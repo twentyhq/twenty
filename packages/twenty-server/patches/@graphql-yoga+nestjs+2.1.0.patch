@@ -37,6 +37,7 @@ index 1684394..dd0773d 100644
 +                const applicationId = request.req.application?.id ?? 'all'
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
++                console.log('[DEBUG:YogaSchema]', { cacheKey, applicationId, hasApp: !!request.req.application, cached: this.schemaCache.has(cacheKey), keys: [...this.schemaCache.keys()] })
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -89,6 +90,7 @@ index 1684394..dd0773d 100644
 +                const applicationId = request.req.application?.id ?? 'all'
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
++                console.log('[DEBUG:YogaSchema]', { cacheKey, applicationId, hasApp: !!request.req.application, cached: this.schemaCache.has(cacheKey), keys: [...this.schemaCache.keys()] })
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -165,6 +167,7 @@ index 7068c51..8494b69 100644
 +                const applicationId = request.req.application?.id ?? 'all'
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
++                console.log('[DEBUG:YogaSchema]', { cacheKey, applicationId, hasApp: !!request.req.application, cached: this.schemaCache.has(cacheKey), keys: [...this.schemaCache.keys()] })
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -218,6 +221,7 @@ index 7068c51..8494b69 100644
 +                const applicationId = request.req.application?.id ?? 'all'
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
++                console.log('[DEBUG:YogaSchema]', { cacheKey, applicationId, hasApp: !!request.req.application, cached: this.schemaCache.has(cacheKey), keys: [...this.schemaCache.keys()] })
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)

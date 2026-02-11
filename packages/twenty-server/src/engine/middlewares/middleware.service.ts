@@ -135,6 +135,16 @@ export class MiddlewareService {
         )
       : undefined;
 
+    // eslint-disable-next-line no-console
+    console.log('[DEBUG:hydrateGraphqlRequest]', {
+      url: request.baseUrl,
+      hasApplication: !!data.application,
+      applicationId: data.application?.id,
+      hasWorkspace: !!data.workspace,
+      workspaceId: data.workspace?.id,
+      metadataVersion,
+    });
+
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
