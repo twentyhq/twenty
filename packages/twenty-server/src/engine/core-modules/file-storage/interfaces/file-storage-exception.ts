@@ -14,6 +14,8 @@ const getFileStorageExceptionUserFriendlyMessage = (
   code: FileStorageExceptionCode,
 ) => {
   switch (code) {
+    case FileStorageExceptionCode.INVALID_EXTENSION:
+      return msg`Wrong extension for file.`;
     case FileStorageExceptionCode.FILE_NOT_FOUND:
       return msg`File not found.`;
     case FileStorageExceptionCode.ACCESS_DENIED:
