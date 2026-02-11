@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { type RemoveSuffix } from 'twenty-shared/types';
 
 import {
   ALL_METADATA_RELATIONS,
@@ -16,7 +17,6 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 
 type ManyToOneConfig<T extends AllMetadataName> =
   (typeof ALL_METADATA_RELATIONS)[T]['manyToOne'];

@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 import { WorkflowVersionEdgeModule } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.module';
@@ -23,6 +24,7 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     WorkflowSchemaModule,
     RecordPositionModule,
     LogicFunctionModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
     WorkflowToolWorkspaceService,

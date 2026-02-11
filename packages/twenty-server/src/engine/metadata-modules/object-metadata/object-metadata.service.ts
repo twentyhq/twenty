@@ -637,6 +637,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       folderUniversalIdentifier: null,
       name: null,
       position: nextPosition,
+      link: null,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
       applicationUniversalIdentifier:

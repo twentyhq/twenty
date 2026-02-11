@@ -16,11 +16,13 @@ type JunctionFieldMetadataItem = Pick<
 type GenerateJunctionRelationGqlFieldsArgs = {
   fieldMetadataItem: JunctionFieldMetadataItem;
   objectMetadataItems: JunctionObjectMetadataItem[];
+  isFilesFieldMigrated?: boolean;
 };
 
 const buildRegularTargetFieldGqlFields = (
   targetField: JunctionFieldMetadataItem,
   objectMetadataItems: JunctionObjectMetadataItem[],
+  isFilesFieldMigrated?: boolean,
 ): RecordGqlFields => {
   const targetObjectMetadata = objectMetadataItems.find(
     (item) => item.id === targetField.relation?.targetObjectMetadata.id,
@@ -31,13 +33,17 @@ const buildRegularTargetFieldGqlFields = (
   }
 
   return {
-    [targetField.name]: buildIdentifierGqlFields(targetObjectMetadata),
+    [targetField.name]: buildIdentifierGqlFields(
+      targetObjectMetadata,
+      isFilesFieldMigrated,
+    ),
   };
 };
 
 const buildMorphTargetFieldGqlFields = (
   targetField: JunctionFieldMetadataItem,
   objectMetadataItems: JunctionObjectMetadataItem[],
+  isFilesFieldMigrated?: boolean,
 ): RecordGqlFields => {
   const morphRelations = targetField.morphRelations;
 
@@ -63,7 +69,10 @@ const buildMorphTargetFieldGqlFields = (
       targetObjectMetadataNamePlural: targetObjectMetadata.namePlural,
     });
 
-    result[computedFieldName] = buildIdentifierGqlFields(targetObjectMetadata);
+    result[computedFieldName] = buildIdentifierGqlFields(
+      targetObjectMetadata,
+      isFilesFieldMigrated,
+    );
   }
 
   return result;
@@ -72,17 +81,27 @@ const buildMorphTargetFieldGqlFields = (
 const buildTargetFieldGqlFields = (
   targetField: JunctionFieldMetadataItem,
   objectMetadataItems: JunctionObjectMetadataItem[],
+  isFilesFieldMigrated?: boolean,
 ): RecordGqlFields => {
   if (targetField.type === FieldMetadataType.MORPH_RELATION) {
-    return buildMorphTargetFieldGqlFields(targetField, objectMetadataItems);
+    return buildMorphTargetFieldGqlFields(
+      targetField,
+      objectMetadataItems,
+      isFilesFieldMigrated,
+    );
   }
-  return buildRegularTargetFieldGqlFields(targetField, objectMetadataItems);
+  return buildRegularTargetFieldGqlFields(
+    targetField,
+    objectMetadataItems,
+    isFilesFieldMigrated,
+  );
 };
 
 // Generates GraphQL fields for a junction relation, including the nested target objects
 export const generateJunctionRelationGqlFields = ({
   fieldMetadataItem,
   objectMetadataItems,
+  isFilesFieldMigrated,
 }: GenerateJunctionRelationGqlFieldsArgs): RecordGqlFields | null => {
   const junctionConfig = getJunctionConfig({
     settings: fieldMetadataItem.settings,
@@ -100,13 +119,17 @@ export const generateJunctionRelationGqlFields = ({
   const junctionTargetFields = targetFields.reduce<RecordGqlFields>(
     (acc, targetField) => ({
       ...acc,
-      ...buildTargetFieldGqlFields(targetField, objectMetadataItems),
+      ...buildTargetFieldGqlFields(
+        targetField,
+        objectMetadataItems,
+        isFilesFieldMigrated,
+      ),
     }),
     {},
   );
 
   return {
-    ...buildIdentifierGqlFields(junctionObjectMetadata),
+    ...buildIdentifierGqlFields(junctionObjectMetadata, isFilesFieldMigrated),
     ...junctionTargetFields,
   };
 };

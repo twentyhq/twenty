@@ -275,6 +275,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'folderUniversalIdentifier',
     },
     name: { toStringify: false, universalProperty: undefined },
+    link: { toStringify: false, universalProperty: undefined },
   },
   rowLevelPermissionPredicate: {
     fieldMetadataId: {

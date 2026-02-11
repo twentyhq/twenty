@@ -46057,7 +46057,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mrmime@npm:^2.0.0":
+"mrmime@npm:^2.0.0, mrmime@npm:^2.0.1":
   version: 2.0.1
   resolution: "mrmime@npm:2.0.1"
   checksum: 10c0/af05afd95af202fdd620422f976ad67dc18e6ee29beb03dd1ce950ea6ef664de378e44197246df4c7cdd73d47f2e7143a6e26e473084b9e4aa2095c0ad1e1761
@@ -57161,6 +57161,7 @@ __metadata:
     lodash.upperfirst: "npm:4.3.1"
     mailparser: "npm:3.9.1"
     microdiff: "npm:1.4.0"
+    mrmime: "npm:^2.0.1"
     ms: "npm:2.1.3"
     nest-commander: "npm:^3.19.1"
     node-ical: "npm:^0.20.1"

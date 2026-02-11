@@ -1,9 +1,6 @@
-import {
-  type ExtractSerializedRelationProperties,
-  type IsSerializedRelation,
-} from 'twenty-shared/types';
-
-import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
+import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
+import { type IsSerializedRelation } from '@/types/IsSerializedRelation.type';
+import { type RemoveSuffix } from '@/types/RemoveSuffix.type';
 
 // Determines if a property should be transformed to a universal identifier
 // A property is transformed only if:

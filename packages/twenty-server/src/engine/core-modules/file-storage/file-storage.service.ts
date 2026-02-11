@@ -114,6 +114,7 @@ export class FileStorageService {
         workspaceId,
         applicationId: application.id,
         id: fileId,
+        mimeType,
         size:
           typeof sourceFile === 'string'
             ? Buffer.byteLength(sourceFile)
