@@ -18,6 +18,7 @@ export const StringFilterType = new GraphQLInputObjectType({
     lte: { type: GraphQLString },
     neq: { type: GraphQLString },
     startsWith: { type: GraphQLString },
+    endsWith: { type: GraphQLString },
     like: {
       type: GraphQLString,
       description: 'Pattern match with % wildcard (e.g. %value%)',
