@@ -76,6 +76,7 @@ export class LocalDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier,
     payload,
     env,
+    timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build({
       flatApplication,
@@ -157,7 +158,7 @@ export class LocalDriver implements LogicFunctionDriver {
             runnerPath,
             env: env ?? {},
             payload,
-            timeoutMs: 900_000, // timeout is handled by the logic function service
+            timeoutMs,
           });
 
         if (stdout)
