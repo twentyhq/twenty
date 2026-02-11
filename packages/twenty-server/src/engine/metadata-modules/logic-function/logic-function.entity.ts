@@ -24,9 +24,6 @@ export enum LogicFunctionRuntime {
   NODE22 = 'nodejs22.x',
 }
 
-export const DEFAULT_SOURCE_HANDLER_PATH = 'src/index.ts';
-export const DEFAULT_HANDLER_NAME = 'main';
-
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
 export class LogicFunctionEntity
@@ -39,10 +36,13 @@ export class LogicFunctionEntity
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false, default: DEFAULT_SOURCE_HANDLER_PATH })
+  @Column({ nullable: false })
   sourceHandlerPath: string;
 
-  @Column({ nullable: false, default: DEFAULT_HANDLER_NAME })
+  @Column({ nullable: false })
+  builtHandlerPath: string;
+
+  @Column({ nullable: false })
   handlerName: string;
 
   @Column({ nullable: true, type: 'varchar' })

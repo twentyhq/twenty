@@ -338,7 +338,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     const compiledCode = await this.logicFunctionResourceService.getBuiltCode({
       workspaceId: flatLogicFunction.workspaceId,
       applicationUniversalIdentifier,
-      sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
 
     const executorPayload: LambdaDriverExecutorPayload = {

@@ -71,7 +71,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: getLogicFunctionSubfolder(flatLogicFunction.id),
+      resourcePath: flatLogicFunction.builtHandlerPath,
     });
   }
 

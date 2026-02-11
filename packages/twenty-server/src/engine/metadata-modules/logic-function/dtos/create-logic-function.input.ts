@@ -75,6 +75,10 @@ export class CreateLogicFunction {
   @Field({ nullable: false })
   sourceHandlerPath: string;
 
+  @IsString()
+  @Field({ nullable: false })
+  builtHandlerPath: string;
+
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()

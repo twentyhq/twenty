@@ -218,6 +218,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
         isTool: oldLogicFunction.isTool ?? false,
         handlerName: oldLogicFunction.handlerName,
         sourceHandlerPath: `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src/index.ts`,
+        builtHandlerPath: `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src/index.mjs`,
         checksum,
         isBuildUpToDate: true,
       },

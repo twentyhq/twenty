@@ -19,8 +19,6 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   const id = rawCreateLogicFunctionInput.id ?? v4();
   const currentDate = new Date();
 
-  const sourceHandlerPath = rawCreateLogicFunctionInput.sourceHandlerPath;
-
   const universalIdentifier =
     rawCreateLogicFunctionInput.universalIdentifier ?? v4();
 
@@ -34,8 +32,9 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
       rawCreateLogicFunctionInput.httpRouteTriggerSettings ?? null,
     name: rawCreateLogicFunctionInput.name,
     description: rawCreateLogicFunctionInput.description ?? null,
-    sourceHandlerPath,
+    sourceHandlerPath: rawCreateLogicFunctionInput.sourceHandlerPath,
     handlerName: rawCreateLogicFunctionInput.handlerName,
+    builtHandlerPath: rawCreateLogicFunctionInput.builtHandlerPath,
     universalIdentifier,
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),

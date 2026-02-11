@@ -83,9 +83,13 @@ export class CodeStepBuildService {
 
     const newUniversalIdentifier = v4();
 
-    const { sourceHandlerPath } = existingLogicFunction;
+    const { sourceHandlerPath, builtHandlerPath } = existingLogicFunction;
 
     const toSourceHandlerPath = sourceHandlerPath.replace(
+      existingLogicFunction.id,
+      newId,
+    );
+    const toBuiltHandlerPath = builtHandlerPath.replace(
       existingLogicFunction.id,
       newId,
     );
@@ -93,6 +97,8 @@ export class CodeStepBuildService {
     await this.logicFunctionResourceService.copyResources({
       fromSourceHandlerPath: sourceHandlerPath,
       toSourceHandlerPath,
+      fromBuiltHandlerPath: builtHandlerPath,
+      toBuiltHandlerPath: toBuiltHandlerPath,
       workspaceId,
       applicationUniversalIdentifier,
     });

@@ -15,9 +15,12 @@ import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
-import { DEFAULT_SOURCE_HANDLER_PATH } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 import { getLogicFunctionSubfolder } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder';
+import {
+  DEFAULT_BUILT_HANDLER_PATH,
+  DEFAULT_SOURCE_HANDLER_PATH,
+} from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 
 @Injectable()
 export class LogicFunctionFromSourceService {
@@ -76,11 +79,19 @@ export class LogicFunctionFromSourceService {
     return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
   }
 
-  private getSourceHandlerPath(logicFunctionId: string) {
-    return join(
-      getLogicFunctionSubfolder(logicFunctionId),
-      DEFAULT_SOURCE_HANDLER_PATH,
-    );
+  private getHandlerPaths(logicFunctionId: string) {
+    const logicFunctionSubfolder = getLogicFunctionSubfolder(logicFunctionId);
+
+    return {
+      sourceHandlerPath: join(
+        logicFunctionSubfolder,
+        DEFAULT_SOURCE_HANDLER_PATH,
+      ),
+      builtHandlerPath: join(
+        logicFunctionSubfolder,
+        DEFAULT_BUILT_HANDLER_PATH,
+      ),
+    };
   }
 
   async createOne({
@@ -97,7 +108,8 @@ export class LogicFunctionFromSourceService {
 
     const logicFunctionId = input.id ?? v4();
 
-    const sourceHandlerPath = this.getSourceHandlerPath(logicFunctionId);
+    const { sourceHandlerPath, builtHandlerPath } =
+      this.getHandlerPaths(logicFunctionId);
 
     if (input.source) {
       await this.logicFunctionResourceService.uploadSourceFile({
@@ -115,6 +127,7 @@ export class LogicFunctionFromSourceService {
             handlerName: input.source.handlerName,
             toolInputSchema: input.source.toolInputSchema,
             sourceHandlerPath,
+            builtHandlerPath,
             id: logicFunctionId,
             isBuildUpToDate: false,
           },
@@ -128,6 +141,7 @@ export class LogicFunctionFromSourceService {
     const { handlerName, checksum } =
       await this.logicFunctionResourceService.seedSourceFiles({
         sourceHandlerPath,
+        builtHandlerPath,
         workspaceId,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
@@ -139,6 +153,7 @@ export class LogicFunctionFromSourceService {
           ...input,
           id: logicFunctionId,
           sourceHandlerPath,
+          builtHandlerPath,
           handlerName,
           checksum,
           toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
@@ -161,10 +176,8 @@ export class LogicFunctionFromSourceService {
     update: UpdateLogicFunctionFromSourceInput['update'];
     workspaceId: string;
   }): Promise<void> {
-    const { applicationUniversalIdentifier } =
+    const { applicationUniversalIdentifier, flatLogicFunction } =
       await this.getLogicFunctionContext({ id, workspaceId });
-
-    const sourceHandlerPath = this.getSourceHandlerPath(id);
 
     let formattedUpdate: UpdateLogicFunctionFromSourceInput['update'] = {
       ...update,
@@ -172,7 +185,7 @@ export class LogicFunctionFromSourceService {
 
     if (update.sourceHandlerCode) {
       await this.logicFunctionResourceService.uploadSourceFile({
-        sourceHandlerPath,
+        sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
         sourceHandlerCode: update.sourceHandlerCode,
         applicationUniversalIdentifier,
         workspaceId,
@@ -206,6 +219,7 @@ export class LogicFunctionFromSourceService {
         workspaceId,
         applicationUniversalIdentifier,
         sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+        builtHandlerPath: flatLogicFunction.builtHandlerPath,
       });
 
     await this.logicFunctionMetadataService.updateOne({

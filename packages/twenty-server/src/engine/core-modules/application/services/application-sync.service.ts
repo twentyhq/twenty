@@ -100,29 +100,23 @@ export class ApplicationSyncService {
       ownerFlatApplication,
     });
 
-    if (manifest.fields.length > 0) {
-      await this.syncFieldsOrThrow({
-        fieldsToSync: manifest.fields,
-        workspaceId,
-        ownerFlatApplication,
-      });
-    }
+    await this.syncFieldsOrThrow({
+      fieldsToSync: manifest.fields,
+      workspaceId,
+      ownerFlatApplication,
+    });
 
-    if (manifest.logicFunctions.length > 0) {
-      await this.syncLogicFunctions({
-        logicFunctionsToSync: manifest.logicFunctions,
-        workspaceId,
-        ownerFlatApplication,
-      });
-    }
+    await this.syncLogicFunctions({
+      logicFunctionsToSync: manifest.logicFunctions,
+      workspaceId,
+      ownerFlatApplication,
+    });
 
-    if ((manifest.frontComponents ?? []).length > 0) {
-      await this.syncFrontComponents({
-        frontComponentsToSync: manifest.frontComponents,
-        workspaceId,
-        ownerFlatApplication,
-      });
-    }
+    await this.syncFrontComponents({
+      frontComponentsToSync: manifest.frontComponents,
+      workspaceId,
+      ownerFlatApplication,
+    });
 
     await this.syncRoles({
       manifest,
@@ -973,6 +967,7 @@ export class ApplicationSyncService {
           universalIdentifier: logicFunctionToCreate.universalIdentifier,
           timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
           sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
+          builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
           handlerName: logicFunctionToCreate.handlerName,
           toolInputSchema: logicFunctionToCreate.toolInputSchema ?? {}, // TODO: compute tool input schema on buildManifest
           isTool: logicFunctionToCreate.isTool,

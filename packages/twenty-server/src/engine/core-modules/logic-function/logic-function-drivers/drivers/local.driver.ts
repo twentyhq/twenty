@@ -94,7 +94,7 @@ export class LocalDriver implements LogicFunctionDriver {
         await this.logicFunctionResourceService.copyBuiltCodeInMemory({
           workspaceId: flatLogicFunction.workspaceId,
           applicationUniversalIdentifier,
-          sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+          builtHandlerPath: flatLogicFunction.builtHandlerPath,
           inMemoryDestinationPath: sourceTemporaryDir,
         });
 
