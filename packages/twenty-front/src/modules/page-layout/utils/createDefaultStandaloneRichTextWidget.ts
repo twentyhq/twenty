@@ -1,4 +1,10 @@
-import {type GridPosition, type PageLayoutWidget, type RichTextV2Body, WidgetConfigurationType, WidgetType} from '~/generated-metadata/graphql';
+import {
+  type GridPosition,
+  type PageLayoutWidget,
+  type RichTextV2Body,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 export const createDefaultStandaloneRichTextWidget = (
   id: string,

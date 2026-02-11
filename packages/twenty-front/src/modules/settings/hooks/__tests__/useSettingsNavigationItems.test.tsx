@@ -4,8 +4,11 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot, RecoilRoot } from 'recoil';
-import { type Billing } from '~/generated-metadata/graphql';
-import { OnboardingStatus, PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  type Billing,
+  OnboardingStatus,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';

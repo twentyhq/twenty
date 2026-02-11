@@ -16,8 +16,11 @@ import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type BarChartConfiguration } from '~/generated-metadata/graphql';
-import { type BarChartLayout, type BarChartSeries } from '~/generated-metadata/graphql';
+import {
+  type BarChartConfiguration,
+  type BarChartLayout,
+  type BarChartSeries,
+} from '~/generated-metadata/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
   objectMetadataItemId: string;

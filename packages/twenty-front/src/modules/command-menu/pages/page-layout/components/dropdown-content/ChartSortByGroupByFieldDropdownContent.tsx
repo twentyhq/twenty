@@ -21,7 +21,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type GraphOrderBy, GraphOrderBy as GraphOrderByEnum } from '~/generated-metadata/graphql';
+import {
+  type GraphOrderBy,
+  GraphOrderBy as GraphOrderByEnum,
+} from '~/generated-metadata/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);

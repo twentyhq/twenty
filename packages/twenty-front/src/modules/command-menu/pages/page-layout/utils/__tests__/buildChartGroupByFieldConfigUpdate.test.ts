@@ -2,8 +2,11 @@ import { type TypedBarChartConfiguration } from '@/command-menu/pages/page-layou
 import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
 import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { BarChartGroupMode } from '~/generated-metadata/graphql';
-import { GraphOrderBy, WidgetConfigurationType } from '~/generated-metadata/graphql';
+import {
+  BarChartGroupMode,
+  GraphOrderBy,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 describe('buildChartGroupByFieldConfigUpdate', () => {
   it('sets default orderBy and dateGranularity for primary axis', () => {

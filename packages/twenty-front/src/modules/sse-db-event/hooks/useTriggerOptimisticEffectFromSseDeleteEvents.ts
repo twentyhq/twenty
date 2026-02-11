@@ -10,8 +10,10 @@ import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { DatabaseEventAction } from '~/generated-metadata/graphql';
-import { type ObjectRecordEvent } from '~/generated-metadata/graphql';
+import {
+  DatabaseEventAction,
+  type ObjectRecordEvent,
+} from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
   const apolloCoreClient = useApolloCoreClient();

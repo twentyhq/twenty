@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type BillingPriceLicensed } from '~/generated-metadata/graphql';
-import { type BillingPriceMetered, BillingUsageType } from '~/generated-metadata/graphql';
+import {
+  type BillingPriceLicensed,
+  type BillingPriceMetered,
+  BillingUsageType,
+} from '~/generated-metadata/graphql';
 import { useAllBillingPrices } from './useAllBillingPrices';
 
 export const usePriceAndBillingUsageByPriceId = () => {

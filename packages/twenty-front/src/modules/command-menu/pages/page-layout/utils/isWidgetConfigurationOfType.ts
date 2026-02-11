@@ -1,7 +1,28 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
-import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
-import { type BarChartConfiguration, type CalendarConfiguration, type EmailsConfiguration, type FieldRichTextConfiguration, type FilesConfiguration, type FrontComponentConfiguration, type GaugeChartConfiguration, type IframeConfiguration, type LineChartConfiguration, type NotesConfiguration, type PieChartConfiguration, type StandaloneRichTextConfiguration, type TasksConfiguration, type TimelineConfiguration, type ViewConfiguration, type WidgetConfiguration, type WidgetConfigurationType, type WorkflowConfiguration, type WorkflowRunConfiguration, type WorkflowVersionConfiguration } from '~/generated-metadata/graphql';
+import {
+  type AggregateChartConfiguration,
+  type BarChartConfiguration,
+  type CalendarConfiguration,
+  type EmailsConfiguration,
+  type FieldRichTextConfiguration,
+  type FilesConfiguration,
+  type FrontComponentConfiguration,
+  type GaugeChartConfiguration,
+  type IframeConfiguration,
+  type LineChartConfiguration,
+  type NotesConfiguration,
+  type PieChartConfiguration,
+  type StandaloneRichTextConfiguration,
+  type TasksConfiguration,
+  type TimelineConfiguration,
+  type ViewConfiguration,
+  type WidgetConfiguration,
+  type WidgetConfigurationType,
+  type WorkflowConfiguration,
+  type WorkflowRunConfiguration,
+  type WorkflowVersionConfiguration,
+} from '~/generated-metadata/graphql';
 
 type WidgetConfigurationTypenameMap = {
   AggregateChartConfiguration: Omit<

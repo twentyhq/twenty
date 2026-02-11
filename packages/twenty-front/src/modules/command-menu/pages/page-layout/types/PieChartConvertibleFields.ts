@@ -1,4 +1,7 @@
-import {type GraphOrderBy, type ObjectRecordGroupByDateGranularity} from '~/generated-metadata/graphql';
+import {
+  type GraphOrderBy,
+  type ObjectRecordGroupByDateGranularity,
+} from '~/generated-metadata/graphql';
 
 export type PieChartConvertibleFields = {
   groupByFieldMetadataId?: string;

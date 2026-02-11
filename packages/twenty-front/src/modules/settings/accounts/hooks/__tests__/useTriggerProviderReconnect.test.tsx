@@ -1,10 +1,12 @@
-import { MessageChannelVisibility } from '~/generated/graphql';
+import {
+  MessageChannelVisibility,
+  CalendarChannelVisibility,
+} from '~/generated/graphql';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { CalendarChannelVisibility } from '~/generated/graphql';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 
 const mockTriggerApisOAuth = jest.fn();

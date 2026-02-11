@@ -122,7 +122,7 @@ export const PageLayoutRendererContent = () => {
           componentInstanceId={tabListInstanceId}
           defaultTabToFocusOnMobileAndSidePanelId={
             currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId ??
-              undefined
+            undefined
           }
         />
         {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (

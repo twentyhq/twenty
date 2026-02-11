@@ -1,8 +1,10 @@
 import { generatePath } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
-import { type AvailableWorkspaces } from '~/generated-metadata/graphql';
+import {
+  type AvailableWorkspace,
+  type AvailableWorkspaces,
+} from '~/generated-metadata/graphql';
 
 export const countAvailableWorkspaces = ({
   availableWorkspacesForSignIn,

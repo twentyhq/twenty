@@ -12,8 +12,11 @@ import { DateTimeSettingsTimeZoneSelect } from '@/settings/experience/components
 import { NumberFormatSelect } from '@/settings/experience/components/NumberFormatSelect';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceMemberDateFormatEnum } from '~/generated-metadata/graphql';
-import { WorkspaceMemberNumberFormatEnum, WorkspaceMemberTimeFormatEnum } from '~/generated-metadata/graphql';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberNumberFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated-metadata/graphql';
 import { DateTimeSettingsCalendarStartDaySelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect';
 
 const StyledContainer = styled.div`

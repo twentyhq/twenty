@@ -1,4 +1,14 @@
-import {AggregateOperations, AxisNameDisplay, BarChartLayout, GraphOrderBy, type GridPosition, type PageLayoutWidget, type WidgetConfiguration, WidgetConfigurationType, WidgetType} from '~/generated-metadata/graphql';
+import {
+  AggregateOperations,
+  AxisNameDisplay,
+  BarChartLayout,
+  GraphOrderBy,
+  type GridPosition,
+  type PageLayoutWidget,
+  type WidgetConfiguration,
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';

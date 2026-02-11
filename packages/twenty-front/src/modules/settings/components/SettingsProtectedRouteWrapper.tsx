@@ -5,8 +5,10 @@ import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { type FeatureFlagKey } from '~/generated-metadata/graphql';
-import { type PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  type FeatureFlagKey,
+  type PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;

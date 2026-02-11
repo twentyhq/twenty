@@ -10,7 +10,10 @@ import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useState } from 'react';
-import { type Application, useUninstallApplicationMutation } from '~/generated-metadata/graphql';
+import {
+  type Application,
+  useUninstallApplicationMutation,
+} from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
