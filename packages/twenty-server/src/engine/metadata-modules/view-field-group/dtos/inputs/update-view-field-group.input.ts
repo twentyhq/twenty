@@ -29,6 +29,11 @@ class UpdateViewFieldGroupInputUpdates {
   @IsBoolean()
   @Field({ nullable: true })
   isVisible?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  deletedAt?: string;
 }
 
 @InputType()

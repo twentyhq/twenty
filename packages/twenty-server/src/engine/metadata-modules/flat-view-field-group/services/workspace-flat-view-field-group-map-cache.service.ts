@@ -62,10 +62,11 @@ export class WorkspaceFlatViewFieldGroupMapCacheService extends WorkspaceCachePr
     const viewIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(views);
 
-    const viewFieldsByViewFieldGroupId = regroupEntitiesByRelatedEntityId({
-      entities: viewFields,
-      foreignKey: 'viewFieldGroupId',
-    });
+    const viewFieldsByViewFieldGroupId =
+      regroupEntitiesByRelatedEntityId<'viewField'>({
+        entities: viewFields,
+        foreignKey: 'viewFieldGroupId',
+      });
 
     const flatViewFieldGroupMaps = createEmptyFlatEntityMaps();
 

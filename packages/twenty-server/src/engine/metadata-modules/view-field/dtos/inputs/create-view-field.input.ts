@@ -49,7 +49,7 @@ export class CreateViewFieldInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  viewFieldGroupId?: string | null;
+  viewFieldGroupId?: string;
 
   @HideField()
   universalIdentifier?: string;
