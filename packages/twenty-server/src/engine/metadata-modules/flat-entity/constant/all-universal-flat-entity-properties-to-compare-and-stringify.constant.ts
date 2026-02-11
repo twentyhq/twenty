@@ -22,7 +22,11 @@ const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
     ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName],
   ) as [
     string,
-    { universalProperty: string | undefined; toStringify: boolean },
+    {
+      universalProperty: string | undefined;
+      toStringify: boolean;
+      toCompare: boolean;
+    },
   ][];
   const accumulator: UniversalFlatEntityPropertiesToCompareAndStringify<T> = {
     propertiesToCompare: [],
@@ -30,6 +34,10 @@ const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
   };
 
   for (const [property, configuration] of entries) {
+    if (!configuration.toCompare) {
+      continue;
+    }
+
     const comparedProperty = configuration.universalProperty ?? property;
 
     accumulator.propertiesToCompare.push(

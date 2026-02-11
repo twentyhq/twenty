@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import {
   FlatCreateWebhookAction,
   UniversalCreateWebhookAction,
@@ -42,15 +41,12 @@ export class CreateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateWebhookAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const webhookRepository =
-      queryRunner.manager.getRepository<WebhookEntity>(WebhookEntity);
-
-    await webhookRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

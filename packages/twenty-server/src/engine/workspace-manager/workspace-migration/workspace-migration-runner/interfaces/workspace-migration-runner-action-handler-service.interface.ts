@@ -1,8 +1,11 @@
 import { Inject, SetMetadata } from '@nestjs/common';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { QueryRunner } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
+import { flatEntityTranspilers } from 'src/engine/metadata-modules/flat-entity/transpiler/flat-entity-transpilers.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -71,6 +74,26 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   public abstract transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
   ): Promise<TFlatAction>;
+
+  protected async insertFlatEntitiesInRepository({
+    flatEntities,
+    queryRunner,
+  }: {
+    queryRunner: QueryRunner;
+    flatEntities: MetadataFlatEntity<TMetadataName>[];
+  }) {
+    const metadataEntity =
+      ALL_METADATA_ENTITY_BY_METADATA_NAME[this.metadataName];
+    const repository = queryRunner.manager.getRepository(metadataEntity);
+    const scalarFlatEntities = flatEntities.map((flatEntity) =>
+      flatEntityTranspilers.toScalarFlatEntity({
+        flatEntity,
+        metadataName: this.metadataName,
+      }),
+    );
+
+    await repository.insert(scalarFlatEntities);
+  }
 
   protected transpileUniversalDeleteActionToFlatDeleteAction(
     context: 'delete' extends TActionType

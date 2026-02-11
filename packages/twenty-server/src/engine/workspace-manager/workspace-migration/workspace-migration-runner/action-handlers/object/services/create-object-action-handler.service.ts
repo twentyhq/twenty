@@ -5,10 +5,10 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
+import { flatEntityTranspilers } from 'src/engine/metadata-modules/flat-entity/transpiler/flat-entity-transpilers.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   FlatCreateObjectAction,
@@ -107,19 +107,23 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     const { queryRunner, flatAction } = context;
     const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = flatAction;
 
-    const objectMetadataRepository =
-      queryRunner.manager.getRepository<ObjectMetadataEntity>(
-        ObjectMetadataEntity,
-      );
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatObjectMetadata],
+    });
 
-    await objectMetadataRepository.insert(flatObjectMetadata);
+    const scalarFieldMetadatas = flatFieldMetadatas.map((flatFieldMetadata) =>
+      flatEntityTranspilers.toScalarFlatEntity({
+        metadataName: 'fieldMetadata',
+        flatEntity: flatFieldMetadata,
+      }),
+    );
 
-    const fieldMetadataRepository =
-      queryRunner.manager.getRepository<FieldMetadataEntity>(
-        FieldMetadataEntity,
-      );
+    const fieldMetadataRepository = queryRunner.manager.getRepository(
+      ALL_METADATA_ENTITY_BY_METADATA_NAME['fieldMetadata'],
+    );
 
-    await fieldMetadataRepository.insert(flatFieldMetadatas);
+    await fieldMetadataRepository.insert(scalarFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(
