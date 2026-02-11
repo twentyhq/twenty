@@ -1,11 +1,11 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddMimeTypeToFileTable1770747515260 implements MigrationInterface {
-  name = 'AddMimeTypeToFileTable1770747515260';
+export class AddMimeTypeToFileTable1770814914548 implements MigrationInterface {
+  name = 'AddMimeTypeToFileTable1770814914548';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."file" ADD "mimeType" character varying`,
+      `ALTER TABLE "core"."file" ADD "mimeType" character varying NOT NULL DEFAULT 'application/octet-stream'`,
     );
   }
 
