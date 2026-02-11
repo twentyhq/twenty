@@ -1,8 +1,8 @@
 import {
   type FieldMetadataType,
-  type FieldMetadataSettings,
   type FieldMetadataOptions,
   type FieldMetadataDefaultValue,
+  type FieldMetadataUniversalSettings,
 } from '@/types';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
@@ -19,7 +19,7 @@ export type RegularFieldManifest<
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
-  settings?: FieldMetadataSettings<T>;
+  universalSettings?: FieldMetadataUniversalSettings<T>;
   isNullable?: boolean;
   objectUniversalIdentifier: string;
 };

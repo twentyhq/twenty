@@ -37,7 +37,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     options: fieldManifest.options ?? null,
     defaultValue:
       fieldManifest.defaultValue ?? generateDefaultValue(fieldManifest.type),
-    universalSettings: fieldManifest.settings ?? null,
+    universalSettings: fieldManifest.universalSettings ?? null,
     isCustom: true,
     isActive: true,
     isSystem: false,
