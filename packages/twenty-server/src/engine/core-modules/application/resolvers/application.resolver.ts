@@ -20,11 +20,14 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
 import { InstallApplicationInput } from 'src/engine/core-modules/application/dtos/install-application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
@@ -54,6 +57,7 @@ export class ApplicationResolver {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationTokenService: ApplicationTokenService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -93,6 +97,29 @@ export class ApplicationResolver {
       id,
       universalIdentifier,
       workspaceId,
+    });
+  }
+
+  @Mutation(() => AuthToken)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async generateApplicationToken(
+    @Args() { applicationId, expiresAt }: GenerateApplicationTokenInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AuthToken> {
+    const DEFAULT_APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60;
+
+    let expiresInSeconds = DEFAULT_APPLICATION_TOKEN_EXPIRY_SECONDS;
+
+    if (expiresAt) {
+      expiresInSeconds = Math.floor(
+        (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
+      );
+    }
+
+    return this.applicationTokenService.generateApplicationToken({
+      workspaceId,
+      applicationId,
+      expiresInSeconds,
     });
   }
 

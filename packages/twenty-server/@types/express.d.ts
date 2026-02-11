@@ -23,6 +23,5 @@ declare module 'express-serve-static-core' {
     userWorkspaceId?: string;
     authProvider?: AuthProviderEnum | null;
     impersonationContext?: AuthContext['impersonationContext'];
-    appId?: string;
   }
 }

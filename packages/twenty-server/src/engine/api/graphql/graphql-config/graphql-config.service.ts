@@ -85,14 +85,14 @@ export class GraphQLConfigService
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
       conditionalSchema: async (context) => {
-        const { workspace, user, appId } = context.req;
+        const { workspace, user, application } = context.req;
 
         try {
           if (!isDefined(workspace)) {
             return new GraphQLSchema({});
           }
 
-          return await this.createSchema(context, workspace, appId);
+          return await this.createSchema(context, workspace, application?.id);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {

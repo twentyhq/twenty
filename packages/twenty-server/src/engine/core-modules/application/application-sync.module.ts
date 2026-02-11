@@ -6,6 +6,7 @@ import { ApplicationResolver } from 'src/engine/core-modules/application/resolve
 import { MarketplaceResolver } from 'src/engine/core-modules/application/resolvers/marketplace.resolver';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -30,6 +31,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     TypeOrmModule.forFeature([FileEntity]),
     ApplicationModule,
     ApplicationVariableEntityModule,
+    TokenModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ObjectMetadataModule,
     FieldMetadataModule,

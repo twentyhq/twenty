@@ -54,18 +54,17 @@ export class WorkspaceSchemaFactory {
       flatFieldMetadataMaps: allFlatFieldMetadataMaps,
       flatIndexMaps: allFlatIndexMaps,
       flatApplicationMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: workspace.id,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-            'flatApplicationMaps',
-          ],
-        },
-      );
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId: workspace.id,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+          'flatIndexMaps',
+          'flatApplicationMaps',
+        ],
+      },
+    );
 
     if (!isDefined(allFlatObjectMetadataMaps)) {
       throw new FlatEntityMapsException(

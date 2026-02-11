@@ -25,10 +25,4 @@ export const bindDataToRequestObject = (
     data.userWorkspace?.locale ??
     (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
     SOURCE_LOCALE;
-
-  const appIdHeader = request.headers['x-app-id'];
-
-  if (typeof appIdHeader === 'string') {
-    request.appId = appIdHeader;
-  }
 };
