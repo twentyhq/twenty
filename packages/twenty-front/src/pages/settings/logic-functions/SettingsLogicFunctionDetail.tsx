@@ -80,11 +80,7 @@ export const SettingsLogicFunctionDetail = () => {
             name: formValues.name,
             description: formValues.description,
             sourceHandlerCode: formValues.code,
-            ...(isDefined(toolInputSchema)
-              ? {
-                  toolInputSchema,
-                }
-              : {}),
+            ...(toolInputSchema !== undefined && { toolInputSchema }),
           },
         },
       });

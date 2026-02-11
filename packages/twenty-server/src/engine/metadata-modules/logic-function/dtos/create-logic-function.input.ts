@@ -65,6 +65,7 @@ export class CreateLogicFunction {
 
   @IsString()
   @Field({ nullable: true })
+  @IsOptional()
   checksum?: string;
 
   @IsString()

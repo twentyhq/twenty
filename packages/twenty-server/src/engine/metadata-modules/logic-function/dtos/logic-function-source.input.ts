@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsObject, IsOptional, IsString } from 'class-validator';
+import { IsObject, IsString } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
 @InputType()
@@ -11,7 +11,6 @@ export class LogicFunctionSourceInput {
 
   @Field(() => graphqlTypeJson, { nullable: false })
   @IsObject()
-  @IsOptional()
   toolInputSchema: object;
 
   @IsString()
