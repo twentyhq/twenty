@@ -46,15 +46,10 @@ export const SettingsLogicFunctionDetail = () => {
 
   const applicationName = data?.findOneApplication?.name;
 
-  // A logic function is "managed" if it belongs to an application
-  // other than the workspace's custom application
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const isManaged =
-    isDefined(applicationId) &&
-    applicationId !== '' &&
-    applicationId !== workspaceCustomApplicationId;
+  const isManaged = applicationId !== workspaceCustomApplicationId;
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
@@ -85,7 +80,11 @@ export const SettingsLogicFunctionDetail = () => {
             name: formValues.name,
             description: formValues.description,
             sourceHandlerCode: formValues.code,
-            ...(toolInputSchema !== undefined && { toolInputSchema }),
+            ...(isDefined(toolInputSchema)
+              ? {
+                  toolInputSchema,
+                }
+              : {}),
           },
         },
       });

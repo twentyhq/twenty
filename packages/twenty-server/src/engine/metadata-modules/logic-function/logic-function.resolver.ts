@@ -26,6 +26,7 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
 @MetadataResolver()
@@ -34,6 +35,7 @@ import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/
 export class LogicFunctionResolver {
   constructor(
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
     private readonly subscriptionService: SubscriptionService,
   ) {}
 
@@ -43,7 +45,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      return await this.logicFunctionFromSourceService.findOne({
+      return await this.logicFunctionMetadataService.findOne({
         id,
         workspaceId,
       });
@@ -57,7 +59,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO[]> {
     try {
-      return await this.logicFunctionFromSourceService.findMany({
+      return await this.logicFunctionMetadataService.findMany({
         workspaceId,
       });
     } catch (error) {
@@ -72,8 +74,8 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      return await this.logicFunctionFromSourceService.getAvailablePackages({
-        id,
+      return await this.logicFunctionMetadataService.getAvailablePackages({
+        logicFunctionId: id,
         workspaceId,
       });
     } catch (error) {

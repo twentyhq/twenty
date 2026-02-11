@@ -16,7 +16,7 @@ import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-mod
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
-import { getLogicFunctionSubfolder } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder';
+import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_SOURCE_HANDLER_PATH,
@@ -31,37 +31,6 @@ export class LogicFunctionFromSourceService {
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
-
-  async findOne({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<LogicFunctionDTO> {
-    return await this.logicFunctionMetadataService.findOne({ id, workspaceId });
-  }
-
-  async findMany({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<LogicFunctionDTO[]> {
-    return await this.logicFunctionMetadataService.findMany({ workspaceId });
-  }
-
-  async getAvailablePackages({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }) {
-    return this.logicFunctionMetadataService.getAvailablePackages({
-      logicFunctionId: id,
-      workspaceId,
-    });
-  }
 
   async deleteOne({
     id,
@@ -80,7 +49,8 @@ export class LogicFunctionFromSourceService {
   }
 
   private getHandlerPaths(logicFunctionId: string) {
-    const logicFunctionSubfolder = getLogicFunctionSubfolder(logicFunctionId);
+    const logicFunctionSubfolder =
+      getLogicFunctionSubfolderForFromSource(logicFunctionId);
 
     return {
       sourceHandlerPath: join(
