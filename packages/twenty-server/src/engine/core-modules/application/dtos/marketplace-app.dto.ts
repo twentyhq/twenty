@@ -1,12 +1,109 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsArray,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
+
+@ObjectType('MarketplaceAppField')
+export class MarketplaceAppFieldDTO {
+  @IsString()
+  @Field()
+  name: string;
+
+  @IsString()
+  @Field()
+  type: string;
+
+  @IsString()
+  @Field()
+  label: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  icon?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  objectUniversalIdentifier?: string;
+}
+
+@ObjectType('MarketplaceAppObject')
+export class MarketplaceAppObjectDTO {
+  @IsString()
+  @Field()
+  universalIdentifier: string;
+
+  @IsString()
+  @Field()
+  nameSingular: string;
+
+  @IsString()
+  @Field()
+  namePlural: string;
+
+  @IsString()
+  @Field()
+  labelSingular: string;
+
+  @IsString()
+  @Field()
+  labelPlural: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  icon?: string;
+
+  @IsArray()
+  @Field(() => [MarketplaceAppFieldDTO])
+  fields: MarketplaceAppFieldDTO[];
+}
+
+@ObjectType('MarketplaceAppLogicFunction')
+export class MarketplaceAppLogicFunctionDTO {
+  @IsString()
+  @Field()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  description?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Field(() => Int, { nullable: true })
+  timeoutSeconds?: number;
+}
+
+@ObjectType('MarketplaceAppFrontComponent')
+export class MarketplaceAppFrontComponentDTO {
+  @IsString()
+  @Field()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  description?: string;
+}
 
 @ObjectType('MarketplaceApp')
 export class MarketplaceAppDTO {
@@ -67,4 +164,20 @@ export class MarketplaceAppDTO {
   @IsString()
   @Field({ nullable: true })
   termsUrl?: string;
+
+  @IsArray()
+  @Field(() => [MarketplaceAppObjectDTO])
+  objects: MarketplaceAppObjectDTO[];
+
+  @IsArray()
+  @Field(() => [MarketplaceAppFieldDTO])
+  fields: MarketplaceAppFieldDTO[];
+
+  @IsArray()
+  @Field(() => [MarketplaceAppLogicFunctionDTO])
+  logicFunctions: MarketplaceAppLogicFunctionDTO[];
+
+  @IsArray()
+  @Field(() => [MarketplaceAppFrontComponentDTO])
+  frontComponents: MarketplaceAppFrontComponentDTO[];
 }

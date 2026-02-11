@@ -5,7 +5,13 @@ import { lowerCase, upperFirst } from 'lodash';
 import { type Manifest } from 'twenty-shared/application';
 import { PackageJson } from 'type-fest';
 
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
+import {
+  MarketplaceAppDTO,
+  MarketplaceAppFieldDTO,
+  MarketplaceAppFrontComponentDTO,
+  MarketplaceAppLogicFunctionDTO,
+  MarketplaceAppObjectDTO,
+} from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 
 type GitHubContent = {
   name: string;
@@ -82,6 +88,10 @@ export class MarketplaceService {
               providers: [],
               websiteUrl: '',
               termsUrl: '',
+              objects: [],
+              fields: [],
+              logicFunctions: [],
+              frontComponents: [],
             });
           }
         } catch (error) {
@@ -123,6 +133,90 @@ export class MarketplaceService {
       providers: ['Clearbit', 'Apollo', 'Hunter.io'],
       websiteUrl: 'https://google.com',
       termsUrl: 'https://google.com',
+      objects: [
+        {
+          universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-000000000001',
+          nameSingular: 'enrichmentJob',
+          namePlural: 'enrichmentJobs',
+          labelSingular: 'Enrichment Job',
+          labelPlural: 'Enrichment Jobs',
+          description: 'Tracks data enrichment requests and their status',
+          icon: 'IconSparkles',
+          fields: [
+            {
+              name: 'status',
+              type: 'SELECT',
+              label: 'Status',
+              description: 'Current status of the enrichment job',
+              icon: 'IconProgressCheck',
+            },
+            {
+              name: 'provider',
+              type: 'TEXT',
+              label: 'Provider',
+              description: 'Enrichment provider used',
+              icon: 'IconCloud',
+            },
+            {
+              name: 'enrichedAt',
+              type: 'DATE_TIME',
+              label: 'Enriched At',
+              description: 'When the enrichment was completed',
+              icon: 'IconCalendar',
+            },
+            {
+              name: 'recordId',
+              type: 'TEXT',
+              label: 'Record ID',
+              description: 'ID of the enriched record',
+              icon: 'IconKey',
+            },
+          ],
+        },
+      ],
+      fields: [
+        {
+          name: 'industry',
+          type: 'TEXT',
+          label: 'Industry',
+          description: 'Company industry from enrichment',
+          icon: 'IconBuildingFactory2',
+          objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        },
+        {
+          name: 'employeeCount',
+          type: 'NUMBER',
+          label: 'Employee Count',
+          description: 'Number of employees from enrichment',
+          icon: 'IconUsers',
+          objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        },
+        {
+          name: 'linkedInUrl',
+          type: 'LINKS',
+          label: 'LinkedIn URL',
+          description: 'LinkedIn profile URL from enrichment',
+          icon: 'IconBrandLinkedin',
+          objectUniversalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
+        },
+        {
+          name: 'jobTitle',
+          type: 'TEXT',
+          label: 'Job Title',
+          description: 'Job title from enrichment',
+          icon: 'IconBriefcase',
+          objectUniversalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
+        },
+      ],
+      logicFunctions: [
+        {
+          name: 'enrich-on-create',
+          description:
+            'Automatically enriches new records when they are created',
+          timeoutSeconds: 30,
+        },
+      ],
+      frontComponents: [],
     };
   }
 
@@ -132,11 +226,6 @@ export class MarketplaceService {
     const rootContents = await this.fetchGitHubDirectory('');
 
     for (const entry of rootContents) {
-      // if (entry.type !== 'dir') continue;
-      // if (entry.name.startsWith('.')) continue;
-      // if (entry.name === 'node_modules') continue;
-      // if (entry.name === 'internal') continue;
-
       if (entry.name === 'community') {
         const communityContents = await this.fetchGitHubDirectory('community');
 
@@ -217,6 +306,53 @@ export class MarketplaceService {
       return null;
     }
 
+    const objects: MarketplaceAppObjectDTO[] = (manifest.objects ?? []).map(
+      (manifestObject) => ({
+        universalIdentifier: manifestObject.universalIdentifier,
+        nameSingular: manifestObject.nameSingular,
+        namePlural: manifestObject.namePlural,
+        labelSingular: manifestObject.labelSingular,
+        labelPlural: manifestObject.labelPlural,
+        description: manifestObject.description,
+        icon: manifestObject.icon,
+        fields: (manifestObject.fields ?? []).map((field) => ({
+          name: field.name ?? '',
+          type: field.type,
+          label: field.label ?? '',
+          description: field.description,
+          icon: field.icon,
+        })),
+      }),
+    );
+
+    const fields: MarketplaceAppFieldDTO[] = (manifest.fields ?? []).map(
+      (manifestField) => {
+        return {
+          name: manifestField.name,
+          type: manifestField.type,
+          label: manifestField.label,
+          description: manifestField.description,
+          icon: manifestField.icon,
+          objectUniversalIdentifier: manifestField.objectUniversalIdentifier,
+        };
+      },
+    );
+
+    const logicFunctions: MarketplaceAppLogicFunctionDTO[] = (
+      manifest.logicFunctions ?? []
+    ).map((manifestLogicFunction) => ({
+      name: manifestLogicFunction.name ?? '',
+      description: manifestLogicFunction.description,
+      timeoutSeconds: manifestLogicFunction.timeoutSeconds,
+    }));
+
+    const frontComponents: MarketplaceAppFrontComponentDTO[] = (
+      manifest.frontComponents ?? []
+    ).map((manifestFrontComponent) => ({
+      name: manifestFrontComponent.name ?? '',
+      description: manifestFrontComponent.description,
+    }));
+
     return {
       id: application.universalIdentifier,
       name: application.displayName,
@@ -231,6 +367,10 @@ export class MarketplaceService {
       providers: marketplaceData.providers ?? [],
       websiteUrl: marketplaceData.websiteUrl,
       termsUrl: marketplaceData.termsUrl,
+      objects,
+      fields,
+      logicFunctions,
+      frontComponents,
     };
   }
 

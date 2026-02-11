@@ -2060,15 +2060,54 @@ export type MarketplaceApp = {
   author: Scalars['String'];
   category: Scalars['String'];
   description: Scalars['String'];
+  fields: Array<MarketplaceAppField>;
+  frontComponents: Array<MarketplaceAppFrontComponent>;
   icon: Scalars['String'];
   id: Scalars['String'];
+  logicFunctions: Array<MarketplaceAppLogicFunction>;
   logo?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  objects: Array<MarketplaceAppObject>;
   providers: Array<Scalars['String']>;
   screenshots: Array<Scalars['String']>;
   termsUrl?: Maybe<Scalars['String']>;
   version: Scalars['String'];
   websiteUrl?: Maybe<Scalars['String']>;
+};
+
+export type MarketplaceAppField = {
+  __typename?: 'MarketplaceAppField';
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  objectUniversalIdentifier?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
+export type MarketplaceAppFrontComponent = {
+  __typename?: 'MarketplaceAppFrontComponent';
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type MarketplaceAppLogicFunction = {
+  __typename?: 'MarketplaceAppLogicFunction';
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  timeoutSeconds?: Maybe<Scalars['Int']>;
+};
+
+export type MarketplaceAppObject = {
+  __typename?: 'MarketplaceAppObject';
+  description?: Maybe<Scalars['String']>;
+  fields: Array<MarketplaceAppField>;
+  icon?: Maybe<Scalars['String']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  universalIdentifier: Scalars['String'];
 };
 
 export enum MessageChannelVisibility {

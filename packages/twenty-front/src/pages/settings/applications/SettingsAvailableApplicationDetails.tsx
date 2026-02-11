@@ -28,6 +28,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated/graphql';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
+import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';
 
 const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
 
@@ -371,7 +372,7 @@ export const SettingsAvailableApplicationDetails = () => {
                 <StyledSidebarSection>
                   <StyledSidebarLabel>{t`Developers links`}</StyledSidebarLabel>
                   <StyledLink
-                    href={application.websiteUrl}
+                    href={application.websiteUrl ?? undefined}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -379,7 +380,7 @@ export const SettingsAvailableApplicationDetails = () => {
                     {t`Website`}
                   </StyledLink>
                   <StyledLink
-                    href={application.termsUrl}
+                    href={application.termsUrl ?? undefined}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -392,7 +393,11 @@ export const SettingsAvailableApplicationDetails = () => {
           </>
         );
       case 'content':
-        return <div>{t`Content tab`}</div>;
+        return (
+          <SettingsAvailableApplicationDetailContentTab
+            application={application}
+          />
+        );
       case 'permissions':
         return <div>{t`Permissions tab`}</div>;
       case 'settings':
@@ -425,9 +430,9 @@ export const SettingsAvailableApplicationDetails = () => {
         <StyledHeader>
           <StyledHeaderLeft>
             <StyledLogo>
-              {application.logoPath ? (
+              {application.logo ? (
                 <StyledLogoImage
-                  src={application.logoPath}
+                  src={application.logo}
                   alt={application.name}
                 />
               ) : (
