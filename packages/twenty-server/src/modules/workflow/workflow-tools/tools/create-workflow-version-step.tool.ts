@@ -10,13 +10,10 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-const createWorkflowVersionStepSchema = z.object({
+const baseStepFields = {
   workflowVersionId: z
     .string()
     .describe('The ID of the workflow version to add the step to'),
-  stepType: z
-    .enum(Object.values(WorkflowActionType) as [string, ...string[]])
-    .describe('The type of step to create'),
   parentStepId: z
     .string()
     .optional()
@@ -41,13 +38,39 @@ const createWorkflowVersionStepSchema = z.object({
     })
     .optional()
     .describe('Optional position coordinates for the step'),
-  defaultSettings: z
-    .record(z.string(), z.any())
-    .optional()
-    .describe(
-      'Optional default settings for the step. Required for LOGIC_FUNCTION steps: pass { input: { logicFunctionId: "<id>" } }. Use list_logic_function_tools to discover available logic function IDs.',
-    ),
-});
+};
+
+const nonLogicFunctionStepTypes = Object.values(WorkflowActionType).filter(
+  (type) => type !== WorkflowActionType.LOGIC_FUNCTION,
+) as [string, ...string[]];
+
+const createWorkflowVersionStepSchema = z.discriminatedUnion('stepType', [
+  z.object({
+    ...baseStepFields,
+    stepType: z.literal(WorkflowActionType.LOGIC_FUNCTION),
+    defaultSettings: z
+      .object({
+        input: z.object({
+          logicFunctionId: z
+            .string()
+            .describe(
+              'The ID of the logic function. Use list_logic_function_tools to discover available IDs.',
+            ),
+        }),
+      })
+      .describe(
+        'Settings for the LOGIC_FUNCTION step. Must include input.logicFunctionId.',
+      ),
+  }),
+  z.object({
+    ...baseStepFields,
+    stepType: z.enum(nonLogicFunctionStepTypes),
+    defaultSettings: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('Optional default settings for the step.'),
+  }),
+]);
 
 const enrichResultWithNextStep = ({
   result,
