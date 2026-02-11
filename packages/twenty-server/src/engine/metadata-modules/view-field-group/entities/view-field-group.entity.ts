@@ -53,9 +53,6 @@ export class ViewFieldGroupEntity
   @JoinColumn({ name: 'viewId' })
   view: Relation<ViewEntity>;
 
-  @OneToMany(
-    () => ViewFieldEntity,
-    (viewField) => viewField.viewFieldGroup,
-  )
+  @OneToMany(() => ViewFieldEntity, (viewField) => viewField.viewFieldGroup)
   viewFields: Relation<ViewFieldEntity[]>;
 }

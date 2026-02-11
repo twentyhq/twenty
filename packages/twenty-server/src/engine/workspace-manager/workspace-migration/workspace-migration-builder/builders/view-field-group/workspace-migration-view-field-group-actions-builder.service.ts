@@ -74,8 +74,7 @@ export class WorkspaceMigrationViewFieldGroupActionsBuilderService extends Works
       action: {
         type: 'delete',
         metadataName: 'viewFieldGroup',
-        universalIdentifier:
-          args.flatEntityToValidate.universalIdentifier,
+        universalIdentifier: args.flatEntityToValidate.universalIdentifier,
       },
     };
   }

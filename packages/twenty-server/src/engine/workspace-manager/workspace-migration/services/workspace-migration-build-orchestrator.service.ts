@@ -458,10 +458,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     if (isDefined(flatViewFieldGroupMaps)) {
-      const {
-        from: fromFlatViewFieldGroupMaps,
-        to: toFlatViewFieldGroupMaps,
-      } = flatViewFieldGroupMaps;
+      const { from: fromFlatViewFieldGroupMaps, to: toFlatViewFieldGroupMaps } =
+        flatViewFieldGroupMaps;
 
       const viewFieldGroupResult =
         await this.workspaceMigrationViewFieldGroupActionsBuilderService.validateAndBuild(
@@ -490,8 +488,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...viewFieldGroupResult.errors,
         );
       } else {
-        orchestratorActionsReport.viewFieldGroup =
-          viewFieldGroupResult.actions;
+        orchestratorActionsReport.viewFieldGroup = viewFieldGroupResult.actions;
       }
     }
 

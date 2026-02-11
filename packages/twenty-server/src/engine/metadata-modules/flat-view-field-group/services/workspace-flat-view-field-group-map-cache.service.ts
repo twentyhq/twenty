@@ -29,9 +29,7 @@ export class WorkspaceFlatViewFieldGroupMapCacheService extends WorkspaceCachePr
     super();
   }
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<FlatViewFieldGroupMaps> {
+  async computeForCache(workspaceId: string): Promise<FlatViewFieldGroupMaps> {
     const [viewFieldGroups, applications, views] = await Promise.all([
       this.viewFieldGroupRepository.find({
         where: { workspaceId },

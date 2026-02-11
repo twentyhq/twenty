@@ -24,8 +24,7 @@ export class FlatViewFieldGroupValidatorService {
   >): FailedFlatEntityValidation<'viewFieldGroup', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        universalIdentifier:
-          flatViewFieldGroupToValidate.universalIdentifier,
+        universalIdentifier: flatViewFieldGroupToValidate.universalIdentifier,
         viewUniversalIdentifier:
           flatViewFieldGroupToValidate.viewUniversalIdentifier,
       },
@@ -34,8 +33,7 @@ export class FlatViewFieldGroupValidatorService {
     });
 
     const existingFlatViewFieldGroup = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        flatViewFieldGroupToValidate.universalIdentifier,
+      universalIdentifier: flatViewFieldGroupToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatViewFieldGroupMaps,
     });
 
@@ -48,8 +46,7 @@ export class FlatViewFieldGroupValidatorService {
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        flatViewFieldGroupToValidate.viewUniversalIdentifier,
+      universalIdentifier: flatViewFieldGroupToValidate.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -129,8 +126,7 @@ export class FlatViewFieldGroupValidatorService {
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        existingFlatViewFieldGroup.viewUniversalIdentifier,
+      universalIdentifier: existingFlatViewFieldGroup.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 
