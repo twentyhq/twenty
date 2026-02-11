@@ -1,15 +1,17 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Query, Subscription } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -25,12 +27,8 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  FeatureFlagGuard,
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-)
-@Resolver()
+@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
+@MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class LogicFunctionResolver {
@@ -68,6 +66,7 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async getAvailablePackages(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -132,6 +131,7 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => String, { nullable: true })
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async getLogicFunctionSourceCode(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -199,6 +199,7 @@ export class LogicFunctionResolver {
       );
     },
   })
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   logicFunctionLogs(
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

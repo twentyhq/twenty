@@ -1,29 +1,21 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
-type FlatDeleteAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['delete'];
-
-export type OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs<
-  TMetadataName extends AllMetadataName,
-> = {
-  flatAction: FlatDeleteAction<TMetadataName>;
+export type OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs = {
+  flatAction: AllFlatWorkspaceMigrationAction<'delete'>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
-  TMetadataName extends AllMetadataName,
->({
+export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
   flatAction,
   allFlatEntityMaps,
-}: OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
+}: OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs): AllFlatEntityMaps => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata':
     case 'objectMetadata':

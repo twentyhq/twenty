@@ -14,14 +14,14 @@ type FileAttachment = {
   contentType: string;
 };
 
-export const makeGraphqlAPIRequestWithFileUpload = (
+export const makeMetadataAPIRequestWithFileUpload = (
   graphqlOperation: FileUploadOperation,
   fileAttachment: FileAttachment,
   token: string | undefined = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
-  const clientInstance = client.post('/graphql');
+  const clientInstance = client.post('/metadata');
 
   if (isDefined(token)) {
     clientInstance.set('Authorization', `Bearer ${token}`);

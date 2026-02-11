@@ -196,26 +196,32 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       ...flatEntityUpdate,
     };
 
-    if (updatedPredicate.roleId !== existingPredicate.roleId) {
-      const existingRoleId = existingPredicate.roleId;
-      const updatedRoleId = updatedPredicate.roleId;
+    if (
+      updatedPredicate.roleUniversalIdentifier !==
+      existingPredicate.roleUniversalIdentifier
+    ) {
+      const existingRoleIdentifier = existingPredicate.roleUniversalIdentifier;
+      const updatedRoleIdentifier = updatedPredicate.roleUniversalIdentifier;
 
       validationResult.errors.push({
         code: RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
-        message: t`Cannot modify predicate to change its role from ${existingRoleId} to ${updatedRoleId}`,
+        message: t`Cannot modify predicate to change its role from ${existingRoleIdentifier} to ${updatedRoleIdentifier}`,
         userFriendlyMessage: msg`Cannot modify predicate to change its role`,
       });
     }
 
     if (
-      updatedPredicate.objectMetadataId !== existingPredicate.objectMetadataId
+      updatedPredicate.objectMetadataUniversalIdentifier !==
+      existingPredicate.objectMetadataUniversalIdentifier
     ) {
-      const existingObjectMetadataId = existingPredicate.objectMetadataId;
-      const updatedObjectMetadataId = updatedPredicate.objectMetadataId;
+      const existingObjectMetadataIdentifier =
+        existingPredicate.objectMetadataUniversalIdentifier;
+      const updatedObjectMetadataIdentifier =
+        updatedPredicate.objectMetadataUniversalIdentifier;
 
       validationResult.errors.push({
         code: RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION,
-        message: t`Cannot modify predicate to change its object from ${existingObjectMetadataId} to ${updatedObjectMetadataId}`,
+        message: t`Cannot modify predicate to change its object from ${existingObjectMetadataIdentifier} to ${updatedObjectMetadataIdentifier}`,
         userFriendlyMessage: msg`Cannot modify predicate to change its object`,
       });
     }

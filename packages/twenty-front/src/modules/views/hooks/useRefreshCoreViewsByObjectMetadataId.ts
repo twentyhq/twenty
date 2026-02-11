@@ -12,7 +12,7 @@ import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordFie
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useRecoilCallback } from 'recoil';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
-import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';
+import { useFindManyCoreViewsLazyQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useRefreshCoreViewsByObjectMetadataId = () => {

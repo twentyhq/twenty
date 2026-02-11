@@ -10,7 +10,7 @@ import {
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
-import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
+import { DeleteFileRecordsAndUpdateTableCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files-and-update-table.command';
 import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -19,7 +19,7 @@ import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/comma
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
-import { UpdateFileTableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-update-file-table-migration.command';
+import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -41,7 +41,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.17 Commands
     protected readonly backfillApplicationPackageFilesCommand: BackfillApplicationPackageFilesCommand,
-    protected readonly deleteFileRecordsCommand: DeleteFileRecordsCommand,
+    protected readonly deleteFileRecordsAndUpdateTableCommand: DeleteFileRecordsAndUpdateTableCommand,
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
     protected readonly migrateFavoritesToNavigationMenuItemsCommand: MigrateFavoritesToNavigationMenuItemsCommand,
     protected readonly migrateNoteTargetToMorphRelationsCommand: MigrateNoteTargetToMorphRelationsCommand,
@@ -49,8 +49,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
-    protected readonly updateFileTableMigrationCommand: UpdateFileTableMigrationCommand,
     protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
+
+    // 1.18 Commands
+    protected readonly migratePersonAvatarFilesCommand: MigratePersonAvatarFilesCommand,
   ) {
     super(
       workspaceRepository,
@@ -70,16 +72,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyWebhookMetadataCommand,
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.deleteFileRecordsAndUpdateTableCommand,
       this.migrateWorkflowCodeStepsCommand,
-      this.deleteFileRecordsCommand,
       this.backfillApplicationPackageFilesCommand,
-      this.updateFileTableMigrationCommand,
       this.fixMorphRelationFieldNamesCommand,
+    ];
+
+    const commands_1180: VersionCommands = [
+      this.migratePersonAvatarFilesCommand,
     ];
 
     this.allCommands = {
       '1.16.0': commands_1160,
       '1.17.0': commands_1170,
+      '1.18.0': commands_1180,
     };
   }
 

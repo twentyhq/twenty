@@ -20,7 +20,7 @@ describe('deleteUser', () => {
     };
 
     await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(query)
       .expect((res) => {
@@ -45,7 +45,7 @@ describe('deleteUser', () => {
     };
 
     await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
       .send(query)
       .expect(200)
@@ -74,7 +74,7 @@ describe('deleteUser', () => {
     };
 
     await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(enablePublicInviteLinkMutation)
       .expect(200)
@@ -92,7 +92,7 @@ describe('deleteUser', () => {
       password: 'Password123!',
     });
 
-    const signUpResponse = await client.post('/graphql').send(signUpMutation);
+    const signUpResponse = await client.post('/metadata').send(signUpMutation);
 
     expect(signUpResponse.status).toBe(200);
     expect(signUpResponse.body.errors).toBeUndefined();
@@ -141,7 +141,7 @@ describe('deleteUser', () => {
     };
 
     const deleteResponse = await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(deleteUserFromWorkspaceMutation);
 
@@ -169,7 +169,7 @@ describe('deleteUser', () => {
     };
 
     const rolesResponse = await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(getRolesWithMembersQuery);
 

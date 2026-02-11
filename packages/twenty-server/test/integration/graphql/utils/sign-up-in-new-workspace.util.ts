@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { type SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 
@@ -35,7 +35,7 @@ export const signUpInNewWorkspace = async ({
     }
   `;
 
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeMetadataAPIRequest(
     {
       query: mutation,
       variables: {},

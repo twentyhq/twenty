@@ -1,31 +1,23 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 
-type FlatUpdateAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['update'];
-
-export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs<
-  TMetadataName extends AllMetadataName,
-> = {
-  flatAction: FlatUpdateAction<TMetadataName>;
+export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs = {
+  flatAction: AllFlatWorkspaceMigrationAction<'update'>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
-  TMetadataName extends AllMetadataName,
->({
+export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
   flatAction,
   allFlatEntityMaps,
-}: OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
+}: OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs): AllFlatEntityMaps => {
   switch (flatAction.metadataName) {
     case 'index': {
       const flatIndex = findFlatEntityByIdInFlatEntityMapsOrThrow({

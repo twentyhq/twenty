@@ -19,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type ActivateWorkflowVersionMutation,
   type ActivateWorkflowVersionMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useActivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();

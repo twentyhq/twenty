@@ -224,9 +224,19 @@ const barChartConfigSchemaCore = z.object({
   primaryAxisGroupByFieldMetadataId: z
     .uuid()
     .describe('Field UUID to group by on primary axis'),
-  primaryAxisGroupBySubFieldName: z.string().optional(),
+  primaryAxisGroupBySubFieldName: z
+    .string()
+    .optional()
+    .describe(
+      'REQUIRED for relation fields (e.g. "name", "address.addressCity") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+    ),
   secondaryAxisGroupByFieldMetadataId: z.uuid().optional(),
-  secondaryAxisGroupBySubFieldName: z.string().optional(),
+  secondaryAxisGroupBySubFieldName: z
+    .string()
+    .optional()
+    .describe(
+      'REQUIRED for relation fields (e.g. "name", "stage") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+    ),
   primaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
   secondaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
@@ -278,9 +288,19 @@ const lineChartConfigSchemaCore = z.object({
   aggregateFieldMetadataId: z.uuid(),
   aggregateOperation: z.enum(AGGREGATE_OPERATION_OPTIONS),
   primaryAxisGroupByFieldMetadataId: z.uuid(),
-  primaryAxisGroupBySubFieldName: z.string().optional(),
+  primaryAxisGroupBySubFieldName: z
+    .string()
+    .optional()
+    .describe(
+      'REQUIRED for relation fields (e.g. "name", "address.addressCity") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+    ),
   secondaryAxisGroupByFieldMetadataId: z.uuid().optional(),
-  secondaryAxisGroupBySubFieldName: z.string().optional(),
+  secondaryAxisGroupBySubFieldName: z
+    .string()
+    .optional()
+    .describe(
+      'REQUIRED for relation fields (e.g. "name", "stage") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+    ),
   primaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   primaryAxisManualSortOrder: z.array(z.string()).optional(),
   secondaryAxisOrderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
@@ -326,7 +346,12 @@ const pieChartConfigSchemaCore = z.object({
   aggregateFieldMetadataId: z.uuid(),
   aggregateOperation: z.enum(AGGREGATE_OPERATION_OPTIONS),
   groupByFieldMetadataId: z.uuid().describe('Field UUID to slice by'),
-  groupBySubFieldName: z.string().optional(),
+  groupBySubFieldName: z
+    .string()
+    .optional()
+    .describe(
+      'REQUIRED for relation fields (e.g. "name", "stage") and composite fields (e.g. "addressCity"). Without this, relation fields group by raw UUID which is not useful.',
+    ),
   orderBy: z.enum(GRAPH_ORDER_BY_OPTIONS).optional(),
   manualSortOrder: z.array(z.string()).optional(),
   dateGranularity: z
@@ -364,10 +389,24 @@ const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z
     .object({
-      blocknote: z.string().nullable().optional(),
-      markdown: z.string().nullable().optional(),
+      blocknote: z
+        .string()
+        .nullable()
+        .optional()
+        .describe(
+          'BlockNote JSON string (advanced). Stringified array of BlockNote blocks.',
+        ),
+      markdown: z
+        .string()
+        .nullable()
+        .optional()
+        .describe(
+          'Markdown content string (preferred for AI). Supports headings, bold, lists, links, etc.',
+        ),
     })
-    .describe('Rich text content (RichTextV2Body)'),
+    .describe(
+      'Rich text content. Use { "markdown": "your content here" } for text. Supports full markdown syntax.',
+    ),
 });
 
 export const graphConfigurationSchema = z.discriminatedUnion(

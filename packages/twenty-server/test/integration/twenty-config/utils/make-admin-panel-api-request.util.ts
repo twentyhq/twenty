@@ -14,7 +14,7 @@ export const makeAdminPanelAPIRequest = (
   const client = request(`http://localhost:${APP_PORT}`);
 
   return client
-    .post('/graphql')
+    .post('/metadata')
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({
       query: print(graphqlOperation.query),

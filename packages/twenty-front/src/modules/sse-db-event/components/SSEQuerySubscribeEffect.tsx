@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ADD_QUERY_TO_EVENT_STREAM_MUTATION } from '@/sse-db-event/graphql/mutations/AddQueryToEventStreamMutation';
 import { REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION } from '@/sse-db-event/graphql/mutations/RemoveQueryFromEventStreamMutation';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
@@ -18,22 +17,20 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   type AddQuerySubscriptionInput,
   type RemoveQueryFromEventStreamInput,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const SSEQuerySubscribeEffect = () => {
   const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
 
-  const apolloCoreClient = useApolloCoreClient();
-
   const [addQueryToEventStream] = useMutation<
     boolean,
     { input: AddQuerySubscriptionInput }
-  >(ADD_QUERY_TO_EVENT_STREAM_MUTATION, { client: apolloCoreClient });
+  >(ADD_QUERY_TO_EVENT_STREAM_MUTATION);
 
   const [removeQueryFromEventStream] = useMutation<
     void,
     { input: RemoveQueryFromEventStreamInput }
-  >(REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION, { client: apolloCoreClient });
+  >(REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION);
 
   const requiredQueryListeners = useRecoilValue(requiredQueryListenersState);
   const activeQueryListeners = useRecoilValue(activeQueryListenersState);

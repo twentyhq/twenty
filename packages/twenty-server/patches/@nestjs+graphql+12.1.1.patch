@@ -1,3 +1,18 @@
+diff --git a/dist/interfaces/gql-module-options.interface.d.ts b/dist/interfaces/gql-module-options.interface.d.ts
+index 1234567..abcdefg 100644
+--- a/dist/interfaces/gql-module-options.interface.d.ts
++++ b/dist/interfaces/gql-module-options.interface.d.ts
+@@ -97,6 +97,10 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
+      * Extra static metadata to be loaded into the specification
+      */
+     metadata?: () => Promise<Record<string, any>>;
++    /**
++     * When set, only resolvers decorated with a matching scope will be included in this schema.
++     */
++    resolverSchemaScope?: 'core' | 'metadata';
+ }
+ export interface GqlOptionsFactory<T extends Record<string, any> = GqlModuleOptions> {
+     createGqlOptions(): Promise<Omit<T, 'driver'>> | Omit<T, 'driver'>;
 diff --git a/dist/schema-builder/graphql-schema.factory.js b/dist/schema-builder/graphql-schema.factory.js
 index f349a6e..425815c 100644
 --- a/dist/schema-builder/graphql-schema.factory.js
@@ -39,3 +54,39 @@ index d5423f1..701a3b2 100644
      generateInputTypeDefs(options) {
          const metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
          const inputTypeDefs = metadata.map((metadata) => this.inputTypeDefinitionFactory.create(metadata, options));
+diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolvers-explorer.service.js
+index 1234567..abcdefg 100644
+--- a/dist/services/resolvers-explorer.service.js
++++ b/dist/services/resolvers-explorer.service.js
+@@ -43,6 +43,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+     filterResolvers(gqlAdapter, wrapper, moduleRef) {
+         const { instance } = wrapper;
+         if (!instance) {
+             return undefined;
+         }
++        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
++        if (resolverSchemaScope && wrapper.metatype) {
++            // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
++            // TODO: remove this fallback once nestjs-query is deprecated
++            const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', wrapper.metatype) || 'metadata';
++            if (scope !== resolverSchemaScope) {
++                return undefined;
++            }
++        }
+         const prototype = Object.getPrototypeOf(instance);
+@@ -147,5 +154,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+     getAllCtors() {
+         const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
+         const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
+-        return resolvers;
++        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
++        if (resolverSchemaScope) {
++            return resolvers.filter((ctor) => {
++                // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
++                // TODO: remove this fallback once nestjs-query is deprecated
++                const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', ctor) || 'metadata';
++                return scope === resolverSchemaScope;
++            });
++        }
++        return resolvers;
+     }

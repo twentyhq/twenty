@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
-import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
+import { DeleteFileRecordsAndUpdateTableCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files-and-update-table.command';
 import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -13,7 +13,6 @@ import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { SeedWorkflowV1_16Command } from 'src/database/commands/upgrade-version-command/1-17/1-17-seed-workflow-v1-16.command';
-import { UpdateFileTableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-update-file-table-migration.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -76,12 +75,11 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    DeleteFileRecordsCommand,
+    DeleteFileRecordsAndUpdateTableCommand,
     MigrateSendEmailRecipientsCommand,
     MigrateWorkflowCodeStepsCommand,
     SeedWorkflowV1_16Command,
     BackfillApplicationPackageFilesCommand,
-    UpdateFileTableMigrationCommand,
   ],
   exports: [
     FixMorphRelationFieldNamesCommand,
@@ -91,12 +89,11 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
+    DeleteFileRecordsAndUpdateTableCommand,
     MigrateWorkflowCodeStepsCommand,
     SeedWorkflowV1_16Command,
     BackfillApplicationPackageFilesCommand,
-    UpdateFileTableMigrationCommand,
   ],
 })
 export class V1_17_UpgradeVersionCommandModule {}

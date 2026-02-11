@@ -134,6 +134,14 @@ export class FilesFieldSync {
       return null;
     }
 
+    const isModifyingFilesField = filesFields.some((filesField) =>
+      isDefined(updatePayload[filesField.name as keyof typeof updatePayload]),
+    );
+
+    if (!isModifyingFilesField) {
+      return null;
+    }
+
     if (existingRecords.length !== 1) {
       throw new TwentyORMException(
         `Cannot update multiple records with files field at once`,

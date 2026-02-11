@@ -27,6 +27,7 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
   >[];
   depth: 0 | 1;
   shouldOnlyLoadRelationIdentifiers?: boolean;
+  isFilesFieldMigrated?: boolean;
 };
 
 export const generateDepthRecordGqlFieldsFromFields = ({
@@ -34,6 +35,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
   fields,
   depth,
   shouldOnlyLoadRelationIdentifiers = true,
+  isFilesFieldMigrated,
 }: GenerateDepthRecordGqlFieldsFromFields) => {
   const generatedRecordGqlFields: RecordGqlFields = fields.reduce(
     (recordGqlFields, fieldMetadata) => {
@@ -83,6 +85,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           const junctionGqlFields = generateJunctionRelationGqlFields({
             fieldMetadataItem: fieldMetadata,
             objectMetadataItems,
+            isFilesFieldMigrated,
           });
 
           if (isDefined(junctionGqlFields) && depth === 1) {
@@ -97,7 +100,10 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem);
 
         const imageIdentifierFieldMetadataItem =
-          getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
+          getImageIdentifierFieldMetadataItem(
+            targetObjectMetadataItem,
+            isFilesFieldMigrated,
+          );
 
         const relationIdentifierSubGqlFields = {
           id: true,
