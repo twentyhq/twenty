@@ -11,7 +11,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
-export type FromToAllFlatEntityMaps = {
+export type FromToAllUniversalFlatEntityMaps = {
   [P in keyof AllUniversalFlatEntityMaps]?: FromTo<
     AllUniversalFlatEntityMaps[P]
   >;
@@ -20,7 +20,7 @@ export type FromToAllFlatEntityMaps = {
 export type WorkspaceMigrationOrchestratorBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationBuilderOptions;
-  fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
+  fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
   dependencyAllFlatEntityMaps?: Partial<AllUniversalFlatEntityMaps>;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
   applicationUniversalIdentifier: string;

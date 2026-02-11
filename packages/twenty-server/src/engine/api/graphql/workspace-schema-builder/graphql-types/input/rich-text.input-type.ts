@@ -3,7 +3,10 @@ import { GraphQLInputObjectType, GraphQLString } from 'graphql';
 const richTextV2LeafFilter = new GraphQLInputObjectType({
   name: 'RichTextV2LeafFilter',
   fields: {
-    ilike: { type: GraphQLString },
+    ilike: {
+      type: GraphQLString,
+      description: 'Case-insensitive match with % wildcard (e.g. %value%)',
+    },
   },
 });
 

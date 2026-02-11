@@ -17,7 +17,7 @@ import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { FromToAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
@@ -87,7 +87,7 @@ export class TwentyStandardApplicationService {
       shouldIncludeRecordPageLayouts,
     });
 
-    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
+    const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
 
     for (const metadataName of TWENTY_STANDARD_ALL_METADATA_NAME) {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);

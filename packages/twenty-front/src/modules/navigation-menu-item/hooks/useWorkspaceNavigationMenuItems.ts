@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -7,20 +9,38 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 import { isDefined } from 'twenty-shared/utils';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
-import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
 export const useWorkspaceNavigationMenuItems = (): {
   workspaceNavigationMenuItemsObjectMetadataItems: ObjectMetadataItem[];
 } => {
-  const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
   const coreViews = useRecoilValue(coreViewsState);
 
   const views = coreViews.map(convertCoreViewToView);
 
+  const workspaceFolderIds = useMemo(
+    () =>
+      new Set(
+        rawWorkspaceNavigationMenuItems
+          .filter(isNavigationMenuItemFolder)
+          .map((item) => item.id),
+      ),
+    [rawWorkspaceNavigationMenuItems],
+  );
+
+  const workspaceNavigationMenuItemsIncludingFolderItems = useMemo(
+    () =>
+      rawWorkspaceNavigationMenuItems.filter(
+        (item) =>
+          !isDefined(item.folderId) ||
+          (isDefined(item.folderId) && workspaceFolderIds.has(item.folderId)),
+      ),
+    [rawWorkspaceNavigationMenuItems, workspaceFolderIds],
+  );
+
   const workspaceNavigationMenuItemViewIds = new Set(
-    workspaceNavigationMenuItemsSorted
+    workspaceNavigationMenuItemsIncludingFolderItems
       .map((item) => item.viewId)
       .filter((viewId) => isDefined(viewId)),
   );
@@ -35,7 +55,7 @@ export const useWorkspaceNavigationMenuItems = (): {
   );
 
   const navigationMenuItemRecordObjectMetadataIds = new Set(
-    rawWorkspaceNavigationMenuItems
+    workspaceNavigationMenuItemsIncludingFolderItems
       .map((item) => item.targetObjectMetadataId)
       .filter((objectMetadataId) => isDefined(objectMetadataId)),
   );

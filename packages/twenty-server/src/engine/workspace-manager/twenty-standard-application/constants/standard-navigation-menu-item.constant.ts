@@ -37,10 +37,31 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       STANDARD_OBJECTS.task.views.allTasks.universalIdentifier,
     position: 5,
   },
-  allWorkflows: {
+  workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    name: 'Workflows',
+    position: 6,
+  },
+  workflowsFolderAllWorkflows: {
+    universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflow.views.allWorkflows.universalIdentifier,
-    position: 6,
+    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    position: 0,
+  },
+  workflowsFolderAllWorkflowRuns: {
+    universalIdentifier: '20202020-b009-4b09-8b09-c0aba11c0009',
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    position: 1,
+  },
+  workflowsFolderAllWorkflowVersions: {
+    universalIdentifier: '20202020-b00a-4b0a-8b0a-c0aba11c000a',
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.workflowVersion.views.allWorkflowVersions
+        .universalIdentifier,
+    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    position: 2,
   },
 } as const;
