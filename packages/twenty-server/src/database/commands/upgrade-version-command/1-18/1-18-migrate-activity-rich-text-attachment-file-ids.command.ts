@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import {
   extractFolderPathFilenameAndTypeOrThrow,
   isDefined,
@@ -13,19 +13,17 @@ import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
@@ -46,7 +44,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
     private readonly featureFlagService: FeatureFlagService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -76,15 +74,11 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       `${isDryRun ? '[DRY RUN] ' : ''}Starting activity rich text attachment file IDs migration for workspace ${workspaceId}`,
     );
 
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-      'flatApplicationMaps',
-    ]);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
     const attachmentObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
@@ -100,80 +94,27 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       return;
     }
 
-    const twentyStandardApplication = Object.values(
-      flatApplicationMaps.byId,
-    ).find(
-      (app) =>
-        app?.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    );
-
-    if (!isDefined(twentyStandardApplication)) {
-      this.logger.error(
-        `Twenty standard application not found for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const attachmentFileUniversalIdentifier =
-      STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
-
-    let attachmentFileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
-      attachmentObjectMetadata,
-      flatFieldMetadataMaps,
-    ).find(
-      (field) =>
-        field.universalIdentifier === attachmentFileUniversalIdentifier,
-    );
-
-    if (!isDefined(attachmentFileFieldMetadata)) {
-      this.logger.log(
-        `File field metadata not found for attachments in workspace ${workspaceId}, creating it`,
-      );
-
-      if (!isDryRun) {
-        await this.fieldMetadataService.createOneField({
-          createFieldInput: {
-            objectMetadataId: attachmentObjectMetadata.id,
-            type: FieldMetadataType.FILES,
-            name: 'file',
-            label: 'File',
-            description: 'Attachment file',
-            icon: 'IconFileUpload',
-            isNullable: true,
-            isUIReadOnly: true,
-            isSystem: true,
-            settings: {
-              maxNumberOfValues: 1,
-            },
-            universalIdentifier: attachmentFileUniversalIdentifier,
-          },
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
           workspaceId,
-          ownerFlatApplication: twentyStandardApplication,
-        });
+        },
+      );
 
-        const { flatFieldMetadataMaps: updatedFlatFieldMetadataMaps } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatFieldMetadataMaps',
-          ]);
-
-        attachmentFileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
-          attachmentObjectMetadata,
-          updatedFlatFieldMetadataMaps,
-        ).find(
-          (field) =>
-            field.universalIdentifier === attachmentFileUniversalIdentifier,
-        );
-      }
-    }
+    const attachmentFileFieldMetadata = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatFieldMetadataMaps,
+      universalIdentifier:
+        STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+    });
 
     if (!isDefined(attachmentFileFieldMetadata)) {
       this.logger.error(
         `Failed to create attachment file field metadata for workspace ${workspaceId}`,
       );
 
-      return;
+      throw new Error(
+        `Failed to create attachment file field metadata for workspace ${workspaceId}`,
+      );
     }
 
     const attachmentRepository =
@@ -206,7 +147,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       'note',
       'targetNoteId',
       workspaceId,
-      twentyStandardApplication,
+      twentyStandardFlatApplication,
       attachmentFileFieldMetadata,
       isDryRun,
     );
@@ -218,10 +159,17 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       'task',
       'targetTaskId',
       workspaceId,
-      twentyStandardApplication,
+      twentyStandardFlatApplication,
       attachmentFileFieldMetadata,
       isDryRun,
     );
+
+    if (!isDryRun) {
+      await this.featureFlagService.enableFeatureFlags(
+        [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
+        workspaceId,
+      );
+    }
 
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Completed activity rich text attachment file IDs migration for workspace ${workspaceId}`,
