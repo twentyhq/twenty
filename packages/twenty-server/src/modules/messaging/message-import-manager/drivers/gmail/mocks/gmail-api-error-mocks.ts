@@ -50,9 +50,11 @@ const ERROR_DEFINITIONS: Record<number, Record<string, ErrorConfig>> = {
 export const getGmailApiError = ({
   code,
   reason,
+  message,
 }: {
   code: number;
   reason?: string;
+  message?: string;
 }): GaxiosError => {
   const statusMap = ERROR_DEFINITIONS[code];
 
@@ -62,8 +64,10 @@ export const getGmailApiError = ({
 
   const config = statusMap[reason || ''] ?? statusMap.default;
 
+  const errorMessage = message ?? config.message;
+
   return new GaxiosError(
-    config.message,
+    errorMessage,
     { url: 'https://gmail.googleapis.com/mocks' },
     {
       status: code,
@@ -71,10 +75,10 @@ export const getGmailApiError = ({
       data: {
         error: {
           code,
-          message: config.message,
+          message: errorMessage,
           errors: [
             {
-              message: config.message,
+              message: errorMessage,
               reason: config.reason,
             },
           ],
