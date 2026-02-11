@@ -828,6 +828,7 @@ export type CoreView = {
   shouldHideEmptyGroups: Scalars['Boolean'];
   type: ViewType;
   updatedAt: Scalars['DateTime'];
+  viewFieldGroups: Array<CoreViewFieldGroup>;
   viewFields: Array<CoreViewField>;
   viewFilterGroups: Array<CoreViewFilterGroup>;
   viewFilters: Array<CoreViewFilter>;
@@ -861,6 +862,7 @@ export type CoreViewFieldGroup = {
   name: Scalars['String'];
   position: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
+  viewFields: Array<CoreViewField>;
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
 };
@@ -1109,6 +1111,7 @@ export type CreateViewFieldInput = {
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
   viewId: Scalars['UUID'];
 };
 
@@ -4599,6 +4602,7 @@ export type UpdateViewFieldGroupInput = {
 };
 
 export type UpdateViewFieldGroupInputUpdates = {
+  deletedAt?: InputMaybe<Scalars['String']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Float']>;

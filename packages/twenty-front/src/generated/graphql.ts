@@ -775,6 +775,7 @@ export type CoreView = {
   shouldHideEmptyGroups: Scalars['Boolean'];
   type: ViewType;
   updatedAt: Scalars['DateTime'];
+  viewFieldGroups: Array<CoreViewFieldGroup>;
   viewFields: Array<CoreViewField>;
   viewFilterGroups: Array<CoreViewFilterGroup>;
   viewFilters: Array<CoreViewFilter>;
@@ -808,6 +809,7 @@ export type CoreViewFieldGroup = {
   name: Scalars['String'];
   position: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
+  viewFields: Array<CoreViewField>;
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
 };
