@@ -56,7 +56,7 @@ export const SettingsLogicFunctionTriggersTab = ({
 
   if (isDefined(databaseEventTriggerSettings)) {
     const [object, action]: [string, string] =
-      databaseEventTriggerSettings.settings.eventName.split('.');
+      databaseEventTriggerSettings.eventName.split('.');
     databaseEventTrigger = {
       object,
       action,
@@ -106,7 +106,7 @@ export const SettingsLogicFunctionTriggersTab = ({
             hint={t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`}
             onChange={() => {}}
             readonly
-            defaultValue={cronTrigger}
+            defaultValue={cronTrigger.pattern}
           />
         </Section>
       )}
