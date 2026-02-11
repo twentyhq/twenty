@@ -111,6 +111,7 @@ export class CodeStepBuildService {
           universalIdentifier: newUniversalIdentifier,
           description: existingLogicFunction.description ?? undefined,
           sourceHandlerPath: toSourceHandlerPath,
+          builtHandlerPath: toBuiltHandlerPath,
           toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
           checksum: existingLogicFunction.checksum ?? '[default-checksum]', // TODO: checksum should never be null, update column in logicFunction entity to set it non nullable
           cronTriggerSettings: existingLogicFunction.cronTriggerSettings as
