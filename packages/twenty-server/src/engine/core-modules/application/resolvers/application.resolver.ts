@@ -12,6 +12,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
@@ -20,6 +21,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
 import { InstallApplicationInput } from 'src/engine/core-modules/application/dtos/install-application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
@@ -34,7 +36,6 @@ import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -42,7 +43,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -103,23 +103,15 @@ export class ApplicationResolver {
   @Mutation(() => AuthToken)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async generateApplicationToken(
-    @Args() { applicationId, expiresAt }: GenerateApplicationTokenInput,
+    @Args() { applicationId }: GenerateApplicationTokenInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AuthToken> {
-    const DEFAULT_APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60;
-
-    let expiresInSeconds = DEFAULT_APPLICATION_TOKEN_EXPIRY_SECONDS;
-
-    if (expiresAt) {
-      expiresInSeconds = Math.floor(
-        (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
-      );
-    }
+    const APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60; // 30 days
 
     return this.applicationTokenService.generateApplicationToken({
       workspaceId,
       applicationId,
-      expiresInSeconds,
+      expiresInSeconds: APPLICATION_TOKEN_EXPIRY_SECONDS,
     });
   }
 
