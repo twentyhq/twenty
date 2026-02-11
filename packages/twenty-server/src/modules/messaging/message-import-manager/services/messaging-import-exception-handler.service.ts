@@ -161,6 +161,14 @@ export class MessageImportExceptionHandlerService {
           'messageChannel',
         );
 
+      await messageChannelRepository.increment(
+        { id: messageChannel.id },
+        'throttleFailureCount',
+        1,
+        undefined,
+        ['throttleFailureCount', 'id'],
+      );
+
       const throttleRetryAfter =
         exception instanceof MessageImportDriverException
           ? exception.throttleRetryAfter
@@ -169,10 +177,9 @@ export class MessageImportExceptionHandlerService {
       await messageChannelRepository.update(
         { id: messageChannel.id },
         {
-          throttleFailureCount: messageChannel.throttleFailureCount + 1,
-          ...(isDefined(throttleRetryAfter)
-            ? { throttleRetryAfter: throttleRetryAfter.toISOString() }
-            : {}),
+          throttleRetryAfter: isDefined(throttleRetryAfter)
+            ? throttleRetryAfter.toISOString()
+            : null,
         },
       );
     }, authContext);
