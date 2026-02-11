@@ -1,15 +1,16 @@
-import {
-  type FieldMetadataType,
-  type FieldMetadataOptions,
-  type FieldMetadataDefaultValue,
-  type FieldMetadataUniversalSettings,
-} from '@/types';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import {
+  type FieldMetadataDefaultValue,
+  type FieldMetadataOptions,
+  type FieldMetadataType,
+  type FieldMetadataUniversalSettings,
+  type RelationAndMorphRelationFieldMetadataType,
+} from '@/types';
 
 export type RegularFieldManifest<
   T extends FieldMetadataType = Exclude<
     FieldMetadataType,
-    FieldMetadataType.RELATION
+    RelationAndMorphRelationFieldMetadataType
   >,
 > = SyncableEntityOptions & {
   type: T;
@@ -25,17 +26,18 @@ export type RegularFieldManifest<
 };
 
 // Both sides of a relation must be declared explicitly in the manifest.
-// Relation-specific settings (relationType, onDelete, joinColumnName)
-// are provided through the `settings` field.
-export type RelationFieldManifest =
-  RegularFieldManifest<FieldMetadataType.RELATION> & {
-    relationTargetFieldMetadataUniversalIdentifier: string;
-    relationTargetObjectMetadataUniversalIdentifier: string;
-  };
+// Relation-specific universal settings (relationType, onDelete, joinColumnName)
+// are provided through the `universalSettings` field.
+export type RelationFieldManifest<
+  T extends RelationAndMorphRelationFieldMetadataType = RelationAndMorphRelationFieldMetadataType,
+> = RegularFieldManifest<T> & {
+  relationTargetFieldMetadataUniversalIdentifier: string;
+  relationTargetObjectMetadataUniversalIdentifier: string;
+};
 
 export type FieldManifest<
   T extends FieldMetadataType = Exclude<
     FieldMetadataType,
-    FieldMetadataType.RELATION
+    RelationAndMorphRelationFieldMetadataType
   >,
 > = RegularFieldManifest<T> | RelationFieldManifest;

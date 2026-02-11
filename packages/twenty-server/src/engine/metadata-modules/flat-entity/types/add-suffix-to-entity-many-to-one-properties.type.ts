@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type RemoveSuffix } from 'twenty-shared/types';
 
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
-import { RemoveSuffix } from 'twenty-shared/types';
 
 export type AddSuffixToEntityManyToOneProperties<
   TEntity,

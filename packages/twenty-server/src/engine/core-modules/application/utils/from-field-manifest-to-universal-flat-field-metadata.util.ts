@@ -1,16 +1,47 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type FieldManifest,
   type RelationFieldManifest,
 } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const isRelationFieldManifest = (
   fieldManifest: FieldManifest<FieldMetadataType>,
 ): fieldManifest is RelationFieldManifest =>
-  fieldManifest.type === FieldMetadataType.RELATION;
+  isMorphOrRelationFieldMetadataType(fieldManifest.type);
+
+const getRelationTargetUniversalIdentifiers = (
+  fieldManifest: FieldManifest<FieldMetadataType>,
+): {
+  relationTargetFieldMetadataUniversalIdentifier: string | null;
+  relationTargetObjectMetadataUniversalIdentifier: string | null;
+} => {
+  if (!isRelationFieldManifest(fieldManifest)) {
+    return {
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      relationTargetObjectMetadataUniversalIdentifier: null,
+    };
+  }
+
+  if (
+    !fieldManifest.relationTargetFieldMetadataUniversalIdentifier ||
+    !fieldManifest.relationTargetObjectMetadataUniversalIdentifier
+  ) {
+    throw new Error(
+      `Field "${fieldManifest.name}" is of type ${fieldManifest.type} but is missing relationTargetFieldMetadataUniversalIdentifier or relationTargetObjectMetadataUniversalIdentifier`,
+    );
+  }
+
+  return {
+    relationTargetFieldMetadataUniversalIdentifier:
+      fieldManifest.relationTargetFieldMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier:
+      fieldManifest.relationTargetObjectMetadataUniversalIdentifier,
+  };
+};
 
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
@@ -25,6 +56,11 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatFieldMetadata => {
+  const {
+    relationTargetFieldMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier,
+  } = getRelationTargetUniversalIdentifiers(fieldManifest);
+
   return {
     universalIdentifier: fieldManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -47,16 +83,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isLabelSyncedWithName: false,
     morphId: null,
     objectMetadataUniversalIdentifier: objectUniversalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier: isRelationFieldManifest(
-      fieldManifest,
-    )
-      ? fieldManifest.relationTargetFieldMetadataUniversalIdentifier
-      : null,
-    relationTargetObjectMetadataUniversalIdentifier: isRelationFieldManifest(
-      fieldManifest,
-    )
-      ? fieldManifest.relationTargetObjectMetadataUniversalIdentifier
-      : null,
+    relationTargetFieldMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier,
     viewFieldUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
