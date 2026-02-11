@@ -87,6 +87,7 @@ export const PullRequestItem = ({
           <StyledPrLink
             href={'https://github.com/twentyhq/twenty/pull/' + prNumber}
             target="_blank"
+            rel="noopener noreferrer"
           >
             #{prNumber}
           </StyledPrLink>{' '}
