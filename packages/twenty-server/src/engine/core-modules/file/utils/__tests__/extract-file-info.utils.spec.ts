@@ -129,7 +129,7 @@ describe('extractFileInfo', () => {
         filename: 'fake-image.png',
       }),
     ).rejects.toThrow(
-      'MimeType could have been detected from file buffer. Extension: png, Expected mime type: image/png',
+      "File content does not match its extension. The file has extension 'png' (expected mime type: image/png), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk.",
     );
   });
 
@@ -140,7 +140,7 @@ describe('extractFileInfo', () => {
         filename: 'fake-document.pdf',
       }),
     ).rejects.toThrow(
-      'MimeType could have been detected from file buffer. Extension: pdf, Expected mime type: application/pdf',
+      "File content does not match its extension. The file has extension 'pdf' (expected mime type: application/pdf), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk.",
     );
   });
 

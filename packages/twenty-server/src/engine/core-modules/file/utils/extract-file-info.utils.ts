@@ -1,9 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import FileType, {
-  mimeTypes as detectableMimeTypes,
-  type MimeType,
-} from 'file-type';
+import FileType, { type MimeType } from 'file-type';
 import { lookup } from 'mrmime';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -42,7 +39,7 @@ export const extractFileInfo = async ({
 
     if (
       mimeTypeFromExtension &&
-      detectableMimeTypes.has(mimeTypeFromExtension as MimeType)
+      FileType.mimeTypes.has(mimeTypeFromExtension as MimeType)
     ) {
       throw new FileStorageException(
         `File content does not match its extension. The file has extension '${ext}' (expected mime type: ${mimeTypeFromExtension}), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk.`,
