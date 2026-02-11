@@ -12,7 +12,6 @@ import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/w
 
 import { FilesFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/files-field-query-result-getter.handler';
 import { RichTextV2FieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-v2-field-query-result-getter.handler';
-import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/activity-query-result-getter.handler';
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
@@ -57,22 +56,6 @@ export class CommonResultGettersService {
       [
         'workspaceMember',
         new WorkspaceMemberQueryResultGetterHandler(this.fileService),
-      ],
-      [
-        'note',
-        new ActivityQueryResultGetterHandler(
-          this.fileService,
-          this.filesFieldService,
-          this.featureFlagService,
-        ),
-      ],
-      [
-        'task',
-        new ActivityQueryResultGetterHandler(
-          this.fileService,
-          this.filesFieldService,
-          this.featureFlagService,
-        ),
       ],
     ]);
   }
