@@ -1,8 +1,9 @@
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneLogicFunctionQuery } from '~/generated-metadata/graphql';
 import { type LogicFunction } from '~/generated/graphql';
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 
 export type LogicFunctionNewFormValues = {
   name: string;
@@ -33,6 +34,11 @@ export const useLogicFunctionUpdateFormState = ({
     code: '',
   });
 
+  const { code: codeFromApi, loading: logicFunctionSourceCodeLoading } =
+    useGetLogicFunctionSourceCode({
+      logicFunctionId,
+    });
+
   const { logicFunction, loading: logicFunctionLoading } =
     useGetOneLogicFunction({
       id: logicFunctionId,
@@ -49,10 +55,16 @@ export const useLogicFunctionUpdateFormState = ({
       },
     });
 
+  useEffect(() => {
+    if (isDefined(codeFromApi)) {
+      setFormValues((prev) => ({ ...prev, code: codeFromApi }));
+    }
+  }, [codeFromApi]);
+
   return {
     formValues,
     setFormValues,
     logicFunction,
-    loading: logicFunctionLoading,
+    loading: logicFunctionLoading || logicFunctionSourceCodeLoading,
   };
 };

@@ -1,6 +1,8 @@
-import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import {
+  type LogicFunctionFormValues,
+  useLogicFunctionUpdateFormState,
+} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -123,21 +125,8 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput,
     );
 
-  const { code: codeFromApi, loading } = useGetLogicFunctionSourceCode({
-    logicFunctionId,
-  });
-
-  const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
-    name: '',
-    description: '',
-    code: '',
-  });
-
-  useEffect(() => {
-    if (isDefined(codeFromApi)) {
-      setFormValues((prev) => ({ ...prev, code: codeFromApi }));
-    }
-  }, [codeFromApi]);
+  const { formValues, setFormValues, loading } =
+    useLogicFunctionUpdateFormState({ logicFunctionId });
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {

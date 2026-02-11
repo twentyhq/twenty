@@ -1,3 +1,6 @@
+import { getToolInputSchemaFromSourceCode } from '@/logic-functions/utils/getToolInputSchemaFromSourceCode';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
@@ -13,16 +16,28 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconPlayerPlay, IconSettings } from 'twenty-ui/display';
+import {
+  IconBolt,
+  IconCode,
+  IconPlayerPlay,
+  IconSettings,
+} from 'twenty-ui/display';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValue } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
 export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId = '' } = useParams();
+
+  const navigate = useNavigate();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -30,6 +45,16 @@ export const SettingsLogicFunctionDetail = () => {
   });
 
   const applicationName = data?.findOneApplication?.name;
+
+  // A logic function is "managed" if it belongs to an application
+  // other than the workspace's custom application
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+
+  const isManaged =
+    isDefined(applicationId) &&
+    applicationId !== '' &&
+    applicationId !== workspaceCustomApplicationId;
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
@@ -41,6 +66,8 @@ export const SettingsLogicFunctionDetail = () => {
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
 
+  const { updateLogicFunction } = usePersistLogicFunction();
+
   const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
     logicFunctionId,
   });
@@ -48,6 +75,23 @@ export const SettingsLogicFunctionDetail = () => {
   const handleExecute = async () => {
     await executeLogicFunction();
   };
+
+  const handleSave = useDebouncedCallback(
+    async (toolInputSchema?: object | null) => {
+      await updateLogicFunction({
+        input: {
+          id: logicFunctionId,
+          update: {
+            name: formValues.name,
+            description: formValues.description,
+            sourceHandlerCode: formValues.code,
+            ...(toolInputSchema !== undefined && { toolInputSchema }),
+          },
+        },
+      });
+    },
+    500,
+  );
 
   const onChange = (key: string) => {
     return (value: string) => {
@@ -58,12 +102,43 @@ export const SettingsLogicFunctionDetail = () => {
     };
   };
 
+  const onCodeChange = async (filePath: string, value: string) => {
+    setFormValues((prevState: LogicFunctionFormValues) => {
+      return {
+        ...prevState,
+        code: value,
+      };
+    });
+
+    // Parse and save schema if editing the handler file
+    let toolInputSchema: object | null | undefined;
+
+    if (filePath === logicFunction?.sourceHandlerPath) {
+      toolInputSchema = await getToolInputSchemaFromSourceCode(value);
+    }
+
+    await handleSave(toolInputSchema);
+  };
+
+  const handleTestFunction = async () => {
+    navigate('#test');
+    await executeLogicFunction();
+  };
+
   const tabs = [
+    {
+      id: 'editor',
+      title: t`Editor`,
+      Icon: IconCode,
+      disabled: isManaged,
+      hide: isManaged,
+    },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
     { id: 'test', title: t`Test`, Icon: IconPlayerPlay },
     { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
   ];
 
+  const isEditorTab = activeTabId === 'editor';
   const isTriggersTab = activeTabId === 'triggers';
   const isSettingsTab = activeTabId === 'settings';
   const isTestTab = activeTabId === 'test';
@@ -104,6 +179,14 @@ export const SettingsLogicFunctionDetail = () => {
           { children: `${logicFunction?.name}` },
         ];
 
+  const files = [
+    {
+      path: 'index.ts',
+      content: formValues.code,
+      language: 'typescript',
+    },
+  ];
+
   return (
     !loading &&
     !applicationLoading && (
@@ -118,6 +201,14 @@ export const SettingsLogicFunctionDetail = () => {
       >
         <SettingsPageContainer>
           <TabList tabs={tabs} componentInstanceId={instanceId} />
+          {isEditorTab && (
+            <SettingsLogicFunctionCodeEditorTab
+              files={files}
+              handleExecute={handleTestFunction}
+              onChange={onCodeChange}
+              isTesting={isExecuting}
+            />
+          )}
           {isTriggersTab && logicFunction && (
             <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
           )}

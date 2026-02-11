@@ -21,13 +21,11 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   handleExecute,
   onChange,
   isTesting = false,
-  isManaged = false,
 }: {
   files: File[];
   handleExecute: () => void;
   onChange: (filePath: string, value: string) => void;
   isTesting?: boolean;
-  isManaged?: boolean;
 }) => {
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -67,16 +65,6 @@ export const SettingsLogicFunctionCodeEditorTab = ({
           currentFilePath={activeTabId}
           onChange={(newCodeValue: string) =>
             onChange(activeTabId, newCodeValue)
-          }
-          options={
-            isManaged
-              ? {
-                  readOnly: true,
-                  readOnlyMessage: {
-                    value: t`Managed logic functions are not editable`,
-                  },
-                }
-              : undefined
           }
         />
       )}
