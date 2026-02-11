@@ -38,9 +38,14 @@ index 1684394..dd0773d 100644
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
++                console.log('[YogaPatch:CJS:Express] schema handler called', { cacheKey, applicationId, hasApplication: !!request.req.application, applicationObj: request.req.application ? { id: request.req.application.id } : null, cacheSize: this.schemaCache.size, existingKeys: [...this.schemaCache.keys()] })
++
 +                if(this.schemaCache.has(cacheKey)) {
++                    console.log('[YogaPatch:CJS:Express] CACHE HIT', { cacheKey })
 +                    return this.schemaCache.get(cacheKey)
 +                }
++
++                console.log('[YogaPatch:CJS:Express] CACHE MISS - generating schema', { cacheKey })
 +
 +                const schemas = [];
 +
@@ -58,6 +63,9 @@ index 1684394..dd0773d 100644
 +                const mergedSchemas = (0, schema_1.mergeSchemas)({
 +                    schemas,
 +                });
++
++                const typeNames = Object.keys(mergedSchemas.getTypeMap()).filter(n => !n.startsWith('__'))
++                console.log('[YogaPatch:CJS:Express] schema generated', { cacheKey, typeCount: typeNames.length, hasRocket: typeNames.includes('Rocket'), sampleTypes: typeNames.slice(0, 10) })
 +
 +                for (const key of this.schemaCache.keys()) {
 +                    if (key.startsWith(`${workspaceId}-${url}-`)) {
@@ -90,9 +98,14 @@ index 1684394..dd0773d 100644
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
++                console.log('[YogaPatch:CJS:Fastify] schema handler called', { cacheKey, applicationId, hasApplication: !!request.req.application })
++
 +                if(this.schemaCache.has(cacheKey)) {
++                    console.log('[YogaPatch:CJS:Fastify] CACHE HIT', { cacheKey })
 +                    return this.schemaCache.get(cacheKey)
 +                }
++
++                console.log('[YogaPatch:CJS:Fastify] CACHE MISS - generating schema', { cacheKey })
 +
 +                const schemas = [];
 +
@@ -166,9 +179,14 @@ index 7068c51..8494b69 100644
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
++                console.log('[YogaPatch:ESM:Express] schema handler called', { cacheKey, applicationId, hasApplication: !!request.req.application, applicationObj: request.req.application ? { id: request.req.application.id } : null, cacheSize: this.schemaCache.size, existingKeys: [...this.schemaCache.keys()] })
++
 +                if (this.schemaCache.has(cacheKey)) {
++                console.log('[YogaPatch:ESM:Express] CACHE HIT', { cacheKey })
 +                return this.schemaCache.get(cacheKey)
 +                }
++
++                console.log('[YogaPatch:ESM:Express] CACHE MISS - generating schema', { cacheKey })
 +
 +                const schemas = [];
 +
@@ -187,6 +205,9 @@ index 7068c51..8494b69 100644
 +                const mergedSchemas = mergeSchemas({
 +                    schemas,
 +                });
++
++                const typeNames = Object.keys(mergedSchemas.getTypeMap()).filter(n => !n.startsWith('__'))
++                console.log('[YogaPatch:ESM:Express] schema generated', { cacheKey, typeCount: typeNames.length, hasRocket: typeNames.includes('Rocket'), sampleTypes: typeNames.slice(0, 10) })
 +
 +                for (const key of this.schemaCache.keys()) {
 +                    if (key.startsWith(`${workspaceId}-${url}-`)) {
@@ -219,9 +240,14 @@ index 7068c51..8494b69 100644
 +
 +                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
++                console.log('[YogaPatch:ESM:Fastify] schema handler called', { cacheKey, applicationId, hasApplication: !!request.req.application })
++
 +                if (this.schemaCache.has(cacheKey)) {
++                console.log('[YogaPatch:ESM:Fastify] CACHE HIT', { cacheKey })
 +                return this.schemaCache.get(cacheKey)
 +                }
++
++                console.log('[YogaPatch:ESM:Fastify] CACHE MISS - generating schema', { cacheKey })
 +
 +                const schemas = [];
 +

@@ -87,6 +87,13 @@ export class GraphQLConfigService
       conditionalSchema: async (context) => {
         const { workspace, user, application } = context.req;
 
+        console.log('[GraphQLConfigService] conditionalSchema called', {
+          hasWorkspace: isDefined(workspace),
+          workspaceId: workspace?.id,
+          hasApplication: isDefined(application),
+          applicationId: application?.id,
+        });
+
         try {
           if (!isDefined(workspace)) {
             return new GraphQLSchema({});
