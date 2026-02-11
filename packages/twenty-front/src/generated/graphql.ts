@@ -2935,7 +2935,7 @@ export type MutationUpdateOneFieldArgs = {
 
 
 export type MutationUpdateOneLogicFunctionArgs = {
-  input: UpdateLogicFunctionInput;
+  input: UpdateLogicFunctionFromSourceInput;
 };
 
 
@@ -4562,25 +4562,25 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
-export type UpdateLogicFunctionInput = {
+export type UpdateLogicFunctionFromSourceInput = {
   /** Id of the logic function to update */
   id: Scalars['UUID'];
   /** The logic function updates */
-  update: UpdateLogicFunctionInputUpdates;
+  update: UpdateLogicFunctionFromSourceInputUpdates;
 };
 
-export type UpdateLogicFunctionInputUpdates = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
+export type UpdateLogicFunctionFromSourceInputUpdates = {
   checksum?: InputMaybe<Scalars['String']>;
   cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
   databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
+  handlerName: Scalars['String'];
   httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
-  isBuildUpToDate: Scalars['Boolean'];
+  isBuildUpToDate?: InputMaybe<Scalars['Boolean']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  sourceHandlerCode: Scalars['String'];
+  sourceHandlerPath: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema: Scalars['JSON'];
 };
