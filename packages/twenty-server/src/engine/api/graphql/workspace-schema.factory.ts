@@ -90,7 +90,9 @@ export class WorkspaceSchemaFactory {
       applicationId,
       isApplicationIdDefined: isDefined(applicationId),
       hasFlatApplicationMaps: isDefined(flatApplicationMaps),
-      allObjectCount: Object.keys(allFlatObjectMetadataMaps.universalIdentifierById).length,
+      allObjectCount: Object.keys(
+        allFlatObjectMetadataMaps.universalIdentifierById,
+      ).length,
     });
 
     if (isDefined(applicationId)) {
@@ -121,7 +123,9 @@ export class WorkspaceSchemaFactory {
 
       // eslint-disable-next-line no-console
       console.log('[DEBUG:WorkspaceSchemaFactory] filtered', {
-        filteredObjectCount: Object.keys(flatObjectMetadataMaps.universalIdentifiersByApplicationId).length,
+        filteredObjectCount: Object.keys(
+          flatObjectMetadataMaps.universalIdentifiersByApplicationId,
+        ).length,
         applicationIds,
       });
     }
