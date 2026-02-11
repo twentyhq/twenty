@@ -12,17 +12,15 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
-import { type Sources, CrudOperationType } from 'twenty-shared/types';
+import { CrudOperationType } from 'twenty-shared/types';
 import {
   type CreateOneLogicFunctionMutation,
   type CreateOneLogicFunctionMutationVariables,
   type DeleteOneLogicFunctionMutation,
   type DeleteOneLogicFunctionMutationVariables,
+  type UpdateOneLogicFunctionMutation,
+  type UpdateOneLogicFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
-
-type UpdateLogicFunctionSourceMutationVariables = {
-  input: { id: string; code: Sources };
-};
 
 export const usePersistLogicFunction = () => {
   const apolloMetadataClient = useApolloCoreClient();
@@ -44,8 +42,8 @@ export const usePersistLogicFunction = () => {
   });
 
   const [updateLogicFunctionSourceMutation] = useMutation<
-    { updateLogicFunctionSource: boolean },
-    UpdateLogicFunctionSourceMutationVariables
+    UpdateOneLogicFunctionMutation,
+    UpdateOneLogicFunctionMutationVariables
   >(UPDATE_ONE_LOGIC_FUNCTION, {
     client: apolloMetadataClient,
   });
@@ -88,9 +86,9 @@ export const usePersistLogicFunction = () => {
     [createLogicFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
-  const updateLogicFunctionSource = useCallback(
+  const updateLogicFunction = useCallback(
     async (
-      variables: UpdateLogicFunctionSourceMutationVariables,
+      variables: UpdateOneLogicFunctionMutationVariables,
     ): Promise<
       MetadataRequestResult<
         Awaited<ReturnType<typeof updateLogicFunctionSourceMutation>>
@@ -170,7 +168,7 @@ export const usePersistLogicFunction = () => {
 
   return {
     createLogicFunction,
-    updateLogicFunctionSource,
+    updateLogicFunction,
     deleteLogicFunction,
   };
 };

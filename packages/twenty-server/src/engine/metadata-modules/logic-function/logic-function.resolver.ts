@@ -131,7 +131,7 @@ export class LogicFunctionResolver {
     }
   }
 
-  @Query(() => graphqlTypeJson, { nullable: true })
+  @Query(() => String, { nullable: true })
   async getLogicFunctionSourceCode(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

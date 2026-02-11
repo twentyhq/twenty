@@ -3591,7 +3591,7 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
-  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
+  getLogicFunctionSourceCode?: Maybe<Scalars['String']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -4574,15 +4574,15 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
   databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
-  handlerName: Scalars['String'];
+  handlerName?: InputMaybe<Scalars['String']>;
   httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
   isBuildUpToDate?: InputMaybe<Scalars['Boolean']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerCode: Scalars['String'];
-  sourceHandlerPath: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  sourceHandlerCode?: InputMaybe<Scalars['String']>;
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema: Scalars['JSON'];
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateObjectPayload = {

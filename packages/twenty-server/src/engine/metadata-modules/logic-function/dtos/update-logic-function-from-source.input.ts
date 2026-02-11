@@ -26,7 +26,7 @@ import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 @InputType()
 class UpdateLogicFunctionFromSourceInputUpdates {
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   @IsOptional()
   name?: string;
 
@@ -43,22 +43,23 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   timeoutSeconds?: number;
 
   @IsString()
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   @IsOptional()
   sourceHandlerCode?: string;
 
-  @Field(() => graphqlTypeJson, { nullable: false })
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
   toolInputSchema?: object;
 
   @IsString()
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   @IsOptional()
   handlerName?: string;
 
   @IsString()
-  @Field({ nullable: false })
+  @Field({ nullable: true })
+  @IsOptional()
   sourceHandlerPath?: string;
 
   @IsBoolean()
@@ -73,6 +74,7 @@ class UpdateLogicFunctionFromSourceInputUpdates {
 
   @IsString()
   @Field({ nullable: true })
+  @IsOptional()
   checksum?: string;
 
   @IsObject()

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { join } from 'path';
 
-import { Sources } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
@@ -263,11 +262,11 @@ export class LogicFunctionFromSourceService {
   }: {
     id: string;
     workspaceId: string;
-  }): Promise<Sources | null> {
+  }): Promise<string | null> {
     const { flatLogicFunction, applicationUniversalIdentifier } =
       await this.getLogicFunctionContext({ id, workspaceId });
 
-    return this.logicFunctionResourceService.getSourceCode({
+    return this.logicFunctionResourceService.getSourceFile({
       workspaceId,
       applicationUniversalIdentifier,
       sourceHandlerPath: flatLogicFunction.sourceHandlerPath,

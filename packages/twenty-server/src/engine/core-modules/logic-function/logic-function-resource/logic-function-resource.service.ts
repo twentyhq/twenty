@@ -197,20 +197,22 @@ export class LogicFunctionResourceService {
     }
   }
 
-  async getSourceCode({
+  async getSourceFile({
     sourceHandlerPath,
     workspaceId,
     applicationUniversalIdentifier,
-  }: GetSourceCodeParams): Promise<Sources | null> {
-    const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
-
+  }: GetSourceCodeParams): Promise<string | null> {
     try {
-      return await this.fileStorageService.readFolder({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-      });
+      return (
+        await streamToBuffer(
+          await this.fileStorageService.readFile({
+            workspaceId,
+            applicationUniversalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: sourceHandlerPath,
+          }),
+        )
+      ).toString('utf-8');
     } catch (error) {
       if (
         isDefined(error) &&

@@ -1,6 +1,5 @@
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import { type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneLogicFunctionQuery } from '~/generated-metadata/graphql';
 import { type LogicFunction } from '~/generated/graphql';
@@ -11,7 +10,7 @@ export type LogicFunctionNewFormValues = {
 };
 
 export type LogicFunctionFormValues = LogicFunctionNewFormValues & {
-  code: Sources;
+  code: string;
 };
 
 type SetLogicFunctionFormValues = Dispatch<
@@ -31,7 +30,7 @@ export const useLogicFunctionUpdateFormState = ({
   const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
     name: '',
     description: '',
-    code: { src: { 'index.ts': '' } },
+    code: '',
   });
 
   const { logicFunction, loading: logicFunctionLoading } =

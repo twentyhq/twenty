@@ -11,7 +11,6 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
 import { getFunctionInputFromSourceCode } from '@/logic-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -35,10 +34,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
@@ -104,7 +101,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateLogicFunctionSource } = usePersistLogicFunction();
+  const { updateLogicFunction } = usePersistLogicFunction();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -133,7 +130,7 @@ export const WorkflowEditActionCode = ({
   const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
     name: '',
     description: '',
-    code: { src: { 'index.ts': '' } },
+    code: '',
   });
 
   useEffect(() => {
@@ -159,10 +156,12 @@ export const WorkflowEditActionCode = ({
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunctionSource({
+    await updateLogicFunction({
       input: {
         id: logicFunctionId,
-        code: formValues.code,
+        update: {
+          sourceHandlerCode: formValues.code,
+        },
       },
     });
   }, 500);
@@ -174,11 +173,7 @@ export const WorkflowEditActionCode = ({
     setFormValues((prevState: LogicFunctionFormValues) => {
       return {
         ...prevState,
-        code: computeNewSources({
-          previousCode: prevState['code'],
-          filePath: `${SOURCE_FOLDER_NAME}/${INDEX_FILE_NAME}`,
-          value: newCode,
-        }),
+        code: newCode,
       };
     });
     await handleSave();
@@ -387,12 +382,6 @@ export const WorkflowEditActionCode = ({
     setIsFullScreen(false);
   };
 
-  const indexFileContent =
-    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
-    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
-      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
-      : '';
-
   const fullScreenOverlay = renderFullScreenModal(
     <div data-globally-prevent-click-outside="true">
       <WorkflowEditActionCodeFields
@@ -404,7 +393,7 @@ export const WorkflowEditActionCode = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={indexFileContent}
+          value={formValues.code}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -439,7 +428,7 @@ export const WorkflowEditActionCode = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowCodeEditor
-                value={indexFileContent}
+                value={formValues.code}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{
