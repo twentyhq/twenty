@@ -28,6 +28,7 @@ export const MenuItemAvatar = ({
   className,
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
+  isTooltipOpen,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -43,6 +44,7 @@ export const MenuItemAvatar = ({
       className={className}
       iconButtons={iconButtons}
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
+      isTooltipOpen={isTooltipOpen}
       LeftComponent={
         isDefined(avatar) ? (
           <Avatar
