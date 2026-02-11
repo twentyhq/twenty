@@ -5,13 +5,13 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreatePageLayoutAction,
   UniversalCreatePageLayoutAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
+import { findPageLayoutTabIdInCreatePageLayoutContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout/services/utils/find-page-layout-tab-id-in-create-page-layout-context.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -52,16 +52,14 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
           .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
       )
     ) {
-      const existingTab = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
-        universalIdentifier:
-          action.flatEntity
-            .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
-      });
-
-      if (isDefined(existingTab)) {
-        defaultTabToFocusOnMobileAndSidePanelId = existingTab.id;
-      }
+      defaultTabToFocusOnMobileAndSidePanelId =
+        findPageLayoutTabIdInCreatePageLayoutContext({
+          universalIdentifier:
+            action.flatEntity
+              .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
+          tabIdByUniversalIdentifier: action.tabIdByUniversalIdentifier,
+          flatPageLayoutTabMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+        });
     }
 
     return {
