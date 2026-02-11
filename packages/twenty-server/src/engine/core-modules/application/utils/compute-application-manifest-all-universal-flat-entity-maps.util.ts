@@ -7,7 +7,7 @@ import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engin
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/utils/from-object-manifest-to-universal-flat-object-metadata.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/utils/from-role-manifest-to-universal-flat-role.util';
 import { getEmptyApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-empty-application-manifest-all-universal-flat-entity-maps.util';
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
