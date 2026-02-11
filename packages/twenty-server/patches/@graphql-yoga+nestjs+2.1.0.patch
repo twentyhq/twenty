@@ -55,7 +55,6 @@ index 1684394..dd0773d 100644
 +                    }
 +                }
 +
-+
 +                const mergedSchemas = (0, schema_1.mergeSchemas)({
 +                    schemas,
 +                });
@@ -107,7 +106,6 @@ index 1684394..dd0773d 100644
 +                        schemas.push(conditionalSchemaResult);
 +                    }
 +                }
-+
 +
 +                const mergedSchemas = (0, schema_1.mergeSchemas)({
 +                    schemas,
