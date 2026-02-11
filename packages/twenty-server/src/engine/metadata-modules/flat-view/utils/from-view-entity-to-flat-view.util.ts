@@ -95,6 +95,8 @@ export const fromViewEntityToFlatView = ({
     deletedAt: viewEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewEntityWithoutRelations.universalIdentifier,
     viewFieldIds: viewEntity.viewFields.map(({ id }) => id),
+    viewFieldGroupIds:
+      viewEntity.viewFieldGroups?.map(({ id }) => id) ?? [],
     viewFilterIds: viewEntity.viewFilters.map(({ id }) => id),
     viewGroupIds: viewEntity.viewGroups.map(({ id }) => id),
     viewFilterGroupIds: viewEntity.viewFilterGroups?.map(({ id }) => id) ?? [],
@@ -106,6 +108,10 @@ export const fromViewEntityToFlatView = ({
     viewFieldUniversalIdentifiers: viewEntity.viewFields.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    viewFieldGroupUniversalIdentifiers:
+      viewEntity.viewFieldGroups?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     viewFilterUniversalIdentifiers: viewEntity.viewFilters.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),

@@ -49,6 +49,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
+    viewFieldGroupUniversalIdentifier: null,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

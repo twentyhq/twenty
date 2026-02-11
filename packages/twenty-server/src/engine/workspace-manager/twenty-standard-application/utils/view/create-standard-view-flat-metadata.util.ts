@@ -142,6 +142,8 @@ export const createStandardViewFlatMetadata = <
     createdByUserWorkspaceId: null,
     viewFieldIds: [],
     viewFieldUniversalIdentifiers: [],
+    viewFieldGroupIds: [],
+    viewFieldGroupUniversalIdentifiers: [],
     viewFilterIds: [],
     viewFilterUniversalIdentifiers: [],
     viewGroupIds: [],

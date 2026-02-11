@@ -17,6 +17,7 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -190,6 +191,12 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
 
   @OneToMany(() => ViewFieldEntity, (viewField) => viewField.view)
   viewFields: Relation<ViewFieldEntity[]>;
+
+  @OneToMany(
+    () => ViewFieldGroupEntity,
+    (viewFieldGroup) => viewFieldGroup.view,
+  )
+  viewFieldGroups: Relation<ViewFieldGroupEntity[]>;
 
   @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.view)
   viewFilters: Relation<ViewFilterEntity[]>;

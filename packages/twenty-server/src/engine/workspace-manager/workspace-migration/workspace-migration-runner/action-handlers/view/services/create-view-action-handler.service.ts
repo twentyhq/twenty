@@ -53,6 +53,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         applicationId: flatApplication.id,
         workspaceId,
         viewFieldIds: [],
+        viewFieldGroupIds: [],
         viewGroupIds: [],
         viewFilterIds: [],
         viewFilterGroupIds: [],

@@ -101,6 +101,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'view':
       case 'viewField':
       case 'viewGroup':
+      case 'viewFieldGroup':
       case 'rowLevelPermissionPredicate':
       case 'rowLevelPermissionPredicateGroup':
       case 'viewFilterGroup':

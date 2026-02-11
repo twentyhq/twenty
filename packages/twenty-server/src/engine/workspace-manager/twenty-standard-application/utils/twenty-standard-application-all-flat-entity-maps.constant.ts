@@ -97,6 +97,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
 
   const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
 
+  const flatViewFieldGroupMaps = createEmptyFlatEntityMaps();
+
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
@@ -114,6 +116,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatViewMaps,
+      flatViewFieldGroupMaps,
     },
     now,
     standardObjectMetadataRelatedEntityIds,
@@ -188,6 +191,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
 
   const allFlatEntityMaps: TwentyStandardAllFlatEntityMaps = {
     flatViewFieldMaps,
+    flatViewFieldGroupMaps,
     flatViewFilterMaps,
     flatViewGroupMaps,
     flatViewMaps,
