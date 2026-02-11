@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import {
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
+  cleanupViewFieldTest,
+  setupViewFieldTest,
   type ViewFieldTestSetup,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
@@ -26,12 +26,12 @@ const normalizeErrorMessage = (error: any) => {
   };
 };
 
-describe('View Field Resolver - Failing Create Operation - v2', () => {
+describe('View Field Resolver - Failing Create Operation', () => {
   let testSetup: ViewFieldTestSetup;
   let createdFlatViewFieldIds: string[] = [];
 
   beforeAll(async () => {
-    testSetup = await setupViewFieldTestV2();
+    testSetup = await setupViewFieldTest();
   });
 
   afterEach(async () => {
@@ -53,7 +53,7 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
   });
 
   afterAll(async () => {
-    await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
+    await cleanupViewFieldTest(testSetup.testObjectMetadataId);
   });
 
   type CreateViewFieldTestCase = (testSetup: ViewFieldTestSetup) => {

@@ -1,8 +1,18 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
+
+import { isArray } from '@sniptt/guards';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -13,6 +23,7 @@ import { UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-fiel
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
+import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewFieldGroupDTO)
@@ -99,6 +110,22 @@ export class ViewFieldGroupResolver {
     return await this.viewFieldGroupService.destroyOne({
       destroyViewFieldGroupInput,
       workspaceId,
+    });
+  }
+
+  @ResolveField(() => [ViewFieldDTO])
+  async viewFields(
+    @Parent() viewFieldGroup: ViewFieldGroupDTO,
+    @Context() context: { loaders: IDataloaders },
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    if (isArray(viewFieldGroup.viewFields)) {
+      return viewFieldGroup.viewFields;
+    }
+
+    return context.loaders.viewFieldsByViewFieldGroupIdLoader.load({
+      workspaceId: workspace.id,
+      viewFieldGroupId: viewFieldGroup.id,
     });
   }
 }

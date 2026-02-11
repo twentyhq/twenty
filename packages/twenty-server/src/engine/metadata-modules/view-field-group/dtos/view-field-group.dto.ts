@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 
 @ObjectType('CoreViewFieldGroup')
 export class ViewFieldGroupDTO {
@@ -32,4 +33,7 @@ export class ViewFieldGroupDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
+
+  @Field(() => [ViewFieldDTO])
+  viewFields?: ViewFieldDTO[];
 }

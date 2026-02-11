@@ -1,8 +1,8 @@
 import {
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
+  cleanupViewFieldTest,
+  setupViewFieldTest,
   type ViewFieldTestSetup,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
@@ -14,15 +14,15 @@ import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-fiel
 
 const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-4000-8000-000000000001';
 
-describe('View Field Resolver - Failing Update Operation - v2', () => {
+describe('View Field Resolver - Failing Update Operation', () => {
   let testSetup: ViewFieldTestSetup;
 
   beforeAll(async () => {
-    testSetup = await setupViewFieldTestV2();
+    testSetup = await setupViewFieldTest();
   });
 
   afterAll(async () => {
-    await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
+    await cleanupViewFieldTest(testSetup.testObjectMetadataId);
   });
 
   type UpdateViewFieldTestCase = {

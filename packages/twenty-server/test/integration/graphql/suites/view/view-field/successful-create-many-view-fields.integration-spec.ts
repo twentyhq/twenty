@@ -1,17 +1,17 @@
-import { createManyCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-core-view-fields.util';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
-import { isDefined } from 'twenty-shared/utils';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createManyCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-core-view-fields.util';
+import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 
-describe('View Field Resolver - Successful Create Many Operations - v2', () => {
+describe('View Field Resolver - Successful Create Many Operations', () => {
   let testSetup: {
     testViewId: string;
     testObjectMetadataId: string;
@@ -29,10 +29,10 @@ describe('View Field Resolver - Successful Create Many Operations - v2', () => {
     } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
-        nameSingular: 'myFieldTestObjectV2',
-        namePlural: 'myFieldTestObjectsV2',
-        labelSingular: 'My Field Test Object v2',
-        labelPlural: 'My Field Test Objects v2',
+        nameSingular: 'myFieldTestObject',
+        namePlural: 'myFieldTestObjects',
+        labelSingular: 'My Field Test Object',
+        labelPlural: 'My Field Test Objects',
         icon: 'Icon123',
       },
     });

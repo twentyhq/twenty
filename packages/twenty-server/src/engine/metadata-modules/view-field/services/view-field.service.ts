@@ -76,11 +76,15 @@ export class ViewFieldService {
         },
       );
 
-    const { flatFieldMetadataMaps, flatViewMaps } =
+    const { flatFieldMetadataMaps, flatViewMaps, flatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatViewMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatViewMaps',
+            'flatViewFieldGroupMaps',
+          ],
         },
       );
 
@@ -91,6 +95,7 @@ export class ViewFieldService {
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
           flatViewMaps,
+          flatViewFieldGroupMaps,
         }),
     );
 
@@ -146,17 +151,21 @@ export class ViewFieldService {
         },
       );
 
-    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+    const {
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewFieldGroupMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps', 'flatViewFieldGroupMaps'],
         },
       );
 
     const optimisticallyUpdatedFlatView =
       fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
         flatViewFieldMaps: existingFlatViewFieldMaps,
+        flatViewFieldGroupMaps,
         updateViewFieldInput,
       });
 

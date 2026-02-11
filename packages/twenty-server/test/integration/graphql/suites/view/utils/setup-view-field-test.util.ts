@@ -11,7 +11,7 @@ export type ViewFieldTestSetup = {
   testFieldMetadataId: string;
 };
 
-export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
+export const setupViewFieldTest = async (): Promise<ViewFieldTestSetup> => {
   const {
     data: {
       createOneObject: { id: objectMetadataId },
@@ -19,10 +19,10 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
   } = await createOneObjectMetadata({
     expectToFail: false,
     input: {
-      nameSingular: 'myFieldTestObjectV2',
-      namePlural: 'myFieldTestObjectsV2',
-      labelSingular: 'My Field Test Object v2',
-      labelPlural: 'My Field Test Objects v2',
+      nameSingular: 'myFieldTestObject',
+      namePlural: 'myFieldTestObjects',
+      labelSingular: 'My Field Test Object',
+      labelPlural: 'My Field Test Objects',
       icon: 'Icon123',
     },
   });
@@ -68,7 +68,7 @@ export const setupViewFieldTestV2 = async (): Promise<ViewFieldTestSetup> => {
   };
 };
 
-export const cleanupViewFieldTestV2 = async (
+export const cleanupViewFieldTest = async (
   objectMetadataId: string,
 ): Promise<void> => {
   await updateOneObjectMetadata({

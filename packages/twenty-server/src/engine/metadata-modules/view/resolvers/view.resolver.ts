@@ -22,6 +22,7 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -258,5 +259,21 @@ export class ViewResolver {
     }
 
     return this.viewGroupService.findByViewId(workspace.id, view.id);
+  }
+
+  @ResolveField(() => [ViewFieldGroupDTO])
+  async viewFieldGroups(
+    @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    if (isArray(view.viewFieldGroups)) {
+      return view.viewFieldGroups;
+    }
+
+    return context.loaders.viewFieldGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 }

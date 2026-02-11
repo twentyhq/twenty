@@ -28,12 +28,13 @@ export const fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate = ({
   const createdAt = new Date().toISOString();
   const viewFieldGroupId = createViewFieldGroupInput.id ?? v4();
 
-  const { viewUniversalIdentifier } =
-    resolveEntityRelationUniversalIdentifiers({
+  const { viewUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
+    {
       metadataName: 'viewFieldGroup',
       foreignKeyValues: { viewId },
       flatEntityMaps: { flatViewMaps },
-    });
+    },
+  );
 
   return {
     id: viewFieldGroupId,
@@ -42,8 +43,7 @@ export const fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate = ({
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier:
-      createViewFieldGroupInput.universalIdentifier ?? v4(),
+    universalIdentifier: createViewFieldGroupInput.universalIdentifier ?? v4(),
     position: createViewFieldGroupInput.position ?? 0,
     isVisible: createViewFieldGroupInput.isVisible ?? true,
     viewFieldUniversalIdentifiers: [],

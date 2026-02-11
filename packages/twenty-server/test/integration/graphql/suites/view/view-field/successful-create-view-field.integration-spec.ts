@@ -1,8 +1,8 @@
 import {
   type ViewFieldTestSetup,
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+  cleanupViewFieldTest,
+  setupViewFieldTest,
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
@@ -21,16 +21,16 @@ type TestContext = {
   expected: Partial<ViewFieldDTO>;
 };
 
-describe('View Field Resolver - Successful Create Operations - v2', () => {
+describe('View Field Resolver - Successful Create Operations', () => {
   let testSetup: ViewFieldTestSetup;
   let createdViewFieldId: string | undefined;
 
   beforeAll(async () => {
-    testSetup = await setupViewFieldTestV2();
+    testSetup = await setupViewFieldTest();
   });
 
   afterAll(async () => {
-    await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
+    await cleanupViewFieldTest(testSetup.testObjectMetadataId);
   });
 
   afterEach(async () => {

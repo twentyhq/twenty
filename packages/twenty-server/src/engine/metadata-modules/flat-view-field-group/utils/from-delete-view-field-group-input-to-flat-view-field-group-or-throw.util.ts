@@ -25,11 +25,12 @@ export const fromDeleteViewFieldGroupInputToFlatViewFieldGroupOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFieldGroupToDelete =
-    findFlatEntityByIdInFlatEntityMaps({
+  const existingFlatViewFieldGroupToDelete = findFlatEntityByIdInFlatEntityMaps(
+    {
       flatEntityId: viewFieldGroupId,
       flatEntityMaps: flatViewFieldGroupMaps,
-    });
+    },
+  );
 
   if (!isDefined(existingFlatViewFieldGroupToDelete)) {
     throw new ViewFieldGroupException(
