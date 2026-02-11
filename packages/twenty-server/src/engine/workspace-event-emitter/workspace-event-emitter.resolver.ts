@@ -142,6 +142,7 @@ export class WorkspaceEventEmitterResolver {
     }
 
     return wrapAsyncIteratorWithLifecycle(iterator, {
+      initialValue: [],
       onHeartbeat: () =>
         this.eventStreamService.refreshEventStreamTTL({
           workspaceId: workspace.id,
