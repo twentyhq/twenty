@@ -85,14 +85,14 @@ export class GraphQLConfigService
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
       conditionalSchema: async (context) => {
-        const { workspace, user } = context.req;
+        const { workspace, user, application } = context.req;
 
         try {
           if (!isDefined(workspace)) {
             return new GraphQLSchema({});
           }
 
-          return await this.createSchema(context, workspace);
+          return await this.createSchema(context, workspace, application?.id);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {
@@ -159,6 +159,7 @@ export class GraphQLConfigService
   async createSchema(
     context: YogaDriverServerContext<'express'> & YogaInitialContext,
     workspace: WorkspaceEntity,
+    applicationId?: string,
   ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
@@ -177,6 +178,6 @@ export class GraphQLConfigService
       },
     );
 
-    return await workspaceFactory.createGraphQLSchema(workspace);
+    return await workspaceFactory.createGraphQLSchema(workspace, applicationId);
   }
 }

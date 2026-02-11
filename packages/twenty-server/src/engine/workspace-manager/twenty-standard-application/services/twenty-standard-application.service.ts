@@ -8,7 +8,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getSubFlatEntityMapsByApplicationIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-id-or-throw.util';
+import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -94,10 +94,10 @@ export class TwentyStandardApplicationService {
       const fromFlatEntityMaps =
         fromTwentyStandardAllFlatEntityMaps[flatEntityMapsKey];
       const fromTo = {
-        from: getSubFlatEntityMapsByApplicationIdOrThrow<
+        from: getSubFlatEntityMapsByApplicationIdsOrThrow<
           MetadataFlatEntity<typeof metadataName>
         >({
-          applicationId: twentyStandardFlatApplication.id,
+          applicationIds: [twentyStandardFlatApplication.id],
           flatEntityMaps: fromFlatEntityMaps,
         }),
         to: toTwentyStandardAllFlatEntityMaps[flatEntityMapsKey],

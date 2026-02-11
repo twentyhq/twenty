@@ -7,6 +7,7 @@ import { MarketplaceResolver } from 'src/engine/core-modules/application/resolve
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/services/application-manifest-migration.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
@@ -24,6 +25,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     TypeOrmModule.forFeature([FileEntity]),
     ApplicationModule,
     ApplicationVariableEntityModule,
+    TokenModule,
     WorkspaceMigrationModule,
     PermissionsModule,
     ObjectPermissionModule,

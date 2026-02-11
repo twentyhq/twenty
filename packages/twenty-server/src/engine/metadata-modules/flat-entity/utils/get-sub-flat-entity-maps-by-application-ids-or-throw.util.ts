@@ -3,22 +3,28 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { getSubFlatEntityByIdsMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-by-ids-maps-or-throw.util';
 
-export const getSubFlatEntityMapsByApplicationIdOrThrow = <
+export const getSubFlatEntityMapsByApplicationIdsOrThrow = <
   T extends SyncableFlatEntity,
 >({
-  applicationId,
+  applicationIds,
   flatEntityMaps,
 }: {
-  applicationId: string;
+  applicationIds: string[];
   flatEntityMaps: FlatEntityMaps<T>;
 }) => {
-  const allApplicationFlatEntity = findFlatEntitiesByApplicationId({
-    applicationId,
-    flatEntityMaps,
+  const allFlatEntityIds = applicationIds.flatMap((applicationId) => {
+    const entities = findFlatEntitiesByApplicationId({
+      applicationId,
+      flatEntityMaps,
+    });
+
+    return entities.map((entity) => entity.id);
   });
 
+  const uniqueFlatEntityIds = [...new Set(allFlatEntityIds)];
+
   return getSubFlatEntityByIdsMapsOrThrow({
-    flatEntityIds: allApplicationFlatEntity.map((flatEntity) => flatEntity.id),
+    flatEntityIds: uniqueFlatEntityIds,
     flatEntityMaps,
   });
 };

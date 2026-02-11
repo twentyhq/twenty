@@ -2106,6 +2106,7 @@ export type Mutation = {
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
+  generateApplicationToken: AuthToken;
   generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
@@ -2610,6 +2611,11 @@ export type MutationExecuteOneLogicFunctionArgs = {
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['UUID'];
   expiresAt: Scalars['String'];
+};
+
+
+export type MutationGenerateApplicationTokenArgs = {
+  applicationId: Scalars['UUID'];
 };
 
 
