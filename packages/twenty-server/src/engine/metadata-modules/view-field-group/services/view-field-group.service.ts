@@ -8,64 +8,64 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
-import { fromDeleteViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util';
-import { fromDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util';
-import { fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
-import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
-import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
-import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
-import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
-import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-create-view-field-group-input-to-flat-view-field-group-to-create.util';
+import { fromDeleteViewFieldGroupInputToFlatViewFieldGroupOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-delete-view-field-group-input-to-flat-view-field-group-or-throw.util';
+import { fromDestroyViewFieldGroupInputToFlatViewFieldGroupOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-destroy-view-field-group-input-to-flat-view-field-group-or-throw.util';
+import { fromUpdateViewFieldGroupInputToFlatViewFieldGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-update-view-field-group-input-to-flat-view-field-group-to-update-or-throw.util';
+import { CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
+import { DeleteViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/delete-view-field-group.input';
+import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/destroy-view-field-group.input';
+import { UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/update-view-field-group.input';
+import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import {
-  ViewFieldException,
-  ViewFieldExceptionCode,
-} from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
-import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
+  ViewFieldGroupException,
+  ViewFieldGroupExceptionCode,
+} from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
+import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class ViewFieldV2Service {
+export class ViewFieldGroupService {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    @InjectRepository(ViewFieldEntity)
-    private readonly viewFieldRepository: Repository<ViewFieldEntity>,
+    @InjectRepository(ViewFieldGroupEntity)
+    private readonly viewFieldGroupRepository: Repository<ViewFieldGroupEntity>,
     private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne({
-    createViewFieldInput,
+    createViewFieldGroupInput,
     workspaceId,
   }: {
-    createViewFieldInput: CreateViewFieldInput;
+    createViewFieldGroupInput: CreateViewFieldGroupInput;
     workspaceId: string;
-  }): Promise<ViewFieldDTO> {
-    const [createdViewField] = await this.createMany({
+  }): Promise<ViewFieldGroupDTO> {
+    const [createdViewFieldGroup] = await this.createMany({
       workspaceId,
-      createViewFieldInputs: [createViewFieldInput],
+      createViewFieldGroupInputs: [createViewFieldGroupInput],
     });
 
-    if (!isDefined(createdViewField)) {
-      throw new ViewFieldException(
-        'Failed to create view field',
-        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+    if (!isDefined(createdViewFieldGroup)) {
+      throw new ViewFieldGroupException(
+        'Failed to create view field group',
+        ViewFieldGroupExceptionCode.INVALID_VIEW_FIELD_GROUP_DATA,
       );
     }
 
-    return createdViewField;
+    return createdViewFieldGroup;
   }
 
   async createMany({
-    createViewFieldInputs,
+    createViewFieldGroupInputs,
     workspaceId,
   }: {
-    createViewFieldInputs: CreateViewFieldInput[];
+    createViewFieldGroupInputs: CreateViewFieldGroupInput[];
     workspaceId: string;
-  }): Promise<ViewFieldDTO[]> {
-    if (createViewFieldInputs.length === 0) {
+  }): Promise<ViewFieldGroupDTO[]> {
+    if (createViewFieldGroupInputs.length === 0) {
       return [];
     }
 
@@ -76,20 +76,19 @@ export class ViewFieldV2Service {
         },
       );
 
-    const { flatFieldMetadataMaps, flatViewMaps } =
+    const { flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatViewMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
-    const flatViewFieldsToCreate = createViewFieldInputs.map(
-      (createViewFieldInput) =>
-        fromCreateViewFieldInputToFlatViewFieldToCreate({
-          createViewFieldInput,
+    const flatViewFieldGroupsToCreate = createViewFieldGroupInputs.map(
+      (createViewFieldGroupInput) =>
+        fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate({
+          createViewFieldGroupInput,
           flatApplication: workspaceCustomFlatApplication,
-          flatFieldMetadataMaps,
           flatViewMaps,
         }),
     );
@@ -98,8 +97,8 @@ export class ViewFieldV2Service {
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
-            viewField: {
-              flatEntityToCreate: flatViewFieldsToCreate,
+            viewFieldGroup: {
+              flatEntityToCreate: flatViewFieldGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -114,31 +113,31 @@ export class ViewFieldV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while creating view fields',
+        'Multiple validation errors occurred while creating view field groups',
       );
     }
 
-    const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
+    const { flatViewFieldGroupMaps: recomputedExistingFlatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
         },
       );
 
     return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: flatViewFieldsToCreate.map((el) => el.id),
-      flatEntityMaps: recomputedExistingFlatViewFieldMaps,
-    }).map(fromFlatViewFieldToViewFieldDto);
+      flatEntityIds: flatViewFieldGroupsToCreate.map((entity) => entity.id),
+      flatEntityMaps: recomputedExistingFlatViewFieldGroupMaps,
+    }).map(fromFlatViewFieldGroupToViewFieldGroupDto);
   }
 
   async updateOne({
-    updateViewFieldInput,
+    updateViewFieldGroupInput,
     workspaceId,
   }: {
     workspaceId: string;
-    updateViewFieldInput: UpdateViewFieldInput;
-  }): Promise<ViewFieldDTO> {
+    updateViewFieldGroupInput: UpdateViewFieldGroupInput;
+  }): Promise<ViewFieldGroupDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -146,28 +145,28 @@ export class ViewFieldV2Service {
         },
       );
 
-    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+    const { flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
         },
       );
 
-    const optimisticallyUpdatedFlatView =
-      fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
-        flatViewFieldMaps: existingFlatViewFieldMaps,
-        updateViewFieldInput,
+    const optimisticallyUpdatedFlatViewFieldGroup =
+      fromUpdateViewFieldGroupInputToFlatViewFieldGroupToUpdateOrThrow({
+        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+        updateViewFieldGroupInput,
       });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
-            viewField: {
+            viewFieldGroup: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatView],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatViewFieldGroup],
             },
           },
           workspaceId,
@@ -180,33 +179,34 @@ export class ViewFieldV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating view field',
+        'Multiple validation errors occurred while updating view field group',
       );
     }
 
-    const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
+    const { flatViewFieldGroupMaps: recomputedExistingFlatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
         },
       );
 
-    return fromFlatViewFieldToViewFieldDto(
+    return fromFlatViewFieldGroupToViewFieldGroupDto(
       findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier: optimisticallyUpdatedFlatView.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewFieldMaps,
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewFieldGroup.universalIdentifier,
+        flatEntityMaps: recomputedExistingFlatViewFieldGroupMaps,
       }),
     );
   }
 
   async deleteOne({
-    deleteViewFieldInput,
+    deleteViewFieldGroupInput,
     workspaceId,
   }: {
-    deleteViewFieldInput: DeleteViewFieldInput;
+    deleteViewFieldGroupInput: DeleteViewFieldGroupInput;
     workspaceId: string;
-  }): Promise<ViewFieldDTO> {
+  }): Promise<ViewFieldGroupDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -214,28 +214,30 @@ export class ViewFieldV2Service {
         },
       );
 
-    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+    const { flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
         },
       );
 
-    const optimisticallyUpdatedFlatViewWithDeletedAt =
-      fromDeleteViewFieldInputToFlatViewFieldOrThrow({
-        flatViewFieldMaps: existingFlatViewFieldMaps,
-        deleteViewFieldInput,
+    const optimisticallyUpdatedFlatViewFieldGroupWithDeletedAt =
+      fromDeleteViewFieldGroupInputToFlatViewFieldGroupOrThrow({
+        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+        deleteViewFieldGroupInput,
       });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
-            viewField: {
+            viewFieldGroup: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatViewFieldGroupWithDeletedAt,
+              ],
             },
           },
           workspaceId,
@@ -248,34 +250,34 @@ export class ViewFieldV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view field',
+        'Multiple validation errors occurred while deleting view field group',
       );
     }
 
-    const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
+    const { flatViewFieldGroupMaps: recomputedExistingFlatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
         },
       );
 
-    return fromFlatViewFieldToViewFieldDto(
+    return fromFlatViewFieldGroupToViewFieldGroupDto(
       findFlatEntityByUniversalIdentifierOrThrow({
         universalIdentifier:
-          optimisticallyUpdatedFlatViewWithDeletedAt.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewFieldMaps,
+          optimisticallyUpdatedFlatViewFieldGroupWithDeletedAt.universalIdentifier,
+        flatEntityMaps: recomputedExistingFlatViewFieldGroupMaps,
       }),
     );
   }
 
   async destroyOne({
-    destroyViewFieldInput,
+    destroyViewFieldGroupInput,
     workspaceId,
   }: {
-    destroyViewFieldInput: DestroyViewFieldInput;
+    destroyViewFieldGroupInput: DestroyViewFieldGroupInput;
     workspaceId: string;
-  }): Promise<ViewFieldDTO> {
+  }): Promise<ViewFieldGroupDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -283,32 +285,33 @@ export class ViewFieldV2Service {
         },
       );
 
-    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+    const { flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
         },
       );
 
-    const existingViewFieldToDelete =
-      fromDestroyViewFieldInputToFlatViewFieldOrThrow({
-        destroyViewFieldInput,
-        flatViewFieldMaps: existingFlatViewFieldMaps,
+    const existingViewFieldGroupToDelete =
+      fromDestroyViewFieldGroupInputToFlatViewFieldGroupOrThrow({
+        destroyViewFieldGroupInput,
+        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
       });
 
-    const existingFlatViewField = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: existingViewFieldToDelete.universalIdentifier,
-      flatEntityMaps: existingFlatViewFieldMaps,
-    });
+    const existingFlatViewFieldGroup =
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier: existingViewFieldGroupToDelete.universalIdentifier,
+        flatEntityMaps: existingFlatViewFieldGroupMaps,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
-            viewField: {
+            viewFieldGroup: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [existingViewFieldToDelete],
+              flatEntityToDelete: [existingViewFieldGroupToDelete],
               flatEntityToUpdate: [],
             },
           },
@@ -322,55 +325,42 @@ export class ViewFieldV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view field',
+        'Multiple validation errors occurred while destroying view field group',
       );
     }
 
-    return fromFlatViewFieldToViewFieldDto({
-      ...existingFlatViewField,
+    return fromFlatViewFieldGroupToViewFieldGroupDto({
+      ...existingFlatViewFieldGroup,
       deletedAt: new Date().toISOString(),
-    });
-  }
-
-  async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
-    return this.viewFieldRepository.find({
-      where: {
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC' },
-      relations: ['workspace', 'view'],
     });
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewFieldEntity[]> {
-    return this.viewFieldRepository.find({
+  ): Promise<ViewFieldGroupEntity[]> {
+    return this.viewFieldGroupRepository.find({
       where: {
         workspaceId,
         viewId,
         deletedAt: IsNull(),
       },
       order: { position: 'ASC' },
-      relations: ['workspace', 'view'],
     });
   }
 
   async findById(
     id: string,
     workspaceId: string,
-  ): Promise<ViewFieldEntity | null> {
-    const viewField = await this.viewFieldRepository.findOne({
+  ): Promise<ViewFieldGroupEntity | null> {
+    const viewFieldGroup = await this.viewFieldGroupRepository.findOne({
       where: {
         id,
         workspaceId,
         deletedAt: IsNull(),
       },
-      relations: ['workspace', 'view'],
     });
 
-    return viewField || null;
+    return viewFieldGroup || null;
   }
 }
