@@ -22,8 +22,10 @@ import { type AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { loggerLink } from '@/apollo/utils/loggerLink';
+import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import {
@@ -34,11 +36,9 @@ import {
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
-import { loggerLink } from '@/apollo/utils/loggerLink';
-import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -152,9 +152,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         forward: (operation: Operation) => Observable<FetchResult>,
       ) => {
         if (!renewalPromise) {
-          // Always renew through /graphql since the RenewToken
-          // mutation may not be exposed on other endpoints (e.g. /metadata).
-          const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/graphql`;
+          // Always renew through /metadata since the RenewToken is only exposed there
+          const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/metadata`;
 
           renewalPromise = renewToken(graphqlUri, getTokenPair())
             .then((tokens) => {
