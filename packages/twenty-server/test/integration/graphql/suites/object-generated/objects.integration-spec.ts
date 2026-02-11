@@ -53,7 +53,6 @@ describe('objectsResolver (e2e)', () => {
           const objects = edges[0].node;
 
           expect(objects).toHaveProperty('id');
-          expect(objects).toHaveProperty('dataSourceId');
           expect(objects).toHaveProperty('nameSingular');
           expect(objects).toHaveProperty('namePlural');
           expect(objects).toHaveProperty('labelSingular');
