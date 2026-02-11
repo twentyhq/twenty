@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { UPDATE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/updateOneLogicFunction';
 import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { CREATE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/createOneLogicFunction';
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/deleteOneLogicFunction';
@@ -23,30 +22,23 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePersistLogicFunction = () => {
-  const apolloMetadataClient = useApolloCoreClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [createLogicFunctionMutation] = useMutation<
     CreateOneLogicFunctionMutation,
     CreateOneLogicFunctionMutationVariables
-  >(CREATE_ONE_LOGIC_FUNCTION, {
-    client: apolloMetadataClient,
-  });
+  >(CREATE_ONE_LOGIC_FUNCTION);
 
   const [deleteLogicFunctionMutation] = useMutation<
     DeleteOneLogicFunctionMutation,
     DeleteOneLogicFunctionMutationVariables
-  >(DELETE_ONE_LOGIC_FUNCTION, {
-    client: apolloMetadataClient,
-  });
+  >(DELETE_ONE_LOGIC_FUNCTION);
 
   const [updateLogicFunctionSourceMutation] = useMutation<
     UpdateOneLogicFunctionMutation,
     UpdateOneLogicFunctionMutationVariables
-  >(UPDATE_ONE_LOGIC_FUNCTION, {
-    client: apolloMetadataClient,
-  });
+  >(UPDATE_ONE_LOGIC_FUNCTION);
 
   const createLogicFunction = useCallback(
     async (

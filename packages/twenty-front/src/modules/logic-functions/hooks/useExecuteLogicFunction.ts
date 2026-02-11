@@ -1,5 +1,4 @@
 import { EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/executeOneLogicFunction';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -33,13 +32,10 @@ export const useExecuteLogicFunction = ({
   callback?: (result: object) => void;
 }) => {
   const [isExecuting, setIsExecuting] = useState(false);
-  const apolloMetadataClient = useApolloCoreClient();
   const [executeOneLogicFunctionMutation] = useMutation<
     { executeOneLogicFunction: ExecuteOneLogicFunctionResult },
     { input: ExecuteOneLogicFunctionInput }
-  >(EXECUTE_ONE_LOGIC_FUNCTION, {
-    client: apolloMetadataClient,
-  });
+  >(EXECUTE_ONE_LOGIC_FUNCTION);
 
   const [logicFunctionTestData, setLogicFunctionTestData] = useRecoilState(
     logicFunctionTestDataFamilyState(logicFunctionId),

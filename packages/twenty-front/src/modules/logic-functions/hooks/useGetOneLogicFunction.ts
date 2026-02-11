@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FIND_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/queries/findOneLogicFunction';
 import { useQuery } from '@apollo/client';
 import {
@@ -13,12 +12,10 @@ export const useGetOneLogicFunction = ({
 }: LogicFunctionIdInput & {
   onCompleted?: (data: FindOneLogicFunctionQuery) => void;
 }) => {
-  const apolloMetadataClient = useApolloCoreClient();
   const { data, loading } = useQuery<
     FindOneLogicFunctionQuery,
     FindOneLogicFunctionQueryVariables
   >(FIND_ONE_LOGIC_FUNCTION, {
-    client: apolloMetadataClient ?? undefined,
     variables: {
       input: { id },
     },

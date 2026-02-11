@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useQuery } from '@apollo/client';
 import { FIND_MANY_AVAILABLE_PACKAGES } from '@/logic-functions/graphql/queries/findManyAvailablePackages';
 import {
@@ -8,12 +7,10 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useGetAvailablePackages = (input: LogicFunctionIdInput) => {
-  const apolloMetadataClient = useApolloCoreClient();
   const { data } = useQuery<
     FindManyAvailablePackagesQuery,
     FindManyAvailablePackagesQueryVariables
   >(FIND_MANY_AVAILABLE_PACKAGES, {
-    client: apolloMetadataClient ?? undefined,
     variables: {
       input,
     },
