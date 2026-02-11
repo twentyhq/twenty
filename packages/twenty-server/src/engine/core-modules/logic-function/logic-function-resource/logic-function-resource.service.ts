@@ -162,7 +162,7 @@ export class LogicFunctionResourceService {
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
         resourcePath: sourceHandlerPath,
-        localPath: sourceTemporaryDir,
+        localPath: join(sourceTemporaryDir, sourceHandlerPath),
       });
 
       const builtHandlerPath =
