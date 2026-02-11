@@ -116,8 +116,8 @@ export const setupTestObjectsWithAllFieldTypes = async (
     }
 
     const testFileContent = 'Test document content';
-    const testFileName = 'Document.pdf';
-    const testMimeType = 'application/pdf';
+    const testFileName = 'Document.txt';
+    const testMimeType = 'text/plain';
 
     const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
       {

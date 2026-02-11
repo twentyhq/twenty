@@ -86,6 +86,9 @@ export const useCommandMenuHotKeys = () => {
     },
     focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [goBackFromCommandMenu],
+    options: {
+      enableOnFormTags: false,
+    },
   });
 
   useHotkeysOnFocusedElement({
@@ -119,6 +122,7 @@ export const useCommandMenuHotKeys = () => {
     ],
     options: {
       preventDefault: false,
+      enableOnFormTags: false,
     },
   });
 };

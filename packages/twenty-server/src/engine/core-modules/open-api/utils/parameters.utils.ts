@@ -93,7 +93,8 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'filter',
     in: 'query',
-    description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2
+    description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2.
+    For like/ilike, use % as a wildcard (e.g. %value% for substring match).
     Refer to the filter section at the top of the page for more details.`,
     required: false,
     schema: {
@@ -112,6 +113,10 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
         value:
           'or(createdAt[gte]:"2024-01-01",createdAt[lte]:"2023-01-01",not(id[is]:NULL))',
         description: 'A more complex filter param',
+      },
+      like: {
+        value: 'name[like]:"%value%"',
+        description: 'Pattern matching',
       },
     },
   };
