@@ -25,7 +25,9 @@ const CUSTOM_OBJECT_TYPE_NAMES = [
   'EmploymentHistory',
 ];
 
-const makeGraphqlIntrospectionRequest = async (token: string): Promise<request.Response> => {
+const makeGraphqlIntrospectionRequest = async (
+  token: string,
+): Promise<request.Response> => {
   const client = request(`http://localhost:${APP_PORT}`);
 
   const response = await client
