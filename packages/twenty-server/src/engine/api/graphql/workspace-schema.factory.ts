@@ -84,14 +84,6 @@ export class WorkspaceSchemaFactory {
     let flatFieldMetadataMaps = allFlatFieldMetadataMaps;
     let flatIndexMaps = allFlatIndexMaps;
 
-    // eslint-disable-next-line no-console
-    console.log('[WorkspaceSchemaFactory] createGraphQLSchema called', {
-      workspaceId: workspace.id,
-      applicationId,
-      isApplicationIdDefined: isDefined(applicationId),
-      hasFlatApplicationMaps: isDefined(flatApplicationMaps),
-    });
-
     if (isDefined(applicationId)) {
       const twentyStandardApplicationId =
         flatApplicationMaps?.idByUniversalIdentifier[
@@ -101,10 +93,6 @@ export class WorkspaceSchemaFactory {
       const applicationIds = isDefined(twentyStandardApplicationId)
         ? [twentyStandardApplicationId, applicationId]
         : [applicationId];
-
-      const allObjectCount = Object.keys(
-        allFlatObjectMetadataMaps.byUniversalIdentifier,
-      ).length;
 
       flatObjectMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
         allFlatObjectMetadataMaps,
@@ -121,18 +109,6 @@ export class WorkspaceSchemaFactory {
           applicationIds,
         );
       }
-
-      const filteredObjectCount = Object.keys(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      ).length;
-
-      // eslint-disable-next-line no-console
-      console.log('[WorkspaceSchemaFactory] filtering applied', {
-        applicationIds,
-        twentyStandardApplicationId,
-        allObjectCount,
-        filteredObjectCount,
-      });
     }
 
     let metadataVersion =

@@ -135,12 +135,6 @@ export class MiddlewareService {
         )
       : undefined;
 
-    // eslint-disable-next-line no-console
-    console.log('[MiddlewareService] hydrateGraphqlRequest', {
-      data,
-      metadataVersion,
-    });
-
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
