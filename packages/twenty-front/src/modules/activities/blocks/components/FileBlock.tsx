@@ -65,7 +65,7 @@ export const FileBlock = createReactBlockSpec(
         if (isUndefinedOrNull(file)) {
           return '';
         }
-        const fileUrl = (await editor.uploadFile?.(file)) as string;
+        const fileUrl = await editor.uploadFile?.(file);
 
         if (!isNonEmptyString(fileUrl)) {
           return '';
