@@ -13509,6 +13509,11 @@ msgstr "檢視現有記錄"
 msgid "view field"
 msgstr "視圖字段"
 
+#. js-lingui-id: MvRxYh
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view field group"
+msgstr ""
+
 #. js-lingui-id: BA3jId
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view filter"
