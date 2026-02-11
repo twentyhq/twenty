@@ -22,6 +22,7 @@ import { type AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -40,6 +41,11 @@ import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 
 const logger = loggerLink(() => 'Twenty');
+
+// Shared across all ApolloFactory instances so concurrent
+// UNAUTHENTICATED errors from /graphql and /metadata clients
+// deduplicate into a single renewal request.
+let renewalPromise: Promise<void> | null = null;
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
@@ -145,8 +151,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         operation: Operation,
         forward: (operation: Operation) => Observable<FetchResult>,
       ) => {
-        return fromPromise(
-          renewToken(uri, getTokenPair())
+        if (!renewalPromise) {
+          // Always renew through /graphql since the RenewToken
+          // mutation may not be exposed on other endpoints (e.g. /metadata).
+          const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/graphql`;
+
+          renewalPromise = renewToken(graphqlUri, getTokenPair())
             .then((tokens) => {
               if (isDefined(tokens)) {
                 // eslint-disable-next-line no-console
@@ -161,8 +171,13 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                 'Failed to renew token, triggering unauthenticated error from handleTokenRenewal',
               );
               onUnauthenticatedError?.();
-            }),
-        ).flatMap(() => forward(operation));
+            })
+            .finally(() => {
+              renewalPromise = null;
+            });
+        }
+
+        return fromPromise(renewalPromise).flatMap(() => forward(operation));
       };
 
       const sendToSentry = ({
