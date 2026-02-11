@@ -5,6 +5,10 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
@@ -46,20 +50,25 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
 
     let defaultTabToFocusOnMobileAndSidePanelId: string | null = null;
 
-    if (
-      isDefined(
-        action.flatEntity
-          .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
-      )
-    ) {
+    const defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier =
+      action.flatEntity
+        .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier;
+
+    if (isDefined(defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier)) {
       defaultTabToFocusOnMobileAndSidePanelId =
         findPageLayoutTabIdInCreatePageLayoutContext({
           universalIdentifier:
-            action.flatEntity
-              .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
+            defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
           tabIdByUniversalIdentifier: action.tabIdByUniversalIdentifier,
           flatPageLayoutTabMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
         });
+
+      if (!isDefined(defaultTabToFocusOnMobileAndSidePanelId)) {
+        throw new FlatEntityMapsException(
+          `Could not resolve defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier to defaultTabToFocusOnMobileAndSidePanelId: no pageLayoutTab found for universal identifier ${defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier}`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
     }
 
     return {
