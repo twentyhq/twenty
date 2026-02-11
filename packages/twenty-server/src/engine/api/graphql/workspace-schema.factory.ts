@@ -85,7 +85,9 @@ export class WorkspaceSchemaFactory {
     let flatIndexMaps = allFlatIndexMaps;
 
     // eslint-disable-next-line no-console
-    console.log(`[SchemaFactory] ws=${workspace.id} appId=${applicationId} objs=${Object.keys(allFlatObjectMetadataMaps.universalIdentifierById).length}`);
+    console.log(
+      `[SchemaFactory] ws=${workspace.id} appId=${applicationId} objs=${Object.keys(allFlatObjectMetadataMaps.universalIdentifierById).length}`,
+    );
 
     if (isDefined(applicationId)) {
       const twentyStandardApplicationId =
@@ -114,7 +116,9 @@ export class WorkspaceSchemaFactory {
       }
 
       // eslint-disable-next-line no-console
-      console.log(`[SchemaFactory] filtered=${Object.keys(flatObjectMetadataMaps.universalIdentifierById).length} appIds=${applicationIds.join(',')}`);
+      console.log(
+        `[SchemaFactory] filtered=${Object.keys(flatObjectMetadataMaps.universalIdentifierById).length} appIds=${applicationIds.join(',')}`,
+      );
     }
 
     let metadataVersion =
