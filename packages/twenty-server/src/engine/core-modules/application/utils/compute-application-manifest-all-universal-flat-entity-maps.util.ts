@@ -78,7 +78,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     );
   }
 
-  // Logic functions
   for (const logicFunctionManifest of manifest.logicFunctions) {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {
@@ -94,7 +93,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     );
   }
 
-  // Front components
   for (const frontComponentManifest of manifest.frontComponents) {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {
@@ -110,7 +108,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     );
   }
 
-  // Roles
   for (const roleManifest of manifest.roles) {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Manifest, RoleManifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
@@ -19,11 +18,6 @@ import { ApplicationVariableEntityService } from 'src/engine/core-modules/applic
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
-import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -37,10 +31,6 @@ export class ApplicationSyncService {
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly objectPermissionService: ObjectPermissionService,
-    private readonly fieldPermissionService: FieldPermissionService,
-    private readonly permissionService: PermissionFlagService,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
@@ -57,15 +47,7 @@ export class ApplicationSyncService {
 
     const ownerFlatApplication: FlatApplication = application;
 
-    // Delegate all metadata migration to the new service
     await this.applicationManifestMigrationService.syncMetadataFromManifest({
-      manifest,
-      workspaceId,
-      ownerFlatApplication,
-    });
-
-    // Post-migration: apply role permissions and resolve default role
-    await this.syncRolePermissionsAndDefaultRole({
       manifest,
       workspaceId,
       ownerFlatApplication,
@@ -135,176 +117,6 @@ export class ApplicationSyncService {
       yarnLockChecksum: manifest.application.yarnLockChecksum,
       //availablePackages: manifest.application.availablePackages, // TODO: compute available package in dev-mode-orchestrator
     });
-  }
-
-  // Resolves role IDs from refreshed cache after migration, applies
-  // permissions, and sets the default role on the application entity.
-  private async syncRolePermissionsAndDefaultRole({
-    manifest,
-    workspaceId,
-    ownerFlatApplication,
-  }: {
-    manifest: Manifest;
-    workspaceId: string;
-    ownerFlatApplication: FlatApplication;
-  }) {
-    const { flatRoleMaps: refreshedFlatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRoleMaps',
-      ]);
-
-    let defaultRoleId: string | null = null;
-
-    for (const role of manifest.roles) {
-      const flatRole = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: refreshedFlatRoleMaps,
-        universalIdentifier: role.universalIdentifier,
-      });
-
-      if (!isDefined(flatRole)) {
-        throw new ApplicationException(
-          `Failed to resolve role for universalIdentifier ${role.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      await this.syncApplicationRolePermissions({
-        role,
-        workspaceId,
-        roleId: flatRole.id,
-      });
-
-      if (
-        role.universalIdentifier ===
-        manifest.application.defaultRoleUniversalIdentifier
-      ) {
-        defaultRoleId = flatRole.id;
-      }
-    }
-
-    if (isDefined(defaultRoleId)) {
-      await this.applicationService.update(ownerFlatApplication.id, {
-        defaultRoleId,
-      });
-    }
-  }
-
-  private async syncApplicationRolePermissions({
-    role,
-    workspaceId,
-    roleId,
-  }: {
-    role: RoleManifest;
-    workspaceId: string;
-    roleId: string;
-  }) {
-    if (
-      (role.objectPermissions ?? []).length > 0 ||
-      (role.fieldPermissions ?? []).length > 0
-    ) {
-      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-          },
-        );
-
-      const formattedObjectPermissions = role.objectPermissions
-        ?.map((perm) => {
-          const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: flatObjectMetadataMaps,
-            universalIdentifier: perm.objectUniversalIdentifier,
-          });
-
-          if (!isDefined(flatObjectMetadata)) {
-            throw new ApplicationException(
-              `Failed to find object with universalIdentifier ${perm.objectUniversalIdentifier}`,
-              ApplicationExceptionCode.OBJECT_NOT_FOUND,
-            );
-          }
-
-          return {
-            ...perm,
-            objectMetadataId: flatObjectMetadata.id,
-          };
-        })
-        .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
-          isDefined(perm.objectMetadataId),
-        );
-
-      if (isDefined(formattedObjectPermissions)) {
-        await this.objectPermissionService.upsertObjectPermissions({
-          workspaceId,
-          input: {
-            roleId,
-            objectPermissions: formattedObjectPermissions,
-          },
-        });
-      }
-
-      const formattedFieldPermissions = role?.fieldPermissions
-        ?.map((perm) => {
-          const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: flatObjectMetadataMaps,
-            universalIdentifier: perm.objectUniversalIdentifier,
-          });
-
-          if (!isDefined(flatObjectMetadata)) {
-            throw new ApplicationException(
-              `Failed to find object with universalIdentifier ${perm.objectUniversalIdentifier}`,
-              ApplicationExceptionCode.OBJECT_NOT_FOUND,
-            );
-          }
-
-          const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifier: perm.fieldUniversalIdentifier,
-          });
-
-          if (!isDefined(flatFieldMetadata)) {
-            throw new ApplicationException(
-              `Failed to find field with universalIdentifier ${perm.fieldUniversalIdentifier}`,
-              ApplicationExceptionCode.FIELD_NOT_FOUND,
-            );
-          }
-
-          return {
-            ...perm,
-            objectMetadataId: flatObjectMetadata.id,
-            fieldMetadataId: flatFieldMetadata.id,
-          };
-        })
-        .filter(
-          (
-            perm,
-          ): perm is typeof perm & {
-            objectMetadataId: string;
-            fieldMetadataId: string;
-          } =>
-            isDefined(perm.objectMetadataId) && isDefined(perm.fieldMetadataId),
-        );
-
-      if (isDefined(formattedFieldPermissions)) {
-        await this.fieldPermissionService.upsertFieldPermissions({
-          workspaceId,
-          input: {
-            roleId,
-            fieldPermissions: formattedFieldPermissions,
-          },
-        });
-      }
-    }
-
-    if (isDefined(role?.permissionFlags) && role.permissionFlags.length > 0) {
-      await this.permissionService.upsertPermissionFlags({
-        workspaceId,
-        input: {
-          roleId,
-          permissionFlagKeys: role.permissionFlags,
-        },
-      });
-    }
   }
 
   public async uninstallApplication({
