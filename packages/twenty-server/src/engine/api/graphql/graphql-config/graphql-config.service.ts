@@ -159,7 +159,7 @@ export class GraphQLConfigService
   async createSchema(
     context: YogaDriverServerContext<'express'> & YogaInitialContext,
     workspace: WorkspaceEntity,
-    appId?: string,
+    applicationId?: string,
   ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
@@ -178,6 +178,6 @@ export class GraphQLConfigService
       },
     );
 
-    return await workspaceFactory.createGraphQLSchema(workspace, appId);
+    return await workspaceFactory.createGraphQLSchema(workspace, applicationId);
   }
 }

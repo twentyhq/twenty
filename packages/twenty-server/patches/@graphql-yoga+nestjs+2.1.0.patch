@@ -34,9 +34,9 @@ index 1684394..dd0773d 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
-+                const appId = request.req.application?.id ?? 'all'
++                const applicationId = request.req.application?.id ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -86,9 +86,9 @@ index 1684394..dd0773d 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
-+                const appId = request.req.application?.id ?? 'all'
++                const applicationId = request.req.application?.id ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -162,9 +162,9 @@ index 7068c51..8494b69 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
-+                const appId = request.req.application?.id ?? 'all'
++                const applicationId = request.req.application?.id ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -215,9 +215,9 @@ index 7068c51..8494b69 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
-+                const appId = request.req.application?.id ?? 'all'
++                const applicationId = request.req.application?.id ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -415,9 +415,9 @@ index ce142f6..d3e7bab 100644
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const url = request.req.baseUrl
-+        const appId = request.req.application?.id ?? 'all'
++        const applicationId = request.req.application?.id ?? 'all'
 +
-+        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
++        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -476,9 +476,9 @@ index ce142f6..d3e7bab 100644
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const url = request.req.baseUrl
-+        const appId = request.req.application?.id ?? 'all'
++        const applicationId = request.req.application?.id ?? 'all'
 +
-+        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
++        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${applicationId}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)

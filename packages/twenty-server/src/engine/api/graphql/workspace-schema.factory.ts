@@ -22,8 +22,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -38,7 +38,7 @@ export class WorkspaceSchemaFactory {
 
   async createGraphQLSchema(
     workspace: WorkspaceEntity,
-    appId?: string,
+    applicationId?: string,
   ): Promise<GraphQLSchema> {
     const dataSourcesMetadata =
       await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
@@ -84,15 +84,15 @@ export class WorkspaceSchemaFactory {
     let flatFieldMetadataMaps = allFlatFieldMetadataMaps;
     let flatIndexMaps = allFlatIndexMaps;
 
-    if (isDefined(appId)) {
+    if (isDefined(applicationId)) {
       const twentyStandardApplicationId =
         flatApplicationMaps?.idByUniversalIdentifier[
           TWENTY_STANDARD_APPLICATION.universalIdentifier
         ];
 
       const applicationIds = isDefined(twentyStandardApplicationId)
-        ? [twentyStandardApplicationId, appId]
-        : [appId];
+        ? [twentyStandardApplicationId, applicationId]
+        : [applicationId];
 
       flatObjectMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
         allFlatObjectMetadataMaps,
@@ -131,13 +131,13 @@ export class WorkspaceSchemaFactory {
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
       workspace.id,
       metadataVersion,
-      appId,
+      applicationId,
     );
     let usedScalarNames =
       await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
         workspace.id,
         metadataVersion,
-        appId,
+        applicationId,
       );
 
     if (!typeDefs || !usedScalarNames) {
@@ -156,13 +156,13 @@ export class WorkspaceSchemaFactory {
         workspace.id,
         metadataVersion,
         typeDefs,
-        appId,
+        applicationId,
       );
       await this.workspaceCacheStorageService.setGraphQLUsedScalarNames(
         workspace.id,
         metadataVersion,
         usedScalarNames,
-        appId,
+        applicationId,
       );
     }
 
