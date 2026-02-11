@@ -84,6 +84,15 @@ export class WorkspaceSchemaFactory {
     let flatFieldMetadataMaps = allFlatFieldMetadataMaps;
     let flatIndexMaps = allFlatIndexMaps;
 
+    // eslint-disable-next-line no-console
+    console.log('[DEBUG:WorkspaceSchemaFactory] createGraphQLSchema called', {
+      workspaceId: workspace.id,
+      applicationId,
+      isApplicationIdDefined: isDefined(applicationId),
+      hasFlatApplicationMaps: isDefined(flatApplicationMaps),
+      allObjectCount: Object.keys(allFlatObjectMetadataMaps.byId).length,
+    });
+
     if (isDefined(applicationId)) {
       const twentyStandardApplicationId =
         flatApplicationMaps?.idByUniversalIdentifier[
@@ -109,6 +118,12 @@ export class WorkspaceSchemaFactory {
           applicationIds,
         );
       }
+
+      // eslint-disable-next-line no-console
+      console.log('[DEBUG:WorkspaceSchemaFactory] filtered', {
+        filteredObjectCount: Object.keys(flatObjectMetadataMaps.byId).length,
+        applicationIds,
+      });
     }
 
     let metadataVersion =
