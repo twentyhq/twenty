@@ -63,41 +63,13 @@ describe('Application token schema filtering', () => {
   });
 
   it('should not include custom objects in the schema when using a standard app token', async () => {
-    // eslint-disable-next-line no-console
-    console.log(
-      '[DEBUG:Test] token preview:',
-      standardAppToken?.substring(0, 30),
-      '..., length:',
-      standardAppToken?.length,
-    );
-
     const response = await makeGraphqlIntrospectionRequest(standardAppToken);
-
-    // eslint-disable-next-line no-console
-    console.log(
-      '[DEBUG:Test] response status:',
-      response.status,
-      'hasErrors:',
-      !!response.body.errors,
-      'hasSchema:',
-      !!response.body.data?.__schema,
-    );
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.__schema).toBeDefined();
 
     const typeNames: string[] = response.body.data.__schema.types.map(
       (type: { name: string }) => type.name,
-    );
-
-    // eslint-disable-next-line no-console
-    console.log(
-      '[DEBUG:Test] type count:',
-      typeNames.length,
-      'hasRocket:',
-      typeNames.includes('Rocket'),
-      'hasPerson:',
-      typeNames.includes('Person'),
     );
 
     for (const customTypeName of CUSTOM_OBJECT_TYPE_NAMES) {
