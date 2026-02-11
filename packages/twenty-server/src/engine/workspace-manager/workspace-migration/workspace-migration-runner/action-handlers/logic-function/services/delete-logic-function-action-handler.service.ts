@@ -15,6 +15,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { getLogicFunctionSubfolder } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder';
 
 @Injectable()
 export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -63,14 +64,14 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
-      resourcePath: flatLogicFunction.id, // TODO: generalise resourcePath so it is always logicFunctionId
+      resourcePath: getLogicFunctionSubfolder(flatLogicFunction.id),
     });
 
     await this.fileStorageService.delete({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: flatLogicFunction.id,
+      resourcePath: getLogicFunctionSubfolder(flatLogicFunction.id),
     });
   }
 

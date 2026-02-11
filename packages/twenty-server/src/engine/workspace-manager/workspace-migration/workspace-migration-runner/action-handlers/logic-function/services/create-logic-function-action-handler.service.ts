@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { FlatCreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
@@ -15,10 +14,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'create',
   'logicFunction',
 ) {
-  constructor(private readonly fileStorageService: FileStorageService) {
-    super();
-  }
-
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<FlatCreateLogicFunctionAction>,
   ): Promise<FlatCreateLogicFunctionAction> {

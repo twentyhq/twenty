@@ -18,6 +18,7 @@ import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
 import { DEFAULT_SOURCE_HANDLER_PATH } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { getLogicFunctionSubfolder } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder';
 
 @Injectable()
 export class LogicFunctionFromSourceService {
@@ -76,15 +77,9 @@ export class LogicFunctionFromSourceService {
     return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
   }
 
-  private getSourceHandlerPath({
-    logicFunctionId,
-    sourceSubfolder,
-  }: {
-    logicFunctionId: string;
-    sourceSubfolder?: string;
-  }) {
+  private getSourceHandlerPath(logicFunctionId: string) {
     return join(
-      sourceSubfolder ?? logicFunctionId,
+      getLogicFunctionSubfolder(logicFunctionId),
       DEFAULT_SOURCE_HANDLER_PATH,
     );
   }
@@ -92,11 +87,9 @@ export class LogicFunctionFromSourceService {
   async createOne({
     input,
     workspaceId,
-    sourceSubfolder,
   }: {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
-    sourceSubfolder?: string;
   }): Promise<LogicFunctionDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -105,10 +98,7 @@ export class LogicFunctionFromSourceService {
 
     const logicFunctionId = input.id ?? v4();
 
-    const sourceHandlerPath = this.getSourceHandlerPath({
-      logicFunctionId,
-      sourceSubfolder,
-    });
+    const sourceHandlerPath = this.getSourceHandlerPath(logicFunctionId);
 
     if (input.source) {
       await this.logicFunctionResourceService.uploadSourceFile({
@@ -166,21 +156,16 @@ export class LogicFunctionFromSourceService {
   async updateOne({
     id,
     update,
-    sourceSubfolder,
     workspaceId,
   }: {
     id: string;
     update: UpdateLogicFunctionFromSourceInput['update'];
     workspaceId: string;
-    sourceSubfolder?: string;
   }): Promise<void> {
     const { applicationUniversalIdentifier } =
       await this.getLogicFunctionContext({ id, workspaceId });
 
-    const sourceHandlerPath = this.getSourceHandlerPath({
-      logicFunctionId: id,
-      sourceSubfolder,
-    });
+    const sourceHandlerPath = this.getSourceHandlerPath(id);
 
     let formattedUpdate: UpdateLogicFunctionFromSourceInput['update'] = {
       ...update,

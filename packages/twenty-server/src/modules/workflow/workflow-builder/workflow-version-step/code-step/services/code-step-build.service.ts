@@ -23,8 +23,6 @@ import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-func
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 
-const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
-
 @Injectable()
 export class CodeStepBuildService {
   constructor(
@@ -34,10 +32,6 @@ export class CodeStepBuildService {
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
   ) {}
-
-  private getSourceSubfolderForCodeStep(logicFunctionId: string) {
-    return `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}`;
-  }
 
   async createCodeStepLogicFunction({
     logicFunctionId,
@@ -53,7 +47,6 @@ export class CodeStepBuildService {
         description: '',
       },
       workspaceId,
-      sourceSubfolder: this.getSourceSubfolderForCodeStep(logicFunctionId),
     });
   }
 
@@ -204,7 +197,7 @@ export class CodeStepBuildService {
       if (
         !isDefined(flatLogicFunction) ||
         flatLogicFunction.deletedAt ||
-        !this.isWorkflowCodeStepLogicFunction(flatLogicFunction)
+        flatLogicFunction.isBuildUpToDate
       ) {
         continue;
       }
@@ -225,44 +218,5 @@ export class CodeStepBuildService {
         id: logicFunctionId,
       });
     }
-  }
-
-  isWorkflowCodeStepLogicFunction(
-    flatLogicFunction: FlatLogicFunction,
-  ): boolean {
-    return flatLogicFunction.sourceHandlerPath.startsWith(
-      `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
-    );
-  }
-
-  async getFlatLogicFunctionForCodeStepOrNull({
-    logicFunctionId,
-    workspaceId,
-  }: {
-    logicFunctionId: string;
-    workspaceId: string;
-  }): Promise<FlatLogicFunction | null> {
-    const { flatLogicFunctionMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: logicFunctionId,
-      flatEntityMaps: flatLogicFunctionMaps,
-    });
-
-    if (
-      !isDefined(flatLogicFunction) ||
-      flatLogicFunction.deletedAt ||
-      !this.isWorkflowCodeStepLogicFunction(flatLogicFunction)
-    ) {
-      return null;
-    }
-
-    return flatLogicFunction;
   }
 }
