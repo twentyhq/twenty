@@ -3641,6 +3641,11 @@ msgstr "Câmpul \"{field}\" nu poate fi actualizat. Vă rugăm să contactați a
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "Câmpul pentru care încercați să setați permisiuni nu a putut fi găsit. Este posibil să fi fost șters."
 
+#. js-lingui-id: bAGU1r
+#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
+msgstr ""
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -4697,6 +4702,11 @@ msgstr "WorkspaceId este necesar pentru a crea o sortare a vizualizării."
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
 msgstr "WorkspaceId este necesar pentru a crea o vizualizare."
+
+#. js-lingui-id: VddeYt
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "Wrong extension for file."
+msgstr ""
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

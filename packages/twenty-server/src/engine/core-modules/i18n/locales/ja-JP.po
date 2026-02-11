@@ -3641,6 +3641,11 @@ msgstr "フィールド「{field}」は更新できません。ワークスペ�
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "権限を設定しようとしているフィールドが見つかりません。削除された可能性があります。"
 
+#. js-lingui-id: bAGU1r
+#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
+msgstr ""
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -4697,6 +4702,11 @@ msgstr "ビューソートを作成するにはWorkspaceIdが必要です。"
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
 msgstr "ビューを作成するにはWorkspaceIdが必要です。"
+
+#. js-lingui-id: VddeYt
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "Wrong extension for file."
+msgstr ""
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

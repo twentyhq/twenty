@@ -3636,6 +3636,11 @@ msgstr ""
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr ""
 
+#. js-lingui-id: bAGU1r
+#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
+msgstr ""
+
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
@@ -4691,6 +4696,11 @@ msgstr ""
 #. js-lingui-id: jtb/lI
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
+msgstr ""
+
+#. js-lingui-id: VddeYt
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "Wrong extension for file."
 msgstr ""
 
 #. js-lingui-id: fV2Bu6
