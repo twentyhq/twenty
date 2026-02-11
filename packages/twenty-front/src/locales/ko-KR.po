@@ -13509,6 +13509,11 @@ msgstr "기존 레코드 보기"
 msgid "view field"
 msgstr "보기 필드"
 
+#. js-lingui-id: MvRxYh
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view field group"
+msgstr ""
+
 #. js-lingui-id: BA3jId
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view filter"

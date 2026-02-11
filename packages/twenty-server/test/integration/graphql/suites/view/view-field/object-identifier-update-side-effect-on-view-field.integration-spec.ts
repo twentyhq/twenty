@@ -1,8 +1,8 @@
 import {
   type ViewFieldTestSetup,
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
+  cleanupViewFieldTest,
+  setupViewFieldTest,
+} from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -22,7 +22,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
 
   beforeAll(async () => {
     const { testFieldMetadataId, testObjectMetadataId, testViewId } =
-      await setupViewFieldTestV2();
+      await setupViewFieldTest();
 
     await updateOneObjectMetadata({
       input: {
@@ -56,7 +56,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
   });
 
   afterAll(async () => {
-    await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
+    await cleanupViewFieldTest(testSetup.testObjectMetadataId);
   });
 
   it('should create a view field on label identifier object metadata update if it does not exist on view', async () => {

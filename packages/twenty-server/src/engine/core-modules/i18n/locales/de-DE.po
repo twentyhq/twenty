@@ -150,6 +150,11 @@ msgstr "Es ist ein Ansichtsfehler aufgetreten."
 msgid "A view field error occurred."
 msgstr "Es ist ein Fehler im Ansichtsfeld aufgetreten."
 
+#. js-lingui-id: 4oDFCk
+#: src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception.ts
+msgid "A view field group error occurred."
+msgstr ""
+
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
@@ -4147,6 +4152,41 @@ msgstr "Ansichts-Feld existiert bereits"
 msgid "View field already exists."
 msgstr "Ansichts-Feld existiert bereits."
 
+#. js-lingui-id: pkIuNd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+msgid "View field group already exists"
+msgstr ""
+
+#. js-lingui-id: rej7zQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+msgid "View field group parent view not found"
+msgstr ""
+
+#. js-lingui-id: uO9NF0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field-group/utils/from-delete-view-field-group-input-to-flat-view-field-group-or-throw.util.ts
+msgid "View field group to delete not found"
+msgstr ""
+
+#. js-lingui-id: Durlx6
+#: src/engine/metadata-modules/flat-view-field-group/utils/from-destroy-view-field-group-input-to-flat-view-field-group-or-throw.util.ts
+msgid "View field group to destroy not found"
+msgstr ""
+
+#. js-lingui-id: KpmBDs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field-group/utils/from-update-view-field-group-input-to-flat-view-field-group-to-update-or-throw.util.ts
+msgid "View field group to update not found"
+msgstr ""
+
+#. js-lingui-id: oKThPN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+msgid "View field group with this universal identifier already exists"
+msgstr ""
+
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata already exists"
@@ -4328,6 +4368,8 @@ msgstr "Kanban-Sicht-Feld-Metadaten nicht gefunden"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View not found"
 msgstr "Ansicht nicht gefunden"
 

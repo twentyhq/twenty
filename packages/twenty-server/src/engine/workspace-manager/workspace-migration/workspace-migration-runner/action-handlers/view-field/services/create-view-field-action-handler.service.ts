@@ -30,7 +30,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewFieldAction>): Promise<FlatCreateViewFieldAction> {
-    const { fieldMetadataId, viewId } =
+    const { fieldMetadataId, viewId, viewFieldGroupId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
@@ -43,6 +43,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         ...action.flatEntity,
         fieldMetadataId,
         viewId,
+        viewFieldGroupId,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
