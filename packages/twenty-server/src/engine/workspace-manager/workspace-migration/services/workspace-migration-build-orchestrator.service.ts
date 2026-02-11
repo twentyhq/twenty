@@ -31,6 +31,7 @@ import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
 import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-view-field-actions-builder.service';
+import { WorkspaceMigrationViewFieldGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field-group/workspace-migration-view-field-group-actions-builder.service';
 import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
 import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-view-filter-actions-builder.service';
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
@@ -47,6 +48,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
     private readonly workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
+    private readonly workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
     private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
     private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
     private readonly workspaceMigrationFieldActionsBuilderService: WorkspaceMigrationFieldActionsBuilderService,
@@ -150,6 +152,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatViewFilterMaps,
       flatViewFilterGroupMaps,
       flatViewGroupMaps,
+      flatViewFieldGroupMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
@@ -324,6 +327,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
               flatFieldMetadataMaps:
                 optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
               flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+              flatViewFieldGroupMaps:
+                optimisticAllFlatEntityMaps.flatViewFieldGroupMaps,
             },
             workspaceId,
           },
@@ -449,6 +454,41 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.viewGroup.push(...viewGroupResult.errors);
       } else {
         orchestratorActionsReport.viewGroup = viewGroupResult.actions;
+      }
+    }
+
+    if (isDefined(flatViewFieldGroupMaps)) {
+      const { from: fromFlatViewFieldGroupMaps, to: toFlatViewFieldGroupMaps } =
+        flatViewFieldGroupMaps;
+
+      const viewFieldGroupResult =
+        await this.workspaceMigrationViewFieldGroupActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatViewFieldGroupMaps,
+            to: toFlatViewFieldGroupMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewFieldGroupResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (viewFieldGroupResult.status === 'fail') {
+        orchestratorFailureReport.viewFieldGroup.push(
+          ...viewFieldGroupResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.viewFieldGroup = viewFieldGroupResult.actions;
       }
     }
 
@@ -1003,6 +1043,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.delete,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.create,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
           ///
 
           // Logic functions

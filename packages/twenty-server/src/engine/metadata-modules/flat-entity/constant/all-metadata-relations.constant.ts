@@ -221,6 +221,7 @@ export const ALL_METADATA_RELATIONS = {
         metadataName: 'viewFilterGroup',
       },
       viewGroups: { metadataName: 'viewGroup' },
+      viewFieldGroups: { metadataName: 'viewFieldGroup' },
       // @ts-expect-error TODO migrate viewSort to v2
       viewSorts: null,
     },
@@ -239,10 +240,31 @@ export const ALL_METADATA_RELATIONS = {
         foreignKey: 'viewId',
         isNullable: false,
       },
+      viewFieldGroup: {
+        metadataName: 'viewFieldGroup',
+        flatEntityForeignKeyAggregator: 'viewFieldIds',
+        foreignKey: 'viewFieldGroupId',
+        isNullable: true,
+      },
       workspace: null,
       application: null,
     },
     oneToMany: {},
+  },
+  viewFieldGroup: {
+    manyToOne: {
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: 'viewFieldGroupIds',
+        foreignKey: 'viewId',
+        isNullable: false,
+      },
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {
+      viewFields: { metadataName: 'viewField' },
+    },
   },
   viewFilter: {
     manyToOne: {

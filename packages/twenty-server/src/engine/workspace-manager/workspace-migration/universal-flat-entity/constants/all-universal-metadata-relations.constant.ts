@@ -202,6 +202,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
       viewFilters: { metadataName: 'viewFilter' },
       viewFilterGroups: { metadataName: 'viewFilterGroup' },
       viewGroups: { metadataName: 'viewGroup' },
+      viewFieldGroups: { metadataName: 'viewFieldGroup' },
       // TODO migrate viewSort to v2
       viewSorts: null,
     },
@@ -224,10 +225,35 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalForeignKey: 'viewUniversalIdentifier',
         isNullable: false,
       },
+      viewFieldGroup: {
+        metadataName: 'viewFieldGroup',
+        foreignKey: 'viewFieldGroupId',
+        universalFlatEntityForeignKeyAggregator:
+          'viewFieldUniversalIdentifiers',
+        universalForeignKey: 'viewFieldGroupUniversalIdentifier',
+        isNullable: true,
+      },
       workspace: null,
       application: null,
     },
     oneToMany: {},
+  },
+  viewFieldGroup: {
+    manyToOne: {
+      view: {
+        metadataName: 'view',
+        foreignKey: 'viewId',
+        universalFlatEntityForeignKeyAggregator:
+          'viewFieldGroupUniversalIdentifiers',
+        universalForeignKey: 'viewUniversalIdentifier',
+        isNullable: false,
+      },
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {
+      viewFields: { metadataName: 'viewField' },
+    },
   },
   viewFilter: {
     manyToOne: {

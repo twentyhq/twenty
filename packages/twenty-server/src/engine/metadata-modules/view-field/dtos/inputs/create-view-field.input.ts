@@ -46,6 +46,11 @@ export class CreateViewFieldInput {
   @Field(() => AggregateOperations, { nullable: true })
   aggregateOperation?: AggregateOperations;
 
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewFieldGroupId?: string;
+
   @HideField()
   universalIdentifier?: string;
 

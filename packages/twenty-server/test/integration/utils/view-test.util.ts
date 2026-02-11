@@ -1,3 +1,4 @@
+import { type ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
@@ -20,6 +21,22 @@ export const assertViewStructure = (
 
   if (expectedFields) {
     expect(view).toMatchObject(expectedFields);
+  }
+};
+
+export const assertViewFieldGroupStructure = (
+  viewFieldGroup: ViewFieldGroupDTO,
+  expectedFields?: Partial<ViewFieldGroupDTO>,
+) => {
+  expect(viewFieldGroup).toBeDefined();
+  expect(viewFieldGroup.id).toBeDefined();
+  expect(viewFieldGroup.name).toBeDefined();
+  expect(viewFieldGroup.viewId).toBeDefined();
+  expect(typeof viewFieldGroup.position).toBe('number');
+  expect(typeof viewFieldGroup.isVisible).toBe('boolean');
+
+  if (expectedFields) {
+    expect(viewFieldGroup).toMatchObject(expectedFields);
   }
 };
 

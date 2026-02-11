@@ -13506,6 +13506,11 @@ msgstr "View existing record"
 msgid "view field"
 msgstr "view field"
 
+#. js-lingui-id: MvRxYh
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view field group"
+msgstr "view field group"
+
 #. js-lingui-id: BA3jId
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view filter"

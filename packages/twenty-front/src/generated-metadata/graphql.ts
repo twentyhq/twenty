@@ -215,6 +215,7 @@ export enum AllMetadataName {
   skill = 'skill',
   view = 'view',
   viewField = 'viewField',
+  viewFieldGroup = 'viewFieldGroup',
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
@@ -827,6 +828,7 @@ export type CoreView = {
   shouldHideEmptyGroups: Scalars['Boolean'];
   type: ViewType;
   updatedAt: Scalars['DateTime'];
+  viewFieldGroups: Array<CoreViewFieldGroup>;
   viewFields: Array<CoreViewField>;
   viewFilterGroups: Array<CoreViewFilterGroup>;
   viewFilters: Array<CoreViewFilter>;
@@ -847,6 +849,20 @@ export type CoreViewField = {
   position: Scalars['Float'];
   size: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewFieldGroup = {
+  __typename?: 'CoreViewFieldGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  name: Scalars['String'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewFields: Array<CoreViewField>;
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
 };
@@ -1086,6 +1102,14 @@ export type CreateSkillInput = {
   name: Scalars['String'];
 };
 
+export type CreateViewFieldGroupInput = {
+  id?: InputMaybe<Scalars['UUID']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  position?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
 export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   fieldMetadataId: Scalars['UUID'];
@@ -1093,6 +1117,7 @@ export type CreateViewFieldInput = {
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
   viewId: Scalars['UUID'];
 };
 
@@ -1214,6 +1239,11 @@ export type DeleteTwoFactorAuthenticationMethodOutput = {
   success: Scalars['Boolean'];
 };
 
+export type DeleteViewFieldGroupInput = {
+  /** The id of the view field group to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeleteViewFieldInput = {
   /** The id of the view field to delete. */
   id: Scalars['UUID'];
@@ -1236,6 +1266,11 @@ export type DeletedWorkspaceMember = {
   name: FullName;
   userEmail: Scalars['String'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
+};
+
+export type DestroyViewFieldGroupInput = {
+  /** The id of the view field group to destroy. */
+  id: Scalars['UUID'];
 };
 
 export type DestroyViewFieldInput = {
@@ -2032,6 +2067,7 @@ export type Mutation = {
   createCommandMenuItem: CommandMenuItem;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
+  createCoreViewFieldGroup: CoreViewFieldGroup;
   createCoreViewFilter: CoreViewFilter;
   createCoreViewFilterGroup: CoreViewFilterGroup;
   createCoreViewGroup: CoreViewGroup;
@@ -2040,6 +2076,7 @@ export type Mutation = {
   createEmailingDomain: EmailingDomain;
   createFile: File;
   createFrontComponent: FrontComponent;
+  createManyCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
   createNavigationMenuItem: NavigationMenuItem;
@@ -2064,6 +2101,7 @@ export type Mutation = {
   deleteCommandMenuItem: CommandMenuItem;
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
+  deleteCoreViewFieldGroup: CoreViewFieldGroup;
   deleteCoreViewFilter: CoreViewFilter;
   deleteCoreViewFilterGroup: Scalars['Boolean'];
   deleteCoreViewGroup: CoreViewGroup;
@@ -2090,6 +2128,7 @@ export type Mutation = {
   deleteWorkspaceInvitation: Scalars['String'];
   destroyCoreView: Scalars['Boolean'];
   destroyCoreViewField: CoreViewField;
+  destroyCoreViewFieldGroup: CoreViewFieldGroup;
   destroyCoreViewFilter: CoreViewFilter;
   destroyCoreViewFilterGroup: Scalars['Boolean'];
   destroyCoreViewGroup: CoreViewGroup;
@@ -2144,6 +2183,7 @@ export type Mutation = {
   updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
+  updateCoreViewFieldGroup: CoreViewFieldGroup;
   updateCoreViewFilter: CoreViewFilter;
   updateCoreViewFilterGroup: CoreViewFilterGroup;
   updateCoreViewGroup: CoreViewGroup;
@@ -2261,6 +2301,11 @@ export type MutationCreateCoreViewFieldArgs = {
 };
 
 
+export type MutationCreateCoreViewFieldGroupArgs = {
+  input: CreateViewFieldGroupInput;
+};
+
+
 export type MutationCreateCoreViewFilterArgs = {
   input: CreateViewFilterInput;
 };
@@ -2300,6 +2345,11 @@ export type MutationCreateFileArgs = {
 
 export type MutationCreateFrontComponentArgs = {
   input: CreateFrontComponentInput;
+};
+
+
+export type MutationCreateManyCoreViewFieldGroupsArgs = {
+  inputs: Array<CreateViewFieldGroupInput>;
 };
 
 
@@ -2426,6 +2476,11 @@ export type MutationDeleteCoreViewFieldArgs = {
 };
 
 
+export type MutationDeleteCoreViewFieldGroupArgs = {
+  input: DeleteViewFieldGroupInput;
+};
+
+
 export type MutationDeleteCoreViewFilterArgs = {
   input: DeleteViewFilterInput;
 };
@@ -2544,6 +2599,11 @@ export type MutationDestroyCoreViewArgs = {
 
 export type MutationDestroyCoreViewFieldArgs = {
   input: DestroyViewFieldInput;
+};
+
+
+export type MutationDestroyCoreViewFieldGroupArgs = {
+  input: DestroyViewFieldGroupInput;
 };
 
 
@@ -2797,6 +2857,11 @@ export type MutationUpdateCoreViewArgs = {
 
 export type MutationUpdateCoreViewFieldArgs = {
   input: UpdateViewFieldInput;
+};
+
+
+export type MutationUpdateCoreViewFieldGroupArgs = {
+  input: UpdateViewFieldGroupInput;
 };
 
 
@@ -3490,6 +3555,8 @@ export type Query = {
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
   getCoreViewField?: Maybe<CoreViewField>;
+  getCoreViewFieldGroup?: Maybe<CoreViewFieldGroup>;
+  getCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   getCoreViewFields: Array<CoreViewField>;
   getCoreViewFilter?: Maybe<CoreViewFilter>;
   getCoreViewFilterGroup?: Maybe<CoreViewFilterGroup>;
@@ -3662,6 +3729,16 @@ export type QueryGetCoreViewArgs = {
 
 export type QueryGetCoreViewFieldArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldGroupsArgs = {
+  viewId: Scalars['String'];
 };
 
 
@@ -4536,6 +4613,20 @@ export type UpdateSkillInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateViewFieldGroupInput = {
+  /** The id of the view field group to update */
+  id: Scalars['UUID'];
+  /** The view field group to update */
+  update: UpdateViewFieldGroupInputUpdates;
+};
+
+export type UpdateViewFieldGroupInputUpdates = {
+  deletedAt?: InputMaybe<Scalars['String']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Float']>;
+};
+
 export type UpdateViewFieldInput = {
   /** The id of the view field to update */
   id: Scalars['UUID'];
@@ -4548,6 +4639,7 @@ export type UpdateViewFieldInputUpdates = {
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateViewFilterGroupInput = {
