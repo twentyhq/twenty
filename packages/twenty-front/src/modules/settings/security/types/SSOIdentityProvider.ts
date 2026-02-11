@@ -2,10 +2,8 @@
 
 import { type SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
 import { type z } from 'zod';
-import {
-  type IdentityProviderType,
-  type SsoIdentityProviderStatus,
-} from '~/generated/graphql';
+import { type IdentityProviderType } from '~/generated-metadata/graphql';
+import { type SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 export type SSOIdentityProvider = {
   __typename: 'SSOIdentityProvider';

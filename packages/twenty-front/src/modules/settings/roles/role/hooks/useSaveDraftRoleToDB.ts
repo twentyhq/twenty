@@ -19,7 +19,7 @@ import {
   useUpsertObjectPermissionsMutation,
   useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
-import { type Role } from '~/generated/graphql';
+import { type Role } from '~/generated-metadata/graphql';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [

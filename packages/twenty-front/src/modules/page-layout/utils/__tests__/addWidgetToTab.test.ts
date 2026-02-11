@@ -1,9 +1,5 @@
 import { WidgetType } from '~/generated-metadata/graphql';
-import {
-  AggregateOperations,
-  WidgetConfigurationType,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
+import {AggregateOperations, WidgetConfigurationType, type PageLayoutWidget} from '~/generated-metadata/graphql';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 

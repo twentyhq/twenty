@@ -1,10 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
-import {
-  BarChartLayout,
-  WidgetConfigurationType,
-  type WidgetConfiguration,
-} from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
+import { WidgetConfigurationType, type WidgetConfiguration } from '~/generated-metadata/graphql';
 
 export const getWidgetTitle = (
   configuration: Pick<WidgetConfiguration, 'configurationType'> & {

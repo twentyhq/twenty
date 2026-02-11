@@ -1,10 +1,4 @@
-import {
-  AggregateOperations,
-  AxisNameDisplay,
-  BarChartLayout,
-  GraphOrderBy,
-  WidgetConfigurationType,
-} from '~/generated/graphql';
+import {AggregateOperations, AxisNameDisplay, BarChartLayout, GraphOrderBy, WidgetConfigurationType} from '~/generated-metadata/graphql';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 
 describe('createDefaultGraphWidget', () => {

@@ -13,11 +13,8 @@ import { useQuery } from '@apollo/client';
 import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type LineChartConfiguration,
-  type LineChartDataPoint,
-  type LineChartSeries,
-} from '~/generated/graphql';
+import { type LineChartConfiguration } from '~/generated-metadata/graphql';
+import { type LineChartDataPoint, type LineChartSeries } from '~/generated-metadata/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
   objectMetadataItemId: string;

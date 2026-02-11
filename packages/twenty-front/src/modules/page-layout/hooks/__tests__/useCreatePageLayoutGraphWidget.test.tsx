@@ -9,7 +9,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
-import { PageLayoutType, WidgetConfigurationType } from '~/generated/graphql';
+import { PageLayoutType, WidgetConfigurationType } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,

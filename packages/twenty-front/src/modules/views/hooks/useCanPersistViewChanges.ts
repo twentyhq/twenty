@@ -1,7 +1,7 @@
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewVisibility } from '~/generated-metadata/graphql';
-import { PermissionFlagType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useCanPersistViewChanges = () => {
   const { currentView } = useGetCurrentViewOnly();

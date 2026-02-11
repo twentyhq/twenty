@@ -29,11 +29,8 @@ import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-} from '~/generated/graphql';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;

@@ -1,10 +1,7 @@
 import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNoteRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-} from '~/generated/graphql';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 
 export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',

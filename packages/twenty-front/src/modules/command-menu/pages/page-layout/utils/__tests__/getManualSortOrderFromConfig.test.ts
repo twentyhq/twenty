@@ -1,10 +1,6 @@
 import { getManualSortOrderFromConfig } from '@/command-menu/pages/page-layout/utils/getManualSortOrderFromConfig';
-import {
-  WidgetConfigurationType,
-  type BarChartConfiguration,
-  type LineChartConfiguration,
-  type PieChartConfiguration,
-} from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
+import { type BarChartConfiguration, type LineChartConfiguration, type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 describe('getManualSortOrderFromConfig', () => {
   describe('pie chart configuration', () => {

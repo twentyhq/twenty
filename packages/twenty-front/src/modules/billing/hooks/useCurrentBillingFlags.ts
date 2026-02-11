@@ -1,5 +1,5 @@
 import { SubscriptionInterval } from '~/generated-metadata/graphql';
-import { BillingPlanKey } from '~/generated/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';

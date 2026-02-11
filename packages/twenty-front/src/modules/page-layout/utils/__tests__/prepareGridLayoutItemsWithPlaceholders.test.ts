@@ -1,10 +1,6 @@
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
-import {
-  AggregateOperations,
-  WidgetConfigurationType,
-  WidgetType,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
+import { AggregateOperations } from '~/generated-metadata/graphql';
+import { WidgetConfigurationType, WidgetType, type PageLayoutWidget } from '~/generated-metadata/graphql';
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {

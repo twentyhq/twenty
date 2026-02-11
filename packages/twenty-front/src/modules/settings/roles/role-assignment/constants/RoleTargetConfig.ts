@@ -3,7 +3,7 @@ import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/rol
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
 import { t } from '@lingui/core/macro';
 import { type Agent } from '~/generated-metadata/graphql';
-import { type ApiKeyForRole } from '~/generated/graphql';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,

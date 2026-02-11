@@ -3,7 +3,7 @@ import {
   type PageLayoutWidget,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { type WidgetConfiguration } from '~/generated/graphql';
+import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,

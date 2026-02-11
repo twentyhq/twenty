@@ -8,7 +8,7 @@ import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential'
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewSort } from '~/generated/graphql';
+import { type CoreViewSort } from '~/generated-metadata/graphql';
 
 export const usePerformViewSortAPIPersist = () => {
   const apolloClient = useApolloClient();

@@ -13,10 +13,8 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  DatabaseEventAction,
-  type ObjectRecordEvent,
-} from '~/generated/graphql';
+import { DatabaseEventAction } from '~/generated-metadata/graphql';
+import { type ObjectRecordEvent } from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
   const apolloCoreClient = useApolloCoreClient();

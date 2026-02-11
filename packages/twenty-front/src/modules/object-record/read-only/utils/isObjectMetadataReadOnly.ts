@@ -1,5 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 type IsObjectMetadataReadOnlyParams = {

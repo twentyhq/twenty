@@ -19,7 +19,7 @@ import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/graphql';
-import { SubscriptionInterval } from '~/generated/graphql';
+import { SubscriptionInterval } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div`
   align-items: flex-end;

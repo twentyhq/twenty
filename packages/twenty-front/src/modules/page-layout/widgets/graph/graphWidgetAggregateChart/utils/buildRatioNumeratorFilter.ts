@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { type RatioAggregateConfig } from '~/generated/graphql';
+import { type RatioAggregateConfig } from '~/generated-metadata/graphql';
 
 export const buildRatioNumeratorFilter = ({
   ratioConfig,

@@ -1,15 +1,9 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import {
-  computeRecordGqlOperationFilter,
-  isDefined,
-} from 'twenty-shared/utils';
-import {
-  type AggregateChartConfiguration,
-  type BarChartConfiguration,
-  type LineChartConfiguration,
-  type PieChartConfiguration,
-} from '~/generated/graphql';
+  computeRecordGqlOperationFilter, isDefined, } from 'twenty-shared/utils';
+import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
+import { type BarChartConfiguration, type LineChartConfiguration, type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 export const useGraphWidgetQueryCommon = ({
   objectMetadataItemId,

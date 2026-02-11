@@ -22,7 +22,7 @@ import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/v
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewVisibility } from '~/generated-metadata/graphql';
-import { PermissionFlagType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetRecoilComponentState(

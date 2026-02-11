@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type GetOneLogicFunctionQuery } from '~/generated-metadata/graphql';
-import { type LogicFunction } from '~/generated/graphql';
+import { type LogicFunction } from '~/generated-metadata/graphql';
 
 export type LogicFunctionNewFormValues = {
   name: string;

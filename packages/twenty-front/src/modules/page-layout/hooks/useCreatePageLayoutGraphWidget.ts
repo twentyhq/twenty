@@ -19,11 +19,8 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  BarChartLayout,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
+import { WidgetConfigurationType, WidgetType } from '~/generated-metadata/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,

@@ -1,3 +1,4 @@
+import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -12,10 +13,7 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import { IconArrowRight } from 'twenty-ui/display';
-import {
-  CalendarChannelVisibility,
-  type TimelineCalendarEvent,
-} from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;

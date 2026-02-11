@@ -1,13 +1,8 @@
 import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import {
-  AggregateOperations,
-  GraphOrderBy,
-  PageLayoutType,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import { AggregateOperations } from '~/generated-metadata/graphql';
+import { GraphOrderBy, PageLayoutType, WidgetConfigurationType, WidgetType } from '~/generated-metadata/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {

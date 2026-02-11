@@ -1,9 +1,7 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import {
-  WorkspaceActivationStatus,
-  PermissionFlagType,
-} from '~/generated/graphql';
+import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 export const useHasPermissionFlag = (permissionFlag?: PermissionFlagType) => {

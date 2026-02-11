@@ -1,8 +1,4 @@
-import {
-  type GridPosition,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import {type GridPosition, WidgetConfigurationType, WidgetType} from '~/generated-metadata/graphql';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 
 export const createDefaultFrontComponentWidget = (

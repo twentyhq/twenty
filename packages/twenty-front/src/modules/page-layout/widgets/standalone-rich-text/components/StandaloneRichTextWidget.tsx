@@ -14,11 +14,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  PageLayoutType,
-  type StandaloneRichTextConfiguration,
-} from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { PageLayoutType, type StandaloneRichTextConfiguration } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;

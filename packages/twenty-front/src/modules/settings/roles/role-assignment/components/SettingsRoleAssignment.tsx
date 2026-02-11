@@ -20,7 +20,7 @@ import {
   useGetApiKeysQuery,
   type Agent,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey, type ApiKeyForRole } from '~/generated/graphql';
+import { FeatureFlagKey, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';

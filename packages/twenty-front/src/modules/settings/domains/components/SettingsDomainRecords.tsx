@@ -5,10 +5,8 @@ import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
-import {
-  type DomainRecord,
-  type DomainValidRecords,
-} from '~/generated/graphql';
+import { type DomainRecord } from '~/generated-metadata/graphql';
+import { type DomainValidRecords } from '~/generated-metadata/graphql';
 
 export const SettingsDomainRecords = ({
   records,

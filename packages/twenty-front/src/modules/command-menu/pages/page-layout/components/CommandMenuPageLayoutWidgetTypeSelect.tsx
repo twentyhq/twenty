@@ -24,16 +24,9 @@ import { useQuery } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconAlignBoxLeftTop,
-  IconApps,
-  IconChartPie,
-  IconFrame,
-} from 'twenty-ui/display';
-import {
-  FeatureFlagKey,
-  type FrontComponent,
-  WidgetType,
-} from '~/generated/graphql';
+  IconAlignBoxLeftTop, IconApps, IconChartPie, IconFrame, } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type FrontComponent, WidgetType } from '~/generated-metadata/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();

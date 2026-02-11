@@ -1,6 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { type LineChartConfiguration } from '~/generated/graphql';
+import { type LineChartConfiguration } from '~/generated-metadata/graphql';
 
 type AssertLineChartWidgetOrThrow = (
   widget: PageLayoutWidget,

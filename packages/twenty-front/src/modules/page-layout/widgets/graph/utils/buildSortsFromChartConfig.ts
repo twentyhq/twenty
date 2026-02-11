@@ -3,11 +3,8 @@ import { buildSortsForChartFieldOrderBy } from '@/page-layout/widgets/graph/util
 import { buildSortsForChartValueOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartValueOrderBy';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type BarChartConfiguration,
-  type LineChartConfiguration,
-  type PieChartConfiguration,
-} from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated-metadata/graphql';
+import { type LineChartConfiguration, type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 type ChartSort = {
   fieldName: string;

@@ -1,14 +1,4 @@
-import {
-  AggregateOperations,
-  AxisNameDisplay,
-  BarChartLayout,
-  GraphOrderBy,
-  type GridPosition,
-  type PageLayoutWidget,
-  type WidgetConfiguration,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import {AggregateOperations, AxisNameDisplay, BarChartLayout, GraphOrderBy, type GridPosition, type PageLayoutWidget, type WidgetConfiguration, WidgetConfigurationType, WidgetType} from '~/generated-metadata/graphql';
 
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -25,8 +15,9 @@ const createDefaultGraphConfiguration = (
     displayDataLabel: true,
     displayLegend: true,
     color: 'auto' satisfies GraphColor,
-    primaryAxisGroupByFieldMetadataId: fieldSelection?.groupByFieldMetadataIdX,
-    aggregateFieldMetadataId: fieldSelection?.aggregateFieldMetadataId,
+    primaryAxisGroupByFieldMetadataId:
+      fieldSelection?.groupByFieldMetadataIdX ?? '',
+    aggregateFieldMetadataId: fieldSelection?.aggregateFieldMetadataId ?? '',
     aggregateOperation: AggregateOperations.SUM,
     primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
     axisNameDisplay: AxisNameDisplay.NONE,

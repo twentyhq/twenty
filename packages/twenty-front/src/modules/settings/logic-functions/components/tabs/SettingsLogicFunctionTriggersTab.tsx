@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { type LogicFunction } from '~/generated/graphql';
+import { type LogicFunction } from '~/generated-metadata/graphql';
 
 export const StyledRouteTriggerTableRow = styled(TableRow)`
   grid-template-columns: 1fr 120px 120px;

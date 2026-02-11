@@ -7,10 +7,8 @@ import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/grou
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  DatabaseEventAction,
-  type ObjectRecordEvent,
-} from '~/generated/graphql';
+import { DatabaseEventAction } from '~/generated-metadata/graphql';
+import { type ObjectRecordEvent } from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseEvents = () => {
   const { objectMetadataItems } = useObjectMetadataItems();

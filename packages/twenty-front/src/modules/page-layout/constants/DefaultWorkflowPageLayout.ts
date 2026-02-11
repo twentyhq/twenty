@@ -1,10 +1,7 @@
 import { DEFAULT_WORKFLOW_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-} from '~/generated/graphql';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetType } from '~/generated-metadata/graphql';
 
 /**
  * Default Workflow PageLayout.

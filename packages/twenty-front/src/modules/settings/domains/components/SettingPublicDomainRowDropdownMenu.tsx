@@ -1,4 +1,4 @@
-import { type PublicDomain } from '~/generated/graphql';
+import { type PublicDomain } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import {

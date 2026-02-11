@@ -14,7 +14,7 @@ import {
   useFindManyNavigationMenuItemsQuery,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunNavigationMenuItemQueriesEffect = () => {

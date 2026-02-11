@@ -1,9 +1,6 @@
 import { createContext } from 'react';
-import {
-  type AdminPanelHealthServiceData,
-  AdminPanelHealthServiceStatus,
-  HealthIndicatorId,
-} from '~/generated/graphql';
+import { type AdminPanelHealthServiceData } from '~/generated-metadata/graphql';
+import { AdminPanelHealthServiceStatus, HealthIndicatorId } from '~/generated-metadata/graphql';
 
 type SettingsAdminIndicatorHealthContextType = {
   indicatorHealth: AdminPanelHealthServiceData;

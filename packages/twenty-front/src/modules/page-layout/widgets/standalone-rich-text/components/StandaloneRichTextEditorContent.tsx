@@ -24,7 +24,7 @@ import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { useRecoilCallback } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type StandaloneRichTextEditorContentProps = {
   widget: PageLayoutWidget;

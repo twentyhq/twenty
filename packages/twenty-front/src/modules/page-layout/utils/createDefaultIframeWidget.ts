@@ -1,9 +1,4 @@
-import {
-  type GridPosition,
-  type PageLayoutWidget,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import {type GridPosition, type PageLayoutWidget, WidgetConfigurationType, WidgetType} from '~/generated-metadata/graphql';
 
 export const createDefaultIframeWidget = (
   id: string,

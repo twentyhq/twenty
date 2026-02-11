@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
-import type { Role } from '~/generated/graphql';
+import type { Role } from '~/generated-metadata/graphql';
 
 const StyledTableRow = styled(TableRow)<{ isDisabled: boolean }>`
   align-items: center;

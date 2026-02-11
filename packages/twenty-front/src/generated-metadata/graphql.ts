@@ -232,6 +232,11 @@ export enum AnalyticsType {
   TRACK = 'TRACK'
 }
 
+export type ApiConfig = {
+  __typename?: 'ApiConfig';
+  mutationMaximumAffectedRecords: Scalars['Float'];
+};
+
 export type ApiKey = {
   __typename?: 'ApiKey';
   createdAt: Scalars['DateTime'];
@@ -449,6 +454,13 @@ export type BarChartSeries = {
   label: Scalars['String'];
 };
 
+export type Billing = {
+  __typename?: 'Billing';
+  billingUrl?: Maybe<Scalars['String']>;
+  isBillingEnabled: Scalars['Boolean'];
+  trialPeriods: Array<BillingTrialPeriod>;
+};
+
 export type BillingEndTrialPeriodOutput = {
   __typename?: 'BillingEndTrialPeriodOutput';
   /** Billing portal URL for payment method update (returned when no payment method exists) */
@@ -604,6 +616,12 @@ export type BillingSubscriptionSchedulePhaseItem = {
   quantity?: Maybe<Scalars['Float']>;
 };
 
+export type BillingTrialPeriod = {
+  __typename?: 'BillingTrialPeriod';
+  duration: Scalars['Float'];
+  isCreditCardRequired: Scalars['Boolean'];
+};
+
 export type BillingUpdateOutput = {
   __typename?: 'BillingUpdateOutput';
   /** All billing subscriptions */
@@ -627,6 +645,17 @@ export type CalendarConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type Captcha = {
+  __typename?: 'Captcha';
+  provider?: Maybe<CaptchaDriverType>;
+  siteKey?: Maybe<Scalars['String']>;
+};
+
+export enum CaptchaDriverType {
+  GOOGLE_RECAPTCHA = 'GOOGLE_RECAPTCHA',
+  TURNSTILE = 'TURNSTILE'
+}
+
 export type ChannelSyncSuccess = {
   __typename?: 'ChannelSyncSuccess';
   success: Scalars['Boolean'];
@@ -637,6 +666,49 @@ export type CheckUserExistOutput = {
   availableWorkspacesCount: Scalars['Float'];
   exists: Scalars['Boolean'];
   isEmailVerified: Scalars['Boolean'];
+};
+
+export type ClientAiModelConfig = {
+  __typename?: 'ClientAIModelConfig';
+  deprecated?: Maybe<Scalars['Boolean']>;
+  inputCostPer1kTokensInCredits: Scalars['Float'];
+  label: Scalars['String'];
+  modelId: Scalars['String'];
+  nativeCapabilities?: Maybe<NativeModelCapabilities>;
+  outputCostPer1kTokensInCredits: Scalars['Float'];
+  provider: ModelProvider;
+};
+
+export type ClientConfig = {
+  __typename?: 'ClientConfig';
+  aiModels: Array<ClientAiModelConfig>;
+  allowRequestsToTwentyIcons: Scalars['Boolean'];
+  analyticsEnabled: Scalars['Boolean'];
+  api: ApiConfig;
+  appVersion?: Maybe<Scalars['String']>;
+  authProviders: AuthProviders;
+  billing: Billing;
+  calendarBookingPageId?: Maybe<Scalars['String']>;
+  canManageFeatureFlags: Scalars['Boolean'];
+  captcha: Captcha;
+  chromeExtensionId?: Maybe<Scalars['String']>;
+  defaultSubdomain?: Maybe<Scalars['String']>;
+  frontDomain: Scalars['String'];
+  isAttachmentPreviewEnabled: Scalars['Boolean'];
+  isClickHouseConfigured: Scalars['Boolean'];
+  isCloudflareIntegrationEnabled: Scalars['Boolean'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean'];
+  isEmailVerificationRequired: Scalars['Boolean'];
+  isGoogleCalendarEnabled: Scalars['Boolean'];
+  isGoogleMessagingEnabled: Scalars['Boolean'];
+  isImapSmtpCaldavEnabled: Scalars['Boolean'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean'];
+  isMultiWorkspaceEnabled: Scalars['Boolean'];
+  publicFeatureFlags: Array<PublicFeatureFlag>;
+  sentry: Sentry;
+  signInPrefilled: Scalars['Boolean'];
+  support: Support;
 };
 
 export type CommandMenuItem = {
@@ -1928,6 +2000,15 @@ export type MarketplaceApp = {
   websiteUrl?: Maybe<Scalars['String']>;
 };
 
+export enum ModelProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  GROQ = 'GROQ',
+  NONE = 'NONE',
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
+  XAI = 'XAI'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
@@ -2945,6 +3026,12 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
   otp: Scalars['String'];
 };
 
+export type NativeModelCapabilities = {
+  __typename?: 'NativeModelCapabilities';
+  twitterSearch?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
+};
+
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
@@ -3334,6 +3421,19 @@ export type PublicDomain = {
   domain: Scalars['String'];
   id: Scalars['UUID'];
   isValidated: Scalars['Boolean'];
+};
+
+export type PublicFeatureFlag = {
+  __typename?: 'PublicFeatureFlag';
+  key: FeatureFlagKey;
+  metadata: PublicFeatureFlagMetadata;
+};
+
+export type PublicFeatureFlagMetadata = {
+  __typename?: 'PublicFeatureFlagMetadata';
+  description: Scalars['String'];
+  imagePath?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type PublicWorkspaceDataOutput = {
@@ -3972,6 +4072,13 @@ export type SendInvitationsOutput = {
   success: Scalars['Boolean'];
 };
 
+export type Sentry = {
+  __typename?: 'Sentry';
+  dsn?: Maybe<Scalars['String']>;
+  environment?: Maybe<Scalars['String']>;
+  release?: Maybe<Scalars['String']>;
+};
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -4074,6 +4181,17 @@ export enum SubscriptionStatus {
   Paused = 'Paused',
   Trialing = 'Trialing',
   Unpaid = 'Unpaid'
+}
+
+export type Support = {
+  __typename?: 'Support';
+  supportDriver: SupportDriver;
+  supportFrontChatId?: Maybe<Scalars['String']>;
+};
+
+export enum SupportDriver {
+  FRONT = 'FRONT',
+  NONE = 'NONE'
 }
 
 export type SystemHealth = {

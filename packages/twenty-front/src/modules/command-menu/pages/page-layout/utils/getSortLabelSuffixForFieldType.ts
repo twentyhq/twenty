@@ -6,7 +6,7 @@ import {
   isFieldMetadataTextKind,
 } from 'twenty-shared/utils';
 
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const getSortLabelSuffixForFieldType = ({
   fieldType,

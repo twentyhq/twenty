@@ -1,11 +1,8 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  type BarChartConfiguration,
-  type PieChartConfiguration,
-  GraphOrderBy,
-} from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated-metadata/graphql';
+import { type PieChartConfiguration, GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('buildSortsFromChartConfig', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

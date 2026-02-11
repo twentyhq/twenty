@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
-import { BillingPlanKey } from '~/generated/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { SubscriptionInterval } from '~/generated-metadata/graphql';
 
 export const useSignInWithGoogle = () => {

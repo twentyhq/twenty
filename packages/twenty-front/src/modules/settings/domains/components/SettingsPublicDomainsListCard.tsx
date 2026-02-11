@@ -7,7 +7,7 @@ import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useFindManyPublicDomainsQuery } from '~/generated-metadata/graphql';
-import { type PublicDomain } from '~/generated/graphql';
+import { type PublicDomain } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsPublicDomainsListCard = () => {

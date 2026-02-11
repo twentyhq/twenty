@@ -1,6 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { assertPageLayoutTabHasDefinedLayoutModeOrThrow } from '@/page-layout/utils/assertPageLayoutTabHasDefinedLayoutModeOrThrow';
-import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated-metadata/graphql';
 
 type GetTabLayoutModeParams = {
   tab: PageLayoutTab | undefined;

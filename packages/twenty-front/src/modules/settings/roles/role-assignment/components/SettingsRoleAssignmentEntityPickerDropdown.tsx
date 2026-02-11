@@ -11,7 +11,7 @@ import {
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
-import { type ApiKeyForRole } from '~/generated/graphql';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledLoadingContainer = styled.div`

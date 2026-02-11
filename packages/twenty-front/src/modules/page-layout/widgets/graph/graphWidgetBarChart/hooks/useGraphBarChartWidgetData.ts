@@ -16,11 +16,8 @@ import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type BarChartConfiguration,
-  type BarChartLayout,
-  type BarChartSeries,
-} from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated-metadata/graphql';
+import { type BarChartLayout, type BarChartSeries } from '~/generated-metadata/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
   objectMetadataItemId: string;
@@ -156,7 +153,7 @@ export const useGraphBarChartWidgetData = ({
     layout: effectiveQueryData?.barChartData?.layout,
     groupMode: getEffectiveGroupMode(
       configuration.groupMode,
-      configuration.secondaryAxisGroupByFieldMetadataId,
+      isDefined(configuration.secondaryAxisGroupByFieldMetadataId),
     ),
     hasTooManyGroups:
       effectiveQueryData?.barChartData?.hasTooManyGroups ?? false,

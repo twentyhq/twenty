@@ -17,21 +17,12 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  ResponsivePie,
-  type ComputedDatum,
-  type PieCustomLayerProps,
-} from '@nivo/pie';
+  ResponsivePie, type ComputedDatum, type PieCustomLayerProps, } from '@nivo/pie';
 import {
-  useCallback,
-  useMemo,
-  useRef,
-  type MouseEvent as ReactMouseEvent,
-} from 'react';
+  useCallback, useMemo, useRef, type MouseEvent as ReactMouseEvent, } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type PieChartConfiguration,
-  type PieChartDataItem,
-} from '~/generated/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
+import { type PieChartDataItem } from '~/generated-metadata/graphql';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];

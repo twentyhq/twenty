@@ -1,11 +1,7 @@
 import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import { PageLayoutType, WidgetConfigurationType, WidgetType } from '~/generated-metadata/graphql';
 
 export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',

@@ -1,4 +1,4 @@
-import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated-metadata/graphql';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type GetWidgetCardVariantParams = {

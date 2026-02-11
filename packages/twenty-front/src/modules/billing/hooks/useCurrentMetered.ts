@@ -1,5 +1,5 @@
 import { type SubscriptionInterval } from '~/generated-metadata/graphql';
-import { BillingProductKey } from '~/generated/graphql';
+import { BillingProductKey } from '~/generated-metadata/graphql';
 import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
 import type { MeteredBillingPrice } from '@/billing/types/billing-price-tiers.type';
 import { useCurrentPlan } from '@/billing/hooks/useCurrentPlan';

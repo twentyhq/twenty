@@ -1,5 +1,5 @@
 import { type SubscriptionInterval } from '~/generated-metadata/graphql';
-import { type BillingPlanKey } from '~/generated/graphql';
+import { type BillingPlanKey } from '~/generated-metadata/graphql';
 import { findOrThrow } from 'twenty-shared/utils';
 import { useBaseProductByPlanKey } from '@/billing/hooks/useBaseProductByPlanKey';
 

@@ -18,7 +18,7 @@ import {
   CommandMenuItemAvailabilityType,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;

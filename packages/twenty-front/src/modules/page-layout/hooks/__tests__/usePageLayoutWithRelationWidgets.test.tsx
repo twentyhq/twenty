@@ -4,15 +4,8 @@ import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLay
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { renderHook } from '@testing-library/react';
-import {
-  AggregateOperations,
-  BarChartLayout,
-  GraphOrderBy,
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated/graphql';
+import { AggregateOperations } from '~/generated-metadata/graphql';
+import { BarChartLayout, GraphOrderBy, PageLayoutTabLayoutMode, PageLayoutType, WidgetConfigurationType, WidgetType } from '~/generated-metadata/graphql';
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext');
 jest.mock(

@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { type RatioAggregateConfig } from '~/generated/graphql';
+import { type RatioAggregateConfig } from '~/generated-metadata/graphql';
 
 import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/buildRatioNumeratorFilter';
 

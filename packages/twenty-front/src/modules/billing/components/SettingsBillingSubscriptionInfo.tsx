@@ -56,7 +56,7 @@ import {
   useSwitchBillingPlanMutation,
   useSwitchSubscriptionIntervalMutation,
 } from '~/generated-metadata/graphql';
-import { SubscriptionStatus } from '~/generated/graphql';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
