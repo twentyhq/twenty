@@ -239,7 +239,7 @@ describe('ApolloFactory', () => {
 
     try {
       await makeRequest();
-    } catch (error) {
+    } catch {
       expect(mockOnPayloadTooLarge).toHaveBeenCalledWith(
         expect.stringContaining('Uploaded content is too large'),
       );
