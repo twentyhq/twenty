@@ -87,6 +87,7 @@ export class GraphQLConfigService
       conditionalSchema: async (context) => {
         const { workspace, user, application } = context.req;
 
+        // eslint-disable-next-line no-console
         console.log('[GraphQLConfigService] conditionalSchema called', {
           hasWorkspace: isDefined(workspace),
           workspaceId: workspace?.id,

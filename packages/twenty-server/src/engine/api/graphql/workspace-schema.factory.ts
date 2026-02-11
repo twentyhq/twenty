@@ -84,6 +84,7 @@ export class WorkspaceSchemaFactory {
     let flatFieldMetadataMaps = allFlatFieldMetadataMaps;
     let flatIndexMaps = allFlatIndexMaps;
 
+    // eslint-disable-next-line no-console
     console.log('[WorkspaceSchemaFactory] createGraphQLSchema called', {
       workspaceId: workspace.id,
       applicationId,
@@ -125,6 +126,7 @@ export class WorkspaceSchemaFactory {
         flatObjectMetadataMaps.byUniversalIdentifier,
       ).length;
 
+      // eslint-disable-next-line no-console
       console.log('[WorkspaceSchemaFactory] filtering applied', {
         applicationIds,
         twentyStandardApplicationId,
