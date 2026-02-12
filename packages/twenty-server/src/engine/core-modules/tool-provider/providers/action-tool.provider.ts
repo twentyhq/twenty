@@ -94,11 +94,7 @@ export class ActionToolProvider implements ToolProvider {
 
     if (hasEmailPermission) {
       descriptors.push(
-        this.buildDescriptor(
-          'send_email',
-          this.sendEmailTool,
-          includeSchemas,
-        ),
+        this.buildDescriptor('send_email', this.sendEmailTool, includeSchemas),
       );
     }
 

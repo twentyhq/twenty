@@ -296,8 +296,7 @@ export class ToolRegistryService {
     const results = await Promise.all(
       this.providers
         .filter(
-          (provider) =>
-            !categorySet || categorySet.has(provider.category),
+          (provider) => !categorySet || categorySet.has(provider.category),
         )
         .map(async (provider) => {
           if (await provider.isAvailable(context)) {
