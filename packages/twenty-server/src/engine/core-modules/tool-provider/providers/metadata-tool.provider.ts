@@ -3,13 +3,17 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import {
+  type GenerateDescriptorOptions,
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
 import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
@@ -49,12 +53,15 @@ export class MetadataToolProvider implements ToolProvider, OnModuleInit {
 
   async generateDescriptors(
     context: ToolProviderContext,
-  ): Promise<ToolDescriptor[]> {
+    options?: GenerateDescriptorOptions,
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const toolSet = {
       ...this.objectMetadataToolsFactory.generateTools(context.workspaceId),
       ...this.fieldMetadataToolsFactory.generateTools(context.workspaceId),
     };
 
-    return toolSetToDescriptors(toolSet, ToolCategory.METADATA);
+    return toolSetToDescriptors(toolSet, ToolCategory.METADATA, {
+      includeSchemas: options?.includeSchemas ?? true,
+    });
   }
 }

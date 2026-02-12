@@ -17,19 +17,14 @@ import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
-
-// Backward-compatible alias -- consumers can import this instead of ToolDescriptor
-export type ToolIndexEntry = ToolDescriptor;
-
-export type ToolSearchOptions = {
-  limit?: number;
-  category?: ToolCategory;
-};
 
 export type ToolContext = {
   workspaceId: string;
@@ -42,15 +37,18 @@ export type ToolContext = {
 
 const RAM_TTL_MS = 5_000;
 const REDIS_TTL_MS = 300_000;
+const MAX_RAM_ENTRIES = 200;
+const MIN_EVICT_ENTRIES = 20;
 
 @Injectable()
 export class ToolRegistryService {
   private readonly logger = new Logger(ToolRegistryService.name);
 
   // Two-tier cache: RAM (5s) → Redis (5min) → generate from providers
+  // Stores lightweight ToolIndexEntry[] (no schemas) to minimize memory
   private readonly ramCache = new Map<
     string,
-    { descriptors: ToolDescriptor[]; cachedAt: number }
+    { entries: ToolIndexEntry[]; cachedAt: number }
   >();
 
   constructor(
@@ -61,15 +59,17 @@ export class ToolRegistryService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  // Core: returns cached ToolDescriptor[] for a workspace+role+user
-  async getCatalog(context: ToolProviderContext): Promise<ToolDescriptor[]> {
+  // Core: returns cached ToolIndexEntry[] (lightweight, no schemas)
+  async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
+    this.evictExpiredEntries();
+
     const cacheKey = await this.buildCacheKey(context);
 
     // 1. RAM hit?
     const ramEntry = this.ramCache.get(cacheKey);
 
     if (ramEntry && Date.now() - ramEntry.cachedAt < RAM_TTL_MS) {
-      return ramEntry.descriptors;
+      return ramEntry.entries;
     }
 
     // 2. Redis hit?
@@ -77,44 +77,100 @@ export class ToolRegistryService {
       await this.workspaceCacheStorageService.getToolCatalog(cacheKey);
 
     if (redisData) {
-      const descriptors = redisData as ToolDescriptor[];
+      const entries = redisData as ToolIndexEntry[];
 
       this.ramCache.set(cacheKey, {
-        descriptors,
+        entries,
         cachedAt: Date.now(),
       });
+      this.evictLRUEntriesIfNeeded();
 
-      return descriptors;
+      return entries;
     }
 
-    // 3. Generate from providers (cache miss)
-    const descriptors: ToolDescriptor[] = [];
+    // 3. Generate from providers (cache miss) -- no schemas
+    const entries: ToolIndexEntry[] = [];
 
     for (const provider of this.providers) {
       if (await provider.isAvailable(context)) {
-        const providerDescriptors = await provider.generateDescriptors(context);
+        const providerEntries = await provider.generateDescriptors(context, {
+          includeSchemas: false,
+        });
 
-        descriptors.push(...providerDescriptors);
+        entries.push(...providerEntries);
       }
     }
 
     this.logger.log(
-      `Generated ${descriptors.length} tool descriptors for workspace ${context.workspaceId}`,
+      `Generated ${entries.length} tool index entries for workspace ${context.workspaceId}`,
     );
 
     // Store in both caches
     this.ramCache.set(cacheKey, {
-      descriptors,
+      entries,
       cachedAt: Date.now(),
     });
+    this.evictLRUEntriesIfNeeded();
 
     await this.workspaceCacheStorageService.setToolCatalog(
       cacheKey,
-      descriptors,
+      entries,
       REDIS_TTL_MS,
     );
 
-    return descriptors;
+    return entries;
+  }
+
+  // On-demand schema generation for specific tools
+  async resolveSchemas(
+    toolNames: string[],
+    context: ToolProviderContext,
+  ): Promise<Map<string, object>> {
+    const index = await this.getCatalog(context);
+    const nameSet = new Set(toolNames);
+    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
+
+    // Group matching entries by provider category
+    const byCategory = new Map<string, ToolIndexEntry[]>();
+
+    for (const entry of matchingEntries) {
+      const existing = byCategory.get(entry.category) ?? [];
+
+      existing.push(entry);
+      byCategory.set(entry.category, existing);
+    }
+
+    const schemas = new Map<string, object>();
+
+    // For each category, call the provider with includeSchemas: true
+    // and extract only the matching tool schemas
+    for (const [category, entries] of byCategory) {
+      const provider = this.providers.find(
+        (providerItem) => providerItem.category === category,
+      );
+
+      if (!provider) {
+        continue;
+      }
+
+      const fullDescriptors = await provider.generateDescriptors(context, {
+        includeSchemas: true,
+      });
+
+      const entryNameSet = new Set(entries.map((entry) => entry.name));
+
+      for (const descriptor of fullDescriptors) {
+        if (
+          entryNameSet.has(descriptor.name) &&
+          'inputSchema' in descriptor &&
+          descriptor.inputSchema
+        ) {
+          schemas.set(descriptor.name, descriptor.inputSchema);
+        }
+      }
+    }
+
+    return schemas;
   }
 
   // Hydrate ToolDescriptor[] into an AI SDK ToolSet with thin dispatch closures
@@ -152,7 +208,7 @@ export class ToolRegistryService {
     workspaceId: string,
     roleId: string,
     options?: { userId?: string; userWorkspaceId?: string },
-  ): Promise<ToolDescriptor[]> {
+  ): Promise<ToolIndexEntry[]> {
     const context = this.buildContext(
       workspaceId,
       roleId,
@@ -162,81 +218,6 @@ export class ToolRegistryService {
     );
 
     return this.getCatalog(context);
-  }
-
-  async searchTools(
-    query: string,
-    workspaceId: string,
-    roleId: string,
-    options: ToolSearchOptions & {
-      userId?: string;
-      userWorkspaceId?: string;
-    } = {},
-  ): Promise<ToolDescriptor[]> {
-    const { limit = 5, category, userId, userWorkspaceId } = options;
-    const context = this.buildContext(
-      workspaceId,
-      roleId,
-      undefined,
-      userId,
-      userWorkspaceId,
-    );
-
-    const descriptors = await this.getCatalog(context);
-
-    const queryLower = query.toLowerCase();
-    const queryTerms = queryLower
-      .split(/\s+/)
-      .filter((term) => term.length > 2);
-
-    const scored = descriptors
-      .filter((tool) => !category || tool.category === category)
-      .map((tool) => {
-        let score = 0;
-        const nameLower = tool.name.toLowerCase();
-        const descLower = tool.description.toLowerCase();
-        const objectLower = tool.objectName?.toLowerCase() ?? '';
-
-        if (nameLower.includes(queryLower)) {
-          score += 100;
-        }
-
-        if (objectLower && queryLower.includes(objectLower)) {
-          score += 80;
-        }
-
-        for (const term of queryTerms) {
-          if (nameLower.includes(term)) {
-            score += 30;
-          }
-          if (objectLower.includes(term)) {
-            score += 25;
-          }
-          if (descLower.includes(term)) {
-            score += 10;
-          }
-        }
-
-        const operations = ['find', 'create', 'update', 'delete', 'search'];
-
-        for (const op of operations) {
-          if (queryLower.includes(op) && nameLower.includes(op)) {
-            score += 40;
-          }
-        }
-
-        return { tool, score };
-      })
-      .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit)
-      .map((item) => item.tool);
-
-    this.logger.log(
-      `Tool search for "${query}" returned ${scored.length} results`,
-    );
-
-    return scored;
   }
 
   async getToolsByName(
@@ -251,13 +232,23 @@ export class ToolRegistryService {
       context.userWorkspaceId,
     );
 
-    const descriptors = await this.getCatalog(fullContext);
+    // Get lightweight index and filter to requested names
+    const index = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
-    const filtered = descriptors.filter((descriptor) =>
-      nameSet.has(descriptor.name),
-    );
+    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    return this.hydrateToolSet(filtered, fullContext);
+    // Resolve schemas only for the requested tools
+    const schemas = await this.resolveSchemas(names, fullContext);
+
+    // Combine into full ToolDescriptor[]
+    const descriptors: ToolDescriptor[] = matchingEntries
+      .filter((entry) => schemas.has(entry.name))
+      .map((entry) => ({
+        ...entry,
+        inputSchema: schemas.get(entry.name)!,
+      }));
+
+    return this.hydrateToolSet(descriptors, fullContext);
   }
 
   async getToolInfo(
@@ -275,12 +266,19 @@ export class ToolRegistryService {
       context.userWorkspaceId,
     );
 
-    const descriptors = await this.getCatalog(fullContext);
-
+    // Get lightweight index for names/descriptions
+    const index = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
-    const filtered = descriptors.filter((entry) => nameSet.has(entry.name));
+    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    return filtered.map((entry) => {
+    // Only resolve schemas if requested
+    let schemas: Map<string, object> | undefined;
+
+    if (aspects.includes('schema')) {
+      schemas = await this.resolveSchemas(names, fullContext);
+    }
+
+    return matchingEntries.map((entry) => {
       const info: {
         name: string;
         description?: string;
@@ -291,8 +289,8 @@ export class ToolRegistryService {
         info.description = entry.description;
       }
 
-      if (aspects.includes('schema')) {
-        info.inputSchema = entry.inputSchema;
+      if (aspects.includes('schema') && schemas) {
+        info.inputSchema = schemas.get(entry.name);
       }
 
       return info;
@@ -314,10 +312,11 @@ export class ToolRegistryService {
         context.userWorkspaceId,
       );
 
-      const descriptors = await this.getCatalog(fullContext);
-      const descriptor = descriptors.find((desc) => desc.name === toolName);
+      // Get lightweight index (no schema needed for dispatch)
+      const index = await this.getCatalog(fullContext);
+      const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
-      if (!descriptor) {
+      if (!entry) {
         return {
           toolName,
           error: {
@@ -329,7 +328,7 @@ export class ToolRegistryService {
       }
 
       const result = await this.toolExecutorService.dispatch(
-        descriptor,
+        entry,
         args,
         fullContext,
       );
@@ -354,25 +353,33 @@ export class ToolRegistryService {
     }
   }
 
-  // Main method for eager loading tools by categories
+  // Main method for eager loading tools by categories (MCP, workflow agent)
+  // These paths need full schemas, so generate with includeSchemas: true
   async getToolsByCategories(
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
     const { categories, excludeTools, wrapWithErrorContext } = options;
-    const descriptors = await this.getCatalog(context);
 
-    let filteredDescriptors: ToolDescriptor[];
+    // Generate full descriptors with schemas (not cached in lightweight index)
+    const descriptors: ToolDescriptor[] = [];
 
-    if (categories) {
-      const categorySet = new Set(categories);
+    for (const provider of this.providers) {
+      if (categories && !categories.includes(provider.category)) {
+        continue;
+      }
 
-      filteredDescriptors = descriptors.filter((descriptor) =>
-        categorySet.has(descriptor.category),
-      );
-    } else {
-      filteredDescriptors = [...descriptors];
+      if (await provider.isAvailable(context)) {
+        const providerDescriptors = await provider.generateDescriptors(
+          context,
+          { includeSchemas: true },
+        );
+
+        descriptors.push(...(providerDescriptors as ToolDescriptor[]));
+      }
     }
+
+    let filteredDescriptors = descriptors;
 
     // Apply excludeTools filter
     if (excludeTools?.length) {
@@ -411,7 +418,8 @@ export class ToolRegistryService {
         context.workspaceId,
       )) ?? 0;
 
-    return `${context.workspaceId}:v${metadataVersion}:${context.roleId}:${context.userId ?? 'system'}`;
+    // userId removed -- descriptors do not vary by user
+    return `${context.workspaceId}:v${metadataVersion}:${context.roleId}`;
   }
 
   private buildContext(
@@ -433,6 +441,32 @@ export class ToolRegistryService {
       userWorkspaceId,
       onCodeExecutionUpdate,
     };
+  }
+
+  private evictExpiredEntries(): void {
+    const now = Date.now();
+
+    for (const [key, value] of this.ramCache) {
+      if (now - value.cachedAt >= RAM_TTL_MS) {
+        this.ramCache.delete(key);
+      }
+    }
+  }
+
+  private evictLRUEntriesIfNeeded(): void {
+    if (this.ramCache.size <= MAX_RAM_ENTRIES) {
+      return;
+    }
+
+    const sortedEntries = [...this.ramCache.entries()].sort(
+      ([, entryA], [, entryB]) => entryA.cachedAt - entryB.cachedAt,
+    );
+
+    const toEvict = sortedEntries.slice(0, MIN_EVICT_ENTRIES);
+
+    for (const [key] of toEvict) {
+      this.ramCache.delete(key);
+    }
   }
 
   private wrapWithErrorHandler(
