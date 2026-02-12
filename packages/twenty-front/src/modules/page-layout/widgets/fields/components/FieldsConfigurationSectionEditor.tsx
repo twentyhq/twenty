@@ -1,10 +1,8 @@
 import styled from '@emotion/styled';
-import {
-  Draggable,
-  Droppable,
-  type DraggableProvided,
-} from '@hello-pangea/dnd';
+import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
+
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -151,24 +149,21 @@ export const FieldsConfigurationSectionEditor = ({
               }
 
               return (
-                <Draggable
+                <DraggableItem
                   key={field.fieldMetadataId}
                   draggableId={`field-${field.fieldMetadataId}`}
                   index={fieldIndex}
-                >
-                  {(fieldDraggableProvided, fieldSnapshot) => (
+                  isInsideScrollableContainer
+                  itemComponent={
                     <FieldsConfigurationFieldEditor
                       field={field}
                       fieldMetadata={fieldMetadata}
-                      index={fieldIndex}
                       onToggleVisibility={() =>
                         handleToggleFieldVisibility(field.fieldMetadataId)
                       }
-                      draggableProvided={fieldDraggableProvided}
-                      isDragging={fieldSnapshot.isDragging}
                     />
-                  )}
-                </Draggable>
+                  }
+                />
               );
             })}
             {droppableProvided.placeholder}
