@@ -3,7 +3,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const usePageLayoutWithRelationWidgets = (
   basePageLayout: PageLayout | undefined,

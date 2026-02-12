@@ -13,8 +13,9 @@ import {
   FileFolder,
   useUploadFileMutation,
   useUploadFilesFieldFileMutation,
+  FeatureFlagKey,
+  FieldMetadataType,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey, FieldMetadataType } from '~/generated/graphql';
 
 export const useUploadAttachmentFile = () => {
   const coreClient = useApolloCoreClient();

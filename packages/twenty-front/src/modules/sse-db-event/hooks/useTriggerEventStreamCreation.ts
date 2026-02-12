@@ -16,7 +16,7 @@ import { print, type ExecutionResult } from 'graphql';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type EventSubscription } from '~/generated/graphql';
+import { type EventSubscription } from '~/generated-metadata/graphql';
 
 export const useTriggerEventStreamCreation = () => {
   const setIsCreatingSseEventStream = useSetRecoilState(

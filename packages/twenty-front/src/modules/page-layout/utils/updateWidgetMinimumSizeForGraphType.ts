@@ -2,7 +2,7 @@ import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { updateLayoutItemConstraints } from '@/page-layout/utils/updateLayoutItemConstraints';
 import { type Layouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
-import { type WidgetConfigurationType } from '~/generated/graphql';
+import { type WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const updateWidgetMinimumSizeForGraphType = ({
   configurationType,

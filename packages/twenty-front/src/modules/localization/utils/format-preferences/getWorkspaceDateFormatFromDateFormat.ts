@@ -1,5 +1,5 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { WorkspaceMemberDateFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberDateFormatEnum } from '~/generated-metadata/graphql';
 
 export const getWorkspaceDateFormatFromDateFormat = (
   dateFormat: DateFormat,

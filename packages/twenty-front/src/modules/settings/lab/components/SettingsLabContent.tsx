@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Card } from 'twenty-ui/layout';
-import { type FeatureFlagKey } from '~/generated/graphql';
+import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCardGrid = styled.div`
   display: grid;

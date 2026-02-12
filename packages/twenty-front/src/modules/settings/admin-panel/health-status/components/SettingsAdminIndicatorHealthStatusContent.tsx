@@ -2,7 +2,7 @@ import { SettingsAdminConnectedAccountHealthStatus } from '@/settings/admin-pane
 import { SettingsAdminJsonDataIndicatorHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus';
 import { SettingsAdminWorkerHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus';
 import { useParams } from 'react-router-dom';
-import { HealthIndicatorId } from '~/generated/graphql';
+import { HealthIndicatorId } from '~/generated-metadata/graphql';
 
 export const SettingsAdminIndicatorHealthStatusContent = () => {
   const { indicatorId } = useParams();

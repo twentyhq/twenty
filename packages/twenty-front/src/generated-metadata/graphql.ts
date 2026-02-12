@@ -693,6 +693,38 @@ export type ClientAiModelConfig = {
   provider: ModelProvider;
 };
 
+export type ClientConfig = {
+  __typename?: 'ClientConfig';
+  aiModels: Array<ClientAiModelConfig>;
+  allowRequestsToTwentyIcons: Scalars['Boolean'];
+  analyticsEnabled: Scalars['Boolean'];
+  api: ApiConfig;
+  appVersion?: Maybe<Scalars['String']>;
+  authProviders: AuthProviders;
+  billing: Billing;
+  calendarBookingPageId?: Maybe<Scalars['String']>;
+  canManageFeatureFlags: Scalars['Boolean'];
+  captcha: Captcha;
+  chromeExtensionId?: Maybe<Scalars['String']>;
+  defaultSubdomain?: Maybe<Scalars['String']>;
+  frontDomain: Scalars['String'];
+  isAttachmentPreviewEnabled: Scalars['Boolean'];
+  isClickHouseConfigured: Scalars['Boolean'];
+  isCloudflareIntegrationEnabled: Scalars['Boolean'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean'];
+  isEmailVerificationRequired: Scalars['Boolean'];
+  isGoogleCalendarEnabled: Scalars['Boolean'];
+  isGoogleMessagingEnabled: Scalars['Boolean'];
+  isImapSmtpCaldavEnabled: Scalars['Boolean'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean'];
+  isMultiWorkspaceEnabled: Scalars['Boolean'];
+  publicFeatureFlags: Array<PublicFeatureFlag>;
+  sentry: Sentry;
+  signInPrefilled: Scalars['Boolean'];
+  support: Support;
+};
+
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;

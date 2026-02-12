@@ -9,7 +9,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useGraphWidgetQueryCommon = ({
   objectMetadataItemId,

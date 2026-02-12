@@ -1,8 +1,10 @@
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOneLogicFunctionQuery } from '~/generated-metadata/graphql';
-import { type LogicFunction } from '~/generated/graphql';
+import {
+  type FindOneLogicFunctionQuery,
+  type LogicFunction,
+} from '~/generated-metadata/graphql';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 
 export type LogicFunctionNewFormValues = {

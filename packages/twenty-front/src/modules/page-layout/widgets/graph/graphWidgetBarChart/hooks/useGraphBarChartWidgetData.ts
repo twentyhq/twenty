@@ -20,7 +20,7 @@ import {
   type BarChartConfiguration,
   type BarChartLayout,
   type BarChartSeries,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type UseGraphBarChartWidgetDataProps = {
   objectMetadataItemId: string;
@@ -156,7 +156,7 @@ export const useGraphBarChartWidgetData = ({
     layout: effectiveQueryData?.barChartData?.layout,
     groupMode: getEffectiveGroupMode(
       configuration.groupMode,
-      configuration.secondaryAxisGroupByFieldMetadataId,
+      isDefined(configuration.secondaryAxisGroupByFieldMetadataId),
     ),
     hasTooManyGroups:
       effectiveQueryData?.barChartData?.hasTooManyGroups ?? false,

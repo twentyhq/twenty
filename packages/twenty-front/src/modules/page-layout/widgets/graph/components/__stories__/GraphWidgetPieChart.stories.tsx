@@ -8,7 +8,7 @@ import {
   AggregateOperations,
   WidgetConfigurationType,
   type PieChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';

@@ -4,7 +4,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 /**
  * Default WorkflowVersion PageLayout.

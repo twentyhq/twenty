@@ -1,7 +1,7 @@
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { convertViewFilterValueToString } from 'twenty-shared/utils';
-import { type CoreViewFilter } from '~/generated/graphql';
+import { type CoreViewFilter } from '~/generated-metadata/graphql';
 
 export const convertCoreViewFilterToViewFilter = (
   coreViewFilter: Pick<
@@ -22,7 +22,7 @@ export const convertCoreViewFilterToViewFilter = (
     operand: coreViewFilter.operand,
     value: convertViewFilterValueToString(coreViewFilter.value),
     displayValue: convertViewFilterValueToString(coreViewFilter.value),
-    viewFilterGroupId: coreViewFilter.viewFilterGroupId,
+    viewFilterGroupId: coreViewFilter.viewFilterGroupId ?? undefined,
     positionInViewFilterGroup: coreViewFilter.positionInViewFilterGroup,
     subFieldName: coreViewFilter.subFieldName as CompositeFieldSubFieldName,
   };

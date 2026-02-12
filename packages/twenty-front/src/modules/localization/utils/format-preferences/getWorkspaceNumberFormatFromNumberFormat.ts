@@ -1,5 +1,5 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberNumberFormatEnum } from '~/generated-metadata/graphql';
 
 export const getWorkspaceNumberFormatFromNumberFormat = (
   numberFormat: NumberFormat,

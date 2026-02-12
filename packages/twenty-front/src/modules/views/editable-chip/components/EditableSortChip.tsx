@@ -4,7 +4,7 @@ import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsert
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {
   recordSort: RecordSort;

@@ -1,4 +1,4 @@
-import { type PageLayoutType } from '~/generated/graphql';
+import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 import { type TargetRecordIdentifier } from './TargetRecordIdentifier';
 

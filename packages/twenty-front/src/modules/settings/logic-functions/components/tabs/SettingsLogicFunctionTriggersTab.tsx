@@ -7,11 +7,11 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { type LogicFunction } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { Tag } from 'twenty-ui/components';
+import { type LogicFunction } from '~/generated-metadata/graphql';
 
 export const StyledRouteTriggerTableRow = styled(TableRow)`
   grid-template-columns: 1fr 120px 120px;

@@ -1,5 +1,5 @@
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
-import { BarChartGroupMode } from '~/generated/graphql';
+import { BarChartGroupMode } from '~/generated-metadata/graphql';
 
 describe('getEffectiveGroupMode', () => {
   describe('without secondary axis grouping', () => {

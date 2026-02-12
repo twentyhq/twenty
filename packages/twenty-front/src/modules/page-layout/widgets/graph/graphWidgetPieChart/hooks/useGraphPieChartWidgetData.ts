@@ -14,7 +14,7 @@ import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 type UseGraphPieChartWidgetDataProps = {
   objectMetadataItemId: string;

@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type Maybe } from '~/generated/graphql';
+import { type Maybe } from '~/generated-metadata/graphql';
 
 export const sortNullsFirst = (
   fieldValueA: Maybe<unknown>,
