@@ -22,5 +22,17 @@ export const computeStandardPersonViews = (
         icon: 'IconList',
       },
     }),
+    personRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        name: 'Person Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };
