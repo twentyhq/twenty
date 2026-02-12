@@ -6687,10 +6687,10 @@ export type TwentyUiMenuItemDraggableProperties = {
 export const TwentyUiMenuItemDraggableElement = createRemoteElement<
   TwentyUiMenuItemDraggableProperties,
   Record<string, never>,
-  { LeftIcon: true; LeftComponent: true; text: true },
+  { LeftIcon: true; text: true },
   Record<string, never>
 >({
-  slots: ['LeftIcon', 'LeftComponent', 'text'],
+  slots: ['LeftIcon', 'text'],
   properties: {
     withIconContainer: { type: Boolean },
     accent: { type: String },
@@ -6997,6 +6997,40 @@ export const TwentyUiMenuItemToggleElement = createRemoteElement<
     onToggleChange: { type: Function },
     toggleSize: { type: String },
     disabled: { type: Boolean },
+  },
+});
+
+export type TwentyUiMenuItemIconProperties = {
+  withContainer?: boolean;
+};
+
+export const TwentyUiMenuItemIconElement = createRemoteElement<
+  TwentyUiMenuItemIconProperties,
+  Record<string, never>,
+  { Icon: true },
+  Record<string, never>
+>({
+  slots: ['Icon'],
+  properties: {
+    withContainer: { type: Boolean },
+  },
+});
+
+export type TwentyUiMenuItemIconWithGripSwapProperties = {
+  withIconContainer?: boolean;
+  gripIconColor: string;
+};
+
+export const TwentyUiMenuItemIconWithGripSwapElement = createRemoteElement<
+  TwentyUiMenuItemIconWithGripSwapProperties,
+  Record<string, never>,
+  { LeftIcon: true },
+  Record<string, never>
+>({
+  slots: ['LeftIcon'],
+  properties: {
+    withIconContainer: { type: Boolean },
+    gripIconColor: { type: String },
   },
 });
 
@@ -7314,6 +7348,11 @@ customElements.define(
   'twenty-ui-menu-item-toggle',
   TwentyUiMenuItemToggleElement,
 );
+customElements.define('twenty-ui-menu-item-icon', TwentyUiMenuItemIconElement);
+customElements.define(
+  'twenty-ui-menu-item-icon-with-grip-swap',
+  TwentyUiMenuItemIconWithGripSwapElement,
+);
 customElements.define(
   'twenty-ui-menu-item-left-content',
   TwentyUiMenuItemLeftContentElement,
@@ -7530,6 +7569,12 @@ declare global {
     >;
     'twenty-ui-menu-item-toggle': InstanceType<
       typeof TwentyUiMenuItemToggleElement
+    >;
+    'twenty-ui-menu-item-icon': InstanceType<
+      typeof TwentyUiMenuItemIconElement
+    >;
+    'twenty-ui-menu-item-icon-with-grip-swap': InstanceType<
+      typeof TwentyUiMenuItemIconWithGripSwapElement
     >;
     'twenty-ui-menu-item-left-content': InstanceType<
       typeof TwentyUiMenuItemLeftContentElement

@@ -96,6 +96,7 @@ export const FieldsConfigurationSectionEditor = ({
           text={section.title}
           gripMode="always"
           isIconDisplayedOnHoverOnly={false}
+          withIconContainer
           iconButtons={[
             {
               Icon: IconDotsVertical,

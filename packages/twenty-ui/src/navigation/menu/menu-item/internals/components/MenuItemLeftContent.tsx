@@ -10,6 +10,7 @@ import {
 } from '@ui/display';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconWithGripSwap } from './MenuItemIconWithGripSwap';
+import { StyledIconContainer } from './StyledIconContainer';
 import {
   StyledDraggableItem,
   StyledMenuItemContextualText,
@@ -65,15 +66,26 @@ export const MenuItemLeftContent = ({
 
   return (
     <StyledMenuItemLeftContent className={className}>
-      {gripMode === 'always' && (
-        <StyledDraggableItem>
-          <IconGripVertical
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={gripIconColor}
-          />
-        </StyledDraggableItem>
-      )}
+      {gripMode === 'always' &&
+        (withIconContainer ? (
+          <StyledIconContainer>
+            <StyledDraggableItem>
+              <IconGripVertical
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+                color={gripIconColor}
+              />
+            </StyledDraggableItem>
+          </StyledIconContainer>
+        ) : (
+          <StyledDraggableItem>
+            <IconGripVertical
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={gripIconColor}
+            />
+          </StyledDraggableItem>
+        ))}
       {gripMode === 'onHover' ? (
         <MenuItemIconWithGripSwap
           LeftIcon={LeftIcon}

@@ -161,6 +161,8 @@ import {
   MenuItemSelectTag,
   MenuItemSuggestion,
   MenuItemToggle,
+  MenuItemIcon,
+  MenuItemIconWithGripSwap,
   MenuItemLeftContent,
   NavigationBar,
   NavigationBarItem,
@@ -188,6 +190,8 @@ import {
   type MenuItemSelectTagProps,
   type MenuItemSuggestionProps,
   type MenuItemToggleProps,
+  type MenuItemIconProps,
+  type MenuItemIconWithGripSwapProps,
   type MenuItemLeftContentProps,
   type NavigationBarProps,
   type NavigationBarItemProps,
@@ -1212,6 +1216,16 @@ const TwentyUiMenuItemToggleWrapper = (
 ) => {
   return React.createElement(MenuItemToggle, filterUiProps(props));
 };
+const TwentyUiMenuItemIconWrapper = (
+  props: MenuItemIconProps & { children?: React.ReactNode },
+) => {
+  return React.createElement(MenuItemIcon, filterUiProps(props));
+};
+const TwentyUiMenuItemIconWithGripSwapWrapper = (
+  props: MenuItemIconWithGripSwapProps & { children?: React.ReactNode },
+) => {
+  return React.createElement(MenuItemIconWithGripSwap, filterUiProps(props));
+};
 const TwentyUiMenuItemLeftContentWrapper = (
   props: MenuItemLeftContentProps & { children?: React.ReactNode },
 ) => {
@@ -1545,6 +1559,14 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
   [
     'twenty-ui-menu-item-toggle',
     createRemoteComponentRenderer(TwentyUiMenuItemToggleWrapper),
+  ],
+  [
+    'twenty-ui-menu-item-icon',
+    createRemoteComponentRenderer(TwentyUiMenuItemIconWrapper),
+  ],
+  [
+    'twenty-ui-menu-item-icon-with-grip-swap',
+    createRemoteComponentRenderer(TwentyUiMenuItemIconWithGripSwapWrapper),
   ],
   [
     'twenty-ui-menu-item-left-content',

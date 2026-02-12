@@ -2,15 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
 import { type IconComponent, IconGripVertical } from '@ui/display';
-
-const StyledIconContainer = styled.div`
-  align-items: flex-start;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
+import { StyledIconContainer } from './StyledIconContainer';
 
 const StyledIconSwapContainer = styled.div`
   position: relative;

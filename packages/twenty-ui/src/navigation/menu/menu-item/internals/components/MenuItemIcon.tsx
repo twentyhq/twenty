@@ -1,16 +1,7 @@
 import { useTheme } from '@emotion/react';
 
-import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
-
-const StyledIconContainer = styled.div`
-  align-items: flex-start;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
+import { StyledIconContainer } from './StyledIconContainer';
 
 export type MenuItemIconProps = {
   Icon: IconComponent | null | undefined;
