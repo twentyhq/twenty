@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const prefetchNavigationMenuItemsState = createState<

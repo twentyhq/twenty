@@ -1,5 +1,5 @@
 import { type ApiConfig } from '~/generated-metadata/graphql';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const apiConfigState = createState<ApiConfig | null>({
   key: 'apiConfigState',

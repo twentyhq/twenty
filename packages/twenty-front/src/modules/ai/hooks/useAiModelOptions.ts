@@ -1,14 +1,14 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useRecoilValue } from 'recoil';
 import { type SelectOption } from 'twenty-ui/input';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useAiModelOptions = (
   includeDeprecated = false,
 ): SelectOption<string>[] => {
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
 
   return aiModels
     .filter((model) => includeDeprecated || !model.deprecated)
@@ -24,7 +24,7 @@ export const useAiModelOptions = (
 };
 
 export const useAiModelLabel = (modelId: string | undefined): string => {
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
 
   if (!modelId) {
     return '';
