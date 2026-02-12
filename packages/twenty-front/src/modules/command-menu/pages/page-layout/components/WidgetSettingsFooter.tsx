@@ -1,4 +1,3 @@
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -14,12 +13,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconTrash } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const WidgetSettingsFooter = () => {
+export const WidgetSettingsFooter = ({
+  pageLayoutId,
+}: {
+  pageLayoutId: string;
+}) => {
   const dropdownId = useId();
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
-
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { duplicateWidget } = useDuplicatePageLayoutWidget(pageLayoutId);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
   const editingWidgetId = useRecoilComponentValue(

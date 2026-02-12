@@ -19,6 +19,7 @@ const StyledContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 export const SettingsItemTypeTag = ({

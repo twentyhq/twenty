@@ -1,10 +1,19 @@
 import { atom } from 'recoil';
 
-export type AgentChatUsageState = {
+export type AgentChatLastMessageUsage = {
   inputTokens: number;
   outputTokens: number;
-  totalTokens: number;
+  cachedInputTokens: number;
+  inputCredits: number;
+  outputCredits: number;
+};
+
+export type AgentChatUsageState = {
+  lastMessage: AgentChatLastMessageUsage | null;
+  conversationSize: number;
   contextWindowTokens: number;
+  inputTokens: number;
+  outputTokens: number;
   inputCredits: number;
   outputCredits: number;
 };

@@ -17,10 +17,6 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 * Özel tetikleyicilerle mantık fonksiyonları oluşturun
 * Aynı uygulamayı birden çok çalışma alanına dağıtın
 
-**Yakında:**
-
-* Özel UI düzenleri ve bileşenleri
-
 ## Ön Gereksinimler
 
 * Node.js 24+ ve Yarn 4
@@ -95,81 +91,54 @@ my-twenty-app/
   README.md
   public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
   src/
-    application.config.ts          # Gerekli - ana uygulama yapılandırması
-    default-function.role.ts       # Sunucusuz işlevler için varsayılan rol
-    hello-world.function.ts        # Örnek sunucusuz işlev
-    hello-world.front-component.tsx # Örnek ön uç bileşeni
-    // varlıklarınız (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### Sözleşme-öncelikli yapılandırma
-
-Uygulamalar, varlıkların dosya sonekiyle algılandığı **sözleşme-öncelikli yapılandırma** yaklaşımını kullanır. Bu, `src/app/` klasörü içinde esnek bir düzenlemeye olanak tanır:
-
-| Dosya soneki            | Varlık türü                   |
-| ----------------------- | ----------------------------- |
-| `*.object.ts`           | Özel nesne tanımları          |
-| `*.function.ts`         | Sunucusuz fonksiyon tanımları |
-| `*.front-component.tsx` | Front component definitions   |
-| `*.role.ts`             | Rol tanımları                 |
-
-### Desteklenen klasör düzenleri
-
-Varlıklarınızı şu desenlerden herhangi birine göre düzenleyebilirsiniz:
-
-**Geleneksel (türe göre):**
-
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**Özelliğe dayalı:**
-
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**Düz:**
-
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # Gerekli - ana uygulama yapılandırması
+  ├── roles/
+  │   └── default-role.ts               # Mantık işlevleri için varsayılan rol
+  ├── logic-functions/
+  │   └── hello-world.ts                # Örnek mantık işlevi
+  └── front-components/
+      └── hello-world.tsx               # Örnek ön uç bileşeni
 ```
 
 Genel hatlarıyla:
 
-* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve yerel `twenty` CLI’sine yetki devreden `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` ve `auth:login` gibi betiklerin yanı sıra `twenty-sdk` ekler.
+* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve `twenty-sdk` ile `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` gibi betikleri ve yerel `twenty` CLI’sine yetki devreden kimlik doğrulama komutlarını ekler.
 * **.gitignore**: `node_modules`, `.yarn`, `generated/` (türlendirilmiş istemci), `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Proje tarafından kullanılan Yarn 4 araç zincirini kilitler ve yapılandırır.
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
 * **eslint.config.mjs** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
 * **README.md**: Uygulama kökünde temel talimatların yer aldığı kısa bir README.
 * **public/**: Uygulamanızla birlikte sunulacak genel varlıkları (görseller, yazı tipleri, statik dosyalar) depolamak için bir klasör. Buraya yerleştirilen dosyalar senkronizasyon sırasında yüklenir ve çalışma zamanında erişilebilir olur.
-* **src/**: Uygulamanızı kod olarak tanımladığınız ana yer:
-  * `application.config.ts`: Uygulamanız için genel yapılandırma (meta veriler ve çalışma zamanı bağlantıları). Aşağıda "Uygulama yapılandırması"na bakın.
-  * `*.role.ts`: Mantık fonksiyonlarınız tarafından kullanılan rol tanımları. Aşağıda "Varsayılan fonksiyon rolü"ne bakın.
-  * `*.object.ts`: Özel nesne tanımları.
-  * `*.function.ts`: Mantık fonksiyon tanımları.
-  * `*.front-component.tsx`: Ön bileşen tanımları.
+* **src/**: Uygulamanızı kod olarak tanımladığınız ana yer
+
+### Varlık algılama
+
+SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** çağrılarını arayarak ayrıştırıp varlıkları algılar. Her varlık türünün, `twenty-sdk` tarafından dışa aktarılan karşılık gelen bir yardımcı fonksiyonu vardır:
+
+| Yardımcı fonksiyon       | Varlık türü                              |
+| ------------------------ | ---------------------------------------- |
+| `defineObject()`         | Özel nesne tanımları                     |
+| `defineLogicFunction()`  | Mantık fonksiyon tanımları               |
+| `defineFrontComponent()` | Front component definitions              |
+| `defineRole()`           | Rol tanımları                            |
+| `defineField()`          | Mevcut nesneler için alan genişletmeleri |
+
+<Note>
+  **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
+</Note>
+
+Algılanan bir varlığa örnek:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
@@ -215,16 +184,18 @@ twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşla
 
 ### Yardımcı fonksiyonlar
 
-SDK, uygulama varlıklarınızı tanımlamak için yerleşik doğrulamaya sahip dört yardımcı fonksiyon sunar:
+SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağlar. [Varlık algılama](#entity-detection) bölümünde açıklandığı gibi, varlıklarınızın algılanması için `export default define<Entity>({...})` kullanmalısınız:
 
-| Fonksiyon             | Amaç                                           |
-| --------------------- | ---------------------------------------------- |
-| `defineApplication()` | Uygulama meta verilerini yapılandırın          |
-| `defineObject()`      | Alanlara sahip özel nesneler tanımlayın        |
-| `defineFunction()`    | İşleyicilerle mantık fonksiyonları tanımlayın  |
-| `defineRole()`        | Rol izinlerini ve nesne erişimini yapılandırın |
+| Fonksiyon                | Amaç                                                                      |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `defineApplication()`    | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet) |
+| `defineObject()`         | Alanlara sahip özel nesneler tanımlayın                                   |
+| `defineLogicFunction()`  | İşleyicilerle mantık fonksiyonları tanımlayın                             |
+| `defineFrontComponent()` | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                |
+| `defineRole()`           | Rol izinlerini ve nesne erişimini yapılandırın                            |
+| `defineField()`          | Mevcut nesneleri ek alanlarla genişletin                                  |
 
-Bu fonksiyonlar, yapılandırmanızı çalışma anında doğrular ve daha iyi IDE otomatik tamamlama ve tür güvenliği sağlar.
+Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
 ### Nesnelerin tanımlanması
 
@@ -311,9 +282,9 @@ export default defineObject({
   **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, `name`, `createdAt`, `updatedAt`, `createdBy`, `position` ve `deletedAt` gibi standart alanları otomatik olarak ekler. Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
 </Note>
 
-### Uygulama yapılandırması (application.config.ts)
+### Uygulama yapılandırması (application-config.ts)
 
-Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` dosyası vardır:
+Her uygulamanın aşağıdakileri açıklayan tek bir `application-config.ts` dosyası vardır:
 
 * **Uygulamanın kim olduğu**: tanımlayıcılar, görünen ad ve açıklama.
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
@@ -322,9 +293,9 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` do
 Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +310,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +318,11 @@ Notlar:
 
 * `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
-* `roleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
+* `defaultRoleUniversalIdentifier`, rol dosyasıyla eşleşmelidir (aşağıya bakın).
 
 #### Roller ve izinler
 
-Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `roleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
+Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application-config.ts` içindeki `defaultRoleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonlarının kullandığı varsayılan rolü belirtir.
 
 * `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
 * Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
@@ -362,7 +333,7 @@ Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri
 Yeni bir uygulama oluşturduğunuzda CLI ayrıca varsayılan bir rol dosyası da oluşturur. Yerleşik doğrulamayla roller tanımlamak için `defineRole()` kullanın:
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -401,10 +372,10 @@ export default defineRole({
 });
 ```
 
-Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `roleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
+Bu rolün `universalIdentifier` değeri daha sonra `application-config.ts` içinde `defaultRoleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
 
 * **\*.role.ts**, varsayılan fonksiyon rolünün neler yapabileceğini tanımlar.
-* **application.config.ts** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
+* **application-config.ts**, fonksiyonlarınızın izinlerini devralması için bu role işaret eder.
 
 Notlar:
 
@@ -415,11 +386,11 @@ Notlar:
 
 ### Mantık fonksiyon yapılandırması ve giriş noktası
 
-Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineFunction()` kullanır. Otomatik algılama için `*.function.ts` dosya soneğini kullanın.
+Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -439,7 +410,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -515,7 +486,7 @@ Notlar:
 Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında, AWS HTTP API v2 formatını izleyen bir `RoutePayload` nesnesi alır. Türü `twenty-sdk` içinden içe aktarın:
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -545,7 +516,7 @@ const handler = async (event: RoutePayload) => {
 Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları mantık fonksiyonunuza **aktarılmaz**. Belirli başlıklara erişmek için bunları açıkça `forwardedRequestHeaders` dizisinde listeleyin:
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -580,8 +551,45 @@ const handler = async (event: RoutePayload) => {
 
 Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 
-* **Şablondan**: `yarn entity:add` çalıştırın ve yeni bir fonksiyon ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
-* **Manuel**: Yeni bir `*.function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineFunction()` kullanın.
+* **Şablondan**: `yarn entity:add` çalıştırın ve yeni bir mantık fonksiyonu ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
+* **Manuel**: Yeni bir `*.logic-function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineLogicFunction()` kullanın.
+
+### Ön uç bileşenleri
+
+Ön uç bileşenleri, Twenty'nin kullanıcı arayüzünde görüntülenen özel React bileşenleri oluşturmanıza olanak tanır. Yerleşik doğrulamayla bileşenleri tanımlamak için `defineFrontComponent()` kullanın:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Önemli noktalar:
+
+* Ön uç bileşenleri, Twenty içinde yalıtılmış bağlamlarda görüntülenen React bileşenleridir.
+* Otomatik algılama için `*.front-component.tsx` dosya soneğini kullanın.
+* `component` alanı, React bileşeninize referans verir.
+* Bileşenler, `yarn app:dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
+
+Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
+
+* **Şablondan**: `yarn entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
+* **Manuel**: Yeni bir `*.front-component.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
 ### Oluşturulmuş türlendirilmiş istemci
 
@@ -606,12 +614,12 @@ Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülme
 Notlar:
 
 * Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
-* API anahtarının izinleri, `application.config.ts` içinde `roleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
-* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `roleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
+* API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
+* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `defaultRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
 
 ### Hello World örneği
 
-Nesneleri, fonksiyonları ve birden çok tetikleyiciyi gösteren minimal, uçtan uca bir örneği [buradan](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world) inceleyin:
+Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve birden çok tetikleyiciyi gösteren minimal, uçtan uca bir örneği [buradan](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world) inceleyin:
 
 ## Manuel kurulum (scaffolder olmadan)
 

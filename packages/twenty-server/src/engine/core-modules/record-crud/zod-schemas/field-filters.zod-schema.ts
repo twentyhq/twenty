@@ -44,6 +44,7 @@ export const generateFieldFilterZodSchema = (
             .optional()
             .describe('Case-insensitive pattern match (use % for wildcards)'),
           startsWith: z.string().optional().describe('Starts with'),
+          endsWith: z.string().optional().describe('Ends with'),
           is: NullCheckEnum.optional().describe('Is null or not null'),
         })
         .optional()
@@ -256,6 +257,7 @@ export const generateFieldFilterZodSchema = (
                 .string()
                 .optional()
                 .describe('First name starts with'),
+              endsWith: z.string().optional().describe('First name ends with'),
               is: NullCheckEnum.optional().describe(
                 'First name is null or not null',
               ),
@@ -278,6 +280,7 @@ export const generateFieldFilterZodSchema = (
                 .string()
                 .optional()
                 .describe('Last name starts with'),
+              endsWith: z.string().optional().describe('Last name ends with'),
               is: NullCheckEnum.optional().describe(
                 'Last name is null or not null',
               ),
@@ -477,6 +480,7 @@ export const generateFieldFilterZodSchema = (
       return null;
 
     case FieldMetadataType.RAW_JSON:
+    case FieldMetadataType.FILES:
       return z
         .object({
           eq: z.string().optional().describe('Raw JSON equals'),

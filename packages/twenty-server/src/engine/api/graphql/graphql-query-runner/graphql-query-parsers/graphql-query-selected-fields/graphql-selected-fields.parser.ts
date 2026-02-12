@@ -9,6 +9,7 @@ import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -136,10 +137,10 @@ export class GraphqlQuerySelectedFieldsParser {
           FieldMetadataType.MORPH_RELATION,
         )
       ) {
-        const targetObjectMetadata =
-          this.flatObjectMetadataMaps.byId[
-            fieldMetadata.relationTargetObjectMetadataId
-          ];
+        const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+          flatEntityMaps: this.flatObjectMetadataMaps,
+        });
 
         if (
           !fieldMetadata.settings?.relationType ||

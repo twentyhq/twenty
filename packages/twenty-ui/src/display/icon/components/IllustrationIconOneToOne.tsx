@@ -4,7 +4,7 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconOneToOneRaw from '@assets/icons/illustration-one-to-one.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconOneToOneProps = Pick<IconComponentProps, 'size'>;
+export type IllustrationIconOneToOneProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconOneToOne = (
   props: IllustrationIconOneToOneProps,

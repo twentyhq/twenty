@@ -1,11 +1,11 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
-import { type BarDatum } from '@nivo/bar';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export type BarChartTickConfig = {
   categoryTickValues: (string | number)[];
@@ -26,7 +26,7 @@ export const getBarChartTickConfig = ({
 }: {
   width: number;
   height: number;
-  data: BarDatum[];
+  data: BarChartDatum[];
   indexBy: string;
   axisFontSize: number;
   layout: BarChartLayout;

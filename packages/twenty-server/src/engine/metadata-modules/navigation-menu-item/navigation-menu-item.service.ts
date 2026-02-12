@@ -64,7 +64,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    return Object.values(flatNavigationMenuItemMaps.byId)
+    return Object.values(flatNavigationMenuItemMaps.byUniversalIdentifier)
       .filter(
         (item): item is NonNullable<typeof item> =>
           isDefined(item) &&
@@ -148,13 +148,20 @@ export class NavigationMenuItemService {
         { workspaceId },
       );
 
-    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps'],
-        },
-      );
+    const {
+      flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatNavigationMenuItemMaps',
+          'flatObjectMetadataMaps',
+          'flatViewMaps',
+        ],
+      },
+    );
 
     const normalizedInput: CreateNavigationMenuItemInput = {
       ...input,
@@ -168,8 +175,10 @@ export class NavigationMenuItemService {
       fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
         createNavigationMenuItemInput: normalizedInput,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+        flatObjectMetadataMaps,
+        flatViewMaps,
       });
 
     const validateAndBuildResult =
@@ -184,6 +193,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -223,6 +234,11 @@ export class NavigationMenuItemService {
     authApiKeyId?: string;
     authApplicationId?: string;
   }): Promise<NavigationMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -266,6 +282,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -305,6 +323,11 @@ export class NavigationMenuItemService {
     authApiKeyId?: string;
     authApplicationId?: string;
   }): Promise<NavigationMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -339,6 +362,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -408,7 +433,10 @@ export class NavigationMenuItemService {
         },
       );
 
-    const objectMetadata = flatObjectMetadataMaps.byId[targetObjectMetadataId];
+    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: targetObjectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(objectMetadata)) {
       return null;

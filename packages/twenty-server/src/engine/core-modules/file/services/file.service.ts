@@ -33,7 +33,7 @@ export class FileService {
   ): Promise<Readable> {
     const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
-    return await this.fileStorageService.readFile({
+    return await this.fileStorageService.readFileLegacy({
       filePath: `${workspaceFolderPath}/${filename}`,
     });
   }
@@ -85,7 +85,7 @@ export class FileService {
   }) {
     const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
-    return await this.fileStorageService.delete({
+    return await this.fileStorageService.deleteLegacy({
       folderPath: workspaceFolderPath,
       filename,
     });
@@ -95,7 +95,7 @@ export class FileService {
     const workspaceFolderPath = `workspace-${workspaceId}`;
 
     const isWorkspaceFolderFound =
-      await this.fileStorageService.checkFolderExists({
+      await this.fileStorageService.checkFolderExistsLegacy({
         folderPath: workspaceFolderPath,
       });
 
@@ -103,7 +103,7 @@ export class FileService {
       return;
     }
 
-    return await this.fileStorageService.delete({
+    return await this.fileStorageService.deleteLegacy({
       folderPath: workspaceFolderPath,
     });
   }
@@ -120,7 +120,7 @@ export class FileService {
 
     const toFilename = uuidV4() + extname(fromFilename);
 
-    await this.fileStorageService.copy({
+    await this.fileStorageService.copyLegacy({
       from: {
         folderPath: `${fromWorkspaceFolderPath}/${subFolder}`,
         filename: fromFilename,

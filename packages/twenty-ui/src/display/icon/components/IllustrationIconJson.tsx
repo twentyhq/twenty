@@ -4,7 +4,7 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconJsonRaw from '@assets/icons/illustration-json.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconJsonProps = Pick<IconComponentProps, 'size'>;
+export type IllustrationIconJsonProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconJson = (props: IllustrationIconJsonProps) => {
   const theme = useTheme();

@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const PERSON_FLAT_FIELDS_MOCK = {
   name: getFlatFieldMetadataMock({
     id: 'f410c1cd-2523-4802-be8e-1acc852b4b1a',
-    standardId: '20202020-3875-44d5-8c33-a6239011cab8',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.FULL_NAME,
     name: 'name',
@@ -36,7 +35,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   emails: getFlatFieldMetadataMock({
     id: '012dd567-b7d9-4088-a0c1-4ded96a25e35',
-    standardId: '20202020-3c51-43fa-8b6e-af39e29368ab',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.EMAILS,
     name: 'emails',
@@ -60,7 +58,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   linkedinLink: getFlatFieldMetadataMock({
     id: '86e35da6-151d-47e3-8745-bb1e652b789c',
-    standardId: '20202020-f1af-48f7-893b-2007a73dd508',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.LINKS,
     name: 'linkedinLink',
@@ -88,7 +85,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   xLink: getFlatFieldMetadataMock({
     id: 'c9d36790-a449-4108-91e1-c6ad6e3379fb',
-    standardId: '20202020-8fc2-487c-b84a-55a99b145cfd',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.LINKS,
     name: 'xLink',
@@ -116,7 +112,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   jobTitle: getFlatFieldMetadataMock({
     id: 'ab82c659-b553-4317-9708-998f6884c72e',
-    standardId: '20202020-b0d0-415a-bef9-640a26dacd9b',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.TEXT,
     name: 'jobTitle',
@@ -140,7 +135,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   phones: getFlatFieldMetadataMock({
     id: '4955e9cb-a740-49fa-9c91-69ec74a6b3df',
-    standardId: '20202020-0638-448e-8825-439134618022',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.PHONES,
     name: 'phones',
@@ -169,7 +163,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   city: getFlatFieldMetadataMock({
     id: '61ad7592-6465-4a24-a863-0320cf7830a6',
-    standardId: '20202020-5243-4ffb-afc5-2c675da41346',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.TEXT,
     name: 'city',
@@ -193,7 +186,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   avatarUrl: getFlatFieldMetadataMock({
     id: '05e46775-93e9-46c4-8b6f-94829045b1ad',
-    standardId: '20202020-b8a6-40df-961c-373dc5d2ec21',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.TEXT,
     name: 'avatarUrl',
@@ -217,7 +209,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   position: getFlatFieldMetadataMock({
     id: '5162d850-29dd-474e-982b-24257b57fd46',
-    standardId: '20202020-fcd5-4231-aff5-fff583eaa0b1',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.POSITION,
     name: 'position',
@@ -241,7 +232,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   createdBy: getFlatFieldMetadataMock({
     id: '1a3de345-4f47-4dc9-b328-61c802efa36e',
-    standardId: '20202020-f6ab-4d98-af24-a3d5b664148a',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.ACTOR,
     name: 'createdBy',
@@ -269,7 +259,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   searchVector: getFlatFieldMetadataMock({
     id: '1d7f79d4-7811-45dc-8f9f-5dbd4863d0a1',
-    standardId: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.TS_VECTOR,
     name: 'searchVector',
@@ -293,7 +282,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   id: getFlatFieldMetadataMock({
     id: 'd9b3e129-49ce-4843-a813-9d16f2239472',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -317,7 +305,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '9fec2460-6fd2-4aaf-8781-78893ba61d6d',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -341,7 +328,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '6a00c4b7-d77c-4268-85e7-9e3a597bd0e7',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -365,7 +351,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: 'a9f5469d-d7ff-42f6-b3a7-399c8ab8b468',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -389,7 +374,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   company: getFlatFieldMetadataMock({
     id: 'ee247ca6-fdaa-4a56-87a2-730cf84f5f29',
-    standardId: '20202020-e2f3-448e-b34c-2d625f0025fd',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'company',
@@ -417,7 +401,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   pointOfContactForOpportunities: getFlatFieldMetadataMock({
     id: '7580c1b1-e8f9-480b-bd41-38b20df35777',
-    standardId: '20202020-911b-4a7d-b67b-918aa9a5b33a',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'pointOfContactForOpportunities',
@@ -442,7 +425,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   taskTargets: getFlatFieldMetadataMock({
     id: '9609ca31-215e-47fd-9b3b-ab200acb2fa8',
-    standardId: '20202020-584b-4d3e-88b6-53ab1fa03c3a',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'taskTargets',
@@ -466,7 +448,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   noteTargets: getFlatFieldMetadataMock({
     id: '60388ed8-45f6-4fb5-8752-81c73e13f4ab',
-    standardId: '20202020-c8fc-4258-8250-15905d3fcfec',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'noteTargets',
@@ -490,7 +471,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   favorites: getFlatFieldMetadataMock({
     id: 'a1a72bee-1c15-4598-ba23-67ba8e3e505d',
-    standardId: '20202020-4073-4117-9cf1-203bcdc91cbd',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'favorites',
@@ -514,7 +494,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   attachments: getFlatFieldMetadataMock({
     id: '367ad117-de09-466c-94f8-ce99d951b5ce',
-    standardId: '20202020-cd97-451f-87fa-bcb789bdbf3a',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'attachments',
@@ -538,7 +517,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   messageParticipants: getFlatFieldMetadataMock({
     id: '22dcab3c-939c-4b8d-bd7c-4c4d58588460',
-    standardId: '20202020-498e-4c61-8158-fa04f0638334',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'messageParticipants',
@@ -562,7 +540,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   calendarEventParticipants: getFlatFieldMetadataMock({
     id: '9e82a873-2988-4d9d-af04-81f2d947f4ec',
-    standardId: '20202020-52ee-45e9-a702-b64b3753e3a9',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'calendarEventParticipants',
@@ -586,7 +563,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   timelineActivities: getFlatFieldMetadataMock({
     id: 'b1457347-545b-4a42-9c68-bc655952229a',
-    standardId: '20202020-a43e-4873-9c23-e522de906ce5',
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RELATION,
     name: 'timelineActivities',
@@ -610,7 +586,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   intro: getFlatFieldMetadataMock({
     id: '94c95bfa-88bc-4271-87c2-08e6df084a15',
-    standardId: null,
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.TEXT,
     name: 'intro',
@@ -634,7 +609,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   whatsapp: getFlatFieldMetadataMock({
     id: 'adc26aa8-d146-49d2-a037-77e15d8b20fc',
-    standardId: null,
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.PHONES,
     name: 'whatsapp',
@@ -663,7 +637,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   workPreference: getFlatFieldMetadataMock({
     id: '421b5788-94dd-40b0-8d5f-6c649d7464c4',
-    standardId: null,
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.MULTI_SELECT,
     name: 'workPreference',
@@ -709,7 +682,6 @@ export const PERSON_FLAT_FIELDS_MOCK = {
   }),
   performanceRating: getFlatFieldMetadataMock({
     id: 'f75b0e71-e34c-4bc9-bb91-55a94127ab82',
-    standardId: null,
     objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     type: FieldMetadataType.RATING,
     name: 'performanceRating',

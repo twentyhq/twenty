@@ -4,7 +4,7 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconTextRaw from '@assets/icons/illustration-text.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconTextProps = Pick<IconComponentProps, 'size'>;
+export type IllustrationIconTextProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconText = (props: IllustrationIconTextProps) => {
   const theme = useTheme();

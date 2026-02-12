@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { useMemo, useRef, useState, type MouseEvent } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -191,7 +191,6 @@ export const SettingsMorphRelationMultiSelect = ({
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
-          placeholderText={t`Select objects...`}
         />
       ) : (
         <Dropdown
@@ -214,7 +213,6 @@ export const SettingsMorphRelationMultiSelect = ({
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
-              placeholderText={t`Select objects...`}
             />
           }
           dropdownComponents={

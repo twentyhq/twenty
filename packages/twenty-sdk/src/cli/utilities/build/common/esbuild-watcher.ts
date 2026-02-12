@@ -1,7 +1,7 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { jsxTransformToRemoteDomWorkerFormatPlugin } from '@/cli/utilities/build/common/front-component-build/jsx-transform-to-remote-dom-worker-format-plugin';
-import { reactGlobalsPlugin } from '@/cli/utilities/build/common/front-component-build/react-globals-plugin';
+import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
+import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -10,7 +10,7 @@ import {
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import * as esbuild from 'esbuild';
 import path from 'path';
-import { OUTPUT_DIR } from 'twenty-shared/application';
+import { OUTPUT_DIR, NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
@@ -38,14 +38,6 @@ export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'twenty-shared/*',
 ];
 
-export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
-  'react-dom',
-  'twenty-sdk',
-  'twenty-sdk/*',
-  'twenty-shared',
-  'twenty-shared/*',
-];
-
 export type EsbuildWatcherConfig = {
   externalModules: string[];
   fileFolder: FileFolder;
@@ -53,6 +45,7 @@ export type EsbuildWatcherConfig = {
   jsx?: 'automatic';
   extraPlugins?: esbuild.Plugin[];
   minify?: boolean;
+  banner?: esbuild.BuildOptions['banner'];
 };
 
 export type EsbuildWatcherOptions = RestartableWatcherOptions & {
@@ -178,6 +171,7 @@ export class EsbuildWatcher implements RestartableWatcher {
       metafile: true,
       logLevel: 'silent',
       minify: this.config.minify,
+      banner: this.config.banner,
       plugins,
     });
 
@@ -214,6 +208,7 @@ export const createLogicFunctionsWatcher = (
       fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
       extraPlugins: [externalPatternsPlugin],
+      banner: NODE_ESM_CJS_BANNER,
     },
   });
 
@@ -226,9 +221,6 @@ export const createFrontComponentsWatcher = (
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
-      extraPlugins: [
-        reactGlobalsPlugin,
-        jsxTransformToRemoteDomWorkerFormatPlugin,
-      ],
+      extraPlugins: getFrontComponentBuildPlugins(),
     },
   });

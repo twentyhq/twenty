@@ -33,16 +33,19 @@ describe('ViewToolsFactory', () => {
   };
 
   const mockFlatObjectMetadataMaps = {
-    byId: {
-      [mockObjectMetadataId]: {
+    byUniversalIdentifier: {
+      'object-universal-id': {
         id: mockObjectMetadataId,
         nameSingular: mockObjectNameSingular,
         namePlural: 'companies',
         labelSingular: 'Company',
         labelPlural: 'Companies',
+        universalIdentifier: 'object-universal-id',
       },
     },
-    idByUniversalIdentifier: {},
+    universalIdentifierById: {
+      [mockObjectMetadataId]: 'object-universal-id',
+    },
     universalIdentifiersByApplicationId: {},
   };
 

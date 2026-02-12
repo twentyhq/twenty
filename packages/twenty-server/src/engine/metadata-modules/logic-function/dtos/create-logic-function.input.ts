@@ -1,4 +1,4 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -7,14 +7,32 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-import { Sources } from 'twenty-shared/types';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
+
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class CreateLogicFunctionInput {
+export class CreateLogicFunction {
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
   @IsString()
   @IsNotEmpty()
   @Field()
@@ -32,42 +50,48 @@ export class CreateLogicFunctionInput {
   @IsOptional()
   timeoutSeconds?: number;
 
-  @HideField()
-  applicationId?: string;
-
-  @HideField()
-  universalIdentifier?: string;
-
-  @HideField()
-  logicFunctionLayerId?: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @Field(() => graphqlTypeJson, { nullable: false })
   @IsObject()
-  @IsOptional()
-  code?: Sources;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  handlerName?: string;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  sourceHandlerPath?: string;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  builtHandlerPath?: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  toolInputSchema?: object;
+  toolInputSchema: object;
 
   @IsBoolean()
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
+
+  @IsBoolean()
+  @Field({ nullable: false })
+  isBuildUpToDate: boolean;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  checksum?: string;
+
+  @IsString()
+  @Field({ nullable: false })
+  handlerName: string;
+
+  @IsString()
+  @Field({ nullable: false })
+  sourceHandlerPath: string;
+
+  @IsString()
+  @Field({ nullable: false })
+  builtHandlerPath: string;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
 }

@@ -7,6 +7,7 @@ import {
 import { useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
@@ -37,6 +38,7 @@ export const useCustomResolver = <
   fetchMoreRecords: () => Promise<void>;
 } => {
   const { enqueueErrorSnackBar } = useSnackBar();
+  const apolloCoreClient = useApolloCoreClient();
 
   const [page, setPage] = useState({
     pageNumber: 1,
@@ -62,6 +64,7 @@ export const useCustomResolver = <
     loading: firstQueryLoading,
     fetchMore,
   } = useQuery<CustomResolverQueryResult<T>>(query, {
+    client: apolloCoreClient,
     variables: queryVariables,
     onError: (error) => {
       enqueueErrorSnackBar({

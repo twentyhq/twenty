@@ -15,7 +15,7 @@ import {
   type WidgetConfiguration,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
 export const TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';

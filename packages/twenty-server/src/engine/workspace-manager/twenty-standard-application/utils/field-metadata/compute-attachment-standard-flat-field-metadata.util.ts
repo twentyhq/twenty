@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -6,7 +7,6 @@ import {
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
   type CreateStandardFieldArgs,
@@ -126,6 +126,27 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  file: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'file',
+      type: FieldMetadataType.FILES,
+      label: 'File',
+      description: 'Attachment file',
+      icon: 'IconFileUpload',
+      isNullable: true,
+      isUIReadOnly: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  //deprecated
   fullPath: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -143,6 +164,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  //deprecated
   fileCategory: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -237,7 +259,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetTask',
       label: 'Task',
       description: 'Attachment task',
@@ -262,7 +284,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetNote',
       label: 'Note',
       description: 'Attachment note',
@@ -287,7 +309,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
       label: 'Person',
       description: 'Attachment person',
@@ -312,7 +334,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
       label: 'Company',
       description: 'Attachment company',
@@ -337,7 +359,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'Attachment opportunity',
@@ -362,7 +384,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetDashboard',
       label: 'Dashboard',
       description: 'Attachment dashboard',
@@ -387,7 +409,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflow',
       label: 'Workflow',
       description: 'Attachment workflow',

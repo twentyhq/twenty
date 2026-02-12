@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 type DraggableItemProps = {
   draggableId: string;
   isDragDisabled?: boolean;
+  disableInteractiveElementBlocking?: boolean;
   index: number;
   itemComponent:
     | JSX.Element
@@ -19,6 +20,7 @@ type DraggableItemProps = {
 export const DraggableItem = ({
   draggableId,
   isDragDisabled = false,
+  disableInteractiveElementBlocking = false,
   index,
   itemComponent,
   isInsideScrollableContainer,
@@ -34,6 +36,7 @@ export const DraggableItem = ({
       draggableId={draggableId}
       index={index}
       isDragDisabled={isDragDisabled}
+      disableInteractiveElementBlocking={disableInteractiveElementBlocking}
     >
       {(draggableProvided, draggableSnapshot) => {
         const draggableStyle = draggableProvided.draggableProps.style;

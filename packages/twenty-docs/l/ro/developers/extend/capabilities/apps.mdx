@@ -17,10 +17,6 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 * Creați funcții de logică cu declanșatoare personalizate
 * Implementați aceeași aplicație în mai multe spații de lucru
 
-**În curând:**
-
-* Dispuneri și componente UI personalizate
-
 ## Cerințe
 
 * Node.js 24+ și Yarn 4
@@ -93,83 +89,56 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-    application.config.ts          # Obligatoriu - configurația principală a aplicației
-    default-function.role.ts       # Rolul implicit pentru funcțiile serverless
-    hello-world.function.ts        # Exemplu de funcție serverless
-    hello-world.front-component.tsx # Exemplu de componentă de interfață
-    // entitățile tale (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### Convenție în locul configurării
-
-Aplicațiile folosesc o abordare bazată pe convenție în locul configurării, în care entitățile sunt detectate după sufixul fișierului. Aceasta permite o organizare flexibilă în folderul `src/app/`:
-
-| Sufixul fișierului      | Tipul entității                          |
-| ----------------------- | ---------------------------------------- |
-| `*.object.ts`           | Definiții de obiecte personalizate       |
-| `*.function.ts`         | Definiții de funcții serverless          |
-| `*.front-component.tsx` | Definiții ale componentelor de interfață |
-| `*.role.ts`             | Definiții de rol                         |
-
-### Structuri de foldere acceptate
-
-Vă puteți organiza entitățile în oricare dintre aceste modele:
-
-**Tradițional (după tip):**
-
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**Bazat pe funcționalități:**
-
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**Plat:**
-
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── logic-functions/
+  │   └── hello-world.ts                # Example logic function
+  └── front-components/
+      └── hello-world.tsx               # Example front component
 ```
 
 Pe scurt:
 
-* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` și `auth:login` care deleagă către CLI-ul local `twenty`.
+* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, precum și comenzi de autentificare care deleagă către CLI-ul local `twenty`.
 * **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
 * **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
 * **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
 * **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația ta. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
-* **src/**: Locul principal unde vă definiți aplicația sub formă de cod:
-  * `application.config.ts`: Configurație globală pentru aplicație (metadate și conectare la runtime). Vezi "Configurația aplicației" mai jos.
-  * `*.role.ts`: Definiții de rol folosite de funcțiile dvs. de logică. Vezi "Rol implicit pentru funcții" mai jos.
-  * `*.object.ts`: Definiții de obiecte personalizate.
-  * `*.function.ts`: Definiții de funcții de logică.
-  * `*.front-component.tsx`: Definiții de componente front-end.
+* **src/**: Locul principal unde vă definiți aplicația sub formă de cod
+
+### Detectarea entităților
+
+SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
+
+| Funcție ajutătoare       | Tipul entității                             |
+| ------------------------ | ------------------------------------------- |
+| `defineObject()`         | Definiții de obiecte personalizate          |
+| `defineLogicFunction()`  | Definiții de funcții de logică              |
+| `defineFrontComponent()` | Definiții ale componentelor de interfață    |
+| `defineRole()`           | Definiții de rol                            |
+| `defineField()`          | Extensii de câmp pentru obiectele existente |
+
+<Note>
+  **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
+</Note>
+
+Exemplu de entitate detectată:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
@@ -215,16 +184,18 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 ### Funcții ajutătoare
 
-SDK-ul oferă patru funcții ajutătoare cu validare încorporată pentru definirea entităților aplicației:
+SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
 
-| Funcție               | Scop                                                     |
-| --------------------- | -------------------------------------------------------- |
-| `defineApplication()` | Configurați metadatele aplicației                        |
-| `defineObject()`      | Definiți obiecte personalizate cu câmpuri                |
-| `defineFunction()`    | Definiți funcții de logică cu handleri                   |
-| `defineRole()`        | Configurați permisiunile rolurilor și accesul la obiecte |
+| Funcție                  | Scop                                                                   |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `defineApplication()`    | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
+| `defineObject()`         | Definiți obiecte personalizate cu câmpuri                              |
+| `defineLogicFunction()`  | Definiți funcții de logică cu handleri                                 |
+| `defineFrontComponent()` | Definiți componente Front pentru interfața de utilizator personalizată |
+| `defineRole()`           | Configurați permisiunile rolurilor și accesul la obiecte               |
+| `defineField()`          | Extindeți obiectele existente cu câmpuri suplimentare                  |
 
-Aceste funcții validează configurația în timpul execuției și oferă o completare automată mai bună în IDE și siguranța tipurilor.
+Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
 ### Definirea obiectelor
 
@@ -311,9 +282,9 @@ Puncte cheie:
   **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
 </Note>
 
-### Configurația aplicației (application.config.ts)
+### Configurația aplicației (application-config.ts)
 
-Fiecare aplicație are un singur fișier `application.config.ts` care descrie:
+Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
 
 * **Cine este aplicația**: identificatori, nume de afișare și descriere.
 * **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
@@ -322,9 +293,9 @@ Fiecare aplicație are un singur fișier `application.config.ts` care descrie:
 Folosiți `defineApplication()` pentru a defini configurația aplicației:
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +310,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +318,11 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* `roleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
+* `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
 
 #### Roluri și permisiuni
 
-Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `roleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `defaultRoleUniversalIdentifier` din `application-config.ts` desemnează rolul implicit utilizat de funcțiile de logică ale aplicației.
 
 * Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
 * Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
@@ -362,7 +333,7 @@ Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor 
 Când generați o aplicație nouă, CLI creează și un fișier de rol implicit. Folosiți `defineRole()` pentru a defini roluri cu validare încorporată:
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -401,10 +372,10 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `roleUniversalIdentifier`. Cu alte cuvinte:
+`universalIdentifier` al acestui rol este apoi referențiat în `application-config.ts` ca `defaultRoleUniversalIdentifier`. Cu alte cuvinte:
 
 * **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
-* **application.config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
+* **application-config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
 
 Notițe:
 
@@ -415,11 +386,11 @@ Notițe:
 
 ### Configurația funcției de logică și punctul de intrare
 
-Fiecare fișier de funcție folosește `defineFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale. Folosiți sufixul de fișier `*.function.ts` pentru detectare automată.
+Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -439,7 +410,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -515,7 +486,7 @@ Notițe:
 Când un declanșator de rută apelează funcția dvs. de logică, aceasta primește un obiect `RoutePayload` care urmează formatul AWS HTTP API v2. Importă tipul din `twenty-sdk`:
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -545,7 +516,7 @@ Tipul `RoutePayload` are următoarea structură:
 În mod implicit, anteturile HTTP din cererile de intrare **nu** sunt transmise funcției dvs. de logică din motive de securitate. Pentru a accesa anumite anteturi, listează-le explicit în array-ul `forwardedRequestHeaders`:
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -580,8 +551,45 @@ const handler = async (event: RoutePayload) => {
 
 Puteți crea funcții noi în două moduri:
 
-* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o funcție nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
-* **Manual**: Creați un fișier nou `*.function.ts` și folosiți `defineFunction()`, urmând același model.
+* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o funcție de logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
+
+### Componente Front
+
+Componentele Front vă permit să construiți componente React personalizate care sunt randate în interfața Twenty. Utilizați `defineFrontComponent()` pentru a defini componente cu validare încorporată:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Puncte cheie:
+
+* Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
+* Folosiți sufixul de fișier `*.front-component.tsx` pentru detectare automată.
+* Câmpul `component` face referire la componenta React.
+* Componentele sunt construite și sincronizate automat în timpul `yarn app:dev`.
+
+Puteți crea componente Front noi în două moduri:
+
+* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o componentă Front nouă.
+* **Manual**: Creați un fișier nou `*.front-component.tsx` și folosiți `defineFrontComponent()`.
 
 ### Client tipizat generat
 
@@ -606,12 +614,12 @@ Când funcția rulează pe Twenty, platforma injectează acreditări ca variabil
 Notițe:
 
 * Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `roleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `roleUniversalIdentifier` la identificatorul universal al acelui rol.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application-config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
 
 ### Exemplu Hello World
 
-Explorați un exemplu minim, cap‑la‑cap, care demonstrează obiecte, funcții și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de logică, componente Front și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Configurare manuală (fără generator)
 

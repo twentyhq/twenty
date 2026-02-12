@@ -54,7 +54,7 @@ export class MessagingMessagesImportJob {
         where: {
           id: messageChannelId,
         },
-        relations: ['connectedAccount'],
+        relations: ['connectedAccount', 'messageFolders'],
       });
 
       if (!messageChannel) {

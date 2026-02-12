@@ -6,6 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
@@ -47,10 +51,9 @@ type JunctionConfigSeed = {
   label?: string;
 };
 
-// Helper type for flat entity maps
 type FlatMaps = {
-  fieldMaps: { byId: Record<string, { name: string; morphId?: string }> };
-  objectMaps: { byId: Record<string, { fieldIds: string[] }> };
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   objectIdByName: Record<string, string>;
 };
 
@@ -324,8 +327,8 @@ export class DevSeederMetadataService {
     );
 
     return {
-      fieldMaps: flatFieldMetadataMaps as FlatMaps['fieldMaps'],
-      objectMaps: flatObjectMetadataMaps as FlatMaps['objectMaps'],
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       objectIdByName: idByNameSingular,
     };
   }
@@ -476,14 +479,22 @@ export class DevSeederMetadataService {
       throw new Error(`Object not found: ${objectName}`);
     }
 
-    const objectMetadata = flatMaps.objectMaps.byId[objectId];
+    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectId,
+      flatEntityMaps: flatMaps.flatObjectMetadataMaps,
+    });
 
     if (!isDefined(objectMetadata)) {
       throw new Error(`Object metadata not found: ${objectName}`);
     }
 
     for (const fieldId of objectMetadata.fieldIds) {
-      if (flatMaps.fieldMaps.byId[fieldId]?.name === fieldName) {
+      const field = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldId,
+        flatEntityMaps: flatMaps.flatFieldMetadataMaps,
+      });
+
+      if (field?.name === fieldName) {
         return fieldId;
       }
     }

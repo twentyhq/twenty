@@ -3,7 +3,6 @@ import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const EXPECTED_MANIFEST: Manifest = {
-  sources: {},
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',
@@ -12,7 +11,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       fileType: 'png',
     },
   ],
-  yarnLock: '',
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
@@ -22,11 +20,13 @@ export const EXPECTED_MANIFEST: Manifest = {
         value: 'Alex Karp',
       },
     },
-    description: 'A simple hello world app',
-    displayName: 'Hello World',
+    description: 'A simple rich app',
+    displayName: 'Rich App',
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    packageJsonChecksum: '42c3913415952d91ff1cf67ef6452872',
   },
   frontComponents: [
     {
@@ -45,7 +45,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'A component using an external component file',
       name: 'card-component',
       sourceComponentPath: 'src/components/card.front-component.tsx',
-      universalIdentifier: 'i0i1i2i3-i4i5-4000-8000-000000000001',
+      universalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
     },
     {
       builtComponentPath: 'src/components/greeting.front-component.mjs',
@@ -54,7 +54,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'A component that uses greeting utility',
       name: 'greeting-component',
       sourceComponentPath: 'src/components/greeting.front-component.tsx',
-      universalIdentifier: 'h0h1h2h3-h4h5-4000-8000-000000000001',
+      universalIdentifier: '370ae182-743f-4ecb-b625-7ac48e21f0e5',
     },
     {
       builtComponentPath: 'src/components/test.front-component.mjs',
@@ -68,14 +68,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
 
   fields: [
-    {
-      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-      description: 'Priority level for the post card (1-10)',
-      label: 'Priority',
-      name: 'priority',
-      type: FieldType.NUMBER,
-      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
-    },
     {
       objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
       description: 'Post card category',
@@ -103,6 +95,14 @@ export const EXPECTED_MANIFEST: Manifest = {
       ],
       type: FieldType.SELECT,
       universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+    },
+    {
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      description: 'Priority level for the post card (1-10)',
+      label: 'Priority',
+      name: 'priority',
+      type: FieldType.NUMBER,
+      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
     },
   ],
   objects: [
@@ -234,8 +234,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           canReadFieldValue: false,
           canUpdateFieldValue: false,
-          fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
-          objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+          fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
       label: 'Default function role',
@@ -245,7 +245,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
           canUpdateObjectRecords: true,
-          objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
       permissionFlags: [PermissionFlagType.APPLICATIONS],
@@ -256,121 +256,57 @@ export const EXPECTED_MANIFEST: Manifest = {
     {
       builtHandlerChecksum: '[checksum]',
       builtHandlerPath: 'src/root.function.mjs',
-      handlerName: 'default.handler',
+      handlerName: 'default.config.handler',
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
       timeoutSeconds: 5,
-      triggers: [
-        {
-          httpMethod: 'GET',
-          isAuthRequired: false,
-          path: '/root',
-          type: 'route',
-          universalIdentifier: 'f0f1f2f3-f4f5-4000-8000-000000000002',
-        },
-      ],
+      httpRouteTriggerSettings: {
+        httpMethod: 'GET',
+        isAuthRequired: false,
+        path: '/root',
+      },
       universalIdentifier: 'f0f1f2f3-f4f5-4000-8000-000000000001',
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/greeting.function.mjs',
-      handlerName: 'default.handler',
+      builtHandlerPath: 'src/logic-functions/greeting.function.mjs',
+      handlerName: 'default.config.handler',
       name: 'greeting-function',
-      sourceHandlerPath: 'src/functions/greeting.function.ts',
+      sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
-      triggers: [
-        {
-          httpMethod: 'GET',
-          isAuthRequired: false,
-          path: '/greet',
-          type: 'route',
-          universalIdentifier: 'f7b12160-3d25-4c92-a13f-a325dd60eb04',
-        },
-      ],
+      httpRouteTriggerSettings: {
+        httpMethod: 'GET',
+        isAuthRequired: false,
+        path: '/greet',
+      },
       universalIdentifier: '9d412d9e-2caf-487c-8b66-d1585883dd4e',
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/test-function-2.function.mjs',
-      handlerName: 'config.handler',
+      builtHandlerPath: 'src/logic-functions/test-function-2.function.mjs',
+      handlerName: 'default.config.handler',
       name: 'test-function-2',
-      sourceHandlerPath: 'src/functions/test-function-2.function.ts',
+      sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
       timeoutSeconds: 2,
-      triggers: [
-        {
-          pattern: '0 0 1 1 *',
-          type: 'cron',
-          universalIdentifier: '9fd0dda9-4664-4fbc-9656-509f4477b9ff',
-        },
-      ],
+      cronTriggerSettings: {
+        pattern: '0 0 1 1 *',
+      },
       universalIdentifier: 'eb3ffc98-88ec-45d4-9b4a-56833b219ccb',
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/test-function.function.mjs',
-      handlerName: 'default.handler',
+      builtHandlerPath: 'src/logic-functions/test-function.function.mjs',
+      handlerName: 'default.config.handler',
       name: 'test-function',
-      sourceHandlerPath: 'src/functions/test-function.function.ts',
+      sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
       timeoutSeconds: 2,
-      triggers: [
-        {
-          forwardedRequestHeaders: ['signature'],
-          httpMethod: 'GET',
-          isAuthRequired: false,
-          path: '/post-card/create',
-          type: 'route',
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-        },
-        {
-          pattern: '0 0 1 1 *',
-          type: 'cron',
-          universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-        },
-        {
-          eventName: 'person.created',
-          type: 'databaseEvent',
-          universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-        },
-      ],
+      httpRouteTriggerSettings: {
+        forwardedRequestHeaders: ['signature'],
+        httpMethod: 'GET',
+        isAuthRequired: false,
+        path: '/post-card/create',
+      },
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     },
   ],
-  packageJson: {
-    name: 'rich-app',
-    version: '0.1.0',
-    license: 'MIT',
-    engines: {
-      node: '^24.5.0',
-      npm: 'please-use-yarn',
-      yarn: '>=4.0.2',
-    },
-    packageManager: 'yarn@4.9.2',
-    scripts: {
-      'auth:login': 'twenty auth:login',
-      'auth:logout': 'twenty auth:logout',
-      'auth:status': 'twenty auth:status',
-      'auth:switch': 'twenty auth:switch',
-      'auth:list': 'twenty auth:list',
-      'app:dev': 'twenty app:dev',
-      'entity:add': 'twenty entity:add',
-      'app:generate': 'twenty app:generate',
-      'function:logs': 'twenty function:logs',
-      'function:execute': 'twenty function:execute',
-      'app:uninstall': 'twenty app:uninstall',
-      help: 'twenty help',
-      lint: 'eslint',
-      'lint:fix': 'eslint --fix',
-    },
-    dependencies: {
-      'twenty-sdk': 'latest',
-    },
-    devDependencies: {
-      typescript: '^5.9.3',
-      '@types/node': '^24.7.2',
-      '@types/react': '^19.0.2',
-      react: '^19.0.2',
-      eslint: '^9.32.0',
-      'typescript-eslint': '^8.50.0',
-    },
-  },
 };

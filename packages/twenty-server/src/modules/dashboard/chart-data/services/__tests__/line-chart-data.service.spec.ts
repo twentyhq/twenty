@@ -65,15 +65,44 @@ describe('LineChartDataService', () => {
           useValue: {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
               flatObjectMetadataMaps: {
-                byId: { [objectMetadataId]: mockObjectMetadata },
+                byUniversalIdentifier: {
+                  'test-object-universal-id': {
+                    ...mockObjectMetadata,
+                    universalIdentifier: 'test-object-universal-id',
+                  },
+                },
+                universalIdentifierById: {
+                  [objectMetadataId]: 'test-object-universal-id',
+                },
+                universalIdentifiersByApplicationId: {},
               },
               flatFieldMetadataMaps: {
-                byId: {
-                  [mockGroupByFieldX.id]: mockGroupByFieldX,
-                  [mockGroupByFieldXText.id]: mockGroupByFieldXText,
-                  [mockGroupByFieldY.id]: mockGroupByFieldY,
-                  [mockAggregateField.id]: mockAggregateField,
+                byUniversalIdentifier: {
+                  'group-by-field-x-universal-id': {
+                    ...mockGroupByFieldX,
+                    universalIdentifier: 'group-by-field-x-universal-id',
+                  },
+                  'group-by-field-x-text-universal-id': {
+                    ...mockGroupByFieldXText,
+                    universalIdentifier: 'group-by-field-x-text-universal-id',
+                  },
+                  'group-by-field-y-universal-id': {
+                    ...mockGroupByFieldY,
+                    universalIdentifier: 'group-by-field-y-universal-id',
+                  },
+                  'aggregate-field-universal-id': {
+                    ...mockAggregateField,
+                    universalIdentifier: 'aggregate-field-universal-id',
+                  },
                 },
+                universalIdentifierById: {
+                  [mockGroupByFieldX.id]: 'group-by-field-x-universal-id',
+                  [mockGroupByFieldXText.id]:
+                    'group-by-field-x-text-universal-id',
+                  [mockGroupByFieldY.id]: 'group-by-field-y-universal-id',
+                  [mockAggregateField.id]: 'aggregate-field-universal-id',
+                },
+                universalIdentifiersByApplicationId: {},
               },
             }),
           },

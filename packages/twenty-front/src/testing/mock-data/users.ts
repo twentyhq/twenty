@@ -13,7 +13,7 @@ import {
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -155,6 +155,7 @@ export const mockCurrentWorkspace = {
   databaseSchema: '',
   databaseUrl: '',
   isTwoFactorAuthenticationEnforced: false,
+  eventLogRetentionDays: 90,
   __typename: 'Workspace',
 } as const satisfies Workspace;
 

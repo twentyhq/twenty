@@ -12,7 +12,7 @@ const GreetingComponent = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'h0h1h2h3-h4h5-4000-8000-000000000001',
+  universalIdentifier: '370ae182-743f-4ecb-b625-7ac48e21f0e5',
   name: 'greeting-component',
   description: 'A component that uses greeting utility',
   component: GreetingComponent,

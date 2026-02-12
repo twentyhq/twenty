@@ -1,4 +1,4 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -84,11 +84,10 @@ const PERSON_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_PERSON_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'personRecordPage',
   name: 'Default Person Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.person,
+  objectUniversalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
   universalIdentifier: '20202020-a102-4002-8002-ae0a1ea11002',
-  defaultTabUniversalIdentifier: PERSON_PAGE_TABS.home.universalIdentifier,
+  defaultTabUniversalIdentifier: null,
   tabs: PERSON_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

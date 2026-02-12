@@ -89,12 +89,12 @@ export class ChartDataQueryService {
 
     const primaryGroupByField = getFieldMetadata(
       groupByFieldMetadataId,
-      flatFieldMetadataMaps.byId,
+      flatFieldMetadataMaps,
     );
 
     const aggregateField = getFieldMetadata(
       aggregateFieldMetadataId,
-      flatFieldMetadataMaps.byId,
+      flatFieldMetadataMaps,
     );
 
     const isPrimaryFieldDate = isFieldMetadataDateKind(
@@ -146,7 +146,7 @@ export class ChartDataQueryService {
     if (isDefined(secondaryGroupByFieldMetadataId)) {
       const secondaryGroupByField = getFieldMetadata(
         secondaryGroupByFieldMetadataId,
-        flatFieldMetadataMaps.byId,
+        flatFieldMetadataMaps,
       );
 
       const isSecondaryFieldDate = isFieldMetadataDateKind(

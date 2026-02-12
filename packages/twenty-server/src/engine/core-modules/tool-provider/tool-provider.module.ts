@@ -12,6 +12,7 @@ import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/p
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
+import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
@@ -24,6 +25,7 @@ import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
@@ -45,6 +47,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     PermissionsModule,
     ViewModule,
     WorkspaceCacheModule,
+    WorkspaceCacheStorageModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
     UserRoleModule,
@@ -52,6 +55,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   ],
   providers: [
     ToolIndexResolver,
+    ToolExecutorService,
     ActionToolProvider,
     DashboardToolProvider,
     DatabaseToolProvider,
@@ -61,13 +65,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewToolProvider,
     WorkflowToolProvider,
     {
+      // TOOL_PROVIDERS contains only providers implementing ToolProvider (generateDescriptors).
+      // NativeModelToolProvider is excluded -- it's injected separately in the registry.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,
         dashboardProvider: DashboardToolProvider,
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
-        nativeModelProvider: NativeModelToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
@@ -76,7 +81,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         dashboardProvider,
         databaseProvider,
         metadataProvider,
-        nativeModelProvider,
         logicFunctionProvider,
         viewProvider,
         workflowProvider,
@@ -86,7 +90,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DashboardToolProvider,
         DatabaseToolProvider,
         MetadataToolProvider,
-        NativeModelToolProvider,
         LogicFunctionToolProvider,
         ViewToolProvider,
         WorkflowToolProvider,

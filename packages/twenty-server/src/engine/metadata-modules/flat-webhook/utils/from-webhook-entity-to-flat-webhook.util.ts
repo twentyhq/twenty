@@ -33,9 +33,6 @@ export const fromWebhookEntityToFlatWebhook = ({
     createdAt: webhookEntity.createdAt.toISOString(),
     updatedAt: webhookEntity.updatedAt.toISOString(),
     deletedAt: webhookEntity.deletedAt?.toISOString() ?? null,
-    __universal: {
-      universalIdentifier: webhookEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
   };
 };

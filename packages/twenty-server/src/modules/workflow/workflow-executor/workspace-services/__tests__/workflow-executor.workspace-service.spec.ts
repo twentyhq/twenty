@@ -382,6 +382,153 @@ describe('WorkflowExecutorWorkspaceService', () => {
     });
   });
 
+  describe('getNextStepIdsToExecute', () => {
+    it('should return nextStepIds for a regular step', async () => {
+      const step = {
+        id: 'step-1',
+        type: WorkflowActionType.CODE,
+        nextStepIds: ['step-2', 'step-3'],
+        settings: {},
+      } as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: { result: {} },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['step-2', 'step-3'],
+      });
+    });
+
+    it('should return initialLoopStepIds for an iterator that has not processed all items', async () => {
+      const step = {
+        id: 'iterator-1',
+        type: WorkflowActionType.ITERATOR,
+        nextStepIds: ['after-loop'],
+        settings: {
+          input: {
+            initialLoopStepIds: ['loop-step-1'],
+          },
+        },
+      } as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          result: { hasProcessedAllItems: false },
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['loop-step-1'],
+      });
+    });
+
+    it('should return nextStepIds for an iterator that has processed all items', async () => {
+      const step = {
+        id: 'iterator-1',
+        type: WorkflowActionType.ITERATOR,
+        nextStepIds: ['after-loop'],
+        settings: {
+          input: {
+            initialLoopStepIds: ['loop-step-1'],
+          },
+        },
+      } as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          result: { hasProcessedAllItems: true },
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['after-loop'],
+      });
+    });
+
+    it('should return matching branch nextStepIds and non-matching branch nextStepIds to skip for if-else', async () => {
+      const step = {
+        id: 'if-else-1',
+        type: WorkflowActionType.IF_ELSE,
+        nextStepIds: [],
+        settings: {
+          input: {
+            branches: [
+              {
+                id: 'branch-if',
+                filterGroupId: 'fg1',
+                nextStepIds: ['step-a'],
+              },
+              {
+                id: 'branch-else',
+                nextStepIds: ['step-b'],
+              },
+            ],
+            stepFilterGroups: [],
+            stepFilters: [],
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          result: { matchingBranchId: 'branch-if' },
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['step-a'],
+        nextStepIdsToSkip: ['step-b'],
+      });
+    });
+
+    it('should skip multiple non-matching branches for if-else with many branches', async () => {
+      const step = {
+        id: 'if-else-1',
+        type: WorkflowActionType.IF_ELSE,
+        nextStepIds: [],
+        settings: {
+          input: {
+            branches: [
+              {
+                id: 'branch-1',
+                filterGroupId: 'fg1',
+                nextStepIds: ['step-a'],
+              },
+              {
+                id: 'branch-2',
+                filterGroupId: 'fg2',
+                nextStepIds: ['step-b'],
+              },
+              {
+                id: 'branch-else',
+                nextStepIds: ['step-c'],
+              },
+            ],
+            stepFilterGroups: [],
+            stepFilters: [],
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          result: { matchingBranchId: 'branch-2' },
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['step-b'],
+        nextStepIdsToSkip: ['step-a', 'step-c'],
+      });
+    });
+  });
+
   describe('sendWorkflowNodeRunEvent', () => {
     it('should emit a billing event', () => {
       service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');

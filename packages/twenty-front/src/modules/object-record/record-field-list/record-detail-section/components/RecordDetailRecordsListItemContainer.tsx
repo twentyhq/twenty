@@ -1,7 +1,7 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled('div', {
   shouldForwardProp: (prop) =>
@@ -23,9 +23,6 @@ type RecordDetailRecordsListItemContainerProps = {
   className?: string;
 };
 
-/**
- * TODO: Remove noHorizontalPadding logic once the traditional record show page is removed.
- */
 export const RecordDetailRecordsListItemContainer = ({
   children,
   className,
@@ -33,8 +30,7 @@ export const RecordDetailRecordsListItemContainer = ({
   const layoutRenderingContext = useLayoutRenderingContext();
 
   const isInRecordPageLayout =
-    layoutRenderingContext?.layoutType === PageLayoutType.RECORD_PAGE &&
-    !layoutRenderingContext?.isLegacyRecordShowPage;
+    layoutRenderingContext?.layoutType === PageLayoutType.RECORD_PAGE;
 
   return (
     <StyledListItem

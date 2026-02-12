@@ -3,8 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
@@ -45,6 +50,8 @@ export class PageLayoutDuplicationService {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
     const originalFlatLayout = this.findOriginalLayoutOrThrow(
@@ -71,23 +78,42 @@ export class PageLayoutDuplicationService {
           objectMetadataId: originalFlatLayout.objectMetadataId,
         },
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps,
       },
     );
+
+    const optimisticFlatPageLayoutMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: newFlatPageLayout,
+      flatEntityMaps: createEmptyFlatEntityMaps(),
+    });
 
     const { newFlatTabs, originalTabIdToNewTabIdMap } =
       this.createDuplicatedTabs({
         originalTabs: originalTabsWithWidgets.map(({ tab }) => tab),
         newPageLayoutId: newFlatPageLayout.id,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
       });
+
+    const optimisticFlatPageLayoutTabMaps = newFlatTabs.reduce(
+      (maps, flatTab) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatTab,
+          flatEntityMaps: maps,
+        }),
+      createEmptyFlatEntityMaps(),
+    );
 
     const newFlatWidgets = this.createDuplicatedWidgets({
       originalTabsWithWidgets,
       originalTabIdToNewTabIdMap,
       workspaceId,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      flatApplication: workspaceCustomFlatApplication,
+      flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
     const validateAndBuildResult =
@@ -112,6 +138,8 @@ export class PageLayoutDuplicationService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -143,11 +171,7 @@ export class PageLayoutDuplicationService {
     );
   }
 
-  private async getPageLayoutFlatEntityMaps(workspaceId: string): Promise<{
-    flatPageLayoutMaps: FlatPageLayoutMaps;
-    flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
-    flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
-  }> {
+  private async getPageLayoutFlatEntityMaps(workspaceId: string) {
     return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -155,6 +179,8 @@ export class PageLayoutDuplicationService {
           'flatPageLayoutMaps',
           'flatPageLayoutTabMaps',
           'flatPageLayoutWidgetMaps',
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
         ],
       },
     );
@@ -164,7 +190,10 @@ export class PageLayoutDuplicationService {
     pageLayoutId: string,
     flatPageLayoutMaps: FlatPageLayoutMaps,
   ): FlatPageLayout {
-    const flatLayout = flatPageLayoutMaps.byId[pageLayoutId];
+    const flatLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: pageLayoutId,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     if (!isDefined(flatLayout) || isDefined(flatLayout.deletedAt)) {
       throw new PageLayoutException(
@@ -186,7 +215,9 @@ export class PageLayoutDuplicationService {
   ): { tab: FlatPageLayoutTab; widgets: FlatPageLayoutWidget[] }[] {
     const widgetsByTabId = new Map<string, FlatPageLayoutWidget[]>();
 
-    for (const widget of Object.values(flatPageLayoutWidgetMaps.byId)) {
+    for (const widget of Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )) {
       if (!isDefined(widget) || isDefined(widget.deletedAt)) {
         continue;
       }
@@ -197,7 +228,7 @@ export class PageLayoutDuplicationService {
       widgetsByTabId.set(widget.pageLayoutTabId, existingWidgets);
     }
 
-    const tabs = Object.values(flatPageLayoutTabMaps.byId)
+    const tabs = Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
       .filter(
         (tab): tab is FlatPageLayoutTab =>
           isDefined(tab) &&
@@ -216,12 +247,14 @@ export class PageLayoutDuplicationService {
     originalTabs,
     newPageLayoutId,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
+    flatPageLayoutMaps,
   }: {
     originalTabs: FlatPageLayoutTab[];
     newPageLayoutId: string;
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
+    flatPageLayoutMaps: AllFlatEntityMaps['flatPageLayoutMaps'];
   }): {
     newFlatTabs: FlatPageLayoutTab[];
     originalTabIdToNewTabIdMap: Map<string, string>;
@@ -237,7 +270,8 @@ export class PageLayoutDuplicationService {
             pageLayoutId: newPageLayoutId,
           },
           workspaceId,
-          workspaceCustomApplicationId,
+          flatApplication,
+          flatPageLayoutMaps,
         });
 
       originalTabIdToNewTabIdMap.set(originalTab.id, newFlatTab.id);
@@ -252,7 +286,10 @@ export class PageLayoutDuplicationService {
     originalTabsWithWidgets,
     originalTabIdToNewTabIdMap,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
+    flatPageLayoutTabMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     originalTabsWithWidgets: {
       tab: FlatPageLayoutTab;
@@ -260,7 +297,10 @@ export class PageLayoutDuplicationService {
     }[];
     originalTabIdToNewTabIdMap: Map<string, string>;
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
+    flatPageLayoutTabMaps: AllFlatEntityMaps['flatPageLayoutTabMaps'];
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): FlatPageLayoutWidget[] {
     return originalTabsWithWidgets.flatMap(({ tab, widgets }) => {
       const newTabId = originalTabIdToNewTabIdMap.get(tab.id)!;
@@ -276,7 +316,10 @@ export class PageLayoutDuplicationService {
             pageLayoutTabId: newTabId,
           },
           workspaceId,
-          workspaceCustomApplicationId,
+          flatApplication,
+          flatPageLayoutTabMaps,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
         }),
       );
     });

@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const COMPANY_FLAT_FIELDS_MOCK = {
   name: getFlatFieldMetadataMock({
     id: '12b304b6-ea97-4dcc-9415-9f7b2ac4b729',
-    standardId: '20202020-4d99-4e2e-a84c-4a27837b1ece',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.TEXT,
     name: 'name',
@@ -36,7 +35,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   domainName: getFlatFieldMetadataMock({
     id: 'f4b67402-1686-491f-a3c7-f70ac9b021cf',
-    standardId: '20202020-0c28-43d8-8ba5-3659924d3489',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.LINKS,
     name: 'domainName',
@@ -65,7 +63,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   employees: getFlatFieldMetadataMock({
     id: '721d26f0-238d-4d55-a1a2-62f915631c4d',
-    standardId: '20202020-8965-464a-8a75-74bafc152a0b',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.NUMBER,
     name: 'employees',
@@ -89,7 +86,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   linkedinLink: getFlatFieldMetadataMock({
     id: '6acb80a0-dab8-4d97-a0c8-15e4a495fb54',
-    standardId: '20202020-ebeb-4beb-b9ad-6848036fb451',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.LINKS,
     name: 'linkedinLink',
@@ -117,7 +113,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   xLink: getFlatFieldMetadataMock({
     id: 'fc630bbb-aa2c-4554-aa4f-9afc0b0567f9',
-    standardId: '20202020-6f64-4fd9-9580-9c1991c7d8c3',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.LINKS,
     name: 'xLink',
@@ -145,7 +140,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   annualRecurringRevenue: getFlatFieldMetadataMock({
     id: '1e34d871-3e1a-4903-850e-1e4bc6b1d72b',
-    standardId: '20202020-602a-495c-9776-f5d5b11d227b',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.CURRENCY,
     name: 'annualRecurringRevenue',
@@ -170,7 +164,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   address: getFlatFieldMetadataMock({
     id: '1bd4dc61-e644-4a9e-8899-cacdf43571a1',
-    standardId: '20202020-c5ce-4adc-b7b6-9c0979fc55e7',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.ADDRESS,
     name: 'address',
@@ -203,7 +196,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   idealCustomerProfile: getFlatFieldMetadataMock({
     id: '8b75a4f1-dc7d-4fa3-b778-616ab9128c31',
-    standardId: '20202020-ba6b-438a-8213-2c5ba28d76a2',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.BOOLEAN,
     name: 'idealCustomerProfile',
@@ -228,7 +220,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   position: getFlatFieldMetadataMock({
     id: 'ed081dac-ff61-4fe1-bc2c-073644b61c28',
-    standardId: '20202020-9b4e-462b-991d-a0ee33326454',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.POSITION,
     name: 'position',
@@ -252,7 +243,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   createdBy: getFlatFieldMetadataMock({
     id: 'dbbddd40-a72b-47fe-9ecf-9bdd4282369a',
-    standardId: '20202020-fabc-451d-ab7d-412170916baa',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.ACTOR,
     name: 'createdBy',
@@ -280,7 +270,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   searchVector: getFlatFieldMetadataMock({
     id: 'b2850ac5-d368-44ab-bc79-b1bf7212e5fb',
-    standardId: '85c71601-72f9-4b7b-b343-d46100b2c74d',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.TS_VECTOR,
     name: 'searchVector',
@@ -304,7 +293,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   id: getFlatFieldMetadataMock({
     id: '982dff40-66c9-4b9b-b3ec-8fa7076ea3a6',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -328,7 +316,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: 'e2f65a26-0210-4f22-954b-7d448abbdb28',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -352,7 +339,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '26518091-a31b-4716-8627-4e2d25bc0e60',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -376,7 +362,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: '29ba1ee7-fc21-441c-8acc-45d9e56751e3',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -400,7 +385,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   people: getFlatFieldMetadataMock({
     id: 'b0563539-f027-40c5-a14c-ee7a25ff6fd9',
-    standardId: '20202020-3213-4ddf-9494-6422bcff8d7c',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'people',
@@ -424,7 +408,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   accountOwner: getFlatFieldMetadataMock({
     id: '86c6692b-bed5-4ef1-bad0-657e56a85eba',
-    standardId: '20202020-95b8-4e10-9881-edb5d4765f9d',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'accountOwner',
@@ -453,7 +436,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   taskTargets: getFlatFieldMetadataMock({
     id: '4f9138da-cd36-4df4-98f9-ebabe036b141',
-    standardId: '20202020-cb17-4a61-8f8f-3be6730480de',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'taskTargets',
@@ -477,7 +459,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   noteTargets: getFlatFieldMetadataMock({
     id: '56b9dc8a-0379-42cf-ab31-8db7061f5a2a',
-    standardId: '20202020-bae0-4556-a74a-a9c686f77a88',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'noteTargets',
@@ -501,7 +482,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   opportunities: getFlatFieldMetadataMock({
     id: '3eda8c8e-74e4-401f-bb0e-470db5b267e6',
-    standardId: '20202020-add3-4658-8e23-d70dccb6d0ec',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'opportunities',
@@ -525,7 +505,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   favorites: getFlatFieldMetadataMock({
     id: '72415216-fed4-450b-aa00-691e37718b01',
-    standardId: '20202020-4d1d-41ac-b13b-621631298d55',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'favorites',
@@ -549,7 +528,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   attachments: getFlatFieldMetadataMock({
     id: '44a572c5-d620-47f5-943a-346ae967e99e',
-    standardId: '20202020-c1b5-4120-b0f0-987ca401ed53',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'attachments',
@@ -573,7 +551,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   timelineActivities: getFlatFieldMetadataMock({
     id: 'cc78390f-f570-4c2c-9f19-2a8fef67f4f6',
-    standardId: '20202020-0414-4daf-9c0d-64fe7b27f89f',
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.RELATION,
     name: 'timelineActivities',
@@ -597,7 +574,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   tagline: getFlatFieldMetadataMock({
     id: 'f869f4ed-e440-486a-8392-be33ab327cf4',
-    standardId: null,
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.TEXT,
     name: 'tagline',
@@ -621,7 +597,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   introVideo: getFlatFieldMetadataMock({
     id: '339b52b7-adfb-4bd3-ae42-0697da92c0fa',
-    standardId: null,
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.LINKS,
     name: 'introVideo',
@@ -649,7 +624,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   workPolicy: getFlatFieldMetadataMock({
     id: '74c546c1-b183-41d0-ac20-aecde83bf674',
-    standardId: null,
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.MULTI_SELECT,
     name: 'workPolicy',
@@ -695,7 +669,6 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
   }),
   visaSponsorship: getFlatFieldMetadataMock({
     id: '5e48697e-a3d0-4faa-b79c-bddd8c7ae17f',
-    standardId: null,
     objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     type: FieldMetadataType.BOOLEAN,
     name: 'visaSponsorship',

@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 
 import fs from 'fs';
-import { mkdir, readdir, readFile } from 'fs/promises';
-import { join } from 'path';
+import { readdir, readFile } from 'fs/promises';
+import { dirname, join } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
@@ -95,6 +95,23 @@ export class S3Driver implements StorageDriver {
     await this.s3Client.send(command);
   }
 
+  private async createFolder(path: string) {
+    return fs.mkdirSync(path, { recursive: true });
+  }
+
+  async downloadFile(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void> {
+    await this.createFolder(dirname(params.localPath));
+
+    const fileStream = await this.readFile({
+      filePath: params.onStoragePath,
+    });
+
+    await pipeline(fileStream, fs.createWriteStream(params.localPath));
+  }
+
   async downloadFolder(params: {
     onStoragePath: string;
     localPath: string;
@@ -124,7 +141,7 @@ export class S3Driver implements StorageDriver {
         ? join(params.localPath, relativePath)
         : params.localPath;
 
-      await mkdir(localFolderPath, { recursive: true });
+      await this.createFolder(localFolderPath);
 
       const fileStream = await this.readFile({
         filePath: `${fromFolderPath}/${filename}`,

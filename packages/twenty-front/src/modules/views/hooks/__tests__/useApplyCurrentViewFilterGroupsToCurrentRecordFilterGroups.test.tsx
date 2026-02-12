@@ -13,7 +13,7 @@ import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLog
 import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } from '@/views/utils/mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator';
 import { act } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilterGroup } from '~/generated/graphql';
+import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import {
   mockedCoreViewsData,

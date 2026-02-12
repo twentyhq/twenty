@@ -22,25 +22,51 @@ Examples of existing syncable entities: `skill`, `agent`, `view`, `viewField`, `
 
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [File Structure](#file-structure)
-3. [Step-by-Step Implementation](#step-by-step-implementation)
-   - [Step 1: Add Metadata Name Constant](#step-1-add-metadata-name-constant-twenty-shared)
-   - [Step 2: Create TypeORM Entity](#step-2-create-typeorm-entity)
-   - [Step 2b: Using JsonbProperty and SerializedRelation Types](#step-2b-using-jsonbproperty-and-serializedrelation-types)
-   - [Step 3: Define Flat Entity Type](#step-3-define-flat-entity-type)
-   - [Step 4: Define Editable Properties](#step-4-define-editable-properties)
-   - [Step 5: Register in Central Constants](#step-5-register-in-central-constants)
-   - [Step 6: Create Cache Service](#step-6-create-cache-service)
-   - [Step 7: Create Flat Entity Module](#step-7-create-flat-entity-module)
-   - [Step 8: Define Action Types](#step-8-define-action-types)
-   - [Step 9: Create Validator Service](#step-9-create-validator-service)
-   - [Step 10: Create Builder Service](#step-10-create-builder-service)
-   - [Step 11: Create Action Handlers](#step-11-create-action-handlers-runner)
-   - [Step 12: Wire in Orchestrator Service](#step-12-wire-in-orchestrator-service-critical)
-   - [Step 13: Register in Modules](#step-13-register-in-modules)
-4. [Using the Entity in Services](#using-the-entity-in-services)
-5. [Integration Tests](#integration-tests)
+- [Creating a New Syncable Entity](#creating-a-new-syncable-entity)
+  - [What is a Syncable Entity?](#what-is-a-syncable-entity)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+    - [Key Design Principle: Separation of Concerns](#key-design-principle-separation-of-concerns)
+  - [File Structure](#file-structure)
+  - [Step-by-Step Implementation](#step-by-step-implementation)
+    - [Step 1: Add Metadata Name Constant (twenty-shared)](#step-1-add-metadata-name-constant-twenty-shared)
+    - [Step 2: Create TypeORM Entity](#step-2-create-typeorm-entity)
+    - [Step 2b: Using JsonbProperty and SerializedRelation Types](#step-2b-using-jsonbproperty-and-serializedrelation-types)
+      - [JsonbProperty Wrapper](#jsonbproperty-wrapper)
+      - [SerializedRelation Type](#serializedrelation-type)
+      - [Complete Example](#complete-example)
+    - [Step 3: Define Flat Entity Type](#step-3-define-flat-entity-type)
+    - [Step 4: Define Editable Properties](#step-4-define-editable-properties)
+    - [Step 5: Register in Central Constants](#step-5-register-in-central-constants)
+      - [5a. All Flat Entity Types Registry](#5a-all-flat-entity-types-registry)
+      - [5b. Properties to Compare and Stringify](#5b-properties-to-compare-and-stringify)
+      - [5c. Metadata Relations](#5c-metadata-relations)
+      - [5d. Required Metadata for Validation](#5d-required-metadata-for-validation)
+    - [Step 6: Create Cache Service](#step-6-create-cache-service)
+    - [Step 7: Create Flat Entity Module](#step-7-create-flat-entity-module)
+    - [Step 8: Define Action Types](#step-8-define-action-types)
+    - [Step 9: Create Validator Service](#step-9-create-validator-service)
+    - [Step 10: Create Builder Service](#step-10-create-builder-service)
+    - [Step 11: Create Action Handlers (Runner)](#step-11-create-action-handlers-runner)
+    - [Step 12: Wire in Orchestrator Service (CRITICAL)](#step-12-wire-in-orchestrator-service-critical)
+    - [Step 13: Register in Modules](#step-13-register-in-modules)
+      - [13a. Builder Module](#13a-builder-module)
+      - [13b. Validators Module](#13b-validators-module)
+      - [13c. Action Handlers Module](#13c-action-handlers-module)
+  - [Using the Entity in Services](#using-the-entity-in-services)
+  - [Integration Tests](#integration-tests)
+  - [Checklist](#checklist)
+    - [Syncable Entity Requirements](#syncable-entity-requirements)
+    - [JSONB Properties and Serialized Relations](#jsonb-properties-and-serialized-relations)
+    - [Registration (twenty-shared)](#registration-twenty-shared)
+    - [Flat Entity Definition](#flat-entity-definition)
+    - [Central Constants Registration](#central-constants-registration)
+    - [Cache Layer](#cache-layer)
+    - [Migration Builder](#migration-builder)
+    - [Migration Runner](#migration-runner)
+    - [Orchestrator Wiring (⚠️ COMMONLY FORGOTTEN)](#orchestrator-wiring-️-commonly-forgotten)
+    - [Module Registration](#module-registration)
+    - [Testing](#testing)
 
 ---
 
@@ -176,9 +202,6 @@ export class MyEntityEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: true, type: 'uuid' })
-  standardId: string | null;
 
   @Column({ nullable: false })
   name: string;
@@ -344,9 +367,6 @@ type GridPosition = {
 export class WidgetEntity extends SyncableEntity implements Required<WidgetEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: true, type: 'uuid' })
-  standardId: string | null;
 
   @Column({ nullable: false })
   name: string;
@@ -672,7 +692,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { MyEntityExceptionCode } from 'src/engine/metadata-modules/my-entity/my-entity.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -740,7 +760,7 @@ export class FlatMyEntityValidatorService {
     }
 
     // Prevent deletion of standard entities unless it's a system build
-    if (!buildOptions.isSystemBuild && isStandardMetadata(existingEntity)) {
+    if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(existingEntity)) {
       validationResult.errors.push({
         code: MyEntityExceptionCode.MY_ENTITY_IS_STANDARD,
         message: t`Cannot delete standard entity`,
@@ -893,7 +913,7 @@ export class WorkspaceMigrationMyEntityActionsBuilderService extends WorkspaceEn
       type: 'update',
       metadataName: 'myEntity',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

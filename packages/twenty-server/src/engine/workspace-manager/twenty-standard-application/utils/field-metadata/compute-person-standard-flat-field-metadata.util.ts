@@ -229,6 +229,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  //deprecated
   avatarUrl: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -240,6 +241,26 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  avatarFile: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'avatarFile',
+      type: FieldMetadataType.FILES,
+      label: 'Avatar File',
+      description: "Contact's avatar file",
+      icon: 'IconFileUpload',
+      isSystem: true,
+      isNullable: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -370,7 +391,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'taskTarget',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -393,7 +414,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'noteTarget',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

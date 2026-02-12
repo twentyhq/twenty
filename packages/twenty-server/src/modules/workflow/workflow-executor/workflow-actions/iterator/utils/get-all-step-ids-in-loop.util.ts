@@ -1,3 +1,4 @@
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -25,7 +26,7 @@ const traverseSteps = ({
 
     const step = steps.find((s) => s.id === stepId);
 
-    if (!step || !step.nextStepIds) {
+    if (!step) {
       continue;
     }
 
@@ -46,10 +47,27 @@ const traverseSteps = ({
       }
     }
 
+    if (isWorkflowIfElseAction(step)) {
+      for (const branch of step.settings.input.branches) {
+        if (branch.nextStepIds) {
+          traverseSteps({
+            iteratorStepId,
+            stepIds: branch.nextStepIds,
+            steps,
+            visitedStepIds,
+            allStepIdsInLoop,
+          });
+        }
+      }
+    }
+
+    if (!step.nextStepIds) {
+      continue;
+    }
+
     const connectsBackToIterator = step.nextStepIds.includes(iteratorStepId);
 
     if (connectsBackToIterator) {
-      // We've found the end of the loop, stop traversing
       continue;
     }
 

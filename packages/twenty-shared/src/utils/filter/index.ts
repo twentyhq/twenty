@@ -19,6 +19,7 @@ export * from './utils/isMatchingArrayFilter';
 export * from './utils/isMatchingBooleanFilter';
 export * from './utils/isMatchingCurrencyFilter';
 export * from './utils/isMatchingDateFilter';
+export * from './utils/isMatchingFilesFilter';
 export * from './utils/isMatchingFloatFilter';
 export * from './utils/isMatchingMultiSelectFilter';
 export * from './utils/isMatchingRatingFilter';

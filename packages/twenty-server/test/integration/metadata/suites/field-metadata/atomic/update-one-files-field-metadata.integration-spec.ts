@@ -5,22 +5,13 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('updateOne FILES field metadata - successful', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -47,12 +38,6 @@ describe('updateOne FILES field metadata - successful', () => {
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: createdObjectMetadataId },
-    });
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 
@@ -153,12 +138,6 @@ describe('updateOne FILES field metadata - failing', () => {
   let createdFieldMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -218,12 +197,6 @@ describe('updateOne FILES field metadata - failing', () => {
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: createdObjectMetadataId },
-    });
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 

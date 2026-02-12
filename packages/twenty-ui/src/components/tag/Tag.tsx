@@ -86,7 +86,7 @@ type TagWeight = 'regular' | 'medium';
 type TagVariant = 'solid' | 'outline' | 'border';
 export type TagColor = ThemeColor | 'transparent';
 
-type TagProps = {
+export type TagProps = {
   className?: string;
   color: TagColor;
   text: string;

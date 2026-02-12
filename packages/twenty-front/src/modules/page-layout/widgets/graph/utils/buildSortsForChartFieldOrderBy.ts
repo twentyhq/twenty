@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 type ChartSort = {
   fieldName: string;

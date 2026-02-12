@@ -8,7 +8,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type UseHandleToggleColumnSortProps = {
   objectMetadataItemId: string;

@@ -9,7 +9,10 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import {
+  getToolDisplayMessage,
+  resolveToolInput,
+} from '@/ai/utils/getToolDisplayMessage';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -132,12 +135,10 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
   const { input, output, type, errorText } = toolPart;
-  const toolName = type.split('-')[1];
+  const rawToolName = type.split('-')[1];
 
-  const toolInput =
-    isDefined(input) && typeof input === 'object' && 'input' in input
-      ? input.input
-      : input;
+  const { resolvedInput: toolInput, resolvedToolName: toolName } =
+    resolveToolInput(input, rawToolName);
 
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
@@ -175,7 +176,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
             <StyledLoadingContainer>
               <ShimmeringText>
                 <StyledDisplayMessage>
-                  {getToolDisplayMessage(input, toolName, false)}
+                  {getToolDisplayMessage(input, rawToolName, false)}
                 </StyledDisplayMessage>
               </ShimmeringText>
             </StyledLoadingContainer>
@@ -188,19 +189,32 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
     );
   }
 
+  // For execute_tool, the actual result is nested inside output.result
+  const unwrappedOutput =
+    rawToolName === 'execute_tool' &&
+    isDefined(output) &&
+    typeof output === 'object' &&
+    'result' in output
+      ? (output as { result: unknown }).result
+      : output;
+
   const displayMessage = hasError
     ? t`Tool execution failed`
-    : output &&
-        typeof output === 'object' &&
-        'message' in output &&
-        typeof output.message === 'string'
-      ? output.message
-      : getToolDisplayMessage(input, toolName, true);
+    : rawToolName === 'learn_tools' || rawToolName === 'execute_tool'
+      ? getToolDisplayMessage(input, rawToolName, true)
+      : unwrappedOutput &&
+          typeof unwrappedOutput === 'object' &&
+          'message' in unwrappedOutput &&
+          typeof unwrappedOutput.message === 'string'
+        ? unwrappedOutput.message
+        : getToolDisplayMessage(input, rawToolName, true);
 
   const result =
-    output && typeof output === 'object' && 'result' in output
-      ? (output as { result: string }).result
-      : output;
+    unwrappedOutput &&
+    typeof unwrappedOutput === 'object' &&
+    'result' in unwrappedOutput
+      ? (unwrappedOutput as { result: string }).result
+      : unwrappedOutput;
 
   const ToolIcon = getToolIcon(toolName);
 

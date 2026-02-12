@@ -67,7 +67,7 @@ export class DevUiStateManager {
     const event: UiEvent = {
       id: ++this.eventIdCounter,
       timestamp: new Date(),
-      message,
+      message: message.slice(0, 5_000),
       status,
     };
 
@@ -92,7 +92,7 @@ export class DevUiStateManager {
       ...this.state,
       ...(manifestStatus ? { manifestStatus } : {}),
       ...(appName ? { appName } : {}),
-      ...(error ? { error } : { error: undefined }),
+      ...(error ? { error: error.slice(0, 5_000) } : { error: undefined }),
     };
 
     this.notify();

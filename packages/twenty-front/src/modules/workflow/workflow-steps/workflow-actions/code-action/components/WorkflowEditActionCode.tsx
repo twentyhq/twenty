@@ -1,8 +1,8 @@
-import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
+import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import {
   type LogicFunctionFormValues,
   useLogicFunctionUpdateFormState,
-} from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -13,8 +13,6 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
-import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
 import { getFunctionInputFromSourceCode } from '@/logic-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -38,9 +36,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
-import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
@@ -129,9 +126,7 @@ export const WorkflowEditActionCode = ({
     );
 
   const { formValues, setFormValues, loading } =
-    useLogicFunctionUpdateFormState({
-      logicFunctionId,
-    });
+    useLogicFunctionUpdateFormState({ logicFunctionId });
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
@@ -144,7 +139,7 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { testLogicFunction, isTesting } = useTestLogicFunction({
+  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
     logicFunctionId,
     callback: updateOutputSchemaFromTestResult,
   });
@@ -154,9 +149,7 @@ export const WorkflowEditActionCode = ({
       input: {
         id: logicFunctionId,
         update: {
-          name: formValues.name,
-          description: formValues.description,
-          code: formValues.code,
+          sourceHandlerCode: formValues.code,
         },
       },
     });
@@ -169,11 +162,7 @@ export const WorkflowEditActionCode = ({
     setFormValues((prevState: LogicFunctionFormValues) => {
       return {
         ...prevState,
-        code: computeNewSources({
-          previousCode: prevState['code'],
-          filePath: `${SOURCE_FOLDER_NAME}/${INDEX_FILE_NAME}`,
-          value: newCode,
-        }),
+        code: newCode,
       };
     });
     await handleSave();
@@ -267,8 +256,8 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    if (!isTesting) {
-      await testLogicFunction();
+    if (!isExecuting) {
+      await executeLogicFunction();
     }
   };
 
@@ -382,12 +371,6 @@ export const WorkflowEditActionCode = ({
     setIsFullScreen(false);
   };
 
-  const indexFileContent =
-    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
-    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
-      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
-      : '';
-
   const fullScreenOverlay = renderFullScreenModal(
     <div data-globally-prevent-click-outside="true">
       <WorkflowEditActionCodeFields
@@ -399,7 +382,7 @@ export const WorkflowEditActionCode = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={indexFileContent}
+          value={formValues.code}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -434,7 +417,7 @@ export const WorkflowEditActionCode = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowCodeEditor
-                value={indexFileContent}
+                value={formValues.code}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{
@@ -443,6 +426,7 @@ export const WorkflowEditActionCode = ({
                   scrollBeyondLastLine: false,
                   padding: { top: 4, bottom: 4 },
                   lineNumbersMinChars: 2,
+                  fixedOverflowWidgets: true,
                 }}
                 readonly={actionOptions.readonly}
                 onEnterFullScreen={handleEnterFullScreen}
@@ -460,7 +444,7 @@ export const WorkflowEditActionCode = ({
                 <InputLabel>{t`Result`}</InputLabel>
                 <LogicFunctionExecutionResult
                   logicFunctionTestData={logicFunctionTestData}
-                  isTesting={isTesting}
+                  isTesting={isExecuting}
                 />
               </StyledCodeEditorContainer>
               {logicFunctionTestData.output.logs.length > 0 && (
@@ -468,7 +452,7 @@ export const WorkflowEditActionCode = ({
                   <InputLabel>{t`Logs`}</InputLabel>
                   <TextArea
                     textAreaId={testLogsTextAreaId}
-                    value={isTesting ? '' : logicFunctionTestData.output.logs}
+                    value={isExecuting ? '' : logicFunctionTestData.output.logs}
                     maxRows={20}
                     disabled
                   />
@@ -486,7 +470,7 @@ export const WorkflowEditActionCode = ({
                     <CmdEnterActionButton
                       title={t`Test`}
                       onClick={handleRunFunction}
-                      disabled={isTesting}
+                      disabled={isExecuting}
                     />,
                   ]
                 : []

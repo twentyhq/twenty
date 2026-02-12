@@ -9,6 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { ViewFieldGroupException } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
 import { ViewFieldException } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFilterGroupException } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterException } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
@@ -35,6 +36,7 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
     exception:
       | ViewException
       | ViewFieldException
+      | ViewFieldGroupException
       | ViewFilterException
       | ViewFilterGroupException
       | ViewGroupException

@@ -19,13 +19,7 @@ export const findFlatEntitiesByApplicationId = <T extends SyncableFlatEntity>({
 
   return universalIdentifiers
     .map((universalId) => {
-      const id = flatEntityMaps.idByUniversalIdentifier[universalId];
-
-      if (!isDefined(id)) {
-        return undefined;
-      }
-
-      const entity = flatEntityMaps.byId[id];
+      const entity = flatEntityMaps.byUniversalIdentifier[universalId];
 
       if (!isDefined(entity)) {
         return undefined;

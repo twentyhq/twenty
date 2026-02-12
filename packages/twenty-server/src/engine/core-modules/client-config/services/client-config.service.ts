@@ -202,6 +202,7 @@ export class ClientConfigService {
         ? calendarBookingPageId
         : undefined,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
+      isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
     };
 
     return clientConfig;

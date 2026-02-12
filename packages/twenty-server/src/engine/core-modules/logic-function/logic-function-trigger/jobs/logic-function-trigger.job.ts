@@ -3,7 +3,7 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 export type LogicFunctionTriggerJobData = {
   logicFunctionId: string;
@@ -25,8 +25,8 @@ export class LogicFunctionTriggerJob {
     await Promise.all(
       logicFunctionPayloads.map(
         async (logicFunctionPayload) =>
-          await this.logicFunctionExecutorService.executeOneLogicFunction({
-            id: logicFunctionPayload.logicFunctionId,
+          await this.logicFunctionExecutorService.execute({
+            logicFunctionId: logicFunctionPayload.logicFunctionId,
             workspaceId: logicFunctionPayload.workspaceId,
             payload: logicFunctionPayload.payload ?? {},
           }),

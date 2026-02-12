@@ -7,10 +7,10 @@ import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/Objec
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
@@ -53,7 +53,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const { data, loading, error } = useQuery<{
+  const { data, loading, error, refetch } = useQuery<{
     [nameSingular: string]: RecordGqlNode;
   }>(findOneRecordQuery, {
     skip: !objectMetadataItem || !objectRecordId || skip || !hasReadPermission,
@@ -85,5 +85,6 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     record: recordWithoutConnection,
     loading,
     error,
+    refetch,
   };
 };

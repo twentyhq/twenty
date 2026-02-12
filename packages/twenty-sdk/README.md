@@ -56,7 +56,7 @@ Commands:
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
   function:logs        Watch application function logs
-  function:execute     Execute a serverless function with a JSON payload
+  function:execute     Execute a logic function with a JSON payload
   help [command]       display help for command
 ```
 

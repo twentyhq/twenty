@@ -10,7 +10,7 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   SubscriptionStatus,
   WorkspaceActivationStatus,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const currentWorkspace = {
   id: '1',

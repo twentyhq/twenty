@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -28,6 +29,8 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {
     super();
   }
@@ -35,34 +38,42 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatEntityMaps<FlatIndexMetadata>> {
-    const [indexes, applications, objectMetadatas] = await Promise.all([
-      this.indexMetadataRepository.find({
-        where: {
-          workspaceId,
-        },
-        withDeleted: true,
-        relationLoadStrategy: 'join',
-        select: {
-          // Note: We need all IndexFieldMetadataEntity in order to build a FlatIndex
-          indexFieldMetadatas: true,
-        },
-        relations: ['indexFieldMetadatas'],
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-    ]);
+    const [indexes, applications, objectMetadatas, fieldMetadatas] =
+      await Promise.all([
+        this.indexMetadataRepository.find({
+          where: {
+            workspaceId,
+          },
+          withDeleted: true,
+          relationLoadStrategy: 'join',
+          select: {
+            // Note: We need all IndexFieldMetadataEntity in order to build a FlatIndex
+            indexFieldMetadatas: true,
+          },
+          relations: ['indexFieldMetadatas'],
+        }),
+        this.applicationRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+        }),
+        this.objectMetadataRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+        this.fieldMetadataRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+      ]);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
+    const fieldMetadataIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(fieldMetadatas);
 
     const flatIndexMaps = createEmptyFlatEntityMaps();
 
@@ -71,6 +82,7 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
         entity: indexEntity,
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,
+        fieldMetadataIdToUniversalIdentifierMap,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

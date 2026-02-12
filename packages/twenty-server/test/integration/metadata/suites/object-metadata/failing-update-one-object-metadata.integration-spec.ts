@@ -36,12 +36,6 @@ const labelIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingCont
       },
     },
     {
-      title: 'when labelIdentifier is null',
-      context: {
-        labelIdentifierFieldMetadataId: null as any,
-      },
-    },
-    {
       title: 'when labelIdentifier is not a TEXT or NAME field',
       context: ({ numberFieldMetadataId }) => ({
         labelIdentifierFieldMetadataId: numberFieldMetadataId,

@@ -6,6 +6,8 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 export const useClearField = () => {
   const {
@@ -37,6 +39,19 @@ export const useClearField = () => {
           throw new Error('Field metadata item cannot be found');
         }
 
+        const isRelation =
+          foundFieldMetadataItem.type === FieldMetadataType.RELATION ||
+          foundFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
+
+        const shouldSkipClearingBecauseInvolvesMultipleRecords =
+          isRelation &&
+          foundFieldMetadataItem.settings?.relationType ===
+            RelationType.ONE_TO_MANY;
+
+        if (shouldSkipClearingBecauseInvolvesMultipleRecords) {
+          return;
+        }
+
         const fieldName = fieldDefinition.metadata.fieldName;
 
         const emptyFieldValue = generateEmptyFieldValue({
@@ -48,11 +63,27 @@ export const useClearField = () => {
           emptyFieldValue,
         );
 
+        const isManyToOneRelation =
+          isRelation &&
+          foundFieldMetadataItem.settings?.relationType ===
+            RelationType.MANY_TO_ONE;
+
+        const updateFieldName = isManyToOneRelation
+          ? getForeignKeyNameFromRelationFieldName(fieldName)
+          : fieldName;
+
+        if (isManyToOneRelation) {
+          set(
+            recordStoreFamilySelector({ recordId, fieldName: updateFieldName }),
+            emptyFieldValue,
+          );
+        }
+
         updateRecord?.({
           variables: {
             where: { id: recordId },
             updateOneRecordInput: {
-              [fieldName]: emptyFieldValue,
+              [updateFieldName]: emptyFieldValue,
             },
           },
         });

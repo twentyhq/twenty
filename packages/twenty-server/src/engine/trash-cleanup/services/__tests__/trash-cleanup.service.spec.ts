@@ -69,14 +69,28 @@ describe('TrashCleanupService', () => {
     };
 
     const setObjectMetadataCache = (
-      entries: Array<{ id: string; nameSingular: string }>,
+      entries: Array<{
+        id: string;
+        nameSingular: string;
+        universalIdentifier: string;
+      }>,
     ) => {
-      const byId = entries.reduce<Record<string, any>>(
-        (acc, { id, nameSingular }) => {
-          acc[id] = {
+      const byUniversalIdentifier = entries.reduce<Record<string, any>>(
+        (acc, { id, nameSingular, universalIdentifier }) => {
+          acc[universalIdentifier] = {
             id,
             nameSingular,
+            universalIdentifier,
           };
+
+          return acc;
+        },
+        {},
+      );
+
+      const universalIdentifierById = entries.reduce<Record<string, string>>(
+        (acc, { id, universalIdentifier }) => {
+          acc[id] = universalIdentifier;
 
           return acc;
         },
@@ -86,8 +100,9 @@ describe('TrashCleanupService', () => {
       mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: {
-            byId,
-            idByUniversalIdentifier: {},
+            byUniversalIdentifier,
+            universalIdentifierById,
+            universalIdentifiersByApplicationId: {},
           },
         },
       );
@@ -95,8 +110,16 @@ describe('TrashCleanupService', () => {
 
     it('should return deleted count when cleanup succeeds', async () => {
       setObjectMetadataCache([
-        { id: 'obj-company', nameSingular: 'company' },
-        { id: 'obj-person', nameSingular: 'person' },
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+        {
+          id: 'obj-person',
+          nameSingular: 'person',
+          universalIdentifier: 'uni-person',
+        },
       ]);
 
       const companyRepository = createRepositoryMock('company', 2);
@@ -141,8 +164,16 @@ describe('TrashCleanupService', () => {
       (service as any).maxRecordsPerWorkspace = 3;
       (service as any).batchSize = 3;
       setObjectMetadataCache([
-        { id: 'obj-company', nameSingular: 'company' },
-        { id: 'obj-person', nameSingular: 'person' },
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+        {
+          id: 'obj-person',
+          nameSingular: 'person',
+          universalIdentifier: 'uni-person',
+        },
       ]);
 
       const companyRepository = createRepositoryMock('company', 2);
@@ -169,7 +200,13 @@ describe('TrashCleanupService', () => {
     });
 
     it('should ignore objects without soft deleted records', async () => {
-      setObjectMetadataCache([{ id: 'obj-company', nameSingular: 'company' }]);
+      setObjectMetadataCache([
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+      ]);
 
       const companyRepository = createRepositoryMock('company', 0);
 
@@ -187,7 +224,13 @@ describe('TrashCleanupService', () => {
     });
 
     it('should delete records across multiple batches', async () => {
-      setObjectMetadataCache([{ id: 'obj-company', nameSingular: 'company' }]);
+      setObjectMetadataCache([
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+      ]);
 
       const companyRepository = createRepositoryMock('company', 5);
 

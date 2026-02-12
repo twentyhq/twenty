@@ -79,30 +79,14 @@ export class CleanerWorkspaceService {
       );
   }
 
-  async computeDaysSinceSubscriptionUnpaid(
+  async computeDaysSinceSuspended(
     workspace: WorkspaceEntity,
   ): Promise<number | null> {
-    const lastSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: {
-          workspaceId: workspace.id,
-        },
-        order: { updatedAt: 'DESC' },
-      });
-
-    if (
-      lastSubscription.status !== SubscriptionStatus.Unpaid &&
-      lastSubscription.status !== SubscriptionStatus.Canceled
-    ) {
-      return null;
+    if (isDefined(workspace.suspendedAt)) {
+      return differenceInDays(new Date(), workspace.suspendedAt);
     }
 
-    const daysSinceSubscriptionUnpaid = differenceInDays(
-      new Date(),
-      lastSubscription.currentPeriodStart,
-    );
-
-    return daysSinceSubscriptionUnpaid;
+    return null;
   }
 
   async checkIfAtLeastOneWorkspaceMemberWarned(
@@ -425,20 +409,20 @@ export class CleanerWorkspaceService {
           continue;
         }
 
-        const workspaceInactivity =
-          await this.computeDaysSinceSubscriptionUnpaid(workspace);
+        const inactiveDaysSinceSuspended =
+          await this.computeDaysSinceSuspended(workspace);
 
-        if (workspaceInactivity === null) {
+        if (inactiveDaysSinceSuspended === null) {
           continue;
         }
 
         if (
           (!isDefined(onlyOperation) || onlyOperation === 'soft-delete') &&
-          workspaceInactivity > this.inactiveDaysBeforeSoftDelete
+          inactiveDaysSinceSuspended > this.inactiveDaysBeforeSoftDelete
         ) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
-            workspaceInactivity,
+            inactiveDaysSinceSuspended,
             dryRun,
           );
 
@@ -447,12 +431,12 @@ export class CleanerWorkspaceService {
 
         if (
           (!isDefined(onlyOperation) || onlyOperation === 'warn') &&
-          workspaceInactivity > this.inactiveDaysBeforeWarn &&
-          workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
+          inactiveDaysSinceSuspended > this.inactiveDaysBeforeWarn &&
+          inactiveDaysSinceSuspended <= this.inactiveDaysBeforeSoftDelete
         ) {
           await this.warnWorkspaceMembers(
             workspace,
-            workspaceInactivity,
+            inactiveDaysSinceSuspended,
             dryRun,
           );
         }

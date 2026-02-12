@@ -1,9 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -32,13 +33,17 @@ import {
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-lifecycle';
+import { WorkspaceEventEmitterExceptionFilter } from 'src/engine/workspace-event-emitter/workspace-event-emitter-exception.filter';
 
 import { eventStreamIdToChannelId } from './utils/get-channel-id-from-event-stream-id';
 
-@Resolver()
+@MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  WorkspaceEventEmitterExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class WorkspaceEventEmitterResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
@@ -99,6 +104,18 @@ export class WorkspaceEventEmitterResolver {
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
+    const streamData = await this.eventStreamService.getStreamData(
+      workspace.id,
+      eventStreamChannelId,
+    );
+
+    if (isDefined(streamData)) {
+      throw new EventStreamException(
+        'Event stream already exists',
+        EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,
+      );
+    }
+
     await this.eventStreamService.createEventStream({
       workspaceId: workspace.id,
       eventStreamChannelId,
@@ -125,6 +142,7 @@ export class WorkspaceEventEmitterResolver {
     }
 
     return wrapAsyncIteratorWithLifecycle(iterator, {
+      initialValue: [],
       onHeartbeat: () =>
         this.eventStreamService.refreshEventStreamTTL({
           workspaceId: workspace.id,
@@ -143,14 +161,24 @@ export class WorkspaceEventEmitterResolver {
   async addQueryToEventStream(
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
-
-    const isAuthorized = await this.eventStreamService.isAuthorized({
-      workspaceId: workspace.id,
+    const streamData = await this.eventStreamService.getStreamData(
+      workspace.id,
       eventStreamChannelId,
+    );
+
+    if (!isDefined(streamData)) {
+      throw new EventStreamException(
+        'Event stream does not exist',
+        EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST,
+      );
+    }
+    const isAuthorized = await this.eventStreamService.isAuthorized({
+      streamData,
       authContext: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
@@ -163,7 +191,6 @@ export class WorkspaceEventEmitterResolver {
         EventStreamExceptionCode.NOT_AUTHORIZED,
       );
     }
-
     await this.eventStreamService.addQuery({
       workspaceId: workspace.id,
       eventStreamChannelId,
@@ -178,14 +205,26 @@ export class WorkspaceEventEmitterResolver {
   async removeQueryFromEventStream(
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
 
-    const isAuthorized = await this.eventStreamService.isAuthorized({
-      workspaceId: workspace.id,
+    const streamData = await this.eventStreamService.getStreamData(
+      workspace.id,
       eventStreamChannelId,
+    );
+
+    if (!isDefined(streamData)) {
+      throw new EventStreamException(
+        'Event stream does not exist',
+        EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST,
+      );
+    }
+
+    const isAuthorized = await this.eventStreamService.isAuthorized({
+      streamData,
       authContext: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,

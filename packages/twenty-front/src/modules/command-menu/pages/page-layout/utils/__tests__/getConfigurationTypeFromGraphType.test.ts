@@ -1,6 +1,6 @@
 import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { getConfigurationTypeFromGraphType } from '@/command-menu/pages/page-layout/utils/getConfigurationTypeFromGraphType';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 describe('getConfigurationTypeFromGraphType', () => {
   it('returns BAR_CHART for VERTICAL_BAR', () => {

@@ -4,16 +4,17 @@ import {
   type FieldFilesMetadata,
   type FieldFilesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 
 import { useContext } from 'react';
 
 export const useFilesFieldDisplay = () => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition, disableChipClick } =
+    useContext(FieldContext);
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue<FieldFilesValue | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldFilesValue[] | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
@@ -22,5 +23,6 @@ export const useFilesFieldDisplay = () => {
   return {
     fieldDefinition: fieldDefinition as FieldDefinition<FieldFilesMetadata>,
     fieldValue,
+    disableChipClick,
   };
 };

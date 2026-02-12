@@ -1,13 +1,12 @@
 import { msg } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 const STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX =
   /^[a-z][a-zA-Z0-9]*$/;
@@ -15,7 +14,7 @@ const STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER
 export const validateFlatObjectMetadataNames = ({
   namePlural,
   nameSingular,
-}: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'> &
+}: Pick<UniversalFlatObjectMetadata, 'nameSingular' | 'namePlural'> &
   ObjectMetadataMinimalInformation) => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
@@ -37,16 +36,6 @@ export const validateFlatObjectMetadataNames = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: `Name is too short`,
         userFriendlyMessage: msg`Name is too short`,
-        value: name,
-      });
-    }
-
-    // CamelCase check
-    if (name !== camelCase(name)) {
-      errors.push({
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        message: `Name should be in camelCase`,
-        userFriendlyMessage: msg`Name should be in camelCase`,
         value: name,
       });
     }

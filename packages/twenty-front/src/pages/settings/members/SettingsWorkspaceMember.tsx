@@ -29,10 +29,10 @@ import { MemberPermissionsTab } from '@/settings/members/components/MemberPermis
 import { useWorkspaceMemberRoles } from '@/settings/members/hooks/useWorkspaceMemberRoles';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
+  PermissionFlagType,
   useDeleteUserWorkspaceMutation,
   useImpersonateMutation,
 } from '~/generated-metadata/graphql';
-import { PermissionFlagType } from '~/generated/graphql';
 
 const SETTINGS_WORKSPACE_MEMBER_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',

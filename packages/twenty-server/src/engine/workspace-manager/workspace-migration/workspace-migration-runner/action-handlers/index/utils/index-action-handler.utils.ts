@@ -8,17 +8,16 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import {
   type FlatIndexFieldMetadata,
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -31,7 +30,7 @@ export const computeFlatIndexFieldColumnNames = ({
   flatFieldMetadataMaps,
 }: {
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
 }): string[] => {
   return flatIndexFieldMetadatas.flatMap(({ fieldMetadataId }) => {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -149,14 +148,14 @@ export const createIndexInWorkspaceSchema = async ({
 }: {
   flatIndexMetadata: FlatIndexMetadata;
   flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
   workspaceSchemaManagerService: WorkspaceSchemaManagerService;
   queryRunner: QueryRunner;
   workspaceId: string;
 }): Promise<void> => {
   const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
-    flatObjectMetadata,
+    objectMetadata: flatObjectMetadata,
   });
 
   const columns = computeFlatIndexFieldColumnNames({

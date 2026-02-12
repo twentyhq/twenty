@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-delete-navigation-menu-item-input-to-flat-navigation-menu-item-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -12,12 +13,18 @@ export class NavigationMenuItemDeletionService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async deleteNavigationMenuItemsForDeletedRecords(
     deletedRecordIds: string[],
     workspaceId: string,
   ): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -29,7 +36,7 @@ export class NavigationMenuItemDeletionService {
     const deletedRecordIdsSet = new Set(deletedRecordIds);
 
     const navigationMenuItemsToDelete = Object.values(
-      flatNavigationMenuItemMaps.byId,
+      flatNavigationMenuItemMaps.byUniversalIdentifier,
     ).filter(
       (item): item is NonNullable<typeof item> =>
         isDefined(item) &&
@@ -62,6 +69,8 @@ export class NavigationMenuItemDeletionService {
           },
           workspaceId,
           isSystemBuild: true,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

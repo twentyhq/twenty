@@ -3,21 +3,12 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('createOne FILES field metadata - successful', () => {
   let createdObjectMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -44,12 +35,6 @@ describe('createOne FILES field metadata - successful', () => {
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: createdObjectMetadataId },
-    });
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 
@@ -136,12 +121,6 @@ describe('createOne FILES field metadata - failing', () => {
   let createdObjectMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -168,12 +147,6 @@ describe('createOne FILES field metadata - failing', () => {
     await deleteOneObjectMetadata({
       expectToFail: false,
       input: { idToDelete: createdObjectMetadataId },
-    });
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 
@@ -231,69 +204,6 @@ describe('createOne FILES field metadata - failing', () => {
         type: FieldMetadataType.FILES,
         settings: { maxNumberOfValues: 5 },
         isUnique: true,
-      },
-    });
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  });
-});
-
-describe('createOne FILES field metadata - feature flag disabled', () => {
-  let createdObjectMetadataId: string;
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-
-    const { data } = await createOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        nameSingular: 'testFilesFieldFlagDisabledObject',
-        namePlural: 'testFilesFieldFlagDisabledObjects',
-        labelSingular: 'Test Files Field Flag Disabled Object',
-        labelPlural: 'Test Files Field Flag Disabled Objects',
-        icon: 'IconFile',
-        isLabelSyncedWithName: false,
-      },
-    });
-
-    createdObjectMetadataId = data.createOneObject.id;
-  });
-
-  afterAll(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: createdObjectMetadataId,
-        updatePayload: { isActive: false },
-      },
-    });
-    await deleteOneObjectMetadata({
-      expectToFail: false,
-      input: { idToDelete: createdObjectMetadataId },
-    });
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
-  it('should fail to create files field when feature flag is disabled', async () => {
-    const { errors } = await createOneFieldMetadata({
-      expectToFail: true,
-      input: {
-        objectMetadataId: createdObjectMetadataId,
-        name: 'filesFieldDisabled',
-        label: 'Files Field Disabled',
-        type: FieldMetadataType.FILES,
-        settings: {
-          maxNumberOfValues: 5,
-        },
       },
     });
 

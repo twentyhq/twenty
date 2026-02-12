@@ -17,10 +17,6 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 * Vytvářejte logické funkce s vlastními spouštěči
 * Nasazujte stejnou aplikaci do více pracovních prostorů
 
-**Již brzy:**
-
-* Vlastní rozvržení a komponenty uživatelského rozhraní
-
 ## Předpoklady
 
 * Node.js 24+ a Yarn 4
@@ -95,81 +91,54 @@ my-twenty-app/
   README.md
   public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
   src/
-    application.config.ts          # Povinné – hlavní konfigurace aplikace
-    default-function.role.ts       # Výchozí role pro bezserverové funkce
-    hello-world.function.ts        # Ukázková bezserverová funkce
-    hello-world.front-component.tsx # Ukázková front-endová komponenta
-    // vaše entity (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### Konvence před konfigurací
-
-Aplikace používají přístup **konvence před konfigurací**, kde jsou entity detekovány podle přípony souboru. To umožňuje flexibilní organizaci ve složce `src/app/`:
-
-| Přípona souboru         | Typ entity                       |
-| ----------------------- | -------------------------------- |
-| `*.object.ts`           | Definice vlastních objektů       |
-| `*.function.ts`         | Definice serverless funkcí       |
-| `*.front-component.tsx` | Definice frontendových komponent |
-| `*.role.ts`             | Definice rolí                    |
-
-### Podporované uspořádání složek
-
-Entity můžete uspořádat podle některého z těchto vzorů:
-
-**Tradiční (podle typu):**
-
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**Podle funkcí:**
-
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**Plochá:**
-
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
+  ├── roles/
+  │   └── default-role.ts               # Výchozí role pro logické funkce
+  ├── logic-functions/
+  │   └── hello-world.ts                # Ukázková logická funkce
+  └── front-components/
+      └── hello-world.tsx               # Ukázková front-endová komponenta
 ```
 
 V kostce:
 
-* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skripty jako `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` a `auth:login`, které delegují na lokální `twenty` CLI.
+* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skripty jako `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` a autentizační příkazy, které delegují na lokální `twenty` CLI.
 * **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
 * **eslint.config.mjs** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
 * **README.md**: Krátké README v kořeni aplikace se základními pokyny.
 * **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
-* **src/**: Hlavní místo, kde definujete svou aplikaci jako kód:
-  * `application.config.ts`: Globální konfigurace vaší aplikace (metadata a napojení za běhu). Viz „Konfigurace aplikace“ níže.
-  * `*.role.ts`: Definice rolí používané vašimi logickými funkcemi. Viz „Výchozí role funkce“ níže.
-  * `*.object.ts`: Definice vlastních objektů.
-  * `*.function.ts`: Definice logických funkcí.
-  * `*.front-component.tsx`: Definice frontových komponent.
+* **src/**: Hlavní místo, kde definujete svou aplikaci jako kód
+
+### Detekce entit
+
+SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`export default define<Entity>({...})`**. Každý typ entity má odpovídající pomocnou funkci exportovanou z `twenty-sdk`:
+
+| Pomocná funkce           | Typ entity                            |
+| ------------------------ | ------------------------------------- |
+| `defineObject()`         | Definice vlastních objektů            |
+| `defineLogicFunction()`  | Definice logických funkcí             |
+| `defineFrontComponent()` | Definice frontendových komponent      |
+| `defineRole()`           | Definice rolí                         |
+| `defineField()`          | Rozšíření polí u existujících objektů |
+
+<Note>
+  **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
+</Note>
+
+Příklad detekované entity:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 Pozdější příkazy přidají další soubory a složky:
 
@@ -215,16 +184,18 @@ twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které použí
 
 ### Pomocné funkce
 
-SDK poskytuje čtyři pomocné funkce s vestavěnou validací pro definování entit vaší aplikace:
+SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je popsáno v [Detekce entit](#entity-detection), musíte použít `export default define<Entity>({...})`, aby byly vaše entity detekovány:
 
-| Funkce                | Účel                                             |
-| --------------------- | ------------------------------------------------ |
-| `defineApplication()` | Konfigurace metadat aplikace                     |
-| `defineObject()`      | Definice vlastních objektů s poli                |
-| `defineFunction()`    | Definice logických funkcí s obslužnými funkcemi  |
-| `defineRole()`        | Konfigurace oprávnění rolí a přístupu k objektům |
+| Funkce                   | Účel                                                              |
+| ------------------------ | ----------------------------------------------------------------- |
+| `defineApplication()`    | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
+| `defineObject()`         | Definice vlastních objektů s poli                                 |
+| `defineLogicFunction()`  | Definice logických funkcí s obslužnými funkcemi                   |
+| `defineFrontComponent()` | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
+| `defineRole()`           | Konfigurace oprávnění rolí a přístupu k objektům                  |
+| `defineField()`          | Rozšiřte existující objekty o další pole                          |
 
-Tyto funkce validují vaši konfiguraci za běhu a poskytují lepší automatické doplňování v IDE a lepší typovou bezpečnost.
+Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
 ### Definování objektů
 
@@ -311,9 +282,9 @@ Hlavní body:
   **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
 </Note>
 
-### Konfigurace aplikace (application.config.ts)
+### Konfigurace aplikace (application-config.ts)
 
-Každá aplikace má jeden soubor `application.config.ts`, který popisuje:
+Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
 
 * **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
@@ -322,9 +293,9 @@ Každá aplikace má jeden soubor `application.config.ts`, který popisuje:
 Use `defineApplication()` to define your application configuration:
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +310,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +318,11 @@ Poznámky:
 
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
-* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
 
 #### Role a oprávnění
 
-Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. Pole `defaultRoleUniversalIdentifier` v `application-config.ts` určuje výchozí roli používanou logickými funkcemi vaší aplikace.
 
 * Běhový klíč API vložený jako `TWENTY_API_KEY` je odvozen z této výchozí role funkcí.
 * Typovaný klient bude omezen oprávněními udělenými této roli.
@@ -362,7 +333,7 @@ Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a a
 Když vygenerujete novou aplikaci, CLI také vytvoří výchozí soubor role. K definování rolí s vestavěnou validací použijte `defineRole()`:
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -401,10 +372,10 @@ export default defineRole({
 });
 ```
 
-Na `universalIdentifier` této role se poté odkazuje v `application.config.ts` jako na `roleUniversalIdentifier`. Jinými slovy:
+Na `universalIdentifier` této role se poté odkazuje v `application-config.ts` jako na `defaultRoleUniversalIdentifier`. Jinými slovy:
 
 * **\*.role.ts** definuje, co může výchozí role funkce dělat.
-* **application.config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
+* **application-config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
 
 Poznámky:
 
@@ -415,11 +386,11 @@ Poznámky:
 
 ### Konfigurace logických funkcí a vstupní bod
 
-Každý soubor funkce používá `defineFunction()` k exportu konfigurace s obslužnou funkcí (handlerem) a volitelnými spouštěči. Pro automatickou detekci použijte příponu souboru `*.function.ts`.
+Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s obslužnou funkcí (handlerem) a volitelnými spouštěči.
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -439,7 +410,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -515,7 +486,7 @@ Poznámky:
 Když spouštěč trasy vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -545,7 +516,7 @@ Typ `RoutePayload` má následující strukturu:
 Ve výchozím nastavení se záhlaví HTTP z příchozích požadavků z bezpečnostních důvodů do vaší logické funkce **ne** předávají. Chcete-li zpřístupnit konkrétní záhlaví, výslovně je uveďte v poli `forwardedRequestHeaders`:
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -580,8 +551,45 @@ const handler = async (event: RoutePayload) => {
 
 Nové funkce můžete vytvářet dvěma způsoby:
 
-* **Vygenerované**: Spusťte `yarn entity:add` a zvolte možnost přidat novou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
-* **Ruční**: Vytvořte nový soubor `*.function.ts` a použijte `defineFunction()` podle stejného vzoru.
+* **Vygenerované**: Spusťte `yarn entity:add` a zvolte možnost přidat novou logickou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
+* **Ruční**: Vytvořte nový soubor `*.logic-function.ts` a použijte `defineLogicFunction()` podle stejného vzoru.
+
+### Frontendové komponenty
+
+Frontendové komponenty vám umožňují vytvářet vlastní React komponenty, které se vykreslují v rozhraní Twenty. K definování komponent s vestavěnou validací použijte `defineFrontComponent()`:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Hlavní body:
+
+* Frontendové komponenty jsou React komponenty, které se vykreslují v izolovaných kontextech v rámci Twenty.
+* Pro automatickou detekci použijte příponu souboru `*.front-component.tsx`.
+* Pole `component` odkazuje na vaši React komponentu.
+* Komponenty se během `yarn app:dev` automaticky sestaví a synchronizují.
+
+Nové frontendové komponenty můžete vytvořit dvěma způsoby:
+
+* **Vygenerované**: Spusťte `yarn entity:add` a zvolte možnost přidat novou frontendovou komponentu.
+* **Ruční**: Vytvořte nový soubor `*.front-component.tsx` a použijte `defineFrontComponent()`.
 
 ### Generovaný typovaný klient
 
@@ -606,12 +614,12 @@ Když vaše funkce běží na Twenty, platforma před spuštěním kódu vloží
 Poznámky:
 
 * Není nutné předávat URL ani klíč API vygenerovanému klientovi. Za běhu čte `TWENTY_API_URL` a `TWENTY_API_KEY` z process.env.
-* Oprávnění API klíče jsou určena rolí odkazovanou v `application.config.ts` prostřednictvím `roleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
-* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `roleUniversalIdentifier` na univerzální identifikátor této role.
+* Oprávnění klíče API jsou určena rolí odkazovanou ve vašem `application-config.ts` prostřednictvím `defaultRoleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
+* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `defaultRoleUniversalIdentifier` na univerzální identifikátor této role.
 
 ### Příklad Hello World
 
-Prozkoumejte minimalistický end-to-end příklad, který demonstruje objekty, funkce a více spouštěčů [zde](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Prozkoumejte minimalistický end-to-end příklad, který demonstruje objekty, logické funkce, frontendové komponenty a více spouštěčů [zde](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Ruční nastavení (bez scaffolderu)
 

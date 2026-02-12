@@ -4,6 +4,10 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -55,8 +59,15 @@ export class TransientTokenService {
   ): Promise<Omit<TransientTokenJwtPayload, 'type' | 'sub'>> {
     await this.jwtWrapperService.verifyJwtToken(transientToken);
 
-    const { type: _type, ...payload } =
+    const { type, ...payload } =
       this.jwtWrapperService.decode<TransientTokenJwtPayload>(transientToken);
+
+    if (type !== JwtTokenTypeEnum.LOGIN) {
+      throw new AuthException(
+        'Expected a transient token',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
 
     return payload;
   }

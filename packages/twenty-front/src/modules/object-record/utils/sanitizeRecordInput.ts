@@ -73,6 +73,18 @@ export const sanitizeRecordInput = ({
           return undefined;
         }
 
+        if (
+          isDefined(fieldMetadataItem) &&
+          fieldMetadataItem.type === FieldMetadataType.FILES &&
+          Array.isArray(fieldValue)
+        ) {
+          const cleanedFiles = fieldValue.map((file: any) => ({
+            fileId: file.fileId,
+            label: file.label,
+          }));
+          return [fieldName, cleanedFiles];
+        }
+
         // Todo: we should check that the fieldValue is a valid value
         // (e.g. a string for a string field, following the right composite structure for composite fields)
         return [fieldName, fieldValue];

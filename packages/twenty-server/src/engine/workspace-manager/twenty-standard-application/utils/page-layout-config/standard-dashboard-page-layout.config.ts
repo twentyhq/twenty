@@ -43,11 +43,10 @@ const DASHBOARD_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_DASHBOARD_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'myFirstDashboard',
   name: 'My First Dashboard',
   type: PageLayoutType.DASHBOARD,
   objectUniversalIdentifier: null,
   universalIdentifier: '20202020-d001-4d01-8d01-da5ab0a00001',
-  defaultTabUniversalIdentifier: DASHBOARD_PAGE_TABS.tab1.universalIdentifier,
+  defaultTabUniversalIdentifier: null,
   tabs: DASHBOARD_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

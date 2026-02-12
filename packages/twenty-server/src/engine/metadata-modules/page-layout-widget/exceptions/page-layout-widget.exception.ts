@@ -16,7 +16,7 @@ export enum PageLayoutWidgetExceptionMessageKey {
   PAGE_LAYOUT_TAB_NOT_FOUND = 'PAGE_LAYOUT_TAB_NOT_FOUND',
   PAGE_LAYOUT_WIDGET_NOT_DELETED = 'PAGE_LAYOUT_WIDGET_NOT_DELETED',
   GRID_POSITION_REQUIRED = 'GRID_POSITION_REQUIRED',
-  INVALID_WIDGET_GRID_POSITION = 'INVALID_WIDGET_GRID_POSITION',
+  INVALID_WIDGET_POSITION = 'INVALID_WIDGET_POSITION',
   INVALID_WIDGET_CONFIGURATION = 'INVALID_WIDGET_CONFIGURATION',
 }
 
@@ -66,15 +66,15 @@ export const generatePageLayoutWidgetExceptionMessage = (
       return 'Page layout widget is not deleted and cannot be restored';
     case PageLayoutWidgetExceptionMessageKey.GRID_POSITION_REQUIRED:
       return 'Grid position is required';
-    case PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION:
+    case PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION:
       if (widgetTitle && detailedError) {
-        return `Invalid grid position for widget "${widgetTitle}": ${detailedError}`;
+        return `Invalid widget position for widget "${widgetTitle}": ${detailedError}`;
       }
       if (detailedError) {
-        return `Invalid grid position: ${detailedError}`;
+        return `Invalid widget position: ${detailedError}`;
       }
 
-      return 'Invalid widget grid position';
+      return 'Invalid widget position';
     case PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_CONFIGURATION:
       if (widgetTitle && widgetType && detailedError) {
         return `Invalid configuration for widget "${widgetTitle}" of type ${widgetType}: ${detailedError}`;

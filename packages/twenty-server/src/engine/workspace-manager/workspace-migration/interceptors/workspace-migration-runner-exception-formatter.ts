@@ -23,6 +23,14 @@ export const workspaceMigrationRunnerExceptionFormatter = (
       ...(isExecutionFailed && {
         action: error.action,
         errors: {
+          ...(error.errors?.actionTranspilation && {
+            actionTranspilation: {
+              message: error.errors.actionTranspilation.message,
+              code:
+                (error.errors.actionTranspilation as { code?: string })?.code ??
+                'INTERNAL_SERVER_ERROR',
+            },
+          }),
           ...(error.errors?.metadata && {
             metadata: {
               message: error.errors.metadata.message,

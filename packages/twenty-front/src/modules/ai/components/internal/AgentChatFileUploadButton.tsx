@@ -1,10 +1,11 @@
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import React, { useRef } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { IconPaperclip } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;
@@ -44,13 +45,14 @@ export const AgentChatFileUploadButton = () => {
         onChange={handleFileInputChange}
       />
 
-      <Button
-        variant="secondary"
+      <IconButton
+        variant="tertiary"
         size="small"
         onClick={() => {
           fileInputRef.current?.click();
         }}
-        Icon={IconPaperclip}
+        Icon={IconPlus}
+        ariaLabel={t`Attach files`}
       />
     </StyledFileUploadContainer>
   );

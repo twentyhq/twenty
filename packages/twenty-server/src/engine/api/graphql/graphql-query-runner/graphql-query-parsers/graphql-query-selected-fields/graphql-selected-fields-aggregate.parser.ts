@@ -6,6 +6,7 @@ import {
   getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -18,7 +19,12 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
     accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
     const fields = flatObjectMetadata.fieldIds
-      .map((id) => flatFieldMetadataMaps.byId[id])
+      .map((id) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+      )
       .filter(isDefined);
 
     const availableAggregations: Record<string, AggregationField> =

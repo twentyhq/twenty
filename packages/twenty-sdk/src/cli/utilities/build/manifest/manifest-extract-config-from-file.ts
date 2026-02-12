@@ -1,10 +1,31 @@
-import path from 'path';
+import { type ValidationResult } from '@/sdk';
+import * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import { createRequire } from 'module';
-import * as esbuild from 'esbuild';
 import os from 'os';
+import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { type ValidationResult } from '@/sdk';
+
+const MANIFEST_MOCK_MODULES = ['twenty-sdk/ui'];
+
+const manifestMockPlugin: esbuild.Plugin = {
+  name: 'manifest-mock',
+  setup: (build) => {
+    const filter = new RegExp(
+      `^(${MANIFEST_MOCK_MODULES.map((module) => module.replace('/', '\\/')).join('|')})$`,
+    );
+
+    build.onResolve({ filter }, ({ path: modulePath }) => ({
+      path: modulePath,
+      namespace: 'manifest-mock',
+    }));
+
+    build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
+      contents: 'module.exports = new Proxy({}, { get: () => () => {} });',
+      loader: 'js',
+    }));
+  },
+};
 
 export const extractManifestFromFile = async <T>({
   filePath,
@@ -53,6 +74,7 @@ const loadModule = async ({
       ...(reactPath && { react: reactPath }),
       ...(reactDomPath && { 'react-dom': reactDomPath }),
     },
+    plugins: [manifestMockPlugin],
     logLevel: 'silent',
   });
 

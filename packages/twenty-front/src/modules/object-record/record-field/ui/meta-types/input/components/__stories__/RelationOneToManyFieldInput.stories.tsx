@@ -5,6 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -115,7 +116,11 @@ const meta: Meta = {
   title: 'UI/Data/Field/Input/RelationOneToManyFieldInput',
   component: RelationOneToManyFieldInputWithContext,
   args: {},
-  decorators: [ObjectMetadataItemsDecorator, SnackBarDecorator],
+  decorators: [
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+    FileUploadDecorator,
+  ],
   parameters: {
     clearMocks: true,
     msw: graphqlMocks,

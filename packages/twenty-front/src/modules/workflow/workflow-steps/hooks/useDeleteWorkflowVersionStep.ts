@@ -8,7 +8,7 @@ import {
   type DeleteWorkflowVersionStepInput,
   type DeleteWorkflowVersionStepMutation,
   type DeleteWorkflowVersionStepMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useDeleteWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();

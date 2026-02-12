@@ -24,16 +24,16 @@ describe('isSyncStale', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false if syncStageStartedAt is undefined', () => {
+  it('should return true if syncStageStartedAt is undefined', () => {
     const result = isSyncStale(undefined);
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
-  it('should return false if syncStageStartedAt is null', () => {
+  it('should return true if syncStageStartedAt is null', () => {
     const result = isSyncStale(null);
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('should throw an error if syncStageStartedAt is invalid', () => {

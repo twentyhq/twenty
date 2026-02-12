@@ -1,6 +1,6 @@
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { DashboardWidgetPlaceholder } from '@/page-layout/widgets/components/DashboardWidgetPlaceholder';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const WidgetPlaceholder = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();

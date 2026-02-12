@@ -1,4 +1,6 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
@@ -55,9 +57,154 @@ const createWelcomeRichText = ({
   args,
 }: {
   args: DashboardWidgetBuilderArgs;
-}): FlatPageLayoutWidget =>
-  createStandardPageLayoutWidgetFlatMetadata({
+}): FlatPageLayoutWidget => {
+  const configuration = {
+    configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
+    body: {
+      blocknote: JSON.stringify([
+        {
+          id: v4(),
+          type: 'heading',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+            level: 3,
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'Welcome to your workspace',
+              styles: {},
+            },
+          ],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'You can edit this dashboard by clicking the ',
+              styles: {},
+            },
+            { type: 'text', text: 'Edit', styles: { code: true } },
+            {
+              type: 'text',
+              text: ' button in the top-right corner to add your own charts or customize this one.',
+              styles: {},
+            },
+          ],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [
+            {
+              type: 'text',
+              text: "Don't forget to replace the sample data with your own.",
+              styles: {},
+            },
+          ],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'If you have any issues, you can check ',
+              styles: {},
+            },
+            {
+              type: 'link',
+              href: 'https://docs.twenty.com/user-guide/introduction',
+              content: [
+                {
+                  type: 'text',
+                  text: 'our documentation',
+                  styles: {},
+                },
+              ],
+            },
+            {
+              type: 'text',
+              text: ' or contact us through the Support section in Settings.',
+              styles: {},
+            },
+          ],
+          children: [],
+        },
+        {
+          id: v4(),
+          type: 'paragraph',
+          props: {
+            textColor: 'default',
+            backgroundColor: 'default',
+            textAlignment: 'left',
+          },
+          content: [],
+          children: [],
+        },
+      ]),
+      markdown: null,
+    },
+  };
+
+  return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -65,153 +212,20 @@ const createWelcomeRichText = ({
       title: 'Untitled Rich Text',
       type: WidgetType.STANDALONE_RICH_TEXT,
       gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
-      configuration: {
-        configurationType:
-          WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
-        body: {
-          blocknote: JSON.stringify([
-            {
-              id: v4(),
-              type: 'heading',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-                level: 3,
-              },
-              content: [
-                {
-                  type: 'text',
-                  text: 'Welcome to your workspace',
-                  styles: {},
-                },
-              ],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [
-                {
-                  type: 'text',
-                  text: 'You can edit this dashboard by clicking the ',
-                  styles: {},
-                },
-                { type: 'text', text: 'Edit', styles: { code: true } },
-                {
-                  type: 'text',
-                  text: ' button in the top-right corner to add your own charts or customize this one.',
-                  styles: {},
-                },
-              ],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [
-                {
-                  type: 'text',
-                  text: "Don't forget to replace the sample data with your own.",
-                  styles: {},
-                },
-              ],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [
-                {
-                  type: 'text',
-                  text: 'If you have any issues, you can check ',
-                  styles: {},
-                },
-                {
-                  type: 'link',
-                  href: 'https://docs.twenty.com/user-guide/introduction',
-                  content: [
-                    {
-                      type: 'text',
-                      text: 'our documentation',
-                      styles: {},
-                    },
-                  ],
-                },
-                {
-                  type: 'text',
-                  text: ' or contact us through the Support section in Settings.',
-                  styles: {},
-                },
-              ],
-              children: [],
-            },
-            {
-              id: v4(),
-              type: 'paragraph',
-              props: {
-                textColor: 'default',
-                backgroundColor: 'default',
-                textAlignment: 'left',
-              },
-              content: [],
-              children: [],
-            },
-          ]),
-          markdown: null,
-        },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 6,
       },
+      configuration,
+      universalConfiguration: configuration,
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
+};
 
 const createDealsByCompany = ({
   args,
@@ -225,6 +239,8 @@ const createDealsByCompany = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -232,6 +248,13 @@ const createDealsByCompany = ({
       title: 'Deals by Company',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 6,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.PIE_CHART,
         groupByFieldMetadataId: opportunityFields.company.id,
@@ -246,7 +269,24 @@ const createDealsByCompany = ({
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.PIE_CHART,
+        groupByFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.company.universalIdentifier,
+        groupBySubFieldName: 'name',
+        aggregateFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
+        aggregateOperation: AggregateOperations.COUNT,
+        orderBy: GraphOrderBy.FIELD_ASC,
+        displayDataLabel: false,
+        showCenterMetric: true,
+        displayLegend: true,
+        color: 'orange',
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -263,6 +303,8 @@ const createPipelineValueByStage = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -270,6 +312,13 @@ const createPipelineValueByStage = ({
       title: 'Pipeline Value by Stage',
       type: WidgetType.GRAPH,
       gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 6,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -290,7 +339,31 @@ const createPipelineValueByStage = ({
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisGroupByFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.stage.universalIdentifier,
+        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
+        secondaryAxisGroupByFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.company.universalIdentifier,
+        secondaryAxisGroupBySubFieldName: 'name',
+        secondaryAxisGroupByDateGranularity:
+          ObjectRecordGroupByDateGranularity.DAY,
+        secondaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        displayDataLabel: true,
+        displayLegend: true,
+        color: 'green',
+        layout: BarChartLayout.VERTICAL,
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -307,6 +380,8 @@ const createRevenueTimeline = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -314,6 +389,13 @@ const createRevenueTimeline = ({
       title: 'Revenue Timeline',
       type: WidgetType.GRAPH,
       gridPosition: { row: 6, column: 6, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 6,
+        column: 6,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -329,7 +411,25 @@ const createRevenueTimeline = ({
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.LINE_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisGroupByFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.closeDate.universalIdentifier,
+        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        displayDataLabel: false,
+        displayLegend: true,
+        color: 'crimson',
+        isCumulative: false,
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -346,6 +446,8 @@ const createOpportunitiesByOwner = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -353,6 +455,13 @@ const createOpportunitiesByOwner = ({
       title: 'Opportunities by Owner',
       type: WidgetType.GRAPH,
       gridPosition: { row: 12, column: 0, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 12,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -375,7 +484,33 @@ const createOpportunitiesByOwner = ({
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
+        aggregateOperation: AggregateOperations.COUNT,
+        primaryAxisGroupByFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,
+        primaryAxisGroupBySubFieldName: 'name.firstName',
+        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        secondaryAxisGroupByFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,
+        secondaryAxisGroupBySubFieldName: 'name.firstName',
+        secondaryAxisGroupByDateGranularity:
+          ObjectRecordGroupByDateGranularity.DAY,
+        secondaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        displayDataLabel: false,
+        displayLegend: true,
+        color: 'blue',
+        layout: BarChartLayout.HORIZONTAL,
+        isCumulative: false,
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -384,9 +519,15 @@ const createStockMarketIframe = ({
   args,
 }: {
   args: DashboardWidgetBuilderArgs;
-}): FlatPageLayoutWidget =>
-  createStandardPageLayoutWidgetFlatMetadata({
+}): FlatPageLayoutWidget => {
+  const configuration = {
+    configurationType: WidgetConfigurationType.IFRAME as const,
+    url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
+  };
+
+  return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -394,13 +535,20 @@ const createStockMarketIframe = ({
       title: 'Stock market (Iframe)',
       type: WidgetType.IFRAME,
       gridPosition: { row: 12, column: 6, rowSpan: 8, columnSpan: 6 },
-      configuration: {
-        configurationType: WidgetConfigurationType.IFRAME as const,
-        url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 12,
+        column: 6,
+        rowSpan: 8,
+        columnSpan: 6,
       },
+      configuration,
+      universalConfiguration: configuration,
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
+};
 
 const createDealsCreatedThisMonth = ({
   args,
@@ -412,8 +560,21 @@ const createDealsCreatedThisMonth = ({
   const opportunityObjectId =
     args.standardObjectMetadataRelatedEntityIds.opportunity.id;
 
+  const filterConfig = createFilterConfig([
+    {
+      type: 'DATE_TIME',
+      label: 'Creation date',
+      value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+      displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+      operand: 'IS_RELATIVE',
+      fieldMetadataId: opportunityFields.createdAt.id,
+    },
+  ]);
+
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -421,26 +582,36 @@ const createDealsCreatedThisMonth = ({
       title: 'Deals created this month',
       type: WidgetType.GRAPH,
       gridPosition: { row: 18, column: 0, rowSpan: 2, columnSpan: 3 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 18,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: false,
-        filter: createFilterConfig([
-          {
-            type: 'DATE_TIME',
-            label: 'Creation date',
-            value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-            displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-            operand: 'IS_RELATIVE',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-        ]),
+        filter: filterConfig,
+        prefix: '',
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
+        aggregateOperation: AggregateOperations.COUNT,
+        displayDataLabel: false,
+        filter: filterConfig,
         prefix: '',
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -455,8 +626,21 @@ const createDealValueCreatedThisMonth = ({
   const opportunityObjectId =
     args.standardObjectMetadataRelatedEntityIds.opportunity.id;
 
+  const filterConfig = createFilterConfig([
+    {
+      type: 'DATE_TIME',
+      label: 'Creation date',
+      value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+      displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
+      operand: 'IS_RELATIVE',
+      fieldMetadataId: opportunityFields.createdAt.id,
+    },
+  ]);
+
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -464,26 +648,36 @@ const createDealValueCreatedThisMonth = ({
       title: 'Deal value created this month',
       type: WidgetType.GRAPH,
       gridPosition: { row: 18, column: 3, rowSpan: 2, columnSpan: 3 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 18,
+        column: 3,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
         aggregateOperation: AggregateOperations.SUM,
         displayDataLabel: false,
-        filter: createFilterConfig([
-          {
-            type: 'DATE_TIME',
-            label: 'Creation date',
-            value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-            displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-            operand: 'IS_RELATIVE',
-            fieldMetadataId: opportunityFields.createdAt.id,
-          },
-        ]),
+        filter: filterConfig,
+        prefix: '$',
+        timezone: 'UTC',
+        firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+      },
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
+        aggregateOperation: AggregateOperations.SUM,
+        displayDataLabel: false,
+        filter: filterConfig,
         prefix: '$',
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };

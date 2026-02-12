@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 // eslint-disable-next-line no-restricted-imports
 import { lowerCase, upperFirst } from 'lodash';
 import { type Manifest } from 'twenty-shared/application';
+import { PackageJson } from 'type-fest';
 
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 
@@ -198,9 +199,18 @@ export class MarketplaceService {
       return null;
     }
 
-    const manifest = JSON.parse(manifestContent) as Manifest;
+    const packageJsonContent = await this.fetchGitHubFile(
+      `${appPath}/.twenty/output/package.json`,
+    );
 
-    const { application, packageJson } = manifest;
+    if (!packageJsonContent) {
+      return null;
+    }
+
+    const manifest = JSON.parse(manifestContent) as Manifest;
+    const packageJson = JSON.parse(packageJsonContent) as PackageJson;
+
+    const { application } = manifest;
     const marketplaceData = application.marketplaceData;
 
     if (!marketplaceData?.author || !marketplaceData?.category) {
@@ -209,10 +219,10 @@ export class MarketplaceService {
 
     return {
       id: application.universalIdentifier,
-      name: application.displayName ?? packageJson.name,
+      name: application.displayName,
       description: application.description ?? '',
       icon: application.icon ?? 'IconApps',
-      version: packageJson.version,
+      version: packageJson.version ?? '0.1.0',
       author: marketplaceData.author,
       category: marketplaceData.category,
       logo: this.resolveAssetUrl(appPath, marketplaceData.logo),

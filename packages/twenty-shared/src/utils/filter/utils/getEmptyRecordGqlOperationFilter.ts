@@ -355,6 +355,7 @@ export const getEmptyRecordGqlOperationFilter = ({
         ],
       };
       break;
+    case 'FILES':
     case 'RAW_JSON':
       emptyRecordFilter = {
         or: [

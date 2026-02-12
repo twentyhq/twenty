@@ -3,7 +3,7 @@ import {
   IconSortAscending,
   IconSortDescending,
 } from 'twenty-ui/display';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const AGGREGATE_SORT_BY_OPTIONS = [
   {

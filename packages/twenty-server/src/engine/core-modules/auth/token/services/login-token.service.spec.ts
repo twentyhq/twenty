@@ -137,13 +137,17 @@ describe('LoginTokenService', () => {
       jest
         .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(undefined);
-      jest
-        .spyOn(jwtWrapperService, 'decode')
-        .mockReturnValue({ sub: mockEmail });
+      jest.spyOn(jwtWrapperService, 'decode').mockReturnValue({
+        sub: mockEmail,
+        type: JwtTokenTypeEnum.LOGIN,
+      });
 
       const result = await service.verifyLoginToken(mockToken);
 
-      expect(result).toEqual({ sub: mockEmail });
+      expect(result).toEqual({
+        sub: mockEmail,
+        type: JwtTokenTypeEnum.LOGIN,
+      });
       expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken, {
         json: true,

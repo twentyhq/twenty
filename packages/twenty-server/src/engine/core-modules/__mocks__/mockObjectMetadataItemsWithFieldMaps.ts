@@ -2,10 +2,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 const workspaceId = '20202020-0000-0000-0000-000000000000';
@@ -18,7 +19,6 @@ const customObjectImageFieldId = 'imageIdentifierFieldMetadataId';
 
 const personFlatObject = getFlatObjectMetadataMock({
   id: '20202020-8dec-43d5-b2ff-6eef05095bec',
-  standardId: '20202020-8dec-43d5-b2ff-6eef05095bec',
   nameSingular: 'person',
   namePlural: 'people',
   labelSingular: 'Person',
@@ -43,7 +43,6 @@ const personFlatObject = getFlatObjectMetadataMock({
 
 const companyFlatObject = getFlatObjectMetadataMock({
   id: '20202020-c03c-45d6-a4b0-04afe1357c5c',
-  standardId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
   nameSingular: 'company',
   namePlural: 'companies',
   labelSingular: 'Company',
@@ -68,7 +67,6 @@ const companyFlatObject = getFlatObjectMetadataMock({
 
 const customObjectFlatObject = getFlatObjectMetadataMock({
   id: '20202020-3d75-4aab-bacd-ee176c5f63ca',
-  standardId: null,
   nameSingular: 'regular-custom-object',
   namePlural: 'regular-custom-objects',
   labelSingular: 'Regular Custom Object',
@@ -93,7 +91,6 @@ const customObjectFlatObject = getFlatObjectMetadataMock({
 
 const nonSearchableFlatObject = getFlatObjectMetadataMock({
   id: '20202020-540c-4397-b872-2a90ea2fb809',
-  standardId: '20202020-540c-4397-b872-2a90ea2fb809',
   nameSingular: 'non-searchable-object',
   namePlural: 'non-searchable-objects',
   labelSingular: '',
@@ -223,13 +220,13 @@ export const mockFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
   ALL_FLAT_OBJECTS.reduce(
     (acc, object) => ({
       ...acc,
-      byId: {
-        ...acc.byId,
-        [object.id]: object,
+      byUniversalIdentifier: {
+        ...acc.byUniversalIdentifier,
+        [object.universalIdentifier]: object,
       },
-      idByUniversalIdentifier: {
-        ...acc.idByUniversalIdentifier,
-        [object.universalIdentifier]: object.id,
+      universalIdentifierById: {
+        ...acc.universalIdentifierById,
+        [object.id]: object.universalIdentifier,
       },
     }),
     createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
@@ -239,13 +236,13 @@ export const mockFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
   ALL_FLAT_FIELDS.reduce(
     (acc, field) => ({
       ...acc,
-      byId: {
-        ...acc.byId,
-        [field.id]: field,
+      byUniversalIdentifier: {
+        ...acc.byUniversalIdentifier,
+        [field.universalIdentifier]: field,
       },
-      idByUniversalIdentifier: {
-        ...acc.idByUniversalIdentifier,
-        [field.universalIdentifier]: field.id,
+      universalIdentifierById: {
+        ...acc.universalIdentifierById,
+        [field.id]: field.universalIdentifier,
       },
     }),
     createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
@@ -264,7 +261,10 @@ export const getMockObjectMetadataInfo = (
   nameSingular: string,
 ): ObjectMetadataInfo => {
   const objectId = mockObjectIdByNameSingular[nameSingular];
-  const flatObjectMetadata = mockFlatObjectMetadataMaps.byId[objectId];
+  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: objectId,
+    flatEntityMaps: mockFlatObjectMetadataMaps,
+  });
 
   if (!flatObjectMetadata) {
     throw new Error(

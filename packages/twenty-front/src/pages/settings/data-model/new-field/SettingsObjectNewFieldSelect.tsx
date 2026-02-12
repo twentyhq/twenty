@@ -6,7 +6,6 @@ import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/for
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
@@ -15,10 +14,7 @@ import { useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
@@ -48,10 +44,6 @@ export const SettingsObjectNewFieldSelect = () => {
     },
   });
 
-  const isFilesFieldEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-  );
-
   const excludedFieldTypes: FieldType[] = (
     [
       FieldMetadataType.NUMERIC,
@@ -59,7 +51,6 @@ export const SettingsObjectNewFieldSelect = () => {
       FieldMetadataType.RICH_TEXT_V2,
       FieldMetadataType.ACTOR,
       FieldMetadataType.UUID,
-      !isFilesFieldEnabled ? FieldMetadataType.FILES : undefined,
     ] as const
   ).filter(isDefined);
 

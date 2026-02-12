@@ -1,4 +1,8 @@
 import { PermissionFlag, defineRole } from '@/sdk';
+import {
+  CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+} from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -17,7 +21,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -26,8 +30,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
-      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },

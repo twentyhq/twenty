@@ -16,7 +16,7 @@ import {
   IconGauge,
   IconSum,
 } from 'twenty-ui/display';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const GRAPH_TYPE_INFORMATION: Record<
   GraphType,

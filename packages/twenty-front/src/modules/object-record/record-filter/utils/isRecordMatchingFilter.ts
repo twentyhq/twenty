@@ -10,6 +10,7 @@ import {
   type CurrencyFilter,
   type DateFilter,
   type EmailsFilter,
+  type FilesFilter,
   type FloatFilter,
   type FullNameFilter,
   type LeafObjectRecordFilter,
@@ -34,6 +35,7 @@ import {
   isMatchingBooleanFilter,
   isMatchingCurrencyFilter,
   isMatchingDateFilter,
+  isMatchingFilesFilter,
   isMatchingFloatFilter,
   isMatchingMultiSelectFilter,
   isMatchingRatingFilter,
@@ -267,6 +269,12 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.RAW_JSON: {
         return isMatchingRawJsonFilter({
           rawJsonFilter: filterValue as RawJsonFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.FILES: {
+        return isMatchingFilesFilter({
+          filesFilter: filterValue as FilesFilter,
           value: record[filterKey],
         });
       }

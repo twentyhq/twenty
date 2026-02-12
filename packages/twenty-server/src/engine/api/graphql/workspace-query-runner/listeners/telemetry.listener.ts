@@ -24,7 +24,7 @@ export class TelemetryListener {
       payload.events.map(async (eventPayload) => {
         this.auditService
           .createContext({
-            userId: eventPayload.userId,
+            userWorkspaceId: eventPayload.userWorkspaceId,
             workspaceId: payload.workspaceId,
           })
           .insertWorkspaceEvent(USER_SIGNUP_EVENT, {});

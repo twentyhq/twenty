@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SERVER_URL } from '@/cli/__tests__/e2e/constants/server-url.constant';
+import { SERVER_URL } from '@/cli/__tests__/constants/server-url.constant';
 
 describe('Twenty Server Health Check (E2E)', () => {
   const HEALTH_ENDPOINT = `${SERVER_URL}/healthz`;

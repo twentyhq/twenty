@@ -1,7 +1,7 @@
 {
   "application": {
     "universalIdentifier": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "functionRoleUniversalIdentifier": "00000000-0000-0000-0000-000000000000",
+    "defaultRoleUniversalIdentifier": "00000000-0000-0000-0000-000000000000",
     "displayName": "Data Enrichment",
     "description": "Enrich your data easily. Choose your provider.",
     "icon": "IconSparkles",

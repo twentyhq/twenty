@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const NOTE_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '1253e3e5-5b00-4a34-93b8-02f3dc6e2b7c',
-  standardId: '20202020-0b00-45cd-b6f6-6cd806fc6804',
   nameSingular: 'note',
   namePlural: 'notes',
   labelSingular: 'Note',

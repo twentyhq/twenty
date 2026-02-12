@@ -17,7 +17,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -115,14 +114,10 @@ export const SettingsDataModelFieldRelationForm = ({
       relationType: initialRelationType,
     });
 
-  const initialMorphRelationsObjectMetadataIds = useMemo(
-    () =>
-      initialRelationObjectMetadataItems.map(
-        (relationObjectMetadataItem) => relationObjectMetadataItem.id,
-      ),
-    [initialRelationObjectMetadataItems],
-  );
-
+  const initialMorphRelationsObjectMetadataIds =
+    initialRelationObjectMetadataItems.map(
+      (relationObjectMetadataItem) => relationObjectMetadataItem.id,
+    );
   const isMobile = useIsMobile();
 
   return (

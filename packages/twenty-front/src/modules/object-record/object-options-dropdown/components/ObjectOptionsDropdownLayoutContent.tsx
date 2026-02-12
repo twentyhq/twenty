@@ -37,7 +37,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
-import { ViewCalendarLayout } from '~/generated/graphql';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();

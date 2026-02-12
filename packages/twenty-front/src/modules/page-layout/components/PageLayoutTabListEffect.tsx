@@ -12,14 +12,14 @@ type PageLayoutTabListEffectProps = Pick<
   'componentInstanceId' | 'onChangeTab'
 > & {
   tabs: PageLayoutTab[];
-  defaultTabIdToFocusOnMobileAndSidePanel?: string;
+  defaultTabToFocusOnMobileAndSidePanelId?: string;
 };
 
 export const PageLayoutTabListEffect = ({
   tabs,
   onChangeTab,
   componentInstanceId,
-  defaultTabIdToFocusOnMobileAndSidePanel,
+  defaultTabToFocusOnMobileAndSidePanelId,
 }: PageLayoutTabListEffectProps) => {
   const [activeTabId, setActiveTabId] = useRecoilComponentState(
     activeTabIdComponentState,
@@ -32,7 +32,7 @@ export const PageLayoutTabListEffect = ({
   const initialActiveTabId = getPageLayoutTabListInitialActiveTabId({
     activeTabId,
     tabs,
-    defaultTabIdToFocusOnMobileAndSidePanel,
+    defaultTabToFocusOnMobileAndSidePanelId,
     isMobile,
     isInRightDrawer,
   });

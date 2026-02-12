@@ -14,7 +14,7 @@ import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-l
 import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -43,8 +43,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
           },
           layoutType: PageLayoutType.RECORD_PAGE,
           isInRightDrawer: false,
-          // TODO: Remove once the traditional record show page is removed.
-          isLegacyRecordShowPage: true,
         }}
       >
         <ContextStoreComponentInstanceContext.Provider

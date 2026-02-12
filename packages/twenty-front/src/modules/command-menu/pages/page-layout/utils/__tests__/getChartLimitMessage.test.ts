@@ -1,6 +1,6 @@
 import { getChartLimitMessage } from '@/command-menu/pages/page-layout/utils/getChartLimitMessage';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 describe('getChartLimitMessage', () => {
   it('returns date-based message for bar chart with date axis', () => {

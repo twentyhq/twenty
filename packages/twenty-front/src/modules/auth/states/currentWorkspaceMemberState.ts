@@ -1,5 +1,5 @@
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export type CurrentWorkspaceMember = Omit<
   WorkspaceMember,

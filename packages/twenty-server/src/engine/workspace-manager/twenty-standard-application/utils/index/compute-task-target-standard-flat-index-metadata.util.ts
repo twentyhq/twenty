@@ -33,7 +33,7 @@ export const buildTaskTargetStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'personIdIndex',
-      relatedFieldNames: ['person'],
+      relatedFieldNames: ['targetPerson'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -45,7 +45,7 @@ export const buildTaskTargetStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'companyIdIndex',
-      relatedFieldNames: ['company'],
+      relatedFieldNames: ['targetCompany'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -57,7 +57,7 @@ export const buildTaskTargetStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'opportunityIdIndex',
-      relatedFieldNames: ['opportunity'],
+      relatedFieldNames: ['targetOpportunity'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

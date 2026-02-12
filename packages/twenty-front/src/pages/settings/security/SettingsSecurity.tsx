@@ -1,10 +1,14 @@
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { Link } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
@@ -20,7 +24,14 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
-import { H2Title, IconLock, IconTrash } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconClockHour8,
+  IconHistory,
+  IconLock,
+  IconTrash,
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
@@ -39,11 +50,19 @@ const StyledSection = styled(Section)`
   flex-shrink: 0;
 `;
 
+const StyledLink = styled(Link, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
+})<{ isDisabled: boolean }>`
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+  text-decoration: none;
+`;
+
 export const SettingsSecurity = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isClickHouseConfigured = useRecoilValue(isClickHouseConfiguredState);
   const authProviders = useRecoilValue(authProvidersState);
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -51,16 +70,28 @@ export const SettingsSecurity = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const saveWorkspace = useDebouncedCallback(async (value: number) => {
+  const saveTrashRetention = useDebouncedCallback(async (value: number) => {
     try {
-      if (!currentWorkspace?.id) {
-        throw new Error('User is not logged in');
-      }
-
       await updateWorkspace({
         variables: {
           input: {
             trashRetentionDays: value,
+          },
+        },
+      });
+    } catch (err) {
+      enqueueErrorSnackBar({
+        apolloError: err instanceof ApolloError ? err : undefined,
+      });
+    }
+  }, 500);
+
+  const saveEventLogRetention = useDebouncedCallback(async (value: number) => {
+    try {
+      await updateWorkspace({
+        variables: {
+          input: {
+            eventLogRetentionDays: value,
           },
         },
       });
@@ -85,7 +116,24 @@ export const SettingsSecurity = () => {
       trashRetentionDays: value,
     });
 
-    saveWorkspace(value);
+    saveTrashRetention(value);
+  };
+
+  const handleEventLogRetentionDaysChange = (value: number) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    if (value === currentWorkspace.eventLogRetentionDays) {
+      return;
+    }
+
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      eventLogRetentionDays: value,
+    });
+
+    saveEventLogRetention(value);
   };
 
   const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
@@ -101,6 +149,9 @@ export const SettingsSecurity = () => {
     hasSsoIdentityProviders &&
     !hasDirectAuthEnabled &&
     hasBypassProviderAvailable;
+
+  const hasEnterpriseAccess = currentWorkspace?.hasValidEnterpriseKey === true;
+  const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
 
   return (
     <SubMenuTopBarContainer
@@ -169,6 +220,58 @@ export const SettingsSecurity = () => {
               <ToggleImpersonate />
             </Section>
           )}
+          <Section>
+            <H2Title
+              title={t`Audit Logs`}
+              description={t`View workspace activity logs`}
+              adornment={
+                <Tag
+                  text={t`Enterprise`}
+                  color="transparent"
+                  Icon={IconLock}
+                  variant="border"
+                />
+              }
+            />
+            <Card rounded>
+              <SettingsOptionCardContentButton
+                Icon={IconHistory}
+                title={t`Audit Logs`}
+                description={
+                  !isClickHouseConfigured
+                    ? t`ClickHouse is required for audit logs. Contact your administrator.`
+                    : !hasEnterpriseAccess
+                      ? t`Upgrade to Enterprise to access audit logs`
+                      : t`View and filter events, page views, object changes`
+                }
+                Button={
+                  <StyledLink
+                    to={getSettingsPath(SettingsPath.EventLogs)}
+                    isDisabled={!isEventLogsEnabled}
+                  >
+                    <Button
+                      title={t`View Logs`}
+                      variant="secondary"
+                      size="small"
+                      disabled={!isEventLogsEnabled}
+                    />
+                  </StyledLink>
+                }
+              />
+              {isEventLogsEnabled && (
+                <SettingsOptionCardContentCounter
+                  Icon={IconClockHour8}
+                  title={t`Log retention`}
+                  description={t`Number of days to retain audit logs (30-1095 days)`}
+                  value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                  onChange={handleEventLogRetentionDaysChange}
+                  minValue={30}
+                  maxValue={1095}
+                  showButtons={false}
+                />
+              )}
+            </Card>
+          </Section>
           <Section>
             <H2Title
               title={t`Other`}

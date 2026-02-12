@@ -2,9 +2,9 @@ import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
 import { usePriceAndBillingUsageByPriceId } from '@/billing/hooks/usePriceAndBillingUsageByPriceId';
 import { type MeteredBillingPrice } from '@/billing/types/billing-price-tiers.type';
 import {
-  type BillingPriceLicensed,
   BillingUsageType,
-} from '~/generated/graphql';
+  type BillingPriceLicensed,
+} from '~/generated-metadata/graphql';
 
 export const useSplitPhaseItemsInPrices = () => {
   const { nextBillingPhase } = useNextBillingPhase();

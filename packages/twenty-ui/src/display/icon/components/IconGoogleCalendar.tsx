@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconGoogleCalendarRaw from '@assets/icons/google-calendar.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconGoogleCalendarProps = Pick<IconComponentProps, 'size'>;
+export type IconGoogleCalendarProps = Pick<IconComponentProps, 'size'>;
 
 export const IconGoogleCalendar = (props: IconGoogleCalendarProps) => {
   const theme = useTheme();

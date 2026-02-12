@@ -19,13 +19,13 @@ export const defineManifestTests = (appPath: string): void => {
         normalizeManifestForComparison(EXPECTED_MANIFEST),
       );
 
-      for (const fn of manifest.entities.logicFunctions) {
+      for (const fn of manifest.logicFunctions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');
       }
 
-      for (const component of manifest.entities.frontComponents ?? []) {
+      for (const component of manifest.frontComponents ?? []) {
         expect(component.builtComponentChecksum).toBeDefined();
         expect(component.builtComponentChecksum).not.toBeNull();
         expect(typeof component.builtComponentChecksum).toBe('string');
@@ -35,20 +35,18 @@ export const defineManifestTests = (appPath: string): void => {
     it('should have correct application config', async () => {
       const manifest = await fs.readJson(manifestOutputPath);
 
-      expect(manifest?.application.displayName).toBe('Hello World');
-      expect(manifest?.application.description).toBe(
-        'A simple hello world app',
-      );
+      expect(manifest?.application.displayName).toBe('Rich App');
+      expect(manifest?.application.description).toBe('A simple rich app');
     });
 
     it('should load all entity types', async () => {
       const manifest = await fs.readJson(manifestOutputPath);
 
-      expect(manifest?.entities.objects).toHaveLength(2);
-      expect(manifest?.entities.logicFunctions).toHaveLength(4);
-      expect(manifest?.entities.frontComponents).toHaveLength(4);
-      expect(manifest?.entities.roles).toHaveLength(2);
-      expect(manifest?.entities.objectExtensions).toHaveLength(1);
+      expect(manifest.objects).toHaveLength(2);
+      expect(manifest.logicFunctions).toHaveLength(4);
+      expect(manifest.frontComponents).toHaveLength(4);
+      expect(manifest.roles).toHaveLength(2);
+      expect(manifest.fields).toHaveLength(2);
     });
   });
 };

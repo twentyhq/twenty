@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '3090f830-c4b1-41a1-8e18-815760830bec',
-  standardId: '20202020-6736-4337-b5c4-8b39fae325a5',
   nameSingular: 'timelineActivity',
   namePlural: 'timelineActivities',
   labelSingular: 'Timeline Activity',

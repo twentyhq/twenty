@@ -1,8 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Field, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import { Field, ObjectType, Query } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -31,7 +32,7 @@ export class ToolIndexEntryDTO {
   inputSchema?: object;
 }
 
-@Resolver()
+@MetadataResolver()
 @UseGuards(WorkspaceAuthGuard)
 export class ToolIndexResolver {
   constructor(

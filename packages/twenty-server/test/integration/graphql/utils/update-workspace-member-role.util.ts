@@ -25,7 +25,7 @@ export const updateWorkspaceMemberRole = async ({
   };
 
   await client
-    .post('/graphql')
+    .post('/metadata')
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send(updateMemberRoleQuery);
 };

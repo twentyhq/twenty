@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
@@ -10,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -17,10 +17,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
-const WORKFLOW_STANDARD_OBJECT_IDS = [
-  STANDARD_OBJECT_IDS.workflow,
-  STANDARD_OBJECT_IDS.workflowRun,
-  STANDARD_OBJECT_IDS.workflowVersion,
+const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.workflow.universalIdentifier,
+  STANDARD_OBJECTS.workflowRun.universalIdentifier,
+  STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ] as const;
 
 @Injectable()
@@ -60,7 +60,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       const objectRecordsPermissions: ObjectsPermissions = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
-        const { id: objectMetadataId, isSystem, standardId } = objectMetadata;
+        const {
+          id: objectMetadataId,
+          isSystem,
+          universalIdentifier,
+        } = objectMetadata;
 
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;
@@ -69,9 +73,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
         const restrictedFields: RestrictedFieldsPermissions = {};
 
         if (
-          standardId &&
-          WORKFLOW_STANDARD_OBJECT_IDS.includes(
-            standardId as (typeof WORKFLOW_STANDARD_OBJECT_IDS)[number],
+          WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+            universalIdentifier as (typeof WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS)[number],
           )
         ) {
           const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
@@ -169,7 +172,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       select: [
         'id',
         'isSystem',
-        'standardId',
+        'universalIdentifier',
         'labelIdentifierFieldMetadataId',
       ],
     });

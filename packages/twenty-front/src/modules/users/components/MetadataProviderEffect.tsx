@@ -10,8 +10,12 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
+import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
@@ -24,10 +28,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type WorkspaceMember,
   useFindAllCoreViewsQuery,
+  useFindAllRecordPageLayoutsQuery,
   useGetCurrentUserQuery,
-  useGetManyLogicFunctionsQuery,
+  useFindManyLogicFunctionsQuery,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -57,10 +63,12 @@ export const MetadataProviderEffect = () => {
         const localeValue = snapshot.getLoadable(dateLocaleState).getValue();
         if (localeValue.locale !== newLocale) {
           getDateFnsLocale(newLocale).then((localeCatalog) => {
-            set(dateLocaleState, {
+            const newValue = {
               locale: newLocale,
               localeCatalog: localeCatalog || enUS,
-            });
+            };
+            set(dateLocaleState, newValue);
+            jotaiStore.set(dateLocaleStateV2.atom, newValue);
           });
         }
       },
@@ -76,6 +84,20 @@ export const MetadataProviderEffect = () => {
 
         if (!isDeeplyEqual(existingCoreViews, coreViews)) {
           set(coreViewsState, coreViews);
+        }
+      },
+    [],
+  );
+
+  const setRecordPageLayouts = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (recordPageLayouts: PageLayout[]) => {
+        const existingRecordPageLayouts = snapshot
+          .getLoadable(recordPageLayoutsState)
+          .getValue();
+
+        if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
+          set(recordPageLayoutsState, recordPageLayouts);
         }
       },
     [],
@@ -107,7 +129,13 @@ export const MetadataProviderEffect = () => {
       skip: shouldSkip,
     });
 
-  const { data: logicFunctionsData } = useGetManyLogicFunctionsQuery({
+  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
+    {
+      skip: shouldSkip,
+    },
+  );
+
+  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
     skip: !isLoggedIn,
   });
 
@@ -221,6 +249,15 @@ export const MetadataProviderEffect = () => {
 
     setCoreViews(queryDataCoreViews.getCoreViews);
   }, [queryDataCoreViews?.getCoreViews, setCoreViews, queryLoadingCoreViews]);
+
+  useEffect(() => {
+    if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;
+
+    const transformedPageLayouts =
+      queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
+
+    setRecordPageLayouts(transformedPageLayouts);
+  }, [queryDataRecordPageLayouts?.getPageLayouts, setRecordPageLayouts]);
 
   useEffect(() => {
     if (localIsCurrentUserLoaded && localAreViewsLoaded) {

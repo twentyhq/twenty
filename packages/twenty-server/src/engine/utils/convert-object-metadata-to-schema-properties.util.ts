@@ -1,6 +1,5 @@
 import {
   FieldMetadataType,
-  FILE_CATEGORIES,
   NumberDataType,
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
@@ -346,9 +345,11 @@ export const convertObjectMetadataToSchemaProperties = ({
               },
               ...(forResponse
                 ? {
-                    fileCategory: {
+                    extension: {
                       type: 'string',
-                      enum: Object.values(FILE_CATEGORIES),
+                    },
+                    url: {
+                      type: 'string',
                     },
                   }
                 : {}),

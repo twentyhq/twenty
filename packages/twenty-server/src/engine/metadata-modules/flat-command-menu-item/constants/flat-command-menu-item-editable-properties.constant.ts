@@ -1,4 +1,4 @@
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES = [
   'label',
@@ -6,4 +6,4 @@ export const FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES = [
   'isPinned',
   'availabilityType',
   'availabilityObjectMetadataId',
-] as const satisfies (keyof FlatCommandMenuItem)[];
+] as const satisfies MetadataEntityPropertyName<'commandMenuItem'>[];

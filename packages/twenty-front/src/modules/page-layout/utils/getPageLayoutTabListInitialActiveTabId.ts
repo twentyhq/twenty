@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 type GetPageLayoutTabListInitialActiveTabIdParams = {
   activeTabId: string | null;
   tabs: PageLayoutTab[];
-  defaultTabIdToFocusOnMobileAndSidePanel?: string;
+  defaultTabToFocusOnMobileAndSidePanelId?: string;
   isMobile: boolean;
   isInRightDrawer: boolean;
 };
@@ -12,7 +12,7 @@ type GetPageLayoutTabListInitialActiveTabIdParams = {
 export const getPageLayoutTabListInitialActiveTabId = ({
   activeTabId,
   tabs,
-  defaultTabIdToFocusOnMobileAndSidePanel,
+  defaultTabToFocusOnMobileAndSidePanelId,
   isMobile,
   isInRightDrawer,
 }: GetPageLayoutTabListInitialActiveTabIdParams): string | null => {
@@ -26,14 +26,14 @@ export const getPageLayoutTabListInitialActiveTabId = ({
 
   if (
     isOnMobileOrSidePanel &&
-    isDefined(defaultTabIdToFocusOnMobileAndSidePanel)
+    isDefined(defaultTabToFocusOnMobileAndSidePanelId)
   ) {
     const defaultTabExists = tabs.some(
-      (tab) => tab.id === defaultTabIdToFocusOnMobileAndSidePanel,
+      (tab) => tab.id === defaultTabToFocusOnMobileAndSidePanelId,
     );
 
     if (defaultTabExists) {
-      return defaultTabIdToFocusOnMobileAndSidePanel;
+      return defaultTabToFocusOnMobileAndSidePanelId;
     }
   }
 

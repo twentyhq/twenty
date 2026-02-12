@@ -13,7 +13,7 @@ import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDraw
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledShowPageBannerContainer = styled.div`
   z-index: 1;

@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
 
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
@@ -12,7 +12,7 @@ export const validateRoleIsEditable = ({
   flatRole,
   buildOptions,
 }: {
-  flatRole: FlatRole;
+  flatRole: UniversalFlatRole;
   buildOptions: WorkspaceMigrationBuilderOptions;
 }): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];

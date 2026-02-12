@@ -14,21 +14,19 @@ import { t } from '@lingui/core/macro';
 import { useSetRecoilState } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
-const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
-
 export type CommandMenuListProps = {
   commandGroups: ActionGroupConfig[];
   selectableItemIds: string[];
   children?: React.ReactNode;
   loading?: boolean;
   noResults?: boolean;
+  noResultsText?: string;
 };
 
 const StyledInnerList = styled.div`
   max-height: calc(
     100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px -
-      ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px -
-      ${MOBILE_NAVIGATION_BAR_HEIGHT}px
+      ${COMMAND_MENU_SEARCH_BAR_PADDING * 2}px
   );
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
@@ -63,6 +61,7 @@ export const CommandMenuList = ({
   children,
   loading = false,
   noResults = false,
+  noResultsText,
 }: CommandMenuListProps) => {
   const setHasUserSelectedCommand = useSetRecoilState(
     hasUserSelectedCommandState,
@@ -94,7 +93,7 @@ export const CommandMenuList = ({
               ) : null,
             )}
             {noResults && !loading && (
-              <StyledEmpty>{t`No results found`}</StyledEmpty>
+              <StyledEmpty>{noResultsText ?? t`No results found`}</StyledEmpty>
             )}
           </SelectableList>
         </StyledInnerList>

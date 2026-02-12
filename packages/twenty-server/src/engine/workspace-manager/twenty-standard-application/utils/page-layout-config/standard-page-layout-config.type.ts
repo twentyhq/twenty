@@ -1,14 +1,20 @@
-import { type PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  type PageLayoutTabLayoutMode,
+  type PageLayoutWidgetConditionalDisplay,
+  type PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 
-import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 export type StandardPageLayoutWidgetConfig = {
   universalIdentifier: string;
   title?: string;
   type?: WidgetType;
   gridPosition?: GridPosition;
+  position?: PageLayoutWidgetPosition;
+  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
 };
 
 export type StandardPageLayoutTabConfig = {
@@ -21,7 +27,6 @@ export type StandardPageLayoutTabConfig = {
 };
 
 export type StandardPageLayoutConfig = {
-  layoutName: string;
   name: string;
   type: PageLayoutType;
   objectUniversalIdentifier: string | null;
@@ -29,3 +34,33 @@ export type StandardPageLayoutConfig = {
   defaultTabUniversalIdentifier: string | null;
   tabs: Record<string, StandardPageLayoutTabConfig>;
 };
+
+export type StandardRecordPageWidgetConfig = {
+  universalIdentifier: string;
+  title: string;
+  type: WidgetType;
+  gridPosition: GridPosition;
+  position?: PageLayoutWidgetPosition;
+  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+};
+
+export type StandardRecordPageTabConfig = {
+  universalIdentifier: string;
+  title: string;
+  position: number;
+  icon: string | null;
+  layoutMode: PageLayoutTabLayoutMode;
+  widgets: Record<string, StandardRecordPageWidgetConfig>;
+};
+
+export type StandardRecordPageLayoutConfig = {
+  universalIdentifier: string;
+  objectUniversalIdentifier: string | null;
+  defaultTabUniversalIdentifier: string | null;
+  tabs: Record<string, StandardRecordPageTabConfig>;
+};
+
+export type StandardRecordPageLayouts = Record<
+  string,
+  StandardRecordPageLayoutConfig
+>;
