@@ -1,12 +1,12 @@
+import { useAtom } from 'jotai';
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type FieldUUidValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUuidField = () => {
@@ -16,10 +16,10 @@ export const useUuidField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldUUidValue>(
-    recordStoreFamilySelector({
+  const [fieldValue, setFieldValue] = useAtom<FieldUUidValue>(
+    recordStoreFamilySelectorV2<FieldUUidValue>({
       recordId,
-      fieldName: fieldName,
+      fieldName,
     }),
   );
   const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';

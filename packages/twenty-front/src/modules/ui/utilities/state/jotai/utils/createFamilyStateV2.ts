@@ -25,7 +25,7 @@ export const createFamilyStateV2 = <ValueType, FamilyKey>({
 
     const existing = atomCache.get(cacheKey);
 
-    if (existing) {
+    if (existing !== undefined) {
       return existing;
     }
 

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   type FieldSelectMetadata,
@@ -14,7 +14,7 @@ export const useSelectFieldDisplay = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue<FieldSelectValue | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldSelectValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
