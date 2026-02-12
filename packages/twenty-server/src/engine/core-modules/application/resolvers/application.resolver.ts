@@ -153,7 +153,7 @@ export class ApplicationResolver {
     }
 
     return this.applicationTokenService.renewApplicationTokens(
-      applicationRefreshToken,
+      applicationRefreshTokenPayload,
     );
   }
 

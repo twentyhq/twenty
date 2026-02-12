@@ -52,103 +52,16 @@ export class ApplicationTokenService {
     userId?: string;
     expiresInSeconds?: number;
   }): Promise<AuthToken> {
-    const expiresIn = `${expiresInSeconds}s`;
+    await this.validateWorkspaceAndApplication(workspaceId, applicationId);
 
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
-    });
-
-    assertIsDefinedOrThrow(
-      application,
-      new ApplicationException(
-        'Application not found',
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      ),
-    );
-
-    const jwtPayload: ApplicationAccessTokenJwtPayload = {
-      sub: applicationId,
-      applicationId,
+    return this.signApplicationToken({
       workspaceId,
-      type: JwtTokenTypeEnum.APPLICATION_ACCESS,
-      ...(userWorkspaceId ? { userWorkspaceId } : {}),
-      ...(userId ? { userId } : {}),
-    };
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret(
-          JwtTokenTypeEnum.APPLICATION_ACCESS,
-          workspaceId,
-        ),
-        expiresIn,
-      }),
-      expiresAt,
-    };
-  }
-
-  async generateApplicationRefreshToken({
-    workspaceId,
-    applicationId,
-    userWorkspaceId,
-    userId,
-    expiresInSeconds = APPLICATION_REFRESH_TOKEN_EXPIRY_SECONDS,
-  }: {
-    workspaceId: string;
-    applicationId: string;
-    userWorkspaceId?: string;
-    userId?: string;
-    expiresInSeconds?: number;
-  }): Promise<AuthToken> {
-    const expiresIn = `${expiresInSeconds}s`;
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-    });
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
-    });
-
-    assertIsDefinedOrThrow(
-      application,
-      new ApplicationException(
-        'Application not found',
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      ),
-    );
-
-    const jwtPayload: ApplicationRefreshTokenJwtPayload = {
-      sub: applicationId,
       applicationId,
-      workspaceId,
-      type: JwtTokenTypeEnum.APPLICATION_REFRESH,
-      ...(userWorkspaceId ? { userWorkspaceId } : {}),
-      ...(userId ? { userId } : {}),
-    };
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret(
-          JwtTokenTypeEnum.APPLICATION_REFRESH,
-          workspaceId,
-        ),
-        expiresIn,
-      }),
-      expiresAt,
-    };
+      userWorkspaceId,
+      userId,
+      tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      expiresInSeconds,
+    });
   }
 
   async generateApplicationTokenPair({
@@ -165,19 +78,25 @@ export class ApplicationTokenService {
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
   }> {
+    await this.validateWorkspaceAndApplication(workspaceId, applicationId);
+
     const [applicationAccessToken, applicationRefreshToken] = await Promise.all(
       [
-        this.generateApplicationAccessToken({
+        this.signApplicationToken({
           workspaceId,
           applicationId,
           userWorkspaceId,
           userId,
+          tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          expiresInSeconds: APPLICATION_ACCESS_TOKEN_EXPIRY_SECONDS,
         }),
-        this.generateApplicationRefreshToken({
+        this.signApplicationToken({
           workspaceId,
           applicationId,
           userWorkspaceId,
           userId,
+          tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
+          expiresInSeconds: APPLICATION_REFRESH_TOKEN_EXPIRY_SECONDS,
         }),
       ],
     );
@@ -206,17 +125,84 @@ export class ApplicationTokenService {
     return payload;
   }
 
-  async renewApplicationTokens(refreshToken: string): Promise<{
+  async renewApplicationTokens(payload: {
+    workspaceId: string;
+    applicationId: string;
+    userWorkspaceId?: string;
+    userId?: string;
+  }): Promise<{
     applicationAccessToken: AuthToken;
     applicationRefreshToken: AuthToken;
   }> {
-    const payload = this.validateApplicationRefreshToken(refreshToken);
-
     return this.generateApplicationTokenPair({
       workspaceId: payload.workspaceId,
       applicationId: payload.applicationId,
       userWorkspaceId: payload.userWorkspaceId,
       userId: payload.userId,
     });
+  }
+
+  private async validateWorkspaceAndApplication(
+    workspaceId: string,
+    applicationId: string,
+  ): Promise<void> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+    });
+
+    assertIsDefinedOrThrow(
+      application,
+      new ApplicationException(
+        'Application not found',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      ),
+    );
+  }
+
+  private signApplicationToken({
+    workspaceId,
+    applicationId,
+    userWorkspaceId,
+    userId,
+    tokenType,
+    expiresInSeconds,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    userWorkspaceId?: string;
+    userId?: string;
+    tokenType:
+      | JwtTokenTypeEnum.APPLICATION_ACCESS
+      | JwtTokenTypeEnum.APPLICATION_REFRESH;
+    expiresInSeconds: number;
+  }): AuthToken {
+    const expiresIn = `${expiresInSeconds}s`;
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
+    const jwtPayload: ApplicationAccessTokenJwtPayload | ApplicationRefreshTokenJwtPayload = {
+      sub: applicationId,
+      applicationId,
+      workspaceId,
+      type: tokenType,
+      ...(userWorkspaceId ? { userWorkspaceId } : {}),
+      ...(userId ? { userId } : {}),
+    };
+
+    return {
+      token: this.jwtWrapperService.sign(jwtPayload, {
+        secret: this.jwtWrapperService.generateAppSecret(
+          tokenType,
+          workspaceId,
+        ),
+        expiresIn,
+      }),
+      expiresAt,
+    };
   }
 }
