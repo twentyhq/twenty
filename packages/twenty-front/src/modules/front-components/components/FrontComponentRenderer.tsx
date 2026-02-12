@@ -24,8 +24,12 @@ export const FrontComponentRenderer = ({
   const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
   const authToken = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token;
 
-  const handleLoadError = useCallback(
-    (error: Error) => {
+  const handleError = useCallback(
+    (error?: Error) => {
+      if (!isDefined(error)) {
+        return;
+      }
+
       const errorMessage = error.message;
 
       enqueueErrorSnackBar({
@@ -35,29 +39,12 @@ export const FrontComponentRenderer = ({
     [enqueueErrorSnackBar],
   );
 
-  const handleRendererError = useCallback(
-    (componentError?: Error) => {
-      if (isDefined(componentError)) {
-        const message = componentError.message;
-
-        enqueueErrorSnackBar({
-          message: t`Failed to load front component: ${message}`,
-        });
-      }
-    },
-    [enqueueErrorSnackBar],
-  );
-
   const { data, loading } = useFindOneFrontComponentQuery({
     variables: { id: frontComponentId },
-    onError: handleLoadError,
+    onError: handleError,
   });
 
-  if (
-    loading === true ||
-    !isDefined(data?.frontComponent) ||
-    !isDefined(authToken)
-  ) {
+  if (loading || !isDefined(data?.frontComponent) || !isDefined(authToken)) {
     return null;
   }
 
@@ -74,7 +61,7 @@ export const FrontComponentRenderer = ({
       apiUrl={apiUrl ?? undefined}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
-      onError={handleRendererError}
+      onError={handleError}
     />
   );
 };
