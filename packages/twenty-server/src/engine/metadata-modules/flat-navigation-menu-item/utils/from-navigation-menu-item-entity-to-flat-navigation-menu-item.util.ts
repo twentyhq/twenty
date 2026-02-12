@@ -81,6 +81,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     viewId: navigationMenuItemEntity.viewId,
     folderId: navigationMenuItemEntity.folderId,
     name: navigationMenuItemEntity.name,
+    link: navigationMenuItemEntity.link,
     position: navigationMenuItemEntity.position,
     workspaceId: navigationMenuItemEntity.workspaceId,
     universalIdentifier: navigationMenuItemEntity.universalIdentifier,

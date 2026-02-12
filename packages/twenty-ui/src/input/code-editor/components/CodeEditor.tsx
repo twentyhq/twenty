@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
 
-type CodeEditorProps = Pick<
+export type CodeEditorProps = Pick<
   EditorProps,
   'value' | 'language' | 'onMount' | 'onValidate' | 'height' | 'options'
 > & {

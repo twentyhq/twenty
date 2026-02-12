@@ -18,7 +18,7 @@ import {
   FeatureFlagKey,
   PageLayoutType,
   type StandaloneRichTextConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type AvailableWorkspace,
   type AvailableWorkspaces,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const countAvailableWorkspaces = ({
   availableWorkspacesForSignIn,

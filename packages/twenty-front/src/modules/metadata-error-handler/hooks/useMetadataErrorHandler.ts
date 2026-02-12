@@ -25,6 +25,7 @@ export const useMetadataErrorHandler = () => {
     fieldMetadata: t`field`,
     view: t`view`,
     viewField: t`view field`,
+    viewFieldGroup: t`view field group`,
     viewGroup: t`view group`,
     viewFilter: t`view filter`,
     index: t`index`,

@@ -14,7 +14,7 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
-import { type AggregateChartConfiguration } from '~/generated/graphql';
+import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useGraphWidgetAggregateQuery = ({

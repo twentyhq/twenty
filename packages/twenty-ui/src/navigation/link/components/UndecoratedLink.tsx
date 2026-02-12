@@ -14,7 +14,7 @@ const StyledUndecoratedLink = styled(
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-type UndecoratedLinkProps = {
+export type UndecoratedLinkProps = {
   to: string | number;
   children: React.ReactNode;
   replace?: boolean;

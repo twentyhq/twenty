@@ -1,5 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type GetTabsByDisplayModeParams = {
   tabs: PageLayoutTab[];

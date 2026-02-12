@@ -3,7 +3,7 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { renderHook } from '@testing-library/react';
 
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
-import { type LineChartSeries } from '~/generated/graphql';
+import { type LineChartSeries } from '~/generated-metadata/graphql';
 
 const mockUseRecoilComponentValue = jest.fn();
 jest.mock(

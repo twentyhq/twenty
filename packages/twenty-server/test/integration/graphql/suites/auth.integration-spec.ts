@@ -34,7 +34,7 @@ describe('AuthResolve (integration)', () => {
     };
 
     return client
-      .post('/graphql')
+      .post('/metadata')
       .set('Origin', ORIGIN.toString())
       .send(queryData)
       .expect(200)
@@ -68,7 +68,7 @@ describe('AuthResolve (integration)', () => {
     };
 
     return client
-      .post('/graphql')
+      .post('/metadata')
       .set('Origin', ORIGIN.toString())
       .send(queryData)
       .expect(200)

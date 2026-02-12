@@ -8,7 +8,7 @@ import {
   type Billing,
   OnboardingStatus,
   PermissionFlagType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';

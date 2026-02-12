@@ -2,7 +2,7 @@ import IconAddressBookRaw from '@assets/icons/address-book.svg?react';
 import { useTheme } from '@emotion/react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconAddressBookProps = Pick<
+export type IconAddressBookProps = Pick<
   IconComponentProps,
   'size' | 'stroke' | 'color'
 >;

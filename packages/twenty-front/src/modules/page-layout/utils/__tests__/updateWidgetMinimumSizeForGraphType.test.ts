@@ -2,7 +2,7 @@ import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { updateLayoutItemConstraints } from '@/page-layout/utils/updateLayoutItemConstraints';
 import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateWidgetMinimumSizeForGraphType';
 import { type Layouts } from 'react-grid-layout';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 jest.mock('../getWidgetSize');
 jest.mock('../updateLayoutItemConstraints');

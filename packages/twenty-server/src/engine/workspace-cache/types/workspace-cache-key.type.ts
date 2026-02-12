@@ -17,6 +17,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatIndexMaps: 'flat-maps:index',
   flatViewMaps: 'flat-maps:view',
   flatViewFieldMaps: 'flat-maps:view-field',
+  flatViewFieldGroupMaps: 'flat-maps:view-field-group',
   flatViewGroupMaps: 'flat-maps:view-group',
   flatViewFilterMaps: 'flat-maps:view-filter',
   flatViewFilterGroupMaps: 'flat-maps:view-filter-group',

@@ -8,7 +8,6 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { CommandMenuMessageThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadIntermediaryMessages';
 import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -31,12 +30,11 @@ const StyledContainer = styled.div`
   overflow-y: auto;
 `;
 
-const StyledButtonContainer = styled.div<{ isMobile: boolean }>`
+const StyledButtonContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   justify-content: flex-end;
-  height: ${({ isMobile }) => (isMobile ? '100px' : '50px')};
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   box-sizing: border-box;
@@ -52,8 +50,6 @@ export const CommandMenuMessageThreadPage = () => {
   const setMessageThread = useSetRecoilComponentState(
     messageThreadComponentState,
   );
-
-  const isMobile = useIsMobile();
 
   const {
     thread,
@@ -170,7 +166,7 @@ export const CommandMenuMessageThreadPage = () => {
         )}
       </StyledContainer>
       {canReply && !messageChannelLoading && (
-        <StyledButtonContainer isMobile={isMobile}>
+        <StyledButtonContainer>
           <Button
             size="small"
             onClick={handleReplyClick}

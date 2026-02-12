@@ -21,6 +21,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -152,7 +153,10 @@ export class WorkspaceMigrationRunnerService {
     actions,
     applicationUniversalIdentifier,
     workspaceId,
-  }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
+  }: WorkspaceMigration): Promise<{
+    allFlatEntityMaps: AllFlatEntityMaps;
+    metadataEvents: MetadataEvent[];
+  }> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
@@ -207,8 +211,10 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
+      const allMetadataEvents: MetadataEvent[] = [];
+
       for (const action of actions) {
-        const result =
+        const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -224,8 +230,10 @@ export class WorkspaceMigrationRunnerService {
 
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
-          ...result,
+          ...partialOptimisticCache,
         } as typeof allFlatEntityMaps;
+
+        allMetadataEvents.push(...metadataEvents);
       }
 
       await queryRunner.commitTransaction();
@@ -239,7 +247,7 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Total execution');
 
-      return allFlatEntityMaps;
+      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction().catch((error) =>

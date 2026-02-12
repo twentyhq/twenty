@@ -118,7 +118,7 @@ describe('Event Logs (integration)', () => {
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   ) => {
     return client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${token}`)
       .send({
         query: `
@@ -498,7 +498,7 @@ describe('Event Logs (integration)', () => {
     });
 
     it('should deny access without authentication', async () => {
-      const response = await client.post('/graphql').send({
+      const response = await client.post('/metadata').send({
         query: `
           query EventLogs($input: EventLogQueryInput!) {
             eventLogs(input: $input) {

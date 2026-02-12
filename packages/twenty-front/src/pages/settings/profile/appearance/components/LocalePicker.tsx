@@ -8,12 +8,14 @@ import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 
@@ -63,10 +65,12 @@ export const LocalePicker = () => {
     await updateWorkspaceMember({ locale: value });
 
     const dateFnsLocale = await getDateFnsLocale(value);
-    setDateLocale({
+    const newDateLocale = {
       locale: value,
       localeCatalog: dateFnsLocale || enUS,
-    });
+    };
+    setDateLocale(newDateLocale);
+    jotaiStore.set(dateLocaleStateV2.atom, newDateLocale);
 
     await dynamicActivate(value);
     try {

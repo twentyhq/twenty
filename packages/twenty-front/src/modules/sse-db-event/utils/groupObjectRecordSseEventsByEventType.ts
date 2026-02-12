@@ -1,7 +1,7 @@
 import {
   type DatabaseEventAction,
   type ObjectRecordEvent,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const groupObjectRecordSseEventsByEventType = ({
   objectRecordEvents,

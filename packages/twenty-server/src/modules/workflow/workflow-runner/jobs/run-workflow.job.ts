@@ -156,7 +156,7 @@ export class RunWorkflowJob {
     const lastExecutedStepOutput =
       workflowRun.state?.stepInfos[lastExecutedStepId];
 
-    const nextStepIdsToExecute =
+    const { nextStepIdsToExecute } =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
         executedStepOutput: lastExecutedStepOutput,

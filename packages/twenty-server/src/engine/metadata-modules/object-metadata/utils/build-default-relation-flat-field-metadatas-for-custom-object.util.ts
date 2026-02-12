@@ -90,10 +90,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             objectMetadataNameSingular,
           );
         const isFeatureFlagEnabled =
-          (objectMetadataNameSingular === 'timelineActivity' &&
-            existingFeatureFlagsMap[
-              FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED
-            ]) ||
+          objectMetadataNameSingular === 'timelineActivity' ||
           (objectMetadataNameSingular === 'attachment' &&
             existingFeatureFlagsMap[FeatureFlagKey.IS_ATTACHMENT_MIGRATED]) ||
           (objectMetadataNameSingular === 'noteTarget' &&

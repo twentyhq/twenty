@@ -1,4 +1,4 @@
-import { type ObjectRecordEvent } from '~/generated/graphql';
+import { type ObjectRecordEvent } from '~/generated-metadata/graphql';
 
 export const groupObjectRecordSseEventsByObjectMetadataItemNameSingular = ({
   objectRecordEvents,

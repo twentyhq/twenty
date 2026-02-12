@@ -14,16 +14,17 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
   AxisNameDisplay,
   type BarChartConfiguration,
   BarChartLayout,
+  GraphOrderBy,
   PageLayoutType,
   type PageLayoutWidget,
   WidgetConfigurationType,
-} from '~/generated/graphql';
+  WidgetType,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';

@@ -8,7 +8,7 @@ import {
   ANALYTICS_COOKIE_NAME,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
-import { AnalyticsType } from '~/generated/graphql';
+import { AnalyticsType } from '~/generated-metadata/graphql';
 
 // Mock document.cookie
 Object.defineProperty(document, 'cookie', {

@@ -3,7 +3,7 @@ import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { type BarChartLayout } from '~/generated/graphql';
+import { type BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartBaseLayerProps = {
   bars: BarPosition[];

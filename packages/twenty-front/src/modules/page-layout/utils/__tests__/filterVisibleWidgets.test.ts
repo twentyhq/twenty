@@ -1,5 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 
 describe('filterVisibleWidgets', () => {

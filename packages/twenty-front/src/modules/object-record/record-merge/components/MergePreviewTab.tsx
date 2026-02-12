@@ -5,7 +5,7 @@ import { getCardComponent } from '@/object-record/record-show/utils/getCardCompo
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type MergePreviewTabProps = {
   objectNameSingular: string;

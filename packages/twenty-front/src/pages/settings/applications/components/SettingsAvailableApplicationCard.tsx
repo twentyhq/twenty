@@ -11,10 +11,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
+import { type MarketplaceApp } from '~/generated-metadata/graphql';
 
 type SettingsAvailableApplicationCardProps = {
-  application: AvailableApplication;
+  application: MarketplaceApp;
 };
 
 const StyledLink = styled(Link)`
@@ -41,7 +41,7 @@ export const SettingsAvailableApplicationCard = ({
       <Card rounded fullWidth>
         <StyledSettingsCardContent alignItems="flex-start" fullHeight>
           <Avatar
-            avatarUrl={application.logoPath || null}
+            avatarUrl={application.logo || null}
             placeholder={application.name}
             placeholderColorSeed={application.name}
             size="lg"

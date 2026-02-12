@@ -16,7 +16,7 @@ import {
   type UpdateWorkflowVersionStepInput,
   type UpdateWorkflowVersionStepMutation,
   type UpdateWorkflowVersionStepMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();

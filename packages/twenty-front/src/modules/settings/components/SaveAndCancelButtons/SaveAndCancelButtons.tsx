@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import type { IconComponent } from 'twenty-ui/display';
 
 import { CancelButton } from './CancelButton';
 import { SaveButton } from './SaveButton';
@@ -15,6 +16,8 @@ type SaveAndCancelButtonsProps = {
   onCancel?: () => void;
   isSaveDisabled?: boolean;
   isCancelDisabled?: boolean;
+  inverted?: boolean;
+  saveIcon?: IconComponent;
 };
 
 export const SaveAndCancelButtons = ({
@@ -23,14 +26,22 @@ export const SaveAndCancelButtons = ({
   onCancel,
   isSaveDisabled,
   isCancelDisabled,
+  inverted = false,
+  saveIcon,
 }: SaveAndCancelButtonsProps) => {
   return (
     <StyledContainer>
-      <CancelButton onCancel={onCancel} disabled={isCancelDisabled} />
+      <CancelButton
+        onCancel={onCancel}
+        disabled={isCancelDisabled}
+        inverted={inverted}
+      />
       <SaveButton
         onSave={onSave}
         disabled={isSaveDisabled}
         isLoading={isLoading}
+        inverted={inverted}
+        saveIcon={saveIcon}
       />
     </StyledContainer>
   );

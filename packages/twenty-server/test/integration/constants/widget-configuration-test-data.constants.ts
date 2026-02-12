@@ -42,7 +42,9 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigu
   {
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
-      markdown: 'Simple text',
+      blocknote:
+        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}',
+      markdown: null,
     },
   };
 
@@ -52,6 +54,15 @@ export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE = {
   body: 'not an object',
+};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
+  configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
+  body: {
+    blocknote: 'valid',
+    markdown: 'valid',
+    invalidField: 'should not be here',
+  },
 };
 
 export const INVALID_IFRAME_CONFIG_BAD_URL = {

@@ -1,7 +1,7 @@
 import {
   type PieChartConfiguration,
   type WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type TypedPieChartConfiguration = PieChartConfiguration & {
   configurationType: WidgetConfigurationType.PIE_CHART;

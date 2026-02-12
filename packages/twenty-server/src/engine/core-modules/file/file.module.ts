@@ -9,7 +9,7 @@ import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/job
 import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/file-attachment.listener';
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -28,6 +28,7 @@ import { FileService } from './services/file.service';
     PermissionsModule,
     FileStorageModule,
     FilesFieldModule,
+    SecureHttpClientModule,
   ],
   providers: [
     FileService,
@@ -39,7 +40,6 @@ import { FileService } from './services/file.service';
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
     FileUploadService,
-    SecureHttpClientService,
   ],
   exports: [FileService, FileMetadataService],
   controllers: [FileController],

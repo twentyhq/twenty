@@ -1,6 +1,6 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
-import { WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberNumberFormatEnum } from '~/generated-metadata/graphql';
 
 export const getNumberFormatFromWorkspaceNumberFormat = (
   numberFormat: WorkspaceMemberNumberFormatEnum,

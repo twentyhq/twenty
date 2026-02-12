@@ -1,4 +1,4 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type InstallApplicationFactoryInput,
   installApplicationQueryFactory,
@@ -20,7 +20,7 @@ export const installApplication = async ({
 }> => {
   const graphqlOperation = installApplicationQueryFactory({ input });
 
-  const response = await makeGraphqlAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

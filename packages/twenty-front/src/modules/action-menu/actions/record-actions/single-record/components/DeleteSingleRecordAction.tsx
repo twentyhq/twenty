@@ -10,7 +10,7 @@ import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const DeleteSingleRecordAction = () => {
   const { recordIndexId, objectMetadataItem } =

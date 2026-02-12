@@ -22,5 +22,17 @@ export const computeStandardNoteViews = (
         icon: 'IconNotes',
       },
     }),
+    noteRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        name: 'Note Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };

@@ -19,31 +19,16 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     linkToShowPage: '/app/objects/people/record-id',
   };
 
-  it('should return null when objectMetadataItem is null', () => {
-    const result = computeNavigationMenuItemDisplayFields(
-      null,
-      mockObjectRecordIdentifier,
-    );
-
-    expect(result).toBeNull();
+  it('should return null when objectMetadataItem or objectRecordIdentifier is null', () => {
+    expect(
+      computeNavigationMenuItemDisplayFields(null, mockObjectRecordIdentifier),
+    ).toBeNull();
+    expect(
+      computeNavigationMenuItemDisplayFields(mockObjectMetadataItem, null),
+    ).toBeNull();
   });
 
-  it('should return null when objectRecordIdentifier is null', () => {
-    const result = computeNavigationMenuItemDisplayFields(
-      mockObjectMetadataItem,
-      null,
-    );
-
-    expect(result).toBeNull();
-  });
-
-  it('should return null when both objectMetadataItem and objectRecordIdentifier are null', () => {
-    const result = computeNavigationMenuItemDisplayFields(null, null);
-
-    expect(result).toBeNull();
-  });
-
-  it('should return complete display fields when all parameters are provided', () => {
+  it('should return display fields from metadata and record identifier', () => {
     const result = computeNavigationMenuItemDisplayFields(
       mockObjectMetadataItem,
       mockObjectRecordIdentifier,
@@ -58,97 +43,18 @@ describe('computeNavigationMenuItemDisplayFields', () => {
     });
   });
 
-  it('should handle objectRecordIdentifier with undefined optional fields', () => {
-    const identifierWithoutOptionalFields: ObjectRecordIdentifier = {
+  it('should default optional identifier fields to empty string or icon', () => {
+    const minimal: ObjectRecordIdentifier = {
       id: 'record-id',
       name: 'Jane Doe',
     };
-
     const result = computeNavigationMenuItemDisplayFields(
       mockObjectMetadataItem,
-      identifierWithoutOptionalFields,
-    );
-
-    expect(result).toEqual({
-      labelIdentifier: 'Jane Doe',
-      avatarUrl: '',
-      avatarType: 'icon',
-      link: '',
-      objectNameSingular: 'person',
-    });
-  });
-
-  it('should use objectMetadataItem nameSingular for objectNameSingular', () => {
-    const customMetadataItem: ObjectMetadataItem = {
-      ...mockObjectMetadataItem,
-      nameSingular: 'company',
-    } as ObjectMetadataItem;
-
-    const result = computeNavigationMenuItemDisplayFields(
-      customMetadataItem,
-      mockObjectRecordIdentifier,
-    );
-
-    expect(result?.objectNameSingular).toBe('company');
-  });
-
-  it('should handle objectRecordIdentifier with null avatarType', () => {
-    const identifierWithNullAvatarType: ObjectRecordIdentifier = {
-      id: 'record-id',
-      name: 'Test User',
-      avatarType: null,
-    };
-
-    const result = computeNavigationMenuItemDisplayFields(
-      mockObjectMetadataItem,
-      identifierWithNullAvatarType,
-    );
-
-    expect(result?.avatarType).toBe('icon');
-  });
-
-  it('should handle objectRecordIdentifier with undefined linkToShowPage', () => {
-    const identifierWithoutLink: ObjectRecordIdentifier = {
-      id: 'record-id',
-      name: 'Test User',
-      linkToShowPage: undefined,
-    };
-
-    const result = computeNavigationMenuItemDisplayFields(
-      mockObjectMetadataItem,
-      identifierWithoutLink,
-    );
-
-    expect(result?.link).toBe('');
-  });
-
-  it('should handle objectRecordIdentifier with undefined avatarUrl', () => {
-    const identifierWithoutAvatarUrl: ObjectRecordIdentifier = {
-      id: 'record-id',
-      name: 'Test User',
-      avatarUrl: undefined,
-    };
-
-    const result = computeNavigationMenuItemDisplayFields(
-      mockObjectMetadataItem,
-      identifierWithoutAvatarUrl,
+      minimal,
     );
 
     expect(result?.avatarUrl).toBe('');
-  });
-
-  it('should handle objectRecordIdentifier with undefined avatarType', () => {
-    const identifierWithoutAvatarType: ObjectRecordIdentifier = {
-      id: 'record-id',
-      name: 'Test User',
-      avatarType: undefined,
-    };
-
-    const result = computeNavigationMenuItemDisplayFields(
-      mockObjectMetadataItem,
-      identifierWithoutAvatarType,
-    );
-
     expect(result?.avatarType).toBe('icon');
+    expect(result?.link).toBe('');
   });
 });

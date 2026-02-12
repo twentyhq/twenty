@@ -4,7 +4,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useDebounce } from 'use-debounce';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -51,6 +52,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -152,8 +154,10 @@ export const SettingsWorkspaceMembers = () => {
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
-  const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
+  const workspaceInvitations = useRecoilValueV2(workspaceInvitationsState);
+  const setWorkspaceInvitations = useSetRecoilStateV2(
+    workspaceInvitationsState,
+  );
 
   const handleSearchChange = (text: string) => {
     setSearchFilter(text);
