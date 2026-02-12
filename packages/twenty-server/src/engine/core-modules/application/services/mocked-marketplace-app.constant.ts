@@ -193,7 +193,7 @@ export const MOCKED_MARKETPLACE_APP: MarketplaceAppDTO = {
         canUpdateFieldValue: false,
       },
       {
-        objectUniversalIdentifier: MOCK_ENRICHMENT_JOB_UNIVERSAL_ID,
+        objectUniversalIdentifier: PERSON_UNIVERSAL_ID,
         fieldUniversalIdentifier: PERSON_JOB_TITLE_FIELD_UNIVERSAL_ID,
         canReadFieldValue: true,
         canUpdateFieldValue: false,
