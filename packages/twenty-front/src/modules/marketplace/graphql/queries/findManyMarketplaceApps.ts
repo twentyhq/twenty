@@ -25,6 +25,7 @@ export const FIND_MANY_MARKETPLACE_APPS = gql`
         description
         icon
         fields {
+          universalIdentifier
           name
           type
           label
@@ -48,6 +49,31 @@ export const FIND_MANY_MARKETPLACE_APPS = gql`
       frontComponents {
         name
         description
+      }
+      defaultRole {
+        id
+        label
+        description
+        canReadAllObjectRecords
+        canUpdateAllObjectRecords
+        canSoftDeleteAllObjectRecords
+        canDestroyAllObjectRecords
+        canUpdateAllSettings
+        canAccessAllTools
+        objectPermissions {
+          objectUniversalIdentifier
+          canReadObjectRecords
+          canUpdateObjectRecords
+          canSoftDeleteObjectRecords
+          canDestroyObjectRecords
+        }
+        fieldPermissions {
+          objectUniversalIdentifier
+          fieldUniversalIdentifier
+          canReadFieldValue
+          canUpdateFieldValue
+        }
+        permissionFlags
       }
     }
   }

@@ -28,6 +28,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated/graphql';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
+import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';
 
 const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
@@ -399,7 +400,12 @@ export const SettingsAvailableApplicationDetails = () => {
           />
         );
       case 'permissions':
-        return <div>{t`Permissions tab`}</div>;
+        return (
+          <SettingsApplicationPermissionsTab
+            marketplaceAppDefaultRole={application.defaultRole}
+            marketplaceAppObjects={application.objects}
+          />
+        );
       case 'settings':
         return <div>{t`Settings tab`}</div>;
       default:

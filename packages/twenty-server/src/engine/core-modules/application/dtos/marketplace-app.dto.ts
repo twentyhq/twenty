@@ -33,10 +33,13 @@ export class MarketplaceAppFieldDTO {
   @Field({ nullable: true })
   icon?: string;
 
-  @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  objectUniversalIdentifier?: string;
+  objectUniversalIdentifier: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  universalIdentifier: string;
 }
 
 @ObjectType('MarketplaceAppObject')
@@ -103,6 +106,95 @@ export class MarketplaceAppFrontComponentDTO {
   @IsString()
   @Field({ nullable: true })
   description?: string;
+}
+
+@ObjectType('MarketplaceAppRoleObjectPermission')
+export class MarketplaceAppRoleObjectPermissionDTO {
+  @IsString()
+  @Field()
+  objectUniversalIdentifier: string;
+
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canReadObjectRecords?: boolean;
+
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canUpdateObjectRecords?: boolean;
+
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canSoftDeleteObjectRecords?: boolean;
+
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canDestroyObjectRecords?: boolean;
+}
+
+@ObjectType('MarketplaceAppRoleFieldPermission')
+export class MarketplaceAppRoleFieldPermissionDTO {
+  @IsString()
+  @Field()
+  objectUniversalIdentifier: string;
+
+  @IsString()
+  @Field()
+  fieldUniversalIdentifier: string;
+
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canReadFieldValue?: boolean;
+
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canUpdateFieldValue?: boolean;
+}
+
+@ObjectType('MarketplaceAppDefaultRole')
+export class MarketplaceAppDefaultRoleDTO {
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  id: string;
+
+  @IsString()
+  @Field()
+  label: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field(() => Boolean)
+  canReadAllObjectRecords: boolean;
+
+  @Field(() => Boolean)
+  canUpdateAllObjectRecords: boolean;
+
+  @Field(() => Boolean)
+  canSoftDeleteAllObjectRecords: boolean;
+
+  @Field(() => Boolean)
+  canDestroyAllObjectRecords: boolean;
+
+  @Field(() => Boolean)
+  canUpdateAllSettings: boolean;
+
+  @Field(() => Boolean)
+  canAccessAllTools: boolean;
+
+  @IsArray()
+  @Field(() => [MarketplaceAppRoleObjectPermissionDTO])
+  objectPermissions: MarketplaceAppRoleObjectPermissionDTO[];
+
+  @IsArray()
+  @Field(() => [MarketplaceAppRoleFieldPermissionDTO])
+  fieldPermissions: MarketplaceAppRoleFieldPermissionDTO[];
+
+  @IsArray()
+  @Field(() => [String])
+  permissionFlags: string[];
 }
 
 @ObjectType('MarketplaceApp')
@@ -180,4 +272,8 @@ export class MarketplaceAppDTO {
   @IsArray()
   @Field(() => [MarketplaceAppFrontComponentDTO])
   frontComponents: MarketplaceAppFrontComponentDTO[];
+
+  @IsOptional()
+  @Field(() => MarketplaceAppDefaultRoleDTO, { nullable: true })
+  defaultRole?: MarketplaceAppDefaultRoleDTO;
 }

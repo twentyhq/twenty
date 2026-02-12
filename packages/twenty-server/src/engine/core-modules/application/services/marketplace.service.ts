@@ -7,11 +7,13 @@ import { PackageJson } from 'type-fest';
 
 import {
   MarketplaceAppDTO,
+  MarketplaceAppDefaultRoleDTO,
   MarketplaceAppFieldDTO,
   MarketplaceAppFrontComponentDTO,
   MarketplaceAppLogicFunctionDTO,
   MarketplaceAppObjectDTO,
 } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
+import { MOCKED_MARKETPLACE_APP } from 'src/engine/core-modules/application/services/mocked-marketplace-app.constant';
 
 type GitHubContent = {
   name: string;
@@ -58,7 +60,7 @@ export class MarketplaceService {
   private async fetchAllMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
     const apps: MarketplaceAppDTO[] = [];
 
-    apps.push(this.loadMockApp());
+    apps.push(MOCKED_MARKETPLACE_APP); // To remove once we have apps on marketplace
 
     try {
       const appDirs = await this.getAppDirectoriesFromGitHub();
@@ -107,117 +109,6 @@ export class MarketplaceService {
     }
 
     return apps;
-  }
-
-  private loadMockApp(): MarketplaceAppDTO {
-    // SVG logo as data URL
-    const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#1a2744"><ellipse cx="38" cy="20" rx="28" ry="10"/><rect x="10" y="20" width="56" height="50"/><ellipse cx="38" cy="70" rx="28" ry="10"/><ellipse cx="38" cy="35" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="38" cy="52" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><circle cx="72" cy="62" r="22" fill="#1a2744"/><circle cx="72" cy="62" r="18" fill="#fff"/><path d="M72 50 L72 74 M62 58 L72 48 L82 58" stroke="#1a2744" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
-    const logoDataUrl = `data:image/svg+xml,${encodeURIComponent(logoSvg)}`;
-
-    return {
-      id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-      name: 'Data Enrichment',
-      description: 'Enrich your data easily. Choose your provider.',
-      icon: 'IconSparkles',
-      version: '1.0.0',
-      author: 'Cosmos Labs',
-      category: 'Data',
-      logo: logoDataUrl,
-      screenshots: [
-        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+1',
-        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+2',
-        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+3',
-      ],
-      aboutDescription:
-        'Enhance your workspace with automated data intelligence. This app monitors your new records and automatically populates missing details such as job titles, company size, social profiles, and industry insights.',
-      providers: ['Clearbit', 'Apollo', 'Hunter.io'],
-      websiteUrl: 'https://google.com',
-      termsUrl: 'https://google.com',
-      objects: [
-        {
-          universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-000000000001',
-          nameSingular: 'enrichmentJob',
-          namePlural: 'enrichmentJobs',
-          labelSingular: 'Enrichment Job',
-          labelPlural: 'Enrichment Jobs',
-          description: 'Tracks data enrichment requests and their status',
-          icon: 'IconSparkles',
-          fields: [
-            {
-              name: 'status',
-              type: 'SELECT',
-              label: 'Status',
-              description: 'Current status of the enrichment job',
-              icon: 'IconProgressCheck',
-            },
-            {
-              name: 'provider',
-              type: 'TEXT',
-              label: 'Provider',
-              description: 'Enrichment provider used',
-              icon: 'IconCloud',
-            },
-            {
-              name: 'enrichedAt',
-              type: 'DATE_TIME',
-              label: 'Enriched At',
-              description: 'When the enrichment was completed',
-              icon: 'IconCalendar',
-            },
-            {
-              name: 'recordId',
-              type: 'TEXT',
-              label: 'Record ID',
-              description: 'ID of the enriched record',
-              icon: 'IconKey',
-            },
-          ],
-        },
-      ],
-      fields: [
-        {
-          name: 'industry',
-          type: 'TEXT',
-          label: 'Industry',
-          description: 'Company industry from enrichment',
-          icon: 'IconBuildingFactory2',
-          objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        },
-        {
-          name: 'employeeCount',
-          type: 'NUMBER',
-          label: 'Employee Count',
-          description: 'Number of employees from enrichment',
-          icon: 'IconUsers',
-          objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        },
-        {
-          name: 'linkedInUrl',
-          type: 'LINKS',
-          label: 'LinkedIn URL',
-          description: 'LinkedIn profile URL from enrichment',
-          icon: 'IconBrandLinkedin',
-          objectUniversalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
-        },
-        {
-          name: 'jobTitle',
-          type: 'TEXT',
-          label: 'Job Title',
-          description: 'Job title from enrichment',
-          icon: 'IconBriefcase',
-          objectUniversalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
-        },
-      ],
-      logicFunctions: [
-        {
-          name: 'enrich-on-create',
-          description:
-            'Automatically enriches new records when they are created',
-          timeoutSeconds: 30,
-        },
-      ],
-      frontComponents: [],
-    };
   }
 
   private async getAppDirectoriesFromGitHub(): Promise<string[]> {
@@ -321,6 +212,8 @@ export class MarketplaceService {
           label: field.label ?? '',
           description: field.description,
           icon: field.icon,
+          universalIdentifier: field.universalIdentifier,
+          objectUniversalIdentifier: manifestObject.universalIdentifier,
         })),
       }),
     );
@@ -334,6 +227,7 @@ export class MarketplaceService {
           description: manifestField.description,
           icon: manifestField.icon,
           objectUniversalIdentifier: manifestField.objectUniversalIdentifier,
+          universalIdentifier: manifestField.universalIdentifier,
         };
       },
     );
@@ -353,6 +247,11 @@ export class MarketplaceService {
       description: manifestFrontComponent.description,
     }));
 
+    const defaultRole = this.resolveDefaultRole(
+      manifest,
+      application.defaultRoleUniversalIdentifier,
+    );
+
     return {
       id: application.universalIdentifier,
       name: application.displayName,
@@ -371,6 +270,55 @@ export class MarketplaceService {
       fields,
       logicFunctions,
       frontComponents,
+      defaultRole,
+    };
+  }
+
+  private resolveDefaultRole(
+    manifest: Manifest,
+    defaultRoleUniversalIdentifier: string,
+  ): MarketplaceAppDefaultRoleDTO | undefined {
+    const roleManifest = manifest.roles?.find(
+      (role) => role.universalIdentifier === defaultRoleUniversalIdentifier,
+    );
+
+    if (!roleManifest) {
+      return undefined;
+    }
+
+    return {
+      id: roleManifest.universalIdentifier,
+      label: roleManifest.label,
+      description: roleManifest.description,
+      canReadAllObjectRecords: roleManifest.canReadAllObjectRecords ?? false,
+      canUpdateAllObjectRecords:
+        roleManifest.canUpdateAllObjectRecords ?? false,
+      canSoftDeleteAllObjectRecords:
+        roleManifest.canSoftDeleteAllObjectRecords ?? false,
+      canDestroyAllObjectRecords:
+        roleManifest.canDestroyAllObjectRecords ?? false,
+      canUpdateAllSettings: roleManifest.canUpdateAllSettings ?? false,
+      canAccessAllTools: roleManifest.canAccessAllTools ?? false,
+      objectPermissions: (roleManifest.objectPermissions ?? []).map(
+        (permission) => ({
+          objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          canReadObjectRecords: permission.canReadObjectRecords,
+          canUpdateObjectRecords: permission.canUpdateObjectRecords,
+          canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
+          canDestroyObjectRecords: permission.canDestroyObjectRecords,
+        }),
+      ),
+      fieldPermissions: (roleManifest.fieldPermissions ?? []).map(
+        (permission) => ({
+          objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+          canReadFieldValue: permission.canReadFieldValue,
+          canUpdateFieldValue: permission.canUpdateFieldValue,
+        }),
+      ),
+      permissionFlags: (roleManifest.permissionFlags ?? []).map((flag) =>
+        flag.toString(),
+      ),
     };
   }
 
