@@ -20,8 +20,8 @@ export const createLogicFunctionQueryFactory = ({
   gqlFields = LOGIC_FUNCTION_GQL_FIELDS,
 }: PerformMetadataQueryParams<CreateLogicFunctionFactoryInput>) => ({
   query: gql`
-    mutation CreateOneLogicFunction($input: CreateLogicFunctionInput!) {
-      createLogicFunction(input: $input) {
+    mutation CreateOneLogicFunction($input: CreateLogicFunctionFromSourceInput!) {
+      createOneLogicFunction(input: $input) {
         ${gqlFields}
       }
     }
