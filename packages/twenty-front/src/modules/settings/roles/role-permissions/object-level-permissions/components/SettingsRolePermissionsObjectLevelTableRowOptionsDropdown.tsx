@@ -12,12 +12,14 @@ type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
   objectMetadataId: string;
   objectPermissionDetailUrl: string;
+  isEditable: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
   roleId,
   objectMetadataId,
   objectPermissionDetailUrl,
+  isEditable,
 }: SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps) => {
   const dropdownId = `settings-role-object-level-options-${objectMetadataId}`;
 
@@ -42,15 +44,17 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <UndecoratedLink
-              fullWidth
-              to={objectPermissionDetailUrl}
-              onClick={() => closeDropdown(dropdownId)}
-            >
-              <MenuItem text={t`Edit`} LeftIcon={IconPencil} />
-            </UndecoratedLink>
-          </DropdownMenuItemsContainer>
+          {isEditable && (
+            <DropdownMenuItemsContainer>
+              <UndecoratedLink
+                fullWidth
+                to={objectPermissionDetailUrl}
+                onClick={() => closeDropdown(dropdownId)}
+              >
+                <MenuItem text={t`Edit`} LeftIcon={IconPencil} />
+              </UndecoratedLink>
+            </DropdownMenuItemsContainer>
+          )}
           <DropdownMenuItemsContainer>
             <MenuItem
               text={t`Remove rule`}

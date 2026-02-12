@@ -29,7 +29,7 @@ type SettingsRolePermissionsObjectLevelTableRowProps = {
   isEditable?: boolean;
   fromAgentId?: string;
 };
-//! Conflict existed in this file
+
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
@@ -92,6 +92,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           roleId={roleId}
           objectMetadataId={objectMetadataItem.id}
           objectPermissionDetailUrl={navigationUrl}
+          isEditable={isEditable}
         />
       </TableCell>
     </TableRow>
