@@ -1,7 +1,6 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -18,7 +17,6 @@ export const FrontComponentRenderer = ({
   frontComponentId,
 }: FrontComponentRendererProps) => {
   const theme = useTheme();
-  const apolloMetadataClient = useApolloCoreClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
@@ -51,7 +49,6 @@ export const FrontComponentRenderer = ({
   );
 
   const { data, loading } = useFindOneFrontComponentQuery({
-    client: apolloMetadataClient,
     variables: { id: frontComponentId },
     onError: handleLoadError,
   });
