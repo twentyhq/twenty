@@ -1,0 +1,136 @@
+---
+title: Disparadores de Flujos de Trabajo
+description: Obtén información sobre los distintos activadores que inician tus flujos de trabajo.
+---
+
+## Acerca de los activadores
+
+Los flujos de trabajo siempre comienzan con un solo disparador que define cuándo debe ejecutarse la automatización.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **¡Se admiten objetos avanzados!** Más allá de los objetos estándar de CRM (Personas, Empresas, Oportunidades), también puedes activar flujos de trabajo y ejecutar acciones sobre:
+
+  * Miembros del espacio de trabajo
+  * Eventos del calendario
+  * Mensajes (correos electrónicos)
+  * Tareas, notas y muchos otros objetos del sistema
+
+  Esto abre potentes automatizaciones como notificar a los miembros del equipo cuando se crean eventos del calendario o procesar automáticamente los correos electrónicos entrantes.
+</Tip>
+
+## Se crea un registro
+
+Inicia el flujo de trabajo cuando se crea un nuevo registro en un objeto seleccionado (Personas, Empresas, Oportunidades o cualquier objeto personalizado).
+
+**Configuración**: Selecciona el tipo de objeto para monitorear nuevos registros.
+
+<Note>
+  * Este activador es ideal para registros creados por CSV, sincronización de buzón y de calendario, o API.
+  * **No se recomienda para registros creados manualmente**: con este activador, los flujos de trabajo comienzan tan pronto como se crea el registro. Dado que Twenty UI ofrece guardado automático sobre la marcha (no hay un modo de edición y luego una validación para guardar registros), el flujo de trabajo se activará antes de que el usuario complete todos los campos.
+    Para activar este flujo de trabajo en registros creados manualmente, se recomienda usar el activador `Record is created or updated` en su lugar.
+</Note>
+
+## Se actualiza un registro
+
+Inicia el flujo de trabajo cuando se realizan cambios en un registro existente.
+
+**Configuración**:
+
+* Selecciona el tipo de objeto
+* Opcionalmente especifica qué campos monitorear para cambios
+
+## Se actualiza o se crea un registro
+
+Inicia el flujo de trabajo cuando un registro es creado o actualizado en un objeto seleccionado.
+
+**¿Por qué esto es importante?**:
+
+* **Importaciones API/CSV**: Los registros se crean con todos los campos poblados inmediatamente
+* **Creación manual**: Los registros se crean primero, luego los campos se agregan en actualizaciones posteriores
+
+**Configuración**:
+
+* Selecciona el tipo de objeto para monitorear
+* Opcionalmente especifica qué campos monitorear para cambios
+* El flujo de trabajo se activará tanto en la creación inicial como en cualquier actualización posterior
+
+## Se elimina un registro
+
+Inicia el flujo de trabajo cuando un registro es eliminado de un objeto.
+
+**Configuración**: Selecciona el tipo de objeto para monitorear eliminaciones.
+
+## Activador manual
+
+Inicia el flujo de trabajo cuando es desencadenado por una acción del usuario. Se puede acceder a este activador a través del menú `Cmd+K` o mediante un botón personalizado que se mostrará en la barra de navegación superior después de seleccionar uno o varios registros.
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Configuración de Disponibilidad**:
+Elige cómo debe manejar el flujo de trabajo la selección de registros:
+
+* **Global**: No se requiere ningún registro para activar este flujo de trabajo. El flujo de trabajo se activa desde el menú de comandos `Cmd + K` en cualquier lugar (desde cualquier objeto) y no utiliza registro(s) como entrada.
+
+* **Individual**: El/los registro(s) seleccionado(s) se pasará(n) a tu flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de iniciar el flujo de trabajo. El flujo de trabajo se ejecutará de principio a fin tantas veces como haya registros seleccionados.
+
+  <Note>
+    **Límite flexible: 100 ejecuciones/minuto**. A partir de ese punto, los flujos de trabajo permanecen en estado "Not Started" y se procesan gradualmente—ya sea mediante un trabajo en segundo plano o cuando otro flujo de trabajo entra en la cola. Esto significa que puedes seleccionar más de 100 registros con un único activador; la ejecución solo será más lenta.
+  </Note>
+
+* **En masa**: El/los registro(s) seleccionado(s) se pasará(n) a tu flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de iniciar el flujo de trabajo. El flujo de trabajo se ejecutará una vez, proporcionando como entrada toda la lista de registros. Esto significa que el flujo de trabajo debe contener una [Acción Iterator](/l/es/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  Esto es más avanzado y es ideal para quienes quieren optimizar la cantidad de ejecuciones del flujo de trabajo.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Configuración Adicional**:
+
+* Selecciona el objeto de destino (para disponibilidad individual y en masa)
+* Elige un ícono de comando para el disparador del flujo de trabajo
+* Configura la ubicación en la barra de navegación (fijado o no fijado)
+
+**Métodos de Acceso**:
+
+* Menú `Cmd+K` para encontrar e iniciar flujos de trabajo manuales
+* Botón personalizado en la barra de navegación superior (si está configurado)
+
+## Activador basado en tiempo: según un horario
+
+Inicia el flujo de trabajo de forma recurrente según lo defina.
+
+**Configuración**:
+
+* Selecciona la unidad de tiempo (minutos, horas, días)
+* Ingresa un valor o usa expresiones cron personalizadas para una programación avanzada
+
+<Note>
+  **Zona horaria**: Los flujos de trabajo programados se ejecutan en **UTC**. Al configurar las horas para programaciones diarias, convierte tu hora local a UTC.
+</Note>
+
+## Activador externo: Webhook
+
+Inicia el flujo de trabajo cuando se recibe una solicitud GET o POST de un servicio externo.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Configuración**:
+
+* El flujo de trabajo proporciona una URL de webhook única—cópiala y agrégala a tu sistema externo como el endpoint a invocar.
+* Para solicitudes POST, define la estructura del cuerpo esperada para que Twenty sepa qué datos esperar. Añade aquí los campos que recibirás y que se necesitarán más abajo en tu flujo de trabajo.
+* Configura la autenticación (próximamente).
+
+## Elegir el activador correcto
+
+| Caso de uso                                       | Activador recomendado              |
+| ------------------------------------------------- | ---------------------------------- |
+| Los nuevos leads necesitan procesamiento          | Se crea un registro                |
+| Los cambios en los datos requieren sincronización | Se actualiza un registro           |
+| Importación/gestión manual de datos               | Se actualiza o se crea un registro |
+| Limpieza después de la eliminación                | Se elimina un registro             |
+| Acción iniciada por el usuario                    | Iniciar manualmente                |
+| Informes recurrentes                              | Según una programación             |
+| Integración externa                               | Webhook o según un horario         |

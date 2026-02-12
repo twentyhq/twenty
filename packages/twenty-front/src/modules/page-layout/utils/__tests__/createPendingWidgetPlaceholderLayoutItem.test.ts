@@ -1,6 +1,6 @@
 import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
-import { createPendingWidgetPlaceholderLayoutItem } from '../createPendingWidgetPlaceholderLayoutItem';
+import { createPendingWidgetPlaceholderLayoutItem } from '@/page-layout/utils/createPendingWidgetPlaceholderLayoutItem';
 
 describe('createPendingWidgetPlaceholderLayoutItem', () => {
   const draggedArea = { x: 2, y: 3, w: 5, h: 6 };

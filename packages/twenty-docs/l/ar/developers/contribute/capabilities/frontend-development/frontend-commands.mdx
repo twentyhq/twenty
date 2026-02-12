@@ -1,0 +1,86 @@
+---
+title: أوامر الواجهة الأمامية
+---
+
+## الأوامر المفيدة
+
+### "بدء التطبيق"
+
+```bash
+"npx nx start twenty-front"
+```
+
+### "إعادة توليد مخطط graphql بناءً على مخطط API graphql"
+
+```bash
+"npx nx run twenty-front:graphql:generate --configuration=metadata"
+```
+
+"أو"
+
+```bash
+"npx nx run twenty-front:graphql:generate"
+```
+
+### Lint
+
+```bash
+"npx nx run twenty-front:lint # مرر --fix لإصلاح أخطاء التدقيق"
+```
+
+## "الترجمات"
+
+```bash
+"npx nx run twenty-front:lingui:extract\nnpx nx run twenty-front:lingui:compile"
+```
+
+### تجربة
+
+```bash
+"npx nx run twenty-front:test # تشغيل اختبارات jest\nnpx nx run twenty-front:storybook:serve:dev # تشغيل storybook\nnpx nx run twenty-front:storybook:test # تشغيل الاختبارات # (يحتاج إلى تشغيل yarn storybook:serve:dev)\nnpx nx run twenty-front:storybook:coverage # (يحتاج إلى تشغيل yarn storybook:serve:dev)"
+```
+
+## "التقنية المستخدمة"
+
+"المشروع يحتوي على تقنية بسيطة ونظيفة، مع الحد الأدنى من كود البويلر بليت."
+
+"**التطبيق**"
+
+* "[React](https://react.dev/)"
+* "[Apollo](https://www.apollographql.com/docs/)"
+* "[GraphQL Codegen](https://the-guild.dev/graphql/codegen)"
+* "[Recoil](https://recoiljs.org/docs/introduction/core-concepts)"
+* "[TypeScript](https://www.typescriptlang.org/)"
+
+**الاختبار**
+
+* [Jest](https://jestjs.io/)
+* "[Storybook](https://storybook.js.org/)"
+
+**الأدوات**
+
+* [Yarn](https://yarnpkg.com/)
+* "[Craco](https://craco.js.org/docs/)"
+* [ESLint](https://eslint.org/)
+
+## "الهيكلية"
+
+### "التوجيه"
+
+"[React Router](https://reactrouter.com/) يتعامل مع التوجيه."
+
+To avoid unnecessary [re-renders](/l/ar/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
+
+### "إدارة الحالة"
+
+"[Recoil](https://recoiljs.org/docs/introduction/core-concepts) يتعامل مع إدارة الحالة."
+
+"راجع [أفضل الممارسات](/l/ar/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) لمزيد من المعلومات حول إدارة الحالة."
+
+## "الاختبار"
+
+"[Jest](https://jestjs.io/) يعمل كأداة لاختبار الوحدات بينما يعمل [Storybook](https://storybook.js.org/) لاختبار المكونات."
+
+"يستخدم Jest بشكل رئيسي لاختبار دوال الأدوات وليس المكونات نفسها."
+
+"Storybook لاختبار سلوك المكونات المعزولة، وكذلك عرض نظام التصميم."

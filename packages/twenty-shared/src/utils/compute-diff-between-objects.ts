@@ -30,7 +30,7 @@ type ComputeDiffBetweenObjectsParams<
 };
 
 export const computeDiffBetweenObjects = <
-  T extends { id: string; deletedAt: Date | null },
+  T extends { id: string; deletedAt: string | null },
   K extends { id: string },
 >({
   existingObjects,

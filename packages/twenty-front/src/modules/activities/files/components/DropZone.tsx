@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useDropzone } from 'react-dropzone';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -47,6 +48,7 @@ export const DropZone = ({
   setIsDraggingFile,
   onUploadFiles,
 }: DropZoneProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { maxFileSize } = useSpreadsheetImportInternal();
 
@@ -85,9 +87,9 @@ export const DropZone = ({
             stroke={theme.icon.stroke.sm}
             size={theme.icon.size.lg}
           />
-          <StyledUploadDragTitle>Upload files</StyledUploadDragTitle>
+          <StyledUploadDragTitle>{t`Upload files`}</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>
-            Drag and Drop Here
+            {t`Drag and Drop Here`}
           </StyledUploadDragSubTitle>
         </>
       )}

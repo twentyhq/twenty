@@ -186,7 +186,7 @@ export const useTriggerRecordBoardFetchMore = () => {
             newRecordIds,
           );
 
-          upsertRecordsInStore(newRecords);
+          upsertRecordsInStore({ partialRecords: newRecords });
 
           if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
             set(

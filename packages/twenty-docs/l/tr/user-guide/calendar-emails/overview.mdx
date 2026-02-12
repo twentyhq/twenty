@@ -1,0 +1,130 @@
+---
+title: Takvim ve E-postalar
+description: E-posta ve takvim hesaplarınızı Twenty'ye bağlayın.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Takvim ve E-postalar" />
+</Frame>
+
+## Bağlantı Seçenekleri
+
+### Google Hesabı (Gmail & Google Takvim)
+
+1. **Ayarlar → Hesaplar** sekmesine gidin.
+2. **Hesap ekle** butonuna tıklayın.
+3. **Google ile Devam Et** seçeneğini seçin.
+4. Twenty'nin Gmail ve Google Takvim hesabınıza erişmesine izin verin.
+5. E-posta eşitleme ayarlarını yapılandırın (görünürlük, otomatik oluşturma) → **İleri**'ye tıklayın
+6. Takvim eşitleme ayarlarını yapılandırın (görünürlük, otomatik oluşturma) → **Hesap Ekle**'ye tıklayın
+7. E-postalarınız ve takvim etkinlikleriniz otomatik olarak senkronize edilmeye başlayacaktır.
+
+### Microsoft Hesabı (Outlook & Microsoft Takvim)
+
+1. **Ayarlar → Hesaplar** sekmesine gidin.
+2. **Hesap ekle** butonuna tıklayın.
+3. **Microsoft ile Devam Et** seçeneğini seçin.
+4. Twenty'nin Outlook ve Microsoft Takvim hesabınıza erişmesine izin verin.
+5. E-posta eşitleme ayarlarını yapılandırın (görünürlük, otomatik oluşturma) → **İleri**'ye tıklayın
+6. Takvim eşitleme ayarlarını yapılandırın (görünürlük, otomatik oluşturma) → **Hesap Ekle**'ye tıklayın
+7. E-postalarınız ve takvim etkinlikleriniz otomatik olarak senkronize edilmeye başlayacaktır.
+
+### SMTP/CalDAV Ayarları (Diğer Sağlayıcılar)
+
+Diğer e-posta ve takvim sağlayıcıları için:
+
+1. **Ayarlar → Hesaplar** sekmesine gidin.
+2. E-posta için SMTP ayarlarını yapılandırın
+3. Takvim için CalDAV ayarlarını yapılandırın
+4. Bağlantıyı test edin
+
+### Birden Fazla Posta Kutusu
+
+* **Sınırsız Hesaplar**: Her kullanıcı için birden fazla e-posta hesabı bağlayın
+* **Hesap Yönetimi**: Farklı posta kutuları arasında geçiş yapın
+* **Senkronizasyon Ayarları**: Her posta kutusu için farklı ayarlar yapılandırın
+
+<Warning>
+  Yalnızca gerçek posta kutuları bağlanabilir (ör. support@domain.com kendi gelen kutusu ile). Başka bir posta kutusuna yönlendirilen e-posta takma adları Twenty'ye bağlanamaz.
+</Warning>
+
+## E-posta Yapılandırması
+
+### Mesaj Görünürlüğü
+
+E-postalarınız için farklı görünürlük seviyeleri seçin:
+
+* **Yalnızca Meta Veriler**: Sadece temel bilgileri paylaşın (gönderen, alıcı, tarih, saat)
+* **Konu ve Meta Veriler**: Konu satırını meta verilerle birlikte paylaşın
+* **Tüm E-posta İçeriği**: Ekler dahil tüm e-posta içeriğini paylaşın
+
+### Otomatik Kişi Oluşturma
+
+* **Devre Dışı**: Otomatik kişi oluşturma yok
+* **Gönderilen ve alınan mesajlar için**: Tüm dış e-posta etkileşimleri için kişiler oluşturun
+* **Yalnızca gönderilen mesajlar için**: Yalnızca gönderdiğiniz e-postalar için kişi oluşturun
+* **Not**: Gizliliği korumak için dahili e-postalar (aynı etki alanı) asla senkronize edilmez
+
+<Note>Etkinleştirildiğinde, kişiler e-posta alan adlarına göre Şirket kayıtlarına otomatik olarak bağlanır. Şirket henüz mevcut değilse, Twenty onu sizin için oluşturur.</Note>
+
+### Mesaj Klasörü Seçimi ile hangi e-postaların senkronize edileceğini kontrol edin
+
+Hangi e-posta klasörlerinin Twenty ile senkronize edileceğini kontrol edin:
+
+1. **Ayarlar → Hesaplar**'a gidin ve bağlı e-posta hesabınızı seçin
+2. Hangi klasörlerin senkronize edileceğini seçin:
+   * **Gelen Kutusu**: Ana gelen e-postalar
+   * **Gönderilenler**: Gönderdiğiniz çıkış e-postaları
+   * **Özel Klasörler**: Eklemek istediğiniz belli klasörler
+   * **Klasörleri Hariç Tut**: Spam, Çöp, ya da kişisel klasörleri atlayın
+
+Bu, her şeyi senkronize etmeden CRM'inizde hangi e-postaların görüneceği üzerinde hassas kontrol sağlar.
+
+**Neler Senkronize Edilir:**
+
+* **Dış E-postalar**: Seçilen klasörlerden dış iletişimlere sahip tüm e-postalar
+* **Dahili E-postalar**: Senkronize edilmez (aynı etki alanı e-postaları özel kalır)
+* **Ekler**: 2026 Yılında Gelecek
+
+**Not**: Selektif senkronizasyon için bir CC e-posta adresi sağlamıyoruz. Bunun yerine, Twenty ile hangi e-postaların senkronize edileceği konusunda aynı kontrol seviyesini elde etmek için yukarıdaki Mesaj Klasörü özelliğini kullanın.
+
+## Takvim Yapılandırması
+
+### Etkinlik Görünürlüğü
+
+Çalışma alanınızdaki diğer kullanıcılar için hangi bilgilerin görünür olacağını seçin:
+
+* **Her Şey**: Tüm etkinlik ayrıntıları ekibinizle paylaşılacaktır
+* **Meta Veriler**: Yalnızca tarih ve katılımcılar ekibinizle paylaşılacaktır
+
+### Toplantılar için Otomatik Kişi Oluşturma
+
+* **Evet**: CRM'inizde bulunmayan toplantı katılımcıları için otomatik olarak kişiler oluşturun
+* **Hayır**: Yalnızca mevcut kişilerle toplantıları bağlantılandırın
+
+<Note>Etkinleştirildiğinde, kişiler e-posta alan adlarına göre Şirket kayıtlarına otomatik olarak bağlanır. Şirket henüz mevcut değilse, Twenty onu sizin için oluşturur.</Note>
+
+### Hangi etkinliklerin senkronize edileceğini kontrol edin
+
+* **Toplantı İçe Aktarma**: Takvim etkinliklerini otomatik olarak içe aktarın
+* **Kişi Bağlantısı**: Toplantıları Kişi ve Şirket kayıtlarına bağlayın
+
+**Neler Senkronize Edilir:**
+
+* **Toplantılar**: Dış katılımcıları olan takvim etkinlikleri
+* **Kişi Bağlantısı**: Etkinlikler otomatik olarak CRM kayıtlarına bağlanır
+* **Takım Etkinlikleri**: Paylaşılan takvim görünürlüğü
+
+## Senkronizasyon Sıklığı
+
+**Her 5 dakikada bir güncellenir**: Hem e-posta hem de takvim verileri ilk içe aktarmadan 5 dakika sonra otomatik olarak senkronize edilir.
+
+<Note>
+  **İlk senkronizasyon zamanlaması**: Takvim senkronizasyonu hızlı tamamlanır (genellikle birkaç dakika içinde), e-posta senkronizasyonu ise büyük posta kutuları için daha uzun sürer. Twenty, e-postaları yaklaşık olarak dakikada **400 ileti** hızında içe aktarır (Gmail API hız sınırlaması tarafından kısıtlanır), bu nedenle 10,000 e-postalı bir posta kutusunun içe aktarılması yaklaşık 25 dakika sürer. Takvim etkinliklerinden gelen kişilerin e-posta kişilerinizden önce göründüğünü görürseniz endişelenmeyin; bu normal bir davranıştır.
+</Note>
+
+## Sonraki Adımlar
+
+* [Posta kutusu özellikleri](/l/tr/user-guide/calendar-emails/capabilities/mailbox)
+* [Eksik e-postalarla ilgili sorunları giderme](/l/tr/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

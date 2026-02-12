@@ -1,0 +1,72 @@
+---
+title: Créer des Champs Personnalisés
+description: Guide étape par étape pour ajouter des champs personnalisés à n'importe quel objet.
+---
+
+Les champs personnalisés vous permettent de capturer des informations spécifiques à votre entreprise. Ajoutez-les à n'importe quel objet — standard ou personnalisé.
+
+## Étapes
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l'objet auquel vous souhaitez ajouter un champ
+3. Cliquez sur **+ Ajouter un champ**
+4. Choisissez un **type de champ** (voir [Champs](/l/fr/user-guide/data-model/capabilities/fields) pour tous les types)
+5. Saisissez le **nom du champ** et une description facultative
+6. Configurez les paramètres spécifiques au champ (voir ci-dessous)
+7. Cliquez sur **Enregistrer**
+
+**Méthode rapide :** Cliquez sur le **+** à la fin des en-têtes de colonne dans n'importe quelle vue en tableau → **Personnaliser les champs**.
+
+## Afficher le champ dans les vues
+
+Les nouveaux champs ne sont pas visibles automatiquement. Pour l'afficher :
+
+1. Ouvrez la vue en tableau de l'objet
+2. Cliquez sur **Options → Champs**
+3. Cliquez sur l'**icône en forme d'œil** à côté de votre champ pour l'afficher
+4. Faites glisser pour réorganiser
+
+## Options de configuration
+
+### Pour Sélection / Sélection multiple
+
+1. Cliquez sur **+ Ajouter une option** pour créer des choix
+2. Définissez une **option par défaut** si vous le souhaitez
+3. Faites glisser pour réorganiser les options
+
+<Note>
+  **Utilisez les noms d'API pour les importations.** Activez le **mode avancé** dans Paramètres pour voir les noms d'API. Voir [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### Pour les champs de devise
+
+Définissez la **devise par défaut** (USD, EUR, etc.) pour les nouveaux enregistrements.
+
+### Pour les champs de téléphone
+
+Définissez le **code du pays par défaut** à préremplir pour les nouveaux numéros de téléphone.
+
+### Rendre un champ unique
+
+Activez **Unique** pour empêcher les valeurs en double dans l'ensemble des enregistrements.
+
+<Note>
+  S'il existe des doublons (y compris dans les enregistrements supprimés), une erreur s'affichera. Commencez par supprimer les doublons.
+</Note>
+
+### Définir des valeurs par défaut
+
+Pour les champs Sélection, vous pouvez choisir quelle option est présélectionnée pour les nouveaux enregistrements. Pour les champs Case à cocher, définissez s'ils sont cochés ou décochés par défaut.
+
+## Désactiver un champ
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Recherchez le champ
+3. Cliquez sur **⋮ → Désactiver**
+
+Les données sont conservées. Vous pourrez le réactiver ou le supprimer définitivement plus tard.
+
+## Articles connexes
+
+* [Champs](/l/fr/user-guide/data-model/capabilities/fields) — tous les types de champs expliqués
+* [FAQ du modèle de données](/l/fr/user-guide/data-model/how-tos/data-model-faq) — questions fréquentes

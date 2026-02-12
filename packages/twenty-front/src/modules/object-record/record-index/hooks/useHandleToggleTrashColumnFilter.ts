@@ -7,6 +7,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 import { useRecoilCallback } from 'recoil';
@@ -60,7 +61,7 @@ export const useHandleToggleTrashColumnFilter = ({
       operand: ViewFilterOperand.IS_NOT_EMPTY,
       displayValue: '',
       type: filterType,
-      label: `Deleted`,
+      label: t`Deleted`,
       value: '',
     };
 

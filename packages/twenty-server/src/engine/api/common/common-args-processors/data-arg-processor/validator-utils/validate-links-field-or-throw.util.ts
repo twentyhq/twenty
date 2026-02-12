@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
@@ -31,6 +32,7 @@ export const validateLinksFieldOrThrow = (
         throw new CommonQueryRunnerException(
           `Invalid subfield ${subField} for links field "${fieldName}"`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: msg`Invalid value for links.` },
         );
     }
   }

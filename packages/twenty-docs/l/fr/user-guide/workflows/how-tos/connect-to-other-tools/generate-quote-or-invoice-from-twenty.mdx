@@ -1,0 +1,144 @@
+---
+title: Générer un devis ou une facture depuis Twenty
+description: Créer automatiquement des factures dans des outils externes lorsque des affaires se clôturent.
+---
+
+Envoyez automatiquement les données de l'affaire vers votre système de facturation (Stripe, QuickBooks, Xero, etc.) lorsqu'une opportunité est gagnée.
+
+## Structure du flux de travail
+
+1. **Déclencheur** : L'enregistrement est mis à jour (Opportunité)
+2. **Filtre** : Étape = Closed Won
+3. **Rechercher un enregistrement** : Obtenir les détails de l'Entreprise
+4. **Code** (facultatif) : Mettre en forme la charge utile
+5. **Requête HTTP** : Envoyer au système de facturation
+
+## Étape 1 : Configurer le déclencheur
+
+1. Créer un nouveau workflow
+2. Sélectionnez le déclencheur **L'enregistrement est mis à jour**
+3. Choisissez **Opportunité** comme objet
+
+## Étape 2 : Filtrer pour Closed Won
+
+Ajoutez une action **Filtre** pour ne continuer que lorsque l'affaire est gagnée :
+
+| Paramètre     | Valeur                                  |
+| ------------- | --------------------------------------- |
+| **Champ**     | Étape                                   |
+| **Condition** | Égal à                                  |
+| **Valeur**    | `CLOSED_WON` (ou le nom de votre étape) |
+
+<Tip>
+  Le déclencheur se déclenche lors de toute mise à jour de l'Opportunité. Le Filtre garantit que le flux de travail ne continue que lorsque l'étape passe à Closed Won.
+</Tip>
+
+## Étape 3 : Obtenir les détails de l'Entreprise
+
+L'enregistrement de l'Opportunité peut ne pas inclure tous les champs de l'Entreprise dont vous avez besoin pour la facture. Ajoutez une action **Rechercher un enregistrement** :
+
+| Paramètre              | Valeur                                   |
+| ---------------------- | ---------------------------------------- |
+| **Objet**              | Entreprise                               |
+| **Correspondance par** | ID égal à `{{trigger.object.companyId}}` |
+
+Cela récupère l'enregistrement complet de l'Entreprise avec l'adresse de facturation, l'ID fiscal, etc.
+
+## Étape 4 : Formater la charge utile (facultatif)
+
+Si votre système de facturation attend un format spécifique, ajoutez une action **Code** :
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Étape 5 : Envoyer au système de facturation
+
+Ajoutez une action **Requête HTTP** :
+
+| Paramètre    | Valeur                                                           |
+| ------------ | ---------------------------------------------------------------- |
+| **Méthode**  | POST                                                             |
+| **URL**      | Votre point de terminaison API de facturation                    |
+| **En-têtes** | `Authorization: Bearer YOUR_API_KEY`                             |
+| **Corps**    | `{{code.invoice}}` ou faites correspondre les champs directement |
+
+### Exemple : Facture Stripe
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Exemple : Facture QuickBooks
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Récapitulatif complet du flux de travail
+
+| Étape | Action                                  | Objectif                                                     |
+| ----- | --------------------------------------- | ------------------------------------------------------------ |
+| 1     | Déclencheur : Enregistrement mis à jour | Se déclenche à chaque modification d'une Opportunité         |
+| 2     | Filtre                                  | Ne poursuivre que si Étape = Closed Won                      |
+| 3     | Rechercher un enregistrement            | Obtenir tous les détails de l'Entreprise pour la facturation |
+| 4     | Code                                    | Mettre en forme les données pour l'API de facturation        |
+| 5     | Requête HTTP                            | Créer la facture dans le système externe                     |
+
+## Conseils
+
+* **Stockez les ID externes** : Enregistrez l'ID de la facture renvoyé par l'API dans l'Opportunité à l'aide d'une action **Mettre à jour l'enregistrement**
+* **Gestion des erreurs** : Ajoutez une branche pour envoyer une notification si la requête HTTP échoue
+* **Testez d'abord** : Utilisez le mode bac à sable/test de votre système de facturation avant la mise en production
+
+## Articles connexes
+
+* [Générer un PDF à partir de Twenty](/l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — joindre les PDF générés aux enregistrements
+* [Déclencheurs de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Automatisations Closed Won](/l/fr/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

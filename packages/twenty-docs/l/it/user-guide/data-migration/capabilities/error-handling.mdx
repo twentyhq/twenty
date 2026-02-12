@@ -1,0 +1,76 @@
+---
+title: Gestione degli errori e convalida
+description: Esamina e correggi gli errori di importazione direttamente nell'interfaccia prima di confermare.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Convalida pre-importazione
+
+Dopo aver caricato il file e mappato i campi, Twenty convalida i tuoi dati **prima** dell'importazione. Questo ti permette di individuare e correggere gli errori senza influire sui dati esistenti.
+
+## Come Funziona
+
+1. **Carica** il tuo file CSV
+2. **Mappa** le colonne ai campi di Twenty
+3. **Esamina** i potenziali errori evidenziati in giallo
+4. **Correggi gli errori** direttamente nell'interfaccia
+5. **Conferma** l'importazione
+
+<VimeoEmbed videoId="1145273857" title="Dimostrazione video" />
+
+## Visualizzazione degli errori
+
+Le righe con problemi sono evidenziate in **giallo**. Puoi:
+
+* **Modifica direttamente la cella** per correggere l'errore
+* **Rimuovi la riga** per escluderla del tutto
+
+Questa modifica in linea fa risparmiare tempo—non è necessario tornare al foglio di calcolo, correggere gli errori e ricaricare il file.
+
+## Tipi di errore comuni
+
+### Valori duplicati
+
+**Causa**: Un campo univoco (email, dominio) esiste già in Twenty o compare due volte nel tuo file.
+
+**Soluzione**:
+
+* Modifica il valore duplicato nell'interfaccia di importazione
+* Rimuovi una delle righe duplicate
+
+Vedi [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints) per maggiori dettagli su come viene applicata l'unicità.
+
+### Formato non valido
+
+**Causa**: I dati non corrispondono al formato previsto (ad es., email non valida, formato data errato).
+
+**Soluzione**: Modifica la cella per usare il formato corretto.
+
+Vedi [Mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping) per il formato previsto di ogni tipo di campo.
+
+### Campi obbligatori mancanti
+
+**Causa**: Un campo obbligatorio è vuoto.
+
+**Soluzione**: Inserisci un valore nel campo obbligatorio oppure rimuovi la riga.
+
+### Relazione non trovata
+
+**Causa**: Il record di riferimento non esiste (ad es., un dominio aziendale che non è stato importato).
+
+**Soluzione**:
+
+* Importa prima i record genitore
+* Oppure correggi il valore di riferimento
+
+Vedi [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations) per l'ordine di importazione corretto e come collegare i record.
+
+## Suggerimenti per ridurre gli errori
+
+1. **Scarica il modello** per vedere il formato previsto prima di importare il tuo file
+2. **Pulisci i dati** nel foglio di calcolo prima
+3. **Importa i file nell'ordine corretto** per importare le relazioni (Aziende → Persone → Opportunità)
+4. **Esegui dei test con piccoli lotti** prima dell'importazione completa
+5. **Controlla i duplicati** prima del caricamento
+6. **Limita la dimensione del file a 10.000 record** per file

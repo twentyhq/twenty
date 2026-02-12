@@ -1,0 +1,168 @@
+---
+title: Enviar e-mails a partir de Fluxos de Trabalho
+description: Envie e-mails personalizados automaticamente usando ações de Fluxos de Trabalho.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Envie e-mails automaticamente quando eventos específicos ocorrerem no seu CRM — dê boas-vindas a novos contatos, faça acompanhamento de oportunidades ou notifique membros da equipe.
+
+## Pré-requisitos
+
+Antes de enviar e-mails a partir de fluxos de trabalho:
+
+1. Conecte uma conta de e-mail em **Configurações → Contas**
+2. Garanta que a conta tenha as permissões de envio ativadas
+
+## Fluxo de Trabalho de E-mail Básico
+
+### Exemplo: E-mail de boas-vindas para novos contatos
+
+**Objetivo**: Enviar um e-mail de boas-vindas quando uma nova pessoa for adicionada ao CRM.
+
+**Configuração**:
+
+1. **Criar fluxo de trabalho**: Vá até **Configurações → Fluxos de Trabalho** e clique em **+ Novo Fluxo de Trabalho**
+
+2. **Adicionar gatilho**: Selecione **Registro é Criado** → **Pessoas**
+
+3. **Adicionar ação Enviar E-mail**:
+   * Clique em **+** para adicionar uma ação
+   * Selecione **Enviar E-mail**
+   * Configure o e-mail:
+
+| Campo       | Valor                                  |
+| ----------- | -------------------------------------- |
+| **Para**    | `{{trigger.object.email}}`             |
+| **Assunto** | `Bem-vindo ao {{Your Company Name}}`   |
+| **Corpo**   | `Hi {{trigger.object.firstName}}, ...` |
+
+4. **Testar e ativar**: Teste com um registro de exemplo e, em seguida, ative
+
+## Usando variáveis em e-mails
+
+Referencie dados de etapas anteriores usando a sintaxe `{{variable}}`:
+
+```text
+Hi {{trigger.object.firstName}},
+
+Thank you for connecting with us!
+
+Your company, {{trigger.object.company.name}}, is now in our system.
+
+Best regards,
+The Team
+```
+
+### Variáveis disponíveis dos gatilhos
+
+| Tipo de Trigger                | Variáveis comuns                       |
+| ------------------------------ | -------------------------------------- |
+| **Registro Criado/Atualizado** | `{{trigger.object.fieldName}}`         |
+| **Manual**                     | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                    | `{{trigger.body.fieldName}}`           |
+
+## Avançado: E-mails condicionais
+
+### Exemplo: E-mails diferentes com base na origem do lead
+
+**Objetivo**: Enviar e-mails de boas-vindas diferentes com base na origem do lead.
+
+**Configuração**:
+
+1. **Gatilho**: Registro é Criado (Pessoas)
+
+2. **Adicionar ação de Filtro**:
+   * Condição: `{{trigger.object.source}}` é igual a `"Website"`
+   * Se verdadeiro → continue para o e-mail de boas-vindas do site
+
+3. **Ramificação para outras origens**:
+   * Crie ramificações paralelas para origens diferentes
+   * Cada ramificação tem sua própria ação Enviar E-mail
+
+## Envio de e-mails para vários destinatários
+
+### Exemplo: Notificar a equipe quando o negócio for fechado
+
+**Objetivo**: Enviar e-mail ao representante de vendas e ao seu gerente quando uma oportunidade for ganha.
+
+**Configuração**:
+
+1. **Gatilho**: Registro é Atualizado (Oportunidades, Estágio = "Closed Won")
+
+2. **Pesquisar Registros**: Encontre o gerente do proprietário da oportunidade
+
+3. **Enviar E-mail nº 1**: Para o proprietário da oportunidade
+   * Para: `{{trigger.object.owner.email}}`
+   * Assunto: `Congratulations on closing {{trigger.object.name}}!`
+
+4. **Enviar E-mail nº 2**: Para o gerente
+   * Para: `{{searchRecords.manager.email}}`
+   * Assunto: `Deal Won: {{trigger.object.name}}`
+
+## E-mails de acompanhamento agendados
+
+### Exemplo: Acompanhar 3 dias após a reunião
+
+**Objetivo**: Enviar um e-mail de acompanhamento 3 dias após o registro de uma reunião.
+
+**Configuração**:
+
+1. **Gatilho**: Registro é Criado (Atividades, Tipo = "Reunião")
+
+2. **Ação de atraso**: Aguarde 3 dias
+
+3. **Enviar E-mail**:
+   * Para: Participante da reunião
+   * Assunto: Acompanhamento da nossa conversa
+   * Corpo: Referencie detalhes da reunião a partir do gatilho
+
+## Anexos de e-mail
+
+Você pode anexar arquivos a e-mails enviados a partir de fluxos de trabalho. O anexo é um arquivo estático que você faz upload ao configurar o fluxo de trabalho.
+
+### Como adicionar um anexo
+
+1. Na ação **Enviar e-mail**, clique no botão **Anexos**
+2. Clique para fazer upload de um arquivo do seu computador
+3. O arquivo será anexado a todos os e-mails enviados por esta ação
+
+### Casos de Uso Comuns
+
+| Caso de uso                   | Arquivo de exemplo                      |
+| ----------------------------- | --------------------------------------- |
+| **E-mails de boas-vindas**    | Brochura da empresa (PDF)               |
+| **Sequências de integração**  | Guia de primeiros passos                |
+| **Acompanhamentos de Vendas** | Catálogo de produtos ou lista de preços |
+| **Confirmações de evento**    | Detalhes ou agenda do evento            |
+
+<Note>
+  Os anexos são estáticos — o mesmo arquivo é enviado a todos os destinatários. Para documentos dinâmicos (como cotações personalizadas), gere e anexe arquivos usando uma [Função Lógica](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+</Note>
+
+## Melhores Práticas
+
+### Conteúdo do e-mail
+
+* Mantenha as linhas de assunto concisas e relevantes
+* Personalize com o nome do destinatário
+* Inclua uma chamada para ação clara
+* Teste os e-mails antes de ativar
+
+### Entregabilidade
+
+* Não envie muitos e-mails muito rapidamente
+* Use assinaturas de e-mail profissionais
+* Evite palavras que acionem spam
+* Garanta opções de cancelamento de inscrição para e-mails de marketing
+
+### Resolução de Problemas
+
+* Verifique se a conta de e-mail está conectada e ativa
+* Verifique se o endereço de e-mail do destinatário é válido
+* Revise as execuções do fluxo de trabalho em busca de mensagens de erro
+* Teste primeiro com o seu próprio endereço de e-mail
+
+## Relacionados
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)

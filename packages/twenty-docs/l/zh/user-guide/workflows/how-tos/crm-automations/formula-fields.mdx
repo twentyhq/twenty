@@ -1,0 +1,202 @@
+---
+title: 公式字段
+description: 在原生支持可用之前，使用工作流创建公式字段。
+---
+
+Twenty 尚未支持原生公式字段（预计 2026 年推出），但你可以通过工作流实现相同的效果。 此变通方案可让你自动计算并填充字段值——从简单的拼接到复杂的业务逻辑。
+
+## 常见使用案例
+
+| 用例          | 公式示例        |
+| ----------- | ----------- |
+| **全名**      | 名 + " " + 姓 |
+| **预期金额**    | 金额 × 概率     |
+| **距离到期的天数** | 到期日期 - 今天   |
+| **阶段停留天数**  | 今天 - 阶段进入日期 |
+| **线索评分**    | 根据多个条件计分    |
+
+<Tip>
+  有关在流水线阶段跟踪时间的完整示例，请参阅 [跟踪机会在每个阶段停留时长](/l/zh/user-guide/views-pipelines/how-tos/track-time-in-stage)。
+</Tip>
+
+## 基础公式：拼接
+
+### 示例：自动填充全名
+
+**目标**：将名字和姓氏自动合并为一个全名字段。
+
+### 设置
+
+1. **触发器**：记录被更新或创建（人员）
+
+2. **过滤器**：检查名字或姓氏是否发生变化
+
+3. **代码操作**：
+
+```javascript
+export const main = async (params) => {
+  const { firstName, lastName } = params;
+
+  const fullName = [firstName, lastName]
+    .filter(Boolean)
+    .join(' ');
+
+  return { fullName };
+};
+```
+
+4. **更新记录**：将全名设置为 `{{code.fullName}}`
+
+## 数值公式：预期金额
+
+### 示例：计算预期收入
+
+**目标**：用机会金额乘以概率以得到预期金额。
+
+完整工作流请参阅 [如何在流水线中显示预期金额](/l/zh/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)。
+
+### 快速设置
+
+1. **触发器**：记录被更新（机会，金额或概率字段）
+
+2. **代码操作**：
+
+```javascript
+export const main = async (params) => {
+  const { amount, probability } = params;
+
+  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+
+  return { expectedAmount };
+};
+```
+
+3. **更新记录**：将预期金额设置为 `{{code.expectedAmount}}`
+
+## 日期公式：天数计算
+
+### 示例：距离任务到期的天数
+
+**目标**：计算距任务到期日期还剩多少天。
+
+### 设置
+
+1. **触发器**：记录被更新或创建（任务，到期日期字段）
+
+2. **代码操作**：
+
+```javascript
+export const main = async (params) => {
+  const { dueDate } = params;
+
+  if (!dueDate) {
+    return { daysUntilDue: null };
+  }
+
+  const due = new Date(dueDate);
+  const today = new Date();
+  const diffTime = due - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return { daysUntilDue: diffDays };
+};
+```
+
+3. **更新记录**：将距离到期的天数设置为 `{{code.daysUntilDue}}`
+
+<Note>
+  负值表示任务已逾期。 你可以使用此字段按紧急程度筛选或排序任务。
+</Note>
+
+## 条件公式：线索评分
+
+### 示例：根据条件计算线索评分
+
+**目标**：根据公司规模、行业和互动情况对线索打分。
+
+### 设置
+
+1. **触发器**：记录被更新（人员或公司）
+
+2. **代码操作**：
+
+```javascript
+export const main = async (params) => {
+  const { companySize, industry, hasEmail, hasPhone, source } = params;
+
+  let score = 0;
+
+  // Company size scoring
+  if (companySize === 'Enterprise') score += 30;
+  else if (companySize === 'Mid-Market') score += 20;
+  else if (companySize === 'SMB') score += 10;
+
+  // Industry scoring
+  const targetIndustries = ['Technology', 'Finance', 'Healthcare'];
+  if (targetIndustries.includes(industry)) score += 25;
+
+  // Contact info scoring
+  if (hasEmail) score += 10;
+  if (hasPhone) score += 15;
+
+  // Source scoring
+  if (source === 'Referral') score += 20;
+  else if (source === 'Website') score += 10;
+
+  return { leadScore: score };
+};
+```
+
+3. **更新记录**：将线索评分设置为 `{{code.leadScore}}`
+
+## 文本公式：域名提取
+
+### 示例：从电子邮件中提取域名
+
+**目标**：自动提取并存储电子邮件域名。
+
+### 设置
+
+1. **触发器**：记录被更新（人员，电子邮件字段）
+
+2. **代码操作**：
+
+```javascript
+export const main = async (params) => {
+  const { email } = params;
+
+  if (!email) return { domain: null };
+
+  const domain = email.split('@')[1]?.toLowerCase();
+
+  return { domain };
+};
+```
+
+3. **更新记录**：将域名字段设置为 `{{code.domain}}`
+
+## 最佳实践
+
+### 性能
+
+* 仅在相关字段更改时触发
+* 使用过滤器跳过不需要计算的记录
+* 避免在大规模工作流中进行复杂计算
+
+### 错误处理
+
+* 在计算前检查 null/undefined 值
+* 在数据缺失时使用默认值
+* 计算失败时返回清晰的错误信息
+
+### 测试
+
+* 使用边界情况进行测试（空字段、零值）
+* 在启用前手动验证计算结果
+* 监控工作流运行情况以发现异常结果
+
+## 相关内容
+
+* [如何在流水线中显示预期金额](/l/zh/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [如何跟踪阶段时长](/l/zh/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)

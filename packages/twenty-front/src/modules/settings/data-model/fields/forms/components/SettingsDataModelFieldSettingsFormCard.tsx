@@ -25,11 +25,14 @@ import {
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
-import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
+import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema.util';
+import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
+import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
@@ -55,6 +58,12 @@ const dateTimeFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
   .extend(settingsDataModelFieldDateFormSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
+
+const relationFieldFormSchema = z
+  .object({
+    type: z.literal(FieldMetadataType.RELATION),
+  })
+  .extend(settingsDataModelFieldMorphRelationFormSchema.shape);
 
 const morphRelationFieldFormSchema = z
   .object({
@@ -91,18 +100,32 @@ const phonesFieldFormSchema = z
 
 const emailsFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.EMAILS) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .merge(
+    mergeSettingsSchemas(
+      settingsDataModelFieldMaxValuesSchema,
+      settingsDataModelFieldOnClickActionSchema,
+    ),
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const linksFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.LINKS) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .merge(
+    mergeSettingsSchemas(
+      settingsDataModelFieldMaxValuesSchema,
+      settingsDataModelFieldOnClickActionSchema,
+    ),
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const arrayFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ARRAY) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema))
   .extend(isUniqueFieldFormSchema.shape);
+
+const filesFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.FILES) })
+  .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema));
 
 const otherFieldsFormSchema = z
   .object({
@@ -111,6 +134,7 @@ const otherFieldsFormSchema = z
         omit(SETTINGS_FIELD_TYPE_CONFIGS, [
           FieldMetadataType.BOOLEAN,
           FieldMetadataType.CURRENCY,
+          FieldMetadataType.RELATION,
           FieldMetadataType.MORPH_RELATION,
           FieldMetadataType.SELECT,
           FieldMetadataType.MULTI_SELECT,
@@ -123,6 +147,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.EMAILS,
           FieldMetadataType.LINKS,
           FieldMetadataType.ARRAY,
+          FieldMetadataType.FILES,
         ]),
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
@@ -136,6 +161,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
+    relationFieldFormSchema,
     morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
@@ -146,6 +172,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     emailsFieldFormSchema,
     linksFieldFormSchema,
     arrayFieldFormSchema,
+    filesFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
@@ -165,6 +192,7 @@ const previewableTypes = [
   FieldMetadataType.DATE,
   FieldMetadataType.DATE_TIME,
   FieldMetadataType.EMAILS,
+  FieldMetadataType.FILES,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.LINKS,
   FieldMetadataType.MULTI_SELECT,
@@ -312,11 +340,28 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             FieldMetadataType.EMAILS,
             FieldMetadataType.LINKS,
             FieldMetadataType.ARRAY,
+            FieldMetadataType.FILES,
           ].includes(fieldType) && (
             <>
               <SettingsDataModelFieldMaxValuesForm
                 existingFieldMetadataId={existingFieldMetadataId}
                 fieldType={fieldType}
+                disabled={disabled}
+              />
+              <Separator />
+            </>
+          )}
+          {[FieldMetadataType.EMAILS, FieldMetadataType.LINKS].includes(
+            fieldType,
+          ) && (
+            <>
+              <SettingsDataModelFieldOnClickActionForm
+                existingFieldMetadataId={existingFieldMetadataId}
+                fieldType={
+                  fieldType as
+                    | FieldMetadataType.EMAILS
+                    | FieldMetadataType.LINKS
+                }
                 disabled={disabled}
               />
               <Separator />

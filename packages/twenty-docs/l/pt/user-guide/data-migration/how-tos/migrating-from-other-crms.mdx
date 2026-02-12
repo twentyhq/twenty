@@ -1,0 +1,293 @@
+---
+title: Migração de Outros CRMs
+description: Guia passo a passo para migrar os seus dados de qualquer CRM para o Twenty.
+---
+
+## Visão Geral
+
+Este guia explica como migrar os seus dados de qualquer CRM para o Twenty. O processo envolve auditar os seus dados, preparar o seu espaço de trabalho no Twenty, exportar do seu sistema atual e importar para o Twenty.
+
+<Note>Vistas, fluxos de trabalho e permissões devem ser recriados manualmente após a migração. Reserve tempo para este trabalho de configuração.</Note>
+
+## Passo 1: Auditar os seus dados atuais
+
+A migração é uma oportunidade para um novo começo. Não traga dados desnecessários.
+
+**O que manter:**
+
+* Contactos ativos e empresas ativas
+* Oportunidades e negócios em aberto
+* Notas e atividades importantes
+* Campos personalizados que realmente utiliza
+
+**O que deixar para trás:**
+
+* Contactos desatualizados (sem atividade há mais de 2 anos)
+* Registos duplicados
+* Dados de teste
+* Campos personalizados não utilizados
+
+## Passo 2: Mapear o seu modelo de dados
+
+Crie um documento de mapeamento entre o seu CRM atual e o Twenty:
+
+| O seu CRM              | Twenty                   |
+| ---------------------- | ------------------------ |
+| Conta / Organização    | **Empresa**              |
+| Contacto / Pessoa      | **Pessoas**              |
+| Negócio / Oportunidade | **Oportunidade**         |
+| Atividade              | **Tarefa** ou **Nota**   |
+| Objeto personalizado   | **Objeto personalizado** |
+
+**Para cada campo, documente:**
+
+* O nome do campo de origem
+* O campo de destino no Twenty
+* Quaisquer transformações de formato necessárias (datas, números de telefone, etc.)
+
+<Note>Mantenha este documento de mapeamento à mão durante a importação — irá referenciá-lo ao mapear as colunas.</Note>
+
+## Passo 3: Configure o seu espaço de trabalho no Twenty
+
+Antes de importar dados, prepare o seu espaço de trabalho no Twenty:
+
+### Crie objetos e campos personalizados
+
+1. Vá a **Definições → Modelo de Dados**
+2. Crie todos os objetos personalizados de que necessita
+3. Adicione campos personalizados a objetos padrão e personalizados
+4. Configure as definições dos campos (único, obrigatório, opções de seleção, etc.)
+
+<Warning>
+  **Os campos devem existir antes da importação.**
+
+  A importação de CSV cria registos, não campos. Crie todos os campos personalizados em Definições → Modelo de Dados antes de importar.
+</Warning>
+
+### Convide a sua equipa
+
+<Warning>
+  **Convide os utilizadores ANTES de importar dados.**
+
+  Se os seus dados incluírem referências a utilizadores (Proprietário da conta, Responsável, etc.), esses utilizadores devem existir no Twenty antes da importação. Caso contrário, essas relações não podem ser mapeadas.
+</Warning>
+
+1. Vá para **Configurações → Membros**
+2. Convide todos os membros da equipa
+3. **Aguarde que todos aceitem** o convite
+4. Verifique se todos os utilizadores aparecem na sua lista de Membros
+
+## Passo 4: Exporte a partir do seu CRM atual
+
+Exporte os seus dados do seu CRM atual:
+
+1. Procure uma função **Exportar** (normalmente em Definições, Gestão de Dados ou Administração)
+2. Exporte para o **formato CSV** sempre que possível
+3. Exporte cada tipo de objeto separadamente (Empresas, Contactos, Negócios, etc.)
+4. Inclua todos os campos que pretende migrar
+
+**Exporte estes objetos (nesta ordem, para referência):**
+
+1. Empresas / Contas / Organizações
+2. Contactos / Pessoas
+3. Negócios / Oportunidades
+4. Notas e Atividades
+5. Objetos personalizados
+
+## Passo 5: Limpe e formate os seus dados
+
+Abra cada CSV exportado numa aplicação de folha de cálculo e prepare-o para o Twenty.
+
+### Remova duplicados
+
+1. Ordene pelo campo único (e-mail para Pessoas, domínio para Empresas)
+2. Remova ou una linhas duplicadas
+3. Verifique se não existem já duplicados no Twenty
+
+### Formate os campos corretamente
+
+| Tipo de campo         | Formato obrigatório                                     |
+| --------------------- | ------------------------------------------------------- |
+| **Domínio**           | `https://domain.com`                                    |
+| **Email**             | `name@domain.com` (deve ser único)                      |
+| **Data**              | `YYYY-MM-DD`                                            |
+| **Telefone**          | Três colunas: Número, Código do País, Código de Chamada |
+| **Booleano**          | `TRUE` ou `FALSE` (maiúsculas)                          |
+| **Campos de seleção** | Use nomes de API, não os rótulos de apresentação        |
+
+<Warning>
+  **O formato do domínio é crítico.**
+
+  Use `https://domain.com` (não `domain.com` nem `www.domain.com`). Isto corresponde ao formato do Twenty e evita duplicados quando ligar a sincronização de e-mail/calendário.
+</Warning>
+
+Veja [Como preparar os seus ficheiros CSV](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files) para requisitos completos de formatação para todos os tipos de campo.
+
+### Adicione colunas de relação
+
+Para ligar registos (por exemplo, Pessoas a Empresas), adicione uma coluna com o identificador único do registo pai.
+
+**Exemplo: CSV de Pessoas com ligação à Empresa**
+
+```csv
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+Veja [Como importar relações](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para instruções detalhadas sobre como ligar registos.
+
+### Atualize as referências a utilizadores
+
+Se os seus dados incluírem atribuições de utilizador (Proprietário, Responsável):
+
+1. Adicione uma coluna com o **e-mail do utilizador** (não apenas o ID dele do sistema antigo)
+2. Use os mesmos endereços de e-mail que os utilizadores usaram para aderir ao seu espaço de trabalho no Twenty
+
+Veja [Como preparar os seus ficheiros CSV](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files) para o guia completo de formatação.
+
+## Passo 6: Importe para o Twenty
+
+<Warning>
+  **A ordem de importação é importante!**
+
+  Importe sempre por esta ordem:
+
+  1. **Empresas** primeiro (sem dependências)
+  2. **Pessoas** em segundo (ligadas a Empresas)
+  3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
+  4. **Notas e Tarefas** (ligadas a registos)
+  5. **Objetos personalizados** seguindo as suas dependências
+
+  O registo pai deve existir antes de o poder referenciar.
+</Warning>
+
+### Importe cada objeto
+
+Para cada ficheiro CSV, por ordem:
+
+1. Navegue até ao objeto no Twenty
+2. Clique em **⋮ → Importar registos**
+3. Carregue o ficheiro CSV
+4. Mapeie as colunas para os campos:
+   * Mapeie as colunas de e-mail do utilizador para os campos de relação apropriados
+   * Mapeie as colunas de relação (como `companyDomain`) para campos de relação
+5. Revise e corrija quaisquer erros na interface
+6. Confirme a importação
+7. Verifique alguns registos antes de avançar para o ficheiro seguinte
+
+**Guias detalhados:**
+
+* [Como importar empresas](/l/pt/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [Como importar contactos](/l/pt/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Como importar relações](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+
+## Passo 7: Migrações de grande dimensão (50 000+ registos)
+
+Para migrações de grande dimensão:
+
+| Volume                   | Abordagem recomendada          |
+| ------------------------ | ------------------------------ |
+| Menos de 10 000 registos | Uma única importação CSV       |
+| 10 000 - 50 000 registos | Divida em vários ficheiros CSV |
+| Mais de 50 000 registos  | Utilize a API                  |
+
+**Para importações via API:**
+
+* Mais rápido e fiável para conjuntos de dados grandes
+* Suporta operações em lote (até 60 registos por chamada)
+* Consulte [Como importar dados via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api)
+
+## Passo 8: Configuração pós-migração
+
+Após importar os dados, complete a configuração do seu espaço de trabalho:
+
+### Recrie vistas
+
+* Configure vistas guardadas com filtros, ordenações e configurações de colunas
+* Crie quaisquer vistas kanban ou de calendário de que necessite
+
+### Recriar Fluxos de Trabalho
+
+* Recrie as suas automatizações em **Definições → Fluxos de trabalho**
+* Comece pelos fluxos de trabalho mais críticos
+* Teste cada um antes de confiar nele
+
+### Configure funções e permissões
+
+* Configure as funções em **Definições → Funções**
+* Atribua os utilizadores às funções apropriadas
+
+### Ligue o e-mail e o calendário
+
+* Cada utilizador liga a sua própria conta em **Definições → Contas**
+* O Twenty começará a sincronizar e-mails com os registos de contactos
+* Consulte [E-mail e Calendário](/l/pt/user-guide/calendar-emails/overview)
+
+### Forme a sua equipa
+
+* Percorram juntos a nova interface
+* Documente quaisquer processos específicos da equipa
+
+## Problemas Comuns e Soluções
+
+| Problema                        | Causa                                 | Solução                                                                                                 |
+| ------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Erros de duplicados**         | E-mail/domínio já existe              | Remova os duplicados do ficheiro ou inclua um identificador único para atualizar os registos existentes |
+| **Relação não encontrada**      | O registo pai não existe              | Importe primeiro os objetos pai (Empresas antes de Pessoas)                                             |
+| **Campos em falta**             | O campo personalizado não existe      | Crie o campo em Definições → Modelo de Dados antes de importar                                          |
+| **Erros em campos de seleção**  | Utilização de rótulos de apresentação | Use nomes de API (ative o modo Avançado em Definições para os encontrar)                                |
+| **Relação de utilizador vazia** | O utilizador não aceitou o convite    | Garanta que todos os utilizadores aceitam os convites antes de importar                                 |
+
+Consulte [Como Corrigir Erros de Importação](/l/pt/user-guide/data-migration/how-tos/fix-import-errors) para passos detalhados de resolução de problemas.
+
+## Lista de Verificação Pós-Migração
+
+### Integridade dos dados
+
+<Check>Todos os registos importados (compare contagens com o sistema de origem)</Check>
+<Check>Relações a funcionar corretamente (Pessoas ligadas a Empresas)</Check>
+<Check>Atribuições de utilizador mapeadas corretamente (Proprietário, Responsável)</Check>
+<Check>Campos personalizados preenchidos</Check>
+<Check>Sem duplicados inesperados</Check>
+
+### Configuração
+
+<Check>Vistas recriadas</Check>
+<Check>Fluxos de trabalho recriados e testados</Check>
+<Check>Funções e permissões configuradas</Check>
+<Check>Sincronização de e-mail/calendário ligada</Check>
+
+### Preparação da equipa
+
+<Check>Equipa formada no novo sistema</Check>
+<Check>Plano de acesso ao CRM antigo decidido (manter para referência? Quando desativar?)</Check>
+
+## Perguntas Frequentes
+
+<AccordionGroup>
+  <Accordion title="Posso migrar fluxos de trabalho automaticamente?">
+    De momento, não. Os fluxos de trabalho devem ser recriados manualmente no Twenty.
+  </Accordion>
+
+  <Accordion title="E quanto aos anexos de ficheiros?">
+    Os anexos de ficheiros não estão incluídos nas exportações CSV. Terá de voltar a carregá-los manualmente, migrá-los via API ou contactar a nossa equipa para obter assistência.
+  </Accordion>
+
+  <Accordion title="Posso manter ambos os sistemas a funcionar durante a migração?">
+    Sim, recomendamos manter o seu CRM antigo a funcionar até verificar que a migração está concluída. Apenas tenha cuidado para não criar novos dados em ambos os locais.
+  </Accordion>
+
+  <Accordion title="Quanto tempo demora normalmente a migração?">
+    Depende do volume e da complexidade dos dados. Migrações pequenas (menos de 10 000 registos) podem ser feitas em poucas horas. Migrações grandes podem demorar vários dias, incluindo limpeza de dados e testes.
+  </Accordion>
+</AccordionGroup>
+
+## Precisa de ajuda?
+
+Para migrações complexas ou conjuntos de dados grandes:
+
+* **Configuração guiada:** Reserve um pacote de integração de 4 horas
+* **Serviço de migração completo:** Os nossos parceiros podem tratar de toda a migração
+
+Contacte [contact@twenty.com](mailto:contact@twenty.com) ou explore os nossos [Serviços de Implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services).

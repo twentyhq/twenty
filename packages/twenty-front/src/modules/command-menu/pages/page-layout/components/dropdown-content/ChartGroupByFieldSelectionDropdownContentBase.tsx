@@ -24,7 +24,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { RelationType } from '~/generated/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -100,6 +100,13 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   const { closeDropdown } = useCloseDropdown();
 
   const { getIcon } = useIcons();
+
+  const isSecondaryAxisGroupBy =
+    fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId';
+
+  const selectableItemIdArray = isSecondaryAxisGroupBy
+    ? ['none', ...availableFieldMetadataItems.map((item) => item.id)]
+    : availableFieldMetadataItems.map((item) => item.id);
 
   if (!isDefined(sourceObjectMetadataItem)) {
     return null;
@@ -227,19 +234,18 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={[
-            'none',
-            ...availableFieldMetadataItems.map((item) => item.id),
-          ]}
+          selectableItemIdArray={selectableItemIdArray}
         >
-          <SelectableListItem itemId="none" onEnter={handleSelectNone}>
-            <MenuItemSelect
-              text={t`None`}
-              selected={!isDefined(currentGroupByFieldMetadataId)}
-              focused={selectedItemId === 'none'}
-              onClick={handleSelectNone}
-            />
-          </SelectableListItem>
+          {isSecondaryAxisGroupBy && (
+            <SelectableListItem itemId="none" onEnter={handleSelectNone}>
+              <MenuItemSelect
+                text={t`None`}
+                selected={!isDefined(currentGroupByFieldMetadataId)}
+                focused={selectedItemId === 'none'}
+                onClick={handleSelectNone}
+              />
+            </SelectableListItem>
+          )}
 
           {availableFieldMetadataItems.map((fieldMetadataItem) => (
             <SelectableListItem

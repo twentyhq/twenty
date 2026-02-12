@@ -25,7 +25,7 @@ import { RecordTableTr } from '@/object-record/record-table/record-table-row/com
 import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -148,8 +148,8 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
   const theme = useTheme();
 
   const recordId = useRecoilComponentFamilyValue(
-    recordIdByRealIndexComponentFamilyState,
-    { realIndex },
+    recordIdByRealIndexComponentFamilySelector,
+    realIndex,
   );
 
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();

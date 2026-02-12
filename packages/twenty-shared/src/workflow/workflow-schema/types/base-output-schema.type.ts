@@ -4,6 +4,7 @@ export type NodeType = 'object' | 'unknown';
 
 export type Leaf = {
   isLeaf: true;
+  icon?: string;
   type: LeafType;
   label: string;
   value: any;
@@ -11,6 +12,7 @@ export type Leaf = {
 
 export type Node = {
   isLeaf: false;
+  icon?: string;
   type: NodeType;
   label: string;
   value: BaseOutputSchemaV2;

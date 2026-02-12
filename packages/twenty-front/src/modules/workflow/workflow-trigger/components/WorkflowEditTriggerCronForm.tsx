@@ -91,7 +91,7 @@ export const WorkflowEditTriggerCronForm = ({
           <>
             <FormTextFieldInput
               label={t`Expression`}
-              placeholder="0 */1 * * *"
+              placeholder={t`0 */1 * * *`}
               error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
               onBlur={onBlur}
               hint={customDescription ?? ''}
@@ -107,8 +107,11 @@ export const WorkflowEditTriggerCronForm = ({
                 try {
                   CronExpressionParser.parse(newPattern);
                 } catch (error) {
+                  const unknownError = t`Unknown error`;
+                  const errorMessage =
+                    error instanceof Error ? error.message : unknownError;
                   setErrorMessages({
-                    CUSTOM: `Invalid cron pattern: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    CUSTOM: t`Invalid cron pattern: ${errorMessage}`,
                   });
                   return;
                 }
@@ -154,7 +157,7 @@ export const WorkflowEditTriggerCronForm = ({
                 if (!isNumber(newDay) || newDay <= 0) {
                   setErrorMessages((prev) => ({
                     ...prev,
-                    DAYS_day: `Invalid day value '${newDay}'. Should be integer greater than 1`,
+                    DAYS_day: t`Invalid day value '${newDay}'. Should be integer greater than 1`,
                   }));
                   return;
                 }

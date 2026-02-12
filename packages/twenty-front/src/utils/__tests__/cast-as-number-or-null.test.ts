@@ -1,7 +1,7 @@
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
-} from '../cast-as-number-or-null';
+} from '~/utils/cast-as-number-or-null';
 
 describe('canBeCastAsNumberOrNull', () => {
   it(`should return true if null`, () => {

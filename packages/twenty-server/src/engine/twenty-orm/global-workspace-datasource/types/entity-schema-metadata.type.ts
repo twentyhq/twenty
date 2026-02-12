@@ -7,7 +7,7 @@ export type EntitySchemaObjectMetadata = Pick<
   ObjectMetadataEntity,
   'id' | 'nameSingular' | 'isCustom'
 > & {
-  fieldMetadataIds: string[];
+  fieldIds: string[];
 };
 
 export type EntitySchemaFieldMetadata<
@@ -60,7 +60,7 @@ export const buildEntitySchemaMetadataMaps = (
       id: object.id,
       nameSingular: object.nameSingular,
       isCustom: object.isCustom,
-      fieldMetadataIds: fieldIdsByObjectId.get(object.id) ?? [],
+      fieldIds: fieldIdsByObjectId.get(object.id) ?? [],
     };
   }
 

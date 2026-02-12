@@ -3,22 +3,22 @@ import { useRecoilCallback } from 'recoil';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useLoadRecordsToVirtualRows = () => {
-  const recordIdByRealIndexCallbackState =
+  const recordIdByRealIndexCallbackSelector =
     useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilyState,
+      recordIdByRealIndexComponentFamilySelector,
     );
 
-  const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentCallbackState(
-      dataLoadingStatusByRealIndexComponentFamilyState,
+  const dataLoadingStatusByRealIndexCallbackSelector =
+    useRecoilComponentFamilyCallbackState(
+      dataLoadingStatusByRealIndexComponentFamilySelector,
     );
 
   const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
@@ -52,15 +52,15 @@ export const useLoadRecordsToVirtualRows = () => {
 
           const currentRecordIdAtRealIndex = getSnapshotValue(
             snapshot,
-            recordIdByRealIndexCallbackState({ realIndex }),
+            recordIdByRealIndexCallbackSelector(realIndex),
           );
 
           if (record.id !== currentRecordIdAtRealIndex) {
-            set(recordIdByRealIndexCallbackState({ realIndex }), record.id);
+            set(recordIdByRealIndexCallbackSelector(realIndex), record.id);
           }
 
           set(
-            dataLoadingStatusByRealIndexCallbackState({ realIndex }),
+            dataLoadingStatusByRealIndexCallbackSelector(realIndex),
             'loaded',
           );
         }
@@ -85,8 +85,8 @@ export const useLoadRecordsToVirtualRows = () => {
         set(recordIndexAllRecordIdsSelector, newAllRecordIds);
       },
     [
-      recordIdByRealIndexCallbackState,
-      dataLoadingStatusByRealIndexCallbackState,
+      recordIdByRealIndexCallbackSelector,
+      dataLoadingStatusByRealIndexCallbackSelector,
       recordIndexAllRecordIdsSelector,
       isRowSelectedCallbackState,
       hasUserSelectedAllRowsCallbackState,

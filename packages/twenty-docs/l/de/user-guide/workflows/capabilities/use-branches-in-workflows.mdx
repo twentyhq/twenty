@@ -1,0 +1,90 @@
+---
+title: Verzweigungen in Workflows verwenden
+description: Verstehen Sie, wie Verzweigungen funktionieren und wie Sie steuern, welcher Pfad ausgeführt wird.
+---
+
+## Wie Verzweigungen funktionieren
+
+Im Workflow-Editor können Sie mehrere Pfade (Verzweigungen) erstellen, die von einem einzelnen Knoten ausgehen. So können Sie komplexe Automatisierungen mit unterschiedlichen Ergebnissen erstellen.
+
+**Wichtig**: Wenn ein Workflow ausgeführt wird, **werden standardmäßig alle Verzweigungen parallel ausgeführt**. Es gibt keine integrierte "if/else"-Logik, um eine Verzweigung gegenüber einer anderen auszuwählen—jeder Pfad wird gleichzeitig ausgeführt.
+
+## Steuern, welche Verzweigung ausgeführt wird
+
+Um basierend auf bestimmten Bedingungen nur eine Verzweigung auszuführen, **fügen Sie am Anfang jeder Verzweigung einen Filter-Knoten hinzu**.
+
+### Beispiel-Setup
+
+1. Erstellen Sie Ihren Workflow mit mehreren Verzweigungen, die von einem einzelnen Knoten ausgehen
+2. Fügen Sie in jeder Verzweigung als ersten Schritt einen **Filter**-Knoten hinzu
+3. Legen Sie für jeden Filter Bedingungen fest, um zu bestimmen, wann diese Verzweigung fortgesetzt werden soll
+4. Nur die Verzweigung(en), deren Filterbedingungen erfüllt sind, wird/werden weiter ausgeführt
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Wie Filter funktionieren
+
+* Wenn die Filterbedingung **erfüllt** ist: Die Verzweigung wird weiter ausgeführt
+* Wenn die Filterbedingung **nicht erfüllt** ist: Die Verzweigung stoppt am Filter-Knoten
+
+Dadurch entsteht effektiv eine bedingte Logik, bei der basierend auf Ihren Daten nur die passende Verzweigung ausgeführt wird.
+
+## Beispiel: Routing nach Dealgröße
+
+**Szenario**: Wenn ein Deal abgeschlossen wird, senden Sie je nach Dealgröße unterschiedliche Benachrichtigungen.
+
+1. **Auslöser**: Verkaufschance aktualisiert (Phase = Closed Won)
+2. **Verzweigung 1**: Filter für Betrag > $10.000 → Slack-Nachricht an #big-deals senden
+3. **Verzweigung 2**: Filter für Betrag ≤ $10.000 → E-Mail an den Vertriebsleiter senden
+
+Beide Verzweigungen starten, aber nur diejenige, die dem Dealbetrag entspricht, wird über ihren Filter hinaus fortgesetzt.
+
+## Verzweigungen erstellen
+
+<Note>
+  Um aus einem bestehenden Schritt eine neue Verzweigung zu erstellen, klicken Sie im Schritt auf die Schaltfläche **+** und fügen Sie Ihre Aktion hinzu. Sie können mehrere Verzweigungen hinzufügen, indem Sie **+** mehrmals klicken.
+</Note>
+
+1. Wählen Sie im Workflow-Editor den Schritt aus, von dem Sie verzweigen möchten
+2. Klicken Sie auf **+**, um eine Aktion hinzuzufügen
+3. Dadurch wird eine Verzweigung erstellt
+4. Klicken Sie im selben Schritt erneut auf **+**, um weitere Verzweigungen zu erstellen
+5. Jede Verzweigung kann ihre eigene Abfolge von Aktionen haben
+
+## Verzweigungen wieder zusammenführen
+
+Nachdem parallele Verzweigungen ihre Arbeit abgeschlossen haben, können Sie sie wieder zu einem einzelnen Pfad zusammenführen:
+
+1. Schließen Sie Ihre verzweigten Aktionen ab
+2. Fügen Sie einen neuen Schritt hinzu, der nach allen Verzweigungen ausgeführt werden soll
+3. Ziehen Sie eine Verbindung vom letzten Schritt jeder Verzweigung zu diesem neuen Schritt
+4. Der zusammengeführte Schritt wartet, bis alle verbundenen Verzweigungen abgeschlossen sind, bevor er ausgeführt wird
+
+### Beispiel: Erst verarbeiten, dann benachrichtigen
+
+```
+Auslöser
+   │
+   ├── Verzweigung A: Kundendatensatz aktualisieren
+   │
+   └── Verzweigung B: Support-Ticket erstellen
+
+       ↘  ↙
+
+   Zusammengeführter Schritt: Bestätigungs-E-Mail senden
+```
+
+Die Bestätigungs-E-Mail wird erst gesendet, nachdem sowohl die Aktualisierung des Kundendatensatzes als auch die Erstellung des Tickets abgeschlossen sind.
+
+## Beste Praktiken
+
+* Verwenden Sie am Anfang von Verzweigungen immer **Filter-Knoten**, wenn Sie eine bedingte Ausführung möchten
+* Halten Sie Verzweigungsbedingungen **gegenseitig ausschließend**, um doppelte Aktionen zu vermeiden
+* Testen Sie Ihre Workflows mit unterschiedlichen Daten, um sicherzustellen, dass die richtigen Verzweigungen ausgeführt werden
+* **Benennen Sie Verzweigungsschritte um** und verwenden Sie aussagekräftige Bezeichnungen, damit klar ist, was jeder Pfad tut
+* **Verzweigungen zusammenführen**, wenn Sie nach paralleler Verarbeitung eine abschließende Aktion benötigen
+
+## Verwandt
+
+* [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq) — Antworten zur parallelen Ausführung
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) — verfügbare Aktionen für Verzweigungen

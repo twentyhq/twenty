@@ -59,6 +59,8 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       options
       settings
       isLabelSyncedWithName
+      morphId
+      applicationId
       relation {
         type
         sourceObjectMetadata {

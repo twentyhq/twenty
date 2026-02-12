@@ -7,6 +7,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -59,6 +60,7 @@ export const buildCursorWhereCondition = ({
     throw new GraphqlQueryRunnerException(
       `Field metadata not found for key: ${cursorKey}`,
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
@@ -84,6 +86,7 @@ export const buildCursorWhereCondition = ({
     throw new GraphqlQueryRunnerException(
       'Invalid cursor',
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 

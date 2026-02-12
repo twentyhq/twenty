@@ -1,0 +1,106 @@
+---
+title: إرسال تنبيهات عبر البريد الإلكتروني بشأن المهام المستحقة
+description: إخطار أعضاء الفريق تلقائيًا بمهامهم القادمة أو المتأخرة.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+إرسال تذكيرات يومية عبر البريد الإلكتروني لكل عضو في الفريق بشأن المهام المستحقة اليوم.
+
+## نظرة عامة
+
+يعمل سير العمل هذا وفق جدول زمني ويقوم بما يلي:
+
+1. يجلب جميع أعضاء مساحة العمل
+2. يُنفِّذ حلقة على كل عضو
+3. يعثر على مهامهم المستحقة اليوم
+4. ينسّق ويرسل بريدًا إلكترونيًا مخصصًا
+
+## إعداد خطوة بخطوة
+
+<VimeoEmbed videoId="1147463514" title="عرض توضيحي بالفيديو" />
+
+### الخطوة 1: تهيئة المشغّل
+
+1. انتقل إلى **الإعدادات → سير العمل** وأنشئ سير عمل جديد
+2. حدّد **وفق جدول** كمشغّل
+3. استخدم تعبير cron للتشغيل يوميًا عند الساعة 8:00 صباحًا: `0 8 * * *`
+
+### الخطوة 2: البحث عن جميع أعضاء مساحة العمل
+
+1. أضف إجراء **Search Records**
+2. حدّد **Workspace Members** (ضمن الكائنات المتقدمة)
+3. لا حاجة إلى فلاتر — فهذا يعيد جميع الأعضاء
+
+### الخطوة 3: إضافة Iterator
+
+1. أضف إجراء **Iterator**
+2. اضبط مصفوفة الإدخال على أعضاء مساحة العمل من الخطوة السابقة
+3. ستُنفَّذ جميع الإجراءات داخل المكرّر مرة واحدة لكل عضو
+
+### الخطوة 4: البحث عن المهام المستحقة اليوم (داخل المكرّر)
+
+1. داخل المكرّر، أضف إجراء **Search Records**
+2. حدّد **Tasks** كالكائن
+3. أضف فلاتر:
+   * **Assignee** = عضو مساحة العمل الحالي (من المكرّر)
+   * **Due Date** = اليوم
+
+### الخطوة 5: تنسيق المهام ضمن محتوى البريد الإلكتروني (داخل المكرّر)
+
+أضف إجراء **Code** لتنسيق المهام في قائمة قابلة للقراءة مع روابط:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.
+</Note>
+
+### الخطوة 6: إرسال بريد إلكتروني (داخل المكرّر)
+
+1. أضف إجراء **Send Email** (ما زال داخل المكرّر)
+2. التكوين:
+
+| الحقل       | القيمة                                                                    |
+| ----------- | ------------------------------------------------------------------------- |
+| **إلى**     | `{{iterator.currentItem.userEmail}}` (البريد الإلكتروني لعضو مساحة العمل) |
+| **الموضوع** | مهامك المستحقة اليوم                                                      |
+| **المحتوى** | `{{code.formattedTasks}}`                                                 |
+
+### الخطوة 7: الاختبار والتفعيل
+
+1. انقر **Test** لتشغيل سير العمل يدويًا
+2. تحقّق من صناديق الوارد للرسائل الإلكترونية
+3. فعّل سير العمل
+
+## ذات صلة
+
+* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

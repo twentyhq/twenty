@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -66,7 +67,7 @@ export const ApiKeyNameInput = ({
     <StyledComboInputContainer>
       <SettingsTextInput
         instanceId={nameTextInputId}
-        placeholder="E.g. backoffice integration"
+        placeholder={t`E.g. backoffice integration`}
         onChange={onNameUpdate}
         fullWidth
         value={apiKeyName}

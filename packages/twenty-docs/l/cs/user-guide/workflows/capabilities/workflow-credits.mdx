@@ -1,0 +1,76 @@
+---
+title: Kredity pracovních postupů
+description: Pochopte spotřebu a správu kreditů pracovních postupů.
+---
+
+Kredity pracovních postupů pohánějí vaše automatizace v Twenty. Pochopení, jak fungují, vám pomůže optimalizovat náklady a efektivně spravovat svůj rozpočet na automatizaci.
+
+## Přidělení kreditů
+
+Kredity pracovních postupů jsou přidělovány podle vašeho fakturačního cyklu, nikoli podle úrovně plánu:
+
+| Fakturační cyklus      | Kredity                    |
+| ---------------------- | -------------------------- |
+| **Měsíční předplatné** | 5 milionů kreditů za měsíc |
+| **Roční předplatné**   | 50 milionů kreditů za rok  |
+
+<Note>
+  5 milionů měsíčních kreditů je štědrý limit pro standardní automatizace. Většina týmů tento limit při typickém používání pracovních postupů nepřekročí. Dodatečné kredity jsou potřeba především pro pokročilé akce Code a pracovní postupy s využitím AI.
+</Note>
+
+## Jak funguje spotřeba kreditů
+
+Kredity se spotřebovávají při provádění pracovních postupů, nikoli při jejich vytváření. Každá akce v pracovním postupu spotřebovává kredity podle své složitosti:
+
+### Spotřeba kreditů podle typu akce
+
+* **Základní interní operace**: Velmi nízká spotřeba kreditů
+  * Hledání záznamů
+  * Vytvořit záznam
+  * Aktualizovat záznam
+  * Smazat záznam
+  * Akce formuláře
+
+* **Složitější operace**: Vyšší spotřeba kreditů
+  * Akce kódování (provádění JavaScriptu)
+  * HTTP požadavky na externí služby
+
+* **Funkce AI**: Vyšší spotřeba kreditů
+  * Akce agenta AI spotřebovávají kredity podle použitého modelu AI
+  * Složitější prompty a delší výstupy spotřebují více kreditů
+
+* **Akce Delay**: Minimální spotřeba kreditů
+  * Uzel Delay při provedení spotřebuje **1 kredit**
+  * **Žádné kredity se nespotřebovávají** během doby čekání
+  * Pětiminutové zpoždění stojí stejně jako pětidenní zpoždění
+
+### Okamžité stržení
+
+Kredity jsou strhávány v reálném čase při provádění pracovních postupů. Toto znamená:
+
+* Návrhy pracovních postupů nespotřebovávají kredity
+* Pouze aktivní, běžící pracovní postupy používají vaše přidělené kredity
+* Nezdařené pracovní postupy stále vyčerpávají kredity za dokončené kroky
+
+## Správa kreditů
+
+### Zkontrolujte využití kreditů
+
+1. Přejděte na **Nastavení → Fakturace**
+2. Zobrazte svoji aktuální spotřebu kreditů a zbývající zůstatek
+3. Sledujte vzory používání pro optimalizaci svých pracovních postupů
+
+### Nákup dalších kreditů
+
+Pokud potřebujete více kreditů než přidělení vašeho plánu:
+
+1. Přejděte na **Nastavení → Fakturace**
+2. Klikněte na možnost koupit další kredity. Balíčky různých velikostí jsou k dispozici.
+3. Kredity jsou přidány k vašemu aktuálnímu zůstatku
+
+## Osvedčené postupy
+
+* **Zpracování dávek**: Efektivně používejte hromadné operace a iterátory akcí
+* **Optimalizace manuálních spouštěčů**: U manuálních spouštěčů zvolte dostupnost `Bulk` pro zpracování více záznamů v rámci jednoho spuštění pracovního postupu
+* Optimalizujte akce kódu pro efektivitu
+* Hromadné operace pro snížení individuálních volání akcí

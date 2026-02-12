@@ -1,0 +1,130 @@
+---
+title: Přeneste odeslané odpovědi z Typeformu do Twenty
+description: Zpracujte payload webhooku Typeformu a vytvářejte leady z odeslaných formulářů.
+---
+
+Pro standardní nastavení webhooku viz [Nastavení spouštěče webhooku](/l/cs/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). Tento článek se věnuje specifickému zpracování požadovanému pro vlastní strukturu payloadu Typeformu.
+
+### Krok 1: Vytvořte pracovní postup pro webhook
+
+1. Přejděte na **Nastavení → Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Vyberte **Webhook** jako spouštěč
+4. Zkopírujte URL webhooku
+
+### Krok 2: Nakonfigurujte Typeform
+
+1. V Typeformu otevřete svůj formulář
+2. Přejděte na **Connect → Webhooks**
+3. Vložte svou URL webhooku Twenty
+4. Uložit
+
+### Krok 3: Porozumějte payloadu Typeformu
+
+Typeform posílá vnořenou strukturu JSON. Zde je zjednodušený příklad:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Důležité body:
+
+* Data formuláře jsou vnořena pod `form_response`
+* **Odpovědi jsou vráceny jako pole**, nikoli jako pojmenovaná pole
+* Každá odpověď obsahuje pro referenci typ a název pole
+
+### Krok 4: Extrahujte pole z pole odpovědí
+
+Protože `answers` je pole, v následujících krocích můžete vybrat pouze celé pole — nikoli jednotlivá pole. Přidejte akci **Code** k extrakci potřebných polí:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+Nyní v následujících krocích můžete z výběru proměnných vybrat `contact.firstName`, `contact.email` apod.
+
+<Tip>
+  Další podrobnosti o práci s poli v akcích Code viz [Práce s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Krok 5: Vytvořte záznam
+
+Přidejte akci **Vytvořit záznam**:
+
+| Pole           | Hodnota                                                        |
+| -------------- | -------------------------------------------------------------- |
+| **Objekt**     | Osoby                                                          |
+| **Jméno**      | `{{code.contact.firstName}}`                                   |
+| **Příjmení**   | `{{code.contact.lastName}}`                                    |
+| **Email**      | `{{code.contact.email}}`                                       |
+| **Společnost** | Vyhledejte nebo vytvořte na základě `{{code.contact.company}}` |
+
+### Krok 6: Otestujte a aktivujte
+
+1. Odešlete testovou odpověď v Typeformu
+2. Zkontrolujte běh pracovního postupu, abyste ověřili, že data byla zachycena
+3. Aktivujte pracovní postup
+
+## Související
+
+* [Nastavení spouštěče webhooku](/l/cs/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Práce s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

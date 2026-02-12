@@ -1,5 +1,6 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isMinMaxRangeValid = (
@@ -10,8 +11,8 @@ export const isMinMaxRangeValid = (
   configuration: ChartConfiguration,
 ): boolean => {
   const isBarOrLineChart =
-    configuration.__typename === 'BarChartConfiguration' ||
-    configuration.__typename === 'LineChartConfiguration';
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isBarOrLineChart) {
     return true;

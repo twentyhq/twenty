@@ -1,0 +1,78 @@
+---
+title: Bug-uri, solicitări și pull request-uri
+info: Raportați probleme, solicitați funcționalități și contribuiți cu cod
+---
+
+## Raportare Erori
+
+Pentru a raporta o eroare, te rog [creează o problemă pe GitHub](https://github.com/twentyhq/twenty/issues/new).
+
+Poți de asemenea să ceri ajutor pe [Discord](https://discord.gg/cx5n4Jzs57).
+
+## Cereri de Funcționalități
+
+Dacă nu ești sigur că este o eroare și simți că este mai aproape de o cerere de funcționalitate, atunci ar trebui probabil să [deschizi în loc o discuție](https://github.com/twentyhq/twenty/discussions/new).
+
+## Trimiteți un pull request
+
+Contribuirea cu cod la Twenty începe cu un pull request (PR).
+
+### Înainte de a începe
+
+1. Verificați [problemele existente](https://github.com/twentyhq/twenty/issues) pentru lucrări conexe
+2. Pentru funcționalități noi, deschideți mai întâi o problemă pentru a discuta
+3. Consultați [Codul de conduită](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Faceți fork și clonați
+
+1. Faceți fork al repository-ului pe GitHub
+2. Clonați fork-ul:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Adăugați remote-ul upstream:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Creați o ramură
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Folosiți nume descriptive pentru ramuri:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Faceți modificările
+
+1. Scrieți cod curat, bine documentat
+2. Respectați stilul de cod existent
+3. Adăugați teste pentru funcționalitatea nouă
+4. Actualizați documentația dacă este necesar
+
+### Trimiteți PR-ul
+
+1. Faceți push pentru ramura dvs.:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Deschideți un PR pe GitHub
+3. Completați șablonul PR
+4. Asociați problemele corelate
+
+### Listă de verificare PR
+
+* [ ] Codul respectă ghidurile de stil ale proiectului
+* [ ] Testele trec local
+* [ ] Documentația este actualizată
+* [ ] Descrierea PR-ului explică modificările

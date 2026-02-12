@@ -1,4 +1,4 @@
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type Layouts } from 'react-grid-layout';
 
 export const convertLayoutsToWidgets = (

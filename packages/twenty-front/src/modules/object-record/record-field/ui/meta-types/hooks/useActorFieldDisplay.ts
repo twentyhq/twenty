@@ -3,10 +3,10 @@ import { useContext } from 'react';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export type ActorFieldDisplayValue = {
   fieldValue: FieldActorValue;
@@ -21,7 +21,7 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldActorValue | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldActorValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
@@ -36,6 +36,7 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   ].find(
     (workspaceMember) => workspaceMember.id === fieldValue.workspaceMemberId,
   );
+
   if (!isDefined(relatedWorkspaceMember)) {
     return {
       fieldValue,

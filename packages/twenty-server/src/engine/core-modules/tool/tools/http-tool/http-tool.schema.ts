@@ -14,12 +14,3 @@ export const HttpRequestInputZodSchema = z.object({
     .optional()
     .describe('Request body for POST, PUT, PATCH requests'),
 });
-
-export const HttpToolParametersZodSchema = z.object({
-  loadingMessage: z
-    .string()
-    .describe(
-      "A clear, human-readable status message describing the HTTP request being made. This will be shown to the user while the tool is being called, so phrase it as a present-tense status update (e.g., 'Making a GET request to ...'). Explain what endpoint you are calling and with what parameters in natural language.",
-    ),
-  input: HttpRequestInputZodSchema,
-});

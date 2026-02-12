@@ -1,0 +1,99 @@
+---
+title: Kanban-Board-Ansichten
+description: Erfahren Sie, wie Sie Kanban-Ansichten nutzen, um Ihre Workflows zu visualisieren und zu verwalten.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Über Kanban-Ansichten
+
+Kanban-Ansichten visualisieren Prozessabläufe, wobei jede Spalte eine eigene Phase darstellt und jede Karte einen Eintrag repräsentiert.
+
+## Karten zwischen Phasen verschieben
+
+Sie können jede Karte zwischen den Phasen in Ihrem Workflow durch Ziehen und Loslassen verschieben. Um fortzufahren, halten Sie einen Mausklick auf einer Karte und verschieben Sie sie zur nächsten Phase.
+
+<VimeoEmbed videoId="927888627" title="Video-Demonstration" />
+
+## Phasen hinzufügen und löschen
+
+Sie können Ihren Workflow anpassen, indem Sie Phasen verwenden, die einen Wert in einem Auswahlfeld darstellen:
+
+### Phasen hinzufügen
+
+Um eine Phase hinzuzufügen, greifen Sie auf die Einstellungen des Auswahlfelds zu, indem Sie zu Einstellungen > Datenmodell navigieren, Ihr Objekt auswählen und dann das Feld, auf dem Ihr Kanban-Board basiert.
+
+<VimeoEmbed videoId="927890428" title="Video-Demonstration" />
+
+### Phasen entfernen
+
+Um eine Phase zu entfernen, bewegen Sie den Mauszeiger über den Phasennamen oder das `⋮`-Symbol, klicken Sie in den Einstellungen des Auswahlfelds auf `Aus Einstellungen bearbeiten` und klicken Sie dann auf **Löschen** neben der entsprechenden Phase.
+
+## Felder anzeigen
+
+Sie können Ihr Kanban-Board so konfigurieren, dass einige Felder angezeigt und andere ausgeblendet werden. Um ein Feld auszublenden, klicken Sie oben rechts auf **Optionen** und dann auf **Felder**, um die Liste der Optionen anzuzeigen. Suchen Sie das benötigte Feld im Bereich Ausgeblendete Felder und klicken Sie auf die Schaltfläche mit dem Augensymbol, um das Feld anzuzeigen.
+
+Sie können auch die Reihenfolge der Felder ändern, indem Sie den Feldnamen festhalten und dorthin ziehen, wo Sie ihn haben möchten.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## Kompaktansicht
+
+Sie können alle Felder ausblenden und einen Überblick über alle Datensätze auf einen Blick erhalten. So aktivieren Sie es:
+
+1. Klicken Sie oben rechts auf **Optionen**
+2. Aktivieren Sie den Schalter für **Kompaktansicht**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Spaltenaggregationen
+
+Jede Spalte in einer Kanban-Ansicht kann oben aggregierte Werte anzeigen, was Ihnen hilft, Ihre Daten auf einen Blick zu erfassen.
+
+### Verfügbare Aggregationen
+
+| Aggregation      | Beschreibung                                              |
+| ---------------- | --------------------------------------------------------- |
+| **Zählen**       | Anzahl der Datensätze in der Spalte                       |
+| **Summe**        | Gesamtsumme eines numerischen Feldes (z. B. Deal-Beträge) |
+| **Durchschnitt** | Durchschnittswert eines numerischen Feldes                |
+| **Min**          | Niedrigster Wert                                          |
+| **Max**          | Höchster Wert                                             |
+
+### Aggregationen konfigurieren
+
+1. Klicken Sie oben in einer Spalte auf die Zahl, die neben dem Phasennamen angezeigt wird
+2. Wählen Sie den Aggregationstyp aus
+3. Wählen Sie das zu aggregierende Feld aus
+
+**Beispiel:** Zeigen Sie den Gesamtwert der Deals pro Phase an, indem Sie das Feld Betrag mit Summe aggregieren.
+
+## Wann Sie Kanban-Ansichten verwenden sollten
+
+Kanban-Ansichten eignen sich ideal für:
+
+* **Vertriebspipelines**: Verfolgen Sie Deals durch die Phasen vom Lead bis zum Abschluss
+* **Projektmanagement**: Überwachen Sie Aufgaben anhand von Workflow-Status
+* **Recruiting**: Verfolgen Sie Kandidaten durch die Einstellungsphasen
+* **Jeder mehrstufige Prozess**: Visualisieren Sie jeden Workflow mit definierten Phasen
+
+## Beste Praktiken
+
+### Organisieren Sie Ihre Phasen
+
+* **Phasen begrenzen**: 5-7 Phasen sind ideal für die Übersichtlichkeit
+* **Klare Benennung**: Verwenden Sie aussagekräftige Phasennamen
+* **Logische Reihenfolge**: Ordnen Sie Phasen in Prozessreihenfolge an
+
+### Kartendarstellung optimieren
+
+* **Schlüsselfelder anzeigen**: Zeigen Sie nur die wichtigsten Informationen an
+* **Kompaktansicht verwenden**: Für Übersichten auf hoher Ebene
+* **Farbkodierung**: Nutzen Sie Phasenfarben, um den Status schnell zu erkennen
+
+### Datenqualität sicherstellen
+
+* **Regelmäßig aktualisieren**: Sorgen Sie dafür, dass Karten durch die Phasen fortschreiten
+* **Abgeschlossenes archivieren**: Verschieben Sie geschlossene Elemente aus der aktiven Ansicht
+* **Veraltete Karten prüfen**: Fassen Sie bei Karten nach, die in Phasen feststecken

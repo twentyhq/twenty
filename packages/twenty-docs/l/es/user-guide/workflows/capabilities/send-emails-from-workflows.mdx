@@ -1,0 +1,168 @@
+---
+title: Enviar correos electrónicos desde flujos de trabajo
+description: Envía correos electrónicos personalizados automáticamente utilizando acciones de flujos de trabajo.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Envía correos electrónicos automáticamente cuando se produzcan eventos específicos en tu CRM—da la bienvenida a nuevos contactos, haz seguimiento de oportunidades o notifica a los miembros del equipo.
+
+## Prerrequisitos
+
+Antes de poder enviar correos electrónicos desde flujos de trabajo:
+
+1. Conecta una cuenta de correo electrónico en **Configuración → Cuentas**
+2. Asegúrate de que la cuenta tenga habilitados los permisos de envío
+
+## Flujo de trabajo de correo electrónico básico
+
+### Ejemplo: Correo de bienvenida para nuevos contactos
+
+**Objetivo**: Enviar un correo de bienvenida cuando se agregue una persona nueva al CRM.
+
+**Configuración**:
+
+1. **Crear flujo de trabajo**: Ve a **Configuración → Flujos de trabajo** y haz clic en **+ Nuevo flujo de trabajo**
+
+2. **Agregar disparador**: Selecciona **Se crea el registro** → **Personas**
+
+3. **Agregar la acción Enviar correo electrónico**:
+   * Haz clic en **+** para agregar una acción
+   * Selecciona **Enviar correo electrónico**
+   * Configura el correo electrónico:
+
+| Campo      | Valor                                  |
+| ---------- | -------------------------------------- |
+| **Para**   | `{{trigger.object.email}}`             |
+| **Asunto** | `Bienvenido a {{Your Company Name}}`   |
+| **Cuerpo** | `Hi {{trigger.object.firstName}}, ...` |
+
+4. **Probar y activar**: Prueba con un registro de ejemplo y luego actívalo
+
+## Uso de variables en correos electrónicos
+
+Haz referencia a datos de pasos anteriores usando la sintaxis `{{variable}}`:
+
+```text
+Hi {{trigger.object.firstName}},
+
+Thank you for connecting with us!
+
+Your company, {{trigger.object.company.name}}, is now in our system.
+
+Best regards,
+The Team
+```
+
+### Variables disponibles de los disparadores
+
+| Tipo de disparador              | Variables comunes                      |
+| ------------------------------- | -------------------------------------- |
+| **Registro creado/actualizado** | `{{trigger.object.fieldName}}`         |
+| **Manual**                      | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                     | `{{trigger.body.fieldName}}`           |
+
+## Avanzado: correos electrónicos condicionales
+
+### Ejemplo: Correos diferentes según el origen del lead
+
+**Objetivo**: Enviar correos de bienvenida diferentes según de dónde provenga el lead.
+
+**Configuración**:
+
+1. **Disparador**: Se crea el registro (Personas)
+
+2. **Agregar la acción de filtro**:
+   * Condición: `{{trigger.object.source}}` es igual a `"Website"`
+   * Si es verdadero → continúa al correo de bienvenida del sitio web
+
+3. **Rama para otras fuentes**:
+   * Crea ramas paralelas para diferentes fuentes
+   * Cada rama tiene su propia acción Enviar correo electrónico
+
+## Envío de correos electrónicos a múltiples destinatarios
+
+### Ejemplo: Notificar al equipo cuando se cierre una oportunidad
+
+**Objetivo**: Enviar un correo al representante de ventas y a su gerente cuando se gane una oportunidad.
+
+**Configuración**:
+
+1. **Disparador**: Se actualiza el registro (Oportunidades, Etapa = "Cerrado Ganado")
+
+2. **Buscar registros**: Busca al gerente del propietario de la oportunidad
+
+3. **Enviar correo electrónico #1**: Al propietario de la oportunidad
+   * Para: `{{trigger.object.owner.email}}`
+   * Asunto: `Congratulations on closing {{trigger.object.name}}!`
+
+4. **Enviar correo electrónico #2**: Al gerente
+   * Para: `{{searchRecords.manager.email}}`
+   * Asunto: `Deal Won: {{trigger.object.name}}`
+
+## Correos de seguimiento programados
+
+### Ejemplo: Hacer seguimiento 3 días después de la reunión
+
+**Objetivo**: Enviar un correo de seguimiento 3 días después de registrar una reunión.
+
+**Configuración**:
+
+1. **Disparador**: Se crea el registro (Actividades, Tipo = "Reunión")
+
+2. **Acción de retraso**: Espera 3 días
+
+3. **Enviar correo electrónico**:
+   * Para: Asistente a la reunión
+   * Asunto: Seguimiento de nuestra conversación
+   * Cuerpo: Consulta los detalles de la reunión a partir del disparador
+
+## Archivos adjuntos de correo electrónico
+
+Puedes adjuntar archivos a los correos electrónicos enviados desde los flujos de trabajo. El archivo adjunto es un archivo estático que cargas al configurar el flujo de trabajo.
+
+### Cómo añadir un archivo adjunto
+
+1. En la acción **Enviar correo electrónico**, haz clic en el botón **Archivos adjuntos**
+2. Haz clic para cargar un archivo desde tu equipo
+3. El archivo se adjuntará a todos los correos electrónicos enviados por esta acción
+
+### Casos de Uso Comunes
+
+| Caso de uso                     | Archivo de ejemplo                       |
+| ------------------------------- | ---------------------------------------- |
+| **Correos de bienvenida**       | Folleto de la empresa (PDF)              |
+| **Secuencias de incorporación** | Guía de primeros pasos                   |
+| **Seguimientos de ventas**      | Catálogo de productos o lista de precios |
+| **Confirmaciones de eventos**   | Detalles o agenda del evento             |
+
+<Note>
+  Los archivos adjuntos son estáticos—se envía el mismo archivo a todos los destinatarios. Para documentos dinámicos (como presupuestos personalizados), genera y adjunta archivos usando una [Función lógica](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+</Note>
+
+## Mejores prácticas
+
+### Contenido del correo electrónico
+
+* Mantén las líneas de asunto concisas y relevantes
+* Personaliza con el nombre del destinatario
+* Incluye una llamada a la acción clara
+* Prueba los correos antes de activar
+
+### Entregabilidad
+
+* No envíes demasiados correos demasiado rápido
+* Usa firmas de correo profesionales
+* Evita palabras que activan filtros de spam
+* Asegúrate de incluir opciones para darse de baja en los correos de marketing
+
+### Solución de Problemas
+
+* Verifica que la cuenta de correo esté conectada y activa
+* Comprueba que la dirección de correo del destinatario sea válida
+* Revisa las ejecuciones del flujo de trabajo para ver mensajes de error
+* Prueba primero con tu propia dirección de correo electrónico
+
+## Relacionado
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)

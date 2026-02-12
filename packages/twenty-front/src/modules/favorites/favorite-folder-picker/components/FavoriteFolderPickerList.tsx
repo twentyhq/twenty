@@ -4,6 +4,7 @@ import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 const StyledItemsContainer = styled.div`
@@ -26,6 +27,7 @@ export const FavoriteFolderPickerList = ({
   folders,
   toggleFolderSelection,
 }: FavoriteFolderPickerListProps) => {
+  const { t } = useLingui();
   const [favoriteFoldersSearchFilter] = useRecoilComponentState(
     favoriteFolderSearchFilterComponentState,
   );
@@ -51,7 +53,7 @@ export const FavoriteFolderPickerList = ({
           key={`menu-${NO_FOLDER_ID}`}
           onSelectChange={() => toggleFolderSelection(NO_FOLDER_ID)}
           selected={favoriteFolderPickerChecked.includes(NO_FOLDER_ID)}
-          text="No folder"
+          text={t`No folder`}
           className="no-folder-menu-item-multi-select"
         />
       )}
@@ -68,7 +70,7 @@ export const FavoriteFolderPickerList = ({
               className="folder-menu-item-multi-select"
             />
           ))
-        : !showNoFolderOption && <MenuItem text="No folders found" />}
+        : !showNoFolderOption && <MenuItem text={t`No folders found`} />}
     </StyledItemsContainer>
   );
 };

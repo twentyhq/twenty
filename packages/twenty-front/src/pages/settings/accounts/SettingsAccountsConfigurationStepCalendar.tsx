@@ -7,7 +7,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconDeviceFloppy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 type SettingsAccountsConfigurationStepCalendarProps = {
@@ -46,8 +46,8 @@ export const SettingsAccountsConfigurationStepCalendar = ({
       ]}
       actionButton={
         <Button
-          Icon={IconPlus}
-          title={t`Add account`}
+          Icon={IconDeviceFloppy}
+          title={t`Finish Setup`}
           accent="blue"
           size="small"
           variant="primary"

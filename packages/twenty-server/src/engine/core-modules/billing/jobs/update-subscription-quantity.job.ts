@@ -2,13 +2,14 @@
 
 import { Logger, Scope } from '@nestjs/common';
 
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
 
 @Processor({
@@ -19,43 +20,42 @@ export class UpdateSubscriptionQuantityJob {
   protected readonly logger = new Logger(UpdateSubscriptionQuantityJob.name);
 
   constructor(
-    private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   @Process(UpdateSubscriptionQuantityJob.name)
   async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        data.workspaceId,
-        'workspaceMember',
-      );
+    const authContext = buildSystemAuthContext(data.workspaceId);
 
-    const workspaceMembersCount = await workspaceMemberRepository.count();
-
-    if (!workspaceMembersCount || workspaceMembersCount <= 0) {
-      return;
-    }
-
-    try {
-      const billingBaseProductSubscriptionItem =
-        await this.billingSubscriptionService.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           data.workspaceId,
+          'workspaceMember',
         );
 
-      await this.stripeSubscriptionItemService.updateSubscriptionItem(
-        billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
-        { quantity: workspaceMembersCount },
-      );
+      const workspaceMembersCount = await workspaceMemberRepository.count();
 
-      this.logger.log(
-        `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
-      );
-    } catch (e) {
-      this.logger.warn(
-        `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
-      );
-    }
+      if (!workspaceMembersCount || workspaceMembersCount <= 0) {
+        return;
+      }
+
+      try {
+        await this.billingSubscriptionUpdateService.changeSeats(
+          data.workspaceId,
+          workspaceMembersCount,
+        );
+
+        this.logger.log(
+          `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
+        );
+      } catch (e) {
+        this.logger.warn(
+          `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
+        );
+      }
+    }, authContext);
   }
 }

@@ -23,7 +23,7 @@ export const MemberNameFields = ({
         instanceId={firstNameInstanceId}
         label={t`First Name`}
         value={firstName}
-        placeholder="Tim"
+        placeholder={t`Tim`}
         onChange={(value) => {
           onChange('firstName', value);
         }}
@@ -33,7 +33,7 @@ export const MemberNameFields = ({
         instanceId={lastNameInstanceId}
         label={t`Last name`}
         value={lastName}
-        placeholder="Cook"
+        placeholder={t`Cook`}
         onChange={(value) => {
           onChange('lastName', value);
         }}

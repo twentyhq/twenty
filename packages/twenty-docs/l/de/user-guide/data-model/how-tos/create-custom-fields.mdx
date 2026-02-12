@@ -1,0 +1,72 @@
+---
+title: Benutzerdefinierte Felder erstellen
+description: Schritt-für-Schritt-Anleitung zum Hinzufügen benutzerdefinierter Felder zu jedem Objekt.
+---
+
+Benutzerdefinierte Felder ermöglichen es Ihnen, Informationen zu erfassen, die spezifisch für Ihr Unternehmen sind. Fügen Sie sie zu jedem Objekt hinzu – ob Standard- oder benutzerdefiniert.
+
+## Schritte
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das Objekt aus, dem Sie ein Feld hinzufügen möchten
+3. Klicken Sie auf **+ Feld hinzufügen**
+4. Wählen Sie einen **Feldtyp** (siehe [Felder](/l/de/user-guide/data-model/capabilities/fields) für alle Typen)
+5. Geben Sie den **Feldnamen** und eine optionale Beschreibung ein
+6. Konfigurieren Sie feldspezifische Einstellungen (siehe unten)
+7. Klicken Sie auf **Speichern**
+
+**Schnellmethode:** Klicken Sie in einer beliebigen Tabellenansicht am Ende der Spaltenüberschriften auf **+** → **Felder anpassen**.
+
+## Feld in Ansichten anzeigen
+
+Neue Felder sind nicht automatisch sichtbar. Zum Anzeigen:
+
+1. Öffnen Sie die Tabellenansicht des Objekts
+2. Klicken Sie auf **Optionen → Felder**
+3. Klicken Sie auf das **Augensymbol** neben Ihrem Feld, um es anzuzeigen
+4. Ziehen, um neu anzuordnen
+
+## Konfigurationsoptionen
+
+### Für Auswahl / Mehrfachauswahl
+
+1. Klicken Sie auf **+ Option hinzufügen**, um Optionen zu erstellen
+2. Legen Sie bei Bedarf eine **Standardoption** fest
+3. Ziehen, um Optionen neu anzuordnen
+
+<Note>
+  **Verwenden Sie für Importe API-Namen.** Aktivieren Sie in den Einstellungen den **Erweiterten Modus**, um API-Namen anzuzeigen. Siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### Für Währungsfelder
+
+Legen Sie die **Standardwährung** fest (USD, EUR usw.) für neue Datensätze.
+
+### Für Telefonfelder
+
+Legen Sie den **Standard-Ländercode** fest, der für neue Telefonnummern vorausgefüllt wird.
+
+### Ein Feld eindeutig machen
+
+Schalten Sie **Eindeutig** ein, um doppelte Werte über alle Datensätze hinweg zu verhindern.
+
+<Note>
+  Wenn Duplikate vorhanden sind (auch in gelöschten Datensätzen), erhalten Sie eine Fehlermeldung. Bereinigen Sie Duplikate zuerst.
+</Note>
+
+### Standardwerte festlegen
+
+Für Auswahlfelder können Sie festlegen, welche Option bei neuen Datensätzen vorausgewählt ist. Für Kontrollkästchenfelder legen Sie fest, ob diese standardmäßig aktiviert oder deaktiviert sind.
+
+## Ein Feld deaktivieren
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Suchen Sie das Feld
+3. Klicken Sie auf **⋮ → Deaktivieren**
+
+Daten bleiben erhalten. Sie können später reaktivieren oder dauerhaft löschen.
+
+## Verwandt
+
+* [Felder](/l/de/user-guide/data-model/capabilities/fields) — alle Feldtypen erklärt
+* [Datenmodell-FAQ](/l/de/user-guide/data-model/how-tos/data-model-faq) — häufige Fragen

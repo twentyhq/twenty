@@ -1,0 +1,231 @@
+---
+title: Fırsatların her aşamada ne kadar süre kaldığını izleyin
+description: Fırsatların her aşamaya ne zaman girdiğini izleyerek anlaşma hızını takip edin.
+---
+
+<Tip>
+  Bu, İş Akışları kullanılarak [Formül Alanları](/l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields) oluşturmaya bir örnektir — özellikle tarih hesaplamaları.
+</Tip>
+
+Fırsatların her aşamaya ne zaman girdiğini izlemeniz darboğazları belirlemenize ve anlaşma hızını ölçmenize yardımcı olur.
+
+Bu kılavuz, bir fırsatın her aşamaya ne zaman geçtiğini otomatik olarak kaydetmek ve önceki aşamada kaç gün geçirdiğini hesaplamak için özel alanlar ve bir İş Akışı yapılandırma adımlarında size yol gösterir.
+
+## Adım 1: Özel Alanlar Oluşturun
+
+Her aşama için iki tür alana ihtiyacınız var:
+
+* **Tarih ve Saat alanları**: Fırsatın her aşamaya ne zaman girdiğini kaydedin
+* **Sayı alanları**: Fırsatın her aşamada kaç gün geçirdiğini saklayın
+
+### "Last Entered" Alanlarını Oluşturun
+
+1. **Ayarlar → Veri Modeli → Fırsatlar** bölümüne gidin
+2. Her aşama için **+ Alan Ekle**'ye tıklayın ve yapılandırın:
+   * **Ad**: Last Entered [Aşama Adı] (örn. "Last Entered New", "Last Entered Qualified")
+   * **Tür**: Tarih ve Saat
+   * **Açıklama**: Fırsatın bu aşamaya girdiği zaman damgası
+3. **Kaydet**'e tıklayın
+
+Bu alanları oluşturun:
+
+* Last Entered New
+* Last Entered Qualified
+* Last Entered Meeting
+* Last Entered Proposal
+* Last Entered Negotiation
+* Last Entered Closed Won
+* Last Entered Closed Lost
+
+### "Days in Stage" Alanlarını Oluşturun
+
+1. Her aşama için **+ Alan Ekle**'ye tıklayın ve yapılandırın:
+   * **Ad**: Days in [Aşama Adı] (örn. "Days in New", "Days in Qualified")
+   * **Tür**: Sayı
+   * **Açıklama**: Bu aşamada geçirilen gün sayısı
+2. **Kaydet**'e tıklayın
+
+Bu alanları oluşturun:
+
+* Days in New
+* Days in Qualified
+* Days in Meeting
+* Days in Proposal
+* Days in Negotiation
+
+<Note>
+  Closed Won ve Closed Lost için "Days in" alanlarına ihtiyaç yoktur; çünkü bunlar son aşamalardır.
+</Note>
+
+### İsteğe bağlı: Alanları Salt Okunur Yapın
+
+Bu hesaplanan alanların kullanıcılar tarafından manuel olarak düzenlenmesini istemiyorsanız:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Yapılandırılacak rolü seçin
+3. Fırsatlar nesnesini bulun
+4. "Last Entered" ve "Days in" alanlarını salt okunur yapın
+
+## Adım 2: İş Akışı Oluşturun
+
+Bu tek İş Akışı her iki görevi de gerçekleştirir:
+
+* Yeni bir aşamaya girildiğinde zaman damgasını kaydeder
+* Önceki aşamada geçirilen günleri hesaplar
+
+### İş Akışı Oluşturun
+
+1. **İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Aşama Süresini İzle" koyun
+
+### Tetikleyiciyi Yapılandırın
+
+1. **Kayıt Güncellendi** tetikleyicisi ekleyin
+2. **Nesne** olarak **Opportunities**'i seçin
+3. Şuna göre filtrele: **Stage** alanı güncellendi
+
+### Her Aşama için Dallar Ekleyin
+
+<Note>
+  Yeni bir dal oluşturmak için iş akışı tuvaline sağ tıklayın ve **New action**'a tıklayın. Ardından, önceki düğümden bu yeni eyleme oku sürükleyerek bu eylemi önceki düğüme bağlayın.
+</Note>
+
+---
+
+**Dal 1: Stage = New (ilk aşama)**
+
+Bu ilk aşama olduğundan yalnızca giriş zaman damgasını kaydediyoruz — hesaplanacak önceki bir aşama yok.
+
+1. **Filter** düğümü ekleyin: Stage = New
+2. **Code** eylemi ekleyin:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. **Update Record** eylemi ekleyin:
+   * Kayıt: Tetikleyen Opportunity
+   * Alan: Last Entered New
+   * Değer: Code düğümünden `now`
+
+---
+
+**Dal 2: Stage = Qualified**
+
+Qualified aşamasına geçerken, giriş zamanını kaydedin VE New aşamasında geçirilen günleri hesaplayın.
+
+1. **Filter** düğümü ekleyin: Stage = Qualified
+2. **Code** eylemi ekleyin:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Code düğümü girdisini yapılandırın: `lastEnteredPreviousStage` değerini **Last Entered New** alanına eşleyin
+4. **Update Record** eylemi ekleyin:
+   * Kayıt: Tetikleyen Opportunity
+   * Güncellenecek alanlar:
+     * Last Entered Qualified = `now`
+     * Days in New = `daysInPreviousStage`
+
+---
+
+**Dal 3: Stage = Meeting**
+
+Meeting aşamasına geçerken, giriş zamanını kaydedin VE Qualified aşamasında geçirilen günleri hesaplayın.
+
+1. **Filter** düğümü ekleyin: Stage = Meeting
+2. **Code** eylemi ekleyin:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Code düğümü girdisini yapılandırın: `lastEnteredPreviousStage` değerini **Last Entered Qualified** alanına eşleyin
+4. **Update Record** eylemi ekleyin:
+   * Kayıt: Tetikleyen Opportunity
+   * Güncellenecek alanlar:
+     * Last Entered Meeting = `now`
+     * Days in Qualified = `daysInPreviousStage`
+
+---
+
+**Kalan aşamalar için devam edin:**
+
+| Aşama       | Kayıtlar                 | Hesaplar            |
+| ----------- | ------------------------ | ------------------- |
+| Proposal    | Last Entered Proposal    | Days in Meeting     |
+| Negotiation | Last Entered Negotiation | Days in Proposal    |
+| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
+| Closed Lost | Last Entered Closed Lost | Days in Negotiation |
+
+Dalların yeniden birleşmesine gerek yoktur—her biri, aşama koşulu karşılandığında bağımsız olarak çalışır.
+
+## Adım 3: Aşamadaki Süreyi Analiz Edin
+
+Zaman damgaları ve gün sayıları kaydedildiğinde artık anlaşma hızını analiz edebilirsiniz.
+
+### "Yavaş Anlaşmalar" Görünümü Oluşturun
+
+1. Fırsatlar için bir Tablo görünümü oluşturun
+2. Sütunları ekleyin: Ad, Aşama, Days in [önceki aşama], Tutar
+3. "Days in" alanına göre sırala (azalan)
+4. Aynı anda tek bir aşamaya odaklanmak için Aşama'ya göre filtreleyin
+
+Üstteki anlaşmalar önceki aşamada en fazla zamanı geçirmiştir.
+
+### Toplamaları Kullanın
+
+Boru hattı Kanban görünümünüzde:
+
+1. Bir Aşama adının yanındaki sayıya tıklayın
+2. **Average**'ı seçin
+3. Bir "Days in" alanı seçin
+
+Bu, anlaşmaların her aşamada harcadığı ortalama süreyi gösterir.
+
+## Özet
+
+| Bileşen                      | Amaç                                                    |
+| ---------------------------- | ------------------------------------------------------- |
+| **Last Entered alanları**    | Fırsatın her aşamaya ne zaman girdiğini saklar          |
+| **Days in alanları**         | Her aşamada kaç gün geçirildiğini saklar                |
+| **İş Akışı**                 | Zaman damgasını kaydeder VE tek adımda günleri hesaplar |
+| **Görünümler ve Toplamalar** | Anlaşma hızını analiz edin ve darboğazları belirleyin   |
+
+## İlgili
+
+* [İş Akışları](/l/tr/user-guide/workflows/overview) — otomasyon temelleri
+* [Özel Alanlar Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-custom-fields) — alan yapılandırma
+* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — toplamalar

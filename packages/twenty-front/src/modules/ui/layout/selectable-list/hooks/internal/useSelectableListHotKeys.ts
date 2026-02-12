@@ -50,15 +50,18 @@ export const useSelectableListHotKeys = (
         const currentPosition = findPosition(selectableItemIds, selectedItemId);
 
         const computeNextId = (direction: Direction) => {
+          if (
+            selectableItemIds.length === 0 ||
+            selectableItemIds[0]?.length === 0
+          ) {
+            return;
+          }
+
           if (!selectedItemId || !currentPosition) {
             return selectableItemIds[0][0];
           }
 
           const { row: currentRow, col: currentCol } = currentPosition;
-
-          if (selectableItemIds.length === 0) {
-            return;
-          }
 
           const isSingleRow = selectableItemIds.length === 1;
 

@@ -13,7 +13,7 @@ import {
   mockId,
   mockWorkspaceMember,
   mocks,
-} from '../__mocks__/useFavorites';
+} from '@/favorites/hooks/__mocks__/useFavorites';
 
 jest.mock('uuid', () => ({
   v4: () => mockId,

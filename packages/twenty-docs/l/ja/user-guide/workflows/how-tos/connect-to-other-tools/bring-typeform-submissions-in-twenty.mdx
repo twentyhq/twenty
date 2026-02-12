@@ -1,0 +1,130 @@
+---
+title: Typeform の回答を Twenty に取り込む
+description: Typeform の webhook ペイロードを処理して、フォームの回答からリードを作成します。
+---
+
+標準的な webhook 設定については、[Webhook トリガーを設定](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)を参照してください。 本記事では、Typeform のカスタムペイロード構造に必要となる特有の処理について説明します。
+
+### ステップ 1: Webhook ワークフローを作成
+
+1. 「**Settings → Workflows**」に移動
+2. 「**+ New Workflow**」をクリック
+3. トリガーとして「**Webhook**」を選択します
+4. webhook URL をコピーします
+
+### ステップ 2: Typeform を設定
+
+1. Typeform でフォームを開く
+2. 「**Connect → Webhooks**」に移動
+3. Twenty の webhook URL を貼り付けます
+4. 保存
+
+### ステップ 3: Typeform のペイロードを理解する
+
+Typeform は入れ子の JSON 構造を送信します。 簡略化した例はこちら：
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+重要なポイント：
+
+* フォームデータは `form_response` の下に入れ子になっています
+* **回答は配列として返され**、名前付きフィールドではありません
+* 各回答には参照用にフィールドの種類とタイトルが含まれます
+
+### ステップ 4: answers 配列からフィールドを抽出する
+
+`answers` は配列のため、後続ステップでは配列全体しか選択できず、個別のフィールドは選択できません。 必要なフィールドを抽出するために「**Code**」アクションを追加します:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+以降のステップでは、変数ピッカーから `contact.firstName` や `contact.email` のような個別フィールドを選択できるようになります。
+
+<Tip>
+  配列の扱いの詳細については、[Code アクションで配列を扱う](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)を参照してください。
+</Tip>
+
+### ステップ 5: レコードを作成
+
+「**Create Record**」アクションを追加します:
+
+| フィールド      | 値                                       |
+| ---------- | --------------------------------------- |
+| **オブジェクト** | 人物                                      |
+| **名**      | `{{code.contact.firstName}}`            |
+| **姓**      | `{{code.contact.lastName}}`             |
+| **メール**    | `{{code.contact.email}}`                |
+| **会社**     | `{{code.contact.company}}` に基づいて検索または作成 |
+
+### ステップ 6: テストして有効化
+
+1. Typeform でテスト回答を送信
+2. ワークフローの実行を確認し、データが取り込まれたことを検証
+3. ワークフローを有効化します
+
+## 関連
+
+* [Webhook トリガーを設定](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Code アクションで配列を扱う](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

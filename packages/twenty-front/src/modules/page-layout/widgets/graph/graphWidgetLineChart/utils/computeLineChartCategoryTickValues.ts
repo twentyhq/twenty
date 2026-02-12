@@ -1,16 +1,19 @@
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
-import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
+import { isNumber, isString } from '@sniptt/guards';
 
-const LINE_CHART_MARGIN_LEFT = 70;
-const LINE_CHART_MARGIN_RIGHT = 20;
-const LINE_CHART_MINIMUM_WIDTH_PER_TICK = 100;
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
+import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 
 export const computeLineChartCategoryTickValues = ({
   width,
   data,
+  marginLeft,
+  marginRight,
 }: {
   width: number;
-  data: LineChartSeries[];
+  data: LineChartSeriesWithColor[];
+  marginLeft: number;
+  marginRight: number;
 }): (string | number)[] => {
   if (data.length === 0 || data[0].data.length === 0) {
     return [];
@@ -18,17 +21,18 @@ export const computeLineChartCategoryTickValues = ({
 
   const values = data[0].data.map((point) => {
     const value = point.x;
-    return typeof value === 'number' || typeof value === 'string'
-      ? value
-      : String(value);
+    return isNumber(value) || isString(value) ? value : String(value);
   });
 
-  const availableWidth =
-    width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT);
+  const availableWidth = width - (marginLeft + marginRight);
+
+  const dataPointCount = data[0].data.length;
+  const widthPerTick = dataPointCount > 0 ? availableWidth / dataPointCount : 0;
 
   return computeChartCategoryTickValues({
     availableSize: availableWidth,
-    minimumSizePerTick: LINE_CHART_MINIMUM_WIDTH_PER_TICK,
+    minimumSizePerTick: LINE_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
+    widthPerTick,
   });
 };

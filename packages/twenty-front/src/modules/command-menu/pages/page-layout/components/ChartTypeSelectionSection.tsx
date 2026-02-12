@@ -1,8 +1,9 @@
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { FeatureFlagKey, GraphType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { t } from '@lingui/core/macro';
 import { MenuPicker } from 'twenty-ui/navigation';
 

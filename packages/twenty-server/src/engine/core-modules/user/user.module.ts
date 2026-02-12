@@ -6,6 +6,8 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -13,6 +15,7 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
 import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -22,8 +25,8 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
-import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
+import { GlobalWorkspaceMemberListener } from 'src/engine/core-modules/user/services/global-workspace-member.listener';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -53,8 +56,15 @@ import { UserService } from './services/user.service';
     PermissionsModule,
     EmailVerificationModule,
     WorkspaceDomainsModule,
+    WorkspaceCacheModule,
   ],
   exports: [UserService, WorkspaceMemberTranspiler],
-  providers: [UserService, UserResolver, WorkspaceMemberTranspiler],
+  providers: [
+    UserService,
+    UserResolver,
+    WorkspaceMemberTranspiler,
+    WorkspaceFlatWorkspaceMemberMapCacheService,
+    GlobalWorkspaceMemberListener,
+  ],
 })
 export class UserModule {}

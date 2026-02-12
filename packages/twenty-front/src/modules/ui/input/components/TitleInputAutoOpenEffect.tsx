@@ -5,26 +5,26 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { isDefined } from 'twenty-shared/utils';
 
 type TitleInputAutoOpenEffectProps = {
-  shouldOpen?: boolean;
+  shouldFocus?: boolean;
   isOpened: boolean;
   disabled?: boolean;
   instanceId: string;
-  onOpen?: () => void;
+  onFocus?: () => void;
   setIsOpened: (isOpened: boolean) => void;
 };
 
 export const TitleInputAutoOpenEffect = ({
-  shouldOpen,
+  shouldFocus,
   isOpened,
   disabled,
   instanceId,
-  onOpen,
+  onFocus,
   setIsOpened,
 }: TitleInputAutoOpenEffectProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   useEffect(() => {
-    if (isDefined(shouldOpen) && shouldOpen && !isOpened && !disabled) {
+    if (isDefined(shouldFocus) && shouldFocus && !isOpened && !disabled) {
       setIsOpened(true);
       pushFocusItemToFocusStack({
         focusId: instanceId,
@@ -36,15 +36,15 @@ export const TitleInputAutoOpenEffect = ({
           enableGlobalHotkeysConflictingWithKeyboard: false,
         },
       });
-      onOpen?.();
+      onFocus?.();
     }
   }, [
-    shouldOpen,
+    shouldFocus,
     isOpened,
     disabled,
     instanceId,
     pushFocusItemToFocusStack,
-    onOpen,
+    onFocus,
     setIsOpened,
   ]);
 

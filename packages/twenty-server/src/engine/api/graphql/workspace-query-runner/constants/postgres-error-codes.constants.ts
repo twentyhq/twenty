@@ -1,263 +1,262 @@
 // From https://www.postgresql.org/docs/current/errcodes-appendix.html
-export const POSTGRESQL_ERROR_CODES = [
-  '00000', // successful_completion
-  '01000', // warning
-  '0100C', // dynamic_result_sets_returned
-  '01008', // implicit_zero_bit_padding
-  '01003', // null_value_eliminated_in_set_function
-  '01007', // privilege_not_granted
-  '01006', // privilege_not_revoked
-  '01004', // string_data_right_truncation
-  '01P01', // deprecated_feature
-  '02000', // no_data
-  '02001', // no_additional_dynamic_result_sets_returned
-  '03000', // sql_statement_not_yet_complete
-  '08000', // connection_exception
-  '08003', // connection_does_not_exist
-  '08006', // connection_failure
-  '08001', // sqlclient_unable_to_establish_sqlconnection
-  '08004', // sqlserver_rejected_establishment_of_sqlconnection
-  '08007', // transaction_resolution_unknown
-  '08P01', // protocol_violation
-  '09000', // triggered_action_exception
-  '0A000', // feature_not_supported
-  '0B000', // invalid_transaction_initiation
-  '0F000', // locator_exception
-  '0F001', // invalid_locator_specification
-  '0L000', // invalid_grantor
-  '0LP01', // invalid_grant_operation
-  '0P000', // invalid_role_specification
-  '0Z000', // diagnostics_exception
-  '0Z002', // stacked_diagnostics_accessed_without_active_handler
-  '20000', // case_not_found
-  '21000', // cardinality_violation
-  '22000', // data_exception
-  '2202E', // array_subscript_error
-  '22021', // character_not_in_repertoire
-  '22008', // datetime_field_overflow
-  '22012', // division_by_zero
-  '22005', // error_in_assignment
-  '2200B', // escape_character_conflict
-  '22022', // indicator_overflow
-  '22015', // interval_field_overflow
-  '2201E', // invalid_argument_for_logarithm
-  '22014', // invalid_argument_for_ntile_function
-  '22016', // invalid_argument_for_nth_value_function
-  '2201F', // invalid_argument_for_power_function
-  '2201G', // invalid_argument_for_width_bucket_function
-  '22018', // invalid_character_value_for_cast
-  '22007', // invalid_datetime_format
-  '22019', // invalid_escape_character
-  '2200D', // invalid_escape_octet
-  '22025', // invalid_escape_sequence
-  '22P06', // nonstandard_use_of_escape_character
-  '22010', // invalid_indicator_parameter_value
-  '22023', // invalid_parameter_value
-  '22013', // invalid_preceding_or_following_size
-  '2201B', // invalid_regular_expression
-  '2201W', // invalid_row_count_in_limit_clause
-  '2201X', // invalid_row_count_in_result_offset_clause
-  '2202H', // invalid_tablesample_argument
-  '2202G', // invalid_tablesample_repeat
-  '22009', // invalid_time_zone_displacement_value
-  '2200C', // invalid_use_of_escape_character
-  '2200G', // most_specific_type_mismatch
-  '22004', // null_value_not_allowed
-  '22002', // null_value_no_indicator_parameter
-  '22003', // numeric_value_out_of_range
-  '2200H', // sequence_generator_limit_exceeded
-  '22026', // string_data_length_mismatch
-  '22001', // string_data_right_truncation
-  '22011', // substring_error
-  '22027', // trim_error
-  '22024', // unterminated_c_string
-  '2200F', // zero_length_character_string
-  '22P01', // floating_point_exception
-  '22P02', // invalid_text_representation
-  '22P03', // invalid_binary_representation
-  '22P04', // bad_copy_file_format
-  '22P05', // untranslatable_character
-  '2200L', // not_an_xml_document
-  '2200M', // invalid_xml_document
-  '2200N', // invalid_xml_content
-  '2200S', // invalid_xml_comment
-  '2200T', // invalid_xml_processing_instruction
-  '22030', // duplicate_json_object_key_value
-  '22031', // invalid_argument_for_sql_json_datetime_function
-  '22032', // invalid_json_text
-  '22033', // invalid_sql_json_subscript
-  '22034', // more_than_one_sql_json_item
-  '22035', // no_sql_json_item
-  '22036', // non_numeric_sql_json_item
-  '22037', // non_unique_keys_in_a_json_object
-  '22038', // singleton_sql_json_item_required
-  '22039', // sql_json_array_not_found
-  '2203A', // sql_json_member_not_found
-  '2203B', // sql_json_number_not_found
-  '2203C', // sql_json_object_not_found
-  '2203D', // too_many_json_array_elements
-  '2203E', // too_many_json_object_members
-  '2203F', // sql_json_scalar_required
-  '2203G', // sql_json_item_cannot_be_cast_to_target_type
-  '23000', // integrity_constraint_violation
-  '23001', // restrict_violation
-  '23502', // not_null_violation
-  '23503', // foreign_key_violation
-  '23505', // unique_violation
-  '23514', // check_violation
-  '23P01', // exclusion_violation
-  '24000', // invalid_cursor_state
-  '25000', // invalid_transaction_state
-  '25001', // active_sql_transaction
-  '25002', // branch_transaction_already_active
-  '25008', // held_cursor_requires_same_isolation_level
-  '25003', // inappropriate_access_mode_for_branch_transaction
-  '25004', // inappropriate_isolation_level_for_branch_transaction
-  '25005', // no_active_sql_transaction_for_branch_transaction
-  '25006', // read_only_sql_transaction
-  '25007', // schema_and_data_statement_mixing_not_supported
-  '25P01', // no_active_sql_transaction
-  '25P02', // in_failed_sql_transaction
-  '25P03', // idle_in_transaction_session_timeout
-  '25P04', // transaction_timeout
-  '26000', // invalid_sql_statement_name
-  '27000', // triggered_data_change_violation
-  '28000', // invalid_authorization_specification
-  '28P01', // invalid_password
-  '2B000', // dependent_privilege_descriptors_still_exist
-  '2BP01', // dependent_objects_still_exist
-  '2D000', // invalid_transaction_termination
-  '2F000', // sql_routine_exception
-  '2F005', // function_executed_no_return_statement
-  '2F002', // modifying_sql_data_not_permitted
-  '2F003', // prohibited_sql_statement_attempted
-  '2F004', // reading_sql_data_not_permitted
-  '34000', // invalid_cursor_name
-  '38000', // external_routine_exception
-  '38001', // containing_sql_not_permitted
-  '38002', // modifying_sql_data_not_permitted
-  '38003', // prohibited_sql_statement_attempted
-  '38004', // reading_sql_data_not_permitted
-  '39000', // external_routine_invocation_exception
-  '39001', // invalid_sqlstate_returned
-  '39004', // null_value_not_allowed
-  '39P01', // trigger_protocol_violated
-  '39P02', // srf_protocol_violated
-  '39P03', // event_trigger_protocol_violated
-  '3B000', // savepoint_exception
-  '3B001', // invalid_savepoint_specification
-  '3D000', // invalid_catalog_name
-  '3F000', // invalid_schema_name
-  '40000', // transaction_rollback
-  '40002', // transaction_integrity_constraint_violation
-  '40001', // serialization_failure
-  '40003', // statement_completion_unknown
-  '40P01', // deadlock_detected
-  '42000', // syntax_error_or_access_rule_violation
-  '42601', // syntax_error
-  '42501', // insufficient_privilege
-  '42846', // cannot_coerce
-  '42803', // grouping_error
-  '42P20', // windowing_error
-  '42P19', // invalid_recursion
-  '42830', // invalid_foreign_key
-  '42602', // invalid_name
-  '42622', // name_too_long
-  '42939', // reserved_name
-  '42804', // datatype_mismatch
-  '42P18', // indeterminate_datatype
-  '42P21', // collation_mismatch
-  '42P22', // indeterminate_collation
-  '42809', // wrong_object_type
-  '428C9', // generated_always
-  '42703', // undefined_column
-  '42883', // undefined_function
-  '42P01', // undefined_table
-  '42P02', // undefined_parameter
-  '42704', // undefined_object
-  '42701', // duplicate_column
-  '42P03', // duplicate_cursor
-  '42P04', // duplicate_database
-  '42723', // duplicate_function
-  '42P05', // duplicate_prepared_statement
-  '42P06', // duplicate_schema
-  '42P07', // duplicate_table
-  '42712', // duplicate_alias
-  '42710', // duplicate_object
-  '42702', // ambiguous_column
-  '42725', // ambiguous_function
-  '42P08', // ambiguous_parameter
-  '42P09', // ambiguous_alias
-  '42P10', // invalid_column_reference
-  '42611', // invalid_column_definition
-  '42P11', // invalid_cursor_definition
-  '42P12', // invalid_database_definition
-  '42P13', // invalid_function_definition
-  '42P14', // invalid_prepared_statement_definition
-  '42P15', // invalid_schema_definition
-  '42P16', // invalid_table_definition
-  '42P17', // invalid_object_definition
-  '44000', // with_check_option_violation
-  '53000', // insufficient_resources
-  '53100', // disk_full
-  '53200', // out_of_memory
-  '53300', // too_many_connections
-  '53400', // configuration_limit_exceeded
-  '54000', // program_limit_exceeded
-  '54001', // statement_too_complex
-  '54011', // too_many_columns
-  '54023', // too_many_arguments
-  '55000', // object_not_in_prerequisite_state
-  '55006', // object_in_use
-  '55P02', // cant_change_runtime_param
-  '55P03', // lock_not_available
-  '55P04', // unsafe_new_enum_value_usage
-  '57000', // operator_intervention
-  '57014', // query_canceled
-  '57P01', // admin_shutdown
-  '57P02', // crash_shutdown
-  '57P03', // cannot_connect_now
-  '57P04', // database_dropped
-  '57P05', // idle_session_timeout
-  '58000', // system_error
-  '58030', // io_error
-  '58P01', // undefined_file
-  '58P02', // duplicate_file
-  'F0000', // config_file_error
-  'F0001', // lock_file_exists
-  'HV000', // fdw_error
-  'HV005', // fdw_column_name_not_found
-  'HV002', // fdw_dynamic_parameter_value_needed
-  'HV010', // fdw_function_sequence_error
-  'HV021', // fdw_inconsistent_descriptor_information
-  'HV024', // fdw_invalid_attribute_value
-  'HV007', // fdw_invalid_column_name
-  'HV008', // fdw_invalid_column_number
-  'HV004', // fdw_invalid_data_type
-  'HV006', // fdw_invalid_data_type_descriptors
-  'HV091', // fdw_invalid_descriptor_field_identifier
-  'HV00B', // fdw_invalid_handle
-  'HV00C', // fdw_invalid_option_index
-  'HV00D', // fdw_invalid_option_name
-  'HV090', // fdw_invalid_string_length_or_buffer_length
-  'HV00A', // fdw_invalid_string_format
-  'HV009', // fdw_invalid_use_of_null_pointer
-  'HV014', // fdw_too_many_handles
-  'HV001', // fdw_out_of_memory
-  'HV00P', // fdw_no_schemas
-  'HV00J', // fdw_option_name_not_found
-  'HV00K', // fdw_reply_handle
-  'HV00Q', // fdw_schema_not_found
-  'HV00R', // fdw_table_not_found
-  'HV00L', // fdw_unable_to_create_execution
-  'HV00M', // fdw_unable_to_create_reply
-  'HV00N', // fdw_unable_to_establish_connection
-  'P0000', // plpgsql_error
-  'P0001', // raise_exception
-  'P0002', // no_data_found
-  'P0003', // too_many_rows
-  'P0004', // assert_failure
-  'XX000', // internal_error
-  'XX001', // data_corrupted
-  'XX002', // index_corrupted
-];
+export const POSTGRESQL_ERROR_CODES = {
+  SUCCESSFUL_COMPLETION: '00000',
+  WARNING: '01000',
+  DYNAMIC_RESULT_SETS_RETURNED: '0100C',
+  IMPLICIT_ZERO_BIT_PADDING: '01008',
+  NULL_VALUE_ELIMINATED_IN_SET_FUNCTION: '01003',
+  PRIVILEGE_NOT_GRANTED: '01007',
+  PRIVILEGE_NOT_REVOKED: '01006',
+  STRING_DATA_RIGHT_TRUNCATION: '01004',
+  DEPRECATED_FEATURE: '01P01',
+  NO_DATA: '02000',
+  NO_ADDITIONAL_DYNAMIC_RESULT_SETS_RETURNED: '02001',
+  SQL_STATEMENT_NOT_YET_COMPLETE: '03000',
+  CONNECTION_EXCEPTION: '08000',
+  CONNECTION_DOES_NOT_EXIST: '08003',
+  CONNECTION_FAILURE: '08006',
+  SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION: '08001',
+  SQLSERVER_REJECTED_ESTABLISHMENT_OF_SQLCONNECTION: '08004',
+  TRANSACTION_RESOLUTION_UNKNOWN: '08007',
+  PROTOCOL_VIOLATION: '08P01',
+  TRIGGERED_ACTION_EXCEPTION: '09000',
+  FEATURE_NOT_SUPPORTED: '0A000',
+  INVALID_TRANSACTION_INITIATION: '0B000',
+  LOCATOR_EXCEPTION: '0F000',
+  INVALID_LOCATOR_SPECIFICATION: '0F001',
+  INVALID_GRANTOR: '0L000',
+  INVALID_GRANT_OPERATION: '0LP01',
+  INVALID_ROLE_SPECIFICATION: '0P000',
+  DIAGNOSTICS_EXCEPTION: '0Z000',
+  STACKED_DIAGNOSTICS_ACCESSED_WITHOUT_ACTIVE_HANDLER: '0Z002',
+  CASE_NOT_FOUND: '20000',
+  CARDINALITY_VIOLATION: '21000',
+  DATA_EXCEPTION: '22000',
+  ARRAY_SUBSCRIPT_ERROR: '2202E',
+  CHARACTER_NOT_IN_REPERTOIRE: '22021',
+  DATETIME_FIELD_OVERFLOW: '22008',
+  DIVISION_BY_ZERO: '22012',
+  ERROR_IN_ASSIGNMENT: '22005',
+  ESCAPE_CHARACTER_CONFLICT: '2200B',
+  INDICATOR_OVERFLOW: '22022',
+  INTERVAL_FIELD_OVERFLOW: '22015',
+  INVALID_ARGUMENT_FOR_LOGARITHM: '2201E',
+  INVALID_ARGUMENT_FOR_NTILE_FUNCTION: '22014',
+  INVALID_ARGUMENT_FOR_NTH_VALUE_FUNCTION: '22016',
+  INVALID_ARGUMENT_FOR_POWER_FUNCTION: '2201F',
+  INVALID_ARGUMENT_FOR_WIDTH_BUCKET_FUNCTION: '2201G',
+  INVALID_CHARACTER_VALUE_FOR_CAST: '22018',
+  INVALID_DATETIME_FORMAT: '22007',
+  INVALID_ESCAPE_CHARACTER: '22019',
+  INVALID_ESCAPE_OCTET: '2200D',
+  INVALID_ESCAPE_SEQUENCE: '22025',
+  NONSTANDARD_USE_OF_ESCAPE_CHARACTER: '22P06',
+  INVALID_INDICATOR_PARAMETER_VALUE: '22010',
+  INVALID_PARAMETER_VALUE: '22023',
+  INVALID_PRECEDING_OR_FOLLOWING_SIZE: '22013',
+  INVALID_REGULAR_EXPRESSION: '2201B',
+  INVALID_ROW_COUNT_IN_LIMIT_CLAUSE: '2201W',
+  INVALID_ROW_COUNT_IN_RESULT_OFFSET_CLAUSE: '2201X',
+  INVALID_TABLESAMPLE_ARGUMENT: '2202H',
+  INVALID_TABLESAMPLE_REPEAT: '2202G',
+  INVALID_TIME_ZONE_DISPLACEMENT_VALUE: '22009',
+  INVALID_USE_OF_ESCAPE_CHARACTER: '2200C',
+  MOST_SPECIFIC_TYPE_MISMATCH: '2200G',
+  NULL_VALUE_NOT_ALLOWED: '22004',
+  NULL_VALUE_NO_INDICATOR_PARAMETER: '22002',
+  NUMERIC_VALUE_OUT_OF_RANGE: '22003',
+  SEQUENCE_GENERATOR_LIMIT_EXCEEDED: '2200H',
+  STRING_DATA_LENGTH_MISMATCH: '22026',
+  SUBSTRING_ERROR: '22011',
+  TRIM_ERROR: '22027',
+  UNTERMINATED_C_STRING: '22024',
+  ZERO_LENGTH_CHARACTER_STRING: '2200F',
+  FLOATING_POINT_EXCEPTION: '22P01',
+  INVALID_TEXT_REPRESENTATION: '22P02',
+  INVALID_BINARY_REPRESENTATION: '22P03',
+  BAD_COPY_FILE_FORMAT: '22P04',
+  UNTRANSLATABLE_CHARACTER: '22P05',
+  NOT_AN_XML_DOCUMENT: '2200L',
+  INVALID_XML_DOCUMENT: '2200M',
+  INVALID_XML_CONTENT: '2200N',
+  INVALID_XML_COMMENT: '2200S',
+  INVALID_XML_PROCESSING_INSTRUCTION: '2200T',
+  DUPLICATE_JSON_OBJECT_KEY_VALUE: '22030',
+  INVALID_ARGUMENT_FOR_SQL_JSON_DATETIME_FUNCTION: '22031',
+  INVALID_JSON_TEXT: '22032',
+  INVALID_SQL_JSON_SUBSCRIPT: '22033',
+  MORE_THAN_ONE_SQL_JSON_ITEM: '22034',
+  NO_SQL_JSON_ITEM: '22035',
+  NON_NUMERIC_SQL_JSON_ITEM: '22036',
+  NON_UNIQUE_KEYS_IN_A_JSON_OBJECT: '22037',
+  SINGLETON_SQL_JSON_ITEM_REQUIRED: '22038',
+  SQL_JSON_ARRAY_NOT_FOUND: '22039',
+  SQL_JSON_MEMBER_NOT_FOUND: '2203A',
+  SQL_JSON_NUMBER_NOT_FOUND: '2203B',
+  SQL_JSON_OBJECT_NOT_FOUND: '2203C',
+  TOO_MANY_JSON_ARRAY_ELEMENTS: '2203D',
+  TOO_MANY_JSON_OBJECT_MEMBERS: '2203E',
+  SQL_JSON_SCALAR_REQUIRED: '2203F',
+  SQL_JSON_ITEM_CANNOT_BE_CAST_TO_TARGET_TYPE: '2203G',
+  INTEGRITY_CONSTRAINT_VIOLATION: '23000',
+  RESTRICT_VIOLATION: '23001',
+  NOT_NULL_VIOLATION: '23502',
+  FOREIGN_KEY_VIOLATION: '23503',
+  UNIQUE_VIOLATION: '23505',
+  CHECK_VIOLATION: '23514',
+  EXCLUSION_VIOLATION: '23P01',
+  INVALID_CURSOR_STATE: '24000',
+  INVALID_TRANSACTION_STATE: '25000',
+  ACTIVE_SQL_TRANSACTION: '25001',
+  BRANCH_TRANSACTION_ALREADY_ACTIVE: '25002',
+  HELD_CURSOR_REQUIRES_SAME_ISOLATION_LEVEL: '25008',
+  INAPPROPRIATE_ACCESS_MODE_FOR_BRANCH_TRANSACTION: '25003',
+  INAPPROPRIATE_ISOLATION_LEVEL_FOR_BRANCH_TRANSACTION: '25004',
+  NO_ACTIVE_SQL_TRANSACTION_FOR_BRANCH_TRANSACTION: '25005',
+  READ_ONLY_SQL_TRANSACTION: '25006',
+  SCHEMA_AND_DATA_STATEMENT_MIXING_NOT_SUPPORTED: '25007',
+  NO_ACTIVE_SQL_TRANSACTION: '25P01',
+  IN_FAILED_SQL_TRANSACTION: '25P02',
+  IDLE_IN_TRANSACTION_SESSION_TIMEOUT: '25P03',
+  TRANSACTION_TIMEOUT: '25P04',
+  INVALID_SQL_STATEMENT_NAME: '26000',
+  TRIGGERED_DATA_CHANGE_VIOLATION: '27000',
+  INVALID_AUTHORIZATION_SPECIFICATION: '28000',
+  INVALID_PASSWORD: '28P01',
+  DEPENDENT_PRIVILEGE_DESCRIPTORS_STILL_EXIST: '2B000',
+  DEPENDENT_OBJECTS_STILL_EXIST: '2BP01',
+  INVALID_TRANSACTION_TERMINATION: '2D000',
+  SQL_ROUTINE_EXCEPTION: '2F000',
+  FUNCTION_EXECUTED_NO_RETURN_STATEMENT: '2F005',
+  MODIFYING_SQL_DATA_NOT_PERMITTED: '2F002',
+  PROHIBITED_SQL_STATEMENT_ATTEMPTED: '2F003',
+  READING_SQL_DATA_NOT_PERMITTED: '2F004',
+  INVALID_CURSOR_NAME: '34000',
+  EXTERNAL_ROUTINE_EXCEPTION: '38000',
+  CONTAINING_SQL_NOT_PERMITTED: '38001',
+  EXTERNAL_MODIFYING_SQL_DATA_NOT_PERMITTED: '38002',
+  EXTERNAL_PROHIBITED_SQL_STATEMENT_ATTEMPTED: '38003',
+  EXTERNAL_READING_SQL_DATA_NOT_PERMITTED: '38004',
+  EXTERNAL_ROUTINE_INVOCATION_EXCEPTION: '39000',
+  INVALID_SQLSTATE_RETURNED: '39001',
+  EXTERNAL_NULL_VALUE_NOT_ALLOWED: '39004',
+  TRIGGER_PROTOCOL_VIOLATED: '39P01',
+  SRF_PROTOCOL_VIOLATED: '39P02',
+  EVENT_TRIGGER_PROTOCOL_VIOLATED: '39P03',
+  SAVEPOINT_EXCEPTION: '3B000',
+  INVALID_SAVEPOINT_SPECIFICATION: '3B001',
+  INVALID_CATALOG_NAME: '3D000',
+  INVALID_SCHEMA_NAME: '3F000',
+  TRANSACTION_ROLLBACK: '40000',
+  TRANSACTION_INTEGRITY_CONSTRAINT_VIOLATION: '40002',
+  SERIALIZATION_FAILURE: '40001',
+  STATEMENT_COMPLETION_UNKNOWN: '40003',
+  DEADLOCK_DETECTED: '40P01',
+  SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION: '42000',
+  SYNTAX_ERROR: '42601',
+  INSUFFICIENT_PRIVILEGE: '42501',
+  CANNOT_COERCE: '42846',
+  GROUPING_ERROR: '42803',
+  WINDOWING_ERROR: '42P20',
+  INVALID_RECURSION: '42P19',
+  INVALID_FOREIGN_KEY: '42830',
+  INVALID_NAME: '42602',
+  NAME_TOO_LONG: '42622',
+  RESERVED_NAME: '42939',
+  DATATYPE_MISMATCH: '42804',
+  INDETERMINATE_DATATYPE: '42P18',
+  COLLATION_MISMATCH: '42P21',
+  INDETERMINATE_COLLATION: '42P22',
+  WRONG_OBJECT_TYPE: '42809',
+  GENERATED_ALWAYS: '428C9',
+  UNDEFINED_COLUMN: '42703',
+  UNDEFINED_FUNCTION: '42883',
+  UNDEFINED_TABLE: '42P01',
+  UNDEFINED_PARAMETER: '42P02',
+  UNDEFINED_OBJECT: '42704',
+  DUPLICATE_COLUMN: '42701',
+  DUPLICATE_CURSOR: '42P03',
+  DUPLICATE_DATABASE: '42P04',
+  DUPLICATE_FUNCTION: '42723',
+  DUPLICATE_PREPARED_STATEMENT: '42P05',
+  DUPLICATE_SCHEMA: '42P06',
+  DUPLICATE_TABLE: '42P07',
+  DUPLICATE_ALIAS: '42712',
+  DUPLICATE_OBJECT: '42710',
+  AMBIGUOUS_COLUMN: '42702',
+  AMBIGUOUS_FUNCTION: '42725',
+  AMBIGUOUS_PARAMETER: '42P08',
+  AMBIGUOUS_ALIAS: '42P09',
+  INVALID_COLUMN_REFERENCE: '42P10',
+  INVALID_COLUMN_DEFINITION: '42611',
+  INVALID_CURSOR_DEFINITION: '42P11',
+  INVALID_DATABASE_DEFINITION: '42P12',
+  INVALID_FUNCTION_DEFINITION: '42P13',
+  INVALID_PREPARED_STATEMENT_DEFINITION: '42P14',
+  INVALID_SCHEMA_DEFINITION: '42P15',
+  INVALID_TABLE_DEFINITION: '42P16',
+  INVALID_OBJECT_DEFINITION: '42P17',
+  WITH_CHECK_OPTION_VIOLATION: '44000',
+  INSUFFICIENT_RESOURCES: '53000',
+  DISK_FULL: '53100',
+  OUT_OF_MEMORY: '53200',
+  TOO_MANY_CONNECTIONS: '53300',
+  CONFIGURATION_LIMIT_EXCEEDED: '53400',
+  PROGRAM_LIMIT_EXCEEDED: '54000',
+  STATEMENT_TOO_COMPLEX: '54001',
+  TOO_MANY_COLUMNS: '54011',
+  TOO_MANY_ARGUMENTS: '54023',
+  OBJECT_NOT_IN_PREREQUISITE_STATE: '55000',
+  OBJECT_IN_USE: '55006',
+  CANT_CHANGE_RUNTIME_PARAM: '55P02',
+  LOCK_NOT_AVAILABLE: '55P03',
+  UNSAFE_NEW_ENUM_VALUE_USAGE: '55P04',
+  OPERATOR_INTERVENTION: '57000',
+  QUERY_CANCELED: '57014',
+  ADMIN_SHUTDOWN: '57P01',
+  CRASH_SHUTDOWN: '57P02',
+  CANNOT_CONNECT_NOW: '57P03',
+  DATABASE_DROPPED: '57P04',
+  IDLE_SESSION_TIMEOUT: '57P05',
+  SYSTEM_ERROR: '58000',
+  IO_ERROR: '58030',
+  UNDEFINED_FILE: '58P01',
+  DUPLICATE_FILE: '58P02',
+  CONFIG_FILE_ERROR: 'F0000',
+  LOCK_FILE_EXISTS: 'F0001',
+  FDW_ERROR: 'HV000',
+  FDW_COLUMN_NAME_NOT_FOUND: 'HV005',
+  FDW_DYNAMIC_PARAMETER_VALUE_NEEDED: 'HV002',
+  FDW_FUNCTION_SEQUENCE_ERROR: 'HV010',
+  FDW_INCONSISTENT_DESCRIPTOR_INFORMATION: 'HV021',
+  FDW_INVALID_ATTRIBUTE_VALUE: 'HV024',
+  FDW_INVALID_COLUMN_NAME: 'HV007',
+  FDW_INVALID_COLUMN_NUMBER: 'HV008',
+  FDW_INVALID_DATA_TYPE: 'HV004',
+  FDW_INVALID_DATA_TYPE_DESCRIPTORS: 'HV006',
+  FDW_INVALID_DESCRIPTOR_FIELD_IDENTIFIER: 'HV091',
+  FDW_INVALID_HANDLE: 'HV00B',
+  FDW_INVALID_OPTION_INDEX: 'HV00C',
+  FDW_INVALID_OPTION_NAME: 'HV00D',
+  FDW_INVALID_STRING_LENGTH_OR_BUFFER_LENGTH: 'HV090',
+  FDW_INVALID_STRING_FORMAT: 'HV00A',
+  FDW_INVALID_USE_OF_NULL_POINTER: 'HV009',
+  FDW_TOO_MANY_HANDLES: 'HV014',
+  FDW_OUT_OF_MEMORY: 'HV001',
+  FDW_NO_SCHEMAS: 'HV00P',
+  FDW_OPTION_NAME_NOT_FOUND: 'HV00J',
+  FDW_REPLY_HANDLE: 'HV00K',
+  FDW_SCHEMA_NOT_FOUND: 'HV00Q',
+  FDW_TABLE_NOT_FOUND: 'HV00R',
+  FDW_UNABLE_TO_CREATE_EXECUTION: 'HV00L',
+  FDW_UNABLE_TO_CREATE_REPLY: 'HV00M',
+  FDW_UNABLE_TO_ESTABLISH_CONNECTION: 'HV00N',
+  PLPGSQL_ERROR: 'P0000',
+  RAISE_EXCEPTION: 'P0001',
+  NO_DATA_FOUND: 'P0002',
+  TOO_MANY_ROWS: 'P0003',
+  ASSERT_FAILURE: 'P0004',
+  INTERNAL_ERROR: 'XX000',
+  DATA_CORRUPTED: 'XX001',
+  INDEX_CORRUPTED: 'XX002',
+};

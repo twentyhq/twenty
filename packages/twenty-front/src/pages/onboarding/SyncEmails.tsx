@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -25,8 +25,10 @@ import { ClickToActionLink } from 'twenty-ui/navigation';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  useSkipSyncEmailOnboardingStepMutation,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
+import { useSkipSyncEmailOnboardingStepMutation } from '~/generated-metadata/graphql';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
@@ -56,6 +58,9 @@ export const SyncEmails = () => {
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
+  const [lastAuthenticatedMethod] = useRecoilState(
+    lastAuthenticatedMethodState,
+  );
   const [skipSyncEmailOnboardingStatusMutation] =
     useSkipSyncEmailOnboardingStepMutation();
 
@@ -69,6 +74,7 @@ export const SyncEmails = () => {
       redirectLocation: AppPath.Index,
       messageVisibility: visibility,
       calendarVisibility: calendarChannelVisibility,
+      skipMessageChannelConfiguration: true,
     });
   };
 
@@ -76,6 +82,9 @@ export const SyncEmails = () => {
     await skipSyncEmailOnboardingStatusMutation();
     setNextOnboardingStatus();
   };
+
+  const userAuthenticatedWithSSO =
+    lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
   const isGoogleMessagingEnabled = useRecoilValue(
     isGoogleMessagingEnabledState,
@@ -106,9 +115,9 @@ export const SyncEmails = () => {
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
-      <Title noMarginTop>Emails and Calendar</Title>
+      <Title noMarginTop>{t`Emails and Calendar`}</Title>
       <SubTitle>
-        Sync your Emails and Calendar with Twenty. Choose your privacy settings.
+        {t`Sync your Emails and Calendar with Twenty. Choose your privacy settings.`}
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard
@@ -117,7 +126,7 @@ export const SyncEmails = () => {
         />
       </StyledSyncEmailsContainer>
       <StyledProviderContainer>
-        {isGoogleProviderEnabled && (
+        {!userAuthenticatedWithSSO && isGoogleProviderEnabled && (
           <MainButton
             title={t`Sync with Google`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
@@ -125,7 +134,7 @@ export const SyncEmails = () => {
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
         )}
-        {isMicrosoftProviderEnabled && (
+        {!userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Sync with Outlook`}
             onClick={() =>
@@ -142,10 +151,26 @@ export const SyncEmails = () => {
             width={144}
           />
         )}
+        {userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
+          <MainButton
+            title={t`Continue`}
+            onClick={() =>
+              handleButtonClick(ConnectedAccountProvider.MICROSOFT)
+            }
+            width={144}
+          />
+        )}
+        {userAuthenticatedWithSSO && isGoogleProviderEnabled && (
+          <MainButton
+            title={t`Continue`}
+            onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
+            width={144}
+          />
+        )}
       </StyledProviderContainer>
       <StyledActionLinkContainer>
         <ClickToActionLink onClick={continueWithoutSync}>
-          Continue without sync
+          {t`Continue without sync`}
         </ClickToActionLink>
       </StyledActionLinkContainer>
     </Modal.Content>

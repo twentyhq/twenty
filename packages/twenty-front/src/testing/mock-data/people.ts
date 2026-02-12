@@ -1,5 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { type FieldMetadataType } from 'twenty-shared/types';
@@ -1746,7 +1746,7 @@ export const peopleQueryResult = {
       },
     ],
   },
-} satisfies { people: RecordGqlConnection };
+} satisfies { people: RecordGqlConnectionEdgesRequired };
 
 export const allMockPersonRecords = getRecordsFromRecordConnection({
   recordConnection: peopleQueryResult.people,

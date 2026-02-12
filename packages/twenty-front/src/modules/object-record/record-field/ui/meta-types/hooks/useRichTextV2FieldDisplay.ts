@@ -3,9 +3,9 @@ import { useContext } from 'react';
 import { type FieldRichTextV2Value } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useRichTextV2FieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -18,7 +18,7 @@ export const useRichTextV2FieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldRichTextV2Value | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldRichTextV2Value | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

@@ -1,77 +1,66 @@
 ---
-title: 反饋
+title: 反馈
 image: /images/user-guide/emails/emails_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+  <img src="/images/user-guide/emails/emails_header.png" alt="标题" />
 </Frame>
 
-顯示進度或倒計時，從右到左移動。
+表示进度或倒计时，并从右向左移动。
 
 <Tabs>
+  <Tab title="**用法**">
+    ```jsx
+    import { ProgressBar } from "twenty-ui/feedback";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <ProgressBar
+          duration={6000}
+          delay={0}
+          easing="easeInOut"
+          barHeight={10}
+          barColor="#4bb543"
+          autoStart={true}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { ProgressBar } from "twenty-ui/feedback";
-
-export const MyComponent = () => {
-  return (
-    <ProgressBar
-      duration={6000}
-      delay={0}
-      easing="easeInOut"
-      barHeight={10}
-      barColor="#4bb543"
-      autoStart={true}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性        | 類型  | 描述                            | 預設值       |
-| --------- | --- | ----------------------------- | --------- |
-| 持續時間      | 數字  | 進度條動畫的總持續時間，以毫秒為單位            | 3         |
-| 延遲        | 數字  | 開始進度條動畫的延遲時間，以毫秒為單位           | 0         |
-| 緩動        | 字串  | 進度條動畫的緩動功能                    | easeInOut |
-| barHeight | 數字  | 條的高度，以像素為單位                   | 24        |
-| 條顏色       | 字串  | 條的顏色                          | gray80    |
-| 自動開始      | 布爾值 | 如果設置為 `true`，則進度條動畫在組件加載時自動開始 | `真`       |
-
-</Tab>
+  <Tab title="属性">
+    | 属性        | 类型  | 描述                        | 默认        |
+    | --------- | --- | ------------------------- | --------- |
+    | 持续时间      | 数字  | 进度条动画的总持续时间，以毫秒为单位        | 3         |
+    | delay     | 数字  | 进度条动画开始的延迟时间，以毫秒为单位       | 0         |
+    | easing    | 字符串 | 进度条动画的缓动函数                | easeInOut |
+    | barHeight | 数字  | 进度条的高度（以像素为单位）            | 24        |
+    | barColor  | 字符串 | 进度条的颜色                    | gray80    |
+    | 自动开始      | 布尔值 | 如果为“true”，则组件加载时进度条动画自动开始 | `真`       |
+  </Tab>
 </Tabs>
 
-## 圓形進度條
+## 圆形进度条
 
-顯示任務的進度，通常用於加載畫面或需要向用戶傳達正在進行的流程的區域。
+指示任务的进展，通常用于加载屏幕或您希望向用户传达正在进行的过程的地方。
 
 <Tabs>
+  <Tab title="用法">
+    ```jsx
+    import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
-
-export const MyComponent = () => {
-  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性  | 類型 | 描述       | 預設值          |
-| --- | -- | -------- | ------------ |
-| 大小  | 數字 | 圓形進度條的大小 | 50           |
-| 條寬度 | 數字 | 進度條的線寬   | 5            |
-| 條顏色 | 字串 | 進度條的顏色   | currentColor |
-
-</Tab>
-
+  <Tab title="属性">
+    | 属性       | 类型  | 描述       | 默认           |
+    | -------- | --- | -------- | ------------ |
+    | 大小       | 数字  | 圆形进度条的大小 | 50           |
+    | barWidth | 数字  | 进度条线的宽度  | 5            |
+    | barColor | 字符串 | 进度条的颜色   | currentColor |
+  </Tab>
 </Tabs>

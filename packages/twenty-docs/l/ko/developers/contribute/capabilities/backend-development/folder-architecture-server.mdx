@@ -1,0 +1,125 @@
+---
+title: 폴더 아키텍처
+info: 서버 폴더 아키텍처에 대한 상세 분석
+---
+
+백엔드 디렉토리 구조는 다음과 같습니다:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## 권한
+
+각 엔티티에 대한 권한을 정의하고 핸들러를 포함합니다.
+
+## 데코레이터
+
+추가 기능을 위한 NestJS 커스텀 데코레이터를 정의합니다.
+
+자세한 내용은 [커스텀 데코레이터](https://docs.nestjs.com/custom-decorators)를 참조하세요.
+
+## 필터
+
+GraphQL 엔드포인트에서 발생할 수 있는 예외를 처리하기 위한 예외 필터를 포함합니다.
+
+## 가드
+
+자세한 내용은 [가드](https://docs.nestjs.com/guards)를 참조하세요.
+
+## 상태
+
+데이터베이스가 예상대로 작동하는지 확인하기 위해 JSON을 반환하는 공개 API(healthz)를 포함합니다.
+
+## 메타데이터
+
+커스텀 객체를 정의하고 GraphQL API (graphql/metadata)를 제공합니다.
+
+## 워크스페이스
+
+메타데이터 기반의 커스텀 GraphQL 스키마를 생성하고 제공합니다.
+
+### 워크스페이스 디렉터리 구조
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+작업 공간 디렉토리의 루트에는 개별 작업 공간을 위한 스키마를 맞춤화하는 `createGraphQLSchema` 함수가 포함된 `workspace.factory.ts` 파일이 있습니다. 이 함수는 메타데이터를 사용하여 작업 공간별 스키마를 생성합니다. 스키마와 리졸버 구조를 분리하여, 이러한 개별 요소를 결합하는 `makeExecutableSchema` 함수를 사용합니다.
+
+이 전략은 조직화뿐만 아니라 성능 및 확장성을 향상시키기 위해 생성된 타입 정의를 캐시하는 최적화에도 기여합니다.
+
+### 작업 공간 스키마 빌더
+
+GraphQL 스키마를 생성하며 다음을 포함합니다:
+
+#### 팩토리:
+
+GraphQL 관련 구성 요소를 생성하는 특수 생성자입니다.
+
+* type.factory는 `TypeMapperService`를 사용하여 필드 메타데이터를 GraphQL 타입으로 변환합니다.
+* type-definition.factory는 `objectMetadata`에서 파생된 GraphQL 입력 또는 출력 객체를 만듭니다.
+
+#### GraphQL 타입
+
+열거형, 입력, 객체, 스칼라를 포함하며, 스키마 구축의 기초로 사용됩니다.
+
+#### 인터페이스 및 객체 정의
+
+GraphQL 엔티티를 위한 청사진을 포함하며, `MONEY`나 `URL`과 같은 사전 정의와 커스텀 타입을 포함합니다.
+
+#### 서비스
+
+FieldMetadataType과 적절한 GraphQL 스칼라 또는 쿼리 수정자를 연결하는 서비스가 포함되어 있습니다.
+
+#### 저장소
+
+GraphQL 타입의 중복을 방지하기 위해 재사용 가능한 타입 정의를 포함하는 `TypeDefinitionsStorage` 클래스를 포함합니다.
+
+### 작업 공간 리졸버 빌더
+
+GraphQL 스키마를 쿼리하고 변경하기 위한 리졸버 함수를 만듭니다.
+
+이 디렉토리의 각 팩토리는 다양한 테이블에 걸쳐 적응 가능한 `FindManyResolverFactory`와 같은 명확한 리졸버 타입을 생성할 책임이 있습니다.
+
+### 작업 공간 쿼리 실행기
+
+데이터베이스에서 생성된 쿼리를 실행하고 결과를 구문 분석합니다.

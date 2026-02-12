@@ -1,5 +1,13 @@
 import { type RelativeDateFilterUnit } from '@/utils/filter/dates/utils/relativeDateFilterUnitSchema';
-import { subDays, subMonths, subWeeks, subYears } from 'date-fns';
+import {
+  subDays,
+  subHours,
+  subMinutes,
+  subMonths,
+  subSeconds,
+  subWeeks,
+  subYears,
+} from 'date-fns';
 
 export const subUnitFromDateTime = (
   dateTime: Date,
@@ -7,6 +15,12 @@ export const subUnitFromDateTime = (
   unit: RelativeDateFilterUnit,
 ) => {
   switch (unit) {
+    case 'SECOND':
+      return subSeconds(dateTime, amount);
+    case 'MINUTE':
+      return subMinutes(dateTime, amount);
+    case 'HOUR':
+      return subHours(dateTime, amount);
     case 'DAY':
       return subDays(dateTime, amount);
     case 'WEEK':

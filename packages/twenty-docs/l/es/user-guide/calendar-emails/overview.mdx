@@ -1,0 +1,130 @@
+---
+title: Calendario y correos electrónicos
+description: Conecta tus cuentas de correo electrónico y calendario a Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendario y correos electrónicos" />
+</Frame>
+
+## Opciones de conexión
+
+### Cuenta de Google (Gmail y Calendario de Google)
+
+1. Ve a **Ajustes → Cuentas**
+2. Haz clic en **Añadir cuenta**
+3. Seleccionar **Continuar con Google**
+4. Autorizar a Twenty para acceder a tu Gmail y Calendario de Google
+5. Configura los ajustes de sincronización del correo electrónico (visibilidad, creación automática) → haz clic en **Siguiente**
+6. Configura los ajustes de sincronización del calendario (visibilidad, creación automática) → haz clic en **Añadir cuenta**
+7. Tus correos y eventos del calendario comenzarán a sincronizarse automáticamente
+
+### Cuenta de Microsoft (Outlook y Calendario de Microsoft)
+
+1. Ve a **Ajustes → Cuentas**
+2. Haz clic en **Añadir cuenta**
+3. Seleccionar **Continuar con Microsoft**
+4. Autorizar a Twenty para acceder a tu Outlook y Calendario de Microsoft
+5. Configura los ajustes de sincronización del correo electrónico (visibilidad, creación automática) → haz clic en **Siguiente**
+6. Configura los ajustes de sincronización del calendario (visibilidad, creación automática) → haz clic en **Añadir cuenta**
+7. Tus correos y eventos del calendario comenzarán a sincronizarse automáticamente
+
+### Configuración SMTP/CalDAV (Otros Proveedores)
+
+Para otros proveedores de correo y calendario:
+
+1. Ve a **Ajustes → Cuentas**
+2. Configurar los ajustes SMTP para el correo
+3. Configurar los ajustes CalDAV para el calendario
+4. Probar la conexión
+
+### Múltiples Buzones
+
+* **Cuentas Ilimitadas**: Conecta múltiples cuentas de correo por usuario
+* **Gestión de Cuentas**: Cambiar entre diferentes buzones
+* **Ajustes de Sincronización**: Configura diferentes ajustes por buzón
+
+<Warning>
+  Solo se pueden conectar verdaderos buzones (por ejemplo, soporte@dominio.com con su propia bandeja de entrada). Los alias de correo electrónico que reenvían a otro buzón no se pueden conectar a Twenty.
+</Warning>
+
+## Configuración de Correo
+
+### Visibilidad del Mensaje
+
+Elige diferentes niveles de visibilidad para tus correos:
+
+* **Solo Metadatos**: Comparte solo información básica (remitente, destinatario, fecha, hora)
+* **Asunto y Metadatos**: Comparte la línea de asunto junto con los metadatos
+* **Todo el Contenido del Correo**: Comparte todo el contenido del correo incluyendo adjuntos
+
+### Creación Automática de Contactos
+
+* **Desactivado**: No se crean contactos automáticamente
+* **Para mensajes enviados y recibidos**: Crea contactos para todas las interacciones externas por correo electrónico
+* **Solo para mensajes enviados**: Crea contactos solo para los correos que envías
+* **Nota**: Los correos internos (mismo dominio) nunca se sincronizan para mantener la privacidad
+
+<Note>Cuando está habilitado, los contactos se vinculan automáticamente a sus registros de Empresa en función de su dominio de correo electrónico. Si la Empresa aún no existe, Twenty la crea para ti.</Note>
+
+### Controla qué correos se sincronizan con la selección de carpetas de mensajes
+
+Controle qué carpetas de correo electrónico se sincronizan con Twenty:
+
+1. Ve a **Ajustes → Cuentas** y selecciona tu cuenta de correo conectada
+2. Elige qué carpetas sincronizar:
+   * **Bandeja de Entrada**: Correos entrantes principales
+   * **Enviados**: Correos salientes que has enviado
+   * **Carpetas Personalizadas**: Cualquier carpeta específica que desees incluir
+   * **Excluir Carpetas**: Omitir carpetas como Spam, Papelera o carpetas personales
+
+Esto te da un control preciso sobre qué correos aparecen en tu CRM sin sincronizar todo.
+
+**Qué se Sincroniza:**
+
+* **Correos Externos**: Todos los correos con contactos externos de carpetas seleccionadas
+* **Correos Internos**: No se sincronizan (los correos del mismo dominio permanecen privados)
+* **Adjuntos**: Se incluyen en la actualización del H1 2026
+
+**Nota**: No proporcionamos una dirección de correo CC para la sincronización selectiva. En su lugar, usa la función de carpeta de mensajes para lograr el mismo nivel de control sobre qué correos sincronizar con Twenty.
+
+## Configuración del Calendario
+
+### Visibilidad del Evento
+
+Elige qué será visible para otros usuarios en tu espacio de trabajo:
+
+* **Todo**: Los detalles completos del evento se compartirán con tu equipo
+* **Metadatos**: Solo se compartirán con tu equipo la fecha y los participantes
+
+### Creación Automática de Contactos para Reuniones
+
+* **Sí**: Crea automáticamente contactos para participantes de reuniones que no están en tu CRM
+* **No**: Solo vincule reuniones a contactos existentes
+
+<Note>Cuando está habilitado, los contactos se vinculan automáticamente a sus registros de Empresa en función de su dominio de correo electrónico. Si la Empresa aún no existe, Twenty la crea para ti.</Note>
+
+### Controla qué eventos se sincronizan
+
+* **Importación de Reuniones**: Importa automáticamente los eventos del calendario
+* **Enlace de Contactos**: Vincula las reuniones a los registros de Personas y Empresas
+
+**Qué se Sincroniza:**
+
+* **Reuniones**: Eventos de calendario con participantes externos
+* **Enlace de Contactos**: Eventos vinculados automáticamente a los registros del CRM
+* **Eventos de Equipos**: Visibilidad compartida del calendario
+
+## Frecuencia de Sincronización
+
+**Actualizaciones cada 5 minutos**: Tanto el correo como el calendario se sincronizan automáticamente cada 5 minutos después de la importación inicial.
+
+<Note>
+  **Tiempo de la sincronización inicial**: La sincronización del calendario se completa rápidamente (normalmente en unos minutos), mientras que la sincronización del correo electrónico tarda más en el caso de buzones grandes. Twenty importa correos electrónicos a aproximadamente **400 mensajes por minuto** (limitado por el límite de tasa de la API de Gmail), por lo que un buzón con 10 000 correos electrónicos tarda unos 25 minutos. No te preocupes si ves que los contactos de eventos del calendario aparecen antes que tus contactos de correo electrónico; es un comportamiento normal.
+</Note>
+
+## Próximos Pasos
+
+* [Capacidades del buzón](/l/es/user-guide/calendar-emails/capabilities/mailbox)
+* [Solucionar problemas de correos electrónicos que faltan](/l/es/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

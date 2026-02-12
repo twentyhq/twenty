@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -113,7 +114,7 @@ const SettingsDataModelObjectPreviewOtherObjects = ({
             />
           </StyledIconContainer>
           <StyledOverflowingTextWithTooltip>
-            <OverflowingTextWithTooltip text={`Other objects`} />
+            <OverflowingTextWithTooltip text={t`Other objects`} />
           </StyledOverflowingTextWithTooltip>
         </StyledObjectName>
         <StyledNumber>

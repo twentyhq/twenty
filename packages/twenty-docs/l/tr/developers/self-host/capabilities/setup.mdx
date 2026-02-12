@@ -1,0 +1,337 @@
+---
+title: Kurulum
+---
+
+# Konfigürasyon Yönetimi
+
+<Warning>
+  **İlk kez mi kuruyorsunuz?** Twenty'yi çalıştırmak için [Docker Compose kurulum kılavuzunu](/l/tr/developers/self-host/capabilities/docker-compose) izleyin, ardından yapılandırma için buraya dönün.
+</Warning>
+
+Twenty, farklı dağıtım ihtiyaçlarına uygun **iki yapılandırma modu** sunar:
+
+**Yönetici paneli erişimi:** Yalnızca yönetici ayrıcalıklarına sahip kullanıcılar (`canAccessFullAdminPanel: true`) konfigürasyon arayüzüne erişebilir.
+
+## 1. Yönetici Paneli Konfigürasyonu (Varsayılan)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
+```
+
+**Çoğu konfigürasyon, kurulumdan sonra arayüz üzerinden gerçekleştirilir**:
+
+1. Twenty örneğinize erişin (genellikle `http://localhost:3000`)
+2. **Ayarlar / Yönetici Paneli / Konfigürasyon Değişkenleri** yoluna gidin
+3. Entegrasyonları, e-postayı, depolamayı ve daha fazlasını yapılandırın
+4. Değişiklikler hemen yürürlüğe girer (çok konteynerli dağıtımlarda 15 saniye içinde)
+
+<Warning>
+  **Çok Konteynerli Dağıtımlar:** Veritabanı yapılandırması (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) kullanıldığında, hem sunucu hem de worker konteynerleri aynı veritabanından okur. Yönetici panelindeki değişiklikler her ikisini de otomatik olarak etkiler ve konteynerler arasında ortam değişkenlerini çoğaltma ihtiyacını ortadan kaldırır (altyapı değişkenleri hariç).
+</Warning>
+
+**Yönetici paneli aracılığıyla yapılandırabileceğiniz:**
+
+* **Kimlik Doğrulama** - Google/Microsoft OAuth, şifre ayarları
+* **E-posta** - SMTP ayarları, şablonlar, doğrulama
+* **Depolama** - S3 yapılandırması, yerel depolama yolları
+* **Entegrasyonlar** - Gmail, Google Calendar, Microsoft hizmetleri
+* **İş Akışı ve Hız Limiti** - Yürütme sınırları, API daraltma
+* **Ve daha fazlası...**
+
+![Yönetici Paneli Konfigürasyon Değişkenleri](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  Her bir değişken, yönetici panelinizde **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** altında açıklamalarla belgelenir.
+  Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve uygulama gizli anahtarları (`APP_SECRET`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
+
+  [Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. Yalnızca Ortam Değişkenleriyle Yapılandırma
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Tüm konfigürasyon `.env` dosyaları aracılığıyla yönetilir:**
+
+1. `.env` dosyanızda `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` değerini ayarlayın
+2. Tüm konfigürasyon değişkenlerini `.env` dosyanıza ekleyin
+3. Değişikliklerin etkin olması için kapları yeniden başlatın
+4. Yönetici paneli mevcut değerleri gösterir ancak bunları değiştiremez
+
+## Çoklu Çalışma Alanı Modu
+
+Varsayılan olarak, Twenty **tek çalışma alanı modunda** çalışır — kuruluşunuz için tek bir CRM örneğine ihtiyaç duyulan çoğu kendi barındırmalı dağıtım için idealdir.
+
+### Tek Çalışma Alanı Modu (Varsayılan)
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* Her Twenty örneği başına bir çalışma alanı
+* İlk kullanıcı otomatik olarak tam ayrıcalıklara sahip yönetici olur (`canImpersonate` ve `canAccessFullAdminPanel`)
+* İlk çalışma alanı oluşturulduktan sonra yeni kayıtlar devre dışı bırakılır
+* Basit URL yapısı: `https://your-domain.com`
+
+### Çoklu Çalışma Alanı Modunu Etkinleştirme
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+Aynı Twenty örneği üzerinde birden fazla bağımsız ekibin kendi çalışma alanlarına ihtiyaç duyduğu SaaS benzeri dağıtımlar için çoklu çalışma alanı modunu etkinleştirin.
+
+**Tek çalışma alanı modundan temel farklar:**
+
+* Aynı örnek üzerinde birden fazla çalışma alanı oluşturulabilir
+* Her çalışma alanı kendi alt alan adını alır (ör. `sales.your-domain.com`, `marketing.your-domain.com`)
+* Kullanıcılar `{DEFAULT_SUBDOMAIN}.your-domain.com` adresinde kaydolur ve oturum açar (ör. `app.your-domain.com`)
+* Otomatik yönetici ayrıcalıkları yoktur — her çalışma alanındaki ilk kullanıcı normal bir kullanıcıdır
+* Alt alan adı ve özel alan adı gibi çalışma alanına özgü ayarlar, çalışma alanı ayarlarında kullanılabilir hale gelir
+
+<Warning>
+  **Yalnızca ortam üzerinden ayar:** `IS_MULTIWORKSPACE_ENABLED` yalnızca `.env` dosyası üzerinden yapılandırılabilir ve yeniden başlatma gerektirir. Yönetici paneli üzerinden değiştirilemez.
+</Warning>
+
+### Çoklu Çalışma Alanı için DNS Yapılandırması
+
+Çoklu çalışma alanı modu kullanılırken, dinamik alt alan adı oluşturmayı sağlamak için DNS'inizi bir wildcard kaydıyla yapılandırın:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+Bu, manuel DNS yapılandırması olmadan yeni çalışma alanları için otomatik alt alan yönlendirmesini etkinleştirir.
+
+### Çalışma Alanı Oluşturmayı Kısıtlama
+
+Çoklu çalışma alanı modunda, yeni çalışma alanı oluşturabilecek kişileri sınırlamak isteyebilirsiniz:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+Etkinleştirildiğinde, yalnızca `canAccessFullAdminPanel` yetkisine sahip kullanıcılar ek çalışma alanları oluşturabilir. Kullanıcılar yine de ilk kayıt sırasında ilk çalışma alanlarını oluşturabilir.
+
+## Gmail ve Google Takvim Entegrasyonu
+
+### Google Cloud Projesi Oluştur
+
+1. [Google Cloud Konsolu](https://console.cloud.google.com/) adresine gidin
+2. Yeni bir proje oluşturun veya mevcut bir projeyi seçin
+3. Bu API'leri etkinleştirin:
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [Kişiler API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### OAuth'u Yapılandır
+
+1. [Kimlik Bilgileri](https://console.cloud.google.com/apis/credentials) sayfasına gidin
+2. OAuth 2.0 İstemci Kimliği Oluştur
+3. Bu yönlendirme URI'lerini ekleyin:
+   * `https://{your-domain}/auth/google/redirect` (SSO için)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (entegrasyonlar için)
+
+### Twenty'de Yapılandır
+
+1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
+2. **Google Auth** bölümünü bulun
+3. Bu değişkenleri ayarlayın:
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+</Warning>
+
+**Gerekli kapsamlar** (otomatik yapılandırılmış):
+[İlgili kaynak kodunu görün](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### Uygulamanız test modunda ise
+
+Uygulamanız test modunda ise, projenize test kullanıcıları eklemeniz gerekecek.
+
+[OAuth onay ekranı](https://console.cloud.google.com/apis/credentials/consent) altında "Test kullanıcılar" bölümüne test kullanıcılarınızı ekleyin.
+
+## Microsoft 365 Entegrasyonu
+
+<Warning>
+  Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir [Microsoft 365 Lisansı](https://admin.microsoft.com/Adminportal/Home) olması gerekir. Biri olmadan hesaplarını Twenty'de eşitleyemeyecekler.
+</Warning>
+
+### Microsoft Azure'da bir proje oluştur
+
+[Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) platformunda bir proje oluşturmanız ve kimlik bilgilerini almanız gerekecek.
+
+### API'leri etkinleştir
+
+Microsoft Azure Konsolunda "İzinler" altında aşağıdaki API'leri etkinleştirin:
+
+* Microsoft Graph: Mail.ReadWrite
+* Microsoft Graph: Mail.Send
+* Microsoft Graph: Calendars.Read
+* Microsoft Graph: User.Read
+* Microsoft Graph: openid
+* Microsoft Graph: email
+* Microsoft Graph: profil
+* Microsoft Graph: offline_access
+
+Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak e-posta göndermek istiyorsanız gereklidir. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
+
+### Yetkili yönlendirme URI'leri
+
+Projenize aşağıdaki yönlendirme URI'lerini eklemeniz gerekir:
+
+* `https://{your-domain}/auth/microsoft/redirect` Microsoft SSO kullanmak istiyorsanız
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Twenty'de Yapılandır
+
+1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
+2. **Microsoft Auth** bölümünü bulun
+3. Bu değişkenleri ayarlayın:
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+</Warning>
+
+### Kapsamları yapılandır
+
+[İlgili kaynak kodunu görün](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* 'e-posta'
+* 'profil'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### Uygulamanız test modunda ise
+
+Uygulamanız test modunda ise, projenize test kullanıcıları eklemeniz gerekecek.
+
+Test kullanıcılarınızı "Kullanıcılar ve gruplar" bölümüne ekleyin.
+
+## Takvim ve Mesajlaşma için Arka Plan İşleri
+
+Gmail, Google Takvim veya Microsoft 365 entegrasyonlarını yapılandırdıktan sonra, verileri senkronize edecek arka plan işlerini başlatmanız gerekir.
+
+İşçi kabınızdaki aşağıdaki tekrarlanan işleri kaydedin:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## E-posta Yapılandırması
+
+1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
+2. **E-posta** bölümünü bulun
+3. SMTP ayarlarınızı yapılandırın:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+  <ArticleTab>
+    [Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_e-posta_adresi
+    * EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
+  </ArticleTab>
+
+  <ArticleTab>
+    2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_e-posta_adresi
+    * EMAIL_SMTP_PASSWORD='office365_parola'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
+
+    * smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * smtp4dev kullanıcı arayüzüne şu adresten erişin: [http://localhost:8090](http://localhost:8090)
+    * Aşağıdaki değişkenleri ayarlayın:
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+</Warning>
+
+## Mantıksal işlevler
+
+Twenty, iş akışları ve özel mantık için mantıksal işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
+
+<Warning>
+  **Güvenlik Notu:** Yerel sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
+</Warning>
+
+### Kullanılabilir Sürücüler
+
+| Sürücü     | Ortam Değişkeni            | Kullanım alanı                                 | Güvenlik Düzeyi                      |
+| ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------ |
+| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Mantıksal işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
+| Yerel      | `SERVERLESS_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
+| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
+
+### Önerilen Yapılandırma
+
+**Geliştirme için:**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**Üretim için (AWS):**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**Mantıksal işlevleri devre dışı bırakmak için:**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  `SERVERLESS_TYPE=DISABLED` kullanıldığında, bir mantıksal işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi mantıksal işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
+</Note>

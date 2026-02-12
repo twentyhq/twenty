@@ -1,0 +1,125 @@
+---
+title: Konfigurace SSO
+description: Nakonfigurujte jednotné přihlášení (SSO) pro zabezpečené podnikové ověřování.
+---
+
+## O SSO
+
+Jednotné přihlášení (SSO) umožňuje členům vašeho týmu přihlašovat se do Twenty pomocí poskytovatele identity vaší organizace. To přináší:
+
+* **Centralizované řízení přístupu**: Spravujte přístup z jednoho místa
+* **Zvýšené zabezpečení**: Využijte své stávající bezpečnostní zásady
+* **Lepší uživatelský zážitek**: Jedna sada přihlašovacích údajů pro všechny nástroje
+
+## Podporovaní poskytovatelé
+
+Twenty podporuje SSO s:
+
+* **SAML 2.0**: Funguje s většinou podnikových poskytovatelů identity
+* **Google Workspace**: Pro organizace používající Google
+* **Microsoft Entra ID**: (dříve Azure AD) Pro prostředí Microsoftu
+
+## Nastavení SSO
+
+### Předpoklady
+
+* Plán Organization (cloudové i self-hostované pracovní prostory)
+* Administrátorský přístup k vašemu poskytovateli identity
+* Administrátorský přístup k pracovnímu prostoru Twenty
+
+<Note>
+  **Pro uživatele vlastního hostování, kteří chtějí nastavit SSO**, obraťte se na contact@twenty.com
+</Note>
+
+### Kroky konfigurace
+
+#### 1. Přístup k nastavení SSO
+
+1. Přejděte na **Nastavení → Zabezpečení**
+2. Najděte sekci **Konfigurace SSO**
+3. Klikněte na **Configure SSO**
+
+#### 2) Vyberte svého poskytovatele
+
+Vyberte svého poskytovatele identity ze seznamu nebo zvolte "Custom SAML" pro jiné poskytovatele.
+
+#### 3. Nakonfigurujte svého poskytovatele identity
+
+Budete muset nakonfigurovat svého poskytovatele identity následujícími údaji:
+
+* **Entity ID**: Poskytováno Twenty
+* **ACS URL**: Adresa URL zpětného volání pro ověřování
+* **Certificate**: Pro zabezpečenou komunikaci
+
+#### 4. Zadejte údaje poskytovatele v Twenty
+
+* **SSO URL**: Přihlašovací adresa URL od vašeho poskytovatele
+* **Entity ID**: Identifikátor vašeho poskytovatele
+* **Certificate**: Certifikát X.509 od vašeho poskytovatele
+
+#### 5. Otestujte a povolte
+
+1. Klikněte na **Test Configuration** pro ověření nastavení
+2. Povolte SSO, jakmile je testování úspěšné
+3. Nastavte předvolby zřizování uživatelů
+
+## Zřizování uživatelů
+
+### Zřizování Just-in-Time (JIT)
+
+* Uživatelé jsou vytvořeni automaticky při prvním přihlášení
+* Automaticky jim je přiřazena výchozí role
+* Není potřeba ruční vytváření uživatelů
+
+### Ruční zřizování
+
+* Pozvěte uživatele předtím, než se budou moci přihlásit
+* Předem přiřaďte konkrétní role
+* Větší kontrola nad tím, kdo má přístup
+
+## Správa uživatelů SSO
+
+### Přiřazování rolí
+
+Uživatelům SSO lze přiřazovat role stejně jako běžným uživatelům:
+
+1. Přejděte na **Nastavení → Členové**
+2. Najděte uživatele
+3. Podle potřeby změňte jejich roli
+
+### Odebrání přístupu
+
+Chcete-li odebrat přístup uživatelům SSO:
+
+* Odeberte je u svého poskytovatele identity, nebo
+* Odeberte je z pracovního prostoru Twenty
+
+## Osvědčené postupy
+
+### Bezpečnost
+
+* **Vyžadovat SSO**: Zakázat přihlášení pomocí hesla pro uživatele SSO
+* **Pravidelné audity**: Pravidelně kontrolujte přístupy
+* **Silné zásady IdP**: Vynucujte MFA u poskytovatele identity
+
+### Správa uživatelů
+
+* **Jasné pojmenování**: Používejte konzistentní názvy z vašeho adresáře
+* **Mapování skupin**: Namapujte skupiny z IdP na role v Twenty (pokud je k dispozici)
+* **Proces offboardingu**: Zahrňte Twenty do svého pracovního postupu deprovisioningu
+
+## Řešení potíží
+
+### Běžné problémy
+
+* **Chyby certifikátu**: Ujistěte se, že certifikátu nevypršela platnost
+* **Nesoulad URL**: Ověřte, že adresa ACS URL přesně odpovídá
+* **Uživatel nenalezen**: Zkontrolujte nastavení zřizování JIT
+
+### Získání pomoci
+
+Pokud narazíte na problémy, kontaktujte podporu s těmito informacemi:
+
+* Obdržené chybové zprávy
+* Používaný poskytovatel identity
+* Podrobnosti konfigurace (bez citlivých údajů)

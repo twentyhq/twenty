@@ -140,23 +140,15 @@ export class ImapFindSentFolderService {
     folderPath: string,
   ): Promise<number> {
     try {
-      const lock = await client.getMailboxLock(folderPath);
+      const status = await client.status(folderPath, {
+        messages: true,
+      });
 
-      try {
-        const status = await client.status(folderPath, {
-          messages: true,
-        });
+      const messageCount = status?.messages;
 
-        const messageCount = status?.messages;
+      this.logger.debug(`Folder "${folderPath}" has ${messageCount} messages`);
 
-        this.logger.debug(
-          `Folder "${folderPath}" has ${messageCount} messages`,
-        );
-
-        return isNumber(messageCount) ? messageCount : 0;
-      } finally {
-        lock.release();
-      }
+      return isNumber(messageCount) ? messageCount : 0;
     } catch (error) {
       this.logger.warn(
         `Error checking folder "${folderPath}": ${error.message}`,

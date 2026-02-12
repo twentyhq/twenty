@@ -1,0 +1,171 @@
+---
+title: Migration von Selbstgehostet zu Cloud
+description: Schritt-für-Schritt-Anleitung zur Migration Ihrer selbstgehosteten Twenty-Instanz zu Twenty Cloud.
+---
+
+## Übersicht
+
+Diese Anleitung führt Sie durch die Migration Ihrer Daten von einer selbstgehosteten Twenty-Instanz zu Twenty Cloud. Der Prozess umfasst das Einrichten Ihres Cloud-Arbeitsbereichs, das Exportieren Ihrer Daten und deren erneutes Importieren.
+
+<Note>Ansichten, Workflows und Rollen müssen nach der Migration manuell neu erstellt werden. Planen Sie Zeit für diese Konfigurationsarbeiten ein.</Note>
+
+## Schritt 1: Erstellen Sie Ihren Cloud-Arbeitsbereich
+
+1. Gehen Sie zu [app.twenty.com](https://app.twenty.com) und erstellen Sie einen neuen Arbeitsbereich
+2. Schließen Sie den Einrichtungsassistenten ab
+3. Notieren Sie sich die URL Ihres neuen Arbeitsbereichs
+
+## Schritt 2: Datenmodell neu erstellen
+
+Erstellen Sie vor dem Import der Daten Ihre benutzerdefinierten Objekte und Felder neu:
+
+1. Gehen Sie in Ihrer Cloud-Instanz zu **Einstellungen → Datenmodell**
+2. Erstellen Sie benutzerdefinierte Objekte, die Ihrer selbstgehosteten Konfiguration entsprechen
+3. Fügen Sie Standard- und benutzerdefinierten Objekten benutzerdefinierte Felder hinzu
+4. Konfigurieren Sie die Feldeinstellungen (eindeutig, erforderlich usw.)
+
+<Note>Machen Sie Screenshots Ihres selbstgehosteten Datenmodells als Referenz oder halten Sie beide Instanzen nebeneinander geöffnet.</Note>
+
+## Schritt 3: Alle Benutzer einladen
+
+<Warning>
+  **Wichtig: Laden Sie Benutzer ein, BEVOR Sie Daten importieren.**
+
+  Benutzer müssen ihre Einladungen annehmen, bevor Sie Datensätze importieren, die auf sie verweisen (z. B. das Feld 'Account Owner'). Wenn Benutzer noch nicht vorhanden sind, können diese Beziehungen nicht zugeordnet werden.
+</Warning>
+
+1. Gehen Sie in Ihrer Cloud-Instanz zu **Einstellungen → Mitglieder**
+2. Laden Sie alle Teammitglieder ein, die in der selbstgehosteten Instanz Konten hatten
+3. **Warten Sie, bis alle** ihre Einladung angenommen haben
+4. Überprüfen Sie, ob alle Benutzer in Ihrer Mitgliederliste erscheinen
+
+## Schritt 4: Daten aus der selbstgehosteten Instanz exportieren
+
+Exportieren Sie jedes Objekt aus Ihrer selbstgehosteten Instanz:
+
+1. Navigieren Sie zu jedem Objekt (Unternehmen, Personen, Opportunities usw.)
+2. Konfigurieren Sie die Ansicht so, dass **alle Spalten** angezeigt werden, die Sie migrieren möchten
+3. Klicken Sie auf **⋮ → Ansicht exportieren**
+4. Speichern Sie jede CSV-Datei mit einem eindeutigen Namen (z. B. `companies-export.csv`)
+
+**Exportieren Sie in dieser Reihenfolge** (als Referenz für den Import):
+
+1. Unternehmen
+2. Personen
+3. Opportunities
+4. Benutzerdefinierte Objekte (entsprechend ihren Abhängigkeiten)
+5. Aufgaben, Notizen
+
+## Schritt 5: Verweise auf Arbeitsbereichsmitglieder aktualisieren
+
+Die exportierten CSVs enthalten Benutzer-IDs aus Ihrer selbstgehosteten Instanz. Diese IDs stimmen nicht mit Ihrer Cloud-Instanz überein, daher müssen Sie sie durch E-Mail-Adressen ersetzen.
+
+**Für jede CSV-Datei mit Benutzerverweisen (Owner, Assignee usw.):**
+
+1. Öffnen Sie die CSV-Datei in einem Tabellenkalkulationsprogramm
+2. Fügen Sie neben jeder Benutzer-ID-Spalte eine neue Spalte hinzu (z. B. `accountOwnerEmail` neben `accountOwnerId`)
+3. Tragen Sie die **E-Mail-Adresse** jedes Benutzers ein
+4. Sie können die alte ID-Spalte löschen oder belassen (sie wird beim Import übersprungen)
+
+**Beispiel:**
+
+Vor:
+
+```csv
+name,domain,accountOwnerId
+Acme Corp,https://acme.com,old-uuid-123
+```
+
+Nach:
+
+```csv
+name,domain,accountOwnerEmail
+Acme Corp,https://acme.com,john@yourcompany.com
+```
+
+<Note>Verwenden Sie dieselben E-Mail-Adressen, mit denen die Benutzer die Einladung zu Ihrem Cloud-Arbeitsbereich angenommen haben.</Note>
+
+## Schritt 6: Importreihenfolge planen
+
+Importieren Sie die Dateien in der richtigen Reihenfolge, um Beziehungen beizubehalten:
+
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (mit Unternehmen verknüpft)
+3. **Opportunities** an dritter Stelle (mit Unternehmen und Personen verknüpft)
+4. **Benutzerdefinierte Objekte** (entsprechend ihren Abhängigkeiten)
+5. Zuletzt **Aufgaben und Notizen** (mit anderen Datensätzen verknüpft)
+
+Siehe [So importieren Sie Beziehungen](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) für Details zum Beibehalten von Beziehungen.
+
+## Schritt 7: In die Cloud importieren
+
+Führen Sie Folgendes der Reihe nach für jede CSV-Datei aus:
+
+1. Navigieren Sie in Ihrer Cloud-Instanz zum Objekt
+2. Klicken Sie auf **⋮ → Datensätze importieren**
+3. Laden Sie die CSV-Datei hoch
+4. Ordnen Sie die Spalten den Feldern zu:
+   * Ordnen Sie die E-Mail-Spalten der Benutzer den entsprechenden Beziehungsfeldern zu
+   * Ordnen Sie andere Spalten wie üblich zu
+5. Überprüfen und beheben Sie eventuelle Fehler
+6. Bestätigen Sie den Import
+7. Überprüfen Sie einige Datensätze, bevor Sie mit der nächsten Datei fortfahren
+
+## Schritt 8: Konfiguration neu erstellen
+
+Erstellen Sie nach dem Import der Daten manuell neu:
+
+### Ansichten
+
+* Erstellen Sie gespeicherte Ansichten mit Filtern, Sortierungen und Spaltenkonfigurationen neu
+* Richten Sie ggf. Kanban- oder Kalenderansichten ein
+
+### Workflows
+
+* Erstellen Sie Automatisierungen in **Einstellungen → Workflows** neu
+* Testen Sie jeden Workflow, bevor Sie sich darauf verlassen
+
+### Rollen und Berechtigungen
+
+* Konfigurieren Sie Rollen in **Einstellungen → Rollen**
+* Weisen Sie Benutzer den entsprechenden Rollen zu
+
+### Integrationen
+
+* Stellen Sie für jeden Benutzer die E-Mail- und Kalendersynchronisierung wieder her
+* Konfigurieren Sie alle API-Integrationen mit neuen API-Schlüsseln neu
+
+## Checkliste nach der Migration
+
+<Check>Alle Daten erfolgreich importiert</Check>
+<Check>Beziehungen zwischen Objekten funktionieren korrekt</Check>
+<Check>Benutzerzuweisungen (Owner, Assignee) korrekt zugeordnet</Check>
+<Check>Ansichten neu erstellt</Check>
+<Check>Workflows neu erstellt und getestet</Check>
+<Check>Rollen und Berechtigungen konfiguriert</Check>
+<Check>E-Mail-/Kalendersynchronisierung wiederhergestellt</Check>
+<Check>API-Integrationen mit neuen Schlüsseln aktualisiert</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Kann ich Workflows automatisch migrieren?">
+    Derzeit nicht. Workflows müssen in Ihrer Cloud-Instanz manuell neu erstellt werden.
+  </Accordion>
+
+  <Accordion title="Was ist mit Dateianhängen und Bildern?">
+    Dateianhänge sind in CSV-Exporten nicht enthalten. Sie müssen Anhänge manuell erneut hochladen, sie über die API migrieren oder unser Team für Unterstützung bei großen Migrationen kontaktieren.
+  </Accordion>
+
+  <Accordion title="Kann ich während der Migration beide Instanzen weiter betreiben?">
+    Ja, wir empfehlen, Ihre selbstgehostete Instanz weiter auszuführen, bis Sie überprüft haben, dass die Cloud-Migration abgeschlossen ist. Achten Sie darauf, nicht an beiden Orten neue Daten zu erstellen.
+  </Accordion>
+
+  <Accordion title="Was ist, wenn ein Benutzer seine Einladung noch nicht angenommen hat?">
+    Datensätze, die sich auf diesen Benutzer beziehen, werden nicht importiert oder die Beziehung bleibt leer. Stellen Sie sicher, dass alle Benutzer ihre Einladungen annehmen, bevor Sie Daten importieren.
+  </Accordion>
+</AccordionGroup>
+
+## Brauchen Sie Hilfe?
+
+Bei komplexen Migrationen oder großen Datenmengen kontaktieren Sie uns unter [contact@twenty.com](mailto:contact@twenty.com) oder informieren Sie sich über unsere [Implementierungsservices](/l/de/user-guide/getting-started/capabilities/implementation-services).

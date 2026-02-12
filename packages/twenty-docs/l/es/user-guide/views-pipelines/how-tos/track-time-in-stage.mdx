@@ -1,0 +1,231 @@
+---
+title: Realiza un seguimiento de cuánto tiempo permanecen las oportunidades en cada etapa.
+description: Supervisa la velocidad de las oportunidades registrando cuándo ingresan a cada etapa.
+---
+
+<Tip>
+  Este es un ejemplo de cómo crear [Campos de fórmula](/l/es/user-guide/workflows/how-tos/crm-automations/formula-fields) usando flujos de trabajo — específicamente cálculos de fechas.
+</Tip>
+
+Registrar cuándo las oportunidades ingresan a cada etapa te ayuda a identificar cuellos de botella y medir la velocidad de las oportunidades.
+
+Esta guía te muestra cómo configurar campos personalizados y un flujo de trabajo para registrar automáticamente cuándo una oportunidad pasa a cada etapa y calcular cuántos días pasó en la etapa anterior.
+
+## Paso 1: Crear campos personalizados
+
+Necesitas dos tipos de campos para cada etapa:
+
+* **Campos de fecha y hora**: Registran cuándo la oportunidad ingresó a cada etapa
+* **Campos numéricos**: Almacenan cuántos días pasó la oportunidad en cada etapa
+
+### Crea los campos "Última entrada"
+
+1. Ve a **Ajustes → Modelo de datos → Oportunidades**
+2. Para cada etapa, haz clic en **+ Agregar campo** y configura:
+   * **Nombre**: Última entrada en [Nombre de la etapa] (p. ej., "Última entrada en Nuevo", "Última entrada en Calificado")
+   * **Tipo**: Fecha y hora
+   * **Descripción**: Marca de tiempo cuando la oportunidad ingresó a esta etapa
+3. Haga clic en **Guardar**
+
+Crea estos campos:
+
+* Última entrada en Nuevo
+* Última entrada en Calificado
+* Última entrada en Reunión
+* Última entrada en Propuesta
+* Última entrada en Negociación
+* Última entrada en Cerrado ganado
+* Última entrada en Cerrado perdido
+
+### Crea los campos "Días en la etapa"
+
+1. Para cada etapa, haz clic en **+ Agregar campo** y configura:
+   * **Nombre**: Días en [Nombre de la etapa] (p. ej., "Días en Nuevo", "Días en Calificado")
+   * **Tipo**: Número
+   * **Descripción**: Número de días que pasó en esta etapa
+2. Haga clic en **Guardar**
+
+Crea estos campos:
+
+* Días en Nuevo
+* Días en Calificado
+* Días en Reunión
+* Días en Propuesta
+* Días en Negociación
+
+<Note>
+  No necesitas campos "Días en" para Cerrado ganado y Cerrado perdido, ya que son etapas finales.
+</Note>
+
+### Opcional: Hacer que los campos sean de solo lectura
+
+Si no quieres que los usuarios editen manualmente estos campos calculados:
+
+1. Ve a **Ajustes → Roles**
+2. Selecciona el rol que deseas configurar
+3. Busca el objeto Oportunidades
+4. Configura los campos "Última entrada" y "Días en" como de solo lectura
+
+## Paso 2: Crear el flujo de trabajo
+
+Este único flujo de trabajo gestiona ambas tareas:
+
+* Registra la marca de tiempo al entrar en una nueva etapa
+* Calcula los días que se pasaron en la etapa anterior
+
+### Crea el flujo de trabajo
+
+1. Ve a **Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Ponle el nombre "Seguimiento del tiempo por etapa"
+
+### Configura el disparador
+
+1. Agrega un disparador **Registro actualizado**
+2. Selecciona **Oportunidades** como objeto
+3. Filtrar por: el campo **Etapa** se actualiza
+
+### Agrega ramas para cada etapa
+
+<Note>
+  Para crear una nueva rama, haz clic derecho en el lienzo del flujo de trabajo y haz clic en **Nueva acción**. Luego, vincula esta acción al nodo anterior arrastrando la flecha desde el nodo anterior hasta esta nueva acción.
+</Note>
+
+---
+
+**Rama 1: Etapa = Nuevo (primera etapa)**
+
+Como esta es la primera etapa, solo registramos la marca de tiempo de entrada; no hay una etapa anterior que calcular.
+
+1. Agrega un nodo **Filtro**: Etapa = Nuevo
+2. Agrega una acción de **Código**:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Agrega una acción **Actualizar registro**:
+   * Registro: la Oportunidad que activó el evento
+   * Campo: Última entrada en Nuevo
+   * Valor: `now` del nodo de Código
+
+---
+
+**Rama 2: Etapa = Calificado**
+
+Al pasar a Calificado, registra la hora de entrada Y calcula los días que se pasaron en Nuevo.
+
+1. Agrega un nodo **Filtro**: Etapa = Calificado
+2. Agrega una acción de **Código**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configura la entrada del nodo de Código: mapea `lastEnteredPreviousStage` al campo **Última entrada en Nuevo**
+4. Agrega una acción **Actualizar registro**:
+   * Registro: la Oportunidad que activó el evento
+   * Campos a actualizar:
+     * Última entrada en Calificado = `now`
+     * Días en Nuevo = `daysInPreviousStage`
+
+---
+
+**Rama 3: Etapa = Reunión**
+
+Al pasar a Reunión, registra la hora de entrada Y calcula los días que se pasaron en Calificado.
+
+1. Agrega un nodo **Filtro**: Etapa = Reunión
+2. Agrega una acción de **Código**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configura la entrada del nodo de Código: mapea `lastEnteredPreviousStage` al campo **Última entrada en Calificado**
+4. Agrega una acción **Actualizar registro**:
+   * Registro: la Oportunidad que activó el evento
+   * Campos a actualizar:
+     * Última entrada en Reunión = `now`
+     * Días en Calificado = `daysInPreviousStage`
+
+---
+
+**Continúa con las etapas restantes:**
+
+| Etapa           | Registros                         | Calcula             |
+| --------------- | --------------------------------- | ------------------- |
+| Propuesta       | Última entrada en Propuesta       | Días en Reunión     |
+| Negociación     | Última entrada en Negociación     | Días en Propuesta   |
+| Cerrado ganado  | Última entrada en Cerrado ganado  | Días en Negociación |
+| Cerrado perdido | Última entrada en Cerrado perdido | Días en Negociación |
+
+Las ramas no necesitan volver a unirse; cada una se ejecuta de forma independiente cuando se cumple su condición de etapa.
+
+## Paso 3: Analizar el tiempo en la etapa
+
+Con las marcas de tiempo y los recuentos de días registrados, ahora puedes analizar la velocidad de las oportunidades.
+
+### Crea una vista "Oportunidades lentas"
+
+1. Crea una vista de tabla de Oportunidades
+2. Agrega columnas: Nombre, Etapa, Días en [etapa anterior], Importe
+3. Ordena por el campo "Días en" (descendente)
+4. Filtra por Etapa para centrarte en una etapa a la vez
+
+Las oportunidades en la parte superior pasaron más tiempo en la etapa anterior.
+
+### Usa agregaciones
+
+En tu vista Kanban del pipeline:
+
+1. Haz clic en el número junto al nombre de una Etapa
+2. Selecciona **Promedio**
+3. Elige un campo "Días en"
+
+Esto muestra el tiempo promedio que las oportunidades pasan en cada etapa.
+
+## Resumen
+
+| Componente                  | Propósito                                                                 |
+| --------------------------- | ------------------------------------------------------------------------- |
+| **Campos "Última entrada"** | Almacenan cuándo la oportunidad ingresó a cada etapa                      |
+| **Campos "Días en"**        | Almacenan cuántos días se pasaron en cada etapa                           |
+| **Flujo de trabajo**        | Registra la marca de tiempo Y calcula los días en una sola pasada         |
+| **Vistas y agregaciones**   | Analiza la velocidad de las oportunidades e identifica cuellos de botella |
+
+## Relacionado
+
+* [Flujos de trabajo](/l/es/user-guide/workflows/overview) — conceptos básicos de automatización
+* [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields) — configuración de campos
+* [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones

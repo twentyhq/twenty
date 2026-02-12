@@ -1,0 +1,122 @@
+---
+title: Campos
+description: Compreenda o papel dos campos e como geri-los.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Sobre Campos
+
+Os campos são como colunas em uma planilha. Eles armazenam diferentes tipos de dados como texto, números ou datas. Os campos podem ser padrão (incorporados) ou personalizados (os que você cria).
+
+### Campos Padrão
+
+Campos padrão vêm incorporados no Twenty para atender necessidades comuns de negócios.
+
+Por exemplo, `Nome` e `Sobrenome` são campos padrão no objeto `Pessoas`. Eles armazenam dados de texto para nomes individuais.
+
+Você não pode excluir campos padrão, mas pode desativá-los se não precisar deles.
+
+Também pode personalizar as opções dos campos padrão do tipo `SELECT`, por exemplo, as opções para o `Stage` em Oportunidades.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+
+### Campos Personalizados
+
+Campos personalizados podem ser adicionados a qualquer objeto. Você pode armazenar texto, números, datas, seleções suspensas e mais. Use campos personalizados para rastrear informações específicas do seu negócio.
+
+Por exemplo, um campo personalizado para a SpaceX pode ser `Status Ativo do Foguete`, indicando se um foguete está operacional.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+
+## Tipos de campo
+
+A Twenty suporta vários tipos de campo:
+
+| Tipo             | Descrição                                                         | Exemplo                  |
+| ---------------- | ----------------------------------------------------------------- | ------------------------ |
+| Endereço         | Endereço estruturado com rua, cidade, estado, país, código postal | Endereço do escritório   |
+| Matriz           | Lista de valores de texto                                         | Etiquetas                |
+| Booleano         | Caixa de seleção verdadeiro/falso                                 | Está ativo               |
+| Moeda            | Valor monetário com código de moeda                               | Valor do negócio (USD)   |
+| Data             | Valores de data                                                   | Data de Fecho            |
+| Data e hora      | Data com hora                                                     | Hora da reunião          |
+| Domínio          | Domínio do website (usado para Empresas)                          | acme.com                 |
+| E-mail           | Endereços de e-mail (com principal + adicionais)                  | E-mail do contacto       |
+| JSON             | Dados JSON estruturados                                           | Metadados personalizados |
+| Links            | URLs com rótulos (principal + secundário)                         | Website, LinkedIn        |
+| Texto longo      | Texto com várias linhas                                           | Descrição, Notas         |
+| Seleção Múltipla | Várias escolhas de uma lista predefinida                          | Etiquetas, Categorias    |
+| Número           | Valores numéricos (inteiros ou decimais)                          | Quantidade, Pontuação    |
+| Telefone         | Números de telefone com código do país                            | Telefone do trabalho     |
+| Avaliação        | Classificação por estrelas (1-5)                                  | Prioridade, Pontuação    |
+| Relação          | Ligações para registos noutros objetos                            | Empresa → Pessoas        |
+| Selecionar       | Escolha única de uma lista predefinida                            | Fase, Estado             |
+| Texto            | Uma única linha de texto                                          | Nome, Título             |
+
+## Criar um Campo Personalizado
+
+Para adicionar um campo personalizado a qualquer objeto, siga estas etapas:
+
+1. Acesse `Configurações` na barra lateral esquerda.
+2. Acesse `Modelo de Dados`, depois selecione o objeto que você deseja personalizar.
+3. Prossiga clicando em `Adicionar Campo`.
+4. Escolha um nome e tipo de campo que atenda aos seus requisitos. Considere adicionar uma descrição do campo para um melhor entendimento.
+
+Seu novo campo agora está disponível dentro dos campos do aplicativo. Para exibi-lo em uma vista específica, clique no menu de opções e selecione `Campos`.
+
+<VimeoEmbed videoId="927628219" title="Demonstração em vídeo" />
+
+**Modo rápido:** Clique no botão **+** no canto superior direito de qualquer tabela de objeto e selecione `Personalizar campos`. Isso leva você diretamente para as configurações do Modelo de Dados.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+
+## Desativar um campo
+
+Você pode desativar um campo para ocultá-lo no aplicativo sem perder seus dados. Pense nisso como esconder o campo em vez de excluí-lo.
+
+Veja como você pode fazer isso:
+
+1. Encontre o campo que deseja desativar nas configurações do seu objeto.
+
+2. Clique nos três pontos `⋮` ao lado do campo para abrir o menu.
+
+3. Selecione `Desativar` no menu suspenso.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+
+O que acontece quando você desativa um campo?
+
+1. **No aplicativo:** O campo desaparece e você não pode adicionar novos valores a ele.
+
+2. **Relações existentes:** Se for um campo de relação, conexões existentes permanecem, mas não é possível criar novas.
+
+3. **Acesso API:** Você ainda pode acessar o campo e seus dados através da API.
+
+Você pode reativar Campos Padrão e Personalizados ou ter a opção de excluí-los permanentemente.
+
+## Tornar Campos Únicos
+
+Torne um campo único para garantir que registros distintos não possam ter o mesmo valor. Por exemplo, endereços de e-mail são únicos para cada pessoa.
+
+Se você receber um erro ao definir exclusividade, verifique se há valores duplicados nos seus dados (incluindo registros excluídos).
+
+## Melhores Práticas de Configuração de Campos
+
+### Convenções de Nomeação e Limitações
+
+* **Os nomes singular e plural devem ser distintos**: Nosso API GraphQL precisa de nomes distintos para mutações.
+* **Nomes de campo protegidos**: alguns nomes são reservados para utilização do sistema (por exemplo, `Type`, `Application`)
+
+### Campos de Moeda e Telefone
+
+* **Moeda padrão**: pode ser configurada através do modelo de dados.
+* **Códigos de país padrão**: podem ser configurados para campos de telefone através do modelo de dados.
+
+### Campos de Seleção
+
+* **Uma opção padrão pode ser selecionada** para cada campo de Seleção.
+
+### Campos de Texto do Registro
+
+* **Cada objeto tem um campo principal de exibição**: Este campo aparece na coluna mais à esquerda e representa o registro quando vinculado a outros objetos. Ele deve ser um campo de texto. Por exemplo, `Pessoas` usa `Nome` como campo principal, então quando você vincula uma pessoa a uma empresa, verá seu nome na visão da empresa.

@@ -5,7 +5,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
@@ -14,15 +14,15 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { addMonths, setMonth, setYear, subMonths } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
 
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
-  getDateFromPlainDate,
-  getPlainDateFromDate,
   isDefined,
+  turnJSDateToPlainDate,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
@@ -305,7 +305,7 @@ type DatePickerProps = {
   instanceId: string;
   isRelative?: boolean;
   hideHeaderInput?: boolean;
-  date: Nullable<string>;
+  plainDateString: Nullable<string>;
   relativeDate?: RelativeDateFilter & {
     start: string;
     end: string;
@@ -320,6 +320,7 @@ type DatePickerProps = {
   onEscape?: (date: string | null) => void;
   keyboardEventsDisabled?: boolean;
   onClear?: () => void;
+  hideCalendar?: boolean;
 };
 
 type DatePickerPropsType = ReactDatePickerLibProps<
@@ -335,7 +336,7 @@ const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
 
 export const DatePicker = ({
   instanceId,
-  date,
+  plainDateString,
   onChange,
   onClose,
   clearable = true,
@@ -345,8 +346,11 @@ export const DatePicker = ({
   onRelativeDateChange,
   hideHeaderInput,
 }: DatePickerProps) => {
-  const dateOrToday = date ?? getPlainDateFromDate(new Date());
-  const shiftedDateForReactPicker = getDateFromPlainDate(dateOrToday);
+  const plainDate = isDefined(plainDateString)
+    ? Temporal.PlainDate.from(plainDateString)
+    : Temporal.Now.plainDateISO();
+
+  const { userTimezone } = useUserTimezone();
 
   const theme = useTheme();
 
@@ -369,61 +373,54 @@ export const DatePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    const newDate = setMonth(shiftedDateForReactPicker, month);
+    const newDate = plainDate?.with({ month: month });
 
-    const plainDate = getPlainDateFromDate(newDate);
-
-    onChange?.(plainDate);
+    onChange?.(newDate?.toString() ?? null);
   };
 
   const handleAddMonth = () => {
-    const dateParsed = addMonths(shiftedDateForReactPicker, 1);
+    const newDate = plainDate?.add({ months: 1 });
 
-    const plainDate = getPlainDateFromDate(dateParsed);
-
-    onChange?.(plainDate);
+    onChange?.(newDate?.toString() ?? null);
   };
 
   const handleSubtractMonth = () => {
-    const dateParsed = subMonths(shiftedDateForReactPicker, 1);
+    const newDate = plainDate?.subtract({ months: 1 });
 
-    const plainDate = getPlainDateFromDate(dateParsed);
-
-    onChange?.(plainDate);
+    onChange?.(newDate?.toString() ?? null);
   };
 
   const handleChangeYear = (year: number) => {
-    const dateParsed = setYear(shiftedDateForReactPicker, year);
+    const newDate = plainDate?.with({ year: year });
 
-    const plainDate = getPlainDateFromDate(dateParsed);
-
-    onChange?.(plainDate);
+    onChange?.(newDate?.toString() ?? null);
   };
 
-  const handleDateChange = (date: Date) => {
-    const plainDate = getPlainDateFromDate(date);
+  const handleDateChange = (datePicked: Date) => {
+    const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
-    onChange?.(plainDate);
+    onChange?.(plainDatePicked.toString());
   };
 
-  const handleDateSelect = (date: Date) => {
-    const plainDate = getPlainDateFromDate(date);
+  const handleDateSelect = (datePicked: Date) => {
+    const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
-    handleClose?.(plainDate);
+    handleClose?.(plainDatePicked.toString());
   };
 
   const highlightedDates =
     isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
-      ? getHighlightedDates({
-          start: getDateFromPlainDate(relativeDate.start),
-          end: getDateFromPlainDate(relativeDate.end),
-        })
+      ? getHighlightedDates(
+          Temporal.PlainDate.from(relativeDate.start),
+          Temporal.PlainDate.from(relativeDate.end).subtract({ days: 1 }),
+          userTimezone,
+        )
       : [];
 
-  const dateAsDate = isDefined(date) ? getDateFromPlainDate(date) : undefined;
+  const dateAsDate = new Date(plainDate.toString());
 
   const selectedDates = isRelative
-    ? highlightedDates
+    ? highlightedDates.map((plainDate) => new Date(plainDate.toString()))
     : isDefined(dateAsDate)
       ? [dateAsDate]
       : [];
@@ -432,6 +429,17 @@ export const DatePicker = ({
     currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM
       ? CalendarStartDay[detectCalendarStartDay()]
       : (currentWorkspaceMember?.calendarStartDay ?? undefined);
+
+  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const dateShiftedToISOString = plainDate
+    ?.toZonedDateTime(systemTimeZone)
+    .toInstant()
+    .toString();
+
+  const dateForDatePicker = isDefined(dateShiftedToISOString)
+    ? new Date(dateShiftedToISOString)
+    : null;
 
   return (
     <StyledContainer calendarDisabled={isRelative}>
@@ -466,9 +474,9 @@ export const DatePicker = ({
         >
           <ReactDatePicker
             open={true}
-            selected={shiftedDateForReactPicker}
+            selected={dateForDatePicker}
             selectedDates={selectedDates}
-            openToDate={shiftedDateForReactPicker}
+            openToDate={dateForDatePicker ?? undefined}
             disabledKeyboardNavigation
             onChange={handleDateChange}
             calendarStartDay={calendarStartDay}
@@ -486,7 +494,7 @@ export const DatePicker = ({
                 />
               ) : (
                 <DatePickerHeader
-                  date={dateOrToday}
+                  date={plainDate?.toString() ?? null}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
                   onChangeYear={handleChangeYear}

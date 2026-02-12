@@ -1,6 +1,6 @@
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldDefinition } from '../FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldActorMetadata,
   type FieldAddressMetadata,
@@ -11,6 +11,7 @@ import {
   type FieldDateTimeMetadata,
   type FieldEmailMetadata,
   type FieldEmailsMetadata,
+  type FieldFilesMetadata,
   type FieldFullNameMetadata,
   type FieldLinkMetadata,
   type FieldLinksMetadata,
@@ -28,7 +29,7 @@ import {
   type FieldSelectMetadata,
   type FieldTextMetadata,
   type FieldUuidMetadata,
-} from '../FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 
 type AssertFieldMetadataFunction = <
   E extends FieldMetadataType,
@@ -46,43 +47,45 @@ type AssertFieldMetadataFunction = <
               ? FieldEmailMetadata
               : E extends 'EMAILS'
                 ? FieldEmailsMetadata
-                : E extends 'SELECT'
-                  ? FieldSelectMetadata
-                  : E extends 'MULTI_SELECT'
-                    ? FieldMultiSelectMetadata
-                    : E extends 'RATING'
-                      ? FieldRatingMetadata
-                      : E extends 'LINK'
-                        ? FieldLinkMetadata
-                        : E extends 'LINKS'
-                          ? FieldLinksMetadata
-                          : E extends 'NUMBER'
-                            ? FieldNumberMetadata
-                            : E extends 'PHONE'
-                              ? FieldPhoneMetadata
-                              : E extends 'RELATION'
-                                ? FieldRelationMetadata
-                                : E extends 'MORPH_RELATION'
-                                  ? FieldMorphRelationMetadata
-                                  : E extends 'TEXT'
-                                    ? FieldTextMetadata
-                                    : E extends 'UUID'
-                                      ? FieldUuidMetadata
-                                      : E extends 'ADDRESS'
-                                        ? FieldAddressMetadata
-                                        : E extends 'RAW_JSON'
-                                          ? FieldRawJsonMetadata
-                                          : E extends 'RICH_TEXT_V2'
-                                            ? FieldRichTextV2Metadata
-                                            : E extends 'RICH_TEXT'
-                                              ? FieldRichTextMetadata
-                                              : E extends 'ACTOR'
-                                                ? FieldActorMetadata
-                                                : E extends 'ARRAY'
-                                                  ? FieldArrayMetadata
-                                                  : E extends 'PHONES'
-                                                    ? FieldPhonesMetadata
-                                                    : never,
+                : E extends 'FILES'
+                  ? FieldFilesMetadata
+                  : E extends 'SELECT'
+                    ? FieldSelectMetadata
+                    : E extends 'MULTI_SELECT'
+                      ? FieldMultiSelectMetadata
+                      : E extends 'RATING'
+                        ? FieldRatingMetadata
+                        : E extends 'LINK'
+                          ? FieldLinkMetadata
+                          : E extends 'LINKS'
+                            ? FieldLinksMetadata
+                            : E extends 'NUMBER'
+                              ? FieldNumberMetadata
+                              : E extends 'PHONE'
+                                ? FieldPhoneMetadata
+                                : E extends 'RELATION'
+                                  ? FieldRelationMetadata
+                                  : E extends 'MORPH_RELATION'
+                                    ? FieldMorphRelationMetadata
+                                    : E extends 'TEXT'
+                                      ? FieldTextMetadata
+                                      : E extends 'UUID'
+                                        ? FieldUuidMetadata
+                                        : E extends 'ADDRESS'
+                                          ? FieldAddressMetadata
+                                          : E extends 'RAW_JSON'
+                                            ? FieldRawJsonMetadata
+                                            : E extends 'RICH_TEXT_V2'
+                                              ? FieldRichTextV2Metadata
+                                              : E extends 'RICH_TEXT'
+                                                ? FieldRichTextMetadata
+                                                : E extends 'ACTOR'
+                                                  ? FieldActorMetadata
+                                                  : E extends 'ARRAY'
+                                                    ? FieldArrayMetadata
+                                                    : E extends 'PHONES'
+                                                      ? FieldPhonesMetadata
+                                                      : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

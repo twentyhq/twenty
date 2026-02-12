@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { lazy, type ReactElement, Suspense, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -9,15 +10,20 @@ import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
 
 const DocumentViewer = lazy(() =>
@@ -133,6 +139,10 @@ export const AttachmentList = ({
     isAttachmentPreviewEnabledState,
   );
 
+  const isFilesFieldMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+  );
+
   const hasDownloadPermission = useHasPermissionFlag(
     PermissionFlagType.DOWNLOAD_FILE,
   );
@@ -142,6 +152,16 @@ export const AttachmentList = ({
   );
 
   const { openModal, closeModal } = useModal();
+
+  const getAttachmentUrl = (attachment: Attachment) => {
+    const fileUrl = isFilesFieldMigrated
+      ? attachment.file?.[0]?.url || attachment.fullPath
+      : attachment.fullPath;
+
+    assertIsDefinedOrThrow(fileUrl, new Error(t`File URL is not defined`));
+
+    return fileUrl;
+  };
 
   const onUploadFile = async (file: File) => {
     await uploadAttachmentFile(file, targetableObject);
@@ -166,7 +186,10 @@ export const AttachmentList = ({
 
   const handleDownload = () => {
     if (!previewedAttachment) return;
-    downloadFile(previewedAttachment.fullPath, previewedAttachment.name);
+    downloadFile(
+      getAttachmentUrl(previewedAttachment),
+      previewedAttachment.name,
+    );
   };
 
   return (
@@ -211,6 +234,7 @@ export const AttachmentList = ({
             size="large"
             isClosable
             onClose={handleClosePreview}
+            ignoreContainer
           >
             <StyledModalHeader>
               <StyledHeader>
@@ -239,14 +263,14 @@ export const AttachmentList = ({
                   fallback={
                     <StyledLoadingContainer>
                       <StyledLoadingText>
-                        Loading document viewer...
+                        {t`Loading document viewer...`}
                       </StyledLoadingText>
                     </StyledLoadingContainer>
                   }
                 >
                   <DocumentViewer
                     documentName={previewedAttachment.name}
-                    documentUrl={previewedAttachment.fullPath}
+                    documentUrl={getAttachmentUrl(previewedAttachment)}
                   />
                 </Suspense>
               </StyledModalContent>

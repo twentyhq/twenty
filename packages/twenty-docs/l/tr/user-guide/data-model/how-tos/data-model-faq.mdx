@@ -1,0 +1,155 @@
+---
+title: Veri Modeli SSS
+description: Twenty'nin veri modeli hakkında sıkça sorulan sorular.
+---
+
+## Nesne Yönetimi
+
+<AccordionGroup>
+  <Accordion title="Özel bir nesneyi silebilir miyim?">
+    Evet, özel nesneler silinebilir. Ayrıca önce onları devre dışı bırakabilirsiniz; bu, verileri korurken nesneyi ve verilerini arayüzden gizler.
+  </Accordion>
+
+  <Accordion title="Standart nesneleri (Kişiler, Şirketler vb.) silebilir miyim?">
+    Hayır, standart nesneler silinemez. Yalnızca devre dışı bırakabilirsiniz; bu, onları arayüzden gizler ancak verileri korur.
+  </Accordion>
+
+  <Accordion title="Kaç özel nesne oluşturabilirim?">
+    İhtiyacınız kadar çok özel nesne ve alan oluşturabilirsiniz — fiyat değişmez.
+  </Accordion>
+
+  <Accordion title="Bir standart nesnenin adını değiştirebilir miyim?">
+    Standart nesnelerin etiketini (Kişiler, Şirketler, Fırsatlar) yeniden adlandırabilirsiniz, ancak API adlarını değiştiremezsiniz. API adları, tüm Twenty çalışma alanlarında tutarlılık için sabittir.
+  </Accordion>
+
+  <Accordion title="Bir nesnenin simgesini değiştirebilir miyim?">
+    Evet, **Ayarlar → Veri Modeli** bölümünde hem standart hem de özel nesnelerin simgesini değiştirebilirsiniz.
+  </Accordion>
+
+  <Accordion title="Sol navigasyon çubuğundaki nesneleri sıralayabilir miyim?">
+    Henüz değil. Navigasyon içindeki nesne sıralaması şu anda sabit, ancak bu özellik gelecekteki bir sürüm için planlanmıştır.
+  </Accordion>
+
+  <Accordion title="Sol navigasyon çubuğundan nesneleri gizleyebilir miyim?">
+    Tüm aktif nesneler gezinme menüsünde görünür. **Ayarlar → Veri Modeli** altında ihtiyaç duymadığınız nesneleri devre dışı bırakabilirsiniz.
+  </Accordion>
+</AccordionGroup>
+
+## Alan Yetkinlikleri
+
+<AccordionGroup>
+  <Accordion title="Bir alan türünü oluşturduktan sonra değiştirebilir miyim?">
+    Hayır, alan türleri oluşturulduktan sonra değiştirilemez. Farklı bir türe ihtiyacınız varsa, doğru türde yeni bir alan oluşturun, verilerinizi taşıyın ve ardından eski alanı devre dışı bırakın.
+  </Accordion>
+
+  <Accordion title="Neden farklı tekil ve çoğul adlara ihtiyacım var?">
+    GraphQL API'miz farklı işlemler için her iki biçimi de kullanır:
+
+    * Tek bir kayıt eylemleri için `createPerson` (tekil)
+    * Toplu işlemler için `createPeople` (çoğul)
+
+    Bu, tekil ve çoğul biçimler aynı olduğunda sınırlamalar yaratır ancak geliştirici deneyimini iyileştirir.
+  </Accordion>
+
+  <Accordion title="Neden bazı alan adları korunmuş durumda?">
+    `Tür` veya `Uygulama` gibi bazı alan adları sistem kullanımı için ayrılmıştır. Bunun yerine `Kategori` veya `Sınıflandırma` gibi alternatif adlar seçin.
+  </Accordion>
+
+  <Accordion title="Bir alanı devre dışı bıraktığınızda ne olur?">
+    * Alan arayüzden gizlenir
+    * Mevcut veriler korunur
+    * Alana API üzerinden erişmeye devam edebilirsiniz
+    * Mevcut ilişkiler kalır, ancak yenilerini oluşturamazsınız
+    * Alanı daha sonra yeniden etkinleştirebilirsiniz
+  </Accordion>
+
+  <Accordion title="Bir alanı zorunlu yapabilir miyim?">
+    Şu anda, özel alanları zorunlu yapamazsınız. Tüm alanlar boş değerleri kabul eder. Alanlar boş olduğunda uyarılar göndererek veya işlemleri engelleyerek alanları zorunlu kılmak için iş akışlarını kullanabilirsiniz.
+  </Accordion>
+
+  <Accordion title="Benzersiz ile zorunlu arasındaki fark nedir?">
+    * **Benzersiz**: İki kayıt bu alanda aynı değere sahip olamaz
+    * **Zorunlu**: Alanın bir değeri olmalıdır (şu anda özel alanlar için desteklenmiyor)
+  </Accordion>
+
+  <Accordion title="Formül alanları oluşturabilir miyim?">
+    Formül alanları **2026'nın ilk çeyreğinde** gelmektedir. Bu arada, alan değerlerini otomatik olarak hesaplamak ve güncellemek için iş akışlarını kullanabilirsiniz.
+  </Accordion>
+
+  <Accordion title="Nesnelerimde iç içe alanlar bulundurabilir miyim?">
+    İç içe alanlar **2026'nın ilk çeyreğinde** gelmektedir. Şu anda, ilişkili nesnelerden alan değerleri getirmek için iş akışlarını kullanabilirsiniz. Örneğin, bir Kişi kaydında bir şirketin sektörünü görüntülemek için, Kişiler üzerinde özel bir alan oluşturun ve değeri eşzamanlamak için bir iş akışı kullanın.
+  </Accordion>
+
+  <Accordion title="Nesnelerde alanları yeniden düzenleyebilir miyim?">
+    Alan yeniden düzenlemesi, **2025'in dördüncü çeyreğinde** özel düzenlerle birlikte kullanılabilir olacaktır. Şu anda alanlar alfabetik sırada görünür.
+  </Accordion>
+</AccordionGroup>
+
+## İlişkiler
+
+<AccordionGroup>
+  <Accordion title="Aynı nesneye işaret eden bir ilişkiye sahip olabilir miyim?">
+    Evet! Kendine başvuran ilişkiler desteklenir ve hesap hiyerarşileri gibi kullanım durumları için önerilir. Örneğin, üst/alt hesapları izlemek için Şirketler'den Şirketler'e bir ilişki oluşturun.
+  </Accordion>
+
+  <Accordion title="Çoktan-çoka ilişkiler oluşturabilir miyim?">
+    Çoktan-çoka ilişkiler **H1 2026**'da geliyor. Şimdilik geçici çözüm olarak, iki adet bire-çok ilişkiye sahip bir ara nesne oluşturun.
+
+    Örneğin, Kişiler ve Projeleri (çoktan-çoka) bağlamak için "Project Assignments" adında şu özelliklere sahip bir nesne oluşturun:
+
+    * Kişilere bir ilişki (birçok atama → bir kişi)
+    * Projelere bir ilişki (birçok atama → bir proje)
+  </Accordion>
+
+  <Accordion title="Birden fazla nesne türüne yönelik ilişkiler (Morph ilişkileri) nelerdir?">
+    Bunlar, tek bir alan aracılığıyla bir nesnenin birden fazla farklı nesne türüyle ilişkilendirilmesine olanak tanır. Örneğin, Notlar aynı anda Kişilere VE Şirketlere VE Fırsatlara eklenebilir.
+
+    Her Not aynı anda bir Kişiye, bir Şirkete ve bir Fırsata bağlanır.
+
+    Daha fazlası için [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) bölümüne bakın.
+  </Accordion>
+
+  <Accordion title="Aynı iki nesne arasında birden fazla ilişkiye sahip olabilir miyim?">
+    Evet, aynı iki nesne arasında birden fazla ilişki oluşturabilirsiniz. Örneğin, bir Şirketin Kişiler ile hem "Primary Contact" hem de "Billing Contact" ilişkisi olabilir.
+  </Accordion>
+
+  <Accordion title="Bir kaydı sildiğimde ilişkilere ne olur?">
+    Bir kaydı sildiğinizde, ilişki bağlantısı ilgili kayıtlardan kaldırılır. İlgili kayıtların kendileri silinmez.
+  </Accordion>
+
+  <Accordion title="Döngüsel ilişkiler oluşturabilir miyim?">
+    Teknik olarak mümkün olsa da, döngüsel ilişkiler (A → B → C → A) kafa karışıklığına ve olası performans sorunlarına yol açabileceği için kaçınılmalıdır.
+  </Accordion>
+</AccordionGroup>
+
+## Erişim ve İzinler
+
+<AccordionGroup>
+  <Accordion title="Nerede veri modelimi görebilir ve düzenleyebilirim?">
+    **Ayarlar → Veri Modeli**'ne giderek tüm nesnelerinizi ve alanlarınızı görüntüleyip düzenleyin.
+  </Accordion>
+
+  <Accordion title="Neden Ayarlar altında Veri Modelini göremiyorum?">
+    Çalışma alanı yöneticinize ulaşın. Veri modeli erişimi genellikle yalnızca yöneticiler tarafından sınırlıdır.
+  </Accordion>
+</AccordionGroup>
+
+## Veri Yönetimi
+
+<AccordionGroup>
+  <Accordion title="Sahip olabileceğim kayıt sayısında bir sınır var mı?">
+    Kayıt sayısına ilişkin katı bir sınır yoktur. Ancak, çok büyük veri kümeleri bazı görünümlerde performansı etkileyebilir. Büyük veri kümelerini etkili şekilde yönetmek için filtreleri ve görünümleri kullanın.
+  </Accordion>
+
+  <Accordion title="Özel nesnelere veri içe aktarabilir miyim?">
+    Evet, özel nesneler de dahil olmak üzere herhangi bir nesneye CSV verisi içe aktarabilirsiniz. İçe aktarma süreci, özel alanlar için alan eşlemeyi destekler. Bkz. [CSV Dosyalarınızı Nasıl Hazırlarsınız](/l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Veri modeli yapılandırmamı dışa aktarabilir miyim?">
+    Şu anda, veri modeli yapılandırması için yerleşik bir dışa aktarma yok. Veri modelinizi çalışma alanları arasında taşımanız gerekiyorsa destek ile iletişime geçin.
+  </Accordion>
+</AccordionGroup>
+
+## Daha Fazla Yardım mı İhtiyacınız Var?
+
+Karmaşık veri modeli tasarımı konusunda yardım için [Uygulama Hizmetlerimizi](/l/tr/user-guide/getting-started/capabilities/implementation-services) inceleyin.

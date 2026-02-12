@@ -1,0 +1,179 @@
+---
+title: Automatizaciones de Cerrado Ganado
+description: Automatiza las actividades posteriores al cierre cuando las oportunidades se cierran como ganadas.
+---
+
+Cuando se cierra un negocio, deben ocurrir varias cosas: actualizar el estado de la empresa, notificar a los miembros del equipo, crear tareas de incorporación. Automatiza todo esto con un único flujo de trabajo.
+
+## Problema
+
+Cuando una oportunidad pasa a "Cerrado ganado":
+
+* El tipo de empresa debe cambiar de "Prospect" a "Customer"
+* Se deben crear tareas de incorporación
+* Se debe notificar al equipo de Customer Success
+* El representante de ventas necesita una confirmación
+
+Hacer esto manualmente consume tiempo y es propenso a errores.
+
+## La solución
+
+Crea un flujo de trabajo que gestione automáticamente todas las actividades posteriores al cierre ganado.
+
+## Configuración completa del flujo de trabajo
+
+### Paso 1: Crear el flujo de trabajo
+
+1. Ve a **Configuración → Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Asígnale el nombre "Deal Won - Post-Win Automation"
+
+### Paso 2: Configurar el disparador
+
+1. Selecciona **Record is Updated**
+2. Elige **Oportunidades**
+3. En "Campos a supervisar", selecciona **Etapa**
+
+### Paso 3: Agregar filtro de etapa
+
+1. Añade la acción **Filter**
+2. Condición: `{{trigger.object.stage}}` es igual a "Closed Won"
+
+### Paso 4: Actualizar el tipo de empresa
+
+1. Añade la acción **Update Record**
+2. Configurar:
+
+| Campo                        | Valor                           |
+| ---------------------------- | ------------------------------- |
+| **Objeto**                   | Empresas                        |
+| **Registro**                 | `{{trigger.object.company.id}}` |
+| **Tipo**                     | Cliente                         |
+| **Fecha del primer negocio** | `{{trigger.object.closedAt}}`   |
+| **Propietario de la cuenta** | `{{trigger.object.owner.id}}`   |
+
+### Paso 5: Crear tarea de incorporación
+
+1. Añade la acción **Create Record**
+2. Configurar:
+
+| Campo                       | Valor                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Objeto**                  | Tareas                                                                                                              |
+| **Título**                  | `Incorporación: {{trigger.object.name}}`                                                                            |
+| **Asignado**                | Miembro del equipo de Customer Success                                                                              |
+| **Fecha de vencimiento**    | Dentro de 3 días                                                                                                    |
+| **Prioridad**               | Alta                                                                                                                |
+| **Empresa relacionada**     | `{{trigger.object.company.id}}`                                                                                     |
+| **Oportunidad relacionada** | `{{trigger.object.id}}`                                                                                             |
+| **Descripción**             | `Incorporación de nuevo cliente para {{trigger.object.company.name}}. Valor del negocio: {{trigger.object.amount}}` |
+
+### Paso 6: Notificar a Customer Success
+
+1. Añade la acción **Send Email**
+2. Configurar:
+
+| Campo      | Valor                                               |
+| ---------- | --------------------------------------------------- |
+| **Para**   | customer-success@yourcompany.com                    |
+| **Asunto** | `🎉 Nuevo cliente: {{trigger.object.company.name}}` |
+| **Cuerpo** | Consulta el ejemplo a continuación                  |
+
+**Ejemplo de cuerpo del correo**:
+
+```
+Hola equipo de CS,
+
+¡Tenemos un nuevo cliente!
+
+Empresa: {{trigger.object.company.name}}
+Negocio: {{trigger.object.name}}
+Valor: {{trigger.object.amount}}
+Representante de ventas: {{trigger.object.owner.name}}
+Fecha de cierre: {{trigger.object.closedAt}}
+
+Se ha creado automáticamente una tarea de incorporación.
+
+¡Démosles un gran comienzo!
+```
+
+### Paso 7: Confirmar al representante de ventas
+
+1. Añade otra acción **Send Email**
+2. Configurar:
+
+| Campo      | Valor                                                                                                                       |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Para**   | `{{trigger.object.owner.email}}`                                                                                            |
+| **Asunto** | `✅ Negocio cerrado: {{trigger.object.name}}`                                                                                |
+| **Cuerpo** | ¡Felicidades! Tu negocio ha sido procesado. Se ha notificado al equipo de Customer Success y la incorporación ha comenzado. |
+
+### Paso 8: Probar y activar
+
+1. Prueba moviendo una oportunidad de prueba a "Closed Won"
+2. Verificar:
+   * El tipo de empresa cambió a "Customer"
+   * Tarea de incorporación creada
+   * El equipo de CS recibió el correo electrónico
+   * El representante de ventas recibió la confirmación
+3. Actívalo cuando esté listo
+
+## Cómo gestionar Closed Lost
+
+Crea un flujo de trabajo similar para negocios perdidos:
+
+### Disparador
+
+* Record is Updated (Oportunidades, Etapa = "Closed Lost")
+
+### Acciones
+
+1. **Create Record**: Tarea para "Análisis de negocio perdido"
+2. **Update Record**: Agrega el motivo de pérdida al registro de la empresa
+3. **Send Email**: Notifica al gerente sobre el negocio perdido
+
+## Avanzado: incorporación de varios pasos
+
+Para una incorporación compleja, crea varias tareas:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Usa **Iterator** para crear cada tarea a partir del array.
+
+## Ideas de personalización
+
+### Mantén tus otras herramientas actualizadas
+
+* Crea el cliente en el sistema de facturación con una **HTTP Request**
+
+### Acciones condicionales
+
+Usa acciones **Filter** para:
+
+* Incorporación diferente para empresas grandes frente a pymes
+* Asignados diferentes según la región
+* Omitir notificaciones para negocios pequeños
+
+### Incluir detalles del negocio
+
+Usa la acción **Code** para formatear:
+
+* Documentos de resumen del negocio
+* Notas de traspaso para el equipo de CS
+* Listas de verificación de incorporación personalizadas
+
+## Relacionado
+
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)

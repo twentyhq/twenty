@@ -1,4 +1,4 @@
-import { groupArrayItemsBy } from '../groupArrayItemsBy';
+import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 
 describe('groupArrayItemsBy', () => {
   it('groups an array of objects by a computed key', () => {

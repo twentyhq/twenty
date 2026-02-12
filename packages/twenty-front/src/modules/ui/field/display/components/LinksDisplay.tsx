@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -13,9 +13,10 @@ import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
+  onLinkClick?: (url: string, event: React.MouseEvent<HTMLElement>) => void;
 };
 
-export const LinksDisplay = ({ value }: LinksDisplayProps) => {
+export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
   const links = useMemo(() => {
     if (!isDefined(value)) {
       return [];
@@ -42,10 +43,23 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
   return (
     <ExpandableList>
       {links.map(({ url, label, type }, index) =>
-        type === LinkType.LinkedIn || type === LinkType.Twitter ? (
-          <SocialLink key={index} href={url} type={type} label={label} />
+        type === LinkType.LinkedIn ||
+        type === LinkType.Twitter ||
+        type === LinkType.Facebook ? (
+          <SocialLink
+            key={index}
+            href={url}
+            type={type}
+            label={label}
+            onClick={(event) => onLinkClick?.(url, event)}
+          />
         ) : (
-          <RoundedLink key={index} href={url} label={label} />
+          <RoundedLink
+            key={index}
+            href={url}
+            label={label}
+            onClick={(event) => onLinkClick?.(url, event)}
+          />
         ),
       )}
     </ExpandableList>

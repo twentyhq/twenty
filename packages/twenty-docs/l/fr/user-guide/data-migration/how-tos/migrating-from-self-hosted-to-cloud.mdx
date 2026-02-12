@@ -1,0 +1,171 @@
+---
+title: Migration de l'hébergement local vers le cloud
+description: Guide pas à pas pour migrer votre instance Twenty auto-hébergée vers Twenty Cloud.
+---
+
+## Vue d'ensemble
+
+Ce guide vous accompagne pour migrer vos données d'une instance Twenty auto-hébergée vers Twenty Cloud. Le processus consiste à configurer votre espace de travail cloud, à exporter vos données, puis à les réimporter.
+
+<Note>Les vues, les flux de travail et les rôles doivent être recréés manuellement après la migration. Prévoyez du temps pour ce travail de configuration.</Note>
+
+## Étape 1: Créez votre espace de travail cloud
+
+1. Accédez à [app.twenty.com](https://app.twenty.com) et créez un nouvel espace de travail
+2. Terminez l'assistant de configuration initial
+3. Notez l'URL de votre nouvel espace de travail
+
+## Étape 2: Recréez votre modèle de données
+
+Avant d'importer des données, recréez vos objets et champs personnalisés:
+
+1. Allez dans **Paramètres → Modèle de données** dans votre instance cloud
+2. Créez des objets personnalisés correspondant à votre configuration auto-hébergée
+3. Ajoutez des champs personnalisés aux objets standard et personnalisés
+4. Configurez les paramètres des champs (unique, obligatoire, etc.)
+
+<Note>Faites des captures d'écran de votre modèle de données auto-hébergé pour référence, ou gardez les deux instances ouvertes côte à côte.</Note>
+
+## Étape 3: Invitez tous les utilisateurs
+
+<Warning>
+  **Critique: invitez les utilisateurs AVANT d'importer des données.**
+
+  Les utilisateurs doivent accepter leurs invitations avant que vous n'importiez des enregistrements qui les référencent (comme les champs Propriétaire du compte). Si les utilisateurs n'existent pas encore, ces relations ne pourront pas être mises en correspondance.
+</Warning>
+
+1. Allez dans **Paramètres → Membres** dans votre instance cloud
+2. Invitez tous les membres de l'équipe qui avaient des comptes sur l'instance auto-hébergée
+3. **Attendez que tout le monde accepte** son invitation
+4. Vérifiez que tous les utilisateurs apparaissent dans votre liste des membres
+
+## Étape 4: Exportez les données depuis l'instance auto-hébergée
+
+Exportez chaque objet depuis votre instance auto-hébergée:
+
+1. Accédez à chaque objet (Entreprises, Personnes, Opportunités, etc.)
+2. Configurez la vue pour afficher **toutes les colonnes** que vous souhaitez migrer
+3. Cliquez sur **⋮ → Exporter la vue**
+4. Enregistrez chaque fichier CSV avec un nom explicite (par exemple, `companies-export.csv`)
+
+**Exportez dans cet ordre** (pour référence lors de l'importation):
+
+1. Entreprises
+2. Personnes
+3. Opportunités
+4. Objets personnalisés (en suivant leurs dépendances)
+5. Tâches, notes
+
+## Étape 5 : Mettez à jour les références des membres de l'espace de travail
+
+Les fichiers CSV exportés contiennent des ID utilisateur provenant de votre instance auto-hébergée. Ces ID ne correspondront pas à votre instance cloud, vous devez donc les remplacer par des adresses e-mail.
+
+**Pour chaque fichier CSV contenant des références utilisateur (propriétaire, assigné, etc.):**
+
+1. Ouvrez le CSV dans une application de feuille de calcul
+2. Ajoutez une nouvelle colonne à côté de chaque colonne d'ID utilisateur (par exemple, `accountOwnerEmail` à côté de `accountOwnerId`)
+3. Renseignez l'**adresse e-mail** de chaque utilisateur
+4. Vous pouvez supprimer l'ancienne colonne d'ID ou la laisser (elle sera ignorée lors de l'importation)
+
+**Exemple:**
+
+Avant:
+
+```csv
+name,domain,accountOwnerId
+Acme Corp,https://acme.com,old-uuid-123
+```
+
+Après:
+
+```csv
+name,domain,accountOwnerEmail
+Acme Corp,https://acme.com,john@yourcompany.com
+```
+
+<Note>Utilisez les mêmes adresses e-mail que celles utilisées par les utilisateurs pour accepter l'invitation à l'espace de travail cloud.</Note>
+
+## Étape 6: Planifiez l'ordre d'importation
+
+Importez les fichiers dans le bon ordre pour conserver les relations:
+
+1. **Entreprises** en premier (aucune dépendance)
+2. **Personnes** en deuxième (liées aux entreprises)
+3. **Opportunités** en troisième (liées aux entreprises et aux personnes)
+4. **Objets personnalisés** (en suivant leurs dépendances)
+5. **Tâches et notes** en dernier (liées aux autres enregistrements)
+
+Voir [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pour plus de détails sur le maintien des relations.
+
+## Étape 7: Importez vers le cloud
+
+Pour chaque fichier CSV, dans l'ordre:
+
+1. Accédez à l'objet dans votre instance cloud
+2. Cliquez sur **⋮ → Importer des enregistrements**
+3. Téléversez le fichier CSV
+4. Faites correspondre les colonnes aux champs:
+   * Faites correspondre les colonnes d'e-mail des utilisateurs aux champs de relation appropriés
+   * Faites correspondre les autres colonnes comme d'habitude
+5. Examinez et corrigez les erreurs éventuelles
+6. Confirmez l'importation
+7. Vérifiez quelques enregistrements avant de passer au fichier suivant
+
+## Étape 8: Recréez la configuration
+
+Après l'importation des données, recréez manuellement:
+
+### Vues
+
+* Recréez les vues enregistrées avec des filtres, des tris et des configurations de colonnes
+* Configurez d'éventuelles vues kanban ou calendrier
+
+### Flux de travail
+
+* Recréez les automatisations dans **Paramètres → Flux de travail**
+* Testez chaque flux de travail avant de vous y fier
+
+### Rôles et autorisations
+
+* Configurez les rôles dans **Paramètres → Rôles**
+* Affectez les utilisateurs aux rôles appropriés
+
+### Intégrations
+
+* Reconnectez la synchronisation e-mail et calendrier pour chaque utilisateur
+* Reconfigurez les intégrations API avec de nouvelles clés API
+
+## Liste de vérification post-migration
+
+<Check>Toutes les données importées avec succès</Check>
+<Check>Relations entre objets fonctionnant correctement</Check>
+<Check>Affectations des utilisateurs (propriétaire, assigné) correctement mises en correspondance</Check>
+<Check>Vues recréées</Check>
+<Check>Flux de travail recréés et testés</Check>
+<Check>Rôles et autorisations configurés</Check>
+<Check>Synchronisation e-mail/calendrier reconnectée</Check>
+<Check>Intégrations API mises à jour avec de nouvelles clés</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Puis-je migrer les flux de travail automatiquement ?">
+    Pas pour le moment. Les flux de travail doivent être recréés manuellement dans votre instance cloud.
+  </Accordion>
+
+  <Accordion title="Qu'en est-il des pièces jointes et des images ?">
+    Les pièces jointes ne sont pas incluses dans les exportations CSV. Vous devrez téléverser à nouveau les pièces jointes manuellement, les migrer via l'API ou contacter notre équipe pour obtenir de l'aide pour les migrations de grande envergure.
+  </Accordion>
+
+  <Accordion title="Puis-je garder les deux instances actives pendant la migration ?">
+    Oui, nous vous recommandons de garder votre instance auto-hébergée active jusqu'à ce que vous ayez vérifié que la migration vers le cloud est terminée. Veillez simplement à ne pas créer de nouvelles données aux deux endroits.
+  </Accordion>
+
+  <Accordion title="Que se passe-t-il si un utilisateur n'a pas encore accepté son invitation ?">
+    Les enregistrements faisant référence à cet utilisateur échoueront à l'importation ou la relation sera vide. Assurez-vous que tous les utilisateurs acceptent les invitations avant d'importer des données.
+  </Accordion>
+</AccordionGroup>
+
+## Besoin d'aide ?
+
+Pour des migrations complexes ou de grands jeux de données, contactez-nous à [contact@twenty.com](mailto:contact@twenty.com) ou découvrez nos [services de mise en œuvre](/l/fr/user-guide/getting-started/capabilities/implementation-services).

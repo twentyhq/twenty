@@ -1,0 +1,228 @@
+---
+title: Twenty'den bir PDF oluşturun
+description: Bir kayda PDF (ör. bir teklif) oluşturup eklemek için bir iş akışı oluşturun.
+---
+
+Twenty'de PDF'yi otomatik olarak oluşturun veya edinin ve bir kayda ekleyin. Bu, Şirketler, Fırsatlar veya diğer nesnelere bağlı teklif, fatura ya da raporlar oluşturmak için yaygın olarak kullanılır.
+
+## Genel Bakış
+
+Bu iş akışı, kullanıcıların seçilen herhangi bir kayıt için isteğe bağlı olarak PDF oluşturabilmesi için **Manuel Tetikleyici** kullanır. Bir **Mantıksal İşlev** şunları gerçekleştirir:
+
+1. PDF'yi bir URL'den indirme (bir PDF oluşturma hizmetinden)
+2. Dosyayı Twenty'ye yükleme
+3. Kayda bağlı bir ek oluşturma
+
+## Ön Gereksinimler
+
+İş akışını kurmadan önce:
+
+1. **Bir API Anahtarı oluşturun**: **Ayarlar → API'ler**'e gidin ve yeni bir API anahtarı oluşturun. Mantıksal işlev için bu belirtece ihtiyacınız olacak.
+2. **Bir PDF oluşturma hizmeti kurun** (isteğe bağlı): PDF'leri dinamik olarak oluşturmak istiyorsanız (ör. teklifler), PDF'yi oluşturmak ve bir indirme URL'si almak için Carbone, PDFMonkey veya DocuSeal gibi bir hizmet kullanın.
+
+## Adım Adım Kurulum
+
+### Adım 1: Tetikleyiciyi Yapılandırın
+
+1. **İş Akışları**'na gidin ve yeni bir iş akışı oluşturun
+2. **Manuel Tetikleyici**'yi seçin
+3. PDF'leri eklemek istediğiniz nesneyi seçin (ör. **Company** veya **Opportunity**)
+
+<Tip>
+  Manuel Tetikleyici ile kullanıcılar, bir kayıt seçildiğinde sağ üstte görünen bir düğmeyi kullanarak bu iş akışını çalıştırıp bir PDF oluşturabilir ve ekleyebilir.
+</Tip>
+
+### Adım 2: Bir Mantıksal İşlev ekleyin
+
+1. Bir **Kod** eylemi (mantıksal işlev) ekleyin
+2. Aşağıdaki kodla yeni bir işlev oluşturun
+3. Girdi parametrelerini yapılandırın
+
+#### Girdi Parametreleri
+
+| Parametre   | Değer                   |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Farklı bir nesneye (Person, Opportunity vb.) ekliyorsanız, parametreyi buna göre yeniden adlandırın (ör. `personId`, `opportunityId`) ve mantıksal işlevi güncelleyin.
+</Note>
+
+#### Mantıksal İşlev Kodu
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Adım 3: Kullanım Senaryonuza Göre Özelleştirin
+
+#### Farklı bir nesneye eklemek için
+
+`companyId` değerini uygun alanla değiştirin:
+
+| Nesne      | Alan Adı             |
+| ---------- | -------------------- |
+| Şirket     | `companyId`          |
+| Kişi       | `personId`           |
+| Fırsat     | `opportunityId`      |
+| Özel Nesne | `yourCustomObjectId` |
+
+Ek oluşturma mutasyonunda hem işlev parametresini hem de `variables.data` nesnesini güncelleyin.
+
+#### Dinamik bir PDF URL'si kullanmak için
+
+Bir PDF oluşturma hizmeti kullanıyorsanız şunları yapabilirsiniz:
+
+1. Önce PDF'yi oluşturmak için bir HTTP İsteği eylemi yapın
+2. Döndürülen PDF URL'sini mantıksal işleve bir parametre olarak iletin
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Adım 4: Test Edin ve Etkinleştirin
+
+1. İş akışını kaydedin
+2. Bir Company kaydına gidin
+3. **⋮** menüsüne tıklayın ve iş akışınızı seçin
+4. PDF'nin eklendiğini doğrulamak için kayıttaki **Attachments** bölümünü kontrol edin
+5. İş akışını etkinleştirin
+
+## PDF Oluşturma Hizmetleriyle Birleştirme
+
+Dinamik teklifler veya faturalar oluşturmak için:
+
+### Örnek: Teklif Oluştur → PDF'yi Ekle
+
+| Adım | Eylem                        | Amaç                                             |
+| ---- | ---------------------------- | ------------------------------------------------ |
+| 1    | Manuel Tetikleyici (Company) | Kullanıcı bir kayıtta başlatır                   |
+| 2    | Kayıt Ara                    | Opportunity veya satır öğesi ayrıntılarını alın  |
+| 3    | HTTP İsteği                  | Kayıt verileriyle PDF oluşturma API'sini çağırın |
+| 4    | Sunucusuz İşlev              | Oluşturulan PDF'yi indirin ve ekleyin            |
+
+### Popüler PDF Oluşturma Hizmetleri
+
+* **Carbone** - Şablon tabanlı belge oluşturma
+* **PDFMonkey** - Şablonlardan dinamik PDF oluşturma
+* **DocuSeal** - Belge otomasyon platformu
+* **Documint** - API-öncelikli belge oluşturma
+
+Her hizmet, bir PDF URL'si döndüren bir API sağlar; ardından bunu mantıksal işleve iletebilirsiniz.
+
+## Sorun Giderme
+
+| Sorun                    | Çözüm                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| "PDF indirilemedi"       | PDF URL'sinin erişilebilir olduğunu ve geçerli bir PDF döndürdüğünü kontrol edin |
+| "Yükleme başarısız"      | API anahtarınızın geçerli olduğunu ve yazma izinlerine sahip olduğunu doğrulayın |
+| "Ek oluşturma başarısız" | Nesne kimliği alan adının hedef nesnenizle eşleştiğinden emin olun               |
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [Mantıksal İşlevler](/l/tr/user-guide/workflows/capabilities/workflow-actions#code)
+* [Twenty'den Teklif veya Fatura Oluşturun](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

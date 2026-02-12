@@ -1,8 +1,8 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act, renderHook } from '@testing-library/react';
-import { pageLayoutCurrentLayoutsComponentState } from '../../states/pageLayoutCurrentLayoutsComponentState';
-import { usePageLayoutHandleLayoutChange } from '../usePageLayoutHandleLayoutChange';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -52,6 +52,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     });
 
     expect(result.current.layouts['tab-1']).toEqual(newLayouts);
+    expect(result.current.layouts['tab-1']).not.toBe(newLayouts); // Ensure a clone was set, not the same reference
     expect(result.current.layouts['tab-2']).toBeUndefined();
   });
 

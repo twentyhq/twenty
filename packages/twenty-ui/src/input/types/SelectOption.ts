@@ -6,6 +6,7 @@ export type SelectOption<
 > = {
   Icon?: IconComponent | null;
   label: string;
+  fullLabel?: string;
   value: Value;
   disabled?: boolean;
   color?: ThemeColor | 'transparent';

@@ -1,0 +1,198 @@
+---
+title: Oprávnění
+description: Řiďte přístup k objektům, polím a nastavením pomocí oprávnění založených na rolích.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Systém oprávnění v Twenty vám umožňuje řídit přístup ke třem hlavním oblastem:
+
+* **Objekty a pole**: Řiďte, kdo může prohlížet, upravovat nebo mazat záznamy a jednotlivá pole.
+* **Nastavení**: Spravujte přístup ke konfiguraci pracovního prostoru a administrativním funkcím.
+* **Akce**: Řiďte obecné akce v pracovním prostoru, jako je import dat nebo odesílání e-mailů.
+
+## Vytvořit roli
+
+Chcete-li vytvořit novou roli:
+
+1. Přejděte na **Nastavení → Role**
+2. V sekci **Všechny role** klikněte na **+ Vytvořit roli**
+3. Zadejte název role
+4. Na výchozí kartě **Oprávnění** [nakonfigurujte oprávnění](#customize-permissions)
+5. Klikněte na **Uložit** pro dokončení
+
+## Smazat roli
+
+Chcete-li smazat roli:
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete odebrat
+3. Otevřete záložku **Nastavení** a klikněte na **Smazat roli**
+4. Klikněte na **Potvrdit** v modálním okně
+
+<Note>
+  Pokud je role smazána, každý člen pracovního prostoru přiřazený k této roli bude automaticky přeřazen na výchozí roli. Všechny role kromě role **Administrátor** mohou být smazány. Musí být vždycky alespoň jeden člen přiřazen k roli **Administrátor**.
+</Note>
+
+## Přiřadit role členům
+
+### Zobrazit aktuální přiřazení
+
+* Přejděte na **Nastavení → Role**
+* Zjistěte všechny role a kolik členů je ke každé přiřazeno
+* Zobrazit, kteří členové mají jaké role
+
+### Přiřadit roli členu
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete přiřadit
+3. Otevřete záložku **Přiřazení**
+4. Klikněte na **+ Přiřadit členu**
+5. Vyberte člena pracovního prostoru ze seznamu
+6. Potvrďte přiřazení
+
+### Nastavit výchozí roli
+
+1. Přejděte na **Nastavení → Role**
+2. V sekci **Možnosti** najděte **Výchozí roli**
+3. Vyberte, kterou roli by noví členové měli automaticky obdržet
+4. Noví členové pracovního prostoru budou při příchodu k této roli přiřazeni.
+
+<Note>
+  Role můžete přiřazovat pouze stávajícím členům pracovního prostoru. Chcete-li pozvat nové členy, použijte [Správa členů](/l/cs/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Přizpůsobit oprávnění
+
+Oprávnění určují, ke kterým záznamům objektů, nastavením a akcím v rámci vašeho pracovního prostoru má každá role přístup nebo co může upravit.
+
+### Oprávnění k objektům
+
+Sekce **Objekty** určuje, co tato role může dělat se záznamy napříč vaším pracovním prostorem.
+
+#### Nastavte výchozí oprávnění (všechny objekty)
+
+Nejprve nakonfigurujte základní oprávnění, která se ve výchozím nastavení vztahují na **všechny objekty**:
+
+| Oprávnění                               | Popis                                                  |
+| --------------------------------------- | ------------------------------------------------------ |
+| **Zobrazit záznamy na všech objektech** | Zobrazit záznamy v seznamech a na detailních stránkách |
+| **Upravit záznamy na všech objektech**  | Upravovat existující záznamy                           |
+| **Smazat záznamy na všech objektech**   | Dočasně smazat záznamy (lze obnovit)                   |
+| **Zničit záznamy na všech objektech**   | Trvale smazat záznamy                                  |
+
+Vyberte nebo zrušte výběr podle toho, jaké má být výchozí chování pro tuto roli.
+
+<Note>
+  **Příklad — role Stážista**: Stážista by měl mít ve výchozím nastavení možnost vidět všechny objekty, ale ne je upravovat. Povolte "Zobrazit záznamy u všech objektů", ale ponechte "Upravovat záznamy u všech objektů" nezaškrtnuté.
+</Note>
+
+#### Přidat výjimky na úrovni objektu
+
+Po nastavení výchozích hodnot použijte podsekci **Na úrovni objektu** k přidání pravidel, která přepíší výchozí nastavení pro konkrétní objekty.
+
+Klikněte na **+ Přidat pravidlo** a vyberte objekt pro vytvoření výjimky.
+
+**Příklad pravidel pro roli Stážista:**
+
+| Pravidlo                                  | Dopad                                                                 |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| Příležitosti → zakažte "Zobrazit záznamy" | Stážista vůbec nemůže vidět objekt Příležitosti                       |
+| Lidé → povolte "Upravovat záznamy"        | Stážista může upravovat záznamy objektu Lidé (ale ne ostatní objekty) |
+
+### Oprávnění k polím
+
+V rámci každého pravidla na úrovni objektu můžete jít dál a nakonfigurovat **oprávnění na úrovni pole** pro řízení přístupu ke konkrétním polím.
+
+| Oprávnění         | Popis                 |
+| ----------------- | --------------------- |
+| **Zobrazit pole** | Zobrazit hodnotu pole |
+| **Upravit pole**  | Upravit hodnotu pole  |
+| **Žádný přístup** | Pole je zcela skryté  |
+
+**Příklad — Omezit citlivá pole:**
+
+U role stážisty s oprávněním upravovat objekt Lidé můžete chtít omezit některá pole:
+
+* Lidé → E-mail → pouze **Zobrazit pole** (nelze upravovat)
+* Lidé → Adresa → **Žádný přístup** (zcela skryté)
+
+To umožní stážistovi upravovat většinu polí objektu Lidé a zároveň chránit citlivé informace.
+
+### Jak funguje dědění oprávnění
+
+Oprávnění se kaskádovitě aplikují od obecných ke specifickým:
+
+1. **Všechny objekty** → určují základ pro všechny objekty
+2. **Pravidla na úrovni objektu** → přepisují základ pro konkrétní objekty
+3. **Pravidla na úrovni pole** → přepisují nastavení objektu pro konkrétní pole
+
+Specifičtější nastavení mají vždy přednost.
+
+### Správa přepsání oprávnění
+
+Chcete-li přepsat zděděná oprávnění:
+
+1. Klikněte na **X** pro odstranění zděděného pravidla
+2. Vyberte požadovaná konkrétní oprávnění
+3. Klikněte na oranžovou ikonu **Zpět** (kruhová šipka), abyste vrátili změny
+
+Až budete hotovi, klikněte na **Dokončit**, pak **Uložit** poté, co budete přesměrováni na stránku role.
+
+### Oprávnění nastavení pracovního prostoru
+
+Řídí přístup k nastavení pracovního prostoru dvěma způsoby:
+
+* Přepněte **Plný přístup k nastavením**, abyste udělili plný přístup
+* Nebo povolte specifická oprávnění (např. generování API klíčů, preference pracovního prostoru, přiřazování rolí, konfigurace datového modelu, bezpečnostní nastavení a správa pracovních postupů)
+
+<Note>
+  **Aktuální omezení**: K ručnímu spouštění pracovních postupů je v současnosti vyžadován přístup ke správě pracovních postupů. Toto chování se může v budoucích verzích změnit.
+</Note>
+
+### Oprávnění k akcím pracovního prostoru
+
+Řídí přístup k obecným akcím v pracovním prostoru:
+
+* Přepněte **Plný přístup k aplikaci**, abyste udělili plná oprávnění
+* Nebo povolte jednotlivé akce jako **Odeslat e-mail**, **Importovat CSV** a **Exportovat CSV**
+
+## Přiřazování rolí klíčům API a agentům AI
+
+Kromě členů pracovního prostoru lze role přiřadit také ke **klíčům API** a **agentům AI**. To je užitečné zejména pro týmy, které chtějí přesně řídit, "kdo" může v jejich pracovním prostoru co dělat — včetně automatizovaných procesů a integrací.
+
+### Proč přiřazovat role klíčům API a agentům AI?
+
+* **Zabezpečení**: Omezte, k čemu mají automatizované procesy přístup nebo co mohou měnit
+* **Soulad**: Zajistěte, aby integrace pracovaly pouze s daty, která potřebují
+* **Kontrola**: Zabraňte nechtěným změnám dat způsobeným chybně nastavenou automatizací
+* **Auditovatelnost**: Sledujte, které akce provedla která integrace nebo agent
+
+### Přiřaďte roli klíči API
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete přiřadit
+3. Otevřete záložku **Přiřazení**
+4. V části **Klíče API** klikněte na **+ Přiřadit ke klíči API**
+5. Vyberte klíč API ze seznamu
+6. Potvrďte přiřazení
+
+Tento klíč API nyní zdědí všechna oprávnění definovaná touto rolí. Jakékoli volání API provedené pomocí tohoto klíče bude odpovídajícím způsobem omezeno.
+
+<Note>
+  Klíče API bez přiřazené role používají výchozí oprávnění. Pro vyšší zabezpečení vždy přiřaďte konkrétní roli produkčním klíčům API.
+</Note>
+
+### Přiřaďte roli agentovi AI
+
+1. Přejděte na **Nastavení → Role**
+2. Klikněte na roli, kterou chcete přiřadit
+3. Otevřete záložku **Přiřazení**
+4. V části **Agenti AI** klikněte na **+ Přiřadit agentovi AI**
+5. Vyberte agenta AI ze seznamu
+6. Potvrďte přiřazení
+
+Agent AI bude moci přistupovat k datům a provádět akce pouze v rozsahu povoleném přiřazenou rolí.
+
+<Note>
+  U agentů AI běžících v rámci pracovních postupů to zajistí, že agent nebude moci přistupovat k datům ani je upravovat mimo svůj zamýšlený rozsah — i když má pracovní postup širší oprávnění.
+</Note>

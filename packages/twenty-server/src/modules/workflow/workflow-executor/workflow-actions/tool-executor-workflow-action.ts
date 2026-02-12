@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { resolveInput, resolveRichTextVariables } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -10,6 +10,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
@@ -44,9 +45,24 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       throw new Error(`No tool found for workflow action type: ${step.type}`);
     }
 
-    const toolInput = resolveInput(step.settings.input, context) as ToolInput;
+    let toolInput = step.settings.input;
 
-    const toolOutput = await tool.execute(toolInput, runInfo.workspaceId);
+    if (step.type === WorkflowActionType.SEND_EMAIL) {
+      const sendEmailInput = toolInput as WorkflowSendEmailActionInput;
+
+      if (sendEmailInput.body) {
+        toolInput = {
+          ...sendEmailInput,
+          body: resolveRichTextVariables(sendEmailInput.body, context),
+        };
+      }
+    }
+
+    toolInput = resolveInput(toolInput, context) as ToolInput;
+
+    const toolOutput = await tool.execute(toolInput, {
+      workspaceId: runInfo.workspaceId,
+    });
 
     return {
       result: toolOutput.result as object,

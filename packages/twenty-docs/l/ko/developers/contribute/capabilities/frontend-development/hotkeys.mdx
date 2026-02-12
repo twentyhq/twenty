@@ -1,0 +1,178 @@
+---
+title: 단축키
+---
+
+## 소개
+
+단축키를 들으려면 일반적으로 `onKeyDown` 이벤트 리스너를 사용합니다.
+
+그러나 `twenty-front`에서는 동일한 시점에 장착된 다른 구성 요소에서 사용되는 같은 단축키 간에 충돌이 발생할 수 있습니다.
+
+예를 들어, Enter 키를 듣는 페이지가 있고, Enter 키를 듣는 모달이 있으며, 그 모달 내에서 Enter 키를 듣는 Select 구성요소가 있다면, 모두 동시에 마운트될 때 충돌이 발생할 수 있습니다.
+
+## `useScopedHotkeys` 훅
+
+이 문제를 해결하기 위해, 우리는 충돌 없이 단축키를 들을 수 있게 하는 커스텀 훅을 만들었습니다.
+
+이를 구성 요소에 배치하면 구성 요소가 마운트될 때 및 지정한 **단축키 스코프**가 활성화될 때만 단축키를 듣습니다.
+
+## 실제로 단축키를 감지하려면 어떻게 하나요?
+
+단축키 청취를 설정하는 데 두 가지 단계가 있습니다:
+
+1. 단축키를 들을 [단축키 스코프](#what-is-a-hotkey-scope-)를 설정합니다.
+2. 단축키를 듣기 위해 `useScopedHotkeys` 훅을 사용합니다.
+
+기본 페이지에서도 단축키 스코프를 설정해야 합니다. 왼쪽 메뉴나 명령 메뉴와 같은 다른 UI 요소도 단축키를 들을 수 있기 때문입니다.
+
+## 단축키 사용 사례
+
+일반적으로, 두 가지 단축키를 필요로 하는 사용 사례가 있습니다:
+
+1. 페이지 또는 페이지에 마운트된 구성 요소
+2. 사용자 작업으로 인해 포커스를 차지하는 모달 형 구성 요소
+
+두 번째 사용 사례는 재귀적으로 발생할 수 있습니다: 예를 들어, 모달의 드롭다운.
+
+### 페이지에서 단축키 듣기
+
+예시:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### 모달 형 구성 요소에서 단축키 듣기
+
+이 예시에서는 부모에게 모달을 닫으라고 알리기 위해 Escape 키를 듣는 모달 구성 요소를 사용합니다.
+
+여기서 사용자 상호작용은 범위를 변경합니다.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+그러면 모달 구성 요소에서:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## 단축키 스코프란 무엇인가요?
+
+단축키 스코프는 단축키가 활성 상태인 컨텍스트를 나타내는 문자열입니다. 일반적으로 열거형으로 인코딩됩니다.
+
+단축키 스코프를 변경하면 해당 스코프를 듣고 있는 단축키는 활성화되고 다른 스코프를 듣고 있는 단축키는 비활성화됩니다.
+
+한 번에 하나의 스코프만 설정할 수 있습니다.
+
+예를 들어 각 페이지의 단축키 스코프는 `PageHotkeyScope` 열거형에 정의되어 있습니다:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+내부적으로, 현재 선택한 스코프는 애플리케이션 전반에 걸쳐 공유되는 Recoil 상태에 저장됩니다:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+하지만 이 Recoil 상태는 수동으로 처리해서는 안 됩니다! 다음 섹션에서 사용하는 방법을 배웁니다.
+
+## 내부적으로 어떻게 작동합니까?
+
+[react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) 위에 얇은 래퍼를 만들어 성능을 높이고 불필요한 재랜더링을 방지합니다.
+
+또한 핫키 스코프 상태를 처리하고 애플리케이션 전반에서 사용할 수 있도록 한 Recoil 상태를 만듭니다.

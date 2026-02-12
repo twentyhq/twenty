@@ -1,0 +1,176 @@
+---
+title: 使用迭代器
+description: 遍历记录数组，对每个项执行操作。
+image: /images/user-guide/workflows/workflow.png
+---
+
+迭代器可让你遍历记录数组，并对其中每一项执行操作。 对于需要处理由搜索记录返回或通过 Webhook 接收的多条记录的工作流，它至关重要。
+
+## 何时使用迭代器
+
+| 场景                | 示例              |
+| ----------------- | --------------- |
+| **处理搜索结果**        | 向每位找到的人员发送电子邮件。 |
+| **处理 Webhook 数组** | 按顺序为每个项目创建记录    |
+| **批量更新**          | 使用计算得出的值更新多条记录  |
+| **通知**            | 就某个事件通知多位人员     |
+
+## 了解迭代器
+
+迭代器需要一个**数组**作为输入。 然后：
+
+1. 从数组中取出第一个元素
+2. 使用该元素运行迭代器内的所有操作
+3. 移动到下一个元素
+4. 重复，直到所有元素处理完毕
+
+## 基本设置
+
+### 示例：向搜索结果中的所有人发送电子邮件
+
+**目标**：查找特定公司的所有联系人，并向每个人发送个性化电子邮件。
+
+### 步骤 1：搜索记录
+
+1. 添加 **搜索记录** 操作
+2. 对象：**People**
+3. 筛选条件：公司等于 "Acme Inc"
+4. 这将返回一个人员数组
+
+### 步骤 2：检查是否有结果
+
+1. 添加 **过滤** 操作
+2. 条件：`{{searchRecords.length}}` 大于 0
+3. 这可防止在结果为空时出现迭代器错误
+
+### 步骤 3：添加迭代器
+
+1. 添加 **Iterator** 操作
+2. 数组输入：选择 `{{searchRecords}}`
+3. 这会创建一个循环
+
+### 步骤 4：在迭代器内添加操作
+
+在迭代器之后放置的操作会针对每个项运行：
+
+1. 添加 **Send Email** 操作（在迭代器内）
+2. 收件人：`{{iterator.currentItem.email}}`
+3. 主题：你好，`{{iterator.currentItem.firstName}}`！
+4. 正文：使用当前项字段的个性化消息
+
+### 结果
+
+如果 Search Records 返回 5 个人，迭代器将：
+
+* 向第 1 个人发送电子邮件
+* 向第 2 个人发送电子邮件
+* ... 对全部 5 人继续执行
+
+## 访问当前项数据
+
+在迭代器内，使用 `{{iterator.currentItem}}` 访问当前记录：
+
+| 变量                                      | 描述                |
+| --------------------------------------- | ----------------- |
+| `{{iterator.currentItem}}`              | 整个当前记录对象          |
+| `{{iterator.currentItem.id}}`           | 记录 ID             |
+| `{{iterator.currentItem.email}}`        | 电子邮件字段            |
+| `{{iterator.currentItem.company.name}}` | 关联的公司名称           |
+| `{{iterator.index}}`                    | 在数组中的当前位置（从 0 开始） |
+
+## 常见模式
+
+### 更新多条记录
+
+**目标**：将所有逾期任务标记为 "Late"
+
+```
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
+```
+
+### 从数组创建记录
+
+**目标**：Webhook 接收到包含多个项目的订单，为每个项目创建一条记录。
+
+```
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
+```
+
+### 在循环内进行条件处理
+
+**目标**：仅向电子邮件地址有效的联系人发送邮件
+
+```
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
+```
+
+## 故障排除
+
+### "迭代器需要一个数组"
+
+**原因**：你传递的是单个记录而不是数组。
+
+**修复方法**：请确保传递的是 Search Records 的结果或数组字段，而不是单个记录。
+
+```
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
+```
+
+### 迭代器未运行
+
+**原因**：数组为空。
+
+**修复方法**：在迭代器之前添加筛选条件以检查数组长度：
+
+```
+Filter: {{searchRecords.length}} > 0
+```
+
+### 操作运行次数过多
+
+**原因**：Search Records 返回的记录数超出预期。
+
+**修复方法**：
+
+* 在 Search Records 中添加更具体的筛选条件
+* 在 Search Records 中设置限制（最多 200）
+* 在迭代器内部添加筛选条件用于附加条件
+
+## 性能注意事项
+
+* **额度使用**：每次迭代都会为其操作消耗额度
+* **时间**：较大的数组处理时间更长
+* **限制**：对于非常大的操作，考虑分批处理
+* **速率限制**：大量迭代的外部 API 调用可能触发速率限制
+
+## 最佳实践
+
+1. **在迭代器之前始终检查数组长度**，以避免错误
+2. **当并非所有项都需要处理时，在循环中添加筛选条件**
+3. **重命名你的迭代器步骤**，以描述它正在遍历的内容
+4. **先使用小数组进行测试**，再处理大型数据集
+5. **监控工作流运行**，以确保迭代按预期完成
+
+## 相关内容
+
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [如何使用分支](/l/zh/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [工作流常见问题](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq)

@@ -1,0 +1,176 @@
+---
+title: Utiliser l'itérateur
+description: Parcourez des tableaux d'enregistrements pour exécuter des actions sur chaque élément.
+image: /images/user-guide/workflows/workflow.png
+---
+
+L'itérateur vous permet de parcourir un tableau d'enregistrements et d'exécuter des actions sur chacun. Il est essentiel pour les workflows qui doivent traiter plusieurs enregistrements renvoyés par Rechercher des enregistrements ou reçus via des webhooks.
+
+## Quand utiliser l'itérateur
+
+| Scénario                               | Exemple                                                            |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| **Traiter les résultats de recherche** | Envoyer un e-mail à chaque personne trouvée                        |
+| **Gérer les tableaux de webhooks**     | Créer des enregistrements pour chaque élément, dans l'ordre        |
+| **Mises à jour en masse**              | Mettre à jour plusieurs enregistrements avec des valeurs calculées |
+| **Notifications**                      | Avertir plusieurs personnes d'un événement                         |
+
+## Comprendre l'itérateur
+
+L'itérateur attend un **tableau** en entrée. Il va ensuite :
+
+1. Prend le premier élément du tableau
+2. Exécute toutes les actions à l'intérieur de l'itérateur avec cet élément
+3. Passe à l'élément suivant
+4. Répète jusqu'à ce que tous les éléments soient traités
+
+## Configuration de base
+
+### Exemple : envoyer un e-mail à toutes les personnes dans les résultats de recherche
+
+**Objectif** : Trouver tous les contacts d'une entreprise spécifique et envoyer à chacun un e-mail personnalisé.
+
+### Étape 1 : Rechercher des enregistrements
+
+1. Ajoutez l'action **Rechercher des enregistrements**
+2. Objet : **Personnes**
+3. Filtre : Entreprise égale à "Acme Inc"
+4. Cela renvoie un tableau de personnes
+
+### Étape 2 : Vérifier que des résultats existent
+
+1. Ajoutez l'action **Filtre**
+2. Condition : `{{searchRecords.length}}` est supérieur à 0
+3. Cela évite les erreurs de l'itérateur sur des résultats vides
+
+### Étape 3 : Ajouter un itérateur
+
+1. Ajoutez une action **Itérateur**
+2. Entrée du tableau : sélectionnez `{{searchRecords}}`
+3. Cela crée une boucle
+
+### Étape 4 : Ajouter des actions dans l'itérateur
+
+Les actions placées dans l'itérateur s'exécutent pour chaque élément :
+
+1. Ajoutez une action **Envoyer un e-mail** (dans l'itérateur)
+2. À : `{{iterator.currentItem.email}}`
+3. Objet : Bonjour `{{iterator.currentItem.firstName}}` !
+4. Corps : Message personnalisé utilisant les champs de l'élément en cours
+
+### Résultat
+
+Si l'action Rechercher des enregistrements renvoie 5 personnes, l'itérateur :
+
+* Envoie un e-mail à la personne 1
+* Envoie un e-mail à la personne 2
+* ... continue pour les 5
+
+## Accéder aux données de l'élément en cours
+
+Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregistrement en cours :
+
+| Variable                                | Description                                               |
+| --------------------------------------- | --------------------------------------------------------- |
+| `{{iterator.currentItem}}`              | L'objet de l'enregistrement en cours dans son intégralité |
+| `{{iterator.currentItem.id}}`           | ID de l'enregistrement                                    |
+| `{{iterator.currentItem.email}}`        | Champ e-mail                                              |
+| `{{iterator.currentItem.company.name}}` | Nom de l'entreprise associée                              |
+| `{{iterator.index}}`                    | Position actuelle dans le tableau (indexé à partir de 0)  |
+
+## Modèles courants
+
+### Mettre à jour plusieurs enregistrements
+
+**Objectif** : Marquer toutes les tâches en retard comme "En retard"
+
+```
+1. Rechercher des enregistrements (Tâches, Date d'échéance < Aujourd'hui, Statut ≠ Terminé)
+2. Filtre (longueur > 0)
+3. Itérateur (searchRecords)
+   └── Mettre à jour l'enregistrement
+       - Objet : Tâches
+       - Enregistrement : {{iterator.currentItem.id}}
+       - Statut : En retard
+```
+
+### Créer des enregistrements à partir d'un tableau
+
+**Objectif** : Le webhook reçoit une commande avec plusieurs éléments, créer un enregistrement pour chacun
+
+```
+1. Déclencheur Webhook (reçoit un tableau d'éléments)
+2. Filtre (items.length > 0)
+3. Itérateur (trigger.body.items)
+   └── Créer un enregistrement
+       - Objet : Articles de commande
+       - Nom : {{iterator.currentItem.name}}
+       - Quantité : {{iterator.currentItem.qty}}
+       - Commande associée : {{trigger.body.orderId}}
+```
+
+### Traitement conditionnel dans la boucle
+
+**Objectif** : N'envoyer un e-mail qu'aux contacts avec des adresses valides
+
+```
+1. Rechercher des enregistrements (Personnes)
+2. Itérateur (searchRecords)
+   └── Filtre (currentItem.email n'est pas vide)
+       └── Envoyer un e-mail
+           - À : {{iterator.currentItem.email}}
+```
+
+## Résolution des problèmes
+
+### "L'itérateur attend un tableau"
+
+**Cause** : Vous avez passé un seul enregistrement au lieu d'un tableau.
+
+**Correctif** : Assurez-vous de passer le résultat de Rechercher des enregistrements ou un champ de type tableau, pas un seul enregistrement.
+
+```
+✅ Correct : {{searchRecords}}
+❌ Incorrect : {{searchRecords[0]}}
+```
+
+### L'itérateur ne s'exécute pas
+
+**Cause** : Le tableau est vide.
+
+**Correctif** : Ajoutez un filtre avant l'itérateur pour vérifier la longueur du tableau :
+
+```
+Filtre : {{searchRecords.length}} > 0
+```
+
+### Les actions s'exécutent trop de fois
+
+**Cause** : Rechercher des enregistrements a renvoyé plus d'enregistrements que prévu.
+
+**Correctif** :
+
+* Ajoutez des filtres plus spécifiques à Rechercher des enregistrements
+* Définissez une limite sur Rechercher des enregistrements (max 200)
+* Ajoutez un filtre dans l'itérateur pour des conditions supplémentaires
+
+## Considérations relatives aux performances
+
+* **Utilisation de crédits** : Chaque itération consomme des crédits pour ses actions
+* **Temps** : Les grands tableaux prennent plus de temps à traiter
+* **Limites** : Envisagez de traiter par lots les opérations très volumineuses
+* **Limites de débit** : Les appels d'API externes peuvent atteindre des limites de débit avec de nombreuses itérations
+
+## Meilleures pratiques
+
+1. **Vérifiez toujours la longueur du tableau** avant l'itérateur pour éviter les erreurs
+2. **Ajoutez des filtres dans les boucles** quand tous les éléments n'ont pas besoin d'être traités
+3. **Renommez votre étape Itérateur** pour décrire ce qu'elle parcourt
+4. **Testez avec de petits tableaux** avant de traiter de grands ensembles de données
+5. **Surveillez l'exécution des workflows** pour vous assurer que les itérations se terminent comme prévu
+
+## Articles connexes
+
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Comment utiliser les branches](/l/fr/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [FAQ sur les workflows](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq)

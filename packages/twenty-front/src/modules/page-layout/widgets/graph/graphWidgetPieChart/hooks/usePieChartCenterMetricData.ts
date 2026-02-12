@@ -11,7 +11,7 @@ import { useContext, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type UsePieChartCenterMetricDataProps = {
@@ -39,6 +39,22 @@ export const usePieChartCenterMetricData = ({
     configuration,
   });
 
+  const groupByField = objectMetadataItem.fields.find(
+    (field) => field.id === configuration.groupByFieldMetadataId,
+  );
+
+  const centerMetricFilter = useMemo(() => {
+    if (!configuration.hideEmptyCategory || !groupByField) {
+      return gqlOperationFilter;
+    }
+
+    const notNullFilter = { [groupByField.name]: { is: 'NOT_NULL' as const } };
+
+    return isDefined(gqlOperationFilter)
+      ? { and: [gqlOperationFilter, notNullFilter] }
+      : notNullFilter;
+  }, [gqlOperationFilter, configuration.hideEmptyCategory, groupByField]);
+
   const centerMetricAggregateOperation =
     configuration.aggregateOperation as AggregateOperations;
 
@@ -58,7 +74,7 @@ export const usePieChartCenterMetricData = ({
   const { data: centerMetricData } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: gqlOperationFilter,
+    filter: centerMetricFilter,
     skip,
   });
 

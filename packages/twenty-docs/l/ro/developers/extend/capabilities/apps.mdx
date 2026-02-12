@@ -1,0 +1,662 @@
+---
+title: Aplicații Twenty
+description: Construiți și gestionați personalizările Twenty sub formă de cod.
+---
+
+<Warning>
+  Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
+</Warning>
+
+## Ce sunt aplicațiile?
+
+Aplicațiile vă permit să construiți și să gestionați personalizările Twenty **sub formă de cod**. În loc să configurați totul prin interfața de utilizator (UI), vă definiți modelul de date și funcțiile de logică în cod — făcând mai rapidă construirea, mentenanța și implementarea în mai multe spații de lucru.
+
+**Ce puteți face astăzi:**
+
+* Definiți obiecte și câmpuri personalizate sub formă de cod (model de date gestionat)
+* Creați funcții de logică cu declanșatoare personalizate
+* Implementați aceeași aplicație în mai multe spații de lucru
+
+## Cerințe
+
+* Node.js 24+ și Yarn 4
+* Un spațiu de lucru Twenty și o cheie API (creați una la https://app.twenty.com/settings/api-webhooks)
+
+## Începeți
+
+Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
+
+```bash filename="Terminal"
+# Creează scheletul unei aplicații noi
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# Dacă nu folosești yarn@4
+corepack enable
+yarn install
+
+# Autentifică-te folosind cheia ta API (ți se va solicita)
+yarn auth:login
+
+# Pornește modul de dezvoltare: sincronizează automat modificările locale cu spațiul tău de lucru
+yarn app:dev
+```
+
+De aici puteți:
+
+```bash filename="Terminal"
+# Adaugă o entitate nouă în aplicația ta (ghidat)
+yarn entity:add
+
+# Generează un client Twenty tipat și tipurile de entități ale spațiului de lucru
+yarn app:generate
+
+# Urmărește jurnalele funcțiilor aplicației tale
+yarn function:logs
+
+# Execută o funcție după nume
+yarn function:execute -n my-function -p '{"name": "test"}'
+
+# Dezinstalează aplicația din spațiul de lucru curent
+yarn app:uninstall
+
+# Afișează ajutorul pentru comenzi
+yarn help},{
+```
+
+Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+
+## Structura proiectului (generată)
+
+Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
+
+* Copiază o aplicație de bază minimală în `my-twenty-app/`
+* Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
+* Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
+* Generează o configurație implicită a aplicației și un rol implicit pentru funcții
+
+O aplicație nou generată arată astfel:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  eslint.config.mjs
+  tsconfig.json
+  README.md
+  public/                           # Public assets folder (images, fonts, etc.)
+  src/
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── logic-functions/
+  │   └── hello-world.ts                # Example logic function
+  └── front-components/
+      └── hello-world.tsx               # Example front component
+```
+
+Pe scurt:
+
+* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, precum și comenzi de autentificare care deleagă către CLI-ul local `twenty`.
+* **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
+* **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
+* **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
+* **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
+* **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația ta. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
+* **src/**: Locul principal unde vă definiți aplicația sub formă de cod
+
+### Detectarea entităților
+
+SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
+
+| Funcție ajutătoare       | Tipul entității                             |
+| ------------------------ | ------------------------------------------- |
+| `defineObject()`         | Definiții de obiecte personalizate          |
+| `defineLogicFunction()`  | Definiții de funcții de logică              |
+| `defineFrontComponent()` | Definiții ale componentelor de interfață    |
+| `defineRole()`           | Definiții de rol                            |
+| `defineField()`          | Extensii de câmp pentru obiectele existente |
+
+<Note>
+  **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
+</Note>
+
+Exemplu de entitate detectată:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
+
+Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
+
+* `yarn app:generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
+* `yarn entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end sau rolurile personalizate.
+
+## Autentificare
+
+Prima dată când rulați `yarn auth:login`, vi se vor solicita:
+
+* URL-ul API (implicit http://localhost:3000 sau profilul spațiului de lucru curent)
+* Cheie API
+
+Acreditările dvs. sunt stocate per utilizator în `~/.twenty/config.json`. Puteți menține mai multe profiluri și comuta între ele.
+
+### Gestionarea spațiilor de lucru
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn auth:login
+
+# Login to a specific workspace profile
+yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
+```
+
+După ce ați schimbat spațiul de lucru cu `auth:switch`, toate comenzile ulterioare vor folosi implicit acel spațiu de lucru. Îl puteți totuși suprascrie temporar cu `--workspace <name>`.
+
+## Utilizați resursele SDK (tipuri și configurare)
+
+Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare pe care le utilizați în aplicația dvs. Mai jos sunt elementele cheie cu care veți interacționa cel mai des.
+
+### Funcții ajutătoare
+
+SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
+
+| Funcție                  | Scop                                                                   |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `defineApplication()`    | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
+| `defineObject()`         | Definiți obiecte personalizate cu câmpuri                              |
+| `defineLogicFunction()`  | Definiți funcții de logică cu handleri                                 |
+| `defineFrontComponent()` | Definiți componente Front pentru interfața de utilizator personalizată |
+| `defineRole()`           | Configurați permisiunile rolurilor și accesul la obiecte               |
+| `defineField()`          | Extindeți obiectele existente cu câmpuri suplimentare                  |
+
+Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
+
+### Definirea obiectelor
+
+Obiectele personalizate descriu atât schema, cât și comportamentul înregistrărilor din spațiul dvs. de lucru. Utilizați `defineObject()` pentru a defini obiecte cu validare încorporată:
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+Puncte cheie:
+
+* Folosiți `defineObject()` pentru validare încorporată și suport mai bun în IDE.
+* `universalIdentifier` trebuie să fie unic și stabil între implementări.
+* Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
+* Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
+* Puteți genera obiecte noi folosind `yarn entity:add`, care vă ghidează prin denumire, câmpuri și relații.
+
+<Note>
+  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+</Note>
+
+### Configurația aplicației (application-config.ts)
+
+Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
+
+* **Cine este aplicația**: identificatori, nume de afișare și descriere.
+* **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
+* **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
+
+Folosiți `defineApplication()` pentru a defini configurația aplicației:
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Notițe:
+
+* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
+* `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
+
+#### Roluri și permisiuni
+
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `defaultRoleUniversalIdentifier` din `application-config.ts` desemnează rolul implicit utilizat de funcțiile de logică ale aplicației.
+
+* Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
+* Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
+* Respectați principiul celui mai mic privilegiu: creați un rol dedicat doar cu permisiunile de care au nevoie funcțiile, apoi referiți identificatorul său universal.
+
+##### Rol implicit pentru funcții (\*.role.ts)
+
+Când generați o aplicație nouă, CLI creează și un fișier de rol implicit. Folosiți `defineRole()` pentru a defini roluri cu validare încorporată:
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+`universalIdentifier` al acestui rol este apoi referențiat în `application-config.ts` ca `defaultRoleUniversalIdentifier`. Cu alte cuvinte:
+
+* **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
+* **application-config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
+
+Notițe:
+
+* Porniți de la rolul generat, apoi restrângeți-l progresiv urmând principiul celui mai mic privilegiu.
+* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele/câmpurile de care au nevoie funcțiile.
+* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum; adăugați doar ceea ce aveți nevoie.
+* Vedeți un exemplu funcțional în aplicația Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Configurația funcției de logică și punctul de intrare
+
+Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import Twenty, { type Person } from '~/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new Twenty(); // generated typed client
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+Tipuri comune de declanșatoare:
+
+* **route**: Expune funcția pe o rută și metodă HTTP **sub endpoint-ul `/s/`**:
+
+> de ex. `path: '/post-card/create',` -> apel pe `<APP_URL>/s/post-card/create`
+
+* **cron**: Rulează funcția pe un program folosind o expresie CRON.
+* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
+
+> de ex. `person.updated`
+
+Notițe:
+
+* Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
+* Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
+
+### Payload-ul declanșatorului de rută
+
+<Warning>
+  **Modificare incompatibilă (v1.16, ianuarie 2026):** Formatul payload-ului declanșatorului de rută s-a schimbat. Înainte de v1.16, parametrii de interogare (query), parametrii de cale și corpul erau trimiși direct ca payload. Începând cu v1.16, acestea sunt incluse într-un obiect structurat `RoutePayload`.
+
+  **Înainte de v1.16:**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **După v1.16:**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **Pentru a migra funcțiile existente:** Actualizează handler-ul pentru a extrage câmpurile din `event.body`, `event.queryStringParameters` sau `event.pathParameters` în loc să le iei direct din obiectul params.
+</Warning>
+
+Când un declanșator de rută apelează funcția dvs. de logică, aceasta primește un obiect `RoutePayload` care urmează formatul AWS HTTP API v2. Importă tipul din `twenty-sdk`:
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Tipul `RoutePayload` are următoarea structură:
+
+| Proprietate                  | Tip                                   | Descriere                                                                            |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                       |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                          |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametri de cale extrași din modelul rutei (de ex., `/users/:id` → `{ id: '123' }`) |
+| `corp`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                                       |
+| `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                                          |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                          |
+| `requestContext.http.path`   | `string`                              | Calea brută a cererii                                                                |
+
+### Transmiterea anteturilor HTTP
+
+În mod implicit, anteturile HTTP din cererile de intrare **nu** sunt transmise funcției dvs. de logică din motive de securitate. Pentru a accesa anumite anteturi, listează-le explicit în array-ul `forwardedRequestHeaders`:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+În handler, poți apoi accesa aceste anteturi:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  Numele anteturilor sunt normalizate la litere mici. Accesează-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+</Note>
+
+Puteți crea funcții noi în două moduri:
+
+* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o funcție de logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
+
+### Componente Front
+
+Componentele Front vă permit să construiți componente React personalizate care sunt randate în interfața Twenty. Utilizați `defineFrontComponent()` pentru a defini componente cu validare încorporată:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Puncte cheie:
+
+* Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
+* Folosiți sufixul de fișier `*.front-component.tsx` pentru detectare automată.
+* Câmpul `component` face referire la componenta React.
+* Componentele sunt construite și sincronizate automat în timpul `yarn app:dev`.
+
+Puteți crea componente Front noi în două moduri:
+
+* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o componentă Front nouă.
+* **Manual**: Creați un fișier nou `*.front-component.tsx` și folosiți `defineFrontComponent()`.
+
+### Client tipizat generat
+
+Rulați yarn app:generate pentru a crea un client tipizat local în generated/, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
+
+```typescript
+import Twenty from '~/generated';
+
+const client = new Twenty();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+```
+
+Clientul este regenerat de `yarn app:generate`. Rulați din nou după ce vă modificați obiectele sau când vă integrați într-un spațiu de lucru nou.
+
+#### Acreditări la runtime în funcțiile de logică
+
+Când funcția rulează pe Twenty, platforma injectează acreditări ca variabile de mediu înainte de execuția codului:
+
+* `TWENTY_API_URL`: URL-ul de bază al API-ului Twenty către care țintește aplicația.
+* `TWENTY_API_KEY`: Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației.
+
+Notițe:
+
+* Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application-config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
+
+### Exemplu Hello World
+
+Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de logică, componente Front și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## Configurare manuală (fără generator)
+
+Deși recomandăm utilizarea `create-twenty-app` pentru cea mai bună experiență de început, puteți configura și un proiect manual. Nu instalați CLI-ul global. În schimb, adăugați `twenty-sdk` ca dependență locală și conectați scripturile în package.json-ul dvs.:
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+Apoi adăugați scripturi ca acestea:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
+  }
+}
+```
+
+Acum puteți rula aceleași comenzi prin Yarn, de ex. `yarn app:dev`, `yarn app:generate`, etc.
+
+## Depanare
+
+* Erori de autentificare: rulați `yarn auth:login` și asigurați-vă că cheia API are permisiunile necesare.
+* Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
+* Tipuri sau client lipsă/învechite: rulați `yarn app:generate`.
+* Modul dev nu sincronizează: asigurați-vă că `yarn app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
+
+Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

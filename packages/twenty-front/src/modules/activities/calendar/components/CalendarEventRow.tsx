@@ -1,7 +1,12 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
+import {
+  CalendarChannelVisibility,
+  type TimelineCalendarEvent,
+} from '~/generated/graphql';
 
 import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
 import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
@@ -11,10 +16,6 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import { IconArrowRight } from 'twenty-ui/display';
-import {
-  CalendarChannelVisibility,
-  type TimelineCalendarEvent,
-} from '~/generated-metadata/graphql';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -93,7 +94,7 @@ export const CalendarEventRow = ({
   const hasEnded = hasCalendarEventEnded(calendarEvent);
 
   const startTimeLabel = calendarEvent.isFullDay
-    ? 'All day'
+    ? t`All day`
     : format(startsAt, 'HH:mm');
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 

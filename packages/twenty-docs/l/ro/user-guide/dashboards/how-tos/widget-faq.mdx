@@ -1,0 +1,67 @@
+---
+title: Întrebări frecvente despre widget
+description: Întrebări comune și mesaje de eroare explicate.
+---
+
+<AccordionGroup>
+  <Accordion title="Cum afișez procente în loc de numărări?">
+    Trei opțiuni:
+
+    * **Procent gol/completat**: În Date afișate, selectează Procent gol sau Procent completat
+    * **Raport**: Pentru câmpurile Select sau Checkbox, activează Raport pentru a afișa o opțiune specifică drept procent din toate înregistrările
+    * **Sufix**: Pentru diagrame agregate, adaugă `%` ca Sufix în Setările de stil
+  </Accordion>
+
+  <Accordion title="Care este diferența dintre bare grupate și stivuite?">
+    Când folosești **Grupează după**, poți afișa seriile în două moduri:
+
+    * **Grupate**: Bare alăturate—cel mai bine pentru compararea valorilor exacte
+    * **Stivuite**: Bare una peste alta—cel mai bine pentru a arăta compoziția
+
+    Comută opțiunea **Stivuite** în Setările de stil.
+  </Accordion>
+
+  <Accordion title="De ce nu văd opțiunile Sumă sau Medie?">
+    Operațiunile disponibile depind de **tipul câmpului**:
+
+    * **Câmpuri numerice**: Sumă, Medie, Minim, Maxim
+    * **Câmpuri de tip dată**: Cel mai devreme, Cel mai târziu (doar pentru diagrame agregate)
+    * **Câmpuri Checkbox**: Număr valori adevărate, Număr valori false
+
+    Dacă nu vezi o opțiune, verifică dacă ai selectat un tip de câmp compatibil.
+  </Accordion>
+
+  <Accordion title="De ce unele setări sunt dezactivate sau lipsesc?">
+    Multe setări apar doar când sunt îndeplinite cerințele prealabile:
+
+    * **Granularitatea datei**: Selectează mai întâi un câmp de tip dată
+    * **Grupează după, Legendă, Stivuite**: Setează Sursa mai întâi
+    * **Comutatoarele Legendă și Stivuite**: Setează mai întâi Grupează după
+
+    Dacă lipsește o setare, configurează mai întâi cerința ei prealabilă.
+  </Accordion>
+
+  <Accordion title="Ce înseamnă „No data”?">
+    Diagrama nu a găsit înregistrări care să corespundă configurației tale.
+
+    **Pentru remediere:** Elimină sau ajustează filtrele, verifică dacă ai selectat obiectul Sursă corect sau verifică dacă există înregistrări pentru intervalul tău de date.
+  </Accordion>
+
+  <Accordion title="Ce înseamnă „Invalid configuration”?">
+    O setare obligatorie lipsește sau este incompatibilă.
+
+    **Pentru remediere:** Asigură-te că Sursa este setată, Datele afișate sunt configurate și orice câmpuri de grupare necesare sunt selectate.
+  </Accordion>
+
+  <Accordion title="Ce înseamnă „Undisplayed data”?">
+    Datele tale depășesc limitele de afișare (100 de bare, 100 de puncte de date sau 100 de felii).
+
+    **Pentru remediere:** Adaugă filtre pentru a restrânge datele sau schimbă granularitatea datei din Zi în Săptămână sau Lună.
+  </Accordion>
+
+  <Accordion title="De ce una dintre axe nu afișează date?">
+    Câmpul selectat nu are valori pentru înregistrările din filtrul tău sau tipul câmpului nu se potrivește cu datele așteptate.
+
+    **Pentru remediere:** Încearcă un alt câmp sau verifică dacă înregistrările au valori pentru câmpul selectat.
+  </Accordion>
+</AccordionGroup>

@@ -97,7 +97,29 @@ async function runMigrations() {
     const sql = fs.readFileSync(path.join(dir, file), 'utf8');
 
     console.log(`⚡ Running ${file}...`);
-    await client.command({ query: sql });
+
+    // Split by semicolons and filter out empty statements/comments
+    const statements = sql
+      .split(';')
+      .map((stmt) => stmt.trim())
+      .filter(
+        (stmt) =>
+          stmt.length > 0 && !stmt.startsWith('--') && !stmt.match(/^[\s-]*$/),
+      );
+
+    for (const statement of statements) {
+      // Skip comment-only blocks
+      const cleanedStatement = statement
+        .split('\n')
+        .filter((line) => !line.trim().startsWith('--'))
+        .join('\n')
+        .trim();
+
+      if (cleanedStatement.length > 0) {
+        await client.command({ query: cleanedStatement });
+      }
+    }
+
     await recordMigration(file, client);
   }
 

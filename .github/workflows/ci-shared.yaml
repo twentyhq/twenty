@@ -1,9 +1,7 @@
 name: CI Shared
 
 on:
-  push:
-    branches:
-      - main
+  merge_group:
 
   pull_request:
 
@@ -38,9 +36,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
+        uses: ./.github/actions/yarn-install
       - name: Run ${{ matrix.task }} task
-        uses: ./.github/workflows/actions/nx-affected
+        uses: ./.github/actions/nx-affected
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}

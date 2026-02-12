@@ -1,0 +1,82 @@
+---
+title: Code 액션에서 배열 처리
+description: 워크플로의 Code 액션에서 배열 입력을 올바르게 처리하는 방법을 알아보세요.
+---
+
+Code 액션에서 배열을 다룰 때 흔히 마주하는 두 가지 문제가 있습니다:
+
+1. **문자열로 전달된 배열** — 외부 시스템이나 이전 단계에서 실제 배열이 아닌 문자열로 전달됨
+2. **개별 항목을 선택할 수 없음** — 배열 전체만 선택할 수 있고, 그 안의 특정 필드는 선택할 수 없음
+
+둘 다 Code 노드로 해결할 수 있습니다.
+
+## 문자열에서 배열 파싱하기
+
+배열은 워크플로 단계 간에 네이티브 배열이 아니라 문자열이나 JSON으로 전달되는 경우가 자주 있습니다. 다음과 같은 경우에 발생합니다:
+
+* HTTP Request로 외부 API에서 데이터를 받을 때
+* 웹훅 페이로드를 처리할 때
+* 워크플로 단계 간에 데이터를 전달할 때
+
+**해결책**: Code 액션의 시작 부분에 다음 패턴을 추가하세요:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+핵심 구문 `typeof users === "string" ? `JSON.parse(users) : users\` 는 입력이 문자열인지 확인하고, 필요하면 파싱하며, 이미 배열인 경우 그대로 사용합니다.
+
+## 배열에서 개별 필드 추출하기
+
+웹훅이 `answers: [...]`와 같은 배열을 반환할 수 있지만, 이후 워크플로 단계에서는 **배열 전체**만 선택할 수 있고 그 안의 개별 항목은 선택할 수 없습니다.
+
+**해결책**: 특정 필드를 추출하여 구조화된 객체로 반환하도록 Code 노드를 추가하세요:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Code 노드는 배열 대신 구조화된 객체를 반환합니다. 이후 단계에서는 변수 선택기에서 `answer.firstname` 및 `answer.name`과 같은 개별 필드를 선택할 수 있습니다.
+
+<Note>
+  향후 업데이트에서 배열 처리를 더 쉽게 만들기 위해 적극적으로 개선하고 있습니다.
+</Note>
+
+<Tip>
+  코드 편집기 오른쪽 상단의 사각형 아이콘을 클릭하여 전체 화면으로 표시하세요 — 기본 편집기 너비가 제한되어 있어 유용합니다.
+</Tip>

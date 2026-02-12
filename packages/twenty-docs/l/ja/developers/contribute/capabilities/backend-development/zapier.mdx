@@ -1,0 +1,83 @@
+---
+title: Zapierアプリ
+---
+
+[Zapier](https://zapier.com/) を使って、3000以上のアプリと Twenty を簡単に同期できます。 タスクを自動化し、生産性を高め、顧客関係を強化しよう！
+
+## Zapierについて
+
+Zapierは、チームが毎日使用するアプリを連携させてワークフローを自動化するツールです。 Zapierの基本的な概念は、Zapsと呼ばれる自動化ワークフローであり、トリガーとアクションを含みます。 Zapierは、チームが毎日使用するアプリを連携させてワークフローを自動化するツールです。 Zapierの基本的な概念は、Zapsと呼ばれる自動化ワークフローであり、トリガーとアクションを含みます。 Zapierの基本的な概念は、Zapsと呼ばれる自動化ワークフローであり、トリガーとアクションを含みます。
+
+Zapierの仕組みについてもっと知りたい方は[こちら](https://zapier.com/how-it-works)をご覧ください。
+
+## セットアップ
+
+### ステップ 1: Zapier パッケージをインストール
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### ステップ 2: CLI でログイン
+
+Zapierの資格情報を使用してCLIでログインしてください。
+
+```bash
+zapier login
+```
+
+### ステップ3：環境変数をセットアップします
+
+`packages/twenty-zapier`フォルダーから実行します。
+
+```bash
+cp .env.example .env
+```
+
+アプリケーションをローカルで実行し、[http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)にアクセスしてAPIキーを生成してください。
+
+.envファイルの**YOUR_API_KEY**値を生成したAPIキーで置き換えてください。
+
+## 開発
+
+<Warning>
+  `zapier`コマンドを実行する前に`yarn build`を実行してください。
+</Warning>
+
+### テスト
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### コードを編集しながら監視＆コンパイル
+
+```bash
+yarn watch
+```
+
+### Zapierアプリを検証
+
+```bash
+yarn validate
+```
+
+### Zapierアプリをデプロイ
+
+```bash
+yarn deploy
+```
+
+### すべてのZapier CLIコマンドを列挙
+
+```bash
+zapier
+```

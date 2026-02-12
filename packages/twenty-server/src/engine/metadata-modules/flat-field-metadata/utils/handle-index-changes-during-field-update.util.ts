@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -13,11 +14,12 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export type FieldMetadataUpdateIndexSideEffect = {
-  flatIndexMetadatasToUpdate: FlatIndexMetadata[];
-  flatIndexMetadatasToDelete: FlatIndexMetadata[];
-  flatIndexMetadatasToCreate: FlatIndexMetadata[];
+  flatIndexMetadatasToUpdate: UniversalFlatIndexMetadata[];
+  flatIndexMetadatasToDelete: UniversalFlatIndexMetadata[];
+  flatIndexMetadatasToCreate: UniversalFlatIndexMetadata[];
 };
 
 type FromToFlatFieldMetadataAndFlatEntityMaps = FromTo<
@@ -28,7 +30,7 @@ type FromToFlatFieldMetadataAndFlatEntityMaps = FromTo<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
   > & {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   };
 const FIELD_METADATA_UPDATE_INDEX_SIDE_EFFECT: FieldMetadataUpdateIndexSideEffect =
   {
@@ -43,7 +45,7 @@ export const handleIndexChangesDuringFieldUpdate = ({
   flatIndexMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: FromToFlatFieldMetadataAndFlatEntityMaps): FieldInputTranspilationResult<FieldMetadataUpdateIndexSideEffect> => {
   if (
     !hasIndexRelevantChanges({
@@ -81,7 +83,7 @@ export const handleIndexChangesDuringFieldUpdate = ({
     relatedIndexes,
     flatObjectMetadata,
     flatFieldMetadataMaps,
-    workspaceCustomApplicationId,
+    flatApplication,
   });
 };
 
@@ -109,7 +111,6 @@ const handleNoExistingIndexes = ({
   const newIndex = generateIndexForFlatFieldMetadata({
     flatFieldMetadata: toFlatFieldMetadata,
     flatObjectMetadata,
-    workspaceId: flatObjectMetadata.workspaceId,
   });
 
   return {
@@ -127,13 +128,13 @@ const handleExistingIndexes = ({
   relatedIndexes,
   flatObjectMetadata,
   flatFieldMetadataMaps,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: {
   relatedIndexes: FlatIndexMetadata[];
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
 } & FromTo<FlatFieldMetadata, 'flatFieldMetadata'> & {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   }): FieldInputTranspilationResult<FieldMetadataUpdateIndexSideEffect> => {
   if (
     toFlatFieldMetadata.isUnique === false &&
@@ -145,7 +146,6 @@ const handleExistingIndexes = ({
         isUnique: true,
       },
       flatObjectMetadata,
-      workspaceId: flatObjectMetadata.workspaceId,
     });
 
     const uniqueIndexToDelete = relatedIndexes.find(
@@ -155,7 +155,7 @@ const handleExistingIndexes = ({
     if (
       isDefined(uniqueIndexToDelete) &&
       ((isDefined(uniqueIndexToDelete.applicationId) &&
-        uniqueIndexToDelete.applicationId !== workspaceCustomApplicationId) ||
+        uniqueIndexToDelete.applicationId !== flatApplication.id) ||
         !uniqueIndexToDelete.isCustom)
     ) {
       return {

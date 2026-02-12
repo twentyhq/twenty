@@ -1,0 +1,74 @@
+---
+title: 수신한 이메일 수 표시
+description: 각 연락처로부터 받은 이메일 수를 자동으로 집계해 표시하는 워크플로우를 만듭니다.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## 개요
+
+이 워크플로우는 새 이메일을 받을 때마다 트리거되며, 해당 발신자로부터 받은 이메일의 총 개수를 사람 레코드의 사용자 지정 필드에 업데이트합니다.
+
+## 사전 준비
+
+이 워크플로우를 설정하기 전에 **사람** 객체에 사용자 지정 필드를 생성합니다:
+
+1. **설정 → 데이터 모델 → 사람**으로 이동
+2. 새 **숫자** 필드를 추가합니다
+3. 필드 이름을 "이 사람에게서 받은 이메일 수"처럼 지정합니다
+
+## 단계별 설정
+
+<VimeoEmbed videoId="1148700336" title="동영상 시연" />
+
+### 1단계: 트리거 구성
+
+1. **워크플로우**로 이동해 새 워크플로우를 생성합니다
+2. 트리거로 **레코드가 생성됨**을 선택합니다
+3. **Message Participants**를 선택합니다(고급 객체에 있음)
+
+<Note>
+  Message Participant는 메시지 ID와 사람 ID의 조합으로, 메시지마다 하나의 고유 레코드를 생성합니다. 이는 발신자(또는 수신자)의 이메일 주소가 들어 있는 `handle` 필드에 접근할 수 있으므로 메시지를 직접 추적하는 것보다 더 쉽습니다.
+</Note>
+
+### 2단계: Role 기준으로 필터링
+
+1. **필터** 액션을 추가합니다
+2. 조건을 설정합니다: **Role**이 **FROM**과 같음
+
+이렇게 하면 해당 사람이 보낸 메시지만 집계되고, 그 사람에게 보낸 메시지는 제외됩니다.
+
+### 3단계: 동일한 Handle을 가진 모든 Message Participants 검색
+
+1. **레코드 검색** 액션을 추가합니다
+2. 객체로 **Message Participants**를 선택합니다
+3. 필터를 추가합니다: **Handle**이 트리거의 handle(발신자의 이메일 주소)과 같고, **Role**이 **FROM**과 같음
+4. **Limit**을 1에서 최대값인 **200**으로 늘립니다
+
+해당 이메일 주소에서 보낸 모든 메시지를 찾아 총 개수를 구합니다.
+
+<Note>
+  Search Records 액션은 최대 200개의 레코드만 반환합니다. 그러나 개별 레코드가 아니라 `totalCount` 값만 사용하므로, 이 단계는 해당 사람이 보낸 이메일의 총 개수를 반환합니다.
+</Note>
+
+### 4단계: Create or Update Record 액션으로 사람 레코드를 업데이트합니다
+
+1. **레코드 생성 또는 업데이트** 액션을 추가합니다
+
+<Warning>
+  여기서는 **Update Record** 대신 **Upsert Record**를 사용하세요. 이렇게 하면 이전 단계의 레코드 ID가 없어도 `handle` 필드(이메일 주소)로 사람을 식별할 수 있습니다.
+</Warning>
+
+2. 객체로 **People**를 선택합니다
+3. Message Participant의 `handle`과 해당 사람의 이메일을 일치시켜 사람을 찾습니다.
+4. 사용자 지정 "수신한 이메일 수" 필드를 `{{searchRecords.totalCount}}`로 설정합니다
+
+Search Records 액션의 `totalCount` 값은 이 사람에게서 받은 이메일의 총 개수를 나타냅니다.
+
+## 관련 항목
+
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [사용자 지정 필드 만들기](/l/ko/user-guide/data-model/how-tos/customize-your-data-model)
+* [레코드 검색 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions#search-records)

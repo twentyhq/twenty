@@ -1,10 +1,9 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -15,7 +14,6 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
   component: SettingsDevelopersWebhookForm,
   decorators: [
     ComponentDecorator,
-    I18nFrontDecorator,
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

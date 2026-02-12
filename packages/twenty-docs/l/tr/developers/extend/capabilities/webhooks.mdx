@@ -1,0 +1,112 @@
+---
+title: Webhooklar
+description: CRM'inizde olaylar gerçekleştiğinde gerçek zamanlı bildirimler alın.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Webhook'lar, Twenty'de olaylar gerçekleştiğinde verileri sistemlerinize gerçek zamanlı olarak iletir — sürekli sorgulamaya gerek yok. Harici sistemleri senkron tutmak, otomasyonları tetiklemek veya uyarılar göndermek için bunları kullanın.
+
+## Webhook oluştur
+
+1. **Ayarlar → API'ler ve Webhook'lar → Webhook'lar**'a gidin
+2. **+ Webhook oluştur**'a tıklayın
+3. Webhook URL'nizi girin (herkese açık olarak erişilebilir olmalıdır)
+4. **Kaydet**'e tıklayın
+
+Webhook anında etkinleşir ve bildirim göndermeye başlar.
+
+<VimeoEmbed videoId="928786708" title="Webhook oluşturma" />
+
+### Webhook'ları Yönet
+
+**Düzenle**: Webhook'u tıklayın → URL'yi güncelleyin → **Kaydet**
+
+**Sil**: Webhook'u tıklayın → **Sil** → Onayla
+
+## Etkinlikler
+
+Twenty, şu olay türleri için webhook'lar gönderir:
+
+| Etkinlik              | Örnek                                                      |
+| --------------------- | ---------------------------------------------------------- |
+| **Kayıt Oluşturuldu** | `person.created`, `company.created`, `note.created`        |
+| **Kayıt Güncellendi** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **Kayıt Silindi**     | `person.deleted`, `company.deleted`                        |
+
+Tüm olay türleri webhook URL'nize gönderilir. Olay filtreleme özelliği ilerideki sürümlerde eklenebilir.
+
+## Yük Biçimi
+
+Her webhook, JSON gövdeli bir HTTP POST gönderir:
+
+```json
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+| Alan            | Açıklama                                      |
+| --------------- | --------------------------------------------- |
+| `etkinlik`      | Ne oldu (ör. `person.created`)                |
+| `veri`          | Oluşturulan/güncellenen/silinen kaydın tamamı |
+| `zaman damgası` | Olayın ne zaman gerçekleştiği (UTC)           |
+
+<Note>
+  Alındığını onaylamak için **2xx HTTP durumu** (200-299) ile yanıt verin. 2xx dışı yanıtlar teslimat hataları olarak kaydedilir.
+</Note>
+
+## Webhook Doğrulaması
+
+Twenty, güvenlik için her webhook isteğini imzalar. İsteklerin gerçekliğini sağlamak için imzaları doğrulayın.
+
+### Üstbilgiler
+
+| Başlık                       | Açıklama            |
+| ---------------------------- | ------------------- |
+| `X-Twenty-Webhook-Signature` | HMAC SHA256 imzası  |
+| `X-Twenty-Webhook-Timestamp` | İstek zaman damgası |
+
+### Doğrulama Adımları
+
+1. `X-Twenty-Webhook-Timestamp` değerinden zaman damgasını alın
+2. Dizeyi oluşturun: `{timestamp}:{JSON payload}`
+3. Webhook gizli anahtarınızı kullanarak HMAC SHA256 hesaplayın
+4. `X-Twenty-Webhook-Signature` ile karşılaştırın
+
+### Örnek (Node.js)
+
+```javascript
+const crypto = require("crypto");
+
+const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const payload = JSON.stringify(req.body);
+const secret = "your-webhook-secret";
+
+const stringToSign = `${timestamp}:${payload}`;
+const expectedSignature = crypto
+  .createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+
+const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+```
+
+## Webhook'lar ve İş Akışları
+
+| Yöntem                             | Yön | Kullanım Senaryosu                                                          |
+| ---------------------------------- | --- | --------------------------------------------------------------------------- |
+| **Webhook'lar**                    | OUT | Herhangi bir kayıt değişikliğini harici sistemlere otomatik olarak bildirin |
+| **İş Akışı + HTTP İsteği**         | OUT | Özel mantıkla (filtreler, dönüşümler) verileri dışarı gönderin              |
+| **İş Akışı Webhook Tetikleyicisi** | IN  | Harici sistemlerden Twenty'ye veri alın                                     |
+
+Harici verileri almak için bkz. [Bir Webhook Tetikleyicisi Kurun](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).

@@ -1,4 +1,4 @@
-import { Bundle, ZObject } from 'zapier-platform-core';
+import type { Bundle, ZObject } from 'zapier-platform-core';
 
 import { requestSchema } from '../utils/requestDb';
 

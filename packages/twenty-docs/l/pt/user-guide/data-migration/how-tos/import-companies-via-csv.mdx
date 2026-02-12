@@ -1,0 +1,201 @@
+---
+title: Importar Empresas via CSV
+description: Guia completo passo a passo para importar empresas para o Twenty.
+---
+
+## Visão Geral
+
+Este guia explica como importar as suas empresas para o Twenty. **As empresas devem ser importadas primeiro** porque Pessoas e Oportunidades se ligam a Empresas.
+
+## Antes de Começar
+
+### Lista de Verificação de Pré-requisitos
+
+<Check>
+  O seu ficheiro está no formato CSV, XLSX ou XLS
+</Check>
+
+<Check>
+  O ficheiro tem menos de 10 000 registos
+</Check>
+
+<Check>
+  Sem domínios duplicados no seu ficheiro
+</Check>
+
+<Check>
+  Todos os campos personalizados existem em **Settings → Data Model**
+</Check>
+
+<Note>
+  Precisa de importar mais de 10 000 empresas? Divida em vários ficheiros ou use a [importação via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
+
+## Passo 1: Prepare os seus dados de empresas
+
+### Campos Obrigatórios e Recomendados
+
+| Campo                     | Obrigatório? | Formato              | Notas                           |
+| ------------------------- | ------------ | -------------------- | ------------------------------- |
+| **Name**                  | Recomendado  | Texto                | Nome de apresentação da empresa |
+| **Domínio**               | Recomendado  | `https://domain.com` | Identificador único             |
+| **Endereço**              | Opcional     | Várias colunas       | Veja abaixo                     |
+| **Empregados**            | Opcional     | Número               | Número de empregados            |
+| **Campos personalizados** | Opcional     | Varia                | Deve existir no Data Model      |
+
+### Formato de Domínio
+
+<Warning>
+  **Use o formato `https://domain.com` para domínios.**
+
+  Isto corresponde ao formato utilizado quando as Empresas são criadas automaticamente a partir da sincronização de e-mail/calendário, evitando duplicados posteriormente.
+</Warning>
+
+**Colunas de domínio:**
+
+* **Domain / Domain Label**: `acme.com`
+* **Domain / Domain URL**: `https://acme.com`
+
+### Formato de Endereço
+
+Endereço é um campo aninhado com várias colunas:
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### Exemplo de estrutura de CSV
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **Dica profissional:** Clique em **Download sample file** durante a importação para ver os nomes de colunas exatos que o Twenty espera.
+</Note>
+
+## Passo 2: Aceda à funcionalidade de importação
+
+**Opção 1: A partir da vista Empresas**
+
+1. Navegue até **Empresas** na barra lateral esquerda
+2. Clique no ícone **⋮** no canto superior direito
+3. Selecione **Import records**
+
+**Opção 2: Utilizando o Menu de Comando**
+
+1. Prima `Cmd + K` (Mac) ou `Ctrl + K` (Windows)
+2. Escreva "import"
+3. Selecione **Import records**
+4. Escolha **Empresas**
+
+## Passo 3: Carregue o seu ficheiro
+
+1. Clique em **Select file**
+2. Escolha o seu ficheiro CSV, XLSX ou XLS
+3. Aguarde que o Twenty analise o seu ficheiro
+
+## Passo 4: Mapeie as suas colunas
+
+O Twenty tenta automaticamente corresponder as suas colunas aos campos. Revise e ajuste:
+
+1. **Verifique os mapeamentos automáticos** — confirme que estão corretos
+2. **Corrija mapeamentos incorretos** — clique no menu suspenso para selecionar o campo correto
+3. **Ignorar colunas** — selecione **Do not map** para as colunas que não quer importar
+
+### Regras Importantes de Mapeamento
+
+* **Domínio**: Faça o mapeamento para **Domain / Domain URL** (não para Domain Label)
+* **Endereço**: Mapeie cada parte para a respetiva coluna (Cidade, Estado, etc.)
+* **Campos Select**: Os valores devem corresponder às opções existentes (ou irá mapeá-los no passo seguinte)
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## Passo 5: Mapear valores de campos Select
+
+Se tiver campos Select ou Multi-Select:
+
+1. O Twenty mostra os seus valores ao lado das opções existentes
+2. Relacione cada valor no seu ficheiro a uma opção do Twenty
+3. Ou crie novas opções, se necessário
+
+<Note>
+  As opções de Select usam **nomes de API**, não os rótulos de apresentação. Em **Settings → Data Model** → Ative o **Modo avançado** para ver os nomes de API.
+</Note>
+
+## Passo 6: Rever e corrigir erros
+
+Antes de concluir a importação, o Twenty valida os seus dados:
+
+1. Clique em **Next Steps**
+2. As linhas com erros são destacadas em **amarelo**
+3. **Corrija os erros diretamente** — clique numa célula e edite o valor
+4. **Remova as linhas problemáticas** — clique no X para ignorar essa linha
+
+### Erros comuns na importação de empresas
+
+| Erro                            | Causa                          | Solução                                            |
+| ------------------------------- | ------------------------------ | -------------------------------------------------- |
+| **Domínio duplicado**           | O domínio já existe no Twenty  | Remova do ficheiro ou atualize o registo existente |
+| **Formato de domínio inválido** | Formato incorreto              | Use `https://domain.com`                           |
+| **Campo obrigatório ausente**   | O campo obrigatório está vazio | Preencha o valor ou remova a linha                 |
+
+## Passo 7: Concluir a importação
+
+1. Revise o resumo da importação
+2. Clique em **Confirm** para importar
+3. Aguarde a conclusão da importação
+4. Verifique consultando alguns registos
+
+## Após importar empresas
+
+Agora pode importar registos que se ligam a Empresas:
+
+1. **[Importar Pessoas](/l/pt/user-guide/data-migration/how-tos/import-contacts-via-csv)** — ligue-as a Empresas utilizando o domínio
+2. **Importar Oportunidades** — ligue-as a Empresas
+3. **Verifique a importação** — faça uma verificação pontual de alguns registos para garantir que os dados estão corretos
+
+## Atualizar Empresas existentes
+
+Para atualizar empresas em vez de criar novas:
+
+1. Inclua a coluna `domain` ou `id` no seu ficheiro
+2. O Twenty faz a correspondência dos registos por este identificador único
+3. As empresas existentes são atualizadas; as novas são criadas
+
+Veja [Como Atualizar Registos Existentes](/l/pt/user-guide/data-migration/how-tos/update-existing-records-via-import) para obter detalhes.
+
+## Perguntas Frequentes
+
+<AccordionGroup>
+  <Accordion title="Porque é que duas Empresas não podem ter o mesmo domínio?">
+    O domínio é um identificador único no Twenty. Isto evita empresas duplicadas e garante que a sincronização de e-mail associe corretamente os e-mails à empresa certa.
+  </Accordion>
+
+  <Accordion title="E se tiver empresas sem domínio?">
+    Pode deixar o domínio em branco. No entanto, recomendamos adicionar domínios quando possível para melhorar a qualidade dos dados e a ligação automática de e-mails.
+  </Accordion>
+
+  <Accordion title="Posso importar empresas sem quaisquer Pessoas associadas?">
+    Sim! Pode importar as empresas primeiro, depois importar as Pessoas e associá-las usando o domínio da empresa.
+  </Accordion>
+
+  <Accordion title="O que acontece se importar um domínio que já existe?">
+    Se incluir um identificador único (domínio ou id) que corresponda a uma empresa existente, a Twenty atualiza essa empresa em vez de criar um duplicado.
+  </Accordion>
+
+  <Accordion title="Como corrijo erros de 'domínio duplicado'?">
+    Remova o duplicado do seu ficheiro ou inclua o `id` da empresa para, em vez disso, atualizar o registo existente.
+  </Accordion>
+</AccordionGroup>
+
+## Resolução de Problemas
+
+Está a ter problemas? Consulte:
+
+* [Como Corrigir Erros de Importação](/l/pt/user-guide/data-migration/how-tos/fix-import-errors)
+* [Referência de Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping)
+* [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)

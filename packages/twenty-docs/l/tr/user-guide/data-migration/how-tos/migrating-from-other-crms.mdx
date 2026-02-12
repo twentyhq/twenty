@@ -1,0 +1,293 @@
+---
+title: Diğer CRM'lerden Taşınma
+description: Verilerinizi herhangi bir CRM'den Twenty'ye taşımak için adım adım kılavuz.
+---
+
+## Genel Bakış
+
+Bu kılavuz, verilerinizi herhangi bir CRM'den Twenty'ye taşıma sürecinde size yol gösterir. Süreç, verilerinizi denetlemeyi, Twenty çalışma alanınızı hazırlamayı, mevcut sisteminizden dışa aktarmayı ve Twenty'ye içe aktarmayı içerir.
+
+<Note>Görünümler, iş akışları ve izinler geçişten sonra manuel olarak yeniden oluşturulmalıdır. Bu yapılandırma çalışması için zaman planlayın.</Note>
+
+## Adım 1: Mevcut Verilerinizi Denetleyin
+
+Geçiş, yeni bir başlangıç için bir fırsattır. Gereksiz karmaşayı taşımayın.
+
+**Tutulacaklar:**
+
+* Aktif kişiler ve şirketler
+* Açık fırsatlar ve anlaşmalar
+* Önemli notlar ve aktiviteler
+* Gerçekten kullandığınız özel alanlar
+
+**Geride bırakılacaklar:**
+
+* Güncelliğini yitirmiş kişiler (2 yıldan uzun süredir aktivite yok)
+* Yinelenen kayıtlar
+* Test verileri
+* Kullanılmayan özel alanlar
+
+## Adım 2: Veri Modelinizi Eşleyin
+
+Mevcut CRM'iniz ile Twenty arasında bir eşleme belgesi oluşturun:
+
+| CRM'iniz         | Twenty                 |
+| ---------------- | ---------------------- |
+| Hesap / Kuruluş  | **Şirket**             |
+| İrtibat / Kişi   | **Kişiler**            |
+| Anlaşma / Fırsat | **Fırsat**             |
+| Aktivite         | **Görev** veya **Not** |
+| Özel Nesne       | **Özel Nesne**         |
+
+**Her alan için şunları belgeleyin:**
+
+* Kaynak alan adı
+* Hedef Twenty alanı
+* Gerekli biçim dönüştürmeleri (tarihler, telefon numaraları vb.)
+
+<Note>İçe aktarma sırasında bu eşleme belgesini elinizin altında bulundurun—sütunları eşlerken ona başvuracaksınız.</Note>
+
+## Adım 3: Twenty Çalışma Alanınızı Kurun
+
+Verileri içe aktarmadan önce Twenty çalışma alanınızı hazırlayın:
+
+### Özel Nesneler ve Alanlar Oluşturun
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Gereksinim duyduğunuz özel nesneleri oluşturun
+3. Standart ve özel nesnelere özel alanlar ekleyin
+4. Alan ayarlarını yapılandırın (benzersiz, zorunlu, seçenekler vb.)
+
+<Warning>
+  **Alanlar içe aktarmadan önce mevcut olmalıdır.**
+
+  CSV içe aktarma alanları değil, kayıtları oluşturur. İçe aktarmadan önce tüm özel alanları Ayarlar → Veri Modeli içinde oluşturun.
+</Warning>
+
+### Ekibinizi Davet Edin
+
+<Warning>
+  **Kullanıcıları verileri içe aktarmadan ÖNCE davet edin.**
+
+  Verileriniz kullanıcı referansları içeriyorsa (Hesap Sahibi, Atanan vb.), bu kullanıcıların içe aktarmadan önce Twenty'de mevcut olması gerekir. Aksi halde bu ilişkiler eşlenemez.
+</Warning>
+
+1. **Ayarlar → Üyeler** bölümüne gidin
+2. Tüm ekip üyelerini davet edin
+3. **Herkesin davetini kabul etmesini bekleyin**
+4. Tüm kullanıcıların Üyeler listenizde göründüğünü doğrulayın
+
+## Adım 4: Mevcut CRM'inizden Dışa Aktarın
+
+Verilerinizi mevcut CRM'inizden dışa aktarın:
+
+1. **Dışa Aktar** işlevini arayın (genellikle Ayarlar, Veri Yönetimi veya Yönetici altında)
+2. Mümkün olduğunda **CSV biçimine** dışa aktarın
+3. Her nesne türünü ayrı ayrı dışa aktarın (Şirketler, Kişiler, Anlaşmalar vb.)
+4. Taşımak istediğiniz tüm alanları dahil edin
+
+**Şu nesneleri dışa aktarın (referans için bu sırayla):**
+
+1. Şirketler / Hesaplar / Kuruluşlar
+2. Kişiler / Bireyler
+3. Anlaşmalar / Fırsatlar
+4. Notlar ve Aktiviteler
+5. Özel nesneler
+
+## Adım 5: Verilerinizi Temizleyin ve Biçimlendirin
+
+Dışa aktarılan her CSV'yi bir hesap tablosu uygulamasında açın ve Twenty için hazırlayın.
+
+### Yinelenenleri Kaldırın
+
+1. Benzersiz alana göre sıralayın (Kişiler için e-posta, Şirketler için alan adı)
+2. Yinelenen satırları kaldırın veya birleştirin
+3. Twenty'de halihazırda yinelenen olmadığını doğrulayın
+
+### Alanları Doğru Biçimlendirin
+
+| Alan tipi          | Gerekli Biçim                                   |
+| ------------------ | ----------------------------------------------- |
+| **Alan Adı**       | `https://domain.com`                            |
+| **E-posta**        | `name@domain.com` (benzersiz olmalıdır)         |
+| **Tarih**          | `YYYY-MM-DD`                                    |
+| **Telefon**        | Üç sütun: Numara, Ülke Kodu, Arama Kodu         |
+| **Boolean**        | `TRUE` veya `FALSE` (büyük harf)                |
+| **Seçim Alanları** | Görüntü etiketleri değil, API adlarını kullanın |
+
+<Warning>
+  **Alan adı biçimi kritiktir.**
+
+  `https://domain.com` kullanın (`domain.com` veya `www.domain.com` değil). Bu, Twenty'nin biçimiyle eşleşir ve e-posta/takvim eşzamanlamasını bağladığınızda yinelenmeleri önler.
+</Warning>
+
+Tüm alan türleri için tam biçimlendirme gereksinimleri için [CSV Dosyalarınızı Nasıl Hazırlarsınız](/l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files) bölümüne bakın.
+
+### İlişki Sütunları Ekleyin
+
+Kayıtları bağlamak için (ör. Kişileri Şirketlere), ana kaydın benzersiz tanımlayıcısını içeren bir sütun ekleyin.
+
+**Örnek: Şirket bağlantılı Kişiler CSV'si**
+
+```csv
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+Kayıtları bağlamaya ilişkin ayrıntılı talimatlar için [İlişkiler Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) bölümüne bakın.
+
+### Kullanıcı Referanslarını Güncelleyin
+
+Verileriniz kullanıcı atamaları içeriyorsa (Sahip, Atanan):
+
+1. **Kullanıcının e-posta adresini** içeren bir sütun ekleyin (yalnızca eski sistemdeki kimlikleri değil)
+2. Kullanıcıların Twenty çalışma alanınıza katılmak için kullandıklarıyla aynı e-posta adreslerini kullanın
+
+Tam biçimlendirme kılavuzu için [CSV Dosyalarınızı Nasıl Hazırlarsınız](/l/tr/user-guide/data-migration/how-tos/prepare-your-csv-files) bölümüne bakın.
+
+## Adım 6: Twenty'ye İçe Aktarın
+
+<Warning>
+  **İçe Aktarma Sırası Önemlidir!**
+
+  Her zaman şu sırayla içe aktarın:
+
+  1. Önce **Şirketler** (bağımlılık yok)
+  2. İkinci olarak **Kişiler** (Şirketlere bağlanır)
+  3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlanır)
+  4. **Notlar ve Görevler** (kayıtlara bağlanır)
+  5. **Özel nesneler** (bağımlılıklarına uyarak)
+
+  Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
+</Warning>
+
+### Her Nesneyi İçe Aktarın
+
+Her CSV dosyası için, sırayla:
+
+1. Twenty'de nesneye gidin
+2. **⋮ → Kayıtları içe aktar**'ı tıklayın
+3. CSV dosyasını yükleyin
+4. Sütunları alanlarla eşleyin:
+   * Kullanıcı e-posta sütunlarını uygun ilişki alanlarına eşleyin
+   * İlişki sütunlarını (ör. `companyDomain`) ilişki alanlarına eşleyin
+5. Kullanıcı arayüzündeki hataları gözden geçirin ve düzeltin
+6. İçe aktarmayı onaylayın
+7. Sonraki dosyaya geçmeden önce birkaç kaydı doğrulayın
+
+**Ayrıntılı kılavuzlar:**
+
+* [Şirketler Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [Kişiler Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [İlişkiler Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+
+## Adım 7: Büyük Geçişler (50.000+ Kayıt)
+
+Büyük geçişler için:
+
+| Hacim                 | Önerilen Yaklaşım                |
+| --------------------- | -------------------------------- |
+| 10.000 kaydın altında | Tek CSV içe aktarma              |
+| 10.000 - 50.000 kayıt | Birden fazla CSV dosyasına bölün |
+| 50.000+ kayıt         | API'yi kullanın                  |
+
+**API içe aktarmaları için:**
+
+* Büyük veri kümeleri için daha hızlı ve daha güvenilir
+* Toplu işlemleri destekler (çağrı başına 60 kayda kadar)
+* Bkz.: [API ile Veri Nasıl İçe Aktarılır](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)
+
+## Adım 8: Geçiş Sonrası Kurulum
+
+Verileri içe aktardıktan sonra çalışma alanı yapılandırmanızı tamamlayın:
+
+### Görünümleri Yeniden Oluşturun
+
+* Kaydedilmiş görünümleri filtreler, sıralamalar ve sütun yapılandırmalarıyla yeniden oluşturun
+* Gereksinim duyduğunuz kanban veya takvim görünümlerini oluşturun
+
+### İş Akışlarını Yeniden Oluşturun
+
+* Otomasyonlarınızı **Ayarlar → İş Akışları** içinde yeniden oluşturun
+* En kritik iş akışlarıyla başlayın
+* Kullanmaya başlamadan önce her birini test edin
+
+### Rolleri ve İzinleri Yapılandırın
+
+* Rolleri **Ayarlar → Roller** bölümünde yapılandırın
+* Kullanıcıları uygun rollere atayın
+
+### E-posta ve Takvimi Bağlayın
+
+* Her kullanıcı kendi hesabını **Ayarlar → Hesaplar** bölümünde bağlar
+* Twenty, e-postaları kişi kayıtlarıyla eşzamanlamaya başlayacaktır
+* Bkz. [E-posta ve Takvim](/l/tr/user-guide/calendar-emails/overview)
+
+### Ekibinizi Eğitin
+
+* Yeni arayüzü birlikte gözden geçirin
+* Takıma özgü süreçleri belgelendirin
+
+## Sık Görülen Sorunlar ve Çözümleri
+
+| Sorun                      | Neden                              | Çözüm                                                                                                    |
+| -------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Yinelenen hatalar**      | E-posta/alan adı zaten mevcut      | Dosyadan yinelenenleri kaldırın veya mevcut kayıtları güncellemek için benzersiz bir tanımlayıcı ekleyin |
+| **İlişki bulunamadı**      | Ana kayıt mevcut değil             | Önce ana nesneleri içe aktarın (Şirketler Kişilerden önce)                                               |
+| **Eksik alanlar**          | Özel alan mevcut değil             | İçe aktarmadan önce alanı Ayarlar → Veri Modeli içinde oluşturun                                         |
+| **Seçim alanı hataları**   | Görüntü etiketlerinin kullanılması | API adlarını kullanın (bulmak için Ayarlar'da Gelişmiş modu etkinleştirin)                               |
+| **Kullanıcı ilişkisi boş** | Kullanıcı daveti kabul etmedi      | Verileri içe aktarmadan önce tüm kullanıcıların davetleri kabul ettiğinden emin olun                     |
+
+Ayrıntılı sorun giderme adımları için [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors) bölümüne bakın.
+
+## Taşındıktan Sonra Kontrol Listesi
+
+### Veri Bütünlüğü
+
+<Check>Tüm kayıtlar içe aktarıldı (sayıları kaynak sistemle karşılaştırın)</Check>
+<Check>İlişkiler düzgün çalışıyor (Kişiler Şirketlere bağlı)</Check>
+<Check>Kullanıcı atamaları doğru eşlendi (Sahip, Atanan)</Check>
+<Check>Özel alanlar dolduruldu</Check>
+<Check>Beklenmeyen yinelenen yok</Check>
+
+### Yapılandırma
+
+<Check>Görünümler yeniden oluşturuldu</Check>
+<Check>İş akışları yeniden oluşturuldu ve test edildi</Check>
+<Check>Roller ve izinler yapılandırıldı</Check>
+<Check>E-posta/takvim eşzamanlaması bağlandı</Check>
+
+### Ekip Hazırlığı
+
+<Check>Ekibe yeni sistem konusunda eğitim verildi</Check>
+<Check>Eski CRM erişim planı kararlaştırıldı (referans için saklansın mı? Ne zaman devre dışı bırakılacak?)</Check>
+
+## SSS
+
+<AccordionGroup>
+  <Accordion title="İş akışlarını otomatik olarak taşıyabilir miyim?">
+    Şu anda mümkün değil. İş akışları Twenty'de manuel olarak yeniden oluşturulmalıdır.
+  </Accordion>
+
+  <Accordion title="Dosya ekleri ne olacak?">
+    Dosya ekleri CSV dışa aktarmalarına dahil edilmez. Bunları manuel olarak yeniden yüklemeniz, API aracılığıyla taşımanız veya yardım için ekibimizle iletişime geçmeniz gerekecek.
+  </Accordion>
+
+  <Accordion title="Geçiş sırasında her iki sistemi de çalışır durumda tutabilir miyim?">
+    Evet, geçişin tamamlandığını doğrulayana kadar eski CRM'inizi çalışır durumda tutmanızı öneririz. Sadece her iki yerde de yeni veriler oluşturmamaya dikkat edin.
+  </Accordion>
+
+  <Accordion title="Geçiş genellikle ne kadar sürer?">
+    Veri hacmine ve karmaşıklığına bağlıdır. Küçük geçişler (10.000 kaydın altında) birkaç saat içinde yapılabilir. Büyük geçişler, veri temizliği ve test dahil olmak üzere birkaç gün sürebilir.
+  </Accordion>
+</AccordionGroup>
+
+## Yardıma mı ihtiyacınız var?
+
+Karmaşık geçişler veya büyük veri kümeleri için:
+
+* **Kılavuzlu kurulum:** 4 saatlik bir işe alıştırma paketi ayırtın
+* **Tam geçiş hizmeti:** İş ortaklarımız tüm geçişi üstlenebilir
+
+[contact@twenty.com](mailto:contact@twenty.com) adresinden bizimle iletişime geçin veya [Uygulama Hizmetlerimizi](/l/tr/user-guide/getting-started/capabilities/implementation-services) keşfedin.

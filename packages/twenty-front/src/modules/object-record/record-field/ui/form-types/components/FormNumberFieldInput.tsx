@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -74,8 +75,8 @@ export const FormNumberFieldInput = ({
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
-      setErrorMessage('Invalid number');
-      onError?.('Invalid number');
+      setErrorMessage(t`Invalid number`);
+      onError?.(t`Invalid number`);
       return;
     }
 
@@ -117,7 +118,7 @@ export const FormNumberFieldInput = ({
               placeholder={
                 isDefined(placeholder) && !isEmpty(placeholder)
                   ? placeholder
-                  : 'Enter a number'
+                  : t`Enter a number`
               }
               value={draftValue.value}
               copyButton={false}

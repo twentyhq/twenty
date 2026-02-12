@@ -1,74 +1,83 @@
-import { type BarChartConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartConfig';
+import { type GraphWidgetLegendItem } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
-import { type BarDatum } from '@nivo/bar';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useMemo } from 'react';
 
 type UseBarChartDataProps = {
-  data: BarDatum[];
-  indexBy: string;
   keys: string[];
-  series?: BarChartSeries[];
+  series?: BarChartSeriesWithColor[];
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
   groupMode?: 'grouped' | 'stacked';
+  colorMode: GraphColorMode;
 };
 
 export const useBarChartData = ({
-  data,
-  indexBy,
   keys,
   series,
   colorRegistry,
   seriesLabels,
+  colorMode,
 }: UseBarChartDataProps) => {
+  const hiddenLegendIds = useRecoilComponentValue(
+    graphWidgetHiddenLegendIdsComponentState,
+  );
+
   const seriesConfigMap = useMemo(
-    () => new Map<string, BarChartSeries>(series?.map((s) => [s.key, s]) || []),
+    () =>
+      new Map<string, BarChartSeriesWithColor>(
+        series?.map((s) => [s.key, s]) || [],
+      ),
     [series],
   );
 
-  const barConfigs = useMemo((): BarChartConfig[] => {
-    return data.flatMap((dataPoint) => {
-      const indexValue = dataPoint[indexBy];
-      return keys.map((key, keyIndex): BarChartConfig => {
-        const seriesConfig = seriesConfigMap.get(key);
-        const colorScheme = getColorScheme({
-          registry: colorRegistry,
-          colorName: seriesConfig?.color,
-          fallbackIndex: keyIndex,
-          totalGroups: keys.length,
-        });
+  const allEnrichedKeys = useMemo((): BarChartEnrichedKey[] => {
+    const shouldApplyGradient = colorMode === 'explicitSingleColor';
 
-        return {
-          key,
-          indexValue,
-          colorScheme,
-        };
+    return keys.map((key, index) => {
+      const seriesConfig = seriesConfigMap.get(key);
+      const colorScheme = getColorScheme({
+        registry: colorRegistry,
+        colorName: seriesConfig?.color,
+        fallbackIndex: index,
+        totalGroups: shouldApplyGradient ? keys.length : undefined,
       });
-    });
-  }, [data, indexBy, keys, colorRegistry, seriesConfigMap]);
 
-  const enrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
-    const seriesConfig = seriesConfigMap.get(key);
-    const colorScheme = getColorScheme({
-      registry: colorRegistry,
-      colorName: seriesConfig?.color,
-      fallbackIndex: index,
-      totalGroups: keys.length,
+      return {
+        key,
+        colorScheme,
+        label: seriesConfig?.label ?? seriesLabels?.[key] ?? key,
+      };
     });
+  }, [keys, seriesConfigMap, colorRegistry, seriesLabels, colorMode]);
 
-    return {
-      key,
-      colorScheme,
-      label: seriesConfig?.label || seriesLabels?.[key] || key,
-    };
-  });
+  const legendItems: GraphWidgetLegendItem[] = allEnrichedKeys.map((item) => ({
+    id: item.key,
+    label: item.label,
+    color: item.colorScheme.solid,
+  }));
+
+  const visibleKeys = keys.filter((key) => !hiddenLegendIds.includes(key));
+
+  const enrichedKeys = allEnrichedKeys.filter(
+    (item) => !hiddenLegendIds.includes(item.key),
+  );
+
+  const enrichedKeysMap = useMemo(
+    () => new Map(allEnrichedKeys.map((ek) => [ek.key, ek])),
+    [allEnrichedKeys],
+  );
 
   return {
     seriesConfigMap,
-    barConfigs,
+    enrichedKeysMap,
     enrichedKeys,
+    legendItems,
+    visibleKeys,
   };
 };

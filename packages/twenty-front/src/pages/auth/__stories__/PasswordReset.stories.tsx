@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
+import { within } from 'storybook/test';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
@@ -9,7 +9,6 @@ import {
   ValidatePasswordResetTokenDocument,
 } from '~/generated-metadata/graphql';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -52,7 +51,7 @@ const buildHandlers = (hasPassword: boolean) => [
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/PasswordReset',
   component: PasswordReset,
-  decorators: [PageDecorator, I18nFrontDecorator],
+  decorators: [PageDecorator],
 };
 
 export default meta;

@@ -7,7 +7,7 @@ import {
   query,
   responseData,
   variables,
-} from '../__mocks__/useFindDuplicateRecords';
+} from '@/object-record/hooks/__mocks__/useFindDuplicateRecords';
 
 const mocks = [
   {

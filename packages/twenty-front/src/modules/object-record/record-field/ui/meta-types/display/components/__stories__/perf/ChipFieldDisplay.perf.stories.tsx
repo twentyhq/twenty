@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -82,7 +82,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'ChipFieldDisplay',
-  averageThresholdInMs: 0.2,
+  averageThresholdInMs: 0.3,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

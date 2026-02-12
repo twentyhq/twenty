@@ -1,0 +1,179 @@
+---
+title: Closed-Won-Automatisierungen
+description: Automatisieren Sie Post-Win-Aktivitäten, wenn Opportunities abgeschlossen werden.
+---
+
+Wenn ein Deal abgeschlossen wird, müssen mehrere Dinge geschehen: Unternehmensstatus aktualisieren, Teammitglieder benachrichtigen, Onboarding-Aufgaben erstellen. Automatisieren Sie all das mit einem einzigen Workflow.
+
+## Das Problem
+
+Wenn eine Opportunity zu "Closed Won" wechselt:
+
+* Der Unternehmenstyp muss von "Prospect" zu "Customer" geändert werden
+* Onboarding-Aufgaben müssen erstellt werden
+* Das Customer-Success-Team muss benachrichtigt werden
+* Der Vertriebsmitarbeiter benötigt eine Bestätigung
+
+Dies manuell zu erledigen ist zeitaufwendig und fehleranfällig.
+
+## Die Lösung
+
+Erstellen Sie einen Workflow, der alle Post-Win-Aktivitäten automatisch erledigt.
+
+## Vollständige Workflow-Einrichtung
+
+### Schritt 1: Workflow erstellen
+
+1. Gehen Sie zu **Einstellungen → Workflows**
+2. Klicken Sie auf **+ Neuer Workflow**
+3. Benennen Sie ihn "Deal Won - Post-Win Automation"
+
+### Schritt 2: Trigger konfigurieren
+
+1. Wählen Sie **Datensatz wird aktualisiert** aus
+2. Wählen Sie **Opportunities**
+3. Wählen Sie unter "Fields to monitor" **Stage** aus
+
+### Schritt 3: Stage-Filter hinzufügen
+
+1. Fügen Sie eine **Filter**-Aktion hinzu
+2. Bedingung: `{{trigger.object.stage}}` ist gleich "Closed Won"
+
+### Schritt 4: Unternehmenstyp aktualisieren
+
+1. Fügen Sie die Aktion **Datensatz aktualisieren** hinzu
+2. Konfigurieren:
+
+| Feld                       | Wert                            |
+| -------------------------- | ------------------------------- |
+| **Objekt**                 | Unternehmen                     |
+| **Datensatz**              | `{{trigger.object.company.id}}` |
+| **Typ**                    | Kunde                           |
+| **Datum des ersten Deals** | `{{trigger.object.closedAt}}`   |
+| **Kontoinhaber**           | `{{trigger.object.owner.id}}`   |
+
+### Schritt 5: Onboarding-Aufgabe erstellen
+
+1. Fügen Sie die Aktion **Datensatz erstellen** hinzu
+2. Konfigurieren:
+
+| Feld                        | Wert                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Objekt**                  | Aufgaben                                                                                         |
+| **Titel**                   | `Onboarding: {{trigger.object.name}}`                                                            |
+| **Zuständiger**             | Mitglied des Customer-Success-Teams                                                              |
+| **Fälligkeitsdatum**        | In 3 Tagen                                                                                       |
+| **Priorität**               | Hoch                                                                                             |
+| **Zugehöriges Unternehmen** | `{{trigger.object.company.id}}`                                                                  |
+| **Zugehörige Opportunity**  | `{{trigger.object.id}}`                                                                          |
+| **Beschreibung**            | `Neukunden-Onboarding für {{trigger.object.company.name}}. Deal-Wert: {{trigger.object.amount}}` |
+
+### Schritt 6: Customer Success benachrichtigen
+
+1. Fügen Sie eine **E-Mail senden**-Aktion hinzu
+2. Konfigurieren:
+
+| Feld        | Wert                                              |
+| ----------- | ------------------------------------------------- |
+| **An**      | customer-success@yourcompany.com                  |
+| **Betreff** | `🎉 Neuer Kunde: {{trigger.object.company.name}}` |
+| **Inhalt**  | Siehe Beispiel unten                              |
+
+**Beispiel für den E-Mail-Text**:
+
+```
+Hi CS-Team,
+
+Wir haben einen neuen Kunden!
+
+Unternehmen: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Wert: {{trigger.object.amount}}
+Vertriebsmitarbeiter: {{trigger.object.owner.name}}
+Abschlussdatum: {{trigger.object.closedAt}}
+
+Eine Onboarding-Aufgabe wurde automatisch erstellt.
+
+Sorgen wir für einen großartigen Start!
+```
+
+### Schritt 7: Bestätigung an Vertriebsmitarbeiter senden
+
+1. Fügen Sie eine weitere **E-Mail senden**-Aktion hinzu
+2. Konfigurieren:
+
+| Feld        | Wert                                                                                                                                |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **An**      | `{{trigger.object.owner.email}}`                                                                                                    |
+| **Betreff** | `✅ Deal abgeschlossen: {{trigger.object.name}}`                                                                                     |
+| **Inhalt**  | Herzlichen Glückwunsch! Ihr Deal wurde verarbeitet. Das Customer-Success-Team wurde benachrichtigt und das Onboarding hat begonnen. |
+
+### Schritt 8: Testen und aktivieren
+
+1. Testen Sie, indem Sie eine Test-Opportunity auf "Closed Won" verschieben
+2. Verifizieren:
+   * Unternehmenstyp auf "Customer" geändert
+   * Onboarding-Aufgabe erstellt
+   * CS-Team hat E-Mail erhalten
+   * Vertriebsmitarbeiter hat Bestätigung erhalten
+3. Aktivieren Sie, sobald alles bereit ist
+
+## Closed Lost behandeln
+
+Erstellen Sie einen ähnlichen Workflow für verlorene Deals:
+
+### Auslöser
+
+* Datensatz wird aktualisiert (Opportunities, Stage = "Closed Lost")
+
+### Aktionen
+
+1. **Datensatz erstellen**: Aufgabe für "Lost Deal Analysis"
+2. **Datensatz aktualisieren**: Grund für verlorenen Deal zum Unternehmensdatensatz hinzufügen
+3. **E-Mail senden**: Manager über verlorenen Deal benachrichtigen
+
+## Erweitert: Mehrstufiges Onboarding
+
+Für komplexes Onboarding mehrere Aufgaben erstellen:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Verwenden Sie **Iterator**, um jede Aufgabe aus dem Array zu erstellen.
+
+## Ideen zur Anpassung
+
+### Halten Sie Ihre anderen Tools auf dem neuesten Stand
+
+* Kunden im Abrechnungssystem per **HTTP Request** erstellen
+
+### Bedingte Aktionen
+
+Verwenden Sie **Filter**-Aktionen, um:
+
+* Unterschiedliches Onboarding für Enterprise vs. SMB
+* Unterschiedliche Zuständige je nach Region
+* Benachrichtigungen für kleine Deals überspringen
+
+### Deal-Details einbeziehen
+
+Verwenden Sie die **Code**-Aktion, um zu formatieren:
+
+* Dokumente zur Deal-Zusammenfassung
+* Übergabenotizen für das CS-Team
+* Individuelle Onboarding-Checklisten
+
+## Verwandt
+
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)

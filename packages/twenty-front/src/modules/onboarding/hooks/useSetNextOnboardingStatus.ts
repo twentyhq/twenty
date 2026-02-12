@@ -10,7 +10,7 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { isDefined } from 'twenty-shared/utils';
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
@@ -22,7 +22,10 @@ const getNextOnboardingStatus = (
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    return OnboardingStatus.SYNC_EMAIL;
+    if (currentWorkspace?.workspaceMembersCount === 1) {
+      return OnboardingStatus.SYNC_EMAIL;
+    }
+    return OnboardingStatus.COMPLETED;
   }
   if (
     currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL &&

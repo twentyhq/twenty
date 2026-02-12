@@ -4,31 +4,28 @@ image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="ヘッダー" />
 </Frame>
 
 ブロックベースのリッチテキストエディター[BlockNote](https://www.blocknotejs.org/)を使用して、ユーザーがコンテンツのブロックを編集および表示できるようにします。
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="使用方法">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-```jsx
-import { useBlockNote } from "@blocknote/react";
-import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
 
-export const MyComponent = () => {
-  const BlockNoteEditor = useBlockNote();
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
 
-  return <BlockEditor editor={BlockNoteEditor} />;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| プロパティ | タイプ               | 説明                   |
-| ----- | ----------------- | -------------------- |
-| エディター | `BlockNoteEditor` | ブロックエディターインスタンスまたは構成 |
-
-</Tab>
+  <Tab title="プロパティ">
+    | プロパティ | タイプ               | 説明                   |
+    | ----- | ----------------- | -------------------- |
+    | エディター | `BlockNoteEditor` | ブロックエディターインスタンスまたは構成 |
+  </Tab>
 </Tabs>

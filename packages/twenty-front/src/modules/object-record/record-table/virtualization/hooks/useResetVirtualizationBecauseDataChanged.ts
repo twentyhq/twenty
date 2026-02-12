@@ -3,20 +3,20 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
-import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
+import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
-import { tableHasAnyFilterOrSortComponentSelector } from '@/object-record/record-table/virtualization/states/tableHasAnyFilterOrSortComponentSelector';
+import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
+import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { type ObjectOperation } from '@/object-record/states/objectOperationsByObjectNameSingularFamilyState';
+import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { sleep } from '~/utils/sleep';
 
 export const useResetVirtualizationBecauseDataChanged = (
   objectNameSingular: string,
@@ -24,6 +24,8 @@ export const useResetVirtualizationBecauseDataChanged = (
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
@@ -48,89 +50,113 @@ export const useResetVirtualizationBecauseDataChanged = (
     dataPagesLoadedComponentState,
   );
 
-  const recordIdByRealIndexCallbackState =
-    useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilyState,
-    );
+  const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
-  const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentCallbackState(
-      dataLoadingStatusByRealIndexComponentFamilyState,
-    );
-
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
-    recordIndexAllRecordIdsComponentSelector,
+  const lastScrollPositionCallbackState = useRecoilComponentCallbackState(
+    lastScrollPositionComponentState,
   );
 
-  const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
+  const recordIdByRealIndexCallbackState = useRecoilComponentCallbackState(
+    recordIdByRealIndexComponentState,
+  );
+
+  const dataLoadingStatusByRealIndexCallbackState =
+    useRecoilComponentCallbackState(dataLoadingStatusByRealIndexComponentState);
 
   const resetVirtualization = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
         const { totalCount } = await findManyRecordsLazy();
 
-        const currentRecordIds = getSnapshotValue(
+        const tableScrollWrapperHeight =
+          scrollWrapperHTMLElement?.clientHeight ?? 0;
+
+        const lastScrollPosition = getSnapshotValue(
           snapshot,
-          recordIndexAllRecordIdsSelector,
+          lastScrollPositionCallbackState,
         );
 
-        for (const [index] of currentRecordIds.entries()) {
-          set(
-            dataLoadingStatusByRealIndexCallbackState({
-              realIndex: index,
-            }),
-            null,
-          );
+        const totalNumberOfRecordsToVirtualize =
+          getSnapshotValue(
+            snapshot,
+            totalNumberOfRecordsToVirtualizeCallbackState,
+          ) ?? 0;
 
-          set(
-            recordIdByRealIndexCallbackState({
-              realIndex: index,
-            }),
-            null,
-          );
+        const {
+          firstRealIndexInOverscanWindow,
+          lastRealIndexInOverscanWindow,
+        } = getVirtualizationOverscanWindow(
+          lastScrollPosition,
+          tableScrollWrapperHeight,
+          totalNumberOfRecordsToVirtualize,
+        );
+
+        const recordIdByRealIndex = getSnapshotValue(
+          snapshot,
+          recordIdByRealIndexCallbackState,
+        );
+
+        const dataLoadingStatusByRealIndex = getSnapshotValue(
+          snapshot,
+          dataLoadingStatusByRealIndexCallbackState,
+        );
+
+        const lengthOfOverscanWindow =
+          lastRealIndexInOverscanWindow - firstRealIndexInOverscanWindow + 1;
+
+        const newRecordIdByRealIndex = new Map<number, string>();
+        const newDataLoadingStatusByRealIndex = new Map<
+          number,
+          'loaded' | 'not-loaded'
+        >();
+
+        for (let i = 0; i < lengthOfOverscanWindow; i++) {
+          const realIndex = firstRealIndexInOverscanWindow + i;
+
+          const existingRecordId = recordIdByRealIndex.get(realIndex);
+
+          if (isDefined(existingRecordId)) {
+            newRecordIdByRealIndex.set(realIndex, existingRecordId);
+          }
+
+          const existingDataLoadingStatus =
+            dataLoadingStatusByRealIndex.get(realIndex);
+
+          if (isDefined(existingDataLoadingStatus)) {
+            newDataLoadingStatusByRealIndex.set(
+              realIndex,
+              existingDataLoadingStatus,
+            );
+          }
         }
 
+        set(recordIdByRealIndexCallbackState, newRecordIdByRealIndex);
         set(
-          recordIndexAllRecordIdsSelector,
-          currentRecordIds.slice(0, totalCount),
+          dataLoadingStatusByRealIndexCallbackState,
+          newDataLoadingStatusByRealIndex,
         );
+
         set(dataPagesLoadedCallbackState, []);
         set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
       },
     [
-      dataPagesLoadedCallbackState,
-      recordIdByRealIndexCallbackState,
-      dataLoadingStatusByRealIndexCallbackState,
-      recordIndexAllRecordIdsSelector,
       findManyRecordsLazy,
+      scrollWrapperHTMLElement?.clientHeight,
+      lastScrollPositionCallbackState,
       totalNumberOfRecordsToVirtualizeCallbackState,
+      dataPagesLoadedCallbackState,
+      dataLoadingStatusByRealIndexCallbackState,
+      recordIdByRealIndexCallbackState,
     ],
   );
 
-  const tableHasAnyFilterOrSort = useRecoilComponentValue(
-    tableHasAnyFilterOrSortComponentSelector,
-  );
+  const resetVirtualizationBecauseDataChanged = useCallback(async () => {
+    await resetVirtualization();
 
-  const resetVirtualizationBecauseDataChanged = useCallback(
-    async (objectOperation: ObjectOperation) => {
-      if (!objectOperation.data.type.startsWith('update')) {
-        await resetVirtualization();
+    await sleep(50);
 
-        await triggerFetchPagesWithoutDebounce();
-      } else {
-        if (tableHasAnyFilterOrSort) {
-          await resetVirtualization();
-
-          await triggerFetchPagesWithoutDebounce();
-        }
-      }
-    },
-    [
-      resetVirtualization,
-      triggerFetchPagesWithoutDebounce,
-      tableHasAnyFilterOrSort,
-    ],
-  );
+    await triggerFetchPagesWithoutDebounce();
+  }, [resetVirtualization, triggerFetchPagesWithoutDebounce]);
 
   return {
     resetVirtualizationBecauseDataChanged,

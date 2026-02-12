@@ -1,0 +1,76 @@
+---
+title: Gestion des erreurs et validation
+description: Examinez et corrigez les erreurs d'importation directement dans l'interface avant de confirmer.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Validation préalable à l'importation
+
+Après avoir téléversé votre fichier et fait la correspondance des champs, Twenty valide vos données **avant** l'importation. Cela vous permet de détecter et de corriger les erreurs sans affecter vos données existantes.
+
+## Comment ça marche
+
+1. **Téléversez** votre fichier CSV
+2. **Faites correspondre** vos colonnes aux champs de Twenty
+3. **Passez en revue** les erreurs potentielles mises en évidence en jaune
+4. **Corrigez les erreurs** directement dans l'interface
+5. **Confirmez** l'importation
+
+<VimeoEmbed videoId="1145273857" title="Démonstration vidéo" />
+
+## Affichage des erreurs
+
+Les lignes présentant des problèmes sont mises en évidence en **jaune**. Vous pouvez :
+
+* **Modifiez la cellule directement** pour corriger l'erreur
+* **Supprimez la ligne** pour l'ignorer complètement
+
+Cette modification en ligne vous fait gagner du temps — inutile de revenir à votre feuille de calcul, de corriger les erreurs et de téléverser à nouveau.
+
+## Types d'erreurs courants
+
+### Valeurs en double
+
+**Cause** : Un champ unique (email, domaine) existe déjà dans Twenty ou apparaît deux fois dans votre fichier.
+
+**Correctif** :
+
+* Modifiez la valeur en double dans l'interface d'importation
+* Supprimez l'une des lignes en double
+
+Voir [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints) pour plus de détails sur la façon dont l'unicité est appliquée.
+
+### Format invalide
+
+**Cause** : Les données ne correspondent pas au format attendu (p. ex., email invalide, format de date incorrect).
+
+**Correctif** : Modifiez la cellule pour utiliser le format correct.
+
+Voir [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping) pour le format attendu de chaque type de champ.
+
+### Champs obligatoires manquants
+
+**Cause** : Un champ obligatoire est vide.
+
+**Correctif** : Saisissez une valeur dans le champ obligatoire ou supprimez la ligne.
+
+### Relation introuvable
+
+**Cause** : L'enregistrement référencé n'existe pas (p. ex., un domaine d'entreprise qui n'a pas été importé).
+
+**Correctif** :
+
+* Importez d'abord les enregistrements parents
+* Ou corrigez la valeur de référence
+
+Voir [Importation des relations](/l/fr/user-guide/data-migration/capabilities/import-relations) pour l'ordre d'importation correct et la manière de lier les enregistrements.
+
+## Conseils pour réduire les erreurs
+
+1. **Téléchargez le modèle** pour voir le format attendu avant d'importer votre fichier
+2. **Nettoyez vos données** d'abord dans votre feuille de calcul
+3. **Importez les fichiers dans le bon ordre** pour importer les relations (Entreprises → Personnes → Opportunités)
+4. **Testez avec de petits lots** avant l'importation complète
+5. **Vérifiez les doublons** avant de téléverser
+6. **Limitez la taille de votre fichier à 10 000 enregistrements** par fichier

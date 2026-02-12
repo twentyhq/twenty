@@ -1,3 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 import {
   appendCommonExceptionCode,
   CustomException,
@@ -28,26 +31,31 @@ describe('appendCommonExceptionCode', () => {
 });
 
 describe('CustomException', () => {
-  // Create a concrete implementation of the abstract class for testing
-  class TestException extends CustomException {}
+  class TestException extends CustomException<string> {
+    constructor(
+      message: string,
+      code: string,
+      { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
+    ) {
+      super(message, code, { userFriendlyMessage });
+    }
+  }
 
   it('should set message and code correctly', () => {
     const message = 'Test error message';
     const code = 'TEST_ERROR';
-    const exception = new TestException(message, code);
+    const userFriendlyMessage = msg`Test user friendly message`;
+    const exception = new TestException(message, code, { userFriendlyMessage });
 
     expect(exception.message).toBe(message);
     expect(exception.code).toBe(code);
-    expect(exception.userFriendlyMessage).toBeUndefined();
+    expect(exception.userFriendlyMessage).toBe(userFriendlyMessage);
   });
 
   it('should set userFriendlyMessage when provided', () => {
     const message = 'Test error message';
     const code = 'TEST_ERROR';
-    const userFriendlyMessage = {
-      id: 'test.message',
-      message: 'User friendly error message',
-    };
+    const userFriendlyMessage = msg`User friendly error message`;
     const exception = new TestException(message, code, {
       userFriendlyMessage,
     });
@@ -58,7 +66,9 @@ describe('CustomException', () => {
   });
 
   it('should extend Error', () => {
-    const exception = new TestException('Test error', 'TEST_ERROR');
+    const exception = new TestException('Test error', 'TEST_ERROR', {
+      userFriendlyMessage: msg`Test error`,
+    });
 
     expect(exception).toBeInstanceOf(Error);
   });
@@ -66,7 +76,9 @@ describe('CustomException', () => {
 
 describe('UnknownException', () => {
   it('should extend CustomException', () => {
-    const exception = new UnknownException('Test error', 'TEST_ERROR');
+    const exception = new UnknownException('Test error', 'TEST_ERROR', {
+      userFriendlyMessage: msg`Test error`,
+    });
 
     expect(exception).toBeInstanceOf(CustomException);
   });
@@ -74,20 +86,18 @@ describe('UnknownException', () => {
   it('should set message and code correctly', () => {
     const message = 'Test error message';
     const code = 'TEST_ERROR';
-    const exception = new UnknownException(message, code);
+    const exception = new UnknownException(message, code, {
+      userFriendlyMessage: msg`Test error`,
+    });
 
     expect(exception.message).toBe(message);
     expect(exception.code).toBe(code);
-    expect(exception.userFriendlyMessage).toBeUndefined();
   });
 
   it('should set userFriendlyMessage when provided', () => {
     const message = 'Test error message';
     const code = 'TEST_ERROR';
-    const userFriendlyMessage = {
-      id: 'test.message',
-      message: 'User friendly error message',
-    };
+    const userFriendlyMessage = msg`User friendly error message`;
     const exception = new UnknownException(message, code, {
       userFriendlyMessage,
     });

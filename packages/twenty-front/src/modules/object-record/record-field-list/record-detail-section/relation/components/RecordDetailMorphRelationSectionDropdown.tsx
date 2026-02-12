@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
@@ -13,10 +13,12 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailMorphRelationSectionDropdownProps = {
   loading: boolean;
+  dropdownTriggerClickableComponent?: ReactNode;
 };
 
 export const RecordDetailMorphRelationSectionDropdown = ({
   loading,
+  dropdownTriggerClickableComponent,
 }: RecordDetailMorphRelationSectionDropdownProps) => {
   const { fieldDefinition, isRecordFieldReadOnly, recordId } =
     useContext(FieldContext);
@@ -64,9 +66,17 @@ export const RecordDetailMorphRelationSectionDropdown = ({
   }
 
   if (isToOneObject) {
-    return <RecordDetailMorphRelationSectionDropdownManyToOne />;
+    return (
+      <RecordDetailMorphRelationSectionDropdownManyToOne
+        dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
+      />
+    );
   } else if (isToManyObjects) {
-    return <RecordDetailMorphRelationSectionDropdownOneToMany />;
+    return (
+      <RecordDetailMorphRelationSectionDropdownOneToMany
+        dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
+      />
+    );
   } else {
     return null;
   }

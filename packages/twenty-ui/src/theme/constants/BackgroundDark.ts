@@ -13,7 +13,7 @@ export const BACKGROUND_DARK = {
   quaternary: GRAY_SCALE_DARK.gray5,
   invertedPrimary: GRAY_SCALE_DARK.gray12,
   invertedSecondary: GRAY_SCALE_DARK.gray11,
-  danger: COLOR_DARK.red12,
+  danger: COLOR_DARK.red3,
   transparent: {
     primary: RadixColors.blackP3A.blackA7,
     secondary: RadixColors.blackP3A.blackA6,

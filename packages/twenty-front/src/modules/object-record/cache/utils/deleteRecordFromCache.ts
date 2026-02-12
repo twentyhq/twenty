@@ -22,7 +22,11 @@ export const deleteRecordFromCache = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: ({
+    partialRecords,
+  }: {
+    partialRecords: ObjectRecord[];
+  }) => void;
 }) => {
   triggerDestroyRecordsOptimisticEffect({
     cache,

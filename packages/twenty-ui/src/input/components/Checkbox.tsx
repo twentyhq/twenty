@@ -24,7 +24,7 @@ export enum CheckboxAccent {
   Orange = 'orange',
 }
 
-type CheckboxProps = {
+export type CheckboxProps = {
   checked: boolean;
   indeterminate?: boolean;
   hoverable?: boolean;
@@ -38,7 +38,7 @@ type CheckboxProps = {
   accent?: CheckboxAccent;
 };
 
-type InputProps = {
+export type InputProps = {
   checkboxSize: CheckboxSize;
   variant: CheckboxVariant;
   accent?: CheckboxAccent;

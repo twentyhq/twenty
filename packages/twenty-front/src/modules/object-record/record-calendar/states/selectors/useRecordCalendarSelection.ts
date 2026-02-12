@@ -6,8 +6,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { isRecordCalendarCardSelectedComponentFamilyState } from '../../record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
-import { RecordCalendarComponentInstanceContext } from '../contexts/RecordCalendarComponentInstanceContext';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
+import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedRecordIdsComponentSelector } from './recordCalendarSelectedRecordIdsComponentSelector';
 
 export const useRecordCalendarSelection = (recordCalendarId?: string) => {

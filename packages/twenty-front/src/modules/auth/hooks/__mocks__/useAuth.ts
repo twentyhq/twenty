@@ -31,13 +31,13 @@ export const variables = {
     email,
     password,
     workspacePersonalInviteToken: null,
-    locale: '',
+    locale: 'en',
   },
   signUpInWorkspace: {
     email,
     password,
     workspacePersonalInviteToken: null,
-    locale: '',
+    locale: 'en',
   },
   getCurrentUser: {},
 };

@@ -4,9 +4,11 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 type GetRecordFieldCardRelationPickerDropdownIdArgs = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
+  instanceId: string;
 };
 export const getRecordFieldCardRelationPickerDropdownId = ({
   fieldDefinition,
   recordId,
+  instanceId,
 }: GetRecordFieldCardRelationPickerDropdownIdArgs) =>
-  `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
+  `record-field-card-relation-picker:${instanceId}:${fieldDefinition.fieldMetadataId}:${recordId}`;

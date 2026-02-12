@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -35,7 +36,12 @@ export const MorphRelationManyToOneFieldInput = () => {
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
     if (!isDefined(selectedMorphItem)) {
-      // Handle detach
+      await persistMorphManyToOne({
+        recordId: recordId,
+        fieldDefinition,
+        valueToPersist: null,
+      });
+      onCancel?.();
       return;
     }
 
@@ -76,12 +82,14 @@ export const MorphRelationManyToOneFieldInput = () => {
     (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
   );
 
+  const fieldLabel = fieldDefinition.label;
+
   return (
     <SingleRecordPicker
       focusId={instanceId}
       componentInstanceId={instanceId}
       EmptyIcon={IconForbid}
-      emptyLabel={'No ' + fieldDefinition.label}
+      emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={objectNameSingulars}

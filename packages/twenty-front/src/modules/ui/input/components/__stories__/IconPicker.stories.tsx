@@ -1,23 +1,27 @@
-import { useArgs } from '@storybook/preview-api';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/utils/sleep';
 
+import {
+  IconPicker,
+  type IconPickerProps,
+} from '@/ui/input/components/IconPicker';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { IconPicker, type IconPickerProps } from '../IconPicker';
 
-type RenderProps = IconPickerProps;
-const Render = (args: RenderProps) => {
-  const [{ selectedIconKey }, updateArgs] = useArgs();
+type IconPickerStoryProps = IconPickerProps;
+
+const IconPickerStory = (args: IconPickerStoryProps) => {
+  const [selectedIconKey, setSelectedIconKey] = useState(args.selectedIconKey);
 
   return (
     <IconPicker
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...args}
       onChange={({ iconKey }) => {
-        updateArgs({ selectedIconKey: iconKey });
+        setSelectedIconKey(iconKey);
       }}
       selectedIconKey={selectedIconKey}
     />
@@ -28,7 +32,10 @@ const meta: Meta<typeof IconPicker> = {
   title: 'UI/Input/IconPicker/IconPicker',
   component: IconPicker,
   decorators: [IconsProviderDecorator, ComponentDecorator],
-  render: Render,
+  render: (args: IconPickerProps) => (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <IconPickerStory key={args.selectedIconKey ?? 'no-selection'} {...args} />
+  ),
 };
 
 export default meta;
@@ -37,8 +44,8 @@ type Story = StoryObj<typeof IconPicker>;
 export const Default: Story = {};
 
 export const WithOpen: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (no icon selected)',
@@ -54,8 +61,8 @@ export const WithSelectedIcon: Story = {
 
 export const WithOpenAndSelectedIcon: Story = {
   ...WithSelectedIcon,
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (selected: IconCalendarEvent)',
@@ -67,8 +74,8 @@ export const WithOpenAndSelectedIcon: Story = {
 
 export const WithSearch: Story = {
   ...WithSelectedIcon,
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (selected: IconCalendarEvent)',
@@ -92,8 +99,8 @@ export const WithSearch: Story = {
 
 export const WithSearchAndClose: Story = {
   ...WithSelectedIcon,
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     let iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (selected: IconCalendarEvent)',
@@ -124,8 +131,6 @@ export const WithSearchAndClose: Story = {
     });
 
     await userEvent.click(iconPickerButton);
-
-    await sleep(500);
 
     searchInput = await canvas.findByRole('textbox');
 

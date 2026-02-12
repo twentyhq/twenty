@@ -1,0 +1,82 @@
+---
+title: Arrays in Code-Aktionen verarbeiten
+description: Erfahren Sie, wie Sie Array-Eingaben in Code-Aktionen innerhalb von Workflows korrekt verarbeiten.
+---
+
+Bei der Arbeit mit Arrays in Code-Aktionen stoßen Sie möglicherweise auf zwei häufige Herausforderungen:
+
+1. **Als Strings übergebene Arrays** — Daten aus externen Systemen oder vorherigen Schritten kommen als String statt als echtes Array an
+2. **Einzelne Elemente nicht auswählbar** — Sie können nur das gesamte Array auswählen, nicht bestimmte Felder darin
+
+Beides lässt sich mit einem Code-Knoten lösen.
+
+## Arrays aus Strings parsen
+
+Arrays werden zwischen Workflow-Schritten häufig als Strings oder JSON übergeben, statt als native Arrays. Dies geschieht, wenn:
+
+* Empfangen von Daten aus externen APIs über HTTP Request
+* Verarbeiten von Webhook-Payloads
+* Weitergeben von Daten zwischen Workflow-Schritten
+
+**Lösung**: Fügen Sie dieses Muster am Anfang Ihrer Code-Aktion hinzu:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+Die entscheidende Zeile `typeof users === "string" ? JSON.parse(users) : users` prüft, ob die Eingabe ein String ist, parst sie bei Bedarf oder verwendet sie direkt, wenn sie bereits ein Array ist.
+
+## Einzelne Felder aus Arrays extrahieren
+
+Ein Webhook kann ein Array wie `answers: [...]` zurückgeben, aber in nachfolgenden Workflow-Schritten können Sie nur das **gesamte Array** auswählen — nicht einzelne Elemente darin.
+
+**Lösung**: Fügen Sie einen Code-Knoten hinzu, um bestimmte Felder zu extrahieren und als strukturiertes Objekt zurückzugeben:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Der Code-Knoten gibt statt eines Arrays ein strukturiertes Objekt zurück. In den folgenden Schritten können Sie nun einzelne Felder wie `answer.firstname` und `answer.name` aus der Variablenauswahl auswählen.
+
+<Note>
+  Wir arbeiten aktiv daran, die Arbeit mit Arrays in zukünftigen Updates zu vereinfachen.
+</Note>
+
+<Tip>
+  Klicken Sie auf das quadratische Symbol oben rechts im Code-Editor, um ihn im Vollbild anzuzeigen — hilfreich, da die Standardbreite des Editors begrenzt ist.
+</Tip>

@@ -16,6 +16,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -211,7 +212,7 @@ export const FormSingleRecordPicker = ({
                 focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
-                emptyLabel={'No ' + objectNameSingulars.join(' or ')}
+                emptyLabel={t`No records`}
                 onCancel={() => closeDropdown(dropdownId)}
                 onMorphItemSelected={handleMorphItemSelected}
                 objectNameSingulars={objectNameSingulars}

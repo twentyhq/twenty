@@ -1,0 +1,137 @@
+---
+title: Görünümler ve Boru Hatları
+description: Twenty'de görünümler oluşturmayı ve yönetmeyi öğrenin.
+image: /images/user-guide/table-views/table.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Görünümler ve Boru Hatları" />
+</Frame>
+
+## Görünümleri Anlama
+
+Görünümler, verilerinizin nasıl görüntüleneceğini belirleyen kaydedilmiş yapılandırmalardır. Her görünümün kendine ait şunları olabilir:
+
+* **Düzen**: Tablo, Kanban veya Takvim
+* **Filtreler**: Hangi kayıtların gösterileceği
+* **Sıralama**: Kayıtların nasıl sıralanacağı
+* **Alanlar**: Hangi sütunların görünür olacağı
+
+## Görünüm Türleri
+
+### Tablo Görünümü
+
+Varsayılan e-tablo benzeri görünüm; kayıtları satırlarda gösterir ve sütunlar özelleştirilebilir.
+
+### Kanban Görünümü
+
+Kayıtların aşamalara göre düzenlenmiş kartlar olarak göründüğü görsel pano görünümü. Şunlar için idealdir:
+
+* Satış boru hatları
+* Proje takibi
+* Tanımlı aşamalara sahip herhangi bir iş akışı
+
+### Takvim Görünümü
+
+Tarih alanları olan kayıtları bir takvimde görüntüleyin. Şunlar için idealdir:
+
+* Toplantılar ve etkinlikler
+* Son tarihler ve teslim tarihleri
+* Zamana dayalı planlama
+
+## Görünüm Oluşturma
+
+Yeni bir görünüm oluşturmanın iki yolu vardır.
+
+### Görünüm Açılır Menüsünü Kullanma
+
+1. Herhangi bir nesneye gidin (Kişiler, Şirketler vb.)
+2. Sol üstteki görünüm adına tıklayın (açılır okla birlikte geçerli görünümü gösterir)
+3. **+ Görünüm Ekle**'ye tıklayın
+4. Görünümünüze ad verin ve **Oluştur**'a tıklayın
+5. **Seçenekler** altında bir düzen seçin (Tablo, Kanban veya Takvim)
+6. Gerektiğinde filtreler ve sıralama ekleyin
+7. Hangi alanların görüntüleneceğini seçin ve sıralarını yeniden düzenleyin
+8. **Kaydet**'e tıklayın
+
+<VimeoEmbed videoId="1145648745" title="Video gösterimi" />
+
+### Mevcut bir görünümü düzenleyerek başlayın
+
+1. Herhangi bir nesneye gidin (Kişiler, Şirketler vb.)
+2. **Seçenekler** altında bir düzen (Tablo, Kanban veya Takvim) seçin ya da gerektiğinde filtreler ve sıralama ekleyin
+3. **Yeni görünüm olarak kaydet**'e tıklayın
+4. Görünümünüze ad verin ve **Oluştur**'a tıklayın
+5. Yeni görünümünüzü düzenlemeye devam edin
+6. Ek yapılandırmalarınızı kaydetmek için **Görünümü güncelle**'ye tıklayın
+
+<VimeoEmbed videoId="1145654005" title="Video gösterimi" />
+
+## Görünümleri Yönetme
+
+### Görünümü Düzenle
+
+1. Açılır listeden görünümü seçin
+2. Değişikliklerinizi yapın (filtreler, sıralama, sütunlar)
+3. Görünümü güncellemek için **Kaydet**'e tıklayın
+
+### Bir Görünümü Yeniden Adlandırın veya Simgesini Değiştirin
+
+1. Görünüm açılır menüsünü açın
+2. Görünüm adının yanındaki **⋮** menüsüne tıklayın
+3. **Düzenle**'yi seçin
+4. Adı veya simgeyi değiştirin
+5. **Kaydet**'e tıklayın
+
+### Görünümleri Yeniden Sırala
+
+1. Görünüm açılır menüsünü açın
+2. Bir görünümü tutamacından tıklayıp sürükleyin
+3. İstediğiniz konuma bırakın
+4. Yeni sıralama otomatik olarak kaydedilir
+
+### Sık Kullanılanlara Ekle
+
+Hızlı erişim için sık kullanılan görünümleri sabitleyin:
+
+1. Görünüm açılır menüsünü açın
+2. Bir görünümün yanındaki **⋮** menüsüne tıklayın
+3. **Sık Kullanılanlara Ekle**'yi seçin
+4. Görünüm, Sık Kullanılanlar bölümünüzde görünür
+
+### Bir Görünümü Sil
+
+1. Silinecek görünümü seçin
+2. Görünüm açılır menüsüne tıklayın
+3. Görünümün yanındaki **⋮** menüsüne tıklayın
+4. **Sil**'i seçin
+5. Silmeyi onaylayın
+
+<Warning>
+  Silinen görünümler geri alınamaz. Onaylamadan önce kaldırmak istediğinizden emin olun.
+</Warning>
+
+## Görünüm Gezgini'nden
+
+Her görünümün (varsayılan "Tüm [Nesne Adı]" görünümleri hariç) kendine ait bir görünürlük ayarı vardır.
+
+Görünürlüğü değiştirmek için:
+
+1. Görünümü açın
+2. **Seçenekler → Görünürlük**'e tıklayın
+3. Şunlardan birini seçin:
+   * **Çalışma Alanı**: Tüm çalışma alanı üyelerine görünür
+   * **Liste Dışı**: Yalnızca size görünür
+
+<Note>
+  Varsayılan "Tüm [Nesne Adı]" görünümlerinin görünürlüğü değiştirilemez.
+</Note>
+
+## Sonraki Adımlar
+
+* [Tablo Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/table-views)
+* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views)
+* [Filtreler ve Sıralama](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting)
+* [Görünüm Ayarları](/l/tr/user-guide/views-pipelines/capabilities/view-settings)

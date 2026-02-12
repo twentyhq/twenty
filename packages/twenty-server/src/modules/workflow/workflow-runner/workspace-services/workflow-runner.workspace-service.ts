@@ -200,12 +200,18 @@ export class WorkflowRunnerWorkspaceService {
         workspaceId,
       });
 
-    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+    const stoppableStatuses = [
+      WorkflowRunStatus.NOT_STARTED,
+      WorkflowRunStatus.ENQUEUED,
+      WorkflowRunStatus.RUNNING,
+    ];
+
+    if (!stoppableStatuses.includes(workflowRun.status)) {
       throw new WorkflowRunException(
-        'Workflow run is not running',
+        'Workflow run cannot be stopped',
         WorkflowRunExceptionCode.INVALID_OPERATION,
         {
-          userFriendlyMessage: msg`Workflow run is not running`,
+          userFriendlyMessage: msg`Workflow run cannot be stopped in its current status`,
         },
       );
     }

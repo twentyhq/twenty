@@ -3,7 +3,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 type FeatureFlagMetadata = {
   label: string;
   description: string;
-  imagePath: string;
+  imagePath?: string;
 };
 
 export type PublicFeatureFlag = {
@@ -13,21 +13,28 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
+    key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
     metadata: {
-      label: 'IMAP, SMTP, CalDAV',
+      label: 'Junction Relations',
       description:
-        'Easily add email accounts from any provider that supports IMAP, send emails with SMTP (and soon, sync calendars with CalDAV)',
-      imagePath:
-        'https://twenty.com/images/lab/is-imap-smtp-caldav-enabled.png',
+        'Enable many-to-many relations through junction tables configuration',
     },
   },
   {
-    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
     metadata: {
-      label: 'Dashboards',
-      description: 'Enable dashboards',
-      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
+      label: 'Row Level Permissions',
+      description: 'Enable row level permission',
+      imagePath:
+        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+    metadata: {
+      label: 'Real-Time',
+      description: 'See all updates without reloading the page',
+      imagePath: 'https://twenty.com/images/lab/is-real-time-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

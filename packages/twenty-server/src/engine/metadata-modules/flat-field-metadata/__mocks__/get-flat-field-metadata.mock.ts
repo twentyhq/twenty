@@ -6,17 +6,14 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 type FlatFieldMetadataOverrides<
   T extends FieldMetadataType = FieldMetadataType,
 > = Required<
-  Pick<
-    FlatFieldMetadata<T>,
-    'universalIdentifier' | 'objectMetadataId' | 'type'
-  >
+  Pick<FlatFieldMetadata, 'universalIdentifier' | 'objectMetadataId' | 'type'>
 > &
   Partial<FlatFieldMetadata<T>>;
 
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-  const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
+  const createdAt = '2024-01-01T00:00:00.000Z';
 
   return {
     calendarViewIds: [],
@@ -42,12 +39,21 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     isUIReadOnly: false,
     isLabelSyncedWithName: false,
     isSystem: false,
-    standardId: null,
     standardOverrides: null,
     workspaceId: faker.string.uuid(),
     applicationId: faker.string.uuid(),
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
+    applicationUniversalIdentifier: faker.string.uuid(),
+    objectMetadataUniversalIdentifier: faker.string.uuid(),
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
     ...overrides,
   };
 };
@@ -56,7 +62,6 @@ export const getStandardFlatFieldMetadataMock = (
   overrides: Omit<FlatFieldMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
   return getFlatFieldMetadataMock({
-    standardId: faker.string.uuid(),
     standardOverrides: {},
     isCustom: false,
     isSystem: true,

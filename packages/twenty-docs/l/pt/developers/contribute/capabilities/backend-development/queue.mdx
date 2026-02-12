@@ -1,0 +1,41 @@
+---
+title: Fila de Mensagens
+---
+
+Filas facilitam operações assíncronas a serem realizadas. Elas podem ser usadas para realizar tarefas em segundo plano, como enviar um email de boas-vindas ao se registrar.
+Cada caso de uso terá sua própria classe de fila estendida de `MessageQueueServiceBase`.
+
+Atualmente, só damos suporte ao `bull-mq`[bull-mq](https://bullmq.io/) como o driver de fila.
+
+## Passos para criar e usar uma nova fila
+
+1. Adicione um nome de fila para sua nova fila no enum `MESSAGE_QUEUES`.
+2. Forneça a implementação da fábrica da fila com o nome da fila como o token de dependência.
+3. Injete a fila que você criou no módulo/serviço necessário com o nome da fila como o token de dependência.
+4. Adicione uma classe de trabalhador com injeção baseada em token, assim como o produtor.
+
+### Exemplo de uso
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

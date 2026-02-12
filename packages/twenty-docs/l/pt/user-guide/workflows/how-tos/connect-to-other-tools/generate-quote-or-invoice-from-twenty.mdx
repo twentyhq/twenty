@@ -1,0 +1,144 @@
+---
+title: Gerar um orçamento ou fatura no Twenty
+description: Crie faturas automaticamente em ferramentas externas quando os negócios forem fechados.
+---
+
+Envie automaticamente os dados do negócio para o seu sistema de faturação (Stripe, QuickBooks, Xero, etc.) quando uma oportunidade é ganha.
+
+## Estrutura do Fluxo de Trabalho
+
+1. **Gatilho**: Registo é atualizado (Oportunidade)
+2. **Filtro**: Etapa = Closed Won
+3. **Pesquisar Registo**: Obter detalhes da empresa
+4. **Código** (opcional): Formatar o payload
+5. **Pedido HTTP**: Enviar para o sistema de faturação
+
+## Etapa 1: Configurar o Gatilho
+
+1. Crie um novo fluxo de trabalho
+2. Selecione o gatilho **Registo é atualizado**
+3. Escolha **Oportunidade** como o objeto
+
+## Etapa 2: Filtrar por Closed Won
+
+Adicione uma ação de **Filtro** para só continuar quando o negócio for ganho:
+
+| Configuração | Valor                                 |
+| ------------ | ------------------------------------- |
+| **Campo**    | Etapa                                 |
+| **Condição** | Igual a                               |
+| **Valor**    | `CLOSED_WON` (ou o nome da sua etapa) |
+
+<Tip>
+  O gatilho é acionado em qualquer atualização de Oportunidade. O Filtro garante que o fluxo de trabalho só continue quando a etapa mudar para Closed Won.
+</Tip>
+
+## Etapa 3: Obter detalhes da empresa
+
+O registo de Oportunidade pode não incluir todos os campos da Empresa de que precisa para a fatura. Adicione uma ação de **Pesquisar Registo**:
+
+| Configuração            | Valor                                     |
+| ----------------------- | ----------------------------------------- |
+| **Objeto**              | Empresa                                   |
+| **Correspondência por** | ID igual a `{{trigger.object.companyId}}` |
+
+Isto obtém o registo completo da Empresa com morada de faturação, NIF, etc.
+
+## Etapa 4: Formatar o Payload (Opcional)
+
+Se o seu sistema de faturação esperar um formato específico, adicione uma ação de **Código**:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Etapa 5: Enviar para o Sistema de Faturação
+
+Adicione uma ação de **Pedido HTTP**:
+
+| Configuração   | Valor                                                          |
+| -------------- | -------------------------------------------------------------- |
+| **Método**     | POST                                                           |
+| **URL**        | O endpoint da API do seu sistema de faturação                  |
+| **Cabeçalhos** | `Authorization: Bearer YOUR_API_KEY`                           |
+| **Corpo**      | `{{code.invoice}}` ou faça o mapeamento dos campos diretamente |
+
+### Exemplo: Fatura Stripe
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Exemplo: Fatura QuickBooks
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Resumo Completo do Fluxo de Trabalho
+
+| Etapa | Ação                        | Finalidade                                         |
+| ----- | --------------------------- | -------------------------------------------------- |
+| 1     | Gatilho: Registo atualizado | Dispara quando qualquer Oportunidade é alterada    |
+| 2     | Filtro                      | Só prossiga se Etapa = Closed Won                  |
+| 3     | Pesquisar Registo           | Obter detalhes completos da Empresa para faturação |
+| 4     | Código                      | Formatar dados para a API de faturação             |
+| 5     | Requisição HTTP             | Criar fatura no sistema externo                    |
+
+## Dicas
+
+* **Armazene IDs externos**: Guarde o ID da fatura retornado pela API na Oportunidade usando uma ação de **Atualizar Registo**
+* **Tratamento de erros**: Adicione uma ramificação para enviar uma notificação se o pedido HTTP falhar
+* **Teste primeiro**: Use o modo sandbox/de teste do seu sistema de faturação antes de ir para produção
+
+## Relacionados
+
+* [Gerar um PDF a partir do Twenty](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — anexar PDFs gerados aos registros
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Automações de Closed Won](/l/pt/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

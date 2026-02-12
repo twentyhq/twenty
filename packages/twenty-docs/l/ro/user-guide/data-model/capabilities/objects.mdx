@@ -1,0 +1,91 @@
+---
+title: Obiecte
+description: Aflați despre obiectele standard și personalizate din Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Obiecte standard
+
+Obiectele standard sunt entități predefinite în spațiul tău de lucru care te ajută să începi. Fac parte dintr-un model de date comun accesibil tuturor utilizatorilor Twenty. Le poți folosi așa cum sunt, le poți personaliza sau le poți dezactiva.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Persoane
+
+Obiectul `People` stochează contactele tale. Include detalii de contact și istoricul interacțiunilor, astfel încât să poți vedea toate interacțiunile cu clienții într-un singur loc.
+
+### Companie
+
+Obiectul `Companies` stochează conturile tale de afaceri. Include detalii precum industria, dimensiunea și locația. Companiile se conectează la obiectele `People` și `Opportunities`.
+
+### Oportunități
+
+Obiectul `Opportunities` stochează datele legate de afaceri. Urmărește progresia posibilelor vânzări, de la prospectare la încheiere, înregistrând etapele, dimensiunile tranzacțiilor, contul asociat și data anticipată de închidere. Poți vizualiza fluxul de vânzări într-un layout kanban.
+
+### Notițe
+
+Obiectul `Notes` stochează note în format liber care pot fi atașate Persoanelor, Companiilor, Oportunităților și altor înregistrări. Folosiți notele pentru a consemna rezumate ale întâlnirilor, detalii importante sau orice informații contextuale.
+
+### Sarcini
+
+Obiectul `Tasks` stochează sarcini de făcut și elemente de acțiune. Sarcinile pot fi asociate Persoanelor, Companiilor, Oportunităților și altor înregistrări. Urmăriți termenele limită, persoanele desemnate și starea finalizării pentru a rămâne la zi cu activitățile de follow-up.
+
+## Obiecte personalizate
+
+Obiectele personalizate îți permit să stochezi informații specifice organizației tale și pe care obiectele standard nu le pot gestiona. De exemplu, dacă ești SpaceX, poți dori să creezi un obiect personalizat pentru Rachete și Lansări.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Crearea unui obiect personalizat nou
+
+Pentru a crea un obiect personalizat nou:
+
+1. Mergi la Setări, în bara laterală din stânga.
+2. Sub Spațiu de lucru, mergi la Model de date. Aici vei putea vedea o prezentare generală a tuturor obiectelor tale Standard și Personalizate (atât active, cât și dezactivate).
+
+<VimeoEmbed videoId="926288174" title="Demonstrație video" />
+
+3. Fă clic pe `+ Obiect nou` în partea de sus. Introduceți numele (singular și plural), alegeți o pictogramă, adăugați o descriere pentru obiectul personalizat și apăsați Salvare (în dreptul sus). Folosind Listing ca exemplu de obiect personalizat, forma de singular ar fi "listing", iar pluralul ar fi "listings", împreună cu o descriere precum "Anunțuri pe care gazdele le-au creat pentru a-și prezenta proprietatea."
+
+4. Obiectul dvs. personalizat a fost creat și va apărea în bara laterală. Puteți începe să adăugați înregistrări imediat.
+
+## Gestionarea obiectelor
+
+### Dezactivarea obiectelor
+
+Dacă nu aveți nevoie de un obiect standard sau personalizat:
+
+1. Accesați Setări → Model de date
+2. Găsiți obiectul pe care doriți să-l dezactivați
+3. Faceți clic pe comutator pentru a-l dezactiva
+4. Obiectul va fi ascuns din spațiul dvs. de lucru, dar datele sunt păstrate
+
+### Reactivarea obiectelor
+
+Pentru a readuce un obiect dezactivat:
+
+1. Accesați Setări → Model de date
+2. Căutați obiectele dezactivate (vor fi afișate în gri)
+3. Faceți clic pe comutator pentru a-l reactiva
+4. Obiectul și toate datele sale vor fi restaurate
+
+## Cele mai bune practici
+
+### Când să creați obiecte personalizate
+
+* **Entități de afaceri unice**: Elemente specifice industriei sau procesului dvs.
+* **Relații complexe**: Când trebuie să urmăriți conexiunile dintre mai multe entități
+* **Date scalabile**: Când este posibil să aveți numeroase instanțe ale aceluiași lucru
+
+### Când să folosiți câmpuri în loc
+
+* **Atribute simple**: Proprietăți care descriu obiecte existente
+* **Categorii sau etichete**: Modalități de a clasifica înregistrările existente
+* **Valori unice**: Informații care nu necesită un ciclu de viață propriu
+
+### Denumirea obiectelor
+
+* **Folosiți denumiri clare și descriptive**: Să fie evident ce reprezintă obiectul
+* **Respectați convențiile**: Folosiți singularul pentru numele obiectului, pluralul pentru colecție
+* **Țineți cont de echipa dvs.**: Alegeți denumiri pe care toată lumea le va înțelege

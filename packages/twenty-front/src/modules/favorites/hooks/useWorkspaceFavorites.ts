@@ -6,17 +6,13 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const useWorkspaceFavorites = () => {
-  const featureFlags = useFeatureFlagsMap();
   const { workspaceFavorites } = usePrefetchedFavoritesData();
   const coreViews = useRecoilValue(coreViewsState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -24,8 +20,11 @@ export const useWorkspaceFavorites = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
   const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
+    useGetObjectRecordIdentifierByNameSingular(allowRequestsToTwentyIcons);
 
   const favoriteRelationFieldMetadataItems = useMemo(
     () =>
@@ -38,17 +37,7 @@ export const useWorkspaceFavorites = () => {
     [favoriteObjectMetadataItem.fields],
   );
 
-  const [dashboardObjectMetadataId] = objectMetadataItems
-    .filter((item) => item.nameSingular === CoreObjectNameSingular.Dashboard)
-    .map((item) => item.id);
-
-  const views = coreViews
-    .map(convertCoreViewToView)
-    .filter(
-      (view) =>
-        featureFlags[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED] === true ||
-        view.objectMetadataId !== dashboardObjectMetadataId,
-    );
+  const views = coreViews.map(convertCoreViewToView);
 
   const sortedWorkspaceFavorites = useMemo(
     () =>

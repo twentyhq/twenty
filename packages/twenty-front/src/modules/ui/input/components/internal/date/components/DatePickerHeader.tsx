@@ -13,10 +13,10 @@ import {
 } from './DateTimePicker';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { parse } from 'date-fns';
 import { useRecoilValue } from 'recoil';
-import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
+import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
@@ -60,7 +60,7 @@ export const DatePickerHeader = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const dateParsed = date ? parse(date, DATE_TYPE_FORMAT, new Date()) : null;
+  const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
   return (
     <>
@@ -75,7 +75,7 @@ export const DatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={dateParsed?.getMonth()}
+            value={dateParsed?.month}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -87,7 +87,7 @@ export const DatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={dateParsed?.getFullYear()}
+            value={dateParsed?.year}
             options={years}
             fullWidth
           />

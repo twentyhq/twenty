@@ -11,6 +11,7 @@ type GetLineChartTooltipDataParameters = {
   slice: SliceTooltipProps<LineSeries>['slice'];
   enrichedSeries: LineChartEnrichedSeries[];
   formatOptions: GraphValueFormatOptions;
+  isStacked?: boolean;
 };
 
 type LineChartTooltipData = {
@@ -22,6 +23,7 @@ export const getLineChartTooltipData = ({
   slice,
   enrichedSeries,
   formatOptions,
+  isStacked = false,
 }: GetLineChartTooltipDataParameters): LineChartTooltipData => {
   const enrichedSeriesMap = new Map(
     enrichedSeries.map((series) => [series.id, series]),
@@ -34,14 +36,34 @@ export const getLineChartTooltipData = ({
     };
   }
 
-  const sortedPoints = [...slice.points].sort((a, b) => a.y - b.y);
+  const seriesIndexMap = new Map(
+    enrichedSeries.map((series, index) => [series.id, index]),
+  );
+
+  const getPointValue = (point: (typeof slice.points)[number]) =>
+    Number(point.data.y ?? point.y ?? 0);
+
+  const getSeriesIndex = (seriesId: string) =>
+    seriesIndexMap.get(seriesId) ?? seriesIndexMap.size;
+
+  const sortedPoints = slice.points.toSorted((a, b) => {
+    if (!isStacked) {
+      const valueDiff = getPointValue(b) - getPointValue(a);
+      if (valueDiff !== 0) {
+        return valueDiff;
+      }
+    }
+    return (
+      getSeriesIndex(String(a.seriesId)) - getSeriesIndex(String(b.seriesId))
+    );
+  });
 
   const tooltipItems = sortedPoints
     .map((point) => {
       const enrichedSeriesItem = enrichedSeriesMap.get(String(point.seriesId));
       if (!enrichedSeriesItem) return null;
 
-      const value = Number(point.data.y || 0);
+      const value = getPointValue(point);
       return {
         key: enrichedSeriesItem.id,
         label: enrichedSeriesItem.label,

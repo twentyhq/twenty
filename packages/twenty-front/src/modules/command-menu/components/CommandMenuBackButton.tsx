@@ -13,11 +13,13 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledNavigationIcon = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   justify-content: center;
-  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconChevronLeft = styled(IconChevronLeft)`
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 export const CommandMenuBackButton = () => {
@@ -50,7 +52,7 @@ export const CommandMenuBackButton = () => {
       clickableComponent={
         <StyledNavigationIcon onContextMenu={handleBackButtonContextMenu}>
           <IconButton
-            Icon={IconChevronLeft}
+            Icon={StyledIconChevronLeft}
             size="small"
             variant="tertiary"
             onClick={goBackFromCommandMenu}

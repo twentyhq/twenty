@@ -1,4 +1,4 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
+/* eslint-disable twenty/no-hardcoded-colors */
 import hexRgb from 'hex-rgb';
 
 export const RGBA = (hex: string, alpha: number) => {

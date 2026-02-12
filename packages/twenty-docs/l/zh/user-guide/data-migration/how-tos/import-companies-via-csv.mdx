@@ -1,0 +1,201 @@
+---
+title: 通过 CSV 导入公司
+description: 将公司导入 Twenty 的完整分步指南。
+---
+
+## 概览
+
+本指南将引导您将公司导入 Twenty。 **应先导入公司**，因为 People 和 Opportunities 会关联到公司。
+
+## 开始之前
+
+### 先决条件清单
+
+<Check>
+  您的文件为 CSV、XLSX 或 XLS 格式
+</Check>
+
+<Check>
+  文件包含少于 10,000 条记录
+</Check>
+
+<Check>
+  您的文件中没有重复的域名
+</Check>
+
+<Check>
+  所有自定义字段已存在于 **设置 → 数据模型**
+</Check>
+
+<Note>
+  需要导入超过 10,000 家公司？ 拆分为多个文件，或使用 [API 导入](/l/zh/user-guide/data-migration/how-tos/import-data-via-api)。
+</Note>
+
+## 步骤 1：准备您的公司数据
+
+### 必填与推荐字段
+
+| 字段         | 是否必填？ | 格式                   | 备注         |
+| ---------- | ----- | -------------------- | ---------- |
+| **Name**   | 推荐    | 文本                   | 公司显示名称     |
+| **Domain** | 推荐    | `https://domain.com` | 唯一标识符      |
+| **地址**     | 可选    | 多列                   | 详见下文       |
+| **员工**     | 可选    | 数字                   | 员工数量       |
+| **自定义字段**  | 可选    | 因情况而异                | 必须存在于数据模型中 |
+
+### 域名格式
+
+<Warning>
+  **域名请使用 `https://domain.com` 格式。**
+
+  这与通过电子邮件/日历同步自动创建公司时使用的格式一致，从而防止之后出现重复。
+</Warning>
+
+**域名列：**
+
+* **Domain / Domain Label**: `acme.com`
+* **Domain / Domain URL**: `https://acme.com`
+
+### 地址格式
+
+地址是一个嵌套字段，包含多个列：
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### 示例 CSV 结构
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **专业提示：** 在导入过程中单击 **Download sample file**，以查看 Twenty 期望的确切列名。
+</Note>
+
+## 步骤 2：进入导入功能
+
+**选项 1：从 Companies 视图**
+
+1. 在左侧边栏中导航到 **Companies**
+2. 单击右上角的 **⋮** 图标
+3. 选择 **Import records**
+
+**选项 2：使用命令菜单**
+
+1. 按 `Cmd + K`（Mac）或 `Ctrl + K`（Windows）
+2. 输入 "import"
+3. 选择 **Import records**
+4. 选择 **Companies**
+
+## 步骤 3：上传您的文件
+
+1. 单击 **Select file**
+2. 选择您的 CSV、XLSX 或 XLS 文件
+3. 等待 Twenty 分析您的文件
+
+## 步骤 4：映射您的列
+
+Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
+
+1. **检查自动映射** — 核实其是否正确
+2. **修正不正确的映射** — 单击下拉菜单选择正确的字段
+3. **跳过列** — 对不想导入的列选择 **Do not map**
+
+### 重要的映射规则
+
+* **Domain**：映射到 **Domain / Domain URL**（而非 Domain Label）
+* **地址**：将每个部分映射到其对应的列（City、State 等）
+* **选择型字段**：其值必须与现有选项匹配（否则您将在下一步进行映射）
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## 步骤 5：映射选择字段的值
+
+如果您有选择或多选字段：
+
+1. Twenty 会将您的值与现有选项并列显示
+2. 将文件中的每个值与一个 Twenty 选项匹配
+3. 或在需要时创建新选项
+
+<Note>
+  选择型选项使用 **API 名称**，而不是显示标签。 在 **Settings → Data Model** 中启用 **Advanced mode** 以查看 API 名称。
+</Note>
+
+## 步骤 6：检查并修复错误
+
+在完成导入之前，Twenty 会验证您的数据：
+
+1. 单击 **Next Steps**
+2. 有错误的行会被高亮为**黄色**
+3. **直接修复错误** — 单击单元格并编辑其值
+4. **移除有问题的行** — 单击 X 以跳过该行
+
+### 常见公司导入错误
+
+| 错误         | 原因              | 解决方案                    |
+| ---------- | --------------- | ----------------------- |
+| **域名重复**   | 域名已存在于 Twenty 中 | 从文件中删除或更新现有记录           |
+| **域名格式无效** | 格式错误            | 使用 `https://domain.com` |
+| **缺少必填字段** | 必填字段为空          | 填写该值或删除该行               |
+
+## 步骤 7：完成导入
+
+1. 查看导入摘要
+2. 单击 **Confirm** 以进行导入
+3. 等待导入完成
+4. 通过抽查几条记录进行验证
+
+## 导入公司之后
+
+现在您可以导入与公司关联的记录：
+
+1. **[导入 People](/l/zh/user-guide/data-migration/how-tos/import-contacts-via-csv)** — 使用域名将其关联到公司
+2. **导入机会** — 将其关联到公司
+3. **验证导入** — 抽查几条记录以确保数据正确
+
+## 更新现有公司
+
+若要更新公司而非创建新公司：
+
+1. 在文件中包含 `domain` 或 `id` 列
+2. Twenty 将根据此唯一标识符匹配记录
+3. 现有公司会被更新；新公司会被创建
+
+详情请参见 [如何更新现有记录](/l/zh/user-guide/data-migration/how-tos/update-existing-records-via-import)。
+
+## 常见问题
+
+<AccordionGroup>
+  <Accordion title="为什么两个公司不能使用相同的域名？">
+    在 Twenty 中，域名是唯一标识符。 这可防止重复公司，并确保电子邮件同步将邮件正确关联到对应的公司。
+  </Accordion>
+
+  <Accordion title="如果有公司没有域名怎么办？">
+    您可以将域名留空。 不过，我们建议在可能的情况下添加域名，以获得更好的数据质量和自动邮件关联功能。
+  </Accordion>
+
+  <Accordion title="我可以在未关联任何联系人的情况下导入公司吗？">
+    是! 您可以先导入公司，随后再导入联系人，并通过公司域名将其关联起来。
+  </Accordion>
+
+  <Accordion title="如果我导入了一个已存在的域名，会发生什么？">
+    如果您包含与现有公司匹配的唯一标识符（域名或 id），Twenty 会更新该公司，而不是创建重复项。
+  </Accordion>
+
+  <Accordion title="如何修复“重复域名”错误？">
+    您可以从文件中移除重复项，或包含公司的 `id` 以更新现有记录。
+  </Accordion>
+</AccordionGroup>
+
+## 故障排除
+
+遇到问题？ 请查看：
+
+* [如何修复导入错误](/l/zh/user-guide/data-migration/how-tos/fix-import-errors)
+* [字段映射参考](/l/zh/user-guide/data-migration/capabilities/field-mapping)
+* [唯一性约束](/l/zh/user-guide/data-migration/capabilities/uniqueness-constraints)

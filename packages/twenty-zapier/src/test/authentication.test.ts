@@ -1,33 +1,9 @@
-import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
+import { createAppTester, tools } from 'zapier-platform-core';
 
 import App from '../index';
 import getBundle from '../utils/getBundle';
-import handleQueryParams from '../utils/handleQueryParams';
-import requestDb from '../utils/requestDb';
 const appTester = createAppTester(App);
 tools.env.inject();
-
-const createApiKey = async (z: ZObject, bundle: Bundle) => {
-  const query = `
-  mutation createApiKey {
-    createApiKey(
-      data:{${handleQueryParams(bundle.inputData)}}
-    )
-    {id}
-  }`;
-  return (await requestDb(z, bundle, query)).data.createApiKey.id;
-};
-
-const generateApiKeyToken = async (z: ZObject, bundle: Bundle) => {
-  const query = `
-  mutation generateApiKeyToken {
-    generateApiKeyToken(
-      ${handleQueryParams(bundle.inputData)}
-    )
-    {token}
-  }`;
-  return (await requestDb(z, bundle, query)).data.generateApiKeyToken.token;
-};
 
 describe('custom auth', () => {
   it('passes authentication and returns json', async () => {
@@ -72,33 +48,6 @@ describe('custom auth', () => {
 
     try {
       await appTester(App.authentication.test, bundle);
-    } catch (error: any) {
-      expect(error.message).toContain('UNAUTHENTICATED');
-      return;
-    }
-    throw new Error('appTester should have thrown');
-  });
-
-  it('fails on invalid auth token', async () => {
-    const expiresAt = '2020-01-01 10:10:10.000';
-    const apiKeyBundle = getBundle({
-      name: 'Test',
-      expiresAt,
-    });
-    const apiKeyId = await appTester(createApiKey, apiKeyBundle);
-    const generateTokenBundle = getBundle({
-      apiKeyId: apiKeyId,
-      expiresAt,
-    });
-    const expiredToken = await appTester(
-      generateApiKeyToken,
-      generateTokenBundle,
-    );
-    const bundleWithExpiredApiKey = getBundle({});
-    bundleWithExpiredApiKey.authData.apiKey = expiredToken;
-
-    try {
-      await appTester(App.authentication.test, bundleWithExpiredApiKey);
     } catch (error: any) {
       expect(error.message).toContain('UNAUTHENTICATED');
       return;

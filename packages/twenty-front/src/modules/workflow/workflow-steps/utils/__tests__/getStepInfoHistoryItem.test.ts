@@ -1,6 +1,6 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { type WorkflowRunStepInfo, StepStatus } from 'twenty-shared/workflow';
-import { getStepInfoHistoryItem } from '../getStepInfoHistoryItem';
+import { getStepInfoHistoryItem } from '@/workflow/workflow-steps/utils/getStepInfoHistoryItem';
 
 describe('getStepInfoHistoryItem', () => {
   const iteratorStep: WorkflowStep = {
@@ -27,9 +27,8 @@ describe('getStepInfoHistoryItem', () => {
     nextStepIds: [],
     settings: {
       input: {
-        serverlessFunctionId: 'func',
-        serverlessFunctionVersion: '1.0.0',
-        serverlessFunctionInput: {},
+        logicFunctionId: 'func',
+        logicFunctionInput: {},
       },
       outputSchema: {},
       errorHandlingOptions: {

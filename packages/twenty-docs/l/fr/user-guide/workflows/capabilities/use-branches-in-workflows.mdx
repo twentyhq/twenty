@@ -1,0 +1,90 @@
+---
+title: Utiliser les branches dans les flux de travail
+description: Comprendre le fonctionnement des branches et comment contrôler le chemin exécuté.
+---
+
+## Fonctionnement des branches
+
+Dans l'éditeur de flux de travail, vous pouvez créer plusieurs chemins (branches) partant d'un seul nœud. Cela vous permet de créer des automatisations complexes avec des résultats différents.
+
+**Important** : Lorsqu'un flux de travail s'exécute, **toutes les branches s'exécutent en parallèle par défaut**. Il n'existe pas de logique "if/else" intégrée pour choisir une branche plutôt qu'une autre — chaque chemin s'exécutera simultanément.
+
+## Contrôler quelle branche s'exécute
+
+Pour exécuter une seule branche selon des conditions spécifiques, **ajoutez un nœud Filter au début de chaque branche**.
+
+### Exemple de configuration
+
+1. Créez votre flux de travail avec plusieurs branches à partir d'un seul nœud
+2. Ajoutez un nœud **Filter** comme première étape de chaque branche
+3. Définissez des conditions sur chaque Filter pour déterminer quand cette branche doit continuer
+4. Seules les branches dont les conditions du Filter sont satisfaites continueront
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Fonctionnement des nœuds Filter
+
+* Si la condition du Filter est **remplie** : La branche continue son exécution
+* Si la condition du Filter **n'est pas remplie** : La branche s'arrête au nœud Filter
+
+Cela crée effectivement une logique conditionnelle où seule la branche appropriée s'exécute en fonction de vos données.
+
+## Exemple : Routage selon le montant de l'affaire
+
+**Scénario** : Lorsqu'une affaire est conclue, envoyez différentes notifications selon le montant de l'affaire.
+
+1. **Déclencheur** : Opportunité mise à jour (Étape = Fermée gagnée)
+2. **Branche 1** : Filter pour Montant > 10 000 $ → Envoyer un message Slack dans #big-deals
+3. **Branche 2** : Filter pour Montant ≤ 10 000 $ → Envoyer un e-mail au responsable commercial
+
+Les deux branches démarrent, mais seule celle qui correspond au montant de l'affaire continuera au-delà de son Filter.
+
+## Création de branches
+
+<Note>
+  Pour créer une nouvelle branche à partir d'une étape existante, cliquez sur le bouton **+** sur l'étape et ajoutez votre action. Vous pouvez ajouter plusieurs branches en cliquant plusieurs fois sur **+**.
+</Note>
+
+1. Dans l'éditeur de flux de travail, sélectionnez l'étape à partir de laquelle vous souhaitez créer une branche
+2. Cliquez sur le bouton **+** pour ajouter une action
+3. Cela crée une branche
+4. Cliquez de nouveau sur **+** sur la même étape pour créer d'autres branches
+5. Chaque branche peut avoir sa propre séquence d'actions
+
+## Fusionner les branches
+
+Une fois que les branches parallèles ont terminé leur travail, vous pouvez les fusionner de nouveau en un seul chemin :
+
+1. Terminez vos actions dans les branches
+2. Ajoutez une nouvelle étape qui doit s'exécuter après toutes les branches
+3. Faites glisser une connexion depuis la dernière étape de chaque branche vers cette nouvelle étape
+4. L'étape fusionnée attend que toutes les branches connectées soient terminées avant de s'exécuter
+
+### Exemple : Traiter puis notifier
+
+```
+Déclencheur
+   │
+   ├── Branche A : Mettre à jour l'enregistrement client
+   │
+   └── Branche B : Créer un ticket d'assistance
+
+       ↘  ↙
+
+   Étape fusionnée : Envoyer un e-mail de confirmation
+```
+
+L'e-mail de confirmation n'est envoyé qu'après la mise à jour du client et la création du ticket.
+
+## Meilleures pratiques
+
+* Utilisez toujours des **nœuds Filter** au début des branches lorsque vous souhaitez une exécution conditionnelle
+* Gardez des conditions de branche **mutuellement exclusives** pour éviter les actions en double
+* Testez vos flux de travail avec différentes données pour vous assurer que les bonnes branches s'exécutent
+* **Renommez les étapes de branche** de manière descriptive afin qu'il soit clair ce que fait chaque chemin
+* **Fusionnez les branches** lorsque vous avez besoin d'une action finale après un traitement en parallèle
+
+## Articles connexes
+
+* [FAQ sur les flux de travail](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — réponses concernant l'exécution parallèle
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions) — actions disponibles pour les branches

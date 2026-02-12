@@ -1,0 +1,170 @@
+---
+title: Mostrar datos de registros relacionados
+description: Muestra datos de registros relacionados (p. ej., información de la empresa en Oportunidades) usando flujos de trabajo.
+---
+
+Muestra datos de registros relacionados directamente en tus registros — por ejemplo, muestra el recuento de empleados de una Empresa en sus Oportunidades. Esta solución provisional con flujos de trabajo es útil hasta que los campos anidados estén disponibles de forma nativa.
+
+## Casos de Uso Comunes
+
+| Fuente      | Destino     | Campos a copiar                                                         |
+| ----------- | ----------- | ----------------------------------------------------------------------- |
+| Empresa     | Oportunidad | Industria, Tamaño de la empresa, ARR                                    |
+| Persona     | Oportunidad | Correo electrónico, Teléfono, Cargo                                     |
+| Oportunidad | Empresa     | Importe de la última oportunidad, Fecha de la última oportunidad ganada |
+
+## Copia básica de campos
+
+### Ejemplo: Copiar el correo electrónico del contacto a la oportunidad
+
+**Objetivo**: Al establecer un Punto de contacto en una oportunidad, copia su correo electrónico a la oportunidad para un acceso sencillo.
+
+### Requisito previo
+
+Crea los campos de destino en **Configuración → Modelo de datos → Oportunidades** antes de crear el flujo de trabajo:
+
+* Correo electrónico del contacto (tipo: Email)
+* Teléfono del contacto (tipo: Phone)
+
+### Configuración
+
+1. **Desencadenante**: Se actualiza el registro (Oportunidades, campo Punto de contacto)
+
+2. **Filtro**: Comprueba que el Punto de contacto no esté vacío
+
+3. **Buscar registros**: Encuentra a la persona vinculada
+   * Objeto: Personas
+   * Filtro: ID igual a `{{trigger.object.pointOfContact.id}}`
+
+4. **Actualizar registro**:
+   * Objeto: Oportunidades
+   * Registro: `{{trigger.object.id}}`
+   * Correo electrónico del contacto: `{{searchRecords[0].email}}`
+   * Teléfono del contacto: `{{searchRecords[0].phone}}`
+
+## Copiar varios campos
+
+### Ejemplo: Sincronizar la información de la empresa con todas las oportunidades relacionadas
+
+**Objetivo**: Cuando cambien los detalles de la empresa, actualiza todas las oportunidades relacionadas.
+
+### Configuración
+
+1. **Desencadenante**: Se actualiza el registro (Empresas)
+   * Campos: Industria, Tamaño de la empresa, Ingresos anuales
+
+2. **Buscar registros**: Encuentra todas las oportunidades de esta empresa
+   * Objeto: Oportunidades
+   * Filtro: ID de empresa igual a `{{trigger.object.id}}`
+
+3. **Iterator**: Recorre cada oportunidad
+
+4. **Actualizar registro** (dentro del Iterator):
+   * Objeto: Oportunidades
+   * Registro: `{{iterator.currentItem.id}}`
+   * Industria de la empresa: `{{trigger.object.industry}}`
+   * Tamaño de la empresa: `{{trigger.object.companySize}}`
+   * ARR de la empresa: `{{trigger.object.annualRevenue}}`
+
+## Copiar al crear el registro
+
+### Ejemplo: Rellenar previamente la oportunidad con datos de la empresa
+
+**Objetivo**: Al crear una oportunidad vinculada a una empresa, copia automáticamente la información clave de la empresa.
+
+### Requisito previo
+
+Crea los campos de destino en **Configuración → Modelo de datos → Oportunidades**:
+
+* Industria de la empresa (tipo: Texto)
+* Tamaño de la empresa (tipo: Número)
+
+### Configuración
+
+1. **Desencadenante**: Se crea el registro (Oportunidades)
+   * Filtro: La empresa no está vacía
+
+2. **Buscar registros**: Obtén los detalles de la empresa vinculada
+   * Objeto: Empresas
+   * Filtro: ID igual a `{{trigger.object.company.id}}`
+
+3. **Actualizar registro**:
+   * Objeto: Oportunidades
+   * Registro: `{{trigger.object.id}}`
+   * Industria de la empresa: `{{searchRecords[0].industry}}`
+   * Tamaño de la empresa: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Limitación de Tareas y Notas**: Las relaciones en Tareas y Notas están codificadas como de muchos a muchos y aún no están disponibles en los desencadenantes o acciones de flujos de trabajo. Para acceder a estas relaciones, usa la [API](/l/es/developers/extend/capabilities/apis).
+</Note>
+
+## Sincronización bidireccional
+
+### Ejemplo: Mantener sincronizado el contacto principal
+
+**Objetivo**: Cuando cambie el contacto principal de una empresa, actualiza el contacto. Cuando una persona se convierta en contacto principal, actualiza la empresa.
+
+### Flujo de trabajo 1: Empresa → Persona
+
+1. **Desencadenante**: Se actualiza el registro (Empresas, campo Contacto principal)
+2. **Actualizar registro**: Establece "Es contacto principal" de la persona en true
+3. **Buscar registros**: Encuentra el contacto principal anterior
+4. **Actualizar registro**: Establece "Es contacto principal" del contacto anterior en false
+
+### Flujo de trabajo 2: Persona → Empresa
+
+1. **Desencadenante**: Se actualiza el registro (Personas, Es contacto principal = true)
+2. **Actualizar registro**: Establece el Contacto principal de la empresa en esta persona
+
+<Note>
+  Ten cuidado con las sincronizaciones bidireccionales para evitar bucles infinitos. Usa filtros para comprobar si el valor realmente cambió antes de actualizar.
+</Note>
+
+## Uso de código para mapeo complejo
+
+### Ejemplo: Transformar datos durante la copia
+
+**Objetivo**: Copiar y formatear el número de teléfono de la persona a la oportunidad.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Mejores prácticas
+
+### Evitar bucles
+
+* No crees flujos de trabajo que se activen mutuamente sin fin
+* Usa condiciones específicas de campo
+* Añade comprobaciones para ver si el valor realmente cambió
+
+### Gestionar datos faltantes
+
+* Comprueba siempre que el registro de origen exista antes de copiar
+* Proporciona valores predeterminados para los campos opcionales
+* Usa filtros para omitir cuando el campo de origen esté vacío
+
+### Rendimiento
+
+* Procesa actualizaciones por lotes al copiar a muchos registros
+* Usa flujos de trabajo programados para operaciones de sincronización masiva
+* Considera usar Iterator para actualizaciones de múltiples registros
+
+## Relacionado
+
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)

@@ -1,0 +1,106 @@
+---
+title: Invia avvisi via email per le attività in scadenza
+description: Notifica automaticamente ai membri del team le attività imminenti o in ritardo.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Invia promemoria email quotidiani a ciascun membro del team sulle attività in scadenza oggi.
+
+## Panoramica
+
+Questo flusso di lavoro viene eseguito secondo una pianificazione e:
+
+1. Recupera tutti i membri dello spazio di lavoro
+2. Scorre ciascun membro
+3. Trova le loro attività in scadenza oggi
+4. Formatta e invia un'email personalizzata
+
+## Configurazione passo-passo
+
+<VimeoEmbed videoId="1147463514" title="Dimostrazione video" />
+
+### Passaggio 1: Configura il trigger
+
+1. Vai su **Impostazioni → Flussi di lavoro** e crea un nuovo flusso di lavoro
+2. Seleziona **On a Schedule** come trigger
+3. Usa un'espressione cron per ogni giorno alle 8:00: `0 8 * * *`
+
+### Passaggio 2: Cerca tutti i membri dello spazio di lavoro
+
+1. Aggiungi un'azione **Search Records**
+2. Seleziona **Workspace Members** (nella sezione Oggetti avanzati)
+3. Non sono necessari filtri — questo restituisce tutti i membri
+
+### Passaggio 3: Aggiungi un Iterator
+
+1. Aggiungi un'azione **Iterator**
+2. Imposta l'array di input con i membri dello spazio di lavoro del passaggio precedente
+3. Tutte le azioni all'interno dell'Iterator verranno eseguite una volta per membro
+
+### Passaggio 4: Cerca le attività in scadenza oggi (all'interno dell'Iterator)
+
+1. All'interno dell'Iterator, aggiungi un'azione **Search Records**
+2. Seleziona **Tasks** come oggetto
+3. Aggiungi filtri:
+   * **Assignee** = membro corrente dello spazio di lavoro (dall'Iterator)
+   * **Due Date** = oggi
+
+### Passaggio 5: Formatta le attività nel corpo dell'email (all'interno dell'Iterator)
+
+Aggiungi un'azione **Code** per formattare le attività in un elenco leggibile con link:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  Sostituisci `yourSubDomain` con il tuo effettivo sottodominio dello spazio di lavoro Twenty.
+</Note>
+
+### Passaggio 6: Invia email (all'interno dell'Iterator)
+
+1. Aggiungi un'azione **Send Email** (sempre all'interno dell'Iterator)
+2. Configura:
+
+| Campo       | Valore                                                                         |
+| ----------- | ------------------------------------------------------------------------------ |
+| **A**       | `{{iterator.currentItem.userEmail}}` (email del membro dello spazio di lavoro) |
+| **Oggetto** | Le tue attività in scadenza oggi                                               |
+| **Corpo**   | `{{code.formattedTasks}}`                                                      |
+
+### Passaggio 7: Testa e attiva
+
+1. Fai clic su **Test** per eseguire manualmente il flusso di lavoro
+2. Controlla le caselle di posta per le email
+3. Attiva il flusso di lavoro
+
+## Correlati
+
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

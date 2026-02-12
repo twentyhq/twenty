@@ -5,6 +5,12 @@ export const GET_CHAT_THREADS = gql`
     chatThreads {
       id
       title
+      totalInputTokens
+      totalOutputTokens
+      contextWindowTokens
+      conversationSize
+      totalInputCredits
+      totalOutputCredits
       createdAt
       updatedAt
     }

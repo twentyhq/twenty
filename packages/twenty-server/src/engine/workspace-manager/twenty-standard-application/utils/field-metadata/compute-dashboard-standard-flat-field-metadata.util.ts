@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -7,18 +11,20 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_DASHBOARD } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 export const buildDashboardStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'dashboard'>, 'context'>): Record<
-  AllStandardObjectFieldName<'dashboard'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'dashboard', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'dashboard'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -34,7 +40,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'uuid',
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -51,9 +57,9 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -70,9 +76,9 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -88,9 +94,9 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -108,7 +114,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconNotes',
       isNullable: true,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -126,7 +132,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isNullable: false,
       defaultValue: 0,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -143,7 +149,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -159,8 +165,35 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconCreativeCommonsSa',
       isUIReadOnly: true,
       isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  updatedBy: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'updatedBy',
+      type: FieldMetadataType.ACTOR,
+      label: 'Updated by',
+      description: 'The workspace member who last updated the record',
+      icon: 'IconUserCircle',
+      isUIReadOnly: true,
+      isNullable: false,
+      defaultValue: {
+        source: "'MANUAL'",
+        name: "'System'",
+        workspaceMemberId: null,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -176,8 +209,14 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_DASHBOARD,
+        ),
+      },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -188,6 +227,8 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'timelineActivities',
       label: 'Timeline Activities',
       description: 'Timeline activities linked to the dashboard',
@@ -195,12 +236,12 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'dashboard',
+      targetFieldName: 'targetDashboard',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -209,6 +250,8 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'favorites',
       label: 'Favorites',
       description: 'Favorites linked to the dashboard',
@@ -221,7 +264,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
         relationType: RelationType.ONE_TO_MANY,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -230,6 +273,8 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'attachments',
       label: 'Attachments',
       description: 'Attachments linked to the dashboard',
@@ -237,12 +282,12 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'attachment',
-      targetFieldName: 'dashboard',
+      targetFieldName: 'targetDashboard',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

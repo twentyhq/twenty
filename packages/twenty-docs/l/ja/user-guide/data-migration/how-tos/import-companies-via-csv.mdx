@@ -1,0 +1,201 @@
+---
+title: CSV ファイルで会社をインポートする
+description: Twenty に会社をインポートするための完全なステップバイステップガイド。
+---
+
+## 概要
+
+このガイドでは、会社を Twenty にインポートする手順を説明します。 **まず Companies をインポートしてください**。People と Opportunities は Companies にリンクします。
+
+## 始める前に
+
+### 事前準備チェックリスト
+
+<Check>
+  ファイル形式が CSV、XLSX、または XLS である
+</Check>
+
+<Check>
+  ファイルのレコード数が 10,000 未満
+</Check>
+
+<Check>
+  ファイル内に重複するドメインがない
+</Check>
+
+<Check>
+  すべてのカスタムフィールドが **Settings → Data Model** に存在する
+</Check>
+
+<Note>
+  10,000 社を超えてインポートする必要がありますか？ 複数のファイルに分割するか、[API インポート](/l/ja/user-guide/data-migration/how-tos/import-data-via-api) を使用します。
+</Note>
+
+## ステップ 1: 会社データを準備する
+
+### 必須および推奨フィールド
+
+| フィールド         | 必須? | 形式                   | ノート                   |
+| ------------- | --- | -------------------- | --------------------- |
+| **Name**      | 推奨  | テキスト                 | 会社の表示名                |
+| **ドメイン**      | 推奨  | `https://domain.com` | 一意の識別子                |
+| **住所**        | 任意  | 複数の列                 | 以下を参照                 |
+| **従業員**       | 任意  | 数                    | 従業員数                  |
+| **カスタムフィールド** | 任意  | 項目により異なる             | データモデル内に存在している必要があります |
+
+### ドメイン形式
+
+<Warning>
+  **ドメインには `https://domain.com` の形式を使用してください。**
+
+  これは、メール／カレンダー同期から Companies が自動作成される際に使用される形式と一致し、後の重複を防ぎます。
+</Warning>
+
+**ドメイン列:**
+
+* **Domain / Domain Label**: `acme.com`
+* **Domain / Domain URL**: `https://acme.com`
+
+### 住所形式
+
+住所は複数の列を必要とする**ネストされたフィールド**です:
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### CSV のサンプル構造
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **プロのヒント:** インポート中に **Download sample file** をクリックして、Twenty が想定する正確な列名を確認してください。
+</Note>
+
+## ステップ 2: インポート機能にアクセスする
+
+**オプション 1: Companies ビューから**
+
+1. 左側のサイドバーで **Companies** に移動します
+2. 右上の **⋮** アイコンをクリックします
+3. **Import records** を選択します
+
+**オプション 2: Command メニューを使用**
+
+1. `Cmd + K`（Mac）または`Ctrl + K`（Windows）を押します
+2. "import" と入力します
+3. **Import records** を選択します
+4. **Companies** を選択します
+
+## ステップ 3: ファイルをアップロードする
+
+1. **Select file** をクリックします
+2. CSV、XLSX、または XLS ファイルを選択します
+3. Twenty がファイルを解析するまで待ちます
+
+## ステップ 4: 列をマッピングする
+
+Twenty は列をフィールドに自動的に照合しようとします。 確認して調整します:
+
+1. **自動マッピングを確認** — 正しいことを検証します
+2. **誤ったマッピングを修正** — ドロップダウンをクリックして正しいフィールドを選択します
+3. **列をスキップ** — インポートしたくない列には **Do not map** を選択します
+
+### 重要なマッピングルール
+
+* **Domain**: **Domain / Domain URL** にマップします（Domain Label ではありません）
+* **住所**: 各項目を対応する列（City、State など）にマップします
+* **Select フィールド**: 値は既存のオプションと一致している必要があります（次のステップでマッピングすることもできます）
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## ステップ 5: Select フィールドの値をマッピングする
+
+Select または Multi-Select フィールドがある場合:
+
+1. Twenty は、既存のオプションと並べて値を表示します
+2. ファイル内の各値を Twenty のオプションに対応付けます
+3. 必要に応じて新しいオプションを作成します
+
+<Note>
+  Select のオプションは表示ラベルではなく、**API 名**を使用します。 API 名を確認するには、**Settings → Data Model** で **Advanced mode** を有効にします。
+</Note>
+
+## ステップ 6: エラーを確認して修正
+
+インポートを完了する前に、Twenty がデータを検証します:
+
+1. **Next Steps** をクリックします
+2. エラーのある行は **黄色** で強調表示されます
+3. **エラーを直接修正** — セルをクリックして値を編集します
+4. **問題のある行を削除** — その行をスキップするには X をクリックします
+
+### 一般的な会社インポートのエラー
+
+| エラー            | 原因                   | 解決策                         |
+| -------------- | -------------------- | --------------------------- |
+| **重複したドメイン**   | ドメインが Twenty に既に存在する | ファイルから削除するか、既存のレコードを更新します   |
+| **無効なドメイン形式**  | 形式の誤り                | `https://domain.com` を使用します |
+| **必須フィールドの欠落** | 必須フィールドが空です          | 値を入力するか、その行を削除します           |
+
+## ステップ 7: インポートを完了する
+
+1. インポートの概要を確認します
+2. インポートするには **Confirm** をクリックします
+3. インポートが完了するまで待ちます
+4. いくつかのレコードを確認して検証します
+
+## 会社をインポートした後
+
+これで、Companies にリンクするレコードをインポートできます:
+
+1. **[People をインポート](/l/ja/user-guide/data-migration/how-tos/import-contacts-via-csv)** — ドメインを使って Companies にリンクします
+2. **Opportunities をインポート** — Companies にリンクします
+3. **インポートを検証** — データが正しいことを確認するために、いくつかのレコードを抜き取り確認します
+
+## 既存の会社を更新する
+
+新規作成ではなく会社を更新するには:
+
+1. ファイルに `domain` または `id` 列を含めます
+2. Twenty はこの一意の識別子でレコードを照合します
+3. 既存の会社は更新され、新規は作成されます
+
+詳細は [既存レコードを更新する方法](/l/ja/user-guide/data-migration/how-tos/update-existing-records-via-import) を参照してください。
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="なぜ 2 社が同じドメインを持つことはできないのですか？">
+    ドメインは Twenty における一意の識別子です。 これにより会社の重複を防ぎ、メール同期でメールが正しい会社にリンクされるようになります。
+  </Accordion>
+
+  <Accordion title="ドメインのない会社がある場合はどうすればよいですか？">
+    ドメインは空のままでもかまいません。 ただし、データ品質を高め自動メールリンクのため、可能であればドメインの追加を推奨します。
+  </Accordion>
+
+  <Accordion title="People にリンクされていない会社をインポートできますか？">
+    はい! 最初に会社をインポートし、その後に People をインポートして、会社のドメインを使用して関連付けることができます。
+  </Accordion>
+
+  <Accordion title="既に存在するドメインをインポートした場合はどうなりますか？">
+    既存の会社と一致する一意の識別子（ドメインまたは id）を含めた場合、Twenty は重複を作成せず、その会社を更新します。
+  </Accordion>
+
+  <Accordion title="「duplicate domain」エラーはどのように修正しますか？">
+    ファイルから重複を削除するか、代わりに会社の `id` を含めて既存のレコードを更新してください。
+  </Accordion>
+</AccordionGroup>
+
+## トラブルシューティング
+
+お困りですか？ 次を確認してください:
+
+* [インポートエラーを解決する方法](/l/ja/user-guide/data-migration/how-tos/fix-import-errors)
+* [フィールドマッピングのリファレンス](/l/ja/user-guide/data-migration/capabilities/field-mapping)
+* [一意性制約](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)

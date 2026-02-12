@@ -6,7 +6,7 @@ import { ListKit } from '@tiptap/extension-list';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
-import { SlashCommand } from '../SlashCommand';
+import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 
 describe('SlashCommand', () => {
   let editor: Editor;

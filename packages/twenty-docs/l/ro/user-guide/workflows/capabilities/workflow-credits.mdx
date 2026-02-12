@@ -1,0 +1,76 @@
+---
+title: Credite pentru fluxuri de lucru
+description: Înțelegeți consumul și gestionarea creditelor pentru fluxurile de lucru.
+---
+
+Creditele fluxului de lucru stimulează automatizările dvs. în Twenty. Înțelegerea modului în care funcționează vă ajută să optimizați costurile și să gestionați eficient bugetul de automatizare.
+
+## Alocarea creditelor
+
+Creditele pentru fluxurile de lucru sunt alocate în funcție de ciclul de facturare, nu de nivelul planului:
+
+| Ciclu de facturare  | Credite                         |
+| ------------------- | ------------------------------- |
+| **Abonament lunar** | 5 milioane de credite pe lună   |
+| **Abonament anual** | 50 de milioane de credite pe an |
+
+<Note>
+  5 milioane de credite lunare sunt generoase pentru automatizările standard. Majoritatea echipelor nu vor depăși această limită cu utilizarea tipică a fluxurilor de lucru. Credite suplimentare sunt necesare în principal pentru acțiuni Code avansate și pentru fluxuri de lucru bazate pe AI.
+</Note>
+
+## Cum funcționează consumul de credite
+
+Creditele sunt consumate când fluxurile de lucru se execută, nu atunci când le creați. Fiecare acțiune a fluxului de lucru consumă credite în funcție de complexitatea sa:
+
+### Consumul de credite în funcție de tipul de acțiune
+
+* **Operațiuni interne de bază**: Consum foarte mic de credite
+  * Căutați Înregistrări
+  * Creează înregistrare
+  * Actualizați Înregistrarea
+  * Ștergeți Înregistrarea
+  * Acțiuni de formular
+
+* **Operațiuni complexe**: Consum mai ridicat de credite
+  * Acțiuni de cod (execuție JavaScript)
+  * Solicitări HTTP către servicii externe
+
+* **Funcționalități AI**: Consum mai ridicat de credite
+  * Acțiunile agentului AI consumă credite în funcție de modelul AI utilizat
+  * Prompturile mai complexe și rezultatele mai lungi utilizează mai multe credite
+
+* **Acțiuni Delay**: Consum minim de credite
+  * Nodul Delay consumă **1 credit** la execuție
+  * **Nu se consumă credite** în perioada de așteptare
+  * O întârziere de 5 minute costă la fel ca o întârziere de 5 zile
+
+### Deducere în timp real
+
+Creditele sunt retrase în timp real pe măsură ce fluxurile de lucru se execută. Acest lucru înseamnă:
+
+* Fluxurile de lucru în ciornă nu consumă credite
+* Numai fluxurile de lucru active, rulate utilizează alocarea dvs. de credite
+* Fluxurile de lucru eșuate consumă totuși credite pentru pașii finalizați
+
+## Gestionarea creditelor
+
+### Verificați utilizarea creditelor
+
+1. Accesați **Setări → Facturare**
+2. Vizualizați consumul dvs. actual de credite și soldul rămas
+3. Monitorizați modelele de utilizare pentru a optimiza fluxurile de lucru
+
+### Achiziționarea de credite suplimentare
+
+Dacă aveți nevoie de mai multe credite decât alocarea planificată:
+
+1. Accesați **Setări → Facturare**
+2. Faceți clic pe opțiunea de a achiziționa credite suplimentare. Sunt disponibile pachete de diferite dimensiuni.
+3. Creditele sunt adăugate la soldul dvs. actual
+
+## Cele mai bune practici
+
+* **Procesare loturi**: Utilizați operațiuni în masă și acțiuni cu Iteratoare eficient
+* **Optimizare pentru declanșatorul manual**: Pentru declanșatoarele manuale, alegeți disponibilitatea `Bulk` pentru a procesa mai multe înregistrări într-o singură rulare a fluxului de lucru
+* Optimizați acțiunile de cod pentru eficiență
+* Operațiuni în lot pentru a reduce apelurile individuale ale acțiunilor

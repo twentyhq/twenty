@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
@@ -36,6 +37,7 @@ type FormMultiSelectFieldInputProps = {
   placeholder?: string;
   testId?: string;
   hint?: string;
+  dropdownWidth?: number;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -85,6 +87,7 @@ export const FormMultiSelectFieldInput = ({
   placeholder,
   testId,
   hint,
+  dropdownWidth,
 }: FormMultiSelectFieldInputProps) => {
   const instanceId = useId();
   const theme = useTheme();
@@ -232,7 +235,7 @@ export const FormMultiSelectFieldInput = ({
                 data-open={draftValue.editingMode === 'edit'}
                 onClick={handleDisplayModeClick}
               >
-                <VisibilityHidden>Edit</VisibilityHidden>
+                <VisibilityHidden>{t`Edit`}</VisibilityHidden>
 
                 {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
                   <MultiSelectDisplay
@@ -268,7 +271,9 @@ export const FormMultiSelectFieldInput = ({
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
                   values={selectedNames}
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                  dropdownWidth={
+                    dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
+                  }
                 />
               </OverlayContainer>
             )}

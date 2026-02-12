@@ -5,28 +5,22 @@ import {
   UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import assert from 'assert';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
+import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -77,6 +71,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 const OriginHeader = createParamDecorator(
@@ -87,7 +82,7 @@ const OriginHeader = createParamDecorator(
   },
 );
 
-@Resolver(() => WorkspaceEntity)
+@MetadataResolver(() => WorkspaceEntity)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -136,7 +131,7 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
@@ -318,6 +313,13 @@ export class WorkspaceResolver {
     }
 
     return workspace.logo ?? '';
+  }
+
+  @ResolveField(() => [BillingEntitlementDTO])
+  billingEntitlements(@Parent() workspace: WorkspaceEntity) {
+    return this.billingSubscriptionService.getWorkspaceEntitlements(
+      workspace.id,
+    );
   }
 
   @ResolveField(() => Boolean)

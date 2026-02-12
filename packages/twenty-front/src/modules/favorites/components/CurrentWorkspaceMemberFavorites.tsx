@@ -25,6 +25,7 @@ import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Droppable } from '@hello-pangea/dnd';
+import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
@@ -47,6 +48,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   folder,
   isGroup,
 }: CurrentWorkspaceMemberFavoritesProps) => {
+  const { t } = useLingui();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
@@ -161,6 +163,8 @@ export const CurrentWorkspaceMemberFavorites = ({
     modalId,
   );
 
+  const favoriteCount = folder.favorites.length;
+
   return (
     <>
       <NavigationDrawerItemsCollapsableContainer
@@ -252,10 +256,18 @@ export const CurrentWorkspaceMemberFavorites = ({
         createPortal(
           <ConfirmationModal
             modalId={modalId}
-            title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
-            subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
+            title={
+              folder.favorites.length > 1
+                ? t`Remove ${favoriteCount} favorites?`
+                : t`Remove ${favoriteCount} favorite?`
+            }
+            subtitle={
+              folder.favorites.length > 1
+                ? t`This action will delete this favorite folder and all ${favoriteCount} favorites inside. Do you want to continue?`
+                : t`This action will delete this favorite folder and the favorite inside. Do you want to continue?`
+            }
             onConfirmClick={handleConfirmDelete}
-            confirmButtonText="Delete Folder"
+            confirmButtonText={t`Delete Folder`}
           />,
           document.body,
         )}

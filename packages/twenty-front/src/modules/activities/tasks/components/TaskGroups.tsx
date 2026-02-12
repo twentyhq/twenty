@@ -78,10 +78,10 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Mission accomplished!
+            {t`Mission accomplished!`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            All tasks addressed. Maintain the momentum.
+            {t`All tasks addressed. Maintain the momentum.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         {hasObjectUpdatePermissions && (

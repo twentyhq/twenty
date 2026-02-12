@@ -1,5 +1,5 @@
 import { AppBasePath } from 'twenty-shared/types';
-import { isMatchingLocation } from '../isMatchingLocation';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 describe('isMatchingLocation', () => {
   it('returns true when paths match with no basePath', () => {

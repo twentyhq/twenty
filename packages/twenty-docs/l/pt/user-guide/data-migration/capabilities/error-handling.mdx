@@ -1,0 +1,76 @@
+---
+title: Tratamento de erros e validação
+description: Revise e corrija os erros de importação diretamente na IU antes de confirmar.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Validação pré-importação
+
+Depois de carregar o seu ficheiro e mapear os campos, o Twenty valida os seus dados **antes** de os importar. Isto permite detetar e corrigir erros sem afetar os seus dados existentes.
+
+## Como Funciona
+
+1. **Carregue** o seu ficheiro CSV
+2. **Mapeie** as suas colunas para os campos do Twenty
+3. **Revise** os potenciais erros destacados em amarelo
+4. **Corrija os erros** diretamente na IU
+5. **Confirme** a importação
+
+<VimeoEmbed videoId="1145273857" title="Demonstração em vídeo" />
+
+## Apresentação de erros
+
+As linhas com erros são destacadas em **amarelo**. Pode:
+
+* **Edite a célula diretamente** para corrigir o erro
+* **Remova a linha** para a ignorar por completo
+
+Esta edição em linha poupa tempo—não é necessário voltar à sua folha de cálculo, corrigir os erros e voltar a carregar.
+
+## Tipos de erro comuns
+
+### Valores duplicados
+
+**Causa**: Um campo único (email, domínio) já existe no Twenty ou aparece duas vezes no seu ficheiro.
+
+**Correção**:
+
+* Edite o valor duplicado na IU de importação
+* Remova uma das linhas duplicadas
+
+Consulte [Restrições de unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints) para mais detalhes sobre como a unicidade é aplicada.
+
+### Formato inválido
+
+**Causa**: Os dados não correspondem ao formato esperado (por exemplo, email inválido, formato de data incorreto).
+
+**Correção**: Edite a célula para usar o formato correto.
+
+Consulte [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping) para o formato esperado de cada tipo de campo.
+
+### Campos obrigatórios ausentes
+
+**Causa**: Um campo obrigatório está vazio.
+
+**Correção**: Introduza um valor no campo obrigatório ou remova a linha.
+
+### Relação não encontrada
+
+**Causa**: O registo referenciado não existe (por exemplo, um domínio de Empresa que não foi importado).
+
+**Correção**:
+
+* Importe primeiro os registos pai
+* Ou corrija o valor de referência
+
+Consulte [Importar relações](/l/pt/user-guide/data-migration/capabilities/import-relations) para conhecer a ordem correta de importação e como ligar registos.
+
+## Dicas para reduzir erros
+
+1. **Transfira o modelo** para ver o formato esperado antes de importar o seu ficheiro
+2. **Limpe os seus dados** primeiro na folha de cálculo
+3. **Importe os ficheiros na ordem correta** para importar relações (Empresas → Pessoas → Oportunidades)
+4. **Teste com pequenos lotes** antes da importação completa
+5. **Verifique se existem duplicados** antes de carregar
+6. **Limite o tamanho do seu ficheiro a 10,000 registos** por ficheiro

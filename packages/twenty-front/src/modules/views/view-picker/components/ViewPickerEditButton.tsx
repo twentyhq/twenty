@@ -1,8 +1,8 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
-import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
@@ -11,8 +11,8 @@ import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 
 export const ViewPickerEditButton = () => {
-  const { availableFieldsForKanban, navigateToSelectSettings } =
-    useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping, navigateToSelectSettings } =
+    useGetAvailableFieldsToGroupRecordsBy();
 
   const { viewPickerMode } = useViewPickerMode();
   const viewPickerType = useRecoilComponentValue(viewPickerTypeComponentState);
@@ -24,13 +24,13 @@ export const ViewPickerEditButton = () => {
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
-  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+  const { destroyViewFromCurrentState } = useDestroyViewFromCurrentState();
 
   if (viewPickerMode === 'edit') {
     return (
       <Button
         title={t`Delete`}
-        onClick={deleteViewFromCurrentState}
+        onClick={destroyViewFromCurrentState}
         accent="danger"
         fullWidth
         size="small"
@@ -44,7 +44,7 @@ export const ViewPickerEditButton = () => {
 
   if (
     viewPickerType === ViewType.Kanban &&
-    availableFieldsForKanban.length === 0
+    availableFieldsForGrouping.length === 0
   ) {
     return (
       <Button

@@ -1,6 +1,6 @@
 import { type ZodSafeParseError } from 'zod';
 
-import { simpleQuotesStringSchema } from '../simpleQuotesStringSchema';
+import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
 describe('simpleQuotesStringSchema', () => {
   it('validates a string with simple quotes', () => {

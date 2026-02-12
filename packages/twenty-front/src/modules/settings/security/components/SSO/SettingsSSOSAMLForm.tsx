@@ -173,7 +173,7 @@ export const SettingsSSOSAMLForm = () => {
               <SettingsTextInput
                 instanceId="sso-saml-acs-url"
                 disabled={true}
-                label="ACS Url"
+                label={t`ACS Url`}
                 value={acsUrl}
                 fullWidth
               />
@@ -194,7 +194,7 @@ export const SettingsSSOSAMLForm = () => {
               <SettingsTextInput
                 instanceId="sso-saml-entity-id"
                 disabled={true}
-                label="Entity ID"
+                label={t`Entity ID`}
                 value={entityID}
                 fullWidth
               />

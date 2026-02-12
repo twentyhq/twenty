@@ -1,16 +1,20 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
-  StyledSettingsOptionCardContent,
-  StyledSettingsOptionCardDescription,
-  StyledSettingsOptionCardIcon,
-  StyledSettingsOptionCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
+  useAiModelLabel,
+  useAiModelOptions,
+} from '@/ai/hooks/useAiModelOptions';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import {
+  StyledSettingsCardContent,
+  StyledSettingsCardDescription,
+  StyledSettingsCardIcon,
+  StyledSettingsCardTitle,
+} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
@@ -18,6 +22,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconBolt, IconBrain } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledSelectContainer = styled.div`
   justify-content: flex-end;
@@ -38,8 +43,41 @@ export const SettingsAIRouterSettings = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const modelOptions = useAiModelOptions();
-  const noModelsAvailable = modelOptions.length === 0;
+  const aiModels = useRecoilValueV2(aiModelsState);
+  const activeModelOptions = useAiModelOptions();
+  const fastModelLabel = useAiModelLabel(currentWorkspace?.fastModel);
+  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel);
+
+  const currentFastModel = aiModels.find(
+    (m) => m.modelId === currentWorkspace?.fastModel,
+  );
+  const currentSmartModel = aiModels.find(
+    (m) => m.modelId === currentWorkspace?.smartModel,
+  );
+
+  const fastModelOptions =
+    currentFastModel?.deprecated === true
+      ? [
+          {
+            value: currentWorkspace?.fastModel ?? '',
+            label: `${fastModelLabel} (deprecated)`,
+          },
+          ...activeModelOptions,
+        ]
+      : activeModelOptions;
+
+  const smartModelOptions =
+    currentSmartModel?.deprecated === true
+      ? [
+          {
+            value: currentWorkspace?.smartModel ?? '',
+            label: `${smartModelLabel} (deprecated)`,
+          },
+          ...activeModelOptions,
+        ]
+      : activeModelOptions;
+
+  const noModelsAvailable = activeModelOptions.length === 0;
 
   const handleFastModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
@@ -124,59 +162,57 @@ export const SettingsAIRouterSettings = () => {
 
       {noModelsAvailable ? (
         <Card rounded>
-          <StyledSettingsOptionCardContent>
+          <StyledSettingsCardContent>
             <StyledErrorMessage>
               {t`No models available. Please configure AI models in your workspace settings.`}
             </StyledErrorMessage>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
         </Card>
       ) : (
         <Card rounded>
-          <StyledSettingsOptionCardContent>
-            <StyledSettingsOptionCardIcon>
+          <StyledSettingsCardContent>
+            <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={IconBolt} />
-            </StyledSettingsOptionCardIcon>
+            </StyledSettingsCardIcon>
             <div>
-              <StyledSettingsOptionCardTitle>
-                {t`Fast Model`}
-              </StyledSettingsOptionCardTitle>
-              <StyledSettingsOptionCardDescription>
+              <StyledSettingsCardTitle>{t`Fast Model`}</StyledSettingsCardTitle>
+              <StyledSettingsCardDescription>
                 {t`Quick model for routing decisions`}
-              </StyledSettingsOptionCardDescription>
+              </StyledSettingsCardDescription>
             </div>
             <StyledSelectContainer>
               <Select
                 dropdownId="fast-model-select"
                 value={currentWorkspace?.fastModel || DEFAULT_FAST_MODEL}
                 onChange={handleFastModelChange}
-                options={modelOptions}
+                options={fastModelOptions}
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
 
-          <StyledSettingsOptionCardContent>
-            <StyledSettingsOptionCardIcon>
+          <StyledSettingsCardContent>
+            <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={IconBrain} />
-            </StyledSettingsOptionCardIcon>
+            </StyledSettingsCardIcon>
             <div>
-              <StyledSettingsOptionCardTitle>
+              <StyledSettingsCardTitle>
                 {t`Smart Model`}
-              </StyledSettingsOptionCardTitle>
-              <StyledSettingsOptionCardDescription>
+              </StyledSettingsCardTitle>
+              <StyledSettingsCardDescription>
                 {t`Advanced model for complex planning`}
-              </StyledSettingsOptionCardDescription>
+              </StyledSettingsCardDescription>
             </div>
             <StyledSelectContainer>
               <Select
                 dropdownId="smart-model-select"
                 value={currentWorkspace?.smartModel || DEFAULT_SMART_MODEL}
                 onChange={handleSmartModelChange}
-                options={modelOptions}
+                options={smartModelOptions}
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
         </Card>
       )}
     </Section>

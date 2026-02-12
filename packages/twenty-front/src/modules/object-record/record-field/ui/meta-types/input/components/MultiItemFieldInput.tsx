@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { useDebounce } from 'use-debounce';
 
 import {
   MultiItemBaseInput,
@@ -9,26 +10,34 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { CustomError } from 'twenty-shared/utils';
+import { useRecoilValue } from 'recoil';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onChange: (newItemsValue: T[]) => void;
-  onEscape?: (newItemsValue: T[]) => void;
+  onEscape: (newItemsValue: T[]) => void;
+  onEnter: (newItemsValue: T[]) => void;
+  onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
+  onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
-  formatInput?: (input: string) => T;
+  formatInput?: (input: string, itemIndex?: number) => T;
   renderItem: (props: {
     value: T;
     index: number;
@@ -37,10 +46,9 @@ type MultiItemFieldInputProps<T> = {
     handleDelete: () => void;
   }) => React.ReactNode;
   newItemLabel?: string;
+  onAddClick?: () => void;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
-  onClickOutside?: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
-  onError?: (hasError: boolean, values: any[]) => void;
   maxItemCount?: number;
 };
 
@@ -50,82 +58,119 @@ export const MultiItemFieldInput = <T,>({
   items,
   onChange,
   onEscape,
+  onEnter,
+  onError,
   placeholder,
   validateInput,
   formatInput,
   renderItem,
   newItemLabel,
+  onAddClick,
   fieldMetadataType,
   renderInput,
   onClickOutside,
-  onError,
   maxItemCount,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleEscape = () => {
-    onEscape?.(items);
-  };
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
+  const currentFocusedItem = useRecoilValue(currentFocusedItemSelector);
+
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      handleSubmitInput();
-      onClickOutside?.(items, event);
+      if (
+        currentFocusedItem?.componentInstance.componentType !==
+        FocusComponentType.OPENED_FIELD_INPUT
+      ) {
+        return;
+      }
+      const { isValid } = validateInputAndComputeUpdatedItems();
+
+      if (!isValid && isInputDisplayed) {
+        return;
+      }
+
+      handleSubmitChanges();
+      onClickOutside(items, event);
     },
     listenerId: instanceId,
   });
 
-  useHotkeysOnFocusedElement({
-    focusId: instanceId,
-    keys: [Key.Escape],
-    callback: handleEscape,
-    dependencies: [handleEscape],
-  });
+  const getItemValueAsString = useCallback(
+    (index: number): string => {
+      if (index >= items.length) {
+        return '';
+      }
 
-  const getItemValueAsString = (index: number): string => {
-    let item;
-    switch (fieldMetadataType) {
-      case FieldMetadataType.LINKS:
-        item = items[index] as { label: string; url: string };
-        return item.url || '';
-      case FieldMetadataType.PHONES:
-        item = items[index] as PhoneRecord;
-        return item.callingCode + item.number;
-      case FieldMetadataType.EMAILS:
-        item = items[index] as string;
-        return item;
-      case FieldMetadataType.ARRAY:
-        item = items[index] as string;
-        return item;
-      default:
-        throw new CustomError(
-          `Unsupported field type: ${fieldMetadataType}`,
-          'UNSUPPORTED_FIELD_TYPE',
-        );
-    }
-  };
+      let item;
+      switch (fieldMetadataType) {
+        case FieldMetadataType.LINKS:
+          item = items[index] as { label: string; url: string };
+          return item.url || '';
+        case FieldMetadataType.PHONES:
+          item = items[index] as PhoneRecord;
+          return item.callingCode + item.number;
+        case FieldMetadataType.EMAILS:
+          item = items[index] as string;
+          return item;
+        case FieldMetadataType.ARRAY:
+          item = items[index] as string;
+          return item;
+        case FieldMetadataType.FILES:
+          item = items[index] as { label: string };
+          return item.label || '';
+        default:
+          throw new CustomError(
+            `Unsupported field type: ${fieldMetadataType}`,
+            'UNSUPPORTED_FIELD_TYPE',
+          );
+      }
+    },
+    [items, fieldMetadataType],
+  );
 
-  const shouldAutoEditSingleItem = items.length === 1 && maxItemCount === 1;
+  const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
+  const shouldAutoEditFirstItemOnOpen =
+    items.length === 0 || maxItemCount === 1;
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(
-    shouldAutoEditSingleItem,
+    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick),
   );
-  const [inputValue, setInputValue] = useState(() =>
-    shouldAutoEditSingleItem ? getItemValueAsString(0) : '',
+
+  const [inputValue, setInputValue] = useState(
+    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick)
+      ? getItemValueAsString(0)
+      : '',
   );
-  const [itemToEditIndex, setItemToEditIndex] = useState(
-    shouldAutoEditSingleItem ? 0 : -1,
-  );
+
+  const [itemToEditIndex, setItemToEditIndex] = useState(0);
+  const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+
   const [errorData, setErrorData] = useState({
     isValid: true,
     errorMessage: '',
   });
-  const isAddingNewItem = itemToEditIndex === -1;
+
+  const [searchFilter, setSearchFilter] = useState('');
+  const [debouncedSearchFilter] = useDebounce(searchFilter, 150);
+
+  const shouldShowSearch = items.length > 3;
+
+  const filteredItems = useMemo(() => {
+    if (!shouldShowSearch || !debouncedSearchFilter) {
+      return items;
+    }
+    const searchTerm = normalizeSearchText(debouncedSearchFilter);
+    return items.filter((_item, index) => {
+      const itemText = getItemValueAsString(index);
+      return normalizeSearchText(itemText).includes(searchTerm);
+    });
+  }, [items, debouncedSearchFilter, shouldShowSearch, getItemValueAsString]);
+
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
 
@@ -146,54 +191,94 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
-    setItemToEditIndex(-1);
+    if (isDefined(onAddClick)) {
+      onAddClick();
+      return;
+    }
+
+    setIsAddingNewItem(true);
+    setInputValue('');
     setIsInputDisplayed(true);
   };
 
   const handleEditButtonClick = (index: number) => {
-    setInputValue(getItemValueAsString(index));
     setItemToEditIndex(index);
+    setInputValue(getItemValueAsString(index));
+    setIsAddingNewItem(false);
     setIsInputDisplayed(true);
   };
 
-  const handleSubmitInput = () => {
+  const handleEnter = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
+
+    handleSubmitChanges();
+    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      onEnter(updatedItems);
+    }
+    setIsInputDisplayed(false);
+    setIsAddingNewItem(false);
+    setInputValue('');
+  };
+
+  const handleSubmitChanges = () => {
+    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+    if (!isValid) {
+      return;
+    }
+
+    onChange(updatedItems);
+  };
+
+  const validateInputAndComputeUpdatedItems = (): {
+    isValid: boolean;
+    updatedItems: T[];
+  } => {
     const sanitizedInput = inputValue.trim();
 
     if (sanitizedInput === '' && isAddingNewItem) {
-      return;
+      return { isValid: true, updatedItems: items };
+    }
+
+    if (sanitizedInput === '' && shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
+      return {
+        isValid: true,
+        updatedItems: [],
+      };
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
-      return;
+      return {
+        isValid: true,
+        updatedItems: toSpliced(items, itemToEditIndex, 1),
+      };
     }
+
+    const newItem = formatInput
+      ? formatInput(
+          sanitizedInput,
+          isAddingNewItem ? undefined : itemToEditIndex,
+        )
+      : (sanitizedInput as unknown as T);
 
     if (validateInput !== undefined) {
       const validationData = validateInput(sanitizedInput) ?? { isValid: true };
       if (!validationData.isValid) {
         onError?.(true, items);
         setErrorData(validationData);
-        return;
+        return { isValid: false, updatedItems: items };
       }
     }
 
-    const newItem = formatInput
-      ? formatInput(sanitizedInput)
-      : (sanitizedInput as unknown as T);
-
-    if (!isAddingNewItem && newItem === items[itemToEditIndex]) {
-      setIsInputDisplayed(false);
-      setInputValue('');
-      return;
-    }
-
-    const updatedItems = isAddingNewItem
-      ? [...items, newItem]
-      : toSpliced(items, itemToEditIndex, 1, newItem);
-
-    onChange(updatedItems);
-    setIsInputDisplayed(false);
-    setInputValue('');
+    return {
+      isValid: true,
+      updatedItems: isAddingNewItem
+        ? [...items, newItem]
+        : toSpliced(items, itemToEditIndex, 1, newItem),
+    };
   };
 
   const handleSetPrimaryItem = (index: number) => {
@@ -204,35 +289,69 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
-    setIsInputDisplayed(false);
-    setInputValue('');
-    setItemToEditIndex(-1);
+
+    const shouldShowInputAfterDeletion =
+      updatedItems.length === 0 && !isDefined(onAddClick);
+    setIsInputDisplayed(shouldShowInputAfterDeletion);
+    setIsAddingNewItem(false);
+    if (shouldShowInputAfterDeletion) {
+      setInputValue('');
+    }
   };
+
+  const handleEscape = () => {
+    onEscape(items);
+  };
+
+  useHotkeysOnFocusedElement({
+    focusId: instanceId,
+    keys: [Key.Escape],
+    callback: handleEscape,
+    dependencies: [handleEscape],
+  });
 
   return (
     <DropdownContent ref={containerRef}>
-      {!!items.length && (!shouldAutoEditSingleItem || !isInputDisplayed) && (
+      {shouldShowSearch && !isInputDisplayed && (
         <>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {items.map((item, index) =>
-              renderItem({
-                value: item,
-                index,
-                handleEdit: () => handleEditButtonClick(index),
-                handleSetPrimary: () => handleSetPrimaryItem(index),
-                handleDelete: () => handleDeleteItem(index),
-              }),
-            )}
-          </DropdownMenuItemsContainer>
-          {isInputDisplayed || !isLimitReached ? (
-            <DropdownMenuSeparator />
-          ) : null}
+          <DropdownMenuSearchInput
+            value={searchFilter}
+            onChange={(event) =>
+              setSearchFilter(
+                turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
+              )
+            }
+            autoFocus
+          />
+          <DropdownMenuSeparator />
         </>
       )}
-      {isInputDisplayed || !items.length ? (
+      {!!filteredItems.length &&
+        (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed) && (
+          <>
+            <DropdownMenuItemsContainer hasMaxHeight>
+              {filteredItems.map((item) => {
+                const originalIndex = items.indexOf(item);
+                return renderItem({
+                  value: item,
+                  index: originalIndex,
+                  handleEdit: () => handleEditButtonClick(originalIndex),
+                  handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
+                  handleDelete: () => {
+                    handleDeleteItem(originalIndex);
+                  },
+                });
+              })}
+            </DropdownMenuItemsContainer>
+            {isInputDisplayed || !isLimitReached ? (
+              <DropdownMenuSeparator />
+            ) : null}
+          </>
+        )}
+      {isInputDisplayed ? (
         <MultiItemBaseInput
           instanceId={instanceId}
-          autoFocus
+          autoFocus={!shouldShowSearch}
           placeholder={placeholder}
           value={inputValue}
           hasError={!errorData.isValid}
@@ -243,13 +362,13 @@ export const MultiItemFieldInput = <T,>({
               ? handleInputChange(turnIntoEmptyStringIfWhitespacesOnly(value))
               : handleInputChange('');
           }}
-          onEnter={handleSubmitInput}
+          onEnter={handleEnter}
           hasItem={!!items.length}
           rightComponent={
             items.length ? (
               <LightIconButton
                 Icon={isAddingNewItem ? IconPlus : IconCheck}
-                onClick={handleSubmitInput}
+                onClick={handleEnter}
               />
             ) : null
           }

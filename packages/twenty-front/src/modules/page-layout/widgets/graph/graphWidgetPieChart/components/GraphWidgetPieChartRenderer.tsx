@@ -1,9 +1,14 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/useGraphPieChartWidgetData';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
+import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
@@ -11,10 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import {
-  type PageLayoutWidget,
-  type PieChartConfiguration,
-} from '~/generated/graphql';
 
 const GraphWidgetPieChart = lazy(() =>
   import(
@@ -24,11 +25,13 @@ const GraphWidgetPieChart = lazy(() =>
   })),
 );
 
-export const GraphWidgetPieChartRenderer = ({
-  widget,
-}: {
-  widget: PageLayoutWidget;
-}) => {
+export const GraphWidgetPieChartRenderer = () => {
+  const widget = useCurrentWidget();
+
+  assertPieChartWidgetOrThrow(widget);
+
+  const { userTimezone } = useUserTimezone();
+
   const {
     data,
     loading,
@@ -38,13 +41,13 @@ export const GraphWidgetPieChartRenderer = ({
     showDataLabels,
     showCenterMetric,
     formattedToRawLookup,
+    colorMode,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as PieChartConfiguration,
+    configuration: widget.configuration,
   });
 
   const navigate = useNavigate();
-  const configuration = widget.configuration as PieChartConfiguration;
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
@@ -55,17 +58,26 @@ export const GraphWidgetPieChartRenderer = ({
     }),
   );
 
-  const handleSliceClick = (datum: PieChartDataItem) => {
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+
+  const groupByField = objectMetadataItem.fields.find(
+    (field) => field.id === widget.configuration.groupByFieldMetadataId,
+  );
+  const canRedirectToFilteredView =
+    isFilteredViewRedirectionSupported(groupByField);
+
+  const handleSliceClick = (datum: PieChartDataItemWithColor) => {
     const rawValue = formattedToRawLookup.get(datum.id) ?? null;
 
     const drilldownQueryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
-      configuration,
+      configuration: widget.configuration,
       clickedData: {
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: configuration.timezone ?? undefined,
+      timezone: userTimezone,
+      firstDayOfTheWeek: userFirstDayOfTheWeek,
     });
 
     const url = getAppPath(
@@ -80,11 +92,11 @@ export const GraphWidgetPieChartRenderer = ({
   };
 
   if (loading) {
-    return <ChartSkeletonLoader />;
+    return <WidgetSkeletonLoader />;
   }
 
   return (
-    <Suspense fallback={<ChartSkeletonLoader />}>
+    <Suspense fallback={<WidgetSkeletonLoader />}>
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
@@ -92,10 +104,15 @@ export const GraphWidgetPieChartRenderer = ({
         data={data}
         id={widget.id}
         objectMetadataItemId={widget.objectMetadataId}
-        configuration={configuration}
+        configuration={widget.configuration}
         showLegend={showLegend}
+        colorMode={colorMode}
         displayType="shortNumber"
-        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
+        onSliceClick={
+          isPageLayoutInEditMode || !canRedirectToFilteredView
+            ? undefined
+            : handleSliceClick
+        }
         showDataLabels={showDataLabels}
         showCenterMetric={showCenterMetric}
       />

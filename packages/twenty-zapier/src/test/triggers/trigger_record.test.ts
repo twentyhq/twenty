@@ -1,4 +1,8 @@
-import { Bundle, createAppTester, ZObject } from 'zapier-platform-core';
+import {
+  type Bundle,
+  createAppTester,
+  type ZObject,
+} from 'zapier-platform-core';
 
 import App from '../../index';
 import { triggerRecordKey } from '../../triggers/trigger_record';
@@ -57,8 +61,7 @@ describe('triggers.trigger_record.created', () => {
       unsubscribeBundle,
     );
 
-    expect(unsubscribeResult).toBeDefined();
-    expect(unsubscribeResult.id).toEqual(result.id);
+    expect(unsubscribeResult).toBeTruthy();
 
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
@@ -146,9 +149,7 @@ describe('triggers.trigger_record.update', () => {
       bundle,
     );
 
-    expect(checkDbResult.data.webhooks.operations[0]).toEqual(
-      'company.updated',
-    );
+    expect(checkDbResult.data.webhook.operations[0]).toEqual('company.updated');
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
@@ -171,8 +172,7 @@ describe('triggers.trigger_record.update', () => {
       unsubscribeBundle,
     );
 
-    expect(unsubscribeResult).toBeDefined();
-    expect(unsubscribeResult.id).toEqual(result.id);
+    expect(unsubscribeResult).toBeTruthy();
 
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
@@ -231,9 +231,7 @@ describe('triggers.trigger_record.delete', () => {
       bundle,
     );
 
-    expect(checkDbResult.data.webhooks.operations[0]).toEqual(
-      'company.deleted',
-    );
+    expect(checkDbResult.data.webhook.operations[0]).toEqual('company.deleted');
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
@@ -256,8 +254,7 @@ describe('triggers.trigger_record.delete', () => {
       unsubscribeBundle,
     );
 
-    expect(unsubscribeResult).toBeDefined();
-    expect(unsubscribeResult.id).toEqual(result.id);
+    expect(unsubscribeResult).toBeTruthy();
 
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>

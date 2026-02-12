@@ -1,0 +1,198 @@
+---
+title: Mettre à jour des enregistrements existants via l'importation
+description: Guide complet étape par étape pour mettre à jour en masse des enregistrements à l'aide de l'importation CSV.
+---
+
+## Vue d'ensemble
+
+Besoin de mettre à jour de nombreux enregistrements en une seule fois ? Au lieu de les modifier un par un, utilisez l'importation CSV pour mettre à jour en masse les enregistrements existants.
+
+**Cas d'utilisation :**
+
+* Mettre à jour les intitulés de poste pour plusieurs personnes
+* Modifier les informations d'entreprise en masse
+* Ajouter des données à de nouveaux champs personnalisés
+* Corriger des erreurs de données sur de nombreux enregistrements
+
+## Comment ça marche
+
+Lorsque vous importez un fichier contenant un **identifiant unique** qui correspond à un enregistrement existant, Twenty met à jour cet enregistrement au lieu de créer un doublon.
+
+| Si l'identifiant unique...              | Twenty va...                                                                    |
+| --------------------------------------- | ------------------------------------------------------------------------------- |
+| Correspond à un enregistrement existant | **Mettre à jour** l'enregistrement existant                                     |
+| Ne correspond à aucun enregistrement    | **Créer** un nouvel enregistrement                                              |
+| Est absent de votre fichier             | **Créer** un nouvel enregistrement (avec un identifiant généré automatiquement) |
+
+<Warning>
+  **Les champs à sélection multiple sont écrasés, pas fusionnés.**
+
+  Si un enregistrement a `Option A` et `Option B` sélectionnées et que vous importez `["Option C"]`, l'enregistrement n'aura plus que `Option C` après l'importation. L'importation remplace toutes les sélections précédentes — elle ne les complète pas.
+
+  Pour conserver les valeurs existantes, incluez-les toutes dans votre importation : `["Option A","Option B","Option C"]`
+</Warning>
+
+## Étape 1 : Exporter vos données actuelles
+
+Commencez par exporter les enregistrements que vous souhaitez mettre à jour :
+
+1. Accédez à l'objet (Personnes, Entreprises, etc.)
+2. **Ajoutez les colonnes dont vous avez besoin** — cliquez sur **Options → Champs** pour afficher les champs que vous souhaitez mettre à jour
+3. **Filtrez si nécessaire** — réduisez la vue aux seuls enregistrements que vous souhaitez mettre à jour
+4. Cliquez sur **⋮** → **Exporter la vue**
+5. Enregistrez le fichier CSV
+
+<Note>**Pourquoi exporter d'abord ?** Le fichier exporté a le bon format, inclut des identifiants uniques et se met automatiquement en correspondance lors de l'importation.</Note>
+
+### Ce qui est exporté
+
+* Toutes les colonnes visibles dans votre vue actuelle
+* Les identifiants uniques de l'enregistrement (`id`, `email`, `domain`)
+* Les valeurs de champ actuelles que vous pouvez modifier
+
+## Étape 2 : Modifier le fichier CSV
+
+Ouvrez le fichier exporté dans votre application de feuille de calcul (Excel, Google Sheets, etc.) :
+
+1. **Conservez la colonne de l'identifiant unique** — ne supprimez pas `id`, `email` ni `domain`
+2. **Mettez à jour les valeurs** dans les colonnes que vous souhaitez modifier
+3. **Supprimez les colonnes que vous n'avez pas besoin de mettre à jour** (facultatif, mais plus propre)
+4. **Ne modifiez pas les valeurs des identifiants uniques** — sinon Twenty créera de nouveaux enregistrements
+
+### Exemple : Mise à jour des intitulés de poste
+
+**Fichier exporté :**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Sales Rep
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Sales Rep
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
+```
+
+**Après vos modifications :**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Account Executive
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Senior Account Executive
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Account Executive
+```
+
+<Warning>
+  **Ne modifiez pas les valeurs des identifiants uniques.**
+
+  Si vous remplacez `john@acme.com` par `john.smith@acme.com`, Twenty créera un nouvel enregistrement au lieu de mettre à jour l'existant.
+</Warning>
+
+## Étape 3 : Importer le fichier mis à jour
+
+1. Accédez à l'objet
+2. Cliquez sur **⋮** → **Importer des enregistrements**
+3. Téléversez votre fichier CSV modifié
+4. **Assurez-vous que l'identifiant unique est mis en correspondance** — vérifiez que `email`, `domain` ou `id` est correctement mis en correspondance
+5. Vérifiez les correspondances de champs
+6. Recherchez des erreurs
+7. Cliquez sur **Confirmer**
+
+Twenty fait correspondre les enregistrements via l'identifiant unique et les met à jour avec les nouvelles valeurs.
+
+## Choisir le bon identifiant unique
+
+| Objet                    | Recommandé                  | Alternative | Notes                                      |
+| ------------------------ | --------------------------- | ----------- | ------------------------------------------ |
+| **Personnes**            | `e-mail`                    | `id`        | L'adresse e-mail est lisible par un humain |
+| **Entreprises**          | `domaine`                   | `id`        | Le domaine est lisible par un humain       |
+| **Objets personnalisés** | N'importe quel champ unique | `id`        | Utilisez votre champ unique personnalisé   |
+
+<Note>**N'utilisez qu'UN SEUL identifiant unique.** N'associez pas à la fois `email` ET `id`. Cela peut provoquer de la confusion et des erreurs.</Note>
+
+### Utiliser des champs uniques personnalisés
+
+Si vous avez un champ personnalisé marqué comme unique (comme un ID externe provenant d'un autre système) :
+
+1. Incluez ce champ dans votre export et votre import
+2. Associez-le lors de l'importation
+3. Twenty effectuera la correspondance sur ce champ
+
+## Étape 4 : Vérifier les mises à jour
+
+Après l'importation :
+
+1. Ouvrez quelques enregistrements mis à jour
+2. Vérifiez que les modifications ont été appliquées
+3. Vérifiez qu'aucun enregistrement en double n'a été créé
+
+## Et les champs qui ne figurent pas dans votre fichier ?
+
+**Les champs non inclus dans votre fichier d'import restent inchangés.**
+
+| Votre fichier inclut...      | Résultat                                                             |
+| ---------------------------- | -------------------------------------------------------------------- |
+| `email`, `jobTitle`          | Seul `jobTitle` est mis à jour ; les autres champs restent inchangés |
+| `email`, `jobTitle`, `phone` | `jobTitle` et `phone` sont mis à jour                                |
+
+Cela signifie que vous n'avez besoin d'inclure que les champs que vous souhaitez modifier (plus l'identifiant unique).
+
+## Combiner mises à jour et nouveaux enregistrements
+
+Vous pouvez mettre à jour des enregistrements existants ET en créer de nouveaux dans la même importation :
+
+```csv
+email,firstName,lastName,jobTitle
+john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
+newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
+```
+
+## Erreurs courantes à éviter
+
+| Erreur                            | Problème                                                                 | Résultat                                               | Solution                                                |
+| --------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------- |
+| **Modifier l'identifiant unique** | Remplacé `john@acme.com` par `john.smith@acme.com`                       | Crée un nouvel enregistrement au lieu de mettre à jour | Conservez les identifiants uniques inchangés            |
+| **Plusieurs champs uniques**      | Association de `email` ET `id`                                           | Risques de conflits de correspondance                  | N'associez qu'UN SEUL identifiant unique                |
+| **Pas d'identifiant unique**      | Le fichier ne contient que `firstName`, `lastName`, `jobTitle`           | Toutes les lignes créent de nouveaux enregistrements   | Incluez toujours `email`, `domain` ou `id`              |
+| **Incohérence de casse**          | Le fichier contient `John@acme.com` mais Twenty contient `john@acme.com` | Crée un nouvel enregistrement                          | Exportez depuis Twenty pour obtenir les valeurs exactes |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Que se passe-t-il si certains enregistrements n'existent pas encore ?">
+    Les enregistrements avec des identifiants uniques qui ne correspondent à aucun enregistrement existant seront créés comme de nouveaux enregistrements. Cela vous permet de mettre à jour et de créer dans la même importation.
+  </Accordion>
+
+  <Accordion title="Puis-je effacer/vider la valeur d'un champ ?">
+    Oui, laissez la cellule vide dans votre CSV. L'importation effacera la valeur de ce champ sur l'enregistrement existant.
+  </Accordion>
+
+  <Accordion title="Que se passe-t-il pour les champs que je n'inclus pas dans l'import ?">
+    Les champs qui ne figurent pas dans votre fichier d'import restent inchangés sur les enregistrements existants. Seuls les champs que vous incluez sont mis à jour.
+  </Accordion>
+
+  <Accordion title="Puis-je mettre à jour des champs de relation (comme Entreprise) ?">
+    Oui! Incluez l'identifiant unique de la relation (par ex., `companyDomain`) et associez-le au champ de relation. La relation sera mise à jour.
+  </Accordion>
+
+  <Accordion title="Comment savoir quels enregistrements seront mis à jour et lesquels seront créés ?">
+    Lors de l'étape de révision de l'import, Twenty vous indique combien d'enregistrements seront mis à jour ou créés en fonction des correspondances d'identifiants uniques.
+  </Accordion>
+
+  <Accordion title="Puis-je annuler une mise à jour en masse ?">
+    Il n'existe pas d'annulation automatique. Nous recommandons d'exporter vos données comme sauvegarde avant d'effectuer des mises à jour en masse.
+  </Accordion>
+</AccordionGroup>
+
+## Meilleures pratiques
+
+1. **Exportez d'abord** — commencez toujours à partir d'une exportation pour garantir le bon format
+2. **Sauvegardez avant de mettre à jour** — exportez vos données avant d'effectuer des modifications en masse
+3. **Testez avec quelques enregistrements** — essayez d'abord de mettre à jour 5 à 10 enregistrements avant d'effectuer un lot important
+4. **Utilisez des identifiants lisibles par un humain** — `email` et `domain` sont plus faciles à vérifier que `id`
+5. **Incluez uniquement les colonnes nécessaires** — moins de colonnes signifie moins de risques d'erreurs
+
+## Résolution des problèmes
+
+Vous rencontrez des problèmes ? Consultez :
+
+* [Comment corriger les erreurs d'import](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Référence de correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)

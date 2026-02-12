@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Successful User Sign Up (integration) should sign up, delete and signup same new user successfully 1`] = `
 {
@@ -25,6 +25,10 @@ exports[`Successful User Sign Up (integration) should sign up, delete and signup
   "extensions": {
     "code": "UNAUTHENTICATED",
     "subCode": "USER_NOT_FOUND",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "User not found.",
+    },
   },
   "message": "User not found",
 }

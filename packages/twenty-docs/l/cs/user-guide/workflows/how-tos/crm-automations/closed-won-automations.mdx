@@ -1,0 +1,179 @@
+---
+title: Automatizace pro Uzavřeno - Vyhráno
+description: Automatizujte činnosti po výhře, když se příležitosti uzavřou.
+---
+
+Když se obchod uzavře, je potřeba provést několik věcí: aktualizovat stav společnosti, upozornit členy týmu, vytvořit onboardingové úkoly. Automatizujte to vše jediným pracovním postupem.
+
+## Problém
+
+Když se příležitost přesune do stavu "Uzavřeno - Vyhráno":
+
+* Typ společnosti je třeba změnit z "Zájemce" na "Zákazník"
+* Je třeba vytvořit onboardingové úkoly
+* Je třeba upozornit tým Customer Success
+* Obchodní zástupce potřebuje potvrzení
+
+Dělat to ručně je časově náročné a náchylné k chybám.
+
+## Řešení
+
+Vytvořte pracovní postup, který automaticky zajistí všechny činnosti po výhře.
+
+## Kompletní nastavení pracovního postupu
+
+### Krok 1: Vytvořte pracovní postup
+
+1. Přejděte na **Nastavení → Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte jej "Vyhraný obchod - Automatizace po výhře"
+
+### Krok 2: Nakonfigurujte spouštěč
+
+1. Vyberte **Záznam je aktualizován**
+2. Vyberte **Příležitosti**
+3. V části "Pole ke sledování" vyberte **Stádium**
+
+### Krok 3: Přidejte filtr podle stádia
+
+1. Přidejte akci **Filtr**
+2. Podmínka: `{{trigger.object.stage}}` se rovná "Uzavřeno - Vyhráno"
+
+### Krok 4: Aktualizujte typ společnosti
+
+1. Přidejte akci **Aktualizovat záznam**
+2. Nakonfigurujte:
+
+| Pole                      | Hodnota                         |
+| ------------------------- | ------------------------------- |
+| **Objekt**                | Společnosti                     |
+| **Záznam**                | `{{trigger.object.company.id}}` |
+| **Typ**                   | Zákazník                        |
+| **Datum prvního obchodu** | `{{trigger.object.closedAt}}`   |
+| **Vlastník účtu**         | `{{trigger.object.owner.id}}`   |
+
+### Krok 5: Vytvořte onboardingový úkol
+
+1. Přidejte akci **Vytvořit záznam**
+2. Nakonfigurujte:
+
+| Pole                        | Hodnota                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Objekt**                  | Úkoly                                                                                                         |
+| **Název**                   | `Onboarding: {{trigger.object.name}}`                                                                         |
+| **Přiřazený**               | Člen týmu Customer Success                                                                                    |
+| **Datum splatnosti**        | Za 3 dny                                                                                                      |
+| **Priorita**                | Vysoká                                                                                                        |
+| **Související společnost**  | `{{trigger.object.company.id}}`                                                                               |
+| **Související příležitost** | `{{trigger.object.id}}`                                                                                       |
+| **Popis**                   | `Onboarding nového zákazníka pro {{trigger.object.company.name}}. Hodnota obchodu: {{trigger.object.amount}}` |
+
+### Krok 6: Upozorněte Customer Success
+
+1. Přidejte akci **Odeslat e-mail**
+2. Nakonfigurujte:
+
+| Pole            | Hodnota                                             |
+| --------------- | --------------------------------------------------- |
+| **Komu**        | customer-success@yourcompany.com                    |
+| **Předmět**     | `🎉 Nový zákazník: {{trigger.object.company.name}}` |
+| **Text zprávy** | Viz příklad níže                                    |
+
+**Příklad textu e-mailu**:
+
+```
+Ahoj týme CS,
+
+Máme nového zákazníka!
+
+Společnost: {{trigger.object.company.name}}
+Obchod: {{trigger.object.name}}
+Hodnota: {{trigger.object.amount}}
+Obchodní zástupce: {{trigger.object.owner.name}}
+Datum uzavření: {{trigger.object.closedAt}}
+
+Onboardingový úkol byl automaticky vytvořen.
+
+Dejme jim skvělý start!
+```
+
+### Krok 7: Potvrďte obchodnímu zástupci
+
+1. Přidejte další akci **Odeslat e-mail**
+2. Nakonfigurujte:
+
+| Pole            | Hodnota                                                                                             |
+| --------------- | --------------------------------------------------------------------------------------------------- |
+| **Komu**        | `{{trigger.object.owner.email}}`                                                                    |
+| **Předmět**     | `✅ Obchod uzavřen: {{trigger.object.name}}`                                                         |
+| **Text zprávy** | Gratulujeme! Váš obchod byl zpracován. Tým Customer Success byl upozorněn a onboarding byl zahájen. |
+
+### Krok 8: Otestujte a aktivujte
+
+1. Otestujte přesunutím testovací příležitosti do stavu "Uzavřeno - Vyhráno"
+2. Ověřit:
+   * Typ společnosti změněn na "Zákazník"
+   * Onboardingový úkol vytvořen
+   * Tým Customer Success obdržel e-mail
+   * Obchodní zástupce obdržel potvrzení
+3. Až budete připraveni, aktivujte
+
+## Zpracování Uzavřeno - Prohráno
+
+Vytvořte podobný pracovní postup pro prohrané obchody:
+
+### Spouštěč
+
+* Záznam je aktualizován (Příležitosti, Stádium = "Uzavřeno - Prohráno")
+
+### Akce
+
+1. **Vytvořit záznam**: Úkol pro "Analýzu prohraného obchodu"
+2. **Aktualizovat záznam**: Přidat důvod prohry do záznamu společnosti
+3. **Odeslat e-mail**: Upozornit manažera na prohraný obchod
+
+## Pokročilé: Vícefázový onboarding
+
+Pro složitější onboarding vytvořte více úkolů:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Použijte **Iterator** k vytvoření každého úkolu z pole.
+
+## Nápady na přizpůsobení
+
+### Udržujte své další nástroje aktuální
+
+* Vytvořte zákazníka ve fakturačním systému pomocí **HTTP Request**
+
+### Podmíněné akce
+
+Použijte akce **Filtr** k:
+
+* Odlišný onboarding pro enterprise vs SMB
+* Různé přiřazené osoby podle regionu
+* Přeskočit upozornění u malých obchodů
+
+### Zahrnout podrobnosti obchodu
+
+Použijte akci **Code** k formátování:
+
+* Dokumenty se souhrnem obchodu
+* Poznámky k předání pro tým Customer Success
+* Vlastní onboardingové kontrolní seznamy
+
+## Související
+
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)

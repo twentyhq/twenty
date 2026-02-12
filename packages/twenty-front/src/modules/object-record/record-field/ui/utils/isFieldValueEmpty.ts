@@ -10,6 +10,8 @@ import { isFieldAddressValue } from '@/object-record/record-field/ui/types/guard
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
@@ -105,6 +107,14 @@ export const isFieldValueEmpty = ({
     return (
       !isFieldArrayValue(fieldValue) ||
       !isFieldMultiSelectValue(fieldValue, selectOptionValues) ||
+      !isDefined(fieldValue) ||
+      !isNonEmptyArray(fieldValue)
+    );
+  }
+
+  if (isFieldFiles(fieldDefinition)) {
+    return (
+      !isFieldFilesValue(fieldValue) ||
       !isDefined(fieldValue) ||
       !isNonEmptyArray(fieldValue)
     );

@@ -1,0 +1,253 @@
+---
+title: 1-Clique c/ Docker Compose
+---
+
+<Warning>
+  Contêineres Docker são para hospedagem de produção ou auto-hospedagem, para contribuições, por favor, verifique o [Setup Local](/l/pt/developers/contribute/capabilities/local-setup).
+</Warning>
+
+## Visão geral
+
+Este guia fornece instruções passo a passo para instalar e configurar o aplicativo Twenty usando Docker Compose. O objetivo é tornar o processo simples e evitar armadilhas comuns que possam quebrar sua configuração.
+
+**Importante:** Modifique apenas as configurações explicitamente mencionadas neste guia. Alterar outras configurações pode levar a problemas.
+
+Veja a documentação [Configurar Variáveis de Ambiente](/l/pt/developers/self-host/capabilities/setup) para configuração avançada. Todas as variáveis de ambiente devem ser declaradas no arquivo docker-compose.yml no nível do servidor e/ou trabalhador, dependendo da variável.
+
+## Requisitos do Sistema
+
+* RAM: Certifique-se de que seu ambiente tenha pelo menos 2GB de RAM. Memória insuficiente pode causar falhas nos processos.
+* Docker & Docker Compose: Certifique-se de que ambos estão instalados e atualizados.
+
+## Opção 1: Script de uma linha
+
+Instale a versão estável mais recente do Twenty com um único comando:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+Para instalar uma versão ou branch específica:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Substitua x.y.z pelo número da versão desejada.
+* Substitua branch-name pelo nome da branch que você deseja instalar.
+
+## Opção 2: Etapas manuais
+
+Siga estas etapas para uma configuração manual.
+
+### Etapa 1: Configure o arquivo de ambiente
+
+1. **Crie o arquivo .env**
+
+   Copie o exemplo de arquivo de ambiente para um novo arquivo .env no seu diretório de trabalho:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Gere Tokens Secretos**
+
+   Execute o seguinte comando para gerar uma string aleatória única:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Importante:** Mantenha este valor em segredo / não o compartilhe.
+
+3. **Atualize o `.env`**
+
+   Substitua o valor do espaço reservado no seu arquivo .env pelo token gerado:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Defina a Senha do Postgres**
+
+   Atualize o valor `PG_DATABASE_PASSWORD` no arquivo .env com uma senha forte sem caracteres especiais.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Etapa 2: Obtenha o arquivo Docker Compose
+
+Baixe o arquivo `docker-compose.yml` para o seu diretório de trabalho:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Etapa 3: Inicie o Aplicativo
+
+Inicie os contêineres Docker:
+
+```bash
+docker compose up -d
+```
+
+### Etapa 4: Acesse o Aplicativo
+
+Se você hospedar o twentyCRM no seu próprio computador, abra o navegador e acesse [http://localhost:3000](http://localhost:3000).
+
+Se você hospedar em um servidor, verifique se o servidor está em execução e se está tudo ok com
+
+```bash
+curl http://localhost:3000
+```
+
+## Configuração
+
+### Expor o Twenty para Acesso Externo
+
+Por padrão, o Twenty é executado em `localhost` na porta `3000`. Para acessá-lo via um domínio externo ou endereço IP, você precisa configurar o `SERVER_URL` no seu arquivo `.env`.
+
+#### Compreendendo `SERVER_URL`
+
+* **Protocolo:** Use `http` ou `https` dependendo da sua configuração.
+  * Use `http` se você não configurou SSL.
+  * Use `https` se você tiver SSL configurado.
+* **Domínio/IP:** Este é o nome de domínio ou endereço IP onde seu aplicativo está acessível.
+* **Porta:** Inclua o número da porta se você não estiver usando as portas padrão (`80` para `http`, `443` para `https`).
+
+### Requisitos de SSL
+
+SSL (HTTPS) é necessário para que certos recursos do navegador funcionem corretamente. Embora esses recursos possam funcionar durante o desenvolvimento local (já que os navegadores tratam o localhost de modo diferente), é necessária uma configuração adequada de SSL ao hospedar o Twenty em um domínio normal.
+
+Por exemplo, a API da área de transferência pode exigir um contexto seguro - alguns recursos, como botões de cópia através do aplicativo, podem não funcionar sem HTTPS ativado.
+
+Recomendamos fortemente configurar o Twenty atrás de um proxy reverso com terminação SSL para segurança e funcionalidade ótimas.
+
+#### Configurando `SERVER_URL`
+
+1. **Determine sua URL de Acesso**
+   * **Sem Proxy Reverso (Acesso Direto):**
+
+     Se você estiver acessando o aplicativo diretamente sem um proxy reverso:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **Com Proxy Reverso (Portas Padrão):**
+
+     Se você estiver usando um proxy reverso como Nginx ou Traefik e tiver SSL configurado:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **Com Proxy Reverso (Portas Customizadas):**
+
+     Se você estiver usando portas não-padrão:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Atualize o arquivo `.env`**
+
+   Abra seu arquivo `.env` e atualize o `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Exemplos:**
+
+   * Acesso direto sem SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * Acesso via domínio com SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Reinicie o Aplicativo**
+
+   Para que as alterações entrem em vigor, reinicie os contêineres Docker:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Considerações
+
+* **Configuração de Proxy Reverso:**
+
+  Certifique-se de que seu proxy reverso encaminha as solicitações para a porta interna correta (`3000` por padrão). Configure a terminação SSL e quaisquer cabeçalhos necessários.
+
+* **Configurações de Firewall:**
+
+  Abra as portas necessárias no seu firewall para permitir acesso externo.
+
+* **Consistência:**
+
+  A `SERVER_URL` deve corresponder à forma como os usuários acessam seu aplicativo nos navegadores.
+
+#### Persistência
+
+* **Volumes de Dados:**
+
+  A configuração do Docker Compose usa volumes para persistir dados para o banco de dados e armazenamento do servidor.
+
+* **Ambientes Sem Estado:**
+
+  Se estiver implantando em um ambiente sem estado (por exemplo, certos serviços de nuvem), configure armazenamento externo para persistir dados.
+
+## Backup e restauração
+
+Backups regulares protegem os dados do seu CRM contra perda.
+
+### Crie um backup do banco de dados
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### Automatize backups diários
+
+Adicione ao seu crontab (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### Restaurar a partir de um backup
+
+1. Pare o aplicativo:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. Restaure o banco de dados:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. Reinicie os serviços:
+
+```bash
+docker compose up -d
+```
+
+### Melhores práticas de backup
+
+* **Teste as restaurações regularmente** — verifique se os backups realmente funcionam
+* **Armazene os backups fora das instalações** — use armazenamento em nuvem (S3, GCS, etc.)
+* **Criptografe dados confidenciais** — proteja os backups com criptografia
+* **Mantenha várias cópias** — guarde backups diários, semanais e mensais
+
+## Resolução de Problemas
+
+Se encontrar algum problema, verifique [Resolução de Problemas](/l/pt/developers/self-host/capabilities/troubleshooting) para soluções.

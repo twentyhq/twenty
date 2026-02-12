@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -37,9 +38,7 @@ export const WorkspaceMemberPictureUploader = ({
 
   const [uploadPicture] = useMutation(UPLOAD_WORKSPACE_MEMBER_PROFILE_PICTURE);
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { canEdit: canEditProfilePicture } =
     useCanEditProfileField('profilePicture');
@@ -73,6 +72,7 @@ export const WorkspaceMemberPictureUploader = ({
       }
 
       await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: workspaceMemberId,
         updateOneRecordInput: { avatarUrl: signedFile.path },
       });
@@ -94,8 +94,8 @@ export const WorkspaceMemberPictureUploader = ({
       setErrorMessage(null);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Failed to upload picture';
-      setErrorMessage('An error occurred while uploading the picture.');
+        error instanceof Error ? error.message : t`Failed to upload picture`;
+      setErrorMessage(t`An error occurred while uploading the picture.`);
       enqueueErrorSnackBar({ message });
     } finally {
       setIsUploading(false);
@@ -112,6 +112,7 @@ export const WorkspaceMemberPictureUploader = ({
 
     try {
       await updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
         idToUpdate: workspaceMemberId,
         updateOneRecordInput: { avatarUrl: '' },
       });
@@ -130,8 +131,8 @@ export const WorkspaceMemberPictureUploader = ({
       setErrorMessage(null);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Failed to remove picture';
-      setErrorMessage('An error occurred while removing the picture.');
+        error instanceof Error ? error.message : t`Failed to remove picture`;
+      setErrorMessage(t`An error occurred while removing the picture.`);
       enqueueErrorSnackBar({ message });
     } finally {
       setIsUploading(false);

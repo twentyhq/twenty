@@ -9,26 +9,39 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+
+export type UserContext = {
+  firstName: string;
+  lastName: string;
+  locale: string;
+  timezone: string | null;
+};
 
 export type AgentActorContext = {
   actorContext: ActorMetadata;
   roleId: string;
+  userId: string;
+  userWorkspaceId: string;
+  userContext: UserContext;
 };
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class AgentActorContextService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userRoleService: UserRoleService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async buildUserAndAgentActorContext(
     userWorkspaceId: string,
     workspaceId: string,
   ): Promise<AgentActorContext> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
     const userWorkspace =
       await this.userWorkspaceService.findById(userWorkspaceId);
 
@@ -39,18 +52,24 @@ export class AgentActorContextService {
       );
     }
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const workspaceMember =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
 
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        userId: userWorkspace.userId,
-      },
-    });
+          return workspaceMemberRepository.findOne({
+            where: {
+              userId: userWorkspace.userId,
+            },
+          });
+        },
+        authContext,
+      );
 
     if (!workspaceMember) {
       throw new AgentException(
@@ -76,9 +95,19 @@ export class AgentActorContextService {
       workspaceMemberId: workspaceMember.id,
     });
 
+    const userContext: UserContext = {
+      firstName: workspaceMember.name?.firstName ?? '',
+      lastName: workspaceMember.name?.lastName ?? '',
+      locale: userWorkspace.locale,
+      timezone: workspaceMember.timeZone ?? null,
+    };
+
     return {
       actorContext,
       roleId,
+      userId: userWorkspace.userId,
+      userWorkspaceId,
+      userContext,
     };
   }
 }

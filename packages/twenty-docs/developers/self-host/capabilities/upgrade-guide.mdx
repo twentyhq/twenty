@@ -1,0 +1,385 @@
+---
+title: Upgrade guide
+---
+
+## General guidelines
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+If you used Docker Compose, follow these steps:
+
+1. In a terminal, on the host where Twenty is running, turn off Twenty: `docker compose down`
+
+2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose. ( We recommend consuming `major.minor` version such as `v0.53` )
+
+3. Bring Twenty back online with `docker compose up -d`
+
+If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
+
+**Make sure that after each upgraded version you have non-corrupted backup.**
+
+## Version-specific upgrade steps
+
+## v1.0
+
+Hello Twenty v1.0! 🎉
+
+## v0.60
+
+### Performance Enhancements
+All interactions with the metadata API have been optimized for better performance, particularly for object metadata manipulation and workspace creation operations.
+
+We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+
+If you encounter any runtime issues after upgrading, you may need to flush your cache to ensure it's synchronized with the latest changes. Run this command in your twenty-server container:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Upgrade your Twenty instance to use v0.55 image
+
+You don't need to run any command anymore, the new image will automatically care about running all required migrations.
+
+
+### `User does not have permission` error
+
+If you encounter authorization errors on most requests after upgrading, you may need to flush your cache to recompute the latest permissions.
+
+In your `twenty-server` container, run:
+```bash
+yarn command:prod cache:flush
+```
+
+This issue is specific to this Twenty version and should not be required for future upgrades.
+
+### v0.54
+
+Since version `0.53`, no manual actions needed.
+
+#### Metadata schema deprecation
+
+We've merged the `metadata` schema into the `core` one to simplify data retrieval from `TypeORM`.
+We have merged the `migrate` command step within the `upgrade` command. We do not recommend running `migrate` manually within any of your server/worker containers.
+
+### Since v0.53
+
+Starting from `0.53`, upgrade is programmatically done within the `DockerFile`, this means from now on, you shouldn't have to run any command manually anymore.
+
+Make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. `0.43.3` to `0.44.0` is allowed, but `0.43.1` to `0.45.0` isn't), else could lead to workspace version desynchronization that could result in runtime error and missing functionality.
+
+To check if a workspace has been correctly migrated you can review its version in database in `core.workspace` table.
+
+It should always be in the range of your current Twenty's instance `major.minor` version, you can view your instance version in the admin panel (at `/settings/admin-panel`, accessible if your user has `canAccessFullAdminPanel` property set to true in the database) or by running `echo $APP_VERSION` in your `twenty-server` container.
+
+
+To fix a desynchronized workspace version, you will have to upgrade from the corresponding twenty's version following related upgrade guide sequentially and so on until it reaches desired version.
+
+#### `auditLog` removal
+
+We've removed the auditLog standard object, which means your backup size might be significantly reduced after this migration.
+
+### v0.51 to v0.52
+
+Upgrade your Twenty instance to use v0.52 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
+
+Unfortunately `0.52.0` and `0.52.6` have been completely removed from dockerHub.
+You will have to manually update your workspace version to `0.51.0` in database and upgrade using twenty version `0.52.11` following its just above upgrade guide.
+
+
+### v0.50 to v0.51
+
+Upgrade your Twenty instance to use v0.51 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0 to v0.50.0
+
+Upgrade your Twenty instance to use v0.50.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Docker-compose.yml mutation
+
+This version includes a `docker-compose.yml` mutation to give `worker` service access to the `server-local-data` volume.
+Please update your local `docker-compose.yml` with [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
+
+### v0.43.0 to v0.44.0
+
+Upgrade your Twenty instance to use v0.44.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0 to v0.43.0
+
+Upgrade your Twenty instance to use v0.43.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+In this version, we have also switched to postgres:16 image in docker-compose.yml.
+
+#### (Option 1) Database migration
+
+Keeping the existing postgres-spilo image is fine, but you will have to freeze the version in your docker-compose.yml to be 0.43.0.
+
+#### (Option 2) Database migration
+
+If you want to migrate your database to the new postgres:16 image, please follow these steps:
+
+1. Dump your database from the old postgres-spilo container
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Make sure your dump file is not empty.
+
+2. Upgrade your docker-compose.yml to use postgres:16 image as in the [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) file.
+
+3. Restore the database to the new postgres:16 container
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0 to v0.42.0
+
+Upgrade your Twenty instance to use v0.42.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Environment Variables**
+
+- Removed: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- Added: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0 to v0.41.0
+
+Upgrade your Twenty instance to use v0.41.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**Environment Variables**
+
+- Removed: `AUTH_MICROSOFT_TENANT_ID`
+
+
+### v0.35.0 to v0.40.0
+
+Upgrade your Twenty instance to use v0.40.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**Environment Variables**
+
+- Added: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0 to v0.35.0
+
+Upgrade your Twenty instance to use v0.35.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.35` takes care of the data migration of all workspaces.
+
+**Environment Variables**
+
+- We replaced `ENABLE_DB_MIGRATIONS` with `DISABLE_DB_MIGRATIONS` (default value is now `false`, you probably don't have to set anything)
+
+### v0.33.0 to v0.34.0
+
+Upgrade your Twenty instance to use v0.34.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.34` takes care of the data migration of all workspaces.
+
+**Environment Variables**
+
+- Removed: `FRONT_BASE_URL`
+- Added: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+We have updated the way we handle the frontend URL.
+You can now set the frontend URL using the `FRONT_DOMAIN`, `FRONT_PROTOCOL` and `FRONT_PORT` variables.
+If FRONT_DOMAIN is not set, the frontend URL will fall back to `SERVER_URL`.
+
+### v0.32.0 to v0.33.0
+
+Upgrade your Twenty instance to use v0.33.0 image
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+The `yarn command:prod cache:flush` command will flush the Redis cache.
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
+
+Starting from this version, twenty-postgres image for DB became deprecated and twenty-postgres-spilo is used instead.
+If you want to keep using twenty-postgres image, simply replace `twentycrm/twenty-postgres:${TAG}` with `twentycrm/twenty-postgres` in docker-compose.yml.
+
+### v0.31.0 to v0.32.0
+
+Upgrade your Twenty instance to use v0.32.0 image
+
+**Schema and data migration**
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
+
+**Environment Variables**
+
+We have updated the way we handle the Redis connection.
+
+- Removed: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- Added: `REDIS_URL`
+
+Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
+
+We have also simplified the way we handle the JWT tokens.
+
+- Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- Added: `APP_SECRET`
+
+Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
+
+**Connected Account**
+
+If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
+
+
+### v0.30.0 to v0.31.0
+
+Upgrade your Twenty instance to use v0.31.0 image
+
+**Schema and data migration**:
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.31` takes care of the data migration of all workspaces.
+
+### v0.24.0 to v0.30.0
+
+Upgrade your Twenty instance to use v0.30.0 image
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. We have updated our [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) to reflect this.
+Make sure to update your configuration and to update your environment variables accordingly:
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Schema and data migration**:
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.30` takes care of the data migration of all workspaces.
+
+### v0.23.0 to v0.24.0
+
+Upgrade your Twenty instance to use v0.24.0 image
+
+Run the following commands:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
+
+### v0.22.0 to v0.23.0
+
+Upgrade your Twenty instance to use v0.23.0 image
+
+Run the following commands:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the Database.
+The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
+
+### v0.21.0 to v0.22.0
+
+Upgrade your Twenty instance to use v0.22.0 image
+
+Run the following commands:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the Database.
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+
+
+
+
+

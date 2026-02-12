@@ -16,6 +16,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const twentyRules = await nxPlugin.loadWorkspaceRules(
+  'packages/twenty-eslint-rules',
+);
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -34,8 +38,8 @@ export default [
       'src/engine/workspace-manager/dev-seeder/data/seeds/**',
       'src/utils/email-providers.ts',
       'src/engine/core-modules/i18n/locales/generated/**',
-      'src/engine/core-modules/serverless/drivers/constants/base-typescript-project/src/index.ts',
-      'packages/twenty-server/src/engine/core-modules/i18n/locales/**'
+      'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-project/src/index.ts',
+      'packages/twenty-server/src/engine/core-modules/i18n/locales/**',
     ],
   },
 
@@ -43,21 +47,25 @@ export default [
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
-      'prettier': prettierPlugin,
-      'lingui': linguiPlugin,
+      prettier: prettierPlugin,
+      lingui: linguiPlugin,
       '@nx': nxPlugin,
       'prefer-arrow': preferArrowPlugin,
-      'import': importPlugin,
+      import: importPlugin,
       'unused-imports': unusedImportsPlugin,
-      'unicorn': unicornPlugin,
+      unicorn: unicornPlugin,
       '@stylistic': stylisticPlugin,
+      twenty: { rules: twentyRules },
     },
     rules: {
       'prettier/prettier': 'error',
-      
+
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
-      'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+      'no-console': [
+        'warn',
+        { allow: ['group', 'groupCollapsed', 'groupEnd'] },
+      ],
       'no-control-regex': 0,
       'no-debugger': 'error',
       'no-duplicate-imports': 'error',
@@ -137,18 +145,18 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
-          fixStyle: 'inline-type-imports'
+          fixStyle: 'inline-type-imports',
         },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/no-empty-interface': [
+      '@typescript-eslint/no-empty-object-type': [
         'error',
         {
-          allowSingleExtends: true,
+          allowInterfaces: 'with-single-extends',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'error', // Stricter for server
@@ -166,7 +174,8 @@ export default [
             },
             {
               group: ['lodash'],
-              message: "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
+              message:
+                "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
             },
           ],
         },
@@ -239,12 +248,12 @@ export default [
       'simple-import-sort/imports': 'off',
       'unicorn/filename-case': 'off',
       'prefer-arrow/prefer-arrow-functions': 'off',
-      '@nx/workspace-max-consts-per-file': 'off',
+      'twenty/max-consts-per-file': 'off',
 
       // Custom workspace rules
-      '@nx/workspace-inject-workspace-repository': 'warn',
-      '@nx/workspace-rest-api-methods-should-be-guarded': 'error',
-      '@nx/workspace-graphql-resolvers-should-be-guarded': 'error',
+      'twenty/inject-workspace-repository': 'warn',
+      'twenty/rest-api-methods-should-be-guarded': 'error',
+      'twenty/graphql-resolvers-should-be-guarded': 'error',
     },
   },
 

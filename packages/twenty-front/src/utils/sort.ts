@@ -1,4 +1,6 @@
-import { type Maybe } from '~/generated/graphql';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { type Maybe } from '~/generated-metadata/graphql';
 
 export const sortNullsFirst = (
   fieldValueA: Maybe<unknown>,
@@ -20,7 +22,16 @@ export const sortNullsLast = (
 export const sortAsc = (
   fieldValueA: string | number,
   fieldValueB: string | number,
-) => (fieldValueA === fieldValueB ? 0 : fieldValueA < fieldValueB ? -1 : 1);
+) => {
+  const valueA = isNonEmptyString(fieldValueA)
+    ? fieldValueA.toLowerCase()
+    : fieldValueA;
+  const valueB = isNonEmptyString(fieldValueB)
+    ? fieldValueB.toLowerCase()
+    : fieldValueB;
+
+  return valueA === valueB ? 0 : valueA < valueB ? -1 : 1;
+};
 
 export const sortDesc = (
   fieldValueA: string | number,

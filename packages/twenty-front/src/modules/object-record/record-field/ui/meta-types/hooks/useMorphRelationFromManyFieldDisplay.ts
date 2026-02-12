@@ -7,11 +7,11 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldContext } from '../../contexts/FieldContext';
-import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 
 export const useMorphRelationFromManyFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -32,7 +32,7 @@ export const useMorphRelationFromManyFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const morphValuesWithObjectNameSingular = useRecordFieldValue<
+  const morphValuesWithObjectNameSingular = useRecordFieldValueV2<
     {
       objectNameSingular: string;
       value: ObjectRecord;

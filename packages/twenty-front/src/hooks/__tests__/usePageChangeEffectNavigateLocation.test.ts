@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';

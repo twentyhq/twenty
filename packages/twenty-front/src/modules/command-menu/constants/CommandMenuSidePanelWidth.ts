@@ -1,1 +1,0 @@
-export const COMMAND_MENU_SIDE_PANEL_WIDTH = 400;

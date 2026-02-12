@@ -1,0 +1,149 @@
+---
+title: Show Expected Amount in Your Pipeline
+description: Gewichtete Deal‑Werte basierend auf der Phasenwahrscheinlichkeit berechnen und anzeigen.
+---
+
+Der erwartete Betrag ist ein berechneter Wert: **Amount × Probability**. So können Sie den Umsatz prognostizieren, indem Sie Deals nach ihrer Abschlusswahrscheinlichkeit gewichten.
+
+<Tip>
+  Dies ist ein Beispiel für das Erstellen von [Formel­feldern](/l/de/user-guide/workflows/how-tos/crm-automations/formula-fields) mit Workflows.
+</Tip>
+
+Diese Anleitung führt Sie durch das Einrichten der benutzerdefinierten Felder und Workflows, die erforderlich sind, um erwartete Beträge in Ihrer Pipeline zu berechnen und anzuzeigen.
+
+## Schritt 1: Benutzerdefinierte Felder erstellen
+
+Sie benötigen zwei benutzerdefinierte Felder am Objekt „Opportunities“.
+
+### Feld „Probability“ erstellen
+
+1. Gehen Sie zu **Settings → Data Model → Opportunities**
+2. Klicken Sie auf **+ Feld hinzufügen**
+3. Konfigurieren:
+   * **Name**: Probability
+   * **Typ**: Number
+   * **Beschreibung**: Phasenbasierte Wahrscheinlichkeit (0–100 %)
+4. Klicken Sie auf **Speichern**
+
+### Feld „Expected Amount“ erstellen
+
+1. Klicken Sie auf **+ Feld hinzufügen**
+2. Konfigurieren:
+   * **Name**: Expected Amount
+   * **Typ**: Currency
+   * **Beschreibung**: Berechnet: Amount × Probability
+3. Klicken Sie auf **Speichern**
+
+### Optional: Felder für Benutzer schreibgeschützt machen
+
+Wenn Benutzer diese berechneten Felder nicht manuell bearbeiten sollen:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Wählen Sie die zu konfigurierende Rolle aus
+3. Suchen Sie das Objekt „Opportunities“
+4. Setzen Sie die Felder **Probability** und **Expected Amount** auf schreibgeschützt
+
+Dadurch können nur die Workflows diese Werte aktualisieren.
+
+## Schritt 2: Workflow #1 erstellen — Probability bei Phasenwechsel aktualisieren
+
+Dieser Workflow setzt die Probability automatisch, wenn eine Opportunity in eine neue Phase wechselt.
+
+### Neuen Workflow erstellen
+
+1. Gehen Sie zu **Workflows**
+2. Klicken Sie auf **+ New Workflow**
+3. Benennen Sie ihn „Update Probability on Stage Change“
+
+### Trigger konfigurieren
+
+1. Fügen Sie einen **Record Created or Updated**-Trigger hinzu
+2. Wählen Sie **Opportunities** als Objekt
+3. Filtern nach: **Stage**-Feld wird aktualisiert
+
+### Für jede Phase Verzweigungen hinzufügen
+
+Erstellen Sie für jede Phase eine Verzweigung mit der entsprechenden Wahrscheinlichkeit:
+
+| Phase        | Wahrscheinlichkeit |
+| ------------ | ------------------ |
+| Neu          | 10 %               |
+| Qualifiziert | 25 %               |
+| Meeting      | 40 %               |
+| Proposal     | 60 %               |
+| Negotiation  | 80 %               |
+| Closed Won   | 100 %              |
+| Closed Lost  | 0%                 |
+
+<Note>
+  Um eine neue Verzweigung zu erstellen, klicken Sie mit der rechten Maustaste auf den Workflow-Canvas und klicken Sie auf **New action**. Verknüpfen Sie diese Aktion anschließend mit dem vorherigen Knoten, indem Sie den Pfeil vom vorherigen Knoten zu dieser neuen Aktion ziehen.
+</Note>
+
+Für jede Phase:
+
+1. Fügen Sie einen **Filter**-Knoten hinzu: Stage = [Phasenname]
+2. Fügen Sie eine **Update Record**-Aktion hinzu:
+   * Datensatz: Die auslösende Opportunity
+   * Feld: Probability
+   * Wert: [Wahrscheinlichkeit für diese Phase]
+
+### Erwarteten Betrag berechnen
+
+Nachdem die Verzweigungen wieder zusammengeführt wurden:
+
+1. Fügen Sie einen **Filter**-Knoten hinzu: Amount ist nicht leer
+2. Fügen Sie eine **Update Record**-Aktion hinzu:
+   * Datensatz: Die auslösende Opportunity
+   * Feld: Expected Amount
+   * Wert: Amount × Probability
+
+## Schritt 3: Workflow #2 erstellen — Bei Änderung von Amount neu berechnen
+
+Dieser Workflow aktualisiert den Expected Amount, wenn sich der Amount des Deals ändert.
+
+### Neuen Workflow erstellen
+
+1. Gehen Sie zu **Workflows**
+2. Klicken Sie auf **+ New Workflow**
+3. Benennen Sie ihn „Recalculate Expected Amount on Amount Change“
+
+### Trigger konfigurieren
+
+1. Fügen Sie einen **Record Created or Updated**-Trigger hinzu
+2. Wählen Sie **Opportunities** als Objekt
+3. Filtern nach: **Amount**-Feld wird aktualisiert
+
+### Logik hinzufügen
+
+1. Fügen Sie einen **Filter**-Knoten hinzu: Amount ist nicht leer
+2. Fügen Sie eine **Update Record**-Aktion hinzu:
+   * Datensatz: Die auslösende Opportunity
+   * Feld: Expected Amount
+   * Wert: Amount × Probability
+
+## Schritt 4: In Ihrer Pipeline anzeigen
+
+Zeigen Sie nun die Summen des Expected Amount in Ihrer Kanban-Ansicht an:
+
+1. Öffnen Sie Ihre Kanban-Ansicht **Sales Pipeline**
+2. Klicken Sie auf die **Zahl** neben einem Phasennamen oben in einer Spalte
+3. Wählen Sie **Summe**
+4. Wählen Sie **Expected Amount**
+
+Jede Spalte zeigt nun den insgesamt gewichteten Pipeline‑Wert für diese Phase.
+
+## Zusammenfassung
+
+| Komponente                 | Zweck                                                                                     |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| **Feld „Probability“**     | Speichert die phasenbasierte Gewinnwahrscheinlichkeit                                     |
+| **Feld „Expected Amount“** | Speichert Amount × Probability                                                            |
+| **Workflow #1**            | Aktualisiert Probability bei Phasenwechsel und berechnet anschließend Expected Amount neu |
+| **Workflow #2**            | Berechnet Expected Amount neu, wenn sich Amount ändert                                    |
+| **Aggregation**            | Zeigt die Summe des Expected Amount pro Phase an                                          |
+
+## Verwandt
+
+* [Formel­felder](/l/de/user-guide/workflows/how-tos/crm-automations/formula-fields) — berechnete Felder mit Workflows erstellen
+* [Kanban-Ansichten](/l/de/user-guide/views-pipelines/capabilities/kanban-views) — Spaltenaggregationen
+* [Benutzerdefinierte Felder erstellen](/l/de/user-guide/data-model/how-tos/create-custom-fields) — Feldkonfiguration

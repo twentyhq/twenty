@@ -1,0 +1,127 @@
+---
+title: Gözden Geçirilecek Bir Not Hakkında Ekip Arkadaşlarını Bilgilendirin
+description: Bir notu gözden geçirmesi için bir meslektaş atadığınızda otomatik e-posta bildirimleri gönderin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **Notların içinde ekip arkadaşlarını doğrudan etiketleme henüz desteklenmiyor.** Bu özellik 2026'nın ikinci yarısı için planlanmıştır. Bu arada, bu iş akışı pratik bir geçici çözüm sunar.
+</Note>
+
+## Zorluk
+
+Bir notta bir meslektaşınızı etiketleyerek gözden geçirmesi için bildirim almasını istiyorsunuz. Bugün itibarıyla, Twenty notlarda veya görevlerde @bahsetmeleri desteklemiyor.
+
+## Geçici Çözüm
+
+Not metni içinde etiketlemek yerine şunları yapabilirsiniz:
+
+1. Notlar nesnesinde bir **Gözden Geçiren** ilişki alanı oluşturun
+2. Notu oluştururken veya düzenlerken gözden geçiren kişiyi atayın
+3. Bir iş akışı, notun bağlantısını içeren bir e-postayı gözden geçirene otomatik olarak gönderir
+
+<Warning>
+  **Sınırlama**: Bu yaklaşım, alan başına bir gözden geçiren atanmasına izin verir. Birden fazla kişiyi bilgilendirmeniz gerekiyorsa, ek ilişki alanları oluşturun (ör. Gözden Geçiren 1, Gözden Geçiren 2). Bu yöntem, aynı anda birçok işbirlikçiyi etiketlemeniz gerekirse iyi ölçeklenmez.
+</Warning>
+
+## Adım adım kurulum
+
+### Adım 1: Gözden Geçiren Alanını Oluşturun
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. **Ayarlar → Veri Modeli → Notlar** bölümüne gidin
+2. **Alan Ekle**'ye tıklayın
+3. Alanı Yapılandır:
+
+| Ayar               | Değer                                |
+| ------------------ | ------------------------------------ |
+| **Ad**             | Gözden Geçiren                       |
+| **Tür**            | İlişki                               |
+| **İlişkili Nesne** | Çalışma Alanı Üyesi                  |
+| **İlişki Türü**    | Birçok Not → Bir Çalışma Alanı Üyesi |
+
+4. Alanı kaydedin
+
+### Adım 2: İş akışını oluşturun
+
+<VimeoEmbed videoId="1151897168" title="Video gösterimi" />
+
+#### İş Akışı Tetikleyicisini Oluşturun
+
+1. Ana görünüme gidin ve yeni bir iş akışı oluşturun
+2. Tetikleyici olarak **Kayıt Güncellendi**'yi seçin
+3. Nesne olarak **Not**'u seçin ve Gözden Geçiren alanını belirtin.
+4. Bu, bir notun gözden geçireni güncellendiğinde tetiklenecektir.
+
+#### Gözden Geçirenin Az Önce Atandığını Kontrol Etmek İçin Bir Filtre Ekleyin
+
+İş akışının yalnızca bir gözden geçiren atandığında devam etmesini sağlamak için bir **Filtre** eylemi ekleyin:
+
+| Koşul              | Değer     |
+| ------------------ | --------- |
+| **Gözden Geçiren** | boş değil |
+
+#### Çalışma Alanı Üyesini Arayın
+
+1. Bir **Kayıtları Ara** eylemi ekleyin
+2. (Gelişmiş Nesneler altında) **Çalışma Alanı Üyesi**'ni seçin
+3. Bir filtre ekleyin:
+
+| Koşul  | Değer                         |
+| ------ | ----------------------------- |
+| **ID** | eşittir `{{note.reviewerId}}` |
+
+Bu, e-posta adresi ve adı dahil olmak üzere çalışma alanı üyesinin tam kaydını getirir.
+
+#### Bildirim E-postasını Gönderin
+
+1. **E-posta Gönder** eylemi ekleyin
+2. Alanı Yapılandır:
+
+| Alan       | Değer                                                     |
+| ---------- | --------------------------------------------------------- |
+| **Kime**   | Kayıt Ara → İlk Çalışma Alanı Üyesi → Kullanıcı E-postası |
+| **Konu**   | Bir not gözden geçirmenizi bekliyor                       |
+| **İçerik** | Aşağıdaki örneğe bakın                                    |
+
+**E-posta gövdesi örneği:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  `yourSubDomain` değerini, gerçek Twenty çalışma alanı alt alan adınızla değiştirin.
+</Note>
+
+#### Test Edin ve Etkinleştirin
+
+1. İş akışını manuel olarak çalıştırmak için **Test**'e tıklayın
+2. Bir not oluşturun veya düzenleyin ve bir gözden geçiren atayın
+3. Bildirim e-postası için gözden geçirenin gelen kutusunu kontrol edin
+4. İş akışını etkinleştirin
+
+## Kullanım
+
+Kurulum tamamlandıktan sonra ekibiniz bu iş akışını şu şekilde kullanabilir:
+
+1. Yeni bir not oluşturarak (veya mevcut bir notu düzenleyerek)
+2. **Gözden Geçiren** alanında bir meslektaş seçerek
+3. Meslektaş, nota doğrudan bağlantı içeren bir e-postayı otomatik olarak alır
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Özel Alanlar Oluşturma](/l/tr/user-guide/data-model/how-tos/create-custom-fields)
+* [İlişki Alanları Oluşturma](/l/tr/user-guide/data-model/how-tos/create-relation-fields)

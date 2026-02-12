@@ -1,15 +1,24 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { useRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationToOneFieldDisplay';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RelationToOneFieldDisplay = () => {
-  const { fieldValue, fieldDefinition, generateRecordChipData } =
-    useRelationToOneFieldDisplay();
+  const {
+    fieldValue,
+    fieldDefinition,
+    generateRecordChipData,
+    foreignKeyFieldValue,
+  } = useRelationToOneFieldDisplay();
 
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
+
+  if (!isDefined(fieldValue) && isDefined(foreignKeyFieldValue)) {
+    return <ForbiddenFieldDisplay />;
+  }
 
   if (
     !isDefined(fieldValue) ||

@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
-import { WEBHOOK_FRAGMENT } from '../fragments/webhookFragment';
+import { WEBHOOK_FRAGMENT } from '@/settings/developers/graphql/fragments/webhookFragment';
 
 export const GET_WEBHOOK = gql`
-  query GetWebhook($input: GetWebhookInput!) {
-    webhook(input: $input) {
+  query GetWebhook($id: UUID!) {
+    webhook(id: $id) {
       ...WebhookFragment
     }
   }

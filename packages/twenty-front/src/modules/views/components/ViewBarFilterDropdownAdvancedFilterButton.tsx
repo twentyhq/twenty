@@ -7,14 +7,13 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -115,9 +114,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
     }
 
-    closeObjectFilterDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
+    closeObjectFilterDropdown(ViewBarFilterDropdownIds.MAIN);
     openAdvancedFilterDropdown({
-      dropdownComponentInstanceIdFromProps: ADVANCED_FILTER_DROPDOWN_ID,
+      dropdownComponentInstanceIdFromProps: ViewBarFilterDropdownIds.ADVANCED,
     });
   };
 

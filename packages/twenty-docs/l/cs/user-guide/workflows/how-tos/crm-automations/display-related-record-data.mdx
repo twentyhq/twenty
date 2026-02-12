@@ -1,0 +1,170 @@
+---
+title: Zobrazení dat souvisejících záznamů
+description: Zobrazujte data ze souvisejících záznamů (např. informace o společnosti na příležitostech) pomocí pracovních postupů.
+---
+
+Zobrazujte data ze souvisejících záznamů přímo na svých záznamech — například zobrazte počet zaměstnanců ze společnosti na jejích příležitostech. Toto řešení pomocí pracovních postupů je užitečné do doby, než budou vnořená pole nativně dostupná.
+
+## Běžné scénáře použití
+
+| Zdroj       | Cíl         | Pole ke kopírování                                            |
+| ----------- | ----------- | ------------------------------------------------------------- |
+| Společnost  | Příležitost | Odvětví, velikost společnosti, ARR                            |
+| Osoba       | Příležitost | E-mail, telefon, pozice                                       |
+| Příležitost | Společnost  | Částka posledního obchodu, datum posledního vyhraného obchodu |
+
+## Základní kopírování polí
+
+### Příklad: Zkopírovat e-mail kontaktu do příležitosti
+
+**Cíl**: Při nastavení kontaktní osoby u příležitosti zkopírujte její e-mail do příležitosti pro snadný přístup.
+
+### Předpoklad
+
+Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti** před vytvořením pracovního postupu:
+
+* E-mail kontaktu (typ: E-mail)
+* Telefon kontaktu (typ: Telefon)
+
+### Nastavení
+
+1. **Spouštěč**: Záznam je aktualizován (Příležitosti, pole Kontaktní osoba)
+
+2. **Filtr**: Zkontrolujte, že pole Kontaktní osoba není prázdné
+
+3. **Vyhledat záznamy**: Najděte propojenou osobu
+   * Objekt: Lidé
+   * Filtr: ID se rovná `{{trigger.object.pointOfContact.id}}`
+
+4. **Aktualizovat záznam**:
+   * Objekt: Příležitosti
+   * Záznam: `{{trigger.object.id}}`
+   * E-mail kontaktu: `{{searchRecords[0].email}}`
+   * Telefon kontaktu: `{{searchRecords[0].phone}}`
+
+## Kopírování více polí
+
+### Příklad: Synchronizace informací o společnosti do všech souvisejících příležitostí
+
+**Cíl**: Když se změní údaje společnosti, aktualizujte všechny související příležitosti.
+
+### Nastavení
+
+1. **Spouštěč**: Záznam je aktualizován (Společnosti)
+   * Pole: Odvětví, velikost společnosti, roční tržby
+
+2. **Vyhledat záznamy**: Najděte všechny příležitosti pro tuto společnost
+   * Objekt: Příležitosti
+   * Filtr: ID společnosti se rovná `{{trigger.object.id}}`
+
+3. **Iterátor**: Procházejte každou příležitost
+
+4. **Aktualizovat záznam** (uvnitř iterátoru):
+   * Objekt: Příležitosti
+   * Záznam: `{{iterator.currentItem.id}}`
+   * Odvětví společnosti: `{{trigger.object.industry}}`
+   * Velikost společnosti: `{{trigger.object.companySize}}`
+   * ARR společnosti: `{{trigger.object.annualRevenue}}`
+
+## Kopírování při vytvoření záznamu
+
+### Příklad: Předvyplnit příležitost údaji společnosti
+
+**Cíl**: Při vytváření příležitosti propojené se společností automaticky zkopírujte klíčové informace o společnosti.
+
+### Předpoklad
+
+Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti**:
+
+* Odvětví společnosti (typ: Text)
+* Velikost společnosti (typ: Číslo)
+
+### Nastavení
+
+1. **Spouštěč**: Záznam je vytvořen (Příležitosti)
+   * Filtr: Společnost není prázdná
+
+2. **Vyhledat záznamy**: Získejte podrobnosti propojené společnosti
+   * Objekt: Společnosti
+   * Filtr: ID se rovná `{{trigger.object.company.id}}`
+
+3. **Aktualizovat záznam**:
+   * Objekt: Příležitosti
+   * Záznam: `{{trigger.object.id}}`
+   * Odvětví společnosti: `{{searchRecords[0].industry}}`
+   * Velikost společnosti: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Omezení pro Úkoly a Poznámky**: Relace u Úkolů a Poznámek jsou napevno nastaveny jako mnoho k mnoha a zatím nejsou k dispozici ve spouštěčích ani akcích pracovních postupů. Pro přístup k těmto relacím použijte místo toho [API](/l/cs/developers/extend/capabilities/apis).
+</Note>
+
+## Oboustranná synchronizace
+
+### Příklad: Udržujte primární kontakt v synchronizaci
+
+**Cíl**: Když se změní primární kontakt společnosti, aktualizujte kontakt. Když se osoba stane primárním kontaktem, aktualizujte společnost.
+
+### Pracovní postup 1: Společnost → Osoba
+
+1. **Spouštěč**: Záznam je aktualizován (Společnosti, pole Primární kontakt)
+2. **Aktualizovat záznam**: Nastavte u osoby "Is Primary Contact" na hodnotu true
+3. **Vyhledat záznamy**: Najděte předchozí primární kontakt
+4. **Aktualizovat záznam**: Nastavte u předchozího kontaktu "Is Primary Contact" na hodnotu false
+
+### Pracovní postup 2: Osoba → Společnost
+
+1. **Spouštěč**: Záznam je aktualizován (Lidé, Is Primary Contact = true)
+2. **Aktualizovat záznam**: Nastavte u společnosti Primární kontakt na tuto osobu
+
+<Note>
+  Dávejte pozor u oboustranných synchronizací, abyste se vyhnuli nekonečným smyčkám. Před aktualizací použijte filtry ke kontrole, zda se hodnota skutečně změnila.
+</Note>
+
+## Použití kódu pro složité mapování
+
+### Příklad: Transformace dat během kopírování
+
+**Cíl**: Zkopírovat a naformátovat telefonní číslo z osoby do příležitosti.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Osvědčené postupy
+
+### Vyhněte se smyčkám
+
+* Nevytvářejte pracovní postupy, které se navzájem spouštějí donekonečna
+* Používejte konkrétní podmínky polí
+* Přidejte kontroly, zda se hodnota skutečně změnila
+
+### Zpracování chybějících dat
+
+* Před kopírováním vždy zkontrolujte, zda zdrojový záznam existuje
+* Poskytněte výchozí hodnoty pro volitelná pole
+* Použijte filtry k vynechání, pokud je zdrojové pole prázdné
+
+### Výkon
+
+* Pro mnoho záznamů používejte dávkové aktualizace při kopírování
+* Pro hromadné synchronizační operace použijte plánované pracovní postupy
+* Zvažte použití iterátoru pro aktualizace více záznamů
+
+## Související
+
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)

@@ -1,0 +1,126 @@
+---
+title: 権限に関するFAQ
+description: ロールと権限に関するよくある質問。
+---
+
+## 役割
+
+<AccordionGroup>
+  <Accordion title="Twenty にはデフォルトでどのようなロールがありますか？">
+    Twenty にはデフォルトで **Admin** と **Member** のロールが用意されています。 チームのニーズに基づいて、追加のカスタムロールを作成できます（例: 営業担当、マネージャー、閲覧専用ユーザー）。
+  </Accordion>
+
+  <Accordion title="Admin ロールを削除できますか？">
+    いいえ、Admin ロールは削除できません。 Admin ロールには、常に少なくとも1人のメンバーが割り当てられている必要があります。
+  </Accordion>
+
+  <Accordion title="ロールを削除するとどうなりますか？">
+    そのロールに割り当てられているワークスペースメンバーは、自動的にデフォルトのロールに再割り当てされます。
+  </Accordion>
+
+  <Accordion title="新規メンバーのデフォルトロールはどのように設定しますか？">
+    **Settings → Roles** に移動し、**Default Role** オプションを見つけ、参加時に新規メンバーが自動的に付与されるロールを選択します。
+  </Accordion>
+
+  <Accordion title="1人のユーザーに複数のロールを割り当てることはできますか？">
+    いいえ、各ユーザーが同時に持てるロールは1つだけです。 権限の組み合わせが必要な場合は、カスタムロールを作成してください。
+  </Accordion>
+</AccordionGroup>
+
+## 権限
+
+<AccordionGroup>
+  <Accordion title="オブジェクト権限とフィールド権限の違いは何ですか？">
+    * **オブジェクト権限**: レコード全体へのアクセスを制御します（例: People レコードの閲覧/編集/削除が可能）
+    * **フィールド権限**: オブジェクト内の特定のフィールドへのアクセスを制御します（例: Salary フィールドは閲覧のみで編集不可）
+
+    フィールド権限により、機密データをより細かく制御できます。
+  </Accordion>
+
+  <Accordion title="権限のオーバーライドはどのように機能しますか？">
+    権限はグローバルから個別へと段階的に適用されます:
+
+    1. **All Objects** はすべてのオブジェクトの基準を設定します
+    2. **Object-Level Permissions** は、特定のオブジェクトに対してグローバル設定を上書きできます
+    3. **Field-Level Permissions** は、特定のフィールドに対してオブジェクト設定を上書きできます
+
+    より具体的な設定が常に優先されます。
+  </Accordion>
+
+  <Accordion title="各権限レベルは何を意味しますか？">
+    オブジェクトの場合:
+
+    * **See Records**: リストや詳細ページでレコードを閲覧
+    * **Edit Records**: 既存のレコードを編集
+    * **Delete Records**: レコードをソフト削除（復元可能）
+    * **Destroy Records**: レコードを完全に削除
+
+    フィールドの場合:
+
+    * **See Field**: フィールド値を閲覧
+    * **Edit Field**: フィールド値を編集
+    * **No Access**: フィールドは完全に非表示
+  </Accordion>
+
+  <Accordion title="特定のレコードへのアクセスを制限できますか（行レベル権限）？">
+    行レベル権限は、2026年第1四半期までに **Organization** プランで利用可能になります。 これにより、条件に基づいて特定のレコードへのアクセスを制限できます（例: 自分の商談のみを閲覧）。
+  </Accordion>
+
+  <Accordion title="特定のユーザーに対してフィールドを読み取り専用にするにはどうすればよいですか？">
+    1. **設定 → 役割** に移動
+    2. ロールを選択
+    3. 該当フィールドを含むオブジェクトに移動
+    4. フィールド権限を **See Field** に設定します（Edit Field は付与しない）
+  </Accordion>
+</AccordionGroup>
+
+## 設定とアクション
+
+<AccordionGroup>
+  <Accordion title="設定に関する権限には何がありますか？">
+    次の項目へのアクセスを制御できます:
+
+    * API キーの生成
+    * ワークスペースの設定
+    * ロールの割り当て
+    * データモデルの設定
+    * セキュリティ設定
+    * ワークフロー管理
+
+    **Settings All Access** を使ってフルアクセスを付与するか、特定の権限のみを有効にします。
+  </Accordion>
+
+  <Accordion title="アクションに関する権限には何がありますか？">
+    次の項目を制御できます:
+
+    * **Send Email**: Twenty からメールを送信できる
+    * **Import CSV**: CSV でデータをインポートできる
+    * **Export CSV**: データを CSV にエクスポートできる
+
+    **Application All Access** を使ってすべてのアクションを付与するか、必要なものだけを有効にします。
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="SSO はすべてのプランで利用できますか？">
+    いいえ、SSO は **Organization** プランでのみ利用可能なプレミアム機能です。
+  </Accordion>
+
+  <Accordion title="どのアイデンティティプロバイダーがサポートされていますか？">
+    Twenty は次のものをサポートしています:
+
+    * **SAML 2.0**（多くのエンタープライズ向けアイデンティティプロバイダーで動作）
+    * **Google Workspace**
+    * **Microsoft Entra ID**（旧 Azure AD）
+  </Accordion>
+
+  <Accordion title="Just-in-Time（JIT）プロビジョニングとは何ですか？">
+    JIT プロビジョニングでは、ユーザーが初めて SSO でログインした際に、Twenty にユーザーアカウントが自動作成されます。 デフォルトのロールが自動的に割り当てられます。
+  </Accordion>
+
+  <Accordion title="すべてのユーザーに SSO を必須にできますか？">
+    はい、SSO を設定すると、SSO ユーザーのパスワードログインを無効化し、アイデンティティプロバイダーを通じた認証を強制できます。
+  </Accordion>
+</AccordionGroup>

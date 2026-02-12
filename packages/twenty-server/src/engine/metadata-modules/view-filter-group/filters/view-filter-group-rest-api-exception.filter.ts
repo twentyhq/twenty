@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -14,15 +15,15 @@ import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
 import {
   type CustomException,
   UnknownException,
 } from 'src/utils/custom-exception';
 
 @Injectable()
-@Catch(ViewFilterGroupException, WorkspaceMigrationBuilderExceptionV2)
+@Catch(ViewFilterGroupException, WorkspaceMigrationBuilderException)
 export class ViewFilterGroupRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
@@ -30,13 +31,13 @@ export class ViewFilterGroupRestApiExceptionFilter implements ExceptionFilter {
   ) {}
 
   catch(
-    exception: ViewFilterGroupException | WorkspaceMigrationBuilderExceptionV2,
+    exception: ViewFilterGroupException | WorkspaceMigrationBuilderException,
     host: ArgumentsHost,
   ) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    if (exception instanceof WorkspaceMigrationBuilderExceptionV2) {
+    if (exception instanceof WorkspaceMigrationBuilderException) {
       const i18n = this.i18nService.getI18nInstance(SOURCE_LOCALE);
       const { errors, summary } =
         fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError(
@@ -81,6 +82,7 @@ export class ViewFilterGroupRestApiExceptionFilter implements ExceptionFilter {
     const unknownException = new UnknownException(
       'Internal server error',
       'INTERNAL_ERROR',
+      { userFriendlyMessage: msg`An unexpected error occurred.` },
     );
 
     return this.httpExceptionHandlerService.handleError(

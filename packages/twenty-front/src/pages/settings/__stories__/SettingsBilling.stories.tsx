@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -11,7 +11,7 @@ import { sleep } from '~/utils/sleep';
 
 import { getSettingsPath } from 'twenty-shared/utils';
 
-import { SettingsBilling } from '../SettingsBilling';
+import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {

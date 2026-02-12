@@ -1,0 +1,209 @@
+---
+title: Exportez vos données
+description: Guide complet étape par étape pour exporter des données depuis Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Vue d'ensemble
+
+Exportez les données de votre espace de travail en CSV pour des sauvegardes, des rapports ou des migrations.
+
+**Cas d'utilisation :**
+
+* **Sauvegardes régulières** — conservez des copies de vos données
+* **Reporting externe** — analysez les données dans Excel, Google Sheets ou des outils de BI
+* **Migration** — déplacez les données vers un autre système
+* **Mises à jour en masse** — exportez, modifiez et réimportez pour mettre à jour les enregistrements
+
+## Ce que vous devez savoir
+
+### Limites d'exportation
+
+* **20 000 enregistrements maximum** par export
+* Seules les **colonnes visibles** sont exportées
+* Seuls les **enregistrements filtrés** sont exportés (selon votre vue actuelle)
+
+<Note>Pour des exports plus volumineux (plus de 20 000 enregistrements), utilisez des filtres pour exporter par lots ou utilisez l'[API](/l/fr/developers/extend/capabilities/apis).</Note>
+
+### Autorisations
+
+Vous avez besoin de l'autorisation **"Export CSV"** pour exporter des données. Contactez l'administrateur de votre espace de travail si vous n'avez pas cette option.
+
+## Étape 1 : Accédez à l'objet
+
+Accédez à l'objet que vous souhaitez exporter :
+
+* **People** — pour les contacts
+* **Companies** — pour les organisations
+* **Opportunities** — pour les affaires
+* **Objets personnalisés** — tout objet que vous avez créé
+
+## Étape 2 : Configurez votre vue
+
+**Important :** L'export n'inclut que ce qui est visible dans votre vue actuelle.
+
+### Ajouter/Supprimer des colonnes
+
+1. Cliquez sur **Options → Fields** (ou sur le **+** à la fin des colonnes)
+2. Cochez les champs que vous souhaitez exporter
+3. Décochez les champs dont vous n'avez pas besoin
+
+### Filtrer les enregistrements (optionnel)
+
+Si vous avez seulement besoin d'un sous-ensemble de données :
+
+1. Cliquez sur **Filter**
+2. Ajoutez des conditions de filtrage (p. ex. "Created date > January 1, 2024")
+3. Seuls les enregistrements correspondants seront exportés
+
+### Trier les enregistrements (optionnel)
+
+1. Cliquez sur l'en-tête d'une colonne pour trier
+2. L'export respectera votre ordre de tri
+
+<Note>**Créez une vue dédiée à l'export.** Enregistrez une vue spécialement configurée pour les exports afin d'éviter de reconfigurer à chaque fois.</Note>
+
+## Étape 3 : Exportez les données
+
+1. Cliquez sur l'icône **⋮** en haut à droite du tableau
+2. Sélectionnez **Export view**
+3. Choisissez où enregistrer le fichier CSV
+4. Attendez la fin du téléchargement
+
+## Ce qui est exporté
+
+| Inclus                                            | Non inclus                             |
+| ------------------------------------------------- | -------------------------------------- |
+| Toutes les colonnes visibles                      | Colonnes masquées                      |
+| Enregistrements correspondant aux filtres actuels | Enregistrements exclus par les filtres |
+| Valeurs des champs personnalisés                  | Champs non présents dans la vue        |
+| ID des enregistrements                            | Fichiers joints                        |
+| ID des relations                                  | Images                                 |
+
+### Champs de relation
+
+Les ID de relations ne sont exportés que du côté **"many"** d'une relation :
+
+* **L'export People** inclut une colonne `companyId` (relation People → Company)
+* **L'export Companies** n'inclut PAS `peopleIds` (Companies est le côté "one")
+
+Cela signifie que vous pouvez utiliser l'export People pour réimporter et conserver le lien avec Company, mais vous devrez réimporter People après Companies pour recréer les relations.
+
+## Exporter pour des besoins spécifiques
+
+### Pour les sauvegardes
+
+1. Créez une vue avec **tous les champs** visibles
+2. Retirez tous les filtres pour inclure tous les enregistrements
+3. Exportez chaque type d'objet séparément
+4. Stockez les exports dans un emplacement sécurisé
+5. Définissez un rappel récurrent (hebdomadaire/mensuel)
+
+### Pour le reporting externe
+
+1. N'incluez que les champs nécessaires à l'analyse
+2. Appliquez des filtres pour vous concentrer sur les données pertinentes
+3. Envisagez de trier selon le champ que vous analyserez
+
+### Pour les mises à jour en masse
+
+1. Exportez les enregistrements que vous souhaitez mettre à jour
+2. Incluez l'identifiant unique (`email`, `domain` ou `id`)
+3. Modifiez le fichier exporté
+4. Réimportez pour mettre à jour les enregistrements
+   Voir : [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Pour la migration
+
+Si vous exportez pour migrer vers un autre système :
+
+1. **Exportez chaque objet séparément** — People, Companies, Opportunities, etc.
+2. **Incluez les champs d'ID** — ils aident à maintenir les relations
+3. **Documentez les correspondances de champs** — notez comment les champs Twenty sont mis en correspondance avec votre système cible
+
+## Gestion de grands jeux de données (plus de 20 000 enregistrements)
+
+La limite d'export est de 20 000 enregistrements. Pour des jeux de données plus volumineux :
+
+### Option 1 : Exporter par lots
+
+1. Ajoutez un filtre (p. ex. des plages de "Created date")
+2. Exportez le premier lot
+3. Modifiez le filtre
+4. Exportez le lot suivant
+5. Combinez les fichiers dans votre feuille de calcul
+
+**Exemples de filtres pour le traitement par lots :**
+
+* Par plage de dates (janvier, février, mars...)
+* Par propriétaire (membre de l'équipe A, membre de l'équipe B...)
+* Par statut (Actif, Inactif...)
+
+### Option 2 : Utiliser l'API
+
+L'API n'a pas de limite d'enregistrements :
+
+1. Récupérez votre clé API depuis **Settings → Developers**
+2. Utilisez l'API GraphQL pour interroger les enregistrements
+3. Traitez les résultats dans votre application
+
+Voir : [Documentation de l'API](/l/fr/developers/extend/capabilities/apis)
+
+## Conseils et bonnes pratiques
+
+### Créez des vues d'export
+
+Enregistrez des vues configurées spécifiquement pour les exports :
+
+1. Configurez les colonnes et les filtres
+2. Cliquez sur **View options** → **Save as new view**
+3. Nommez-la "Export - [Purpose]"
+
+### Sécurisez vos exports
+
+Les fichiers exportés peuvent contenir des données sensibles :
+
+* Stockez-les dans des emplacements sécurisés
+* Supprimez les anciens exports lorsqu'ils ne sont plus nécessaires
+* Soyez prudent lors du partage des fichiers d'export
+
+### À vérifier avant l'export
+
+<Check>Les colonnes appropriées sont visibles</Check>
+<Check>Les filtres sont correctement définis (ou supprimés pour un export complet)</Check>
+<Check>Vous disposez de l'autorisation d'export</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Pourquoi certaines colonnes manquent-elles dans mon export ?">
+    Seules les colonnes visibles sont exportées. Ajoutez les colonnes nécessaires via **Options → Fields** avant d'exporter.
+  </Accordion>
+
+  <Accordion title="Pourquoi mon export ne contient-il pas tous les enregistrements ?">
+    Vérifiez vos filtres. L'export n'inclut que les enregistrements correspondant aux filtres de votre vue actuelle. Supprimez les filtres pour exporter tous les enregistrements.
+  </Accordion>
+
+  <Accordion title="Puis-je exporter plus de 20 000 enregistrements ?">
+    Pas en un seul export. Utilisez des filtres pour exporter par lots, ou utilisez l'API pour des jeux de données plus volumineux.
+  </Accordion>
+
+  <Accordion title="Quel est le format du fichier d'export ?">
+    CSV (valeurs séparées par des virgules). S'ouvre dans Excel, Google Sheets ou toute application de feuille de calcul.
+  </Accordion>
+
+  <Accordion title="Les ID de relations sont-ils inclus ?">
+    Oui, mais seulement du côté "many" des relations. Par exemple, un export People inclut `companyId`, mais un export Companies n'inclut pas les ID des personnes.
+  </Accordion>
+
+  <Accordion title="Puis-je automatiser les exports ?">
+    Pas directement via l'interface utilisateur. Utilisez l'API pour créer des workflows d'export automatisés.
+  </Accordion>
+</AccordionGroup>
+
+## Prochaines étapes
+
+* [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/data-migration/how-tos/update-existing-records-via-import) — modifiez et réimportez votre export
+* [Comment importer des données via l'API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api) — pour de grands jeux de données
+* [Documentation de l'API](/l/fr/developers/extend/capabilities/apis) — créez des flux de travail d'exportation personnalisés

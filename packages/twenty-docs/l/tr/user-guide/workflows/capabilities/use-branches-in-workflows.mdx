@@ -1,0 +1,90 @@
+---
+title: İş Akışlarında Dalları Kullanın
+description: Dalların nasıl çalıştığını ve hangi yolun çalıştırılacağını nasıl kontrol edeceğinizi anlayın.
+---
+
+## Dallar Nasıl Çalışır
+
+İş akışı düzenleyicisinde, tek bir düğümden çıkan birden çok yol (dallar) oluşturabilirsiniz. Bu, farklı sonuçlara sahip karmaşık otomasyonlar oluşturmanıza olanak tanır.
+
+**Önemli**: Bir iş akışı çalıştığında, **varsayılan olarak tüm dallar paralel olarak yürütülür**. Bir dalı diğerine tercih etmek için yerleşik bir "if/else" mantığı yoktur—her yol eşzamanlı olarak çalışır.
+
+## Hangi Dalın Çalıştırılacağını Kontrol Etme
+
+Belirli koşullara göre yalnızca bir dalı çalıştırmak için, **her dalın başına bir Filter düğümü ekleyin**.
+
+### Örnek Kurulum
+
+1. İş akışınızı, tek bir düğümden birden çok dal çıkaracak şekilde oluşturun
+2. Her dalda ilk adım olarak bir **Filter** düğümü ekleyin
+3. Her Filter üzerinde, o dalın ne zaman devam etmesi gerektiğini belirlemek için koşullar ayarlayın
+4. Yalnızca Filter koşulları sağlanan dal(lar) devam edecektir
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Filter'lar Nasıl Çalışır
+
+* Filter koşulu **sağlanırsa**: Dal çalışmaya devam eder
+* Filter koşulu **sağlanmazsa**: Dal, Filter düğümünde durur
+
+Bu, verilerinize bağlı olarak yalnızca uygun dalın çalıştığı bir koşullu mantık oluşturur.
+
+## Örnek: Anlaşma Büyüklüğüne Göre Yönlendirme
+
+**Senaryo**: Bir anlaşma kapandığında, anlaşma büyüklüğüne göre farklı bildirimler gönderin.
+
+1. **Tetikleyici**: Fırsat güncellendi (Aşama = Closed Won)
+2. **Dal 1**: Miktar > $10.000 için Filter → #big-deals kanalına Slack mesajı gönderin
+3. **Dal 2**: Miktar ≤ $10.000 için Filter → satış müdürüne e-posta gönderin
+
+Her iki dal da başlar, ancak yalnızca anlaşma tutarıyla eşleşen dal, Filter'ını geçerek devam eder.
+
+## Dallar Oluşturma
+
+<Note>
+  Mevcut bir adımdan yeni bir dal oluşturmak için, adım üzerindeki **+** düğmesine tıklayın ve eyleminizi ekleyin. **+**'ı birden çok kez tıklayarak birden fazla dal ekleyebilirsiniz.
+</Note>
+
+1. İş akışı düzenleyicisinde, dallandırmak istediğiniz adımı seçin
+2. Bir eylem eklemek için **+** düğmesine tıklayın
+3. Bu, bir dal oluşturur
+4. Ek dallar oluşturmak için aynı adımda **+** düğmesine tekrar tıklayın
+5. Her dalın kendi eylem dizisi olabilir
+
+## Dalları Yeniden Birleştirme
+
+Paralel dallar işlerini tamamladıktan sonra, onları yeniden tek bir yolda birleştirebilirsiniz:
+
+1. Dallanmış eylemlerinizi tamamlayın
+2. Tüm dallardan sonra çalışması gereken yeni bir adım ekleyin
+3. Her dalın son adımından bu yeni adıma bir bağlantı sürükleyin
+4. Birleştirilen adım, çalıştırılmadan önce bağlı tüm dalların tamamlanmasını bekler
+
+### Örnek: Önce İşle Sonra Bildir
+
+```
+Trigger
+   │
+   ├── Dal A: Müşteri Kaydını Güncelle
+   │
+   └── Dal B: Destek Talebi Oluştur
+
+       ↘  ↙
+
+   Birleştirilen Adım: Onay E-postası Gönder
+```
+
+Onay e-postası, hem müşteri güncellemesi hem de talep oluşturma tamamlandıktan sonra gönderilir.
+
+## En İyi Uygulamalar
+
+* Koşullu yürütme istediğiniz durumlarda dalların başlangıcında her zaman **Filter düğümlerini** kullanın
+* Yinelenen eylemleri önlemek için dal koşullarını **birbirini dışlayıcı** tutun
+* Doğru dalların çalıştığından emin olmak için iş akışlarınızı farklı verilerle test edin
+* Her yolun ne yaptığının açık olması için dal adımlarını açıklayıcı şekilde **yeniden adlandırın**
+* Paralel işlemden sonra son bir eyleme ihtiyaç duyduğunuzda **dalları birleştirin**
+
+## İlgili
+
+* [İş Akışları SSS](/l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — paralel yürütme hakkında yanıtlar
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions) — dallar için kullanılabilir eylemler

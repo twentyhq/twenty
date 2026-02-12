@@ -1,0 +1,78 @@
+---
+title: Bug, richieste e Pull Request
+info: Segnala problemi, richiedi funzionalità e contribuisci al codice
+---
+
+## Segnalazione Bug
+
+Per segnalare un bug, per favore [crea una issue su GitHub](https://github.com/twentyhq/twenty/issues/new).
+
+Puoi anche chiedere aiuto su [Discord](https://discord.gg/cx5n4Jzs57).
+
+## Richieste di Funzionalità
+
+Se non sei sicuro che sia un bug e ti sembra più vicino a una richiesta di funzionalità, probabilmente dovresti [aprire invece una discussione](https://github.com/twentyhq/twenty/discussions/new).
+
+## Invia una Pull Request
+
+Contribuire al codice di Twenty inizia con una pull request (PR).
+
+### Prima di Iniziare
+
+1. Controlla le [issue esistenti](https://github.com/twentyhq/twenty/issues) per lavori correlati
+2. Per le nuove funzionalità, apri prima una issue per discuterne
+3. Consulta il nostro [Codice di condotta](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Esegui il fork e clona
+
+1. Esegui il fork del repository su GitHub
+2. Clona il tuo fork:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Aggiungi il remote upstream:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Crea un branch
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Usa nomi di branch descrittivi:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Apporta le tue modifiche
+
+1. Scrivi codice pulito e ben documentato
+2. Segui lo stile di codice esistente
+3. Aggiungi test per la nuova funzionalità
+4. Aggiorna la documentazione se necessario
+
+### Invia la tua PR
+
+1. Esegui il push del tuo branch:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Apri una PR su GitHub
+3. Compila il modello della PR
+4. Collega le issue correlate
+
+### Checklist della PR
+
+* [ ] Il codice segue le linee guida di stile del progetto
+* [ ] I test passano in locale
+* [ ] La documentazione è aggiornata
+* [ ] La descrizione della PR spiega le modifiche

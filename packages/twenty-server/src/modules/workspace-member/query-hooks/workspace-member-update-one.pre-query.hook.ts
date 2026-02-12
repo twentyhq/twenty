@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -14,8 +14,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 
 @WorkspaceQueryHook(`workspaceMember.updateOne`)
 export class WorkspaceMemberUpdateOnePreQueryHook
@@ -66,6 +66,15 @@ export class WorkspaceMemberUpdateOnePreQueryHook
         locale: payload.data.locale,
       });
     }
+
+    await this.workspaceMemberPreQueryHookService.completeOnboardingProfileStepIfNameProvided(
+      {
+        userId: authContext.user?.id,
+        workspaceId: workspace.id,
+        firstName: payload.data.name?.firstName,
+        lastName: payload.data.name?.lastName,
+      },
+    );
 
     return payload;
   }

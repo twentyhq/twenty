@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import {
   type EventRowDynamicComponentProps,
@@ -91,7 +92,7 @@ export const EventRowActivity = ({
       return event.linkedRecordCachedName;
     }
 
-    return 'Untitled';
+    return t`Untitled`;
   };
   const activityTitle = computeActivityTitle();
 
@@ -103,7 +104,7 @@ export const EventRowActivity = ({
         <StyledRow>
           <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
           <StyledEventRowItemAction>
-            {`${eventAction} a related ${eventObject}`}
+            {t`${eventAction} a related ${eventObject}`}
           </StyledEventRowItemAction>
           <StyledLinkedActivity
             onClick={() =>

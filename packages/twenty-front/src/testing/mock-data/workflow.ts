@@ -144,13 +144,13 @@ export const workflowQueryResult = {
                               value: {
                                 amountMicros: {
                                   type: 'NUMERIC',
-                                  label: 'My Amount Micros',
+                                  label: 'My Amount',
                                   value: null,
                                   isLeaf: true,
                                 },
                                 currencyCode: {
                                   type: 'TEXT',
-                                  label: 'My Currency Code',
+                                  label: 'My Currency',
                                   value: 'My text',
                                   isLeaf: true,
                                 },

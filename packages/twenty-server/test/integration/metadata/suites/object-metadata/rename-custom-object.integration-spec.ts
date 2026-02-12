@@ -5,6 +5,7 @@ import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/su
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 describe('Custom object renaming', () => {
   let listingObjectId = '';
@@ -66,7 +67,9 @@ describe('Custom object renaming', () => {
       standardObjectRelationsMap[relation].objectMetadataId =
         standardObjects.body.data.objects.edges.find(
           // @ts-expect-error legacy noImplicitAny
-          (object) => object.node.nameSingular === relation,
+          (object) =>
+            object.node.nameSingular === relation ||
+            object.node.nameSingular === `target${relation}`,
         ).node.id;
     });
   };
@@ -110,21 +113,26 @@ describe('Custom object renaming', () => {
       .filter(
         // @ts-expect-error legacy noImplicitAny
         (field) =>
-          field.node.name === `${CUSTOM_OBJECT.nameSingular}` &&
-          field.node.type === FieldMetadataType.RELATION,
+          (field.node.name === `${CUSTOM_OBJECT.nameSingular}` &&
+            FieldMetadataType.RELATION) ||
+          (field.node.name ===
+            `target${capitalize(CUSTOM_OBJECT.nameSingular)}` &&
+            FieldMetadataType.MORPH_RELATION),
       )
       // @ts-expect-error legacy noImplicitAny
       .map((field) => field.node);
 
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       // relation field
-      const relationFieldMetadataId = relationFieldsMetadataForListing.find(
+      const relationFieldMetadata = relationFieldsMetadataForListing.find(
         // @ts-expect-error legacy noImplicitAny
         (field) =>
           field.object.id ===
           // @ts-expect-error legacy noImplicitAny
           standardObjectRelationsMap[relation].objectMetadataId,
-      ).id;
+      );
+
+      const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
 

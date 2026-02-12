@@ -1,0 +1,275 @@
+---
+title: Grafik Ayarları
+description: Grafiklerinizi, verileri tam ihtiyacınız olan şekilde görüntüleyecek biçimde yapılandırın.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Grafik Ayarlarına Erişim
+
+1. Panelinizin sağ üst köşesindeki **Düzenle** düğmesine tıklayın
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Düzenleme modu" />
+
+2. Panel düzenleme moduna geçer
+3. Herhangi bir bileşeni seçmek için üzerine tıklayın
+4. Ayarlar paneli sağda açılır
+
+Ayarlar bölümlere ayrılmıştır:
+
+* **Veri**: Hangi verilerin çekileceği ve nasıl filtreleneceği
+* **X ekseni**: Kategorilerin nasıl gruplandırılacağı ve sıralanacağı (çubuk/çizgi grafikler)
+* **Y ekseni**: Nelerin ölçüleceği ve nasıl görüntüleneceği (çubuk/çizgi grafikler)
+* **Stil**: Renkler, etiketler ve görsel seçenekler
+
+<Note>
+  Bazı ayarlar yalnızca diğer ayarlar yapılandırıldığında görünür. Örneğin, **Tarih ayrıntı düzeyi** yalnızca bir tarih alanı seçtiğinizde görünür.
+</Note>
+
+---
+
+## Veri Ayarları
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Kaynak </span>
+
+Verilerin hangi nesneden çekileceğini seçin.
+
+1. **Kaynak**'a tıklayın
+2. Bir nesne seçin (Fırsatlar, Kişiler, Şirketler vb.)
+
+Tüm standart ve özel nesneleriniz kullanılabilir. Kaynağı değiştirmek diğer ayarları sıfırlar; çünkü alan seçenekleri seçilen nesneye bağlıdır.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Kaynak" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtre </span>
+
+Grafiğe dahil edilecek kayıtları sınırlandırın.
+
+1. **Filter**'e tıklayın
+2. Filtre oluşturucu açılır
+3. **+ Filtre Ekle**'ye tıklayın
+4. Bir alan, koşul ve değer seçin
+5. Gerektiğinde daha fazla filtre ekleyin
+
+Filtreler, tablo görünümlerindekiyle aynı şekilde çalışır. Verilerinizin belirli bölümlerine odaklanmak için bunları kullanın.
+
+**Örnek**: Yalnızca kapanan anlaşmaları göstermek için Aşama değeri "Kazanıldı" olan fırsatları filtreleyin.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtre" />
+
+<Tip>
+  Tarih alanları için, otomatik olarak güncellenen "Son 7 gün" veya "Bu ay" gibi dinamik filtreler oluşturmak üzere **Göreli** seçeneğini deneyin.
+</Tip>
+
+<Tip>
+  Gelişmiş filtreler desteklenir—birden fazla filtre kuralı ekleyin ve bunları **Ve** veya **Veya** mantığıyla birleştirin.
+</Tip>
+
+---
+
+## X Ekseni Ayarları
+
+Bu ayarlar, çubuk ve çizgi grafiklerin yatay eksenini kontrol eder—genellikle verilerinizin kategorilere nasıl gruplandırılacağını belirler.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Görüntülenen veri </span>
+
+Verilerinizi gruplandıracağınız alanı seçin. Bu, X ekseninde gösterilen kategorileri belirler.
+
+**Örnek**: Verileri satış süreci aşamasına göre gruplandırılmış görmek için "Aşama"yı veya zaman içindeki verileri görmek için "Oluşturulma tarihi"ni seçin.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Görüntülenen veriler" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Tarih ayrıntı düzeyi </span>
+
+Bir tarih alanına göre gruplandırırken, gruplandırma için zaman aralığını seçin.
+
+| Seçenek           | Verileri şu şekilde gruplandırır | Örnek çıktı                                          |
+| ----------------- | -------------------------------- | ---------------------------------------------------- |
+| **Gün**           | Her takvim günü                  | 1 Oca, 2 Oca, 3 Oca...                               |
+| **Hafta**         | Takvim haftaları                 | Hafta 1, Hafta 2, Hafta 3...                         |
+| **Ay**            | Takvim ayları                    | Ocak, Şubat, Mart...                                 |
+| **Çeyrek**        | Mali çeyrekler                   | Q1, Q2, Q3, Q4                                       |
+| **Yıl**           | Takvim yılları                   | 2023, 2024, 2025                                     |
+| **Haftanın günü** | Haftanın günü (birleştirilmiş)   | Pazartesi, Salı... (tüm Pazartesiler birleştirilmiş) |
+| **Yılın ayı**     | Ay (birleştirilmiş)              | Ocak, Şubat... (tüm Ocaklar birleştirilmiş)          |
+| **Yılın çeyreği** | Çeyrek (birleştirilmiş)          | Q1, Q2, Q3, Q4 (tüm Q1'ler birleştirilmiş)           |
+
+"hafta/yıl" seçenekleri tüm zaman genelinde birleştirme yapar. **Haftanın günü**nü, genellikle en çok anlaşmanın hangi günde gerçekleştiğini görmek için kullanın. **Ay** seçeneğini, aylara göre eğilimleri görmek için kullanın.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Şuna göre sırala </span>
+
+X eksenindeki kategorilerin sırasını kontrol edin.
+
+* **Konum** – Seçim alanı ayarlarınızda tanımlanan sırayı kullanır
+* **Alfabetik** – A'dan Z'ye (tarihler için kronolojik)
+* **Değere göre** – Metrik değere göre sıralanır (önce en yüksek veya en düşük)
+* **El ile** – Kendi sıranızı belirlemek için sürükleyin
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Şuna göre sırala" />
+
+**İpucu**: Boru hattı aşamaları için, aşamaları satış sürecinizin sırasına göre göstermek üzere **Konum**u kullanın (Aday → Nitelikli → Teklif → Kazanıldı).
+
+<Note>
+  Gösterilen seçenekler, alan türünüze bağlıdır. Seçim alanlarında tüm seçenekler bulunur; tarih ve metin alanları daha az seçenek gösterir.
+</Note>
+
+<Tip>
+  **El ile** sıralamada, özel bir sıra oluşturmak için kategorileri sürükleyin—belirli bölümleri vurgulamak veya verilerinizle bir hikâye anlatmak için idealdir.
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Sıfır değerleri hariç tut </span>
+
+Sıfır olan veya verisi olmayan kategorileri gizleyin.
+
+* **Açık**: Kaydı olmayan kategoriler gizlenir
+* **Kapalı**: Boş olsa bile tüm kategoriler gösterilir
+
+Seyrek veriye sahip grafikleri sadeleştirmek için bunu kullanın.
+
+---
+
+## Y Ekseni Ayarları
+
+Bu ayarlar, neyi ölçtüğünüzü ve nasıl görüntülendiğini kontrol eder.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Görüntülenen veri </span>
+
+Metrik değerinizi hesaplamak için alanı ve işlemi seçin.
+
+* **Sayım** – Tümünü say, Boş olanları say, Boş olmayanları say, Benzersiz değerleri say
+* **Matematik** – Toplam, Ortalama, Minimum, Maksimum (sayı alanları)
+* **Yüzdeler** – Boş olanların yüzdesi, Boş olmayanların yüzdesi
+
+Boolean alanlar için Doğru/Yanlış sayımı eklenir. Tarih alanlarına sahip toplama grafiklerinde En erken/En geç gösterilir.
+
+**Örnek**: Kategori başına toplam anlaşma değerini görmek için "Tutar"ı Toplam ile seçin veya anlaşma sayısını görmek için "Tümünü say"ı seçin.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Görüntülenen veriler" />
+
+<Note>
+  Gösterilen seçenekler, alanınıza ve grafik türünüze bağlıdır. Beklediğiniz bir işlem görünmüyorsa, alan türünüzü kontrol edin.
+</Note>
+
+### Oran
+
+Seçim, Çoklu seçim veya Boolean alanları için belirli bir değerin yüzdesini hesaplayabilirsiniz.
+
+1. Bir Seçim, Çoklu seçim veya Boolean alanı seçin
+2. **Oran**'ı etkinleştirin
+3. Ölçülecek seçeneği seçin
+
+**Örnek**: "Kazanıldı" anlaşmalarını tüm fırsatların yüzdesi olarak gösterin. Toplam 50'de 10 Kazanıldı varsa, grafik %20 gösterir.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Şuna göre grupla </span>
+
+Birden çok seri oluşturmak için ikinci bir boyut ekleyin (birden çok çubuk veya çizgi).
+
+1. Önce X ekseni alanınızı ayarlayın
+2. **Şuna göre grupla**'ya tıklayın
+3. İkinci bir alan seçin
+
+**Örnek**: Her kişinin boru hattı dökümünü yan yana görmek için anlaşmaları Aşamaya (X ekseni) VE Sahibe (Şuna göre grupla) göre gruplayın.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Grupla" />
+
+Şuna göre grupla ayarlandığında, grafikte birden fazla renk görürsünüz ve bir açıklama görünür.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Tarih ayrıntı düzeyi </span>
+
+Şuna göre grupla bir tarih alanı olduğunda, zaman aralığını seçin (X eksenindeki seçeneklerle aynıdır).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Şuna göre sırala </span>
+
+**Şuna göre grupla** ayarlandığında, gruplanmış serilerin sırasını kontrol edin (ör. her kategoride hangi sahibin çubuğunun önce görüneceği).
+
+X ekseni sıralamasıyla aynı seçenekler—Konum, Alfabetik ve El ile—ancak ikincil gruplandırma için **değer temelli sıralama kullanılamaz**.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Kümülatif </span>
+
+Tek tek değerler yerine kümülatif toplamları gösterin.
+
+* **Kapalı**: Her çubuk/nokta kendi değerini gösterir
+* **Açık**: Her çubuk/nokta, önceki tüm değerlerin toplamını kendi değeriyle birlikte gösterir
+
+**Örnek**: Ocak = 10, Şubat = 15
+
+* Kümülatif kapalı: 10 ve 15 gösterir
+* Kümülatif açık: 10 ve 25 gösterir (10 + 15)
+
+Zaman içinde bir hedefe doğru ilerlemeyi izlemek için kümülatifi kullanın.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Kümülatif" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Alt sınır / <ChartIcon icon="math-max" />Üst sınır </span>
+
+Y ekseni için sabit minimum ve maksimum değerler ayarlayın.
+
+* Otomatik ölçekleme için boş bırakın
+* Sınırı sabitlemek için bir sayı girin
+
+**Ne zaman kullanılmalı:**
+
+* Doğru görsel karşılaştırmalar için Minimum'u 0 olarak ayarlayın
+* Birden çok grafik arasında tutarlı ölçekler için her ikisini de ayarlayın
+* Her ikisini de ayarlayarak belirli bir değer aralığına odaklanın
+
+---
+
+## Stil Ayarları
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Renkler </span>
+
+Grafiğiniz için renk düzenini ayarlayın. Çeşitli renk paletleri arasından seçim yapın.
+
+<Note>
+  Bir Seçim alanına göre gruplandırırken, grafik alan ayarlarınızda her seçenek için tanımlanan renkleri otomatik olarak kullanır.
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Eksen adı </span>
+
+Hangi eksen etiketlerinin gösterileceğini seçin: **Yok**, **X ekseni**, **Y ekseni** veya **Her ikisi** (yalnızca çubuk ve çizgi grafikler).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Yığılmış çubuklar / Yığılmış çizgiler </span>
+
+Şuna göre grupla ayarlandığında, birden çok serinin nasıl görüntüleneceğini seçin.
+
+* **Kapalı (Gruplanmış)**: Seriler yan yana görünür. Gruplar arasındaki kesin değerleri karşılaştırırken kullanın.
+* **Açık (Yığılmış)**: Seriler birbirinin üzerine yığılır. Bileşimi gösterirken—parçaların bütünü nasıl oluşturduğunu—kullanın.
+
+**Örnek**: Aşamaya göre anlaşmalar, sahibe göre gruplanmış
+
+* Gruplanmış: Her sahibin kesin sayılarını yan yana görün
+* Yığılmış: Aşama başına toplam anlaşmaları ve her sahibin katkısının yığıldığını görün
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Veri etiketleri </span>
+
+Değerleri grafik öğelerinin üzerinde doğrudan gösterin (çubuklar, noktalar, dilimler).
+
+* **Açık**: Değerler grafikte görünür
+* **Kapalı**: Değerler gösterilmez (daha sade görünüm)
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Açıklama </span>
+
+Açıklamayı gösterin veya gizleyin (yalnızca Şuna göre grupla ayarlandığında görünür).
+
+* **Açık**: Açıklama, her rengin neyi temsil ettiğini gösterir
+* **Kapalı**: Açıklama gösterilmez
+
+<Tip>
+  Bir açıklama öğesinin üzerine **gelin**, o grubu vurgulamak için. Geçici olarak grafikten gizlemek için **tıklayın**.
+</Tip>
+
+---
+
+## Grafiğe Özel Notlar
+
+### Pasta grafikleri
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Her dilim şunu temsil eder** – Dilimlerin nasıl gruplandığını tanımlayın
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Boş kategoriyi gizle** – Sıfır değerli dilimleri kaldırın
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Merkezde değeri göster** – Toplulaştırılmış değeri görüntüleyin (toplam, ortalama, sayım vb.)
+
+### Toplama grafikleri
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Önek** – Sayının önüne metin ekleyin (ör. `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Sonek** – Sayının sonuna metin ekleyin (ör. `%`)

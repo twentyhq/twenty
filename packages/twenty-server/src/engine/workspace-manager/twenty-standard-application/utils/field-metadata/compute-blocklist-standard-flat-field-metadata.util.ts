@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -16,13 +17,13 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'blocklist'>, 'context'>): Record<
-  AllStandardObjectFieldName<'blocklist'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'blocklist', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'blocklist'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -38,7 +39,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'uuid',
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -56,10 +57,10 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -77,10 +78,10 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -97,10 +98,10 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -117,8 +118,9 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
+      isUIReadOnly: true,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -129,11 +131,14 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'workspaceMember',
       label: 'WorkspaceMember',
       description: 'WorkspaceMember',
       icon: 'IconCircleUser',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'blocklist',
       settings: {
@@ -142,7 +147,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
         joinColumnName: 'workspaceMemberId',
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

@@ -1,6 +1,6 @@
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 import { type WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
-import { addEmptyOperationIfNecessary } from '../addEmptyOperationIfNecessary';
+import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 
 describe('addEmptyOperationIfNecessary', () => {
   it('should add empty operation when no wildcard or null object operations exist', () => {
@@ -18,7 +18,7 @@ describe('addEmptyOperationIfNecessary', () => {
     ]);
   });
 
-  it('should not add empty operation when wildcard operation exists', () => {
+  it('should add empty operation when only record wildcard operation exists', () => {
     const operations: WebhookOperationType[] = [
       { object: '*', action: '*' },
       { object: 'person', action: 'created' },
@@ -29,6 +29,36 @@ describe('addEmptyOperationIfNecessary', () => {
     expect(result).toEqual([
       { object: '*', action: '*' },
       { object: 'person', action: 'created' },
+      WEBHOOK_EMPTY_OPERATION,
+    ]);
+  });
+
+  it('should add empty operation when only metadata wildcard operation exists', () => {
+    const operations: WebhookOperationType[] = [
+      { object: 'metadata.*', action: '*' },
+      { object: 'person', action: 'created' },
+    ];
+
+    const result = addEmptyOperationIfNecessary(operations);
+
+    expect(result).toEqual([
+      { object: 'metadata.*', action: '*' },
+      { object: 'person', action: 'created' },
+      WEBHOOK_EMPTY_OPERATION,
+    ]);
+  });
+
+  it('should not add empty operation when both record and metadata wildcard operations exist', () => {
+    const operations: WebhookOperationType[] = [
+      { object: '*', action: '*' },
+      { object: 'metadata.*', action: '*' },
+    ];
+
+    const result = addEmptyOperationIfNecessary(operations);
+
+    expect(result).toEqual([
+      { object: '*', action: '*' },
+      { object: 'metadata.*', action: '*' },
     ]);
   });
 

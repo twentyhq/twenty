@@ -1,0 +1,231 @@
+---
+title: Sledujte, jak dlouho obchodní příležitosti zůstávají v jednotlivých fázích.
+description: Sledujte tempo obchodů tím, že budete zaznamenávat, kdy obchodní příležitosti vstupují do jednotlivých fází.
+---
+
+<Tip>
+  Toto je příklad vytváření [Vzorcová pole](/l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields) pomocí pracovních postupů — konkrétně výpočtů dat.
+</Tip>
+
+Sledování, kdy obchodní příležitosti vstupují do jednotlivých fází, pomáhá identifikovat úzká místa a měřit tempo obchodů.
+
+Tento průvodce vás provede nastavením vlastních polí a pracovního postupu, který automaticky zaznamená, kdy obchodní příležitost přejde do každé fáze, a spočítá, kolik dní strávila v předchozí fázi.
+
+## Krok 1: Vytvořte vlastní pole
+
+Pro každou fázi potřebujete dva typy polí:
+
+* **Pole Datum a čas**: zaznamenávají, kdy obchodní příležitost vstoupila do jednotlivých fází
+* **Číselná pole**: ukládají, kolik dní obchodní příležitost strávila v jednotlivých fázích
+
+### Vytvořte pole "Poslední vstup"
+
+1. Přejděte do **Nastavení → Datový model → Obchodní příležitosti**
+2. U každé fáze klikněte na **+ Přidat pole** a nastavte:
+   * **Název**: Poslední vstup: [název fáze] (např. "Poslední vstup: Nová", "Poslední vstup: Kvalifikace")
+   * **Typ**: Datum a čas
+   * **Popis**: Časové razítko, kdy obchodní příležitost vstoupila do této fáze
+3. Klikněte na **Uložit**
+
+Vytvořte tato pole:
+
+* Poslední vstup: Nová
+* Poslední vstup: Kvalifikace
+* Poslední vstup: Schůzka
+* Poslední vstup: Nabídka
+* Poslední vstup: Vyjednávání
+* Poslední vstup: Uzavřeno – vyhráno
+* Poslední vstup: Uzavřeno – prohráno
+
+### Vytvořte pole "Dny ve fázi"
+
+1. U každé fáze klikněte na **+ Přidat pole** a nastavte:
+   * **Název**: Dny v [názvu fáze] (např. "Dny v Nové", "Dny v Kvalifikaci")
+   * **Typ**: Číslo
+   * **Popis**: Počet dní strávených v této fázi
+2. Klikněte na **Uložit**
+
+Vytvořte tato pole:
+
+* Dny v Nové
+* Dny v Kvalifikaci
+* Dny ve Schůzce
+* Dny v Nabídce
+* Dny ve Vyjednávání
+
+<Note>
+  Pole "Dny v" pro Uzavřeno – vyhráno a Uzavřeno – prohráno nepotřebujete, protože to jsou konečné fáze.
+</Note>
+
+### Volitelné: Nastavte pole jen pro čtení
+
+Nechcete-li, aby uživatelé ručně upravovali tato vypočítávaná pole:
+
+1. Přejděte na **Nastavení → Role**
+2. Vyberte roli k nastavení
+3. Najděte objekt Obchodní příležitosti
+4. Nastavte pole "Poslední vstup" a "Dny v" jako jen pro čtení
+
+## Krok 2: Vytvořte pracovní postup
+
+Tento jediný pracovní postup zvládne obě úlohy:
+
+* Zaznamená časové razítko při vstupu do nové fáze
+* Spočítá dny strávené v předchozí fázi
+
+### Vytvořte pracovní postup
+
+1. Přejděte do **Pracovních postupů**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte ho "Sledování času ve fázích"
+
+### Nakonfigurujte spouštěč
+
+1. Přidejte spouštěč **Záznam aktualizován**
+2. Vyberte **Obchodní příležitosti** jako objekt
+3. Filtrovat: pole **Fáze** je aktualizováno
+
+### Přidejte větve pro každou fázi
+
+<Note>
+  Chcete-li vytvořit novou větev, klikněte pravým tlačítkem na plátno pracovního postupu a klikněte na **Nová akce**. Poté propojte tuto akci s předchozím uzlem přetažením šipky z předchozího uzlu na tuto novou akci.
+</Note>
+
+---
+
+**Větev 1: Fáze = Nová (první fáze)**
+
+Protože jde o první fázi, zaznamenáme pouze čas vstupu — není žádná předchozí fáze k výpočtu.
+
+1. Přidejte uzel **Filtr**: Fáze = Nová
+2. Přidejte akci **Kód**:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Přidejte akci **Aktualizovat záznam**:
+   * Záznam: Spouštěcí obchodní příležitost
+   * Pole: Poslední vstup: Nová
+   * Hodnota: `now` z uzlu Kód
+
+---
+
+**Větev 2: Fáze = Kvalifikace**
+
+Při přesunu do Kvalifikace zaznamenejte čas vstupu A spočítejte dny strávené v Nové.
+
+1. Přidejte uzel **Filtr**: Fáze = Kvalifikace
+2. Přidejte akci **Kód**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Nakonfigurujte vstup uzlu Kód: namapujte `lastEnteredPreviousStage` na pole **Poslední vstup: Nová**
+4. Přidejte akci **Aktualizovat záznam**:
+   * Záznam: Spouštěcí obchodní příležitost
+   * Pole k aktualizaci:
+     * Poslední vstup: Kvalifikace = `now`
+     * Dny v Nové = `daysInPreviousStage`
+
+---
+
+**Větev 3: Fáze = Schůzka**
+
+Při přesunu do Schůzky zaznamenejte čas vstupu A spočítejte dny strávené v Kvalifikaci.
+
+1. Přidejte uzel **Filtr**: Fáze = Schůzka
+2. Přidejte akci **Kód**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Nakonfigurujte vstup uzlu Kód: namapujte `lastEnteredPreviousStage` na pole **Poslední vstup: Kvalifikace**
+4. Přidejte akci **Aktualizovat záznam**:
+   * Záznam: Spouštěcí obchodní příležitost
+   * Pole k aktualizaci:
+     * Poslední vstup: Schůzka = `now`
+     * Dny v Kvalifikaci = `daysInPreviousStage`
+
+---
+
+**Pokračujte pro zbývající fáze:**
+
+| Fáze                | Záznamy                             | Počítá             |
+| ------------------- | ----------------------------------- | ------------------ |
+| Nabídka             | Poslední vstup: Nabídka             | Dny ve Schůzce     |
+| Vyjednávání         | Poslední vstup: Vyjednávání         | Dny v Nabídce      |
+| Uzavřeno – vyhráno  | Poslední vstup: Uzavřeno – vyhráno  | Dny ve Vyjednávání |
+| Uzavřeno – prohráno | Poslední vstup: Uzavřeno – prohráno | Dny ve Vyjednávání |
+
+Větve není nutné znovu spojovat — každá se spouští nezávisle, když je splněna podmínka pro danou fázi.
+
+## Krok 3: Analyzujte čas ve fázi
+
+S zaznamenanými časovými razítky a počty dní můžete nyní analyzovat tempo obchodů.
+
+### Vytvořte zobrazení "Pomalé obchody"
+
+1. Vytvořte tabulkové zobrazení Obchodních příležitostí
+2. Přidejte sloupce: Název, Fáze, Dny v [předchozí fázi], Částka
+3. Seřaďte podle pole "Dny v" (sestupně)
+4. Filtrujte podle Fáze, abyste se zaměřili vždy na jednu fázi
+
+Obchody nahoře strávily v předchozí fázi nejvíce času.
+
+### Použijte agregace
+
+V kanbanovém zobrazení vašeho pipeline:
+
+1. Klikněte na číslo vedle názvu fáze
+2. Vyberte **Průměr**
+3. Zvolte pole "Dny v"
+
+Tím zobrazíte průměrný čas, který obchody tráví v jednotlivých fázích.
+
+## Souhrn
+
+| Součást                   | Účel                                                              |
+| ------------------------- | ----------------------------------------------------------------- |
+| **Pole "Poslední vstup"** | Ukládají, kdy obchodní příležitost vstoupila do jednotlivých fází |
+| **Pole "Dny v"**          | Ukládají, kolik dní bylo stráveno v jednotlivých fázích           |
+| **Pracovní postup**       | V jednom kroku zaznamená časové razítko A spočítá dny             |
+| **Zobrazení a agregace**  | Analyzujte tempo obchodů a identifikujte úzká místa               |
+
+## Související
+
+* [Pracovní postupy](/l/cs/user-guide/workflows/overview) — základy automatizace
+* [Jak vytvořit vlastní pole](/l/cs/user-guide/data-model/how-tos/create-custom-fields) — konfigurace polí
+* [Kanbanová zobrazení](/l/cs/user-guide/views-pipelines/capabilities/kanban-views) — agregace

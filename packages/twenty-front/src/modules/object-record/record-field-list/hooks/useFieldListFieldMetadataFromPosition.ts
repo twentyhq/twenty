@@ -21,14 +21,14 @@ export const useFieldListFieldMetadataFromPosition = ({
 
   const {
     inlineFieldMetadataItems,
-    inlineRelationFieldMetadataItems,
+    legacyActivityTargetFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
   });
 
   const fieldMetadataItems = [
-    ...inlineRelationFieldMetadataItems,
+    ...legacyActivityTargetFieldMetadataItems,
     ...inlineFieldMetadataItems,
     ...boxedRelationFieldMetadataItems,
   ];

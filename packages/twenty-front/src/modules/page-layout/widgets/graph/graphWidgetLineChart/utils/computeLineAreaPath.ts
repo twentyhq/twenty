@@ -19,7 +19,7 @@ export const computeLineAreaPath = ({
   type PositionData = (typeof currentSeries.data)[number];
 
   const areaGenerator = area<PositionData>()
-    .defined((d) => d.position.x !== null && d.position.y !== null)
+    .defined((d) => isDefined(d.position.x) && isDefined(d.position.y))
     .x((d) => d.position.x ?? 0)
     .y1((d) => d.position.y ?? 0)
     .y0((_, index) => {

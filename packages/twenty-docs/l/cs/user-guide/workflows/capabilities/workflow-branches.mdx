@@ -1,0 +1,66 @@
+---
+title: Větve pracovního postupu
+description: Vytvářejte paralelní cesty a podmíněnou logiku ve svých pracovních postupech.
+---
+
+Větve vám umožní rozdělit pracovní postup do více cest, které mohou běžet současně nebo podmíněně na základě vašich dat.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## Jak větve fungují
+
+Když z jednoho uzlu vytvoříte více propojení, každá cesta se stane větví. Ve výchozím nastavení se **všechny větve provádějí paralelně** — nečekají na sebe navzájem.
+
+## Vytváření větví
+
+### Přidat novou větev
+
+1. **Klikněte pravým tlačítkem na hlavní plátno** pracovního postupu (ne na existující uzel)
+2. Klikněte na **Přidat uzel**
+3. Vyberte typ uzlu pro svou novou větev
+4. Přetáhněte šipku ze spodní části předchozího kroku na horní část této nové akce
+5. Opakujte pro přidání dalších větví ze stejného uzlu
+
+<Note>
+  Každá větev je nezávislá. Přidání větve neovlivní jiné existující cesty z tohoto uzlu.
+</Note>
+
+### Vizuální rozložení
+
+Větve se v editoru pracovního postupu zobrazují jako paralelní cesty. Můžete přetahovat uzly a upravovat tak vizuální rozložení, aniž by to ovlivnilo běh.
+
+## Podmíněné větve
+
+Protože se všechny větve ve výchozím nastavení spouštějí, použijte uzly **Filtr** ke kontrole, které cesty se skutečně provedou:
+
+| Větev | Podmínka filtru      | Akce                           |
+| ----- | -------------------- | ------------------------------ |
+| A     | Fáze = "Vyhráno"     | Odeslat gratulační e‑mail      |
+| B     | Fáze = "Prohráno"    | Vytvořit úkol následného kroku |
+| C     | Fáze = "Vyjednávání" | Upozornit manažera             |
+
+1. Vytvářejte větve ze svého spouštěče nebo akce
+2. Přidejte uzel **Filtr** jako první krok každé větve
+3. Nakonfigurujte každý filtr s navzájem se vylučujícími podmínkami
+4. Za každý filtr přidejte své akce
+
+V provádění bude pokračovat pouze větev (větve), kde je splněna podmínka filtru.
+
+## Slučování větví
+
+**Větve se automaticky neslučují.** Každá větev běží nezávisle, dokud neskončí. Máte plnou volnost v tom, jak to řešit:
+
+* **Možnost 1: Nechávejte větve oddělené**
+  Každá větev samostatně zpracovává své následné akce. Toto je nejjednodušší přístup, když není potřeba, aby se větve sbíhaly.
+
+* **Možnost 2: Sloučit větve ručně**
+  Při vytváření pracovního postupu můžete ručně připojit více větví ke stejné následné akci. Jednoduše přetáhněte šipky z konce každé větve do společného uzlu.
+
+<Note>
+  Ačkoli můžete k pozastavení běhu použít uzel [Delay](/l/cs/user-guide/workflows/capabilities/workflow-actions#delay), momentálně jej nelze nastavit tak, aby čekal "dokud neskončí jiná větev".
+</Note>
+
+## Související
+
+* [Jak používat větve v pracovních postupech](/l/cs/user-guide/workflows/capabilities/use-branches-in-workflows) - Průvodce krok za krokem
+* [Akce pracovního postupu](/l/cs/user-guide/workflows/capabilities/workflow-actions) - Dostupné akce včetně Filtru

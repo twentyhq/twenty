@@ -1,6 +1,6 @@
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { type CoreViewFilterGroup } from '~/generated/graphql';
+import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
 
 export const convertCoreViewFilterGroupToViewFilterGroup = (
   coreViewFilterGroup: Pick<

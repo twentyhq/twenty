@@ -1,10 +1,11 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   IconBolt,
   IconBrandGoogle,
@@ -17,8 +18,6 @@ import {
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
-import { MultiSelectInput } from '../MultiSelectInput';
 
 type RenderProps = {
   values: FieldMultiSelectValue;
@@ -128,7 +127,7 @@ const Render = ({
 const meta: Meta<typeof MultiSelectInput> = {
   title: 'UI/Field/Input/MultiSelectInput',
   component: MultiSelectInput,
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [ComponentDecorator],
   args: {
     values: [],
     options: sampleOptions,

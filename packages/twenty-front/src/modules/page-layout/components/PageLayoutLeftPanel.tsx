@@ -8,7 +8,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: grid;
   grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
   height: 100%;
 `;
 

@@ -1,3 +1,6 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -34,7 +37,7 @@ import { buildWorkspaceMemberStandardFlatFieldMetadatas } from 'src/engine/works
 import { type CreateStandardFieldArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 
 type StandardFieldBuilder<P extends AllStandardObjectName> = (
-  args: Omit<CreateStandardFieldArgs<P>, 'context'>,
+  args: Omit<CreateStandardFieldArgs<P, FieldMetadataType>, 'context'>,
 ) => Record<string, FlatFieldMetadata>;
 
 const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
@@ -75,15 +78,11 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   [P in AllStandardObjectName]: StandardFieldBuilder<P>;
 };
 
-const createEmptyFlatFieldMetadataMaps =
-  (): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: {},
-    idByUniversalIdentifier: {},
-    universalIdentifiersByApplicationId: {},
-  });
-
 export const buildStandardFlatFieldMetadataMaps = (
-  args: Omit<CreateStandardFieldArgs, 'context' | 'objectName'>,
+  args: Omit<
+    CreateStandardFieldArgs<AllStandardObjectName, FieldMetadataType>,
+    'context' | 'objectName'
+  >,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const allFieldMetadatas: FlatFieldMetadata[] = (
     Object.keys(
@@ -101,7 +100,7 @@ export const buildStandardFlatFieldMetadataMaps = (
     return Object.values(result);
   });
 
-  let flatFieldMetadataMaps = createEmptyFlatFieldMetadataMaps();
+  let flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
   for (const fieldMetadata of allFieldMetadatas) {
     flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({

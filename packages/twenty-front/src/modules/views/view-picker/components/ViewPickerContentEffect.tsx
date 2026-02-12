@@ -8,7 +8,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
-import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
+import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -21,8 +21,10 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewVisibility } from '~/generated-metadata/graphql';
-import { PermissionFlagType } from '~/generated/graphql';
+import {
+  ViewVisibility,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetRecoilComponentState(
@@ -75,7 +77,8 @@ export const ViewPickerContentEffect = () => {
     (view) => view.id === viewPickerReferenceViewId,
   );
 
-  const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
+  const { availableFieldsForGrouping } =
+    useGetAvailableFieldsToGroupRecordsBy();
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
   const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
@@ -115,14 +118,14 @@ export const ViewPickerContentEffect = () => {
   useEffect(() => {
     if (
       isDefined(referenceView) &&
-      availableFieldsForKanban.length > 0 &&
+      availableFieldsForGrouping.length > 0 &&
       viewPickerMainGroupByFieldMetadataId === ''
     ) {
       setViewPickerMainGroupByFieldMetadataId(
         isDefined(referenceView.mainGroupByFieldMetadataId) &&
           referenceView.mainGroupByFieldMetadataId !== ''
           ? referenceView.mainGroupByFieldMetadataId
-          : availableFieldsForKanban[0].id,
+          : availableFieldsForGrouping[0].id,
       );
     }
     if (
@@ -139,7 +142,7 @@ export const ViewPickerContentEffect = () => {
     }
   }, [
     referenceView,
-    availableFieldsForKanban,
+    availableFieldsForGrouping,
     viewPickerMainGroupByFieldMetadataId,
     setViewPickerMainGroupByFieldMetadataId,
     availableFieldsForCalendar,

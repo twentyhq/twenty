@@ -1,0 +1,170 @@
+---
+title: 관련 레코드 데이터 표시
+description: "워크플로우를 사용해 관련 레코드의 데이터를 표시합니다(예: Opportunities에 회사 정보 표시)."
+---
+
+관련 레코드의 데이터를 내 레코드에 직접 표시하세요 — 예를 들어, Company의 직원 수를 해당 Opportunities에 표시합니다. 중첩 필드가 기본적으로 제공될 때까지 이 워크플로우 우회 방법이 유용합니다.
+
+## 일반적인 사용 사례
+
+| 소스 | 대상 | 복사할 필드             |
+| -- | -- | ------------------ |
+| 회사 | 기회 | 산업, 회사 규모, ARR     |
+| 사람 | 기회 | 이메일, 전화, 직함        |
+| 기회 | 회사 | 최근 거래 금액, 최근 성사 일자 |
+
+## 기본 필드 복사
+
+### 예시: 연락처 이메일을 Opportunity로 복사
+
+**목표**: Opportunity에서 담당자를 설정할 때, 쉽게 액세스할 수 있도록 해당 이메일을 Opportunity로 복사합니다.
+
+### 사전 준비
+
+워크플로우를 만들기 전에 **설정 → 데이터 모델 → Opportunities**에서 대상 필드를 생성하세요:
+
+* 연락처 이메일(유형: Email)
+* 연락처 전화(유형: Phone)
+
+### 설정
+
+1. **트리거**: 레코드가 업데이트됨 (Opportunities, 담당자 필드)
+
+2. **필터**: 담당자가 비어 있지 않은지 확인
+
+3. **레코드 검색**: 연결된 사람 찾기
+   * 객체: People
+   * 필터: ID가 `{{trigger.object.pointOfContact.id}}`와 같음
+
+4. **레코드 업데이트**:
+   * 객체: Opportunities
+   * 레코드: `{{trigger.object.id}}`
+   * 연락처 이메일: `{{searchRecords[0].email}}`
+   * 연락처 전화: `{{searchRecords[0].phone}}`
+
+## 여러 필드 복사
+
+### 예시: 모든 관련 Opportunities에 회사 정보 동기화
+
+**목표**: 회사 세부 정보가 변경되면 관련된 모든 Opportunities를 업데이트합니다.
+
+### 설정
+
+1. **트리거**: 레코드가 업데이트됨 (Companies)
+   * 필드: 산업, 회사 규모, 연간 매출
+
+2. **레코드 검색**: 이 회사의 모든 Opportunities 찾기
+   * 객체: Opportunities
+   * 필터: 회사 ID가 `{{trigger.object.id}}`와 같음
+
+3. **Iterator**: 각 Opportunity를 순회
+
+4. **레코드 업데이트** (iterator 내부):
+   * 객체: Opportunities
+   * 레코드: `{{iterator.currentItem.id}}`
+   * 회사 산업: `{{trigger.object.industry}}`
+   * 회사 규모: `{{trigger.object.companySize}}`
+   * 회사 ARR: `{{trigger.object.annualRevenue}}`
+
+## 레코드 생성 시 복사
+
+### 예시: 회사 데이터로 Opportunity를 미리 채우기
+
+**목표**: 회사와 연결된 Opportunity를 생성할 때 핵심 회사 정보를 자동으로 복사합니다.
+
+### 사전 준비
+
+**설정 → 데이터 모델 → Opportunities**에서 대상 필드를 생성하세요:
+
+* 회사 산업(유형: Text)
+* 회사 규모(유형: Number)
+
+### 설정
+
+1. **트리거**: 레코드가 생성됨 (Opportunities)
+   * 필터: 회사가 비어 있지 않음
+
+2. **레코드 검색**: 연결된 회사의 세부 정보 가져오기
+   * 객체: Companies
+   * 필터: ID가 `{{trigger.object.company.id}}`와 같음
+
+3. **레코드 업데이트**:
+   * 객체: Opportunities
+   * 레코드: `{{trigger.object.id}}`
+   * 회사 산업: `{{searchRecords[0].industry}}`
+   * 회사 규모: `{{searchRecords[0].employees}}`
+
+<Note>
+  **작업 및 노트 제한 사항**: 작업과 노트의 관계는 다대다로 하드코딩되어 있으며, 워크플로우 트리거 또는 액션에서 아직 사용할 수 없습니다. 이러한 관계에 액세스하려면 대신 [API](/l/ko/developers/extend/capabilities/apis)를 사용하세요.
+</Note>
+
+## 양방향 동기화
+
+### 예시: 기본 담당자 동기화 유지
+
+**목표**: 회사의 기본 담당자가 변경되면 담당자를 업데이트합니다. 사람이 기본 담당자가 되면 회사를 업데이트합니다.
+
+### 워크플로우 1: Company → Person
+
+1. **트리거**: 레코드가 업데이트됨 (Companies, 기본 담당자 필드)
+2. **레코드 업데이트**: 사람의 "Is Primary Contact"를 true로 설정
+3. **레코드 검색**: 이전 기본 담당자 찾기
+4. **레코드 업데이트**: 이전 담당자의 "Is Primary Contact"를 false로 설정
+
+### 워크플로우 2: Person → Company
+
+1. **트리거**: 레코드가 업데이트됨 (People, Is Primary Contact = true)
+2. **레코드 업데이트**: 회사의 기본 담당자를 이 사람으로 설정
+
+<Note>
+  무한 루프를 피하기 위해 양방향 동기화에 주의하세요. 업데이트하기 전에 값이 실제로 변경되었는지 필터로 확인하세요.
+</Note>
+
+## 복잡한 매핑에 코드 사용
+
+### 예시: 복사 중 데이터 변환
+
+**목표**: 사람의 전화번호를 Opportunity로 복사하고 형식을 지정합니다.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## 모범 사례
+
+### 루프 방지
+
+* 서로를 끝없이 트리거하는 워크플로우를 만들지 마세요
+* 특정 필드 조건 사용
+* 값이 실제로 변경되었는지 확인을 추가하세요
+
+### 누락된 데이터 처리
+
+* 복사하기 전에 소스 레코드가 존재하는지 항상 확인하세요
+* 선택적 필드에 기본값 제공
+* 소스 필드가 비어 있을 때 건너뛰도록 필터 사용
+
+### 성능
+
+* 여러 레코드에 복사할 때 일괄 업데이트 사용
+* 대량 동기화 작업에는 예약된 워크플로우를 사용하세요
+* 다수의 레코드를 업데이트할 때 Iterator 사용을 고려하세요
+
+## 관련 항목
+
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [워크플로우 트리거](/l/ko/user-guide/workflows/capabilities/workflow-triggers)

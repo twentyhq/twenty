@@ -1,6 +1,7 @@
 import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -28,12 +29,19 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   const configuration = widgetInEditMode?.configuration;
 
-  if (
-    configuration?.__typename !== 'BarChartConfiguration' &&
-    configuration?.__typename !== 'LineChartConfiguration' &&
-    configuration?.__typename !== 'AggregateChartConfiguration' &&
-    configuration?.__typename !== 'PieChartConfiguration'
-  ) {
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+  const isAggregateChart = isWidgetConfigurationOfType(
+    configuration,
+    'AggregateChartConfiguration',
+  );
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
+
+  if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
     throw new Error('Invalid configuration type');
   }
 

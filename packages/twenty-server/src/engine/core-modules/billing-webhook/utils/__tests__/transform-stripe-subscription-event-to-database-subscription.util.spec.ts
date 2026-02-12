@@ -18,13 +18,13 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
           plan: {
             interval: 'month',
           },
+          current_period_end: mockTimestamp,
+          current_period_start: mockTimestamp - 2592000, // 30 days before end
         },
       ],
     },
     cancel_at_period_end: false,
     currency: 'usd',
-    current_period_end: mockTimestamp,
-    current_period_start: mockTimestamp - 2592000, // 30 days before end
     metadata: {},
     collection_method: 'charge_automatically',
     automatic_tax: null,
@@ -121,7 +121,7 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
       cancellation_details: {
         comment: 'Customer requested cancellation',
         feedback: 'too_expensive',
-        reason: 'customer_request',
+        reason: 'cancellation_requested',
       },
     });
 
@@ -136,7 +136,7 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
     expect(result.cancellationDetails).toEqual({
       comment: 'Customer requested cancellation',
       feedback: 'too_expensive',
-      reason: 'customer_request',
+      reason: 'cancellation_requested',
     });
   });
 
@@ -144,7 +144,11 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
     const mockData = createMockSubscriptionData({
       automatic_tax: {
         enabled: true,
-        status: 'calculated',
+        disabled_reason: null,
+        liability: {
+          type: 'self',
+          account: 'acct_123',
+        },
       },
     });
 
@@ -155,7 +159,11 @@ describe('transformStripeSubscriptionEventToDatabaseSubscription', () => {
 
     expect(result.automaticTax).toEqual({
       enabled: true,
-      status: 'calculated',
+      disabled_reason: null,
+      liability: {
+        type: 'self',
+        account: 'acct_123',
+      },
     });
   });
 

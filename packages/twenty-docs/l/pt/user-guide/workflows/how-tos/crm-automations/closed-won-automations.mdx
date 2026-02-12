@@ -1,0 +1,179 @@
+---
+title: Automatizações para Closed Won
+description: Automatize as atividades pós-ganho quando as oportunidades forem encerradas.
+---
+
+Quando um negócio é encerrado, várias coisas precisam acontecer: atualizar o status da empresa, notificar os membros da equipe, criar tarefas de onboarding. Automatize tudo isso com um único fluxo de trabalho.
+
+## O Problema
+
+Quando uma oportunidade passa para "Closed Won":
+
+* O tipo de empresa precisa mudar de "Prospect" para "Customer"
+* Tarefas de onboarding precisam ser criadas
+* A equipe de Customer Success precisa ser notificada
+* O representante de vendas precisa de confirmação
+
+Fazer isso manualmente consome tempo e é suscetível a erros.
+
+## A Solução
+
+Crie um fluxo de trabalho que trate automaticamente todas as atividades pós-ganho.
+
+## Configuração Completa do Fluxo de Trabalho
+
+### Etapa 1: Criar o fluxo de trabalho
+
+1. Vá para **Configurações → Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Nomeie como "Deal Won - Post-Win Automation"
+
+### Etapa 2: Configurar o gatilho
+
+1. Selecione **Record is Updated**
+2. Escolha **Oportunidades**
+3. Em "Campos para monitorar", selecione **Estágio**
+
+### Etapa 3: Adicionar filtro de estágio
+
+1. Adicione a ação **Filtro**
+2. Condição: `{{trigger.object.stage}}` é igual a "Closed Won"
+
+### Etapa 4: Atualizar o tipo de empresa
+
+1. Adicione a ação **Atualizar registro**
+2. Configurar:
+
+| Campo                        | Valor                           |
+| ---------------------------- | ------------------------------- |
+| **Objeto**                   | Empresas                        |
+| **Registro**                 | `{{trigger.object.company.id}}` |
+| **Tipo**                     | Cliente                         |
+| **Data do primeiro negócio** | `{{trigger.object.closedAt}}`   |
+| **Proprietário da Conta**    | `{{trigger.object.owner.id}}`   |
+
+### Etapa 5: Criar tarefa de onboarding
+
+1. Adicione a ação **Criar registro**
+2. Configurar:
+
+| Campo                        | Valor                                                                                                          |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Objeto**                   | Tarefas                                                                                                        |
+| **Título**                   | `Onboarding: {{trigger.object.name}}`                                                                          |
+| **Responsável**              | Membro da equipe de Customer Success                                                                           |
+| **Data de vencimento**       | Daqui a 3 dias                                                                                                 |
+| **Prioridade**               | Alta                                                                                                           |
+| **Empresa relacionada**      | `{{trigger.object.company.id}}`                                                                                |
+| **Oportunidade relacionada** | `{{trigger.object.id}}`                                                                                        |
+| **Descrição**                | `Onboarding de novo cliente para {{trigger.object.company.name}}. Valor do negócio: {{trigger.object.amount}}` |
+
+### Etapa 6: Notificar Customer Success
+
+1. Adicione a ação **Enviar e-mail**
+2. Configurar:
+
+| Campo       | Valor                                              |
+| ----------- | -------------------------------------------------- |
+| **Para**    | customer-success@yourcompany.com                   |
+| **Assunto** | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **Corpo**   | Veja o exemplo abaixo                              |
+
+**Exemplo de corpo do e-mail**:
+
+```
+Hi CS Team,
+
+We have a new customer!
+
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
+
+An onboarding task has been created automatically.
+
+Let's give them a great start!
+```
+
+### Etapa 7: Confirmar para o representante de vendas
+
+1. Adicione outra ação **Enviar e-mail**
+2. Configurar:
+
+| Campo       | Valor                                                                                                          |
+| ----------- | -------------------------------------------------------------------------------------------------------------- |
+| **Para**    | `{{trigger.object.owner.email}}`                                                                               |
+| **Assunto** | `✅ Deal Closed: {{trigger.object.name}}`                                                                       |
+| **Corpo**   | Parabéns! Seu negócio foi processado. A equipe de Customer Success foi notificada e o onboarding foi iniciado. |
+
+### Etapa 8: Testar e ativar
+
+1. Teste movendo uma oportunidade de teste para "Closed Won"
+2. Verificar:
+   * Tipo de empresa alterado para "Customer"
+   * Tarefa de onboarding criada
+   * A equipe de CS recebeu o e-mail
+   * O representante de vendas recebeu a confirmação
+3. Ative quando estiver pronto
+
+## Tratamento de Closed Lost
+
+Crie um fluxo de trabalho semelhante para negócios perdidos:
+
+### Disparador
+
+* Registro é atualizado (Oportunidades, Estágio = "Closed Lost")
+
+### Ações
+
+1. **Criar registro**: Tarefa para "Análise de negócio perdido"
+2. **Atualizar registro**: Adicionar o motivo da perda ao registro da empresa
+3. **Enviar e-mail**: Notificar o gerente sobre o negócio perdido
+
+## Avançado: Onboarding em várias etapas
+
+Para um onboarding complexo, crie várias tarefas:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Use **Iterator** para criar cada tarefa a partir do array.
+
+## Ideias de personalização
+
+### Mantenha suas outras ferramentas atualizadas
+
+* Crie o cliente no sistema de faturamento com uma **Requisição HTTP**
+
+### Ações condicionais
+
+Use ações **Filtro** para:
+
+* Onboarding diferente para enterprise vs. SMB
+* Responsáveis diferentes com base na região
+* Ignorar notificações para negócios pequenos
+
+### Incluir detalhes do negócio
+
+Use a ação **Código** para formatar:
+
+* Documentos de resumo do negócio
+* Notas de repasse para a equipe de CS
+* Checklists de onboarding personalizadas
+
+## Relacionados
+
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)

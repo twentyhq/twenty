@@ -21,11 +21,7 @@ export const RecordShowPageTitle = ({
   const record = useRecoilValue(recordStoreFamilyState(objectRecordId));
 
   const pageName = isDefined(record)
-    ? getLabelIdentifierFieldValue(
-        record,
-        labelIdentifierFieldMetadataItem,
-        objectNameSingular,
-      )
+    ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)
     : '';
 
   const pageTitle = pageName.trim()

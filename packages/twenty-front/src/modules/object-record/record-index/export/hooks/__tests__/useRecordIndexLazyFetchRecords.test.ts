@@ -4,7 +4,7 @@ import {
   percentage,
   sleep,
   useRecordIndexLazyFetchRecords,
-} from '../useRecordIndexLazyFetchRecords';
+} from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { ViewType } from '@/views/types/ViewType';

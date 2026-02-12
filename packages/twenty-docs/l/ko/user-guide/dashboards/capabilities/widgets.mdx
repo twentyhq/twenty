@@ -1,0 +1,149 @@
+---
+title: 위젯
+description: Twenty에서 위젯 유형과 시각화 옵션을 살펴보세요.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## 사용 가능한 위젯
+
+Twenty는 CRM 데이터를 시각화할 수 있는 다양한 위젯 유형을 제공합니다.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />막대 차트</span>
+
+데이터를 가로 또는 세로 막대로 표시합니다.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="막대 차트" />
+</Frame>
+
+**적합한 용도:**
+
+* 범주별 값 비교
+* 순위 표시
+* 기간별 지표 추적
+
+**사용 예시:**
+
+* 단계별 거래
+* 영업 담당자별 매출
+* 월별 추가된 연락처
+
+<Note>
+  **표시 제한**: 막대 차트는 막대 최대 100개를 표시할 수 있으며, Group By를 사용하는 경우 막대당 최대 50개의 그룹을 표시할 수 있습니다. 경고 "Undisplayed data: max X bars per chart"가 표시되면, 필터를 추가해 데이터 범위를 좁히거나 그룹화를 변경하세요(예: 일 단위 대신 주 단위로 그룹화).
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />파이 차트</span>
+
+전체 대비 비율을 표시합니다.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="파이 차트" />
+</Frame>
+
+**적합한 용도:**
+
+* 구성 또는 분포 표시
+* 부분과 전체 비교
+* 주요 세그먼트 강조
+
+**사용 예시:**
+
+* 소스별 거래 분포
+* 업종별 연락처 분포
+* 소유자별 파이프라인 구성
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />선형 차트</span>
+
+시간에 따른 추세를 표시합니다.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="선형 차트" />
+</Frame>
+
+**적합한 용도:**
+
+* 시간 경과에 따른 변화 추적
+* 추세 파악
+* 여러 지표 비교
+
+**사용 예시:**
+
+* 월별 거래 건수 추세
+* 분기별 매출 성장
+* 시간 경과에 따른 활동 수준
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />집계 차트</span>
+
+단일 핵심 값을 눈에 띄게 표시합니다.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="집계 차트" />
+</Frame>
+
+**적합한 용도:**
+
+* KPI 강조
+* 합계 또는 평균 표시
+* 빠른 상태 확인
+
+**사용 예시:**
+
+* 총 파이프라인 가치
+* 열린 기회 수
+* 전환율
+
+**고급 옵션:**
+
+* **Ratio**: Select 필드에서 값 간 비율을 계산합니다. **Data on display**로 이동 → 필드를 선택 → **Ratio** 옵션을 활성화하세요.
+* **Prefix & Suffix**: 가독성을 높이기 위해 숫자 앞이나 뒤에 사용자 지정 텍스트를 추가합니다(예: "$" 접두사 또는 "%" 접미사).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+대시보드에 외부 도구와 콘텐츠를 직접 삽입합니다.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**적합한 용도:**
+
+* 외부 보고서 또는 대시보드 표시
+* 타사 영업 도구 통합
+* 다른 시스템의 실시간 콘텐츠 표시
+
+**사용 예시:**
+
+* 지원 도구의 지표
+* 다이얼러의 지표
+* 영업 시퀀스 도구의 실시간 콘텐츠
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />서식 있는 텍스트</span>
+
+대시보드에 서식 있는 텍스트와 콘텐츠를 직접 추가하세요.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="서식 있는 텍스트" />
+</Frame>
+
+**적합한 용도:**
+
+* 컨텍스트 또는 지침 추가
+* 대시보드 설명
+* 노트 및 주석
+
+**기능:**
+
+* 서식 있는 텍스트 편집(굵게, 기울임, 목록 등)
+* 이미지 및 파일 업로드
+* Markdown 스타일 편집
+
+<Note>
+  **곧 제공 예정**: 게이지 차트와 표는 아직 사용할 수 없지만 로드맵에 포함되어 있습니다.
+</Note>
+
+### 위젯 복제
+
+1. 위젯을 클릭하세요
+2. **Options**를 여세요
+3. **Duplicate widget**을 클릭하세요

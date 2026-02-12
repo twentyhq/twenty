@@ -1,0 +1,170 @@
+---
+title: Visualizza i dati dei record correlati
+description: Mostra i dati dei record correlati (ad es., informazioni sull'Azienda nelle Opportunità) usando i flussi di lavoro.
+---
+
+Visualizza i dati dei record correlati direttamente sui tuoi record — ad esempio, mostra il numero di dipendenti di un'Azienda nelle sue Opportunità. Questa soluzione alternativa con i flussi di lavoro è utile finché i campi annidati non sono disponibili nativamente.
+
+## Casi d'Uso Comuni
+
+| Fonte       | Destinazione | Campi da copiare                                          |
+| ----------- | ------------ | --------------------------------------------------------- |
+| Azienda     | Opportunità  | Settore, Dimensione aziendale, ARR                        |
+| Persona     | Opportunità  | Email, Telefono, Qualifica                                |
+| Opportunità | Azienda      | Importo dell'ultimo affare, Data dell'ultimo affare vinto |
+
+## Copia di campi di base
+
+### Esempio: copia l'Email del contatto nell'Opportunità
+
+**Obiettivo**: Quando imposti un Punto di contatto su un'opportunità, copia la sua email nell'opportunità per un accesso rapido.
+
+### Prerequisito
+
+Crea i campi di destinazione in **Impostazioni → Modello dati → Opportunità** prima di creare il flusso di lavoro:
+
+* Email del contatto (tipo: Email)
+* Telefono del contatto (tipo: Telefono)
+
+### Impostazione
+
+1. **Trigger**: Il record è aggiornato (Opportunità, campo Punto di contatto)
+
+2. **Filtro**: Verifica che il Punto di contatto non sia vuoto
+
+3. **Cerca record**: Trova la persona collegata
+   * Oggetto: Persone
+   * Filtro: ID uguale a `{{trigger.object.pointOfContact.id}}`
+
+4. **Aggiorna record**:
+   * Oggetto: Opportunità
+   * Record: `{{trigger.object.id}}`
+   * Email del contatto: `{{searchRecords[0].email}}`
+   * Telefono del contatto: `{{searchRecords[0].phone}}`
+
+## Copia di più campi
+
+### Esempio: sincronizza le informazioni dell'Azienda con tutte le Opportunità correlate
+
+**Obiettivo**: Quando i dettagli dell'azienda cambiano, aggiorna tutte le opportunità correlate.
+
+### Impostazione
+
+1. **Trigger**: Il record è aggiornato (Aziende)
+   * Campi: Settore, Dimensione aziendale, Ricavi annuali
+
+2. **Cerca record**: Trova tutte le opportunità per questa azienda
+   * Oggetto: Opportunità
+   * Filtro: ID Azienda uguale a `{{trigger.object.id}}`
+
+3. **Iteratore**: Itera su ciascuna opportunità
+
+4. **Aggiorna record** (all'interno dell'iteratore):
+   * Oggetto: Opportunità
+   * Record: `{{iterator.currentItem.id}}`
+   * Settore aziendale: `{{trigger.object.industry}}`
+   * Dimensione aziendale: `{{trigger.object.companySize}}`
+   * ARR dell'azienda: `{{trigger.object.annualRevenue}}`
+
+## Copia alla creazione del record
+
+### Esempio: precompila l'Opportunità con i dati dell'Azienda
+
+**Obiettivo**: Quando crei un'opportunità collegata a un'azienda, copia automaticamente le informazioni principali dell'azienda.
+
+### Prerequisito
+
+Crea i campi di destinazione in **Impostazioni → Modello dati → Opportunità**:
+
+* Settore aziendale (tipo: Testo)
+* Dimensione aziendale (tipo: Numero)
+
+### Impostazione
+
+1. **Trigger**: Il record è creato (Opportunità)
+   * Filtro: l'Azienda non è vuota
+
+2. **Cerca record**: Recupera i dettagli dell'azienda collegata
+   * Oggetto: Aziende
+   * Filtro: ID uguale a `{{trigger.object.company.id}}`
+
+3. **Aggiorna record**:
+   * Oggetto: Opportunità
+   * Record: `{{trigger.object.id}}`
+   * Settore aziendale: `{{searchRecords[0].industry}}`
+   * Dimensione aziendale: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Limitazione di Attività e Note**: Le relazioni su Attività e Note sono codificate come molte-a-molte e non sono ancora disponibili nei trigger o nelle azioni dei flussi di lavoro. Per accedere a queste relazioni, usa invece le [API](/l/it/developers/extend/capabilities/apis).
+</Note>
+
+## Sincronizzazione bidirezionale
+
+### Esempio: mantieni sincronizzato il Contatto principale
+
+**Obiettivo**: Quando cambia il contatto principale di un'azienda, aggiorna il contatto. Quando una persona diventa principale, aggiorna l'azienda.
+
+### Flusso di lavoro 1: Azienda → Persona
+
+1. **Trigger**: Il record è aggiornato (Aziende, campo Contatto principale)
+2. **Aggiorna record**: Imposta "È Contatto principale" della persona su true
+3. **Cerca record**: Trova il precedente contatto principale
+4. **Aggiorna record**: Imposta "È Contatto principale" del contatto precedente su false
+
+### Flusso di lavoro 2: Persona → Azienda
+
+1. **Trigger**: Il record è aggiornato (Persone, È Contatto principale = true)
+2. **Aggiorna record**: Imposta il Contatto principale dell'azienda su questa persona
+
+<Note>
+  Fai attenzione con le sincronizzazioni bidirezionali per evitare loop infiniti. Usa filtri per verificare che il valore sia effettivamente cambiato prima di aggiornare.
+</Note>
+
+## Uso del codice per mappature complesse
+
+### Esempio: trasformare i dati durante la copia
+
+**Obiettivo**: Copia e formatta il numero di telefono dalla persona all'opportunità.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Migliori Pratiche
+
+### Evita i loop
+
+* Non creare flussi di lavoro che si attivano a vicenda all'infinito
+* Usa condizioni specifiche sui campi
+* Aggiungi controlli per verificare se il valore è effettivamente cambiato
+
+### Gestisci i dati mancanti
+
+* Verifica sempre che il record di origine esista prima di copiare
+* Fornisci valori predefiniti per i campi facoltativi
+* Usa filtri per saltare quando il campo di origine è vuoto
+
+### Prestazioni
+
+* Esegui aggiornamenti in batch quando copi su molti record
+* Usa flussi di lavoro pianificati per operazioni di sincronizzazione in blocco
+* Valuta l'uso dell'Iteratore per aggiornamenti di più record
+
+## Correlati
+
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)

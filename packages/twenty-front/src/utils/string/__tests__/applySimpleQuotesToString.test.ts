@@ -1,4 +1,4 @@
-import { applySimpleQuotesToString } from '../applySimpleQuotesToString';
+import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 describe('applySimpleQuotesToString', () => {
   it('wraps the input string with single quotes', () => {

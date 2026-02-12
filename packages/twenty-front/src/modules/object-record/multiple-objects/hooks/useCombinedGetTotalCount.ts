@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 

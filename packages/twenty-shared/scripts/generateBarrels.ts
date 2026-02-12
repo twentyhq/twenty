@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { globSync } from 'glob';
 // @ts-ignore
 import path from 'path';
-import { Options } from 'prettier';
+import { type Options } from 'prettier';
 import slash from 'slash';
 // @ts-ignore
 import ts from 'typescript';

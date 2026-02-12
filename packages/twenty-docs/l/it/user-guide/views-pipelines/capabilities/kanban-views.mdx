@@ -1,0 +1,99 @@
+---
+title: Viste Kanban
+description: Scopri come utilizzare le viste Kanban per visualizzare e gestire i flussi di lavoro.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Informazioni sulle viste Kanban
+
+Le viste Kanban mappano visivamente i flussi di processo, dove ogni colonna rappresenta una fase distinta e ogni scheda rappresenta un record.
+
+## Sposta le Carte tra le Fasi
+
+Puoi spostare ogni carta tra le fasi mentre attraversa il tuo flusso di lavoro trascinandola e rilasciandola. Per procedere, tieni premuto il clic su una carta e spostala nella fase successiva.
+
+<VimeoEmbed videoId="927888627" title="Dimostrazione video" />
+
+## Aggiungi ed elimina fasi
+
+Puoi adattare il tuo flusso di lavoro alle tue esigenze usando le fasi, che rappresentano un valore in un Campo Seleziona:
+
+### Aggiungi Fasi
+
+Per aggiungere una fase, accedi alle impostazioni del campo Seleziona navigando su Impostazioni > Modello dati, selezionando il tuo oggetto e poi il campo da cui dipende la tua board Kanban.
+
+<VimeoEmbed videoId="927890428" title="Dimostrazione video" />
+
+### Rimuovi Fasi
+
+Per rimuovere una fase, passa il mouse sul nome della fase o sull'icona `⋮`, fai clic su `Edit from settings` nelle impostazioni del campo Selezione e quindi fai clic su **Elimina** accanto alla fase pertinente.
+
+## Campi da visualizzare
+
+Puoi configurare la tua bacheca Kanban per mostrare alcuni campi e nasconderne altri. Per nascondere un campo, fai clic su **Opzioni** in alto a destra, poi su **Campi** per visualizzare l'elenco delle opzioni. Cerca il campo necessario nella sezione Campi nascosti e fai clic sul pulsante a forma di occhio per visualizzare il campo.
+
+Puoi anche riordinare l'ordine dei campi tenendo premuto sul nome del campo e trascinandolo dove vuoi.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## Vista compatta
+
+Puoi nascondere tutti i campi e ottenere una panoramica di tutti i record a colpo d'occhio. Per abilitare:
+
+1. Fai clic su **Opzioni** in alto a destra
+2. Attiva l'interruttore per **Vista compatta**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Aggregazioni per colonna
+
+Ogni colonna in una vista Kanban può mostrare in alto valori aggregati, aiutandoti a comprendere i dati a colpo d'occhio.
+
+### Aggregazioni disponibili
+
+| Aggregazione  | Descrizione                                                    |
+| ------------- | -------------------------------------------------------------- |
+| **Conteggio** | Numero di record nella colonna                                 |
+| **Somma**     | Totale di un campo numerico (ad es., importi delle trattative) |
+| **Media**     | Valore medio di un campo numerico                              |
+| **Minimo**    | Valore minimo                                                  |
+| **Massimo**   | Valore massimo                                                 |
+
+### Configurazione delle aggregazioni
+
+1. Fai clic sul numero visualizzato accanto al valore della fase, nella parte superiore di una colonna
+2. Seleziona il tipo di aggregazione
+3. Scegli il campo da aggregare
+
+**Esempio:** Mostra il valore totale delle trattative per fase aggregando il campo Importo con Somma.
+
+## Quando utilizzare le viste Kanban
+
+Le viste Kanban sono ideali per:
+
+* **Pipeline di vendita**: Tieni traccia delle trattative attraverso le varie fasi, dal lead alla chiusura
+* **Gestione progetti**: Monitora le attività attraverso gli stati del flusso di lavoro
+* **Selezione del personale**: Tieni traccia dei candidati attraverso le fasi di assunzione
+* **Qualsiasi processo a fasi**: Visualizza qualsiasi flusso di lavoro con fasi definite
+
+## Migliori Pratiche
+
+### Organizza le fasi
+
+* **Limita le fasi**: 5-7 fasi sono ideali per la visibilità
+* **Nomi chiari**: Usa nomi di fasi descrittivi
+* **Ordine logico**: Disponi le fasi nell'ordine del processo
+
+### Ottimizza la visualizzazione delle schede
+
+* **Mostra i campi chiave**: Visualizza solo le informazioni più importanti
+* **Usa la vista compatta**: Per panoramiche di alto livello
+* **Codifica a colori**: Usa i colori delle fasi per identificare rapidamente lo stato
+
+### Mantieni la qualità dei dati
+
+* **Aggiorna regolarmente**: Mantieni le schede in movimento tra le fasi
+* **Archivia gli elementi completati**: Sposta gli elementi chiusi fuori dalla vista attiva
+* **Rivedi le schede inattive**: Esegui un follow-up sulle schede bloccate nelle fasi

@@ -1,5 +1,5 @@
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const recordIndexOpenRecordInState = createState<ViewOpenRecordInType>({
   key: 'recordIndexOpenRecordInState',

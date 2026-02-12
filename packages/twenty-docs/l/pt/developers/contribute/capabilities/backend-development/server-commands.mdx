@@ -1,0 +1,100 @@
+---
+title: Comandos de Backend
+---
+
+## Comandos Úteis
+
+Esses comandos devem ser executados a partir da pasta packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Configuração inicial
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Iniciando o servidor
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Teste
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Nota: você pode executar `npx nx run twenty-server:test:integration:with-db-reset` caso precise redefinir o banco de dados antes de executar os testes de integração.
+
+### Redefinindo o banco de dados
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrações
+
+#### Para objetos nos esquemas Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### For Workspace objects
+
+Não há arquivos de migração, as migrações são geradas automaticamente para cada espaço de trabalho, armazenadas no banco de dados e aplicadas com este comando
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  Isso excluirá o banco de dados e reexecutará as migrações e seeds.
+
+  Certifique-se de fazer backup de todos os dados que deseja manter antes de executar este comando.
+</Warning>
+
+## Pilha de Tecnologias
+
+O Twenty usa principalmente NestJS para o backend.
+
+Prisma foi o primeiro ORM que usamos. Mas para permitir que os usuários criem campos e objetos personalizados, um nível mais baixo fazia mais sentido, pois precisamos ter controle detalhado. O projeto agora usa TypeORM.
+
+Veja como a pilha de tecnologia se parece agora.
+
+**Core**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Banco de Dados**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+
+* [Sentry](https://sentry.io/welcome/) para rastreamento de bugs
+
+**Testes**
+
+* [Jest](https://jestjs.io/)
+
+**Ferramentas**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Desenvolvimento**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

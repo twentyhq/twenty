@@ -1,5 +1,5 @@
-import { createState } from 'twenty-ui/utilities';
-import { type SpreadsheetImportDialogOptions } from '../types';
+import { createState } from '@/ui/utilities/state/utils/createState';
+import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 
 export type SpreadsheetImportDialogState = {
   isOpen: boolean;

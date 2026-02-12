@@ -1,0 +1,130 @@
+---
+title: Calendario & Email
+description: Collega i tuoi account email e calendario a Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendario & Email" />
+</Frame>
+
+## Opzioni di Connessione
+
+### Account Google (Gmail & Google Calendar)
+
+1. Vai a **Impostazioni → Account**
+2. Clicca su **Aggiungi account**
+3. Seleziona **Continua con Google**
+4. Autorizza Twenty ad accedere al tuo Gmail e Google Calendar
+5. Configura le impostazioni di sincronizzazione delle email (visibilità, creazione automatica) → fai clic su **Avanti**
+6. Configura le impostazioni di sincronizzazione del calendario (visibilità, creazione automatica) → fai clic su **Aggiungi account**
+7. Le tue email e gli eventi del calendario inizieranno a sincronizzarsi automaticamente
+
+### Account Microsoft (Outlook & Microsoft Calendar)
+
+1. Vai a **Impostazioni → Account**
+2. Clicca su **Aggiungi account**
+3. Seleziona **Continua con Microsoft**
+4. Autorizza Twenty ad accedere al tuo Outlook e Microsoft Calendar
+5. Configura le impostazioni di sincronizzazione delle email (visibilità, creazione automatica) → fai clic su **Avanti**
+6. Configura le impostazioni di sincronizzazione del calendario (visibilità, creazione automatica) → fai clic su **Aggiungi account**
+7. Le tue email e gli eventi del calendario inizieranno a sincronizzarsi automaticamente
+
+### Configurazione SMTP/CalDAV (Altri Fornitori)
+
+Per altri fornitori di email e calendario:
+
+1. Vai a **Impostazioni → Account**
+2. Configura le impostazioni SMTP per l'email
+3. Configura le impostazioni CalDAV per il calendario
+4. Testa la connessione
+
+### Caselle Multiple
+
+* **Account Illimitati**: Collega vari account email per utente
+* **Gestione Account**: Passa tra diverse caselle di posta
+* **Impostazioni di Sincronizzazione**: Configura impostazioni differenti per ciascuna casella
+
+<Warning>
+  Solo vere caselle di posta possono essere collegate (es. supporto@dominio.com con la propria inbox). Alias email che inoltrano ad un'altra casella non possono essere collegati a Twenty.
+</Warning>
+
+## Configurazione Email
+
+### Visibilità Messaggi
+
+Scegli diversi livelli di visibilità per le tue email:
+
+* **Solo Metadati**: Condividi solo informazioni di base (mittente, destinatario, data, ora)
+* **Oggetto e Metadati**: Condividi l'oggetto insieme ai metadati
+* **Tutto il Contenuto dell'Email**: Condividi l'intero contenuto dell'email inclusi gli allegati
+
+### Creazione Automatica Contatti
+
+* **Disattivato**: Nessuna creazione automatica di contatti
+* **Per messaggi inviati e ricevuti**: Crea contatti per tutte le interazioni email esterne
+* **Solo per messaggi inviati**: Crea contatti solo per email che invii
+* **Nota**: Le email interne (stesso dominio) non vengono mai sincronizzate per mantenere la privacy
+
+<Note>Quando è attivata, i contatti vengono collegati automaticamente ai relativi record di Azienda in base al loro dominio email. Se l'Azienda non esiste ancora, Twenty la crea per te.</Note>
+
+### Controlla quali email vengono sincronizzate con la Selezione Cartelle Messaggi
+
+Controlla quali cartelle email sincronizzano con Twenty:
+
+1. Vai a **Impostazioni → Account** e seleziona il tuo account email collegato
+2. Scegli quali cartelle sincronizzare:
+   * **Posta in Arrivo**: Email in entrata principali
+   * **Inviati**: Email in uscita che hai inviato
+   * **Cartelle Personalizzate**: Qualsiasi cartella specifica che vuoi includere
+   * **Escludi Cartelle**: Salta cartelle come Spam, Cestino o cartelle personali
+
+Questo ti offre un controllo preciso su quali email appaiono nel tuo CRM senza sincronizzare tutto.
+
+**Cosa viene sincronizzato:**
+
+* **Email Esterne**: Tutte le email con contatti esterni dalle cartelle selezionate
+* **Email Interne**: Non sincronizzate (email dello stesso dominio rimangono private)
+* **Allegati**: In arrivo nel H1 2026
+
+**Nota**: Non forniamo un indirizzo email CC per la sincronizzazione selettiva. Invece, usa la funzionalità Cartella Messaggi sopra per ottenere lo stesso livello di controllo su quali email sincronizzano con Twenty.
+
+## Configurazione Calendario
+
+### Visibilità Eventi
+
+Scegli cosa sarà visibile ad altri utenti nel tuo spazio di lavoro:
+
+* **Tutto**: Tutti i dettagli dell'evento saranno condivisi con il tuo team
+* **Metadati**: Solo la data e i partecipanti saranno condivisi con il tuo team
+
+### Creazione Automatica Contatti per Riunioni
+
+* **Sì**: Crea automaticamente contatti per i partecipanti alle riunioni non nel tuo CRM
+* **No**: Collega solo le riunioni ai contatti esistenti
+
+<Note>Quando è attivata, i contatti vengono collegati automaticamente ai relativi record di Azienda in base al loro dominio email. Se l'Azienda non esiste ancora, Twenty la crea per te.</Note>
+
+### Controlla quali eventi vengono sincronizzati
+
+* **Importazione Riunioni**: Importa automaticamente gli eventi del calendario
+* **Collegamento Contatti**: Collega le riunioni ai record di Persone e Aziende
+
+**Cosa viene sincronizzato:**
+
+* **Riunioni**: Eventi del calendario con partecipanti esterni
+* **Collegamento Contatti**: Eventi collegati automaticamente ai record CRM
+* **Eventi di Team**: Visibilità del calendario condiviso
+
+## Frequenza di Sincronizzazione
+
+**Aggiornamenti ogni 5 minuti**: Sia i dati delle email che del calendario vengono sincronizzati automaticamente ogni 5 minuti dopo l'importazione iniziale.
+
+<Note>
+  **Tempistiche di sincronizzazione iniziale**: La sincronizzazione del calendario si completa rapidamente (di solito in pochi minuti), mentre la sincronizzazione delle email richiede più tempo per le caselle di posta di grandi dimensioni. Twenty importa email a circa **400 messaggi al minuto** (limitato dal rate limiting dell'API di Gmail), quindi una casella di posta con 10.000 email impiega circa 25 minuti. Non preoccuparti se vedi contatti provenienti dagli eventi del calendario apparire prima dei tuoi contatti email; è un comportamento normale.
+</Note>
+
+## Prossimi Passi
+
+* [Funzionalità della casella di posta](/l/it/user-guide/calendar-emails/capabilities/mailbox)
+* [Risolvi i problemi delle email mancanti](/l/it/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

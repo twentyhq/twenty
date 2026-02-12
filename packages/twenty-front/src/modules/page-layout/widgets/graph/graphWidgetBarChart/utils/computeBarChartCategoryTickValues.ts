@@ -1,34 +1,30 @@
-import { BAR_CHART_MINIMUM_WIDTH_PER_TICK } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTick';
-import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
-import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
-import { type BarDatum } from '@nivo/bar';
+import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const computeBarChartCategoryTickValues = ({
   axisSize,
   axisFontSize,
   data,
   indexBy,
-  xAxisLabel,
-  yAxisLabel,
+  margins,
   layout,
 }: {
   axisSize: number;
   axisFontSize: number;
-  data: BarDatum[];
+  data: BarChartDatum[];
   indexBy: string;
   layout: BarChartLayout;
-  xAxisLabel?: string;
-  yAxisLabel?: string;
+  margins: ChartMargins;
 }): (string | number)[] => {
   if (axisSize === 0 || data.length === 0) {
     return [];
   }
 
   const values = data.map((item) => item[indexBy] as string | number);
-
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
   const totalMargins =
     layout === BarChartLayout.VERTICAL
@@ -37,14 +33,20 @@ export const computeBarChartCategoryTickValues = ({
 
   const availableAxisSize = axisSize - totalMargins;
 
-  const minimumSizePerTick =
-    layout === BarChartLayout.VERTICAL
-      ? BAR_CHART_MINIMUM_WIDTH_PER_TICK
-      : computeMinHeightPerTick({ axisFontSize });
+  if (layout === BarChartLayout.HORIZONTAL) {
+    return computeChartCategoryTickValues({
+      availableSize: availableAxisSize,
+      minimumSizePerTick: computeMinHeightPerTick({ axisFontSize }),
+      values,
+    });
+  }
+
+  const widthPerTick = data.length > 0 ? availableAxisSize / data.length : 0;
 
   return computeChartCategoryTickValues({
     availableSize: availableAxisSize,
-    minimumSizePerTick,
+    minimumSizePerTick: BAR_CHART_CONSTANTS.MINIMUM_WIDTH_PER_TICK_ROTATED,
     values,
+    widthPerTick,
   });
 };

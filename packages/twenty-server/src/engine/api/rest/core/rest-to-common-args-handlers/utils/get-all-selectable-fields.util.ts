@@ -29,7 +29,7 @@ export const getAllSelectableFields = ({
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
-  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+  for (const fieldId of flatObjectMetadata.fieldIds) {
     const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: fieldId,

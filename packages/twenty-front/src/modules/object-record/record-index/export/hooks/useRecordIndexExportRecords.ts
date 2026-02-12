@@ -132,13 +132,15 @@ export const displayedExportProgress = (progress?: ExportProgress): string => {
     progress.displayType === 'percentage' &&
     isDefined(progress?.totalRecordCount)
   ) {
-    return `Export (${percentage(
+    const percentageValue = percentage(
       progress.exportedRecordCount,
       progress.totalRecordCount,
-    )}%)`;
+    );
+    return t`Export (${percentageValue}%)`;
   }
 
-  return `Export (${progress.exportedRecordCount})`;
+  const exportedCount = progress.exportedRecordCount;
+  return t`Export (${exportedCount})`;
 };
 
 const downloader = (mimeType: string, generator: GenerateExport) => {

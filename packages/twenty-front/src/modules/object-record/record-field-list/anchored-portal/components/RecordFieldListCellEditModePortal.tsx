@@ -43,7 +43,12 @@ export const RecordFieldListCellEditModePortal = ({
       recordId={recordId}
       instanceIdPrefix={instanceId}
     >
-      <RecordFieldListInputContextProvider>
+      <RecordFieldListInputContextProvider
+        fieldMetadataItem={editedFieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+        recordId={recordId}
+        instanceIdPrefix={instanceId}
+      >
         <RecordInlineCellEditMode>
           <FieldInput />
         </RecordInlineCellEditMode>

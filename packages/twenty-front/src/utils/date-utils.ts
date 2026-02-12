@@ -13,12 +13,15 @@ import {
 } from 'date-fns';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
 import { logError } from './logError';
 
+// TODO: review all of this with Temporal
+// - also break down this into small files
 export const parseDate = (dateToParse: Date | string | number): Date => {
   if (dateToParse === 'now') return new Date();
 
@@ -152,8 +155,8 @@ export const beautifyDateDiff = (
 
   if (years !== 0) {
     result = plural(Math.abs(years), {
-      one: `${years} ${t`year`}`,
-      other: `${years} ${t`years`}`,
+      one: `${years} year`,
+      other: `${years} years`,
     });
 
     if (short) return result;
@@ -165,8 +168,8 @@ export const beautifyDateDiff = (
 
   if (days !== 0) {
     const daysPart = plural(Math.abs(days), {
-      one: `${days} ${t`day`}`,
-      other: `${days} ${t`days`}`,
+      one: `${days} day`,
+      other: `${days} days`,
     });
     result += daysPart;
   }
@@ -180,17 +183,26 @@ export const formatToHumanReadableDate = (date: Date | string) => {
   return i18n.date(parsedJSDate, { dateStyle: 'medium' });
 };
 
-export const getDateTimeFormatStringFoDatePickerInputMask = (
-  dateFormat: DateFormat,
-): string => {
+const getTimePattern = (timeFormat: TimeFormat) => {
+  return timeFormat === TimeFormat.HOUR_12 ? 'hh:mm a' : 'HH:mm';
+};
+
+export const getDateTimeFormatStringFoDatePickerInputMask = ({
+  dateFormat,
+  timeFormat,
+}: {
+  dateFormat: DateFormat;
+  timeFormat: TimeFormat;
+}): string => {
+  const timePattern = getTimePattern(timeFormat);
   switch (dateFormat) {
     case DateFormat.DAY_FIRST:
-      return `dd/MM/yyyy HH:mm`;
+      return `dd/MM/yyyy ${timePattern}`;
     case DateFormat.YEAR_FIRST:
-      return `yyyy-MM-dd HH:mm`;
+      return `yyyy-MM-dd ${timePattern}`;
     case DateFormat.MONTH_FIRST:
     default:
-      return `MM/dd/yyyy HH:mm`;
+      return `MM/dd/yyyy ${timePattern}`;
   }
 };
 

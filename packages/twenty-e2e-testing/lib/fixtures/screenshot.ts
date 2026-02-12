@@ -27,6 +27,7 @@ export const test = base.extend<{ screenshotHook: void }>({
     },
     { auto: true },
   ],
+  baseURL: process.env.LINK ? new URL(process.env.LINK).origin : 'http://localhost:3001',
 });
 
 export { expect } from '@playwright/test';

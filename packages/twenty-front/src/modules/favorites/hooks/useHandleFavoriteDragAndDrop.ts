@@ -1,10 +1,10 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
-import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
-import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
+import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
@@ -12,9 +12,7 @@ import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 export const useHandleFavoriteDragAndDrop = () => {
   const { favorites } = usePrefetchedFavoritesData();
   const { favoritesSorted } = useSortedFavorites();
-  const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Favorite,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
   const setOpenFavoriteFolderIds = useSetRecoilState(
     openFavoriteFolderIdsState,
   );
@@ -45,10 +43,14 @@ export const useHandleFavoriteDragAndDrop = () => {
     const draggedFavorite = favorites.find((f) => f.id === draggableId);
     if (!draggedFavorite) return;
 
-    const destinationFolderId = validateAndExtractFolderId(
-      destination.droppableId,
-    );
-    const sourceFolderId = validateAndExtractFolderId(source.droppableId);
+    const destinationFolderId = validateAndExtractFolderId({
+      droppableId: destination.droppableId,
+      orphanDroppableId: FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES,
+    });
+    const sourceFolderId = validateAndExtractFolderId({
+      droppableId: source.droppableId,
+      orphanDroppableId: FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES,
+    });
 
     if (
       destination.droppableId.startsWith(
@@ -67,7 +69,8 @@ export const useHandleFavoriteDragAndDrop = () => {
           ? 1
           : folderFavorites[folderFavorites.length - 1].position + 1;
 
-      updateOneFavorite({
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Favorite,
         idToUpdate: draggableId,
         updateOneRecordInput: {
           favoriteFolderId: destinationFolderId,
@@ -100,7 +103,8 @@ export const useHandleFavoriteDragAndDrop = () => {
         });
       }
 
-      updateOneFavorite({
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.Favorite,
         idToUpdate: draggableId,
         updateOneRecordInput: {
           favoriteFolderId: destinationFolderId,
@@ -120,7 +124,8 @@ export const useHandleFavoriteDragAndDrop = () => {
       items: favoritesInSameList,
     });
 
-    updateOneFavorite({
+    updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.Favorite,
       idToUpdate: draggableId,
       updateOneRecordInput: { position: newPosition },
     });

@@ -66,17 +66,19 @@ export const useDeleteOneWorkflowVersion = () => {
         },
       });
 
-      upsertRecordsInStore([
-        {
-          ...cachedWorkflow,
-          statuses:
-            cachedWorkflow.statuses?.filter((status) => status !== 'DRAFT') ??
-            [],
-          versions: cachedWorkflow.versions.filter(
-            (version) => version.id !== workflowVersionId,
-          ),
-        },
-      ]);
+      upsertRecordsInStore({
+        partialRecords: [
+          {
+            ...cachedWorkflow,
+            statuses:
+              cachedWorkflow.statuses?.filter((status) => status !== 'DRAFT') ??
+              [],
+            versions: cachedWorkflow.versions.filter(
+              (version) => version.id !== workflowVersionId,
+            ),
+          },
+        ],
+      });
     },
     [
       apolloCoreClient.cache,

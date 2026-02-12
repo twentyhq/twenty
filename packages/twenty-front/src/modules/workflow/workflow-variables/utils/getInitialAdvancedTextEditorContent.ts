@@ -23,6 +23,15 @@ export const getInitialAdvancedTextEditorContent = (
 
   try {
     const json = JSON.parse(rawContent);
+
+    // Handle BlockNote array format (wrap in doc structure for TipTap)
+    if (Array.isArray(json)) {
+      return {
+        type: 'doc',
+        content: json,
+      };
+    }
+
     return json;
   } catch (error) {
     logError(error);

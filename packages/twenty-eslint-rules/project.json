@@ -1,0 +1,19 @@
+{
+  "name": "twenty-eslint-rules",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-eslint-rules",
+  "tags": ["scope:shared"],
+  "targets": {
+    "lint": {
+      "options": {
+        "eslintConfig": "{workspaceRoot}/eslint.config.mjs",
+        "lintFilePatterns": ["{projectRoot}/**/*.ts"]
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "typecheck": {},
+    "test": {}
+  }
+}

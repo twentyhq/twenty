@@ -1,0 +1,74 @@
+---
+title: Exibir o número de e-mails recebidos
+description: Crie um fluxo de trabalho para contar e exibir automaticamente o número de e-mails recebidos de cada contato.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## Visão Geral
+
+Esse fluxo de trabalho é acionado sempre que um novo e-mail é recebido e atualiza um campo personalizado no registro de Pessoa com a contagem total de e-mails desse remetente.
+
+## Pré-requisitos
+
+Antes de configurar esse fluxo de trabalho, crie um campo personalizado no objeto **Pessoas**:
+
+1. Vá para **Configurações → Modelo de Dados → Pessoas**
+2. Adicione um novo campo **Número**
+3. Dê a ele um nome como "Número de e-mails recebidos desta pessoa"
+
+## Configuração passo a passo
+
+<VimeoEmbed videoId="1148700336" title="Demonstração em vídeo" />
+
+### Etapa 1: Configurar o gatilho
+
+1. Vá para **Fluxos de Trabalho** e crie um novo fluxo de trabalho
+2. Selecione **Registro é criado** como o gatilho
+3. Escolha **Participantes da Mensagem** (disponível em Objetos avançados)
+
+<Note>
+  Um Participante da Mensagem é a combinação de um ID de mensagem e um ID de pessoa, criando um registro exclusivo por mensagem. Isso é mais fácil de acompanhar do que Mensagens diretamente porque podemos acessar o campo `handle`, que contém o endereço de e-mail do remetente (ou do destinatário).
+</Note>
+
+### Etapa 2: Filtrar por função
+
+1. Adicione a ação **Filtro**
+2. Defina a condição: **Role** igual a **FROM**
+
+Isso garante que você conte apenas as mensagens enviadas por essa pessoa, e não as mensagens enviadas para ela.
+
+### Etapa 3: Pesquisar todos os Participantes da Mensagem com o mesmo handle
+
+1. Adicione a ação **Pesquisar Registros**
+2. Selecione **Participantes da Mensagem** como o objeto
+3. Adicione filtros: **Handle** igual ao handle do gatilho (o endereço de e-mail do remetente) e **Role** igual a **FROM**
+4. Aumente o **Limite** de 1 para **200** (o máximo)
+
+Isso encontra todas as mensagens desse endereço de e-mail para obter a contagem total.
+
+<Note>
+  A ação Pesquisar Registros é limitada a retornar no máximo 200 registros. No entanto, como você está usando apenas o valor `totalCount` (não os registros individuais), esta etapa retornará o número total de e-mails enviados por essa pessoa.
+</Note>
+
+### Etapa 4: Atualizar o registro de Pessoa com uma ação Criar ou Atualizar Registro
+
+1. Adicione a ação **Criar ou Atualizar Registro**
+
+<Warning>
+  Use **Upsert Record** em vez de **Update Record** aqui. Isso permite identificar a pessoa pelo endereço de e-mail dela (o campo `handle`), em vez de exigir um ID de registro de uma etapa anterior.
+</Warning>
+
+2. Selecione **Pessoas** como o objeto
+3. Encontre a pessoa cujo e-mail corresponde ao `handle` do Participante da Mensagem
+4. Defina seu campo personalizado "Número de e-mails recebidos" como `{{searchRecords.totalCount}}`
+
+O valor `totalCount` da ação Pesquisar Registros representa o número total de e-mails recebidos dessa pessoa.
+
+## Relacionados
+
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Criar campos personalizados](/l/pt/user-guide/data-model/how-tos/customize-your-data-model)
+* [Ação Pesquisar Registros](/l/pt/user-guide/workflows/capabilities/workflow-actions#search-records)

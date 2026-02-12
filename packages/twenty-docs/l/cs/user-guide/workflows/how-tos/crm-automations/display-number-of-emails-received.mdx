@@ -1,0 +1,74 @@
+---
+title: Zobrazení počtu přijatých e-mailů
+description: Vytvořte pracovní postup, který automaticky spočítá a zobrazí počet e-mailů přijatých od každého kontaktu.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## Přehled
+
+Tento pracovní postup se spustí pokaždé, když je přijat nový e-mail, a aktualizuje vlastní pole u záznamu osoby celkovým počtem e-mailů od tohoto odesílatele.
+
+## Předpoklady
+
+Než tento pracovní postup nastavíte, vytvořte v objektu **Lidé** vlastní pole:
+
+1. Přejděte do **Nastavení → Datový model → Lidé**
+2. Přidejte nové pole **Number**
+3. Pojmenujte ho například "Počet e-mailů přijatých od této osoby"
+
+## Nastavení krok za krokem
+
+<VimeoEmbed videoId="1148700336" title="Ukázka videa" />
+
+### Krok 1: Nakonfigurujte spouštěč
+
+1. Přejděte na **Pracovní postupy** a vytvořte nový pracovní postup
+2. Vyberte jako spouštěč **Záznam je vytvořen**
+3. Zvolte **Účastníci zpráv** (k dispozici v části Pokročilé objekty)
+
+<Note>
+  Účastník zprávy je kombinace ID zprávy a ID osoby, čímž vzniká jeden jedinečný záznam na zprávu. To je snazší sledovat než přímo Zprávy, protože můžeme přistupovat k poli `handle`, které obsahuje e-mailovou adresu odesílatele (nebo příjemce).
+</Note>
+
+### Krok 2: Filtrování podle role
+
+1. Přidejte akci **Filtr**
+2. Nastavte podmínku: **Role** se rovná **FROM**
+
+Tím zajistíte, že budete počítat pouze zprávy odeslané touto osobou, nikoli zprávy jí zaslané.
+
+### Krok 3: Vyhledejte všechny účastníky zpráv se stejnou hodnotou handle
+
+1. Přidejte akci **Vyhledat záznamy**
+2. Vyberte jako objekt **Účastníci zpráv**
+3. Přidejte filtry: **Handle** se rovná hodnotě handle ze spouštěče (e-mailová adresa odesílatele) a **Role** se rovná **FROM**
+4. Zvyšte **Limit** z 1 na **200** (maximum)
+
+Tímto najdete všechny zprávy z této e-mailové adresy a získáte celkový počet.
+
+<Note>
+  Akce Vyhledat záznamy je omezena na vrácení maximálně 200 záznamů. Protože však používáte pouze hodnotu `totalCount` (nikoli jednotlivé záznamy), tento krok vrátí celkový počet e-mailů odeslaných touto osobou.
+</Note>
+
+### Krok 4: Aktualizujte záznam osoby pomocí akce Vytvořit nebo aktualizovat záznam
+
+1. Přidejte akci **Vytvořit nebo aktualizovat záznam**
+
+<Warning>
+  Zde použijte **Upsert Record** místo **Update Record**. To vám umožní identifikovat osobu podle její e-mailové adresy (pole `handle`) místo požadavku na ID záznamu z předchozího kroku.
+</Warning>
+
+2. Vyberte jako objekt **Lidé**
+3. Najděte osobu podle shody jejího e-mailu s hodnotou `handle` z účastníka zprávy
+4. Nastavte své vlastní pole "Počet přijatých e-mailů" na hodnotu `{{searchRecords.totalCount}}`
+
+Hodnota `totalCount` z akce Vyhledat záznamy představuje celkový počet e-mailů přijatých od této osoby.
+
+## Související
+
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Vytvořit vlastní pole](/l/cs/user-guide/data-model/how-tos/customize-your-data-model)
+* [Akce Vyhledat záznamy](/l/cs/user-guide/workflows/capabilities/workflow-actions#search-records)

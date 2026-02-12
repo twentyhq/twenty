@@ -1,0 +1,148 @@
+---
+title: Import relací mezi objekty
+description: Import relací mezi záznamy pomocí CSV.
+---
+
+## Přehled
+
+Twenty podporuje import relací mezi objekty během importu CSV. To vám umožní propojit záznamy (např. přiřadit Lidi ke Společnostem) jako součást migrace dat.
+
+<Note>**V současnosti podporováno pro import**: Relace jedna ku mnoha směřující na jeden typ objektu na každé straně (např. Lidé → Společnosti). Relace směřující k více typům objektů zatím nejsou pro import/export podporovány.</Note>
+
+## Jak relace fungují v Twenty
+
+### Jedna ku mnoha / Mnoho ku jedné
+
+Twenty podporuje standardní relace, kde se jeden záznam propojuje s mnoha dalšími:
+
+* **Jedna Společnost → Mnoho Lidí**: Společnost může mít více zaměstnanců, ale každá osoba patří do jedné společnosti
+* **Jedna Společnost → Mnoho Příležitostí**: Společnost může mít více obchodů, ale každá příležitost patří k jedné společnosti
+
+### Relace, které mohou směřovat k více typům objektů
+
+Některé relace mohou propojit různé typy objektů. To funguje dvěma způsoby:
+
+**Vzor 1: Mnoho záznamů se odkazuje vždy na jeden záznam u různých typů objektů**
+
+Několik Poznámek, Úkolů nebo Aktivit může být současně připojeno k více typům objektů:
+
+* **Poznámky** mohou být současně propojeny s jednou Osobou, jednou Společností a jednou Příležitostí
+* **Úkoly** mohou být současně propojeny s jednou Osobou, jednou Společností a jednou Příležitostí
+
+Zde jsou Poznámky/Úkoly na straně „mnoho“. Každý z nich se váže na jeden záznam pro každý typ objektu.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Vzor 2: Jeden záznam přijímá odkazy od mnoha záznamů různých typů objektů**
+
+Projekt může přijímat odkazy od více záznamů napříč různými typy objektů:
+
+* **Projekt** může mít k sobě připojeno mnoho Lidí, mnoho Společností a mnoho Poznámek
+
+Zde je Projekt na straně „jedna“. Více záznamů z různých objektů se může odkazovat na tentýž Projekt.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Omezení importu/exportu**: Relace, které směřují k více typům objektů (např. Poznámky → Lidé/Společnosti/Příležitosti), zatím **nejsou podporovány** při importu nebo exportu CSV.
+
+  * **Import**: Lze importovat pouze relace jedna ku mnoha směřující na jeden typ objektu na každé straně
+  * **Export**: Sloupce pro relace směřující k více typům objektů jsou aktuálně ponechány prázdné
+
+  Je to v našem plánu.
+</Warning>
+
+### Co dnes není podporováno
+
+**Relace mnoho ku mnoha** zatím nejsou k dispozici. Například aktuálně nemůžete vytvořit relaci, kde:
+
+* Mnoho Lidí je propojeno s mnoha Projekty
+
+<Note>Relace mnoho ku mnoha jsou plánovány na 1. pololetí 2026.</Note>
+
+## Propojování záznamů během importu
+
+<Note>**Připomenutí**: Importovat lze pouze relace jedna ku mnoha směřující na jeden typ objektu (např. Lidé → Společnosti). Relace směřující k více typům objektů (např. Poznámky → Lidé/Společnosti/Příležitosti) zatím nejsou podporovány.</Note>
+
+### Krok 1: Určete strany „jedna“ a „mnoho“
+
+Nejprve určete, který objekt je na straně „jedna“ a který je na straně „mnoho“ dané relace.
+
+**Příklad**:
+
+* **Společnost** je strana „jedna“ (jedna společnost má mnoho zaměstnanců)
+* **Lidé** jsou strana „mnoho“ (každá osoba patří do jedné společnosti)
+
+### Krok 2: Ujistěte se, že záznamy na straně „jedna“ existují
+
+Před importem strany „mnoho“ musí záznamy na straně „jedna“ již v Twenty existovat.
+
+* Nejprve importujte nebo vytvořte záznamy strany „jedna“ (např. Společnosti)
+* Ověřte jejich jedinečný identifikátor. Může to být:
+  * Pole `id` (UUID v Twenty)
+  * Pole nastavené jako jedinečné (např. `domain` u Společností nebo externí ID z vašeho předchozího systému)
+
+<Warning>Import selže, pokud je odkazováno na záznam, který neexistuje.</Warning>
+
+### Krok 3: Připravte svůj soubor CSV
+
+Přidejte do souboru CSV pro stranu „mnoho“ sloupec, který odkazuje na záznam strany „jedna“.
+
+**Příklad**: Pro soubor CSV Lidé propojený se Společnostmi:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Důležité**:
+
+* Hodnota se musí **přesně shodovat** s jedinečným polem v záznamu Společnosti
+* U domén používejte **URL domény** (např. `https://acme.com`), nikoli označení domény
+* Mapujte pouze **jeden** jedinečný identifikátor na relaci: povede to k hladšímu importu
+
+### Krok 4: Ujistěte se, že relační pole existuje
+
+Před nahráním souboru se ujistěte, že mezi vašimi objekty existuje relační pole.
+
+Pokud neexistuje:
+
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte svůj objekt (např. Lidé)
+3. Vytvořte relační pole směřující na cílový objekt (např. Společnost)
+
+### Krok 5: Nahrajte a namapujte relaci
+
+1. Nahrajte svůj soubor CSV prostřednictvím rozhraní pro import
+2. V kroku mapování polí najděte svůj relační sloupec (např. `companyDomain`)
+3. Namapujte jej na relační pole (např. Společnost)
+4. Twenty automaticky propojí každý záznam s odpovídajícím nadřazeným objektem
+
+### Dostupná jedinečná pole pro relace
+
+| Objekt                                 | Dostupná jedinečná pole                         |
+| -------------------------------------- | ----------------------------------------------- |
+| **Společnosti**                        | `id`, `domain`, jakékoli vlastní jedinečné pole |
+| **Lidé**                               | `id`, `email`, jakékoli vlastní jedinečné pole  |
+| **Členové pracovního prostoru**        | `id`, `email` (ne jméno)                        |
+| **Další standardní a vlastní objekty** | `id`, jakékoli pole označené jako jedinečné     |
+
+<Note>**Propojení na členy pracovního prostoru**: Pokud relace směřuje na členy pracovního prostoru (váš tým přihlašující se do Twenty), odkazujte je pomocí jejich **e-mailové adresy**, nikoli jména.</Note>
+
+<Note>Doporučujeme používat `domain` pro Společnosti a `email` pro Lidi, protože jsou srozumitelné pro člověka a snadno se udržují v tabulkách.</Note>
+
+<Note>**Připomenutí**: Měkce smazané záznamy (viditelné v Command Menu → Zobrazit smazané záznamy) se započítávají do kritérií jedinečnosti. Pokud naimportujete záznam se stejnou jedinečnou hodnotou jako má smazaný záznam, smazaný záznam bude obnoven. Více podrobností naleznete v [Omezeních jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints).</Note>
+
+## Pořadí importu
+
+<Warning>
+  **Vždy nejprve importujte stranu „jedna“!**
+
+  1. **Společnosti** jako první (bez závislostí)
+  2. **Lidé** jako druzí (propojeni se Společnostmi)
+  3. **Příležitosti** jako třetí (propojené se Společnostmi/Lidmi)
+  4. **Vlastní objekty** podle jejich závislostí
+
+  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+</Warning>

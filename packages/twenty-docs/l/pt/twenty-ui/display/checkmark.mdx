@@ -1,69 +1,58 @@
 ---
-title: Marca de Verificação
+title: Marca de seleção
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Cabeçalho" />
 </Frame>
 
 Representa uma ação bem-sucedida ou concluída.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { Checkmark } from 'twenty-ui/display';
 
-```jsx
-import { Checkmark } from 'twenty-ui/display';
+    export const MyComponent = () => {
+      return <Checkmark />;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <Checkmark />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-Estende `React.ComponentPropsWithoutRef<'div'>` e aceita todas as propriedades de um elemento `div` regular.
-
-</Tab>
-
+  <Tab title="Propriedades">
+    Estende `React.ComponentPropsWithoutRef<'div'>` e aceita todas as propriedades de um elemento `div` regular.
+  </Tab>
 </Tabs>
 
-## Marca de Verificação Animada
+## Marca de Seleção Animada
 
-Representa um ícone de marca de verificação com o recurso adicional de animação.
+Representa um ícone de marca de seleção com o recurso adicional de animação.
 
 <Tabs>
+  <Tab title="Uso">
+    ```jsx
+    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <AnimatedCheckmark
+          isAnimating={true}
+          color="green"
+          duration={0.5}
+          size={30}
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { AnimatedCheckmark } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return (
-    <AnimatedCheckmark
-      isAnimating={true}
-      color="green"
-      duration={0.5}
-      size={30}
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props       | Tipo                                     | Descrição                                        | Padrão       |
-| ----------- | ---------------------------------------- | ------------------------------------------------ | ------------ |
-| isAnimating | booleano                                 | Controla se a marca de verificação está animando | falso        |
-| cor         | Nome opcional para estilização adicional | Cor da marca de verificação                      |              |
-| duração     | número                                   | A duração da animação em segundos                | 0,5 segundos |
-| tamanho     | número                                   | O tamanho da marca de verificação                | 28 pixels    |
-
-</Tab>
-
+  <Tab title="Propriedades">
+    | Propriedades | Tipo     | Descrição                                    | Padrão       |
+    | ------------ | -------- | -------------------------------------------- | ------------ |
+    | isAnimating  | booleano | Controla se a marca de seleção está animando | falso        |
+    | cor          | string   | Cor da marca de seleção                      |              |
+    | duração      | número   | A duração da animação em segundos            | 0,5 segundos |
+    | tamanho      | número   | O tamanho da marca de seleção                | 28 pixels    |
+  </Tab>
 </Tabs>

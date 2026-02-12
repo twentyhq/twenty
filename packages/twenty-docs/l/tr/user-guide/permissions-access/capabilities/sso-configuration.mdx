@@ -1,0 +1,125 @@
+---
+title: SSO Yapılandırması
+description: Güvenli kurumsal kimlik doğrulaması için Tek Oturum Açma'yı (SSO) yapılandırın.
+---
+
+## SSO Hakkında
+
+Tek Oturum Açma (SSO), ekip üyelerinizin kuruluşunuzun kimlik sağlayıcısını kullanarak Twenty'ye giriş yapmasına olanak tanır. Bu şunları sağlar:
+
+* **Merkezi erişim denetimi**: Erişimi tek bir yerden yönetin
+* **Geliştirilmiş güvenlik**: Mevcut güvenlik ilkelerinizden yararlanın
+* **Daha iyi kullanıcı deneyimi**: Tüm araçlar için tek bir kimlik bilgisi seti
+
+## Desteklenen Sağlayıcılar
+
+Twenty, SSO'yu şu sağlayıcılarla destekler:
+
+* **SAML 2.0**: Çoğu kurumsal kimlik sağlayıcıyla çalışır
+* **Google Workspace**: Google kullanan kuruluşlar için
+* **Microsoft Entra ID**: (önceden Azure AD) Microsoft ortamları için
+
+## SSO'yu Ayarlama
+
+### Ön Gereksinimler
+
+* Kuruluş planı (bulut ve kendi barındırılan çalışma alanları)
+* Kimlik sağlayıcınıza yönetici erişimi
+* Twenty çalışma alanına yönetici erişimi
+
+<Note>
+  **SSO'yu kurmak isteyen öz barındırma kullanıcıları için**, contact@twenty.com ile iletişime geçin
+</Note>
+
+### Yapılandırma Adımları
+
+#### 1. SSO Ayarlarına Erişim
+
+1. **Ayarlar → Güvenlik** bölümüne gidin
+2. **SSO Yapılandırması** bölümünü bulun
+3. **SSO'yu Yapılandır**'a tıklayın
+
+#### 2) Sağlayıcınızı Seçin
+
+Kimlik sağlayıcınızı listeden seçin veya diğer sağlayıcılar için "Custom SAML" seçeneğini seçin
+
+#### 3. Kimlik Sağlayıcınızı Yapılandırın
+
+Kimlik sağlayıcınızı aşağıdakilerle yapılandırmanız gerekir:
+
+* **Entity ID**: Twenty tarafından sağlanır
+* **ACS URL**: Kimlik doğrulaması için geri çağrı URL'si
+* **Certificate**: Güvenli iletişim için
+
+#### 4. Sağlayıcı Ayrıntılarını Twenty'ye Girin
+
+* **SSO URL**: Sağlayıcınızdan giriş URL'si
+* **Entity ID**: Sağlayıcınızın tanımlayıcısı
+* **Certificate**: Sağlayıcınızdan X.509 sertifikası
+
+#### 5. Test Edin ve Etkinleştirin
+
+1. Kurulumu doğrulamak için **Yapılandırmayı Test Et**'e tıklayın
+2. Test başarılı olduğunda SSO'yu etkinleştirin
+3. Kullanıcı sağlama tercihlerini yapılandırın
+
+## Kullanıcı Sağlama
+
+### Tam Zamanında (JIT) Sağlama
+
+* Kullanıcılar ilk oturum açmada otomatik olarak oluşturulur
+* Varsayılan rol otomatik olarak atanır
+* Manuel kullanıcı oluşturma gerekmez
+
+### Manuel Sağlama
+
+* Kullanıcıları, oturum açabilmelerinden önce davet edin
+* Belirli rolleri önceden atayın
+* Kimlerin erişebileceği üzerinde daha fazla kontrol
+
+## SSO Kullanıcılarını Yönetme
+
+### Rol Atama
+
+SSO kullanıcılarına, normal kullanıcılarda olduğu gibi roller atanabilir:
+
+1. **Ayarlar → Üyeler** bölümüne gidin
+2. Kullanıcıyı bulun
+3. Gerektiğinde rolünü değiştirin
+
+### Erişim İptali
+
+SSO kullanıcılarının erişimini kaldırmak için:
+
+* Kimlik sağlayıcınızdan kaldırın veya
+* Twenty çalışma alanından kaldırın
+
+## En İyi Uygulamalar
+
+### Güvenlik
+
+* **SSO'yu Zorunlu Kıl**: SSO kullanıcıları için parola ile oturum açmayı devre dışı bırakın
+* **Düzenli denetimler**: Erişimi periyodik olarak gözden geçirin
+* **Güçlü IdP ilkeleri**: Kimlik sağlayıcıda MFA'yı zorunlu kılın
+
+### Kullanıcı Yönetimi
+
+* **Net adlandırma**: Dizininizde tutarlı adlandırma kullanın
+* **Grup eşleme**: IdP gruplarını Twenty rollerine eşleyin (varsa)
+* **Ayrılış süreci**: Erişim kaldırma iş akışınıza Twenty'yi dahil edin
+
+## Sorun Giderme
+
+### Yaygın Sorunlar
+
+* **Sertifika hataları**: Sertifikanın süresinin dolmadığından emin olun
+* **URL uyuşmazlıkları**: ACS URL'sinin birebir eşleştiğini doğrulayın
+* **Kullanıcı bulunamadı**: JIT sağlama ayarlarını kontrol edin
+
+### Yardım Almak
+
+Sorunlarla karşılaşırsanız, desteğe şu bilgilerle ulaşın:
+
+* Alınan hata iletileri
+* Kullanılan kimlik sağlayıcı
+* Yapılandırma ayrıntıları (hassas veriler olmadan)

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`successful find view with all sub-relations (e2e) Company View Structure Validation should successfully fetch complete view structure with all sub-relations in single GraphQL query 1`] = `
 {

@@ -1,0 +1,176 @@
+---
+title: Daten über die API importieren
+description: Wann und wie Sie die APIs von Twenty für groß angelegte Datenimporte verwenden.
+---
+
+## Übersicht
+
+Twenty stellt sowohl **GraphQL**- als auch **REST-APIs** für den programmatischen Datenimport bereit. Verwenden Sie die API, wenn der CSV-Import für Ihr Datenvolumen nicht praktikabel ist oder wenn Sie automatisierte, wiederkehrende Importe benötigen.
+
+## Wann Sie den API-Import verwenden sollten
+
+| Szenario                             | Empfohlene Methode                |
+| ------------------------------------ | --------------------------------- |
+| Unter 10.000 Datensätzen             | CSV-Import                        |
+| 10.000–50.000 Datensätze             | CSV-Import (in Dateien aufteilen) |
+| **Über 50.000 Datensätze**           | **API-Import**                    |
+| Einmalige Migration                  | Beides (je nach Volumen)          |
+| **Wiederkehrende Importe**           | **API-Import**                    |
+| **Echtzeitsynchronisierung**         | **API-Import**                    |
+| **Integration mit anderen Systemen** | **API-Import**                    |
+
+<Note>Für Datensätze im Bereich von Hunderttausenden ist die API deutlich schneller und zuverlässiger als mehrere CSV-Importe.</Note>
+
+## API-Rate-Limits
+
+Twenty setzt Rate-Limits durch, um die Systemstabilität zu gewährleisten:
+
+| Limit                           | Wert                     |
+| ------------------------------- | ------------------------ |
+| **Anfragen pro Minute**         | 100                      |
+| **Datensätze pro Batch-Aufruf** | 60                       |
+| **Maximaler Durchsatz**         | ~6.000 Datensätze/Minute |
+
+<Warning>
+  **Planen Sie Ihren Import unter Berücksichtigung dieser Limits.**
+
+  Für 100.000 Datensätze bei maximalem Durchsatz rechnen Sie mit etwa 17 Minuten Importzeit. Fügen Sie Pufferzeit für Fehlerbehandlung und Wiederholungen hinzu.
+</Warning>
+
+## Erste Schritte
+
+### Schritt 1: API-Schlüssel abrufen
+
+1. Gehen Sie zu **Einstellungen → Entwickler**
+2. Klicken Sie auf **+ API-Schlüssel erstellen**
+3. Geben Sie Ihrem API-Schlüssel einen aussagekräftigen Namen
+4. Kopieren Sie den API-Schlüssel sofort (er wird nicht erneut angezeigt)
+5. Bewahren Sie ihn sicher auf
+
+<Warning>
+  **Halten Sie Ihren API-Schlüssel geheim.**
+
+  Jeder, der Ihren API-Schlüssel besitzt, kann auf die Daten Ihres Arbeitsbereichs zugreifen und sie ändern. Checken Sie ihn niemals in Code-Repositories ein und geben Sie ihn nicht öffentlich weiter.
+</Warning>
+
+### Schritt 2: Wählen Sie Ihre API
+
+Twenty unterstützt zwei API-Typen:
+
+| API         | Am besten geeignet für                                           | Dokumentation                                             |
+| ----------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
+| **GraphQL** | Flexible Abfragen, Abruf verknüpfter Daten, komplexe Operationen | [API-Dokumentation](/l/de/developers/extend/capabilities/apis) |
+| **REST**    | Einfache CRUD-Operationen, vertraute REST-Muster                 | [API-Dokumentation](/l/de/developers/extend/capabilities/apis) |
+
+Beide APIs unterstützen:
+
+* Erstellen, Lesen, Aktualisieren und Löschen von Datensätzen
+* **Batch-Operationen** — bis zu 60 Datensätze pro Aufruf erstellen oder aktualisieren
+
+**Verwenden Sie für Importe Batch-Operationen**, um den Durchsatz innerhalb der Rate-Limits zu maximieren.
+
+### Schritt 3: Importreihenfolge planen
+
+Wie bei CSV-Importen ist die **Reihenfolge bei Relationen wichtig**:
+
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (können mit Unternehmen verknüpft werden)
+3. **Opportunities** an dritter Stelle (können mit Unternehmen und Personen verknüpft werden)
+4. **Aufgaben/Notizen** (können mit allen oben genannten verknüpft werden)
+5. **Benutzerdefinierte Objekte** (gemäß ihren Abhängigkeiten)
+
+## Beste Praktiken
+
+### Anfragen bündeln
+
+* Senden Sie Datensätze nicht einzeln
+* Fassen Sie bis zu **60 Datensätze pro API-Aufruf** zusammen
+* Dies maximiert den Durchsatz innerhalb der Rate-Limits
+
+### Mit Rate-Limits umgehen
+
+* Implementieren Sie Verzögerungen zwischen den Anfragen (mindestens 600 ms für dauerhafte Importe)
+* Verwenden Sie exponentielles Backoff, wenn Sie an Grenzen stoßen
+* Überwachen Sie 429-Antworten (Too Many Requests)
+
+### Daten zuerst validieren
+
+* Bereinigen und validieren Sie Ihre Daten vor dem Import
+* Prüfen Sie, ob Pflichtfelder ausgefüllt sind
+* Überprüfen Sie, ob die Formate den Anforderungen von Twenty entsprechen (siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping))
+
+### Alles protokollieren
+
+* Protokollieren Sie jeden importierten Datensatz (einschließlich IDs)
+* Protokollieren Sie Fehler mit vollem Kontext
+* Dies hilft bei der Fehleranalyse und der Überprüfung des Abschlusses
+
+### Zuerst testen
+
+* Testen Sie mit einer kleinen Stichprobe (10–20 Datensätze)
+* Überprüfen Sie, ob die Daten in Twenty korrekt angezeigt werden
+* Führen Sie anschließend den vollständigen Import aus
+
+### Upsert verwenden, um Duplikate zu vermeiden
+
+Die GraphQL-API unterstützt **Batch-Upsert** — aktualisieren, wenn der Datensatz existiert, ansonsten erstellen. Dies verhindert Duplikate beim erneuten Ausführen von Importen.
+
+## Objekt- und Feldnamen finden
+
+So sehen Sie verfügbare Objekte und Felder:
+
+1. Gehen Sie zu **Einstellungen → API und Webhooks**
+2. Durchsuchen Sie die **Metadaten-API**
+3. Sehen Sie alle Standard- und benutzerdefinierten Objekte mit ihren Feldern
+
+Die Dokumentation zeigt alle Standard- und benutzerdefinierten Objekte, deren Felder und die erwarteten Datentypen.
+
+## Professionelle Dienstleistungen
+
+Bei komplexen API-Migrationen können unsere Partner helfen:
+
+| Dienst                               | Enthalten                                         |
+| ------------------------------------ | ------------------------------------------------- |
+| **Datenmodell-Design**               | Entwerfen Sie Ihre optimale Datenstruktur         |
+| **Migrationsskripte**                | Schreiben und Ausführen der Importskripte         |
+| **Daten-Transformation**             | Bearbeitung komplexer Zuordnungen und Bereinigung |
+| **Validierung & Qualitätssicherung** | Überprüfen, dass die Migration abgeschlossen ist  |
+
+**Am besten geeignet für:**
+
+* Migrationen mit über 100.000 Datensätzen
+* Komplexe Daten-Transformationen
+* Straffe Zeitpläne
+* Teams ohne Entwicklerressourcen
+
+Kontaktieren Sie uns unter [contact@twenty.com](mailto:contact@twenty.com) oder informieren Sie sich über unsere [Implementierungsservices](/l/de/user-guide/getting-started/capabilities/implementation-services).
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Was ist der Unterschied zwischen GraphQL und REST?">
+    Mit GraphQL können Sie in einer einzelnen Abfrage genau die Daten anfordern, die Sie benötigen, und es eignet sich besser für komplexe Operationen. REST verwendet standardmäßige HTTP-Methoden (GET, POST, PUT, DELETE) und ist möglicherweise vertrauter, wenn Sie mit herkömmlichen APIs gearbeitet haben.
+  </Accordion>
+
+  <Accordion title="Kann ich vorhandene Datensätze über die API aktualisieren?">
+    Ja! Verwenden Sie Update-Mutationen (GraphQL) oder PUT/PATCH-Anfragen (REST) mit der `id` des Datensatzes.
+  </Accordion>
+
+  <Accordion title="Wie gehe ich mit Duplikaten um?">
+    Fragen Sie zunächst nach vorhandenen Datensätzen mit eindeutigen Kennungen (E-Mail, Domain). Aktualisieren, wenn vorhanden; erstellen, wenn nicht.
+  </Accordion>
+
+  <Accordion title="Kann ich Datensätze über die API löschen?">
+    Ja, verwenden Sie Lösch-Mutationen (GraphQL) oder DELETE-Anfragen (REST).
+  </Accordion>
+
+  <Accordion title="Gibt es ein SDK für Python oder Node.js?">
+    Derzeit nicht, aber beide APIs funktionieren mit jedem HTTP-Client in jeder Sprache.
+  </Accordion>
+</AccordionGroup>
+
+## API-Dokumentation
+
+Für vollständige Implementierungsdetails, Codebeispiele und Schema-Referenz:
+
+* [API-Dokumentation](/l/de/developers/extend/capabilities/apis)

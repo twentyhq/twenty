@@ -13,7 +13,7 @@ export const GET_SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTab
         align: 'left',
       },
       {
-        fieldLabel: msg`Type`,
+        fieldLabel: msg`App`,
         fieldName: 'objectTypeLabel',
         fieldType: 'string',
         align: 'left',

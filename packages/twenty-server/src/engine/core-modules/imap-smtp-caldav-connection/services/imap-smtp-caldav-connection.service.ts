@@ -10,7 +10,8 @@ import {
   type AccountType,
   type ConnectionParameters,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -19,7 +20,7 @@ export class ImapSmtpCaldavService {
   private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async testImapConnection(
@@ -127,11 +128,19 @@ export class ImapSmtpCaldavService {
 
     try {
       await client.listCalendars();
+      await client.validateSyncCollectionSupport();
     } catch (error) {
       this.logger.error(
         `CALDAV connection failed: ${error.message}`,
         error.stack,
       );
+
+      if (error.message?.includes('CALDAV_SYNC_COLLECTION_NOT_SUPPORTED')) {
+        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
+          userFriendlyMessage: msg`Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail.`,
+        });
+      }
+
       if (error.code === 'FailedToOpenSocket') {
         throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
           userFriendlyMessage: msg`We couldn't connect to your CalDAV server. Please check your server settings and try again.`,
@@ -175,19 +184,26 @@ export class ImapSmtpCaldavService {
     workspaceId: string,
     connectionId: string,
   ): Promise<ConnectedAccountWorkspaceEntity | null> {
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: {
-        id: connectionId,
-        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+          );
+
+        const connectedAccount = await connectedAccountRepository.findOne({
+          where: {
+            id: connectionId,
+            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+          },
+        });
+
+        return connectedAccount;
       },
-    });
-
-    return connectedAccount;
+      authContext,
+    );
   }
 }

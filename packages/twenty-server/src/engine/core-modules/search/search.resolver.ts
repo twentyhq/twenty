@@ -1,8 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -20,7 +22,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
-@Resolver()
+@CoreResolver()
 @UseFilters(SearchApiExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
@@ -36,7 +38,7 @@ export class SearchResolver {
   async search(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
-    @AuthApiKey() apiKey: string | undefined,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Args()
     {
       searchInput,
@@ -56,7 +58,7 @@ export class SearchResolver {
       );
 
     const flatObjectMetadatas = Object.values(
-      flatObjectMetadataMaps.byId,
+      flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     const filteredObjectMetadataItems =
@@ -70,8 +72,8 @@ export class SearchResolver {
     let rolePermissionConfig: RolePermissionConfig | undefined;
 
     if (isDefined(apiKey)) {
-      const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
-        apiKey,
+      const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
+        apiKey.id,
         workspace.id,
       );
 

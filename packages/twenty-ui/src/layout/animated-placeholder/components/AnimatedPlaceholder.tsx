@@ -39,7 +39,7 @@ export type AnimatedPlaceholderType =
   | keyof typeof BACKGROUND
   | keyof typeof MOVING_IMAGE;
 
-interface AnimatedPlaceholderProps {
+export interface AnimatedPlaceholderProps {
   type: AnimatedPlaceholderType;
 }
 
@@ -91,14 +91,14 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
     <StyledContainer>
       <StyledBackgroundImage
         src={theme.name === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
-        alt="Background"
+        alt=""
         type={type}
       />
       <StyledMovingImage
         src={
           theme.name === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
         }
-        alt="Moving"
+        alt=""
         style={{ translateX, translateY }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
         type={type}

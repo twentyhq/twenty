@@ -1,4 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { FormRichTextV2FieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextV2FieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   expect,
   fn,
@@ -6,19 +7,17 @@ import {
   waitFor,
   waitForElementToBeRemoved,
   within,
-} from '@storybook/test';
+} from 'storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormRichTextV2FieldInput } from '../FormRichTextV2FieldInput';
 
 const meta: Meta<typeof FormRichTextV2FieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRichTextV2FieldInput',
   component: FormRichTextV2FieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -89,8 +88,9 @@ export const WithVariable: Story = {
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
-        blocknote: null,
-        markdown: `## Title\nVariable: {{${MOCKED_STEP_ID}.name}}`,
+        blocknote:
+          '[{"type":"paragraph","content":[{"type":"text","text":"## Title"},{"type":"hardBreak"},{"type":"text","text":"Variable: "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
+        markdown: null,
       });
     });
     expect(args.onChange).toHaveBeenCalledTimes(1);
@@ -135,8 +135,9 @@ export const WithDeletableVariable: Story = {
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
-        blocknote: null,
-        markdown: 'test  test',
+        blocknote:
+          '[{"type":"paragraph","content":[{"type":"text","text":"test  test"}]}]',
+        markdown: null,
       });
     });
     expect(args.onChange).toHaveBeenCalledTimes(1);
@@ -252,16 +253,17 @@ export const HasHistory: Story = {
     await userEvent.click(addVariableButton);
 
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote: null,
-      markdown: `Hello World {{${MOCKED_STEP_ID}.name}}`,
+      blocknote:
+        '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
+      markdown: null,
     });
 
     await userEvent.type(editor, `{${controlKey}>}z{/${controlKey}}`);
 
     expect(editor).toHaveTextContent('');
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote: null,
-      markdown: '',
+      blocknote: '[{"type":"paragraph"}]',
+      markdown: null,
     });
 
     await userEvent.type(
@@ -271,8 +273,9 @@ export const HasHistory: Story = {
 
     expect(editor).toHaveTextContent(`Hello World Name`);
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote: null,
-      markdown: `Hello World {{${MOCKED_STEP_ID}.name}}`,
+      blocknote:
+        '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
+      markdown: null,
     });
   },
 };

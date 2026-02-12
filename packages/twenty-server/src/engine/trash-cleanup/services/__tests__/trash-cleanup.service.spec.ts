@@ -2,20 +2,23 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 describe('TrashCleanupService', () => {
   let service: TrashCleanupService;
   let mockFlatEntityMapsCacheService: any;
-  let mockTwentyORMGlobalManager: any;
+  let mockGlobalWorkspaceOrmManager: any;
 
   beforeEach(async () => {
     mockFlatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
     };
 
-    mockTwentyORMGlobalManager = {
-      getRepositoryForWorkspace: jest.fn(),
+    mockGlobalWorkspaceOrmManager = {
+      getRepository: jest.fn(),
+      executeInWorkspaceContext: jest
+        .fn()
+        .mockImplementation((fn: () => any, _authContext?: any) => fn()),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -26,8 +29,8 @@ describe('TrashCleanupService', () => {
           useValue: mockFlatEntityMapsCacheService,
         },
         {
-          provide: TwentyORMGlobalManager,
-          useValue: mockTwentyORMGlobalManager,
+          provide: GlobalWorkspaceOrmManager,
+          useValue: mockGlobalWorkspaceOrmManager,
         },
       ],
     }).compile();
@@ -66,14 +69,28 @@ describe('TrashCleanupService', () => {
     };
 
     const setObjectMetadataCache = (
-      entries: Array<{ id: string; nameSingular: string }>,
+      entries: Array<{
+        id: string;
+        nameSingular: string;
+        universalIdentifier: string;
+      }>,
     ) => {
-      const byId = entries.reduce<Record<string, any>>(
-        (acc, { id, nameSingular }) => {
-          acc[id] = {
+      const byUniversalIdentifier = entries.reduce<Record<string, any>>(
+        (acc, { id, nameSingular, universalIdentifier }) => {
+          acc[universalIdentifier] = {
             id,
             nameSingular,
+            universalIdentifier,
           };
+
+          return acc;
+        },
+        {},
+      );
+
+      const universalIdentifierById = entries.reduce<Record<string, string>>(
+        (acc, { id, universalIdentifier }) => {
+          acc[id] = universalIdentifier;
 
           return acc;
         },
@@ -83,8 +100,9 @@ describe('TrashCleanupService', () => {
       mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: {
-            byId,
-            idByUniversalIdentifier: {},
+            byUniversalIdentifier,
+            universalIdentifierById,
+            universalIdentifiersByApplicationId: {},
           },
         },
       );
@@ -92,14 +110,22 @@ describe('TrashCleanupService', () => {
 
     it('should return deleted count when cleanup succeeds', async () => {
       setObjectMetadataCache([
-        { id: 'obj-company', nameSingular: 'company' },
-        { id: 'obj-person', nameSingular: 'person' },
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+        {
+          id: 'obj-person',
+          nameSingular: 'person',
+          universalIdentifier: 'uni-person',
+        },
       ]);
 
       const companyRepository = createRepositoryMock('company', 2);
       const personRepository = createRepositoryMock('person', 1);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace
+      mockGlobalWorkspaceOrmManager.getRepository
         .mockResolvedValueOnce(companyRepository)
         .mockResolvedValueOnce(personRepository);
 
@@ -130,7 +156,7 @@ describe('TrashCleanupService', () => {
 
       expect(result).toEqual(0);
       expect(
-        mockTwentyORMGlobalManager.getRepositoryForWorkspace,
+        mockGlobalWorkspaceOrmManager.getRepository,
       ).not.toHaveBeenCalled();
     });
 
@@ -138,14 +164,22 @@ describe('TrashCleanupService', () => {
       (service as any).maxRecordsPerWorkspace = 3;
       (service as any).batchSize = 3;
       setObjectMetadataCache([
-        { id: 'obj-company', nameSingular: 'company' },
-        { id: 'obj-person', nameSingular: 'person' },
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+        {
+          id: 'obj-person',
+          nameSingular: 'person',
+          universalIdentifier: 'uni-person',
+        },
       ]);
 
       const companyRepository = createRepositoryMock('company', 2);
       const personRepository = createRepositoryMock('person', 5);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace
+      mockGlobalWorkspaceOrmManager.getRepository
         .mockResolvedValueOnce(companyRepository)
         .mockResolvedValueOnce(personRepository);
 
@@ -166,11 +200,17 @@ describe('TrashCleanupService', () => {
     });
 
     it('should ignore objects without soft deleted records', async () => {
-      setObjectMetadataCache([{ id: 'obj-company', nameSingular: 'company' }]);
+      setObjectMetadataCache([
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+      ]);
 
       const companyRepository = createRepositoryMock('company', 0);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace.mockResolvedValueOnce(
+      mockGlobalWorkspaceOrmManager.getRepository.mockResolvedValueOnce(
         companyRepository,
       );
 
@@ -184,11 +224,17 @@ describe('TrashCleanupService', () => {
     });
 
     it('should delete records across multiple batches', async () => {
-      setObjectMetadataCache([{ id: 'obj-company', nameSingular: 'company' }]);
+      setObjectMetadataCache([
+        {
+          id: 'obj-company',
+          nameSingular: 'company',
+          universalIdentifier: 'uni-company',
+        },
+      ]);
 
       const companyRepository = createRepositoryMock('company', 5);
 
-      mockTwentyORMGlobalManager.getRepositoryForWorkspace.mockResolvedValueOnce(
+      mockGlobalWorkspaceOrmManager.getRepository.mockResolvedValueOnce(
         companyRepository,
       );
 

@@ -1,0 +1,126 @@
+---
+title: FAQ zu Berechtigungen
+description: Häufig gestellte Fragen zu Rollen und Berechtigungen.
+---
+
+## Rollen
+
+<AccordionGroup>
+  <Accordion title="Welche Rollen sind in Twenty standardmäßig enthalten?">
+    Twenty enthält standardmäßig die Rollen **Admin** und **Member**. Sie können je nach Bedarf Ihres Teams zusätzliche benutzerdefinierte Rollen erstellen (z. B. Vertriebsmitarbeiter, Manager, Nur-Lese-Benutzer).
+  </Accordion>
+
+  <Accordion title="Kann ich die Admin-Rolle löschen?">
+    Nein, die Admin-Rolle kann nicht gelöscht werden. Es muss immer mindestens ein Mitglied der Admin-Rolle zugewiesen sein.
+  </Accordion>
+
+  <Accordion title="Was passiert, wenn ich eine Rolle lösche?">
+    Jedes Mitglied des Arbeitsbereichs, dem diese Rolle zugewiesen ist, wird automatisch der Standardrolle zugewiesen.
+  </Accordion>
+
+  <Accordion title="Wie lege ich eine Standardrolle für neue Mitglieder fest?">
+    Gehen Sie zu **Einstellungen → Rollen**, suchen Sie die Option **Standardrolle** und wählen Sie aus, welche Rolle neue Mitglieder beim Beitritt automatisch erhalten sollen.
+  </Accordion>
+
+  <Accordion title="Kann ich einem Benutzer mehrere Rollen zuweisen?">
+    Nein, jeder Benutzer kann immer nur eine Rolle haben. Erstellen Sie eine benutzerdefinierte Rolle, wenn Sie eine Kombination von Berechtigungen benötigen.
+  </Accordion>
+</AccordionGroup>
+
+## Berechtigungen
+
+<AccordionGroup>
+  <Accordion title="Was ist der Unterschied zwischen Objekt- und Feldberechtigungen?">
+    * **Objektberechtigungen**: Steuern den Zugriff auf ganze Datensätze (z. B. kann Personen-Datensätze sehen/bearbeiten/löschen)
+    * **Feldberechtigungen**: Steuern den Zugriff auf bestimmte Felder innerhalb eines Objekts (z. B. kann das Feld Gehalt sehen, aber nicht bearbeiten)
+
+    Feldberechtigungen ermöglichen eine granularere Kontrolle über sensible Daten.
+  </Accordion>
+
+  <Accordion title="Wie funktionieren Berechtigungsüberschreibungen?">
+    Berechtigungen kaskadieren von global zu spezifisch:
+
+    1. **Alle Objekte** legt die Basis für alle Objekte fest
+    2. **Berechtigungen auf Objektebene** können die globale Einstellung für bestimmte Objekte überschreiben
+    3. **Berechtigungen auf Feldebene** können die Objekteinstellung für bestimmte Felder überschreiben
+
+    Spezifischere Einstellungen haben immer Vorrang.
+  </Accordion>
+
+  <Accordion title="Was bedeuten die verschiedenen Berechtigungsstufen?">
+    Für Objekte:
+
+    * **Datensätze anzeigen**: Datensätze in Listen und auf Detailseiten ansehen
+    * **Datensätze bearbeiten**: Vorhandene Datensätze ändern
+    * **Datensätze löschen**: Datensätze vorläufig löschen (können wiederhergestellt werden)
+    * **Datensätze vernichten**: Datensätze dauerhaft löschen
+
+    Für Felder:
+
+    * **Feld anzeigen**: Feldwert anzeigen
+    * **Feld bearbeiten**: Feldwert ändern
+    * **Kein Zugriff**: Feld ist vollständig ausgeblendet
+  </Accordion>
+
+  <Accordion title="Kann ich den Zugriff auf bestimmte Datensätze einschränken (Berechtigungen auf Zeilenebene)?">
+    Berechtigungen auf Zeilenebene werden bis Q1 2026 im Tarif **Organization** verfügbar sein. Damit können Sie den Zugriff auf bestimmte Datensätze anhand von Kriterien einschränken (z. B. nur die eigenen Verkaufschancen sehen).
+  </Accordion>
+
+  <Accordion title="Wie mache ich ein Feld für bestimmte Benutzer schreibgeschützt?">
+    1. Gehen Sie zu **Einstellungen → Rollen**
+    2. Wählen Sie die Rolle aus
+    3. Navigieren Sie zu dem Objekt, das das Feld enthält
+    4. Setzen Sie die Feldberechtigung auf **Feld anzeigen** (ohne Feld bearbeiten)
+  </Accordion>
+</AccordionGroup>
+
+## Einstellungen & Aktionen
+
+<AccordionGroup>
+  <Accordion title="Welche Berechtigungen für Einstellungen sind verfügbar?">
+    Sie können den Zugriff auf Folgendes steuern:
+
+    * Erstellung von API-Schlüsseln
+    * Arbeitsbereichseinstellungen
+    * Rollenzuweisung
+    * Konfiguration des Datenmodells
+    * Sicherheitseinstellungen
+    * Workflow-Management
+
+    Verwenden Sie **Settings All Access**, um vollen Zugriff zu gewähren, oder aktivieren Sie bestimmte Berechtigungen.
+  </Accordion>
+
+  <Accordion title="Welche Berechtigungen für Aktionen sind verfügbar?">
+    Sie können steuern:
+
+    * **E-Mail senden**: Möglichkeit, E-Mails aus Twenty zu senden
+    * **CSV importieren**: Möglichkeit, Daten per CSV zu importieren
+    * **CSV exportieren**: Möglichkeit, Daten als CSV zu exportieren
+
+    Verwenden Sie **Application All Access**, um alle Aktionen zu gewähren, oder aktivieren Sie einzelne.
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="Ist SSO in allen Tarifen verfügbar?">
+    Nein, SSO ist eine Premium-Funktion und nur im Tarif **Organization** verfügbar.
+  </Accordion>
+
+  <Accordion title="Welche Identitätsanbieter werden unterstützt?">
+    Twenty unterstützt:
+
+    * **SAML 2.0** (funktioniert mit den meisten Identitätsanbietern für Unternehmen)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (früher Azure AD)
+  </Accordion>
+
+  <Accordion title="Was ist Just-in-Time-(JIT)-Bereitstellung?">
+    Mit JIT-Bereitstellung werden Benutzerkonten in Twenty automatisch erstellt, wenn sich jemand zum ersten Mal über SSO anmeldet. Ihnen wird automatisch die Standardrolle zugewiesen.
+  </Accordion>
+
+  <Accordion title="Kann ich SSO für alle Benutzer erzwingen?">
+    Ja, sobald SSO konfiguriert ist, können Sie die Anmeldung per Passwort für SSO-Benutzer deaktivieren, um die Authentifizierung über Ihren Identitätsanbieter durchzusetzen.
+  </Accordion>
+</AccordionGroup>

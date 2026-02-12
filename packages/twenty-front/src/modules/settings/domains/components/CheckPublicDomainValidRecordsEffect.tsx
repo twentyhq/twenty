@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
-import { type PublicDomain } from '~/generated/graphql';
+import { type PublicDomain } from '~/generated-metadata/graphql';
 
 export const CheckPublicDomainValidRecordsEffect = ({
   publicDomain,

@@ -1,5 +1,5 @@
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
-import { useDialogManager } from '../hooks/useDialogManager';
+import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Dialog } from './Dialog';

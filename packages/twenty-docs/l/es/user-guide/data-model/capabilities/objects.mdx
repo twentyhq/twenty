@@ -1,0 +1,91 @@
+---
+title: Objetos
+description: Conozca los objetos estándar y personalizados en Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Objetos estándar
+
+Objetos estándar son entidades predefinidas en tu espacio de trabajo para ayudarte a comenzar. Forman parte de un modelo de datos compartido accesible para todos los usuarios de Twenty. Puedes usarlos tal cual, personalizarlos o desactivarlos.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Personas
+
+El objeto `Personas` almacena tus contactos. Incluye detalles de contacto y el historial de interacciones, para que puedas ver todas tus interacciones con clientes en un solo lugar.
+
+### Empresa
+
+El objeto `Empresas` almacena las cuentas de tu negocio. Incluye detalles como industria, tamaño y ubicación. Las empresas se conectan tanto a los objetos `Personas` como `Oportunidades`.
+
+### Oportunidades
+
+El objeto `Oportunidades` almacena datos relacionados con acuerdos. Hace un seguimiento de la progresión de las ventas potenciales, desde la prospección hasta el cierre, registrando etapas, importes del acuerdo, cuenta asociada y fecha de cierre prevista. Puedes ver tu canal de ventas en un diseño kanban.
+
+### Notas
+
+El objeto `Notes` almacena notas de formato libre que se pueden adjuntar a Personas, Empresas, Oportunidades y otros registros. Utilice las notas para capturar resúmenes de reuniones, detalles importantes o cualquier información contextual.
+
+### Tareas
+
+El objeto `Tasks` almacena tareas pendientes y elementos de acción. Las tareas se pueden vincular a Personas, Empresas, Oportunidades y otros registros. Realice un seguimiento de las fechas de vencimiento, los responsables y el estado de finalización para mantenerse al día con sus seguimientos.
+
+## Objetos personalizados
+
+Los objetos personalizados te permiten almacenar información que es única para tu organización y que los objetos estándar no pueden manejar. Por ejemplo, si eres SpaceX, puedes querer crear un objeto personalizado para Cohetes y Lanzamientos.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Creando un nuevo objeto personalizado
+
+Para crear un nuevo objeto personalizado:
+
+1. Ve a Configuración en la barra lateral a la izquierda.
+2. En Espacio de trabajo, vaya a Modelo de datos. Aquí podrás ver una visión general de todos tus objetos Estándar y Personalizados (tanto activos como desactivados).
+
+<VimeoEmbed videoId="926288174" title="Demostración en video" />
+
+3. Haz clic en `+ Nuevo objeto` en la parte superior. Ingresa el nombre (tanto singular como plural), elige un ícono y añade una descripción para tu objeto personalizado y presiona Guardar (en la parte superior derecha). Usando Listado como un ejemplo de objeto personalizado, el singular sería "listado" y el plural sería "listados" junto con una descripción como "Listados que los anfitriones crearon para mostrar sus propiedades."
+
+4. Su objeto personalizado ya se creó y aparecerá en su barra lateral. Puede empezar a añadir registros de inmediato.
+
+## Gestión de objetos
+
+### Desactivación de objetos
+
+Si no necesita un objeto estándar o personalizado:
+
+1. Vaya a Configuración → Modelo de datos
+2. Busque el objeto que desea desactivar
+3. Haga clic en el interruptor para desactivarlo
+4. El objeto se ocultará de su espacio de trabajo, pero los datos se conservarán
+
+### Reactivación de objetos
+
+Para recuperar un objeto desactivado:
+
+1. Vaya a Configuración → Modelo de datos
+2. Busque los objetos desactivados (aparecerán en gris)
+3. Haga clic en el interruptor para reactivarlo
+4. El objeto y todos sus datos se restaurarán
+
+## Mejores prácticas
+
+### Cuándo crear objetos personalizados
+
+* **Entidades empresariales únicas**: Elementos específicos de su sector o proceso
+* **Relaciones complejas**: Cuando necesita realizar un seguimiento de las conexiones entre varias entidades
+* **Datos escalables**: Cuando puede haber muchas instancias de algo
+
+### Cuándo usar campos en su lugar
+
+* **Atributos simples**: Propiedades que describen objetos existentes
+* **Categorías o etiquetas**: Formas de clasificar registros existentes
+* **Valores únicos**: Información que no necesita su propio ciclo de vida
+
+### Nomenclatura de objetos
+
+* **Utilice nombres claros y descriptivos**: Haga evidente qué representa el objeto
+* **Siga las convenciones**: Utilice el singular para el nombre del objeto y el plural para la colección
+* **Tenga en cuenta a su equipo**: Elija nombres que todos comprendan

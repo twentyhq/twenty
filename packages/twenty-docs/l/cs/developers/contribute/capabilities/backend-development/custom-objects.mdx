@@ -1,0 +1,39 @@
+---
+title: Vlastní objekty
+---
+
+Objekty jsou struktury, které vám umožňují ukládat data (záznamy, atributy a hodnoty) specifická pro organizaci. Twenty poskytuje jak standardní, tak vlastní objekty.
+
+Standardní objekty jsou vestavěné objekty se sadou atributů dostupných pro všechny uživatele. Příklady standardních objektů v Twenty zahrnují Firma a Osoba. Standardní objekty mají standardní pole, která jsou také dostupná pro všechny uživatele Twenty, jako například Firma.displayName.
+
+Vlastní objekty jsou objekty, které můžete vytvářet pro ukládání informací specifických pro vaši organizaci. Nejsou vestavěné; členové vaší pracovní skupiny mohou vytvářet a upravovat vlastní objekty pro ukládání informací, které nejsou vhodné pro standardní objekty.
+
+## Schema na vysoké úrovni
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Schema na vysoké úrovni" />
+</div>
+
+<br />
+
+## Jak to funguje
+
+Vlastní objekty pocházejí z tabulek metadat, které určují tvar, název a typ objektů. Veškeré tyto informace jsou přítomny v databázi schémat metadat, která se skládá z následujících tabulek:
+
+* **Zdroj dat**: Definuje, kde se data nacházejí.
+* **Objekt**: Popisuje objekt a odkazuje na DataSource.
+* **Pole**: Vymezuje pole objektu a připojuje je k objektu.
+
+Pro přidání vlastního objektu vyhledá člen pracovní skupiny rozhraní /metadata API. To aktualizuje metadata odpovídajícím způsobem a generuje GraphQL schéma na základě metadat, které se ukládá v GQL cache pro pozdější použití.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Vyhledejte /metadata API pro přidání vlastních objektů" />
+</div>
+
+<br />
+
+Pro načtení dat proces zahrnuje provádění dotazů přes /graphql endpoint a jejich předání přes Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Dotazujte se na /graphql endpoint pro načtení dat." />
+</div>

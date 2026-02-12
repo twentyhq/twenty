@@ -13,7 +13,7 @@ import {
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
@@ -25,7 +25,7 @@ export const sanitizeRawUpdateFieldInput = ({
   rawUpdateFieldInput,
   isSystemBuild,
 }: SanitizeRawUpdateFieldInputArgs) => {
-  const isStandardField = isStandardMetadata(existingFlatFieldMetadata);
+  const isStandardField = belongsToTwentyStandardApp(existingFlatFieldMetadata);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
     [

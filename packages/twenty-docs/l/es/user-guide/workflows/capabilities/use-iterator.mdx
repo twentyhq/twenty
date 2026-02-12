@@ -1,0 +1,176 @@
+---
+title: Usar Iterador
+description: Recorre arrays de registros para realizar acciones en cada elemento.
+image: /images/user-guide/workflows/workflow.png
+---
+
+El iterador te permite recorrer un array de registros y realizar acciones en cada uno. Es esencial para los flujos de trabajo que necesitan procesar varios registros devueltos por Search Records o recibidos mediante webhooks.
+
+## Cuándo usar el iterador
+
+| Escenario                           | Ejemplo                                                |
+| ----------------------------------- | ------------------------------------------------------ |
+| **Procesar resultados de búsqueda** | Enviar un correo electrónico a cada persona encontrada |
+| **Gestionar arrays de webhooks**    | Crear registros para cada elemento en orden            |
+| **Actualizaciones masivas**         | Actualizar varios registros con valores calculados     |
+| **Notificaciones**                  | Alertar a varias personas sobre un evento              |
+
+## Comprender el iterador
+
+El iterador espera un **array** como entrada. Luego:
+
+1. Toma el primer elemento del array
+2. Ejecuta todas las acciones dentro del iterador con ese elemento
+3. Pasa al siguiente elemento
+4. Repite hasta que se procesen todos los elementos
+
+## Configuración básica
+
+### Ejemplo: enviar un correo electrónico a todos en los resultados de búsqueda
+
+**Objetivo**: Encontrar todos los contactos de una empresa específica y enviar a cada uno un correo electrónico personalizado.
+
+### Paso 1: Buscar registros
+
+1. Añade la acción **Search Records**
+2. Objeto: **People**
+3. Filtro: Company es igual a "Acme Inc"
+4. Esto devuelve un array de personas
+
+### Paso 2: Comprobar que existan resultados
+
+1. Añade la acción **Filter**
+2. Condición: `{{searchRecords.length}}` es mayor que 0
+3. Esto evita errores del iterador con resultados vacíos
+
+### Paso 3: Añadir un iterador
+
+1. Añade la acción **Iterator**
+2. Entrada del array: selecciona `{{searchRecords}}`
+3. Esto crea un bucle
+
+### Paso 4: Añadir acciones dentro del iterador
+
+Las acciones colocadas después del iterador se ejecutan para cada elemento:
+
+1. Añade la acción **Send Email** (dentro del iterador)
+2. Para: `{{iterator.currentItem.email}}`
+3. Asunto: Hola `{{iterator.currentItem.firstName}}`!
+4. Cuerpo: Mensaje personalizado utilizando los campos del elemento actual
+
+### Resultado
+
+Si Search Records devuelve 5 personas, el iterador:
+
+* Envía un correo electrónico a la persona 1
+* Envía un correo electrónico a la persona 2
+* ... continúa con las 5
+
+## Acceder a los datos del elemento actual
+
+Dentro del iterador, usa `{{iterator.currentItem}}` para acceder al registro actual:
+
+| Variable                                | Descripción                                   |
+| --------------------------------------- | --------------------------------------------- |
+| `{{iterator.currentItem}}`              | Todo el objeto de registro actual             |
+| `{{iterator.currentItem.id}}`           | ID de registro                                |
+| `{{iterator.currentItem.email}}`        | Campo de correo electrónico                   |
+| `{{iterator.currentItem.company.name}}` | Nombre de la empresa relacionada              |
+| `{{iterator.index}}`                    | Posición actual en el array (comenzando en 0) |
+
+## Patrones comunes
+
+### Actualizar varios registros
+
+**Objetivo**: Marcar todas las tareas atrasadas como "Late"
+
+```
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
+```
+
+### Crear registros desde un array
+
+**Objetivo**: El webhook recibe un pedido con varios artículos, crear un registro para cada uno
+
+```
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
+```
+
+### Procesamiento condicional dentro del bucle
+
+**Objetivo**: Enviar correo electrónico solo a los contactos con correos válidos
+
+```
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
+```
+
+## Solución de Problemas
+
+### "El iterador espera un array"
+
+**Causa**: Pasaste un único registro en lugar de un array.
+
+**Solución**: Asegúrate de pasar el resultado de Search Records o un campo de tipo array, no un único registro.
+
+```
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
+```
+
+### El iterador no se ejecuta
+
+**Causa**: El array está vacío.
+
+**Solución**: Añade un Filter antes del iterador para comprobar la longitud del array:
+
+```
+Filter: {{searchRecords.length}} > 0
+```
+
+### Las acciones se ejecutan demasiadas veces
+
+**Causa**: Search Records devolvió más registros de los esperados.
+
+**Solución**:
+
+* Añade filtros más específicos a Search Records
+* Establece un límite en Search Records (máx. 200)
+* Añade un Filter dentro del iterador para condiciones adicionales
+
+## Consideraciones de rendimiento
+
+* **Uso de créditos**: Cada iteración consume créditos por sus acciones
+* **Tiempo**: Los arrays grandes tardan más en procesarse
+* **Límites**: Considera procesar por lotes las operaciones muy grandes
+* **Límites de velocidad**: Las llamadas a API externas pueden alcanzar límites de velocidad con muchas iteraciones
+
+## Mejores prácticas
+
+1. **Comprueba siempre la longitud del array** antes del iterador para evitar errores
+2. **Añade filtros dentro de los bucles** cuando no sea necesario procesar todos los elementos
+3. **Renombra tu paso del iterador** para describir qué está recorriendo
+4. **Prueba con arrays pequeños** antes de procesar conjuntos de datos grandes
+5. **Supervisa las ejecuciones de flujos de trabajo** para asegurarte de que las iteraciones se completen como se espera
+
+## Relacionado
+
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Cómo usar ramas](/l/es/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Preguntas frecuentes sobre flujos de trabajo](/l/es/user-guide/workflows/how-tos/need-more-help/workflows-faq)

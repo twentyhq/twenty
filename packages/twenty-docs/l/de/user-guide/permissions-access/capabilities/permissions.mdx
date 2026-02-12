@@ -1,0 +1,198 @@
+---
+title: Berechtigungen
+description: Steuern Sie den Zugriff auf Objekte, Felder und Einstellungen mit rollenbasierten Berechtigungen.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Das Berechtigungssystem von Twenty ermöglicht es Ihnen, den Zugriff auf drei Hauptbereiche zu steuern:
+
+* **Objekte und Felder**: Kontrollieren Sie, wer Datensätze und einzelne Felder anzeigen, bearbeiten oder löschen kann.
+* **Einstellungen**: Verwalten Sie den Zugriff auf die Konfiguration des Arbeitsbereichs und administrative Funktionen.
+* **Aktionen**: Steuern Sie allgemeine Arbeitsbereichsaktionen wie das Importieren von Daten oder das Versenden von E-Mails.
+
+## Erstellen Sie eine Rolle
+
+Um eine neue Rolle zu erstellen:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Unter **Alle Rollen** klicken Sie auf **+ Rolle erstellen**
+3. Geben Sie einen Rollennamen ein
+4. Im Standard-Tab **Berechtigungen** [Berechtigungen konfigurieren](#customize-permissions)
+5. Klicken Sie auf **Speichern**, um den Vorgang abzuschließen
+
+## Löschen Sie eine Rolle
+
+Um eine Rolle zu löschen:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie entfernen möchten
+3. Öffnen Sie den Tab **Einstellungen** und klicken Sie auf **Rolle löschen**
+4. Klicken Sie im Modal auf **Bestätigen**
+
+<Note>
+  Wenn eine Rolle gelöscht wird, wird jedes ihr zugewiesene Mitglied des Arbeitsbereichs automatisch der Standardrolle zugewiesen. Alle außer der **Admin**-Rolle können gelöscht werden. Es muss immer mindestens ein Mitglied der **Admin**-Rolle zugewiesen sein.
+</Note>
+
+## Rollen an Mitglieder zuweisen
+
+### Aktuelle Zuweisungen anzeigen
+
+* Gehen Sie zu **Einstellungen → Rollen**
+* Sehen Sie alle Rollen und wie viele Mitglieder jeweils zugewiesen sind
+* Anzeigen, welche Mitglieder welche Rollen haben
+
+### Weisen Sie einem Mitglied eine Rolle zu
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Klicken Sie auf **+ Mitglied zuweisen**
+5. Wählen Sie das Mitglied des Arbeitsbereichs aus der Liste aus
+6. Bestätigen Sie die Zuweisung
+
+### Standardrolle festlegen
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Suchen Sie im Abschnitt **Optionen** nach **Standardrolle**
+3. Wählen Sie aus, welche Rolle neue Mitglieder automatisch erhalten sollen
+4. Neue Arbeitsbereichsmitglieder werden beim Beitritt dieser Rolle zugewiesen
+
+<Note>
+  Sie können Rollen nur vorhandenen Mitgliedern des Arbeitsbereichs zuweisen. Um neue Mitglieder einzuladen, verwenden Sie die [Mitgliederverwaltung](/l/de/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Berechtigungen anpassen
+
+Berechtigungen bestimmen, auf was jede Rolle innerhalb Ihres Arbeitsbereichs zugreifen oder was sie ändern kann, einschließlich Arbeitsbereich-Objekte, Datensätze, Einstellungen und Aktionen.
+
+### Objektberechtigungen
+
+Der Abschnitt **Objekte** legt fest, was diese Rolle mit Datensätzen in Ihrem Arbeitsbereich tun kann.
+
+#### Standardberechtigungen festlegen (alle Objekte)
+
+Konfigurieren Sie zunächst die Basisberechtigungen, die standardmäßig für **alle Objekte** gelten:
+
+| Berechtigung                                 | Beschreibung                                                   |
+| -------------------------------------------- | -------------------------------------------------------------- |
+| **Datensätze auf allen Objekten anzeigen**   | Datensätze in Listen und auf Detailseiten ansehen              |
+| **Datensätze auf allen Objekten bearbeiten** | Vorhandene Datensätze bearbeiten                               |
+| **Datensätze auf allen Objekten löschen**    | Datensätze vorläufig löschen (können wiederhergestellt werden) |
+| **Datensätze auf allen Objekten zerstören**  | Datensätze dauerhaft löschen                                   |
+
+Auswählen oder abwählen, je nachdem, welches Standardverhalten für diese Rolle gelten soll.
+
+<Note>
+  **Beispiel — Praktikantenrolle**: Ein Praktikant sollte standardmäßig alle Objekte sehen können, sie jedoch nicht bearbeiten. Aktivieren Sie „Datensätze bei allen Objekten ansehen“, lassen Sie „Datensätze bei allen Objekten bearbeiten“ deaktiviert.
+</Note>
+
+#### Ausnahmen auf Objektebene hinzufügen
+
+Nachdem Sie die Standardwerte festgelegt haben, verwenden Sie den Unterabschnitt **Objektebene**, um Regeln hinzuzufügen, die die Standardwerte für bestimmte Objekte außer Kraft setzen.
+
+Klicken Sie auf **+ Regel hinzufügen** und wählen Sie ein Objekt aus, um eine Ausnahme zu erstellen.
+
+**Beispielregeln für eine Praktikantenrolle:**
+
+| Regel                                             | Auswirkung                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------- |
+| Opportunities → „Datensätze ansehen“ deaktivieren | Praktikant kann das Opportunities-Objekt überhaupt nicht sehen            |
+| People → „Datensätze bearbeiten“ aktivieren       | Praktikant kann People-Datensätze bearbeiten (aber keine anderen Objekte) |
+
+### Feldberechtigungen
+
+Innerhalb jeder Regel auf Objektebene können Sie weitergehen und **Berechtigungen auf Feldebene** konfigurieren, um den Zugriff auf bestimmte Felder zu steuern.
+
+| Berechtigung        | Beschreibung                      |
+| ------------------- | --------------------------------- |
+| **Feld anzeigen**   | Den Feldwert anzeigen             |
+| **Feld bearbeiten** | Den Feldwert bearbeiten           |
+| **Kein Zugriff**    | Feld ist vollständig ausgeblendet |
+
+**Beispiel — Sensible Felder einschränken:**
+
+Für die Praktikantenrolle mit Bearbeitungszugriff auf People möchten Sie eventuell bestimmte Felder einschränken:
+
+* People → Email → nur **Feld anzeigen** (kann nicht bearbeitet werden)
+* People → Address → **Kein Zugriff** (vollständig ausgeblendet)
+
+So kann der Praktikant die meisten People-Felder bearbeiten, während sensible Informationen geschützt werden.
+
+### So funktioniert die Vererbung von Berechtigungen
+
+Berechtigungen kaskadieren von global zu spezifisch:
+
+1. **Alle Objekte** → legt die Basis für alle Objekte fest
+2. **Regeln auf Objektebene** → setzen die Basis für bestimmte Objekte außer Kraft
+3. **Regeln auf Feldebene** → setzen die Objekteinstellung für bestimmte Felder außer Kraft
+
+Spezifischere Einstellungen haben immer Vorrang.
+
+### Verwaltung von Berechtigungsüberschreibungen
+
+So setzen Sie geerbte Berechtigungen außer Kraft:
+
+1. Klicken Sie auf **X**, um die vererbte Regel zu entfernen
+2. Wählen Sie die gewünschten spezifischen Berechtigungen aus
+3. Klicken Sie auf das orange **Rückgängig**-Symbol (kreisförmiger Pfeil), um Änderungen rückgängig zu machen
+
+Wenn Sie fertig sind, klicken Sie auf **Beenden**, und dann auf **Speichern**, sobald Sie zur Rollenseite weitergeleitet werden.
+
+### Berechtigungen für Arbeitsbereichseinstellungen
+
+Steuern Sie den Zugriff auf die Einstellungen des Arbeitsbereichs auf zwei Arten:
+
+* Schalten Sie **Einstellungen Alles Zugriff** ein, um vollen Zugriff zu gewähren
+* Oder aktivieren Sie bestimmte Berechtigungen (z.B. API-Schlüsselgenerierung, Arbeitsbereich-Präferenzen, Rollenzuweisung, Datenmodellkonfiguration, Sicherheitseinstellungen und Workflow-Management)
+
+<Note>
+  **Aktuelle Einschränkung**: Für das manuelle Auslösen von Workflows ist derzeit Zugriff auf die Workflow-Verwaltung erforderlich. Dieses Verhalten kann sich in zukünftigen Versionen ändern.
+</Note>
+
+### Arbeitsbereichs-Aktionsberechtigungen
+
+Steuern Sie den Zugriff auf allgemeine Arbeitsbereichsaktionen:
+
+* Schalten Sie **Anwendung Alles Zugriff** ein, um volle Berechtigungen zu gewähren
+* Oder aktivieren Sie individuelle Aktionen wie **E-Mail senden**, **CSV importieren** und **CSV exportieren**
+
+## Zuweisen von Rollen zu API-Schlüsseln und KI-Agenten
+
+Neben Mitgliedern des Arbeitsbereichs können Rollen auch **API-Schlüsseln** und **KI-Agenten** zugewiesen werden. Dies ist besonders hilfreich für Teams, die genau steuern möchten, „wer“ was in ihrem Arbeitsbereich tun kann — einschließlich automatisierter Prozesse und Integrationen.
+
+### Warum Rollen API-Schlüsseln und KI-Agenten zuweisen?
+
+* **Sicherheit**: Beschränken, worauf automatisierte Prozesse zugreifen oder was sie ändern können
+* **Compliance**: Sicherstellen, dass Integrationen nur die Daten berühren, die sie benötigen
+* **Kontrolle**: Verhindern unbeabsichtigter Datenänderungen durch falsch konfigurierte Automatisierungen
+* **Nachvollziehbarkeit**: Nachverfolgen, welche Aktionen von welcher Integration oder welchem Agenten ausgeführt wurden
+
+### Einem API-Schlüssel eine Rolle zuweisen
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Unter **API-Schlüssel** auf **+ API-Schlüssel zuweisen** klicken
+5. Wählen Sie den API-Schlüssel aus der Liste aus
+6. Bestätigen Sie die Zuweisung
+
+Der API-Schlüssel erbt nun alle von dieser Rolle definierten Berechtigungen. Alle mit diesem Schlüssel ausgeführten API-Aufrufe werden entsprechend eingeschränkt.
+
+<Note>
+  API-Schlüssel ohne zugewiesene Rolle verwenden Standardberechtigungen. Weisen Sie Produktions-API-Schlüsseln zur höheren Sicherheit stets eine spezifische Rolle zu.
+</Note>
+
+### Einem KI-Agenten eine Rolle zuweisen
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Unter **KI-Agenten** auf **+ KI-Agenten zuweisen** klicken
+5. Wählen Sie den KI-Agenten aus der Liste aus
+6. Bestätigen Sie die Zuweisung
+
+Der KI-Agent kann nur auf Daten zugreifen und Aktionen ausführen, die seine zugewiesene Rolle erlaubt.
+
+<Note>
+  Für KI-Agenten, die innerhalb von Workflows laufen, stellt dies sicher, dass der Agent nicht auf Daten außerhalb seines vorgesehenen Umfangs zugreifen oder diese ändern kann — selbst wenn der Workflow über weitergehende Berechtigungen verfügt.
+</Note>

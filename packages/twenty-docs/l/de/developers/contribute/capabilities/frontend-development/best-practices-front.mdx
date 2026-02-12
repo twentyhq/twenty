@@ -1,0 +1,325 @@
+---
+title: Beste Praktiken
+---
+
+Dieses Dokument beschreibt die besten Praktiken, die Sie beim Arbeiten am Frontend beachten sollten.
+
+## Zustandsverwaltung
+
+React und Recoil übernehmen die Zustandsverwaltung im Code.
+
+### Verwenden Sie `useRecoilState`, um den Zustand zu speichern.
+
+Es ist eine gute Praxis, so viele Atome zu erstellen, wie Sie benötigen, um Ihren Zustand zu speichern.
+
+<Warning>
+  Es ist besser, zusätzliche Atome zu verwenden, als zu versuchen, mit Prop Drilling allzu knapp zu arbeiten.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Verwenden Sie `useRef` nicht, um den Zustand zu speichern.
+
+Vermeiden Sie die Verwendung von `useRef`, um den Zustand zu speichern.
+
+If you want to store state, you should use `useState` or `useRecoilState`.
+
+Sehen Sie sich [an, wie Re-Renderings verwaltet werden können](#managing-re-renders), falls Sie das Gefühl haben, dass Sie `useRef` benötigen, um einige Re-Renderings zu verhindern.
+
+## Re-Renderings verwalten
+
+Re-Renderings können in React schwer zu verwalten sein.
+
+Hier sind einige Regeln, die befolgt werden sollten, um unnötige Re-Renderings zu vermeiden.
+
+Beachten Sie, dass Sie **immer** Re-Renderings vermeiden können, indem Sie deren Ursache verstehen.
+
+### Arbeiten Sie auf der Root-Ebene
+
+Das Vermeiden von Re-Renderings in neuen Funktionen wird jetzt erleichtert, indem sie auf Root-Ebene eliminiert werden.
+
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+
+Auf diese Weise wissen Sie, dass es nur einen Ort gibt, der ein Re-Rendering auslösen kann.
+
+### Always think twice before adding `useEffect` in your codebase
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+Sie können sie auch in Bibliotheken wie Apollo finden: `onCompleted`, `onError`, usw.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Verwenden Sie Recoil-Familienzustände und Recoil-Familienselektoren
+
+Recoil-Familienzustände und -Selektoren sind eine großartige Möglichkeit, Re-Renders zu vermeiden.
+
+Sie sind nützlich, wenn Sie eine Liste von Elementen speichern müssen.
+
+### Sie sollten nicht `React.memo(MyComponent)` verwenden.
+
+Vermeiden Sie die Verwendung von `React.memo()`, da es nicht die Ursache für das Re-Rendering löst, sondern stattdessen die Re-Render-Kette unterbricht, was zu unerwartetem Verhalten führen kann und es sehr schwierig macht, den Code zu refaktorisieren.
+
+### Beschränken Sie die Nutzung von `useCallback` oder `useMemo`.
+
+Oft sind sie nicht erforderlich und machen den Code schwerer zu lesen und zu warten für einen Leistungsgewinn, der kaum wahrnehmbar ist.
+
+## Console.logs
+
+`console.log`-Anweisungen bieten während der Entwicklung wertvolle Echtzeit-Einblicke in Variablenwerte und den Codefluss. Aber wenn sie im Produktivcode belassen werden, kann dies zu mehreren Problemen führen:
+
+1. **Leistung**: Übermäßiges Logging kann die Laufzeitleistung beeinflussen, insbesondere bei clientseitigen Anwendungen.
+
+2. **Sicherheit**: Das Protokollieren sensibler Daten kann kritische Informationen offenlegen für jeden, der die Konsole des Browsers inspiziert.
+
+3. **Sauberkeit**: Das Ausfüllen der Konsole mit Logs kann wichtige Warnungen oder Fehler verdecken, die Entwickler oder Tools sehen müssen.
+
+4. **Professionalität**: Endbenutzer oder Kunden, die die Konsole überprüfen und eine Vielzahl von Protokollanweisungen sehen, könnten die Qualität und den Feinschliff des Codes in Frage stellen.
+
+Stellen Sie sicher, dass Sie alle `console.logs` entfernen, bevor Sie den Code in die Produktion übertragen.
+
+## Namensgebung
+
+### Variablenbenennung
+
+Variablennamen sollten den Zweck oder die Funktion der Variable genau beschreiben.
+
+#### Das Problem mit generischen Namen
+
+Generische Namen in der Programmierung sind nicht ideal, weil ihnen die Spezifität fehlt, was zu Mehrdeutigkeit und verminderter Lesbarkeit des Codes führt. Solche Namen vermitteln nicht den Zweck der Variablen oder Funktion, was es Entwicklern erschwert, die Absicht des Codes ohne tiefere Untersuchung zu verstehen. Dies kann zu erhöhten Debugging-Zeiten, höherer Fehleranfälligkeit und Schwierigkeiten bei der Wartung und Zusammenarbeit führen. In der Zwischenzeit macht eine beschreibende Namensgebung den Code selbsterklärend und einfacher zu navigieren, was die Codequalität und die Produktivität der Entwickler verbessert.
+
+```tsx
+// ❌ Schlecht, verwendet einen generischen Namen, der seinen
+//    Zweck oder Inhalt nicht klar kommuniziert
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Gut, verwendet einen beschreibenden Namen
+const [email, setEmail] = useState('');
+```
+
+#### Einige Wörter, die in Variablennamen zu vermeiden sind
+
+* Dummy
+
+### Ereignis-Handler
+
+Ereignis-Handler-Namen sollten mit `handle` beginnen, während `on` als Präfix dient, um Ereignisse in Komponenten-Props zu benennen.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Optionale Props
+
+Vermeiden Sie es, den Standardwert für ein optionales Prop zu übergeben.
+
+**BEISPIEL**
+
+Betrachten Sie die unten definierte `EmailField`-Komponente:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Verwendung**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Komponente als Props
+
+Versuchen Sie nach Möglichkeit, nicht instanziierte Komponenten als Props zu übergeben, damit untergeordnete Komponenten selbst entscheiden können, welche Props sie weiterreichen müssen.
+
+Das häufigste Beispiel dafür sind Icon-Komponenten:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+Damit React versteht, dass die Komponente eine Komponente ist, müssen Sie PascalCase verwenden, damit sie später mit `<MyIcon>` instanziiert werden kann.
+
+## Prop Drilling: Beschränken Sie es auf das Nötigste
+
+Prop Drilling im React-Kontext bezieht sich auf die Praxis, Zustandvariablen und deren Setter durch viele Komponentenebenen zu leiten, auch wenn Zwischenkomponenten sie nicht verwenden. Obwohl es manchmal notwendig ist, kann übermäßiges Prop Drilling zu Folgendem führen:
+
+1. **Verminderte Lesbarkeit**: Die Nachverfolgung, woher ein Prop stammt oder wo es verwendet wird, kann in einer tief verschachtelten Komponentenstruktur verworren werden.
+
+2. **Wartungsherausforderungen**: Änderungen in der Prop-Struktur einer Komponente können Anpassungen in mehreren Komponenten erfordern, selbst wenn sie das Prop nicht direkt verwenden.
+
+3. **Verringerte Wiederverwendbarkeit von Komponenten**: Eine Komponente, die viele Props nur zum Weiterreichen erhält, wird weniger universell und schwieriger in unterschiedlichen Kontexten wiederzuverwenden.
+
+Wenn Sie das Gefühl haben, dass Sie übermäßig Prop Drilling einsetzen, sehen Sie sich die [Best Practices für das Zustandsmanagement](#state-management) an.
+
+## Importe
+
+Beim Importieren sollten Sie die vorgesehenen Aliase anstelle der vollständigen oder relativen Pfade verwenden.
+
+**Die Aliase**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Verwendung**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Schemavalidierung
+
+[Zod](https://github.com/colinhacks/zod) ist der Schema-Validator für ungetypte Objekte:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Breaking Changes
+
+Führen Sie immer gründliche manuelle Tests durch, bevor Sie fortfahren, um sicherzustellen, dass keine Modifikationen anderswo Störungen verursacht haben, da Testen noch nicht umfassend integriert ist.

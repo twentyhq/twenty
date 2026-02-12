@@ -1,0 +1,170 @@
+---
+title: Depanarea fluxului de lucru
+description: Probleme frecvente ale fluxurilor de lucru și cum să le rezolvați.
+---
+
+## Probleme comune și soluții
+
+### Flux de lucru care nu se declanșează
+
+**Simptome**: Fluxul de lucru nu rulează atunci când vă așteptați.
+
+**Cauze posibile**:
+
+1. **Flux de lucru neactivat**: Asigurați-vă că fluxul de lucru este setat pe "Active", nu pe "Draft"
+2. **Condițiile declanșatorului nu sunt îndeplinite**: Verificați că declanșatorul corespunde evenimentului așteptat
+3. **Câmp nemonitorizat**: Pentru declanșatoarele "Record is Updated", asigurați-vă că acel câmp specific este urmărit
+4. **Permisiuni**: Verificați că aveți permisiunea de a rula fluxuri de lucru
+
+**Soluții**:
+
+* Verificați starea fluxului de lucru în lista fluxurilor de lucru
+* Testați cu acțiunea specifică despre care considerați că îl declanșează
+* Revizuiți configurarea declanșatorului
+* Contactați administratorul dvs. despre permisiuni
+
+### Declanșarea fluxului de lucru prea devreme (câmpuri goale)
+
+**Simptome**: Când creați manual o înregistrare în UI, fluxul de lucru se declanșează înainte de a avea timp să completați toate câmpurile. Fluxul de lucru rulează cu valori ale câmpurilor în mare parte goale.
+
+**De ce se întâmplă asta**: Twenty salvează totul în timp real — nu există moduri separate "edit" vs "read". Când creați o înregistrare, aceasta este salvată imediat, declanșând evenimentul "Record is created" înainte să puteți completa câmpuri suplimentare.
+
+**Când "Record is created" funcționează bine**:
+
+* Înregistrări create prin apeluri API (câmpurile sunt populate într-o singură cerere)
+* Înregistrări create prin import
+* Crearea automată de înregistrări din alte fluxuri de lucru
+
+**Soluție**: Pentru înregistrările create manual în UI, folosiți **"Record is created or updated"** ca declanșator. Astfel:
+
+* Fluxul de lucru se declanșează după ce utilizatorul a terminat de completat și salvat câmpurile
+* Obțineți date complete în loc de valori goale
+
+<Tip>
+  Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistrare, adăugați o acțiune Filter pentru a verifica un câmp precum `createdAt equals updatedAt` (prima salvare) sau folosiți un câmp checkbox personalizat pentru a urmări dacă fluxul de lucru a rulat deja.
+</Tip>
+
+### Acțiuni eșuate
+
+**Simptome**: Fluxul de lucru rulează, dar unele acțiuni eșuează.
+
+**Cauze posibile**:
+
+1. **Date lipsă**: Câmpurile obligatorii sunt goale
+2. **Referințe nevalide**: Variabilele din pașii anteriori nu există
+3. **Erori API**: Serviciile externe returnează erori
+4. **Probleme de permisiuni**: Acțiunea necesită permisiuni pe care nu le aveți
+
+**Soluții**:
+
+* Verificați detaliile rulării fluxului de lucru pentru mesaje de eroare
+* Verificați că toate câmpurile obligatorii au valori
+* Testați conexiunile API independent
+* Revizuiți permisiunile rolurilor
+
+### Erori ale cererilor HTTP
+
+**Simptome**: Acțiunile HTTP Request eșuează sau returnează rezultate neașteptate.
+
+**Coduri de eroare comune**:
+
+* **400**: Cerere incorectă - verificați formatul corpului cererii
+* **401**: Neautorizat - verificați cheia API
+* **403**: Interzis - verificați permisiunile API
+* **404**: Nu a fost găsit - verificați URL-ul punctului final
+* **429**: Prea multe cereri - implementați limitarea ratei
+* **500**: Eroare de server - problemă a serviciului extern
+
+**Soluții**:
+
+* Verificați URL-ul punctului final API
+* Verificați antetele de autentificare
+* Testați mai întâi apelul API în afara Twenty
+* Adăugați tratare a erorilor în acțiunile Code
+
+### Erori în acțiunile Code
+
+**Simptome**: Codul JavaScript nu reușește să se execute.
+
+**Probleme comune**:
+
+1. **Erori de sintaxă**: Greșeli de tastare sau JavaScript invalid
+2. **Variabile nedefinite**: Referire la variabile care nu există
+3. **Erori de tip**: Operații pe tipuri de date greșite
+4. **Depășiri de timp**: Codul durează prea mult să se execute
+
+**Soluții**:
+
+* Utilizați validarea integrată a editorului de cod
+* Testați mai întâi logica codului într-o consolă JavaScript
+* Adăugați instrucțiuni console.log pentru depanare
+* Simplificați operațiunile complexe
+
+### Emailul nu se trimite
+
+**Simptome**: Acțiunea Send Email nu livrează emailuri.
+
+**Cauze posibile**:
+
+1. **Niciun cont de email conectat**: Verificați Settings → Accounts
+2. **Adresă de email invalidă**: Emailul destinatarului are un format incorect
+3. **Limite de trimitere**: S-au atins limitele de rată ale furnizorului de email
+4. **Filtre de spam**: Emailurile sunt blocate
+
+**Soluții**:
+
+* Verificați conexiunea contului de email
+* Validați adresele de email ale destinatarilor
+* Verificați limitele furnizorului de email
+* Revizuiți conținutul emailului pentru posibile declanșatoare de spam
+
+## Depanarea fluxurilor de lucru
+
+### Utilizarea rulărilor fluxurilor de lucru
+
+1. Accesați editorul de fluxuri de lucru
+2. Deschideți panoul **Runs**
+3. Găsiți rularea eșuată
+4. Faceți clic pentru a vedea detalii pas cu pas
+5. Revizuiți mesajele de eroare și datele de ieșire
+
+### Testarea pașilor individuali
+
+1. Pentru acțiunile Code, folosiți butonul **Test**
+2. Pentru cererile HTTP, testați endpoint-ul separat
+3. Creați înregistrări de test pentru a declanșa fluxuri de lucru
+4. Folosiți declanșatoare manuale pentru testare controlată
+
+### Tipare comune de depanare
+
+**Adăugați jurnalizare**:
+Folosiți acțiuni Code pentru a înregistra valori intermediare pentru depanare.
+
+**Izolați pașii**:
+Testați fiecare pas independent pentru a identifica eșecurile.
+
+**Verificați fluxul de date**:
+Verificați că fiecare pas primește datele de intrare așteptate.
+
+## Cele mai bune practici pentru a evita problemele
+
+### Înainte de activare
+
+* Testați temeinic în modul draft
+* Validați toate conexiunile API
+* Revizuiți cu atenție condițiile declanșatorului
+* Documentați comportamentul așteptat
+
+### În timpul dezvoltării
+
+* Folosiți nume descriptive pentru pași
+* Adăugați comentarii în acțiunile Code
+* Testați cu date realiste
+* Planificați pentru cazuri limită
+
+### După activare
+
+* Monitorizați îndeaproape rulările inițiale
+* Configurați alerte pentru eșecuri
+* Revizuiți în mod regulat istoricul rulărilor
+* Mențineți fluxurile de lucru simple atunci când este posibil

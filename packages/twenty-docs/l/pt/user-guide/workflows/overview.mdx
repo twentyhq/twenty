@@ -1,0 +1,80 @@
+---
+title: Fluxos de trabalho
+description: Aprenda a criar automações no Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Fluxos de trabalho" />
+</Frame>
+
+## Por que Workflows Importam
+
+Twenty foi criado para trazer flexibilidade máxima aos seus usuários. Em vez de forçá-lo a adaptar seus processos de negócios a recursos rígidos e pré-construídos, os workflows permitem que você crie automações que criem o CRM que melhor apoie seus casos de uso de negócios exclusivos.
+
+Workflows são o recurso interno de Twenty para criar essas automações. Eles oferecem os blocos de construção para criar exatamente o que seu negócio precisa, quando precisa.
+
+## O que posso fazer com workflows?
+
+Recomendamos a construção de automações para dois principais propósitos:
+
+1. **Automações internas para facilitar o dia a dia da sua equipe**: Reduza a quantidade de entradas manuais e tarefas repetitivas que retardam sua equipe.
+2. **Traga dados para dentro e para fora do Twenty**: Conecte-se ao Twenty por meio de chamadas de API e webhooks para seu banco de dados e outras ferramentas.
+
+## Criando seu primeiro fluxo de trabalho
+
+### Etapa 1: Criar um novo fluxo de trabalho
+
+1. Vá para **Workflows**, localizado abaixo dos outros objetos
+2. Clique em **+ New Record**
+3. Dê um nome ao seu fluxo de trabalho
+
+### Etapa 2: Adicionar um gatilho
+
+Todo fluxo de trabalho começa com um gatilho. Escolha entre:
+
+* **Eventos de registro**: Quando um registro é criado, atualizado ou excluído
+* **Agendamento**: Executar em horários específicos (diariamente, semanalmente, etc.)
+* **Manual**: Acionado por uma ação do usuário
+* **Webhook**: Acionado por um webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Etapa 3: Adicionar ações
+
+Após o gatilho, adicione uma ou mais ações:
+
+* **Criar registro**: Adicionar novos registros a qualquer objeto
+* **Atualizar registro**: Modificar os dados do registro existente
+* **Excluir registro**: Remover registros de objetos
+* **Pesquisar registros**: Encontrar registros que correspondam aos critérios
+* **Inserir/atualizar registro**: Criar ou atualizar com base em critérios de correspondência
+* **Iterador**: Percorrer arrays de registros
+* **Filtro**: Controlar quais registros prosseguem
+* **Atraso**: Aguardar antes de continuar (duração ou data agendada)
+* **Enviar e-mail**: Enviar e-mails via sua conta conectada
+* **Código**: Executar JavaScript personalizado
+* **Solicitação HTTP**: Chamar APIs externas
+* **Formulário**: Obter entradas de usuários na interface do Twenty no momento da execução
+* **Agente de IA** (Em breve): Executar tarefas de IA inteligentes
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Etapa 4: Testar e ativar
+
+1. Use o botão **Test** para executar seu fluxo de trabalho com dados de exemplo
+2. Revise os resultados para garantir que funcione como esperado
+3. Alterne o fluxo de trabalho para **Active** quando estiver pronto
+
+## Melhores Práticas de Workflows
+
+* **Editar nomes de etapas**: Renomeie as etapas do seu Workflow para descrever claramente o que cada uma faz. Isso ajuda na manutenção e facilita a transferência para colegas
+* **Aproveitar dados de etapas anteriores**: Você pode usar campos de registros retornados por qualquer etapa anterior no seu Workflow
+* **Comece simples**: Inicie com Workflows básicos e adicione complexidade ao longo do tempo à medida que se sentir mais confortável com o sistema
+* **Planeje antes de construir**: Mapeie a lógica do seu Workflow antes de começar a construir para evitar ficar preso no meio do caminho
+
+## Próximos Passos
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Automações de CRM](/l/pt/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

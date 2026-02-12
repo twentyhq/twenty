@@ -4,7 +4,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
-import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -58,16 +57,18 @@ export const SettingsObjectNewFieldConfigure = () => {
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(
-      settingsFieldFormSchema(
-        activeObjectMetadataItem?.fields.map((value) => value.name),
-      ),
+      settingsFieldFormSchema({
+        existingOtherLabels: activeObjectMetadataItem?.fields.map(
+          (value) => value.name,
+        ),
+        sourceObjectMetadataId: activeObjectMetadataItem?.id,
+      }),
     ),
     defaultValues: {
       type: fieldType,
       icon:
         DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
       label: '',
-      description: '',
       name: '',
     },
   });
@@ -236,13 +237,6 @@ export const SettingsObjectNewFieldConfigure = () => {
               existingFieldMetadataId=""
               objectNameSingular={activeObjectMetadataItem.nameSingular}
             />
-          </Section>
-          <Section>
-            <H2Title
-              title={t`Description`}
-              description={t`The description of this field`}
-            />
-            <SettingsDataModelFieldDescriptionForm />
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const OPPORTUNITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
-  standardId: '20202020-9549-49dd-b2b2-883999db8938',
   nameSingular: 'opportunity',
   namePlural: 'opportunities',
   labelSingular: 'Opportunity',

@@ -1,0 +1,311 @@
+---
+title: Ações de Fluxo de Trabalho
+description: Saiba mais sobre as ações disponíveis nos fluxos de trabalho do Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Sobre as Ações
+
+As ações definem o que acontece após um gatilho ser acionado. Você pode encadear várias ações para criar automações complexas.
+
+<Tip>
+  * Use o seletor de variáveis (clique no ícone `(x+)`) para explorar os dados disponíveis de etapas anteriores
+  * Passe o cursor sobre qualquer campo de entrada para ver de qual etapa uma variável vem — útil quando o mesmo campo (por exemplo, ID) existe em várias etapas anteriores
+  * Dê a cada ação um nome descritivo para facilitar a manutenção
+</Tip>
+
+## Ações em Registros
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Criar um Registro
+
+Adiciona um novo registro a um objeto selecionado.
+
+**Configuração**:
+
+* Selecione o objeto alvo
+* Preencha os campos obrigatórios e opcionais
+* Use dados de etapas anteriores ou insira valores manualmente para preencher os campos
+
+**Saída**: Os dados do registro recém-criado estão disponíveis para uso em etapas subsequentes.
+
+### Atualizar Registro
+
+Modifica um registro existente em um objeto selecionado.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Configuração**:
+
+* Selecione o objeto alvo
+* Escolha o registro específico para atualizar.
+  * Você pode escolher um registro fixo, usando o menu suspenso que exibe todos os registros disponíveis.
+  * Ou você pode fazer com que o registro seja selecionado dinamicamente, designando um registro encontrado em uma etapa anterior, usando o `(x+)`. Você não pode pesquisar o registro com base em critérios diferentes nesta etapa. Se você ainda não identificou o registro, adicione uma etapa `Search Record` antes desta etapa `Update Record`.
+* Selecione campos para modificar e insira novos valores
+
+**Saída**: Os dados do registro atualizado estão disponíveis para uso em etapas subsequentes.
+
+### Excluir Registro
+
+Remove um registro de um objeto selecionado.
+
+**Configuração**:
+
+* Selecione o objeto alvo
+* Escolha o registro específico para excluir
+
+**Saída**: Os dados do registro excluído permanecem disponíveis para uso em etapas subsequentes.
+
+### Pesquisar Registros
+
+Encontra registros dentro de um objeto selecionado usando condições de filtro.
+
+**Configuração**:
+
+* Selecione o objeto para pesquisar
+* Defina critérios de filtro para restringir os resultados
+* Configurar ordenação e limites
+
+**Saída**: Retorna registros correspondentes que podem ser usados em etapas subsequentes.
+
+<Note>
+  **Limite**: Search Records retorna no máximo **200 registros**. Se você precisar processar mais, adicione filtros específicos para reduzir os resultados ou use fluxos de trabalho agendados para processar em lotes.
+</Note>
+
+**Melhor prática**: Use [ramificações](/l/pt/user-guide/workflows/capabilities/workflow-branches) após Search Records para lidar com os cenários "encontrado" vs "não encontrado".
+
+### Upsert Record
+
+Cria um novo registro ou atualiza um existente com base em critérios de correspondência. Isso é útil quando você não tem certeza se um registro já existe.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Configuração**:
+
+* Selecione o objeto alvo
+* Observe quais campos podem ser usados para correspondência: e-mail para Pessoas, domínio para Empresas, ID para qualquer objeto ou qualquer campo marcado como Único. Você precisará preencher pelo menos um destes abaixo.
+* Preencha os valores dos campos. Não se esqueça de preencher pelo menos um dos identificadores únicos.
+
+<Note>
+  **A correspondência geralmente funciona ainda melhor ao adicionar apenas um identificador único.** Por exemplo, a captura de tela abaixo fará a correspondência de empresas com base no domínio delas. O ID não é necessariamente obrigatório.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Use dados de etapas anteriores para preencher os campos
+
+**Como Funciona**:
+
+1. Procura um registro que corresponda aos seus critérios
+2. Se encontrado → atualiza o registro existente
+3. Se não encontrado → cria um novo registro
+
+**Saída**: Os dados do registro criado ou atualizado estão disponíveis para uso em etapas subsequentes.
+
+## Ações de Fluxo
+
+### Iterador
+
+**Percorre um array de registros** retornados de uma etapa anterior, permitindo que você execute ações em cada registro individualmente.
+
+**Configuração**:
+
+* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho Manual com Bulk, de um nó de código)
+* Defina as ações a serem realizadas em cada registro no loop.
+
+<Note>
+  - Você pode adicionar várias ações dentro de um iterador.
+  - Ao usar ramificações dentro de um iterador, certifique-se de que a última etapa de cada ramificação se conecte de volta ao iterador para fechar o loop.
+</Note>
+
+* Acesse os campos de `Current Item`: para usar campos do registro que está sendo processado no momento, clique na etapa **Iterator** e, em seguida, selecione **Current item**. A lista de campos disponíveis desse registro será exibida e poderá ser selecionada para uso em ações subsequentes.
+
+<VimeoEmbed videoId="1146577247" title="Demonstração em vídeo" />
+
+### Filtro
+
+Filtra registros com base em condições especificadas, permitindo que apenas os registros que atendam aos critérios passem.
+
+**Configuração**:
+
+* Selecione o registro a ser filtrado
+* Defina condições e critérios de filtro
+* Configure quais registros devem passar para as etapas subsequentes
+
+<Note>
+  1. **Saída**: Nós de filtro não retornam dados — eles atuam como portões. Se as condições forem atendidas, o fluxo de trabalho continua. Caso contrário, o fluxo de trabalho para nessa ramificação.
+  2. O operador `IS` pode ser usado com campos numéricos. Ele funciona como um `EQUAL`.
+</Note>
+
+### Atraso
+
+Pausa a execução do fluxo de trabalho por uma duração especificada ou até uma data/hora específica.
+
+**Tipos de Atraso**:
+
+| Tipo                | Descrição                                                               |
+| ------------------- | ----------------------------------------------------------------------- |
+| **Duração**         | Aguarda um período específico de tempo (dias, horas, minutos, segundos) |
+| **Data Programada** | Aguarda até uma data e hora específicas                                 |
+
+**Configuração para Duração**:
+
+* Defina dias, horas, minutos e/ou segundos
+* Combine várias unidades (por exemplo, 2 dias e 4 horas)
+
+**Configuração para Data Programada**:
+
+* Selecione uma data e hora
+* Pode referenciar um campo de data de uma etapa anterior (por exemplo, fazer um acompanhamento 3 dias após uma reunião)
+
+**Casos de uso**:
+
+* Aguarde 24 horas antes de enviar um e-mail de acompanhamento
+* Aguarde até a data de fechamento de uma oportunidade
+* Agende ações para o horário comercial
+
+<Note>
+  A data programada não pode estar no passado. Se for usado um campo de data de uma etapa anterior e a data já tiver passado, o fluxo de trabalho falhará.
+</Note>
+
+**Limites e Créditos**:
+
+* **Sem limite máximo de duração** — você pode definir atrasos de minutos, dias, semanas ou mais longos
+* **1 crédito consumido** quando o nó de Atraso é executado, independentemente da duração
+* **Nenhum crédito consumido** durante a espera — um atraso de 5 minutos custa o mesmo que um atraso de 5 dias
+
+## Ações de Comunicação
+
+### Enviar Email
+
+Envia um email a partir do seu fluxo de trabalho. Isso é ótimo para e-mails de grupo com modelos. Os e-mails terão a mesma aparência dos que você envia da sua caixa de correio.
+Não é adequado para newsletters (que exigem formatação mais rica) ou sequências automáticas de e-mails.
+
+**Pré-requisitos**: Adicione uma conta de e-mail em Configurações → Contas
+
+**Configuração**:
+
+* Selecione a conta de e-mail do remetente
+
+<Note>
+  Você só pode enviar e-mails de caixas de correio sincronizadas com a sua própria conta Twenty. O envio a partir das caixas de correio de outros membros da equipe (por exemplo, o e-mail do proprietário da conta) está no roadmap.
+</Note>
+
+Para todas as etapas a seguir, você pode referenciar variáveis de etapas anteriores para personalização.
+
+* Insira o endereço de email do destinatário.
+
+<Note>
+  No momento, é possível apenas um destinatário.
+</Note>
+
+* Defina o assunto.
+* Componha o corpo da mensagem. Você pode formatar links, criar listas numeradas, listas com marcadores e adicionar anexos.
+
+<Note>
+  Adicionar assinaturas em HTML não é possível no momento.
+</Note>
+
+### Formulário
+
+Apresenta um formulário durante a execução do fluxo de trabalho para coletar a entrada do usuário. As respostas podem então ser usadas em etapas subsequentes para criar registros, enviar e-mails ou executar qualquer outra ação com base na entrada.
+
+<Warning>
+  **Os formulários são projetados apenas para gatilhos manuais**. Para fluxos de trabalho com outros gatilhos (Registro Criado, Atualizado, etc.), os formulários só são acessíveis via a interface de execução do fluxo de trabalho, o que não é a experiência esperada do usuário. Um centro de notificações será lançado em 2026 para suportar adequadamente os formulários em fluxos de trabalho automatizados.
+</Warning>
+
+**Configuração**:
+
+* Configure os campos que os usuários deverão preencher. Para cada campo, escolha
+  * um tipo entre texto, número, data, um determinado registro, um campo de seleção. Campos de seleção de todos os objetos estão disponíveis.
+  * um rótulo
+  * um valor padrão em `Placeholder` (opcional)
+* Edite o título do formulário
+
+**Saída**: Respostas do formulário estão disponíveis para uso em etapas subsequentes.
+
+**Exemplo**: O fluxo de trabalho "Quick Lead" está disponível por padrão em todos os espaços de trabalho, disponível em qualquer lugar no Menu de Comando `Cmd + K`.
+
+**Como preencher o formulário**:
+
+* Acione seu fluxo de trabalho manual a partir do menu de comando `Cmd K`
+* Preencha o formulário exibido no painel lateral e clique em `Submit`.
+
+<Note>
+  Os campos não podem ser tornados obrigatórios.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Demonstração em vídeo" />
+
+## Ações de Integração
+
+### Código
+
+Executa JavaScript personalizado dentro do seu fluxo de trabalho.
+
+**Configuração**:
+
+* Acesse variáveis de etapas anteriores. Você pode editar os nomes das variáveis dinamicamente.
+
+<VimeoEmbed videoId="1147281795" title="Demonstração em vídeo" />
+
+* Escreva o código JavaScript no editor
+* Retorne variáveis para uso em etapas subsequentes
+* Teste o código diretamente na etapa
+
+<Note>
+  Se você precisar usar chaves de API externas em seu código, deverá inseri-las diretamente no corpo da função. Você não pode configurar chaves de API em outro lugar e referenciá-las na função de lógica.
+</Note>
+
+<Tip>
+  **Trabalhando com arrays?** Arrays de sistemas externos ou de etapas anteriores podem vir como strings. Veja [Como lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) para a solução.
+</Tip>
+
+<Tip>
+  Clique no ícone quadrado no canto superior direito do editor de código para exibi-lo em tela cheia — útil, já que a largura padrão do editor é limitada.
+</Tip>
+
+### Requisição HTTP
+
+Envia uma solicitação para uma API externa como parte do seu fluxo de trabalho.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Configuração**:
+
+* Insira a URL do endpoint da API. É possível usar parâmetros de etapas anteriores.
+* Selecione o método HTTP (GET, POST, PUT, PATCH, DELETE)
+* Adicione cabeçalhos e valores obrigatórios
+* Forneça resposta de amostra para visualização da estrutura
+
+## Ações de IA
+
+### Agente de IA - Em breve
+
+Executa um agente de IA dentro do seu fluxo de trabalho para realizar tarefas inteligentes.
+
+**Configuração**:
+
+* **Agente**: Selecione um agente de IA existente ou use o agente padrão
+* **Prompt**: Escreva a instrução para o agente de IA
+* Referencie variáveis de etapas anteriores no prompt
+
+**O que os Agentes de IA podem fazer**:
+
+* Analisar e resumir dados
+* Classificar ou categorizar registros
+* Gerar conteúdo de texto
+* Tomar decisões com base em dados
+* Interagir com seus dados de CRM usando ferramentas
+
+**Saída**: A resposta do agente de IA está disponível para uso em etapas subsequentes. Se o agente tiver um esquema de saída estruturado, a resposta seguirá esse formato.
+
+<Note>
+  As ações do Agente de IA consomem créditos de fluxo de trabalho com base no modelo de IA usado. Veja [Créditos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-credits) para obter detalhes.
+</Note>
+
+<Note>
+  Os agentes de IA respeitam permissões baseadas em funções. Você pode atribuir funções específicas aos agentes em **Configurações → Funções** para controlar a quais dados eles podem acessar. Veja [Permissões](/l/pt/user-guide/permissions-access/capabilities/permissions) para obter detalhes.
+</Note>

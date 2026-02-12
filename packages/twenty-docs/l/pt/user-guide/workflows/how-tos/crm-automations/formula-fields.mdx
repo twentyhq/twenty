@@ -1,0 +1,202 @@
+---
+title: Campos de Fórmula
+description: Crie campos de fórmula usando fluxos de trabalho até que o suporte nativo esteja disponível.
+---
+
+A Twenty ainda não oferece suporte nativo a campos de fórmula (chegando em 2026), mas você pode obter o mesmo resultado usando fluxos de trabalho. Esta solução alternativa permite calcular e preencher automaticamente os valores dos campos — de concatenações simples a lógica de negócios complexa.
+
+## Casos de Uso Comuns
+
+| Caso de uso               | Exemplo de fórmula                  |
+| ------------------------- | ----------------------------------- |
+| **Nome completo**         | Nome + " " + Sobrenome              |
+| **Valor esperado**        | Valor × Probabilidade               |
+| **Dias até o vencimento** | Data de vencimento - hoje           |
+| **Dias na etapa**         | Hoje - Data de entrada na etapa     |
+| **Pontuação de lead**     | Pontos com base em vários critérios |
+
+<Tip>
+  Para um exemplo completo de rastreamento do tempo nas etapas do pipeline, consulte [Acompanhar por quanto tempo as oportunidades permanecem em cada etapa](/l/pt/user-guide/views-pipelines/how-tos/track-time-in-stage).
+</Tip>
+
+## Fórmula básica: Concatenação
+
+### Exemplo: Preencher automaticamente o nome completo
+
+**Objetivo**: Combinar automaticamente nome e sobrenome em um campo de nome completo.
+
+### Configuração
+
+1. **Gatilho**: Registro é atualizado ou criado (Pessoas)
+
+2. **Filtro**: Verifique se o nome ou o sobrenome foi alterado
+
+3. **Ação de código**:
+
+```javascript
+export const main = async (params) => {
+  const { firstName, lastName } = params;
+
+  const fullName = [firstName, lastName]
+    .filter(Boolean)
+    .join(' ');
+
+  return { fullName };
+};
+```
+
+4. **Atualizar registro**: Definir Nome completo como `{{code.fullName}}`
+
+## Fórmula numérica: Valor esperado
+
+### Exemplo: Calcular a receita esperada
+
+**Objetivo**: Multiplicar o valor da oportunidade pela probabilidade para obter o valor esperado.
+
+Consulte [Como mostrar o valor esperado no pipeline](/l/pt/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) para o fluxo de trabalho completo.
+
+### Configuração rápida
+
+1. **Gatilho**: Registro é atualizado (Oportunidades, campo Valor OU Probabilidade)
+
+2. **Ação de código**:
+
+```javascript
+export const main = async (params) => {
+  const { amount, probability } = params;
+
+  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+
+  return { expectedAmount };
+};
+```
+
+3. **Atualizar registro**: Definir Valor esperado como `{{code.expectedAmount}}`
+
+## Fórmula de data: Cálculo de dias
+
+### Exemplo: Dias até o vencimento da tarefa
+
+**Objetivo**: Calcular quantos dias faltam até a data de vencimento de uma tarefa.
+
+### Configuração
+
+1. **Gatilho**: Registro é atualizado ou criado (Tarefas, campo Data de vencimento)
+
+2. **Ação de código**:
+
+```javascript
+export const main = async (params) => {
+  const { dueDate } = params;
+
+  if (!dueDate) {
+    return { daysUntilDue: null };
+  }
+
+  const due = new Date(dueDate);
+  const today = new Date();
+  const diffTime = due - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return { daysUntilDue: diffDays };
+};
+```
+
+3. **Atualizar registro**: Definir Dias até o vencimento como `{{code.daysUntilDue}}`
+
+<Note>
+  Valores negativos indicam tarefas em atraso. Você pode usar este campo para filtrar ou classificar tarefas por urgência.
+</Note>
+
+## Fórmula condicional: Pontuação de lead
+
+### Exemplo: Calcular a pontuação de lead com base em critérios
+
+**Objetivo**: Pontuar leads com base no porte da empresa, setor e engajamento.
+
+### Configuração
+
+1. **Gatilho**: Registro é atualizado (Pessoas ou Empresas)
+
+2. **Ação de código**:
+
+```javascript
+export const main = async (params) => {
+  const { companySize, industry, hasEmail, hasPhone, source } = params;
+
+  let score = 0;
+
+  // Company size scoring
+  if (companySize === 'Enterprise') score += 30;
+  else if (companySize === 'Mid-Market') score += 20;
+  else if (companySize === 'SMB') score += 10;
+
+  // Industry scoring
+  const targetIndustries = ['Technology', 'Finance', 'Healthcare'];
+  if (targetIndustries.includes(industry)) score += 25;
+
+  // Contact info scoring
+  if (hasEmail) score += 10;
+  if (hasPhone) score += 15;
+
+  // Source scoring
+  if (source === 'Referral') score += 20;
+  else if (source === 'Website') score += 10;
+
+  return { leadScore: score };
+};
+```
+
+3. **Atualizar registro**: Definir Pontuação de lead como `{{code.leadScore}}`
+
+## Fórmula de texto: Extração de domínio
+
+### Exemplo: Extrair domínio do e-mail
+
+**Objetivo**: Extrair e armazenar automaticamente o domínio do e-mail.
+
+### Configuração
+
+1. **Gatilho**: Registro é atualizado (Pessoas, campo E-mail)
+
+2. **Ação de código**:
+
+```javascript
+export const main = async (params) => {
+  const { email } = params;
+
+  if (!email) return { domain: null };
+
+  const domain = email.split('@')[1]?.toLowerCase();
+
+  return { domain };
+};
+```
+
+3. **Atualizar registro**: Definir o campo Domínio como `{{code.domain}}`
+
+## Melhores Práticas
+
+### Desempenho
+
+* Acione apenas em alterações de campos relevantes
+* Use filtros para ignorar registros que não precisam de cálculo
+* Evite cálculos complexos em fluxos de trabalho de alto volume
+
+### Tratamento de Erros
+
+* Verifique valores null/undefined antes dos cálculos
+* Use valores padrão quando faltarem dados
+* Retorne mensagens de erro claras quando os cálculos falharem
+
+### Testes
+
+* Teste com casos extremos (campos vazios, valores zero)
+* Verifique os cálculos manualmente antes de ativar
+* Monitore as execuções de fluxos de trabalho para resultados inesperados
+
+## Relacionados
+
+* [Como mostrar o valor esperado no pipeline](/l/pt/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [Como acompanhar o tempo na etapa](/l/pt/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)

@@ -1,0 +1,60 @@
+---
+title: 関連フィールドの作成
+description: リレーションフィールドでオブジェクトを接続するためのステップバイステップガイド。
+---
+
+リレーションフィールドは異なるオブジェクトのレコードを接続します—たとえば、People を Companies にリンクします。
+
+<Note>
+  **リレーション名は作成後に変更できません**（API に影響するため）。 名前は慎重に計画してください。
+</Note>
+
+## 始める前に
+
+決めること：
+
+* どのオブジェクトを接続しますか？ （例：People → Companies）
+* どちらが「one」側ですか？ （例：Company）
+* どちらが「many」側ですか？ （例：People — 多くの人が1つの会社で働く）
+* 各側のフィールド名は何にしますか？
+
+リレーションの種類については、[Relation Fields](/l/ja/user-guide/data-model/capabilities/relation-fields) を参照してください。
+
+## 手順
+
+1. **Settings → Data Model** に移動します
+2. リレーションを作成したいオブジェクト（通常は「many」側）を選択します
+3. **+ Add Field** をクリックします
+4. フィールドタイプとして **Relation** を選択します
+5. **対象オブジェクト** を選択します
+6. **One-to-Many** または **Many-to-One** を選択します
+7. リレーションの**両側**のフィールド名を入力します
+8. **保存**をクリック
+
+## 例：People → Companies
+
+* **Settings → Data Model → People** に移動します
+* リレーションフィールドを追加します
+* 対象：**Companies**
+* タイプ：**Many-to-One**
+* People 側のフィールド：**Company**
+* Companies 側のフィールド：**Employees**
+
+これで、各 Person は Company にリンクでき、各 Company には People が表示されます。
+
+## リレーションの削除
+
+1. **Settings → Data Model** に移動します
+2. リレーションフィールドを見つけます
+3. **⋮ → Deactivate** をクリックします
+
+リンクは保持されますが非表示になります。 再有効化すると復元されます。
+
+<Note>
+  **リレーションを削除しても、レコードは削除されません。** 削除されるのは、それらの間のリンクだけです。
+</Note>
+
+## 関連
+
+* [Relation Fields](/l/ja/user-guide/data-model/capabilities/relation-fields) — 種類と制限事項
+* [How to Import Relations](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — リンクされたレコードを一括インポート

@@ -1,0 +1,136 @@
+---
+title: Durağan Fırsatları Tespit Et
+description: Fırsatlar güncellenmediğinde yöneticileri otomatik olarak bilgilendirin.
+---
+
+Fırsatlar durağanlaştığında yöneticileri uyararak satış boru hattınızı sağlıklı tutun. Bu iş akışı, belirli sayıda gündür güncellenmeyen fırsatları kontrol eder.
+
+## Sorun
+
+Güncellenmeden bekleyen fırsatlar şunlara yol açar:
+
+* Anlaşmaların soğuması
+* Güvenilmez tahminler
+* Kaybedilen gelir
+
+## Çözüm
+
+Durağan fırsatları bulan ve yöneticilerine e-posta gönderen zamanlanmış bir iş akışı oluşturun.
+
+## Adım adım kurulum
+
+### Adım 1: İş akışını oluşturun
+
+1. **Ayarlar → İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Durağan Fırsat Uyarısı" koyun
+
+### Adım 2: Tetikleyiciyi yapılandırın
+
+1. **Zamanlanmış Olarak** seçin
+2. Günlük çalışacak şekilde ayarlayın (ör. her gün saat 08:00'de)
+
+### Adım 3: Durağan Fırsatları Ara
+
+1. **Kayıt Ara** eylemini ekleyin
+2. Alanı Yapılandır:
+
+| Alan       | Değer                                            |
+| ---------- | ------------------------------------------------ |
+| **Nesne**  | Fırsatlar                                        |
+| **Filtre** | Updated At, (bugün - 7 gün) tarihinden önce      |
+| **Filtre** | Stage, "Closed Won" DEĞİL VE "Closed Lost" DEĞİL |
+| **Sınır**  | 100                                              |
+
+### Adım 4: Bulunup Bulunmadığını Kontrol Edin
+
+1. **Filtre** eylemi ekleyin
+2. Koşul: `{{searchRecords.length}}` 0'dan büyüktür
+3. Durağan fırsat yoksa iş akışı burada durur
+
+### Adım 5: Uyarıyı Biçimlendirin (Kod Eylemi)
+
+E-postayı biçimlendirmek için bir **Kod** eylemi ekleyin:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Adım 6: Uyarı E-postası Gönderin
+
+**E-posta Gönder** eylemini ekleyin:
+
+| Alan       | Değer                                                       |
+| ---------- | ----------------------------------------------------------- |
+| **Kime**   | sales-manager@yourcompany.com                               |
+| **Konu**   | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
+| **İçerik** | `{{code.summary}}`                                          |
+
+### Adım 7: Test Edin ve Etkinleştirin
+
+1. İş akışını çalıştırmak için **Test**'e tıklayın
+2. E-postanın doğru verileri içerdiğini kontrol edin
+3. Hazır olduğunuzda etkinleştirin
+
+## Özelleştirme Seçenekleri
+
+### Durağanlık Eşiğini Değiştirin
+
+7 günü tercih ettiğiniz süreyle değiştirmek için Kayıt Ara filtresini düzenleyin:
+
+* Hızlı tempolu satışlar için 3 gün
+* Kurumsal anlaşmalar için 14 gün
+* Uzun satış döngüleri için 30 gün
+
+### Bireysel Temsilcileri Uyarın
+
+Tek bir yönetici e-postası yerine, her temsilciye kendi durağan anlaşmaları hakkında kişiselleştirilmiş e-postalar göndermek için **Iterator** kullanın.
+
+### Eskalasyon Ekle
+
+Artan ciddiyette birden fazla iş akışı oluşturun:
+
+1. Gün 7: Temsilciye e-posta
+2. Gün 14: Temsilciye + yöneticiye e-posta
+3. Gün 21: Müdahale etmesi için yöneticiye görev oluşturun
+
+### Slack'e Dahil Edin
+
+E-postaya ek olarak veya yerine, bir Slack webhook'una gönderi yapmak için **HTTP Request** kullanın.
+
+## İlgili
+
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)

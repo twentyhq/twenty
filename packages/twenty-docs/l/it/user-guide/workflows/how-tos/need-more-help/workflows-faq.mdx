@@ -1,0 +1,254 @@
+---
+title: FAQ sui flussi di lavoro
+description: Domande frequenti sui flussi di lavoro in Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Perché non riesco ad attivare un flusso di lavoro?">
+    È probabilmente un problema di permessi. Hai bisogno dell'accesso ai flussi di lavoro per crearli e attivarli.
+
+    **Soluzione**: Contatta l'amministratore dello spazio di lavoro per concederti l'accesso ai flussi di lavoro in **Impostazioni → Ruoli**.
+
+    Se non vedi affatto la sezione Flussi di lavoro nella barra laterale, ciò conferma che è un problema di permessi.
+  </Accordion>
+
+  <Accordion title="Perché non vedo il pulsante del flusso di lavoro manuale nella barra di navigazione superiore?">
+    I flussi di lavoro manuali compaiono nella barra di navigazione solo se configurati correttamente:
+
+    1. Il flusso di lavoro deve essere **attivato** (non in modalità bozza)
+    2. Il posizionamento nella barra di navigazione deve essere impostato su **Pinned**
+    3. Per i trigger Single/Bulk, devi trovarti nella pagina dell'oggetto corretta
+
+    **Per verificare**: Apri il flusso di lavoro → fai clic sul trigger → verifica che "Navbar placement" sia impostato su "Pinned".
+
+    Puoi sempre accedere ai flussi di lavoro manuali tramite **Cmd + K** (o **Ctrl + K**) indipendentemente dalle impostazioni della barra di navigazione.
+  </Accordion>
+
+  <Accordion title="Qual è la differenza tra i trigger manuali Single, Global e Bulk?">
+    | Tipo | Record richiesti | Esecuzioni del workflow |
+    | ---- | ---------------- | ----------------------- |
+
+    \| **Global** | Nessuno | Una volta, senza input di record |
+    \| **Single** | Uno o più selezionati | Una volta per ogni record selezionato |
+    \| **Bulk** | Uno o più selezionati | Una volta, con tutti i record come array |
+
+    * **Global**: Usalo quando il flusso di lavoro non richiede alcun contesto di record (ad es., generare un report)
+    * **Single**: Usalo quando vuoi elaborare ogni record selezionato in modo indipendente (ad es., inviare email singole)
+    * **Bulk**: Usalo quando devi elaborare i record insieme o ottimizzare l'uso dei crediti (richiede l'azione Iterator)
+
+    Vedi [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers) per i dettagli.
+  </Accordion>
+
+  <Accordion title="Non vedo un nodo If/Else. Cosa devo fare?">
+    Un nodo If/Else esplicito non è ancora disponibile ma è nella nostra roadmap.
+
+    **Soluzione temporanea**: Crea più diramazioni dal tuo passaggio, ciascuna iniziando con un'azione **Filtro**:
+
+    ```
+    Passaggio 1
+       │
+       ├── Diramazione A: Filtro (condizione = true) → Azioni...
+       │
+       └── Diramazione B: Filtro (condizione = false) → Azioni...
+    ```
+
+    Solo la diramazione in cui la condizione del filtro è soddisfatta eseguirà le azioni successive.
+
+    Consulta [Come usare le diramazioni](/l/it/user-guide/workflows/capabilities/workflow-branches) per una guida passo passo.
+  </Accordion>
+
+  <Accordion title="Le diramazioni del flusso di lavoro vengono eseguite in parallelo?">
+    **Sì**, le diramazioni vengono eseguite in parallelo per impostazione predefinita.
+
+    Se vuoi che venga eseguita solo una diramazione:
+
+    * Aggiungi un'azione **Filtro** all'inizio di ogni diramazione
+    * Imposta condizioni opposte (ad es., Diramazione A: stato = "Open", Diramazione B: stato ≠ "Open")
+
+    Le diramazioni che non soddisfano la loro condizione di filtro interrompono l'esecuzione, mentre le altre continuano.
+  </Accordion>
+
+  <Accordion title="Posso riunire le diramazioni?">
+    **Sì**. Dopo che le diramazioni parallele sono state completate, puoi aggiungere un passaggio a cui si colleghino entrambe.
+
+    Nell'editor dei flussi di lavoro:
+
+    1. Completa le azioni nelle diramazioni
+    2. Aggiungi un nuovo passaggio dopo le diramazioni
+    3. Trascina le connessioni dalla fine di ciascuna diramazione verso questo nuovo passaggio
+
+    Il passaggio unificato verrà eseguito dopo il completamento di tutte le diramazioni collegate.
+  </Accordion>
+
+  <Accordion title="Qual è il limite dei risultati di Search Records?">
+    **Search Records restituisce un massimo di 200 record.**
+
+    Se devi elaborarne di più:
+
+    * Aggiungi filtri più specifici per ridurre i risultati
+    * Usa flussi di lavoro pianificati per elaborare in lotti
+    * Valuta di usare le API per operazioni in blocco
+
+    Per la maggior parte dei flussi di lavoro, 200 record sono sufficienti. Se raggiungi regolarmente questo limite, valuta di ristrutturare l'automazione.
+  </Accordion>
+
+  <Accordion title="Posso mettere in CC persone nelle email dei flussi di lavoro?">
+    **Non ancora.** I campi CC e BCC per l'azione Send Email sono nella nostra roadmap.
+
+    **Soluzione temporanea**: Aggiungi più azioni Send Email per inviare ad altri destinatari, oppure usa una HTTP Request per inviare tramite un servizio email esterno che supporti CC.
+  </Accordion>
+
+  <Accordion title="Come si usano gli output dai passaggi precedenti?">
+    Ogni azione produce dati di output che possono essere utilizzati nei passaggi successivi.
+
+    **Per fare riferimento ai dati del passaggio precedente**:
+
+    * Usa il selettore di variabili durante la configurazione di un campo
+    * Oppure digita `{{stepName.fieldName}}` direttamente
+
+    **Esempi**:
+
+    * Dati del trigger: `{{trigger.object.email}}`
+    * Risultati della ricerca: `{{searchRecords[0].name}}`
+    * Output del codice: `{{code.calculatedValue}}`
+
+    Passa il mouse su qualsiasi campo nella configurazione dell'azione per vedere le variabili disponibili dai passaggi precedenti.
+  </Accordion>
+
+  <Accordion title="Perché il mio Iterator non riesce?">
+    **Iterator richiede un input di tipo array.** Problemi comuni:
+
+    1. **L'input non è un array**: Assicurati di passare i risultati di Search Records o di un'altra azione che restituisce un array
+    2. **L'array è vuoto**: Aggiungi un filtro prima di Iterator per verificare `{{searchRecords.length}} > 0`
+    3. **Variabile sbagliata selezionata**: Assicurati di selezionare l'array stesso, non un singolo record
+
+    **Configurazione corretta**:
+
+    1. Search Records (restituisce un array)
+    2. Filtro: length > 0
+    3. Iterator: seleziona `{{searchRecords}}`
+    4. Le azioni all'interno di Iterator usano `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="Qual è il tempo massimo di esecuzione per le azioni di codice?">
+    Le azioni di codice (funzioni serverless) hanno un **timeout predefinito di 5 minuti** (300 secondi).
+
+    Il timeout massimo configurabile è di **15 minuti** (900 secondi).
+
+    Se il tuo codice supera questo limite, l'azione non riuscirà con un errore di timeout.
+
+    **Suggerimenti per evitare timeout**:
+
+    * Suddividi le operazioni grandi in parti più piccole usando Iterator
+    * Evita elaborazioni pesanti; usa servizi esterni tramite HTTP Request per processi intensivi
+    * Ottimizza il tuo codice per ridurre il tempo di esecuzione
+    * Se hai bisogno di elaborazioni più lunghe, valuta l'uso di flussi di lavoro pianificati che elaborano i dati in lotti
+  </Accordion>
+
+  <Accordion title="Come leggere le esecuzioni dei flussi di lavoro?">
+    Le esecuzioni dei flussi di lavoro mostrano la cronologia di esecuzione e ti aiutano a eseguire il debug dei problemi.
+
+    **Accesso alle esecuzioni**:
+
+    * Nell'editor dei flussi di lavoro → pannello **Runs** a destra
+    * Oppure vai a **Workflow Runs** nella barra laterale
+
+    **Comprendere un'esecuzione**:
+
+    * **Stato**: In esecuzione, Completato, Non riuscito, In attesa
+    * **Passaggi**: Vedi quali passaggi sono stati eseguiti e il loro output
+    * **Errori**: Fai clic sui passaggi non riusciti per vedere i messaggi di errore
+    * **Dati**: Visualizza i dati di input/output a ogni passaggio
+
+    Vedi [Esecuzioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-runs) per i dettagli.
+  </Accordion>
+
+  <Accordion title="Perché non vedo le esecuzioni dei miei flussi di lavoro?">
+    Le esecuzioni dei flussi di lavoro potrebbero non riuscire immediatamente a causa dei limiti di frequenza.
+
+    **Limite hard: 5.000 esecuzioni all'ora per spazio di lavoro.**
+
+    Se superi questo limite, i flussi di lavoro vengono contrassegnati immediatamente come non riusciti e non appariranno nell'elenco delle esecuzioni come previsto.
+
+    **Scenari comuni che raggiungono questo limite**:
+
+    * Selezionare più di 5.000 record con un trigger manuale Single
+    * Più flussi di lavoro in esecuzione simultaneamente nel tuo spazio di lavoro
+    * Trigger automatici ad alta frequenza (ad es., Record Updated su un oggetto molto attivo)
+
+    **Soluzioni**:
+
+    * Usa i trigger **Bulk** invece di Single per elaborare molti record in un'unica esecuzione
+    * Scagliona nel tempo le operazioni in grandi batch
+    * Usa filtri per ridurre la frequenza dei trigger
+    * Pianifica i flussi di lavoro pesanti nelle ore di minore traffico
+  </Accordion>
+
+  <Accordion title="Quali sono i limiti di frequenza dei flussi di lavoro?">
+    Twenty ha due limiti di frequenza per garantire la stabilità del sistema:
+
+    | Limite | Valore | Comportamento |
+    | ------ | ------ | ------------- |
+
+    \| **Soft limit** | 100 esecuzioni/minuto | Le esecuzioni vanno in coda con stato "Not Started", elaborate gradualmente |
+    \| **Hard limit** | 5.000 esecuzioni/ora | Le esecuzioni falliscono immediatamente |
+
+    **Limite soft (100/min)**: I tuoi flussi di lavoro non falliranno: semplicemente attendono in coda e vengono elaborati nel tempo. Puoi attivare più di 100 record; l'esecuzione sarà più lenta.
+
+    **Limite hard (5.000/ora)**: Si applica all'intero spazio di lavoro. Se tutti i tuoi flussi di lavoro combinati superano 5.000 esecuzioni in un'ora, le esecuzioni aggiuntive falliranno immediatamente.
+
+    **Suggerimenti per rimanere entro i limiti**:
+
+    * Usa trigger Bulk con Iterator invece dei trigger Single per grandi batch
+    * Combina automazioni correlate in un numero minore di flussi di lavoro
+    * Usa flussi di lavoro pianificati per distribuire il carico nel tempo
+  </Accordion>
+
+  <Accordion title="Posso ritentare un'esecuzione di flusso di lavoro non riuscita?">
+    **No, al momento non esiste una funzionalità di ritentativo automatico.**
+
+    Se un'esecuzione di flusso di lavoro non riesce, dovrai:
+
+    1. Rivedi l'errore in **Impostazioni → Flussi di lavoro → [Il tuo flusso di lavoro] → Runs**
+    2. Risolvi il problema (dati, configurazione o servizio esterno)
+    3. Attiva manualmente di nuovo il flusso di lavoro sui record interessati
+
+    **Suggerimenti per ridurre gli errori**:
+
+    * Aggiungi nodi **Filtro** per convalidare i dati prima delle azioni
+    * Usa **Search Records** per verificare se esistono record correlati
+    * Esegui test accurati con pochi record prima delle operazioni in blocco
+
+    La funzionalità di ritentativo automatico è nella nostra roadmap per un rilascio futuro.
+  </Accordion>
+
+  <Accordion title="Devo disattivare i flussi di lavoro prima delle importazioni CSV?">
+    **Sì, se i tuoi flussi di lavoro sono attivati dalla creazione o dall'aggiornamento dei record.**
+
+    Quando importi dati tramite CSV, ogni record creato o aggiornato può attivare flussi di lavoro. Una grande importazione (migliaia di record) potrebbe:
+
+    * Raggiungere il limite di 5.000 esecuzioni/ora
+    * Consumare una quantità significativa di crediti dei flussi di lavoro
+    * Inviare email o notifiche inattese
+    * Creare attività o record duplicati
+
+    **Prima di un'importazione massiva**:
+
+    1. Vai a **Impostazioni → Flussi di lavoro**
+    2. Identifica i flussi di lavoro attivati dall'oggetto che stai importando
+    3. **Disattivali** temporaneamente
+    4. Esegui l'importazione CSV
+    5. **Riattiva** i flussi di lavoro al termine
+
+    **Alternativa**: Se hai bisogno che i flussi di lavoro vengano eseguiti sui dati importati, importa in batch più piccoli per rimanere entro i limiti di frequenza.
+  </Accordion>
+
+  <Accordion title="Come posso pulire il layout del mio flusso di lavoro?">
+    Se il canvas del flusso di lavoro sembra disordinato, con nodi sparsi, puoi organizzarli automaticamente:
+
+    1. Fai clic con il pulsante destro in un punto qualsiasi del canvas del flusso di lavoro
+    2. Fai clic su **Tidy up workflow**
+
+    Questo riorganizzerà automaticamente tutti i nodi in un layout pulito e ordinato.
+  </Accordion>
+</AccordionGroup>

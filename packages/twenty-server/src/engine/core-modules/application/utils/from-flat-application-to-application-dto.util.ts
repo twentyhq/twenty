@@ -3,11 +3,14 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 
 export const fromFlatApplicationToApplicationDto = ({
   canBeUninstalled,
-
   description,
   id,
   name,
-
+  packageJsonChecksum,
+  packageJsonFileId,
+  yarnLockChecksum,
+  yarnLockFileId,
+  availablePackages,
   universalIdentifier,
   version,
 }: FlatApplication): ApplicationDTO => {
@@ -17,6 +20,11 @@ export const fromFlatApplicationToApplicationDto = ({
     id,
     name,
     objects: [],
+    packageJsonChecksum: packageJsonChecksum ?? undefined,
+    packageJsonFileId: packageJsonFileId ?? undefined,
+    yarnLockChecksum: yarnLockChecksum ?? undefined,
+    yarnLockFileId: yarnLockFileId ?? undefined,
+    availablePackages: availablePackages ?? {},
     universalIdentifier,
     version: version ?? undefined,
   };

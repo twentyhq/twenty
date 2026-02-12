@@ -2,12 +2,13 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarChip,
@@ -54,7 +55,9 @@ export const RecordChip = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValueV2(
+    recordIndexOpenRecordInStateV2,
+  );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
   const isSidePanelViewOpenRecordInType =
@@ -81,6 +84,7 @@ export const RecordChip = ({
     return (
       <Chip
         label={recordChipData.name}
+        emptyLabel={t`Untitled`}
         size={size}
         maxWidth={maxWidth}
         className={className}
@@ -104,6 +108,7 @@ export const RecordChip = ({
       size={size}
       maxWidth={maxWidth}
       label={recordChipData.name}
+      emptyLabel={t`Untitled`}
       isLabelHidden={isLabelHidden}
       leftComponent={
         isIconHidden ? null : (

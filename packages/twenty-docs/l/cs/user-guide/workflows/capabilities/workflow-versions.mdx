@@ -1,0 +1,85 @@
+---
+title: Workflow Versions
+description: Spravujte verze a koncepty pracovních postupů.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## O verzích
+
+Pokaždé, když aktivujete pracovní postup, se vytvoří nová verze. To vám umožní sledovat změny v čase a v případě potřeby se vrátit k předchozím konfiguracím.
+
+## Stavy verzí
+
+| Stav             | Popis                                |
+| ---------------- | ------------------------------------ |
+| **Koncept**      | Upravováno, dosud nezveřejněno       |
+| **Aktivní**      | Živá verze reagující na spouštěče    |
+| **Deaktivováno** | Dříve aktivní, ale ručně zastaveno   |
+| **Archivováno**  | Minulé verze uchovávané pro historii |
+
+## Práce s koncepty
+
+Když upravíte aktivní pracovní postup, vaše změny se uloží jako **koncept**. Aktivní verze běží dál, zatímco pracujete na aktualizacích.
+
+Až dokončíte úpravy, můžete:
+
+* **Aktivovat**: Publikovat koncept jako novou aktivní verzi (předchozí verze bude archivována)
+* **Zahodit**: Smazat koncept a ponechat aktuální aktivní verzi
+
+## Historie Verzí
+
+### Zobrazení minulých verzí
+
+1. Otevřete pracovní postup
+2. Klikněte na kartu **Verze**
+3. Zobrazí se všechny předchozí verze s časovými razítky
+
+### Obnovení verze
+
+1. Najděte verzi, kterou chcete obnovit
+2. Klikněte na **Použít jako koncept**
+3. Verze se zkopíruje do nového konceptu
+4. Proveďte všechny potřebné aktualizace
+5. Aktivujte, až budete připraveni.
+
+## Osvědčené postupy
+
+### Správa verzí
+
+* Aktivujte teprve, až bude připraveno pro produkční prostředí.
+* Mezi verzemi udržujte smysluplné změny.
+* Zdokumentujte zásadní změny v názvech nebo popisech pracovních postupů
+* Testujte v režimu konceptu před aktivací
+
+### Vrácení změn
+
+* Pokud nová verze způsobuje problémy, obnovte předchozí verzi
+* Použijte historii verzí ke sledování toho, co se změnilo
+* Obnovené verze vždy otestujte před aktivací
+
+## Běžné pracovní postupy
+
+### Rychlá úprava
+
+1. Proveďte drobné změny v aktivním pracovním postupu
+2. Testujte v režimu konceptu
+3. Aktivujte novou verzi
+
+### Zásadní revize
+
+1. Použijte předchozí verzi jako výchozí bod
+2. Proveďte významné změny v konceptu
+3. Důkladně otestujte všechny scénáře
+4. Aktivujte, až budete mít jistotu
+
+### Vrácení zpět
+
+1. Identifikujte problém s aktuální verzí
+2. Najděte v historii poslední funkční verzi
+3. Klikněte na **Použít jako koncept**
+4. Aktivujte, abyste obnovili původní chování
+
+## Související
+
+* [Začínáme s pracovními postupy](/l/cs/user-guide/workflows/overview)
+* [Běhy pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-runs)

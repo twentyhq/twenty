@@ -10,6 +10,8 @@ const StyledWidgetCard = styled.div<{
   isEditing: boolean;
   isDragging: boolean;
   isResizing: boolean;
+  headerLess?: boolean;
+  isLastWidget?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
@@ -26,14 +28,15 @@ const StyledWidgetCard = styled.div<{
     isDragging,
     isResizing,
     onClick,
+    headerLess,
+    isLastWidget,
   }) => {
     if (variant === 'dashboard' && !isEditable) {
       return css`
         background: ${theme.background.secondary};
         border: 1px solid ${theme.border.color.light};
         border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
-        gap: ${theme.spacing(2)};
+        padding: ${headerLess ? 0 : theme.spacing(2)};
       `;
     }
 
@@ -42,8 +45,7 @@ const StyledWidgetCard = styled.div<{
         background: ${theme.background.secondary};
         border: 1px solid ${theme.border.color.light};
         border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
-        gap: ${theme.spacing(2)};
+        padding: ${headerLess ? 0 : theme.spacing(2)};
 
         ${!isDragging &&
         !isEditing &&
@@ -76,7 +78,21 @@ const StyledWidgetCard = styled.div<{
 
     if (variant === 'side-column' && !isEditable) {
       return css`
-        background: ${theme.background.secondary};
+        padding: ${theme.spacing(3)};
+
+        ${isLastWidget !== true &&
+        css`
+          border-bottom: 1px solid ${theme.border.color.light};
+        `}
+      `;
+    }
+
+    if (variant === 'record-page' && !isEditable) {
+      return css`
+        background: ${theme.background.primary};
+        border: 1px solid transparent;
+        border-radius: ${theme.border.radius.md};
+        padding: ${theme.spacing(2)};
       `;
     }
 
@@ -85,10 +101,11 @@ const StyledWidgetCard = styled.div<{
       (variant === 'record-page' && isEditable)
     ) {
       return css`
-        background: ${theme.background.primary};
+        background: ${variant === 'side-column'
+          ? theme.background.secondary
+          : theme.background.primary};
         border: 1px solid transparent;
         border-radius: ${theme.border.radius.md};
-        gap: ${theme.spacing(2)};
         padding: ${theme.spacing(2)};
 
         ${!isDragging &&
@@ -117,16 +134,6 @@ const StyledWidgetCard = styled.div<{
             ${theme.background.secondary};
           border: 1px solid ${theme.color.blue} !important;
         `}
-      `;
-    }
-
-    if (variant === 'record-page' && !isEditable) {
-      return css`
-        background: ${theme.background.primary};
-        border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        gap: ${theme.spacing(2)};
-        padding: ${theme.spacing(2)};
       `;
     }
   }}

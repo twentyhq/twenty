@@ -1,0 +1,72 @@
+---
+title: Creați câmpuri personalizate
+description: Ghid pas cu pas pentru adăugarea câmpurilor personalizate la orice obiect.
+---
+
+Câmpurile personalizate vă permit să colectați informații specifice afacerii dumneavoastră. Adăugați-le la orice obiect — standard sau personalizat.
+
+## Pași
+
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul la care doriți să adăugați un câmp
+3. Faceți clic pe **+ Adaugă câmp**
+4. Alegeți un **tip de câmp** (consultați [Câmpuri](/l/ro/user-guide/data-model/capabilities/fields) pentru toate tipurile)
+5. Introduceți **numele câmpului** și o descriere opțională
+6. Configurați setările specifice câmpului (vedeți mai jos)
+7. Faceți clic pe **Salvare**
+
+**Metodă rapidă:** Faceți clic pe **+** la capătul anteturilor de coloană din orice vizualizare de tabel → **Personalizați câmpurile**.
+
+## Afișați câmpul în vizualizări
+
+Noile câmpuri nu sunt vizibile automat. Pentru a afișa:
+
+1. Deschideți vizualizarea tabelară a obiectului
+2. Faceți clic pe **Opțiuni → Câmpuri**
+3. Faceți clic pe **pictograma în formă de ochi** de lângă câmpul dvs. pentru a-l afișa
+4. Trageți pentru a reordona
+
+## Opțiuni de configurare
+
+### Pentru Selectare / Selectare multiplă
+
+1. Faceți clic pe **+ Adaugă opțiune** pentru a crea opțiuni
+2. Stabiliți o **opțiune implicită** dacă doriți
+3. Trageți pentru a reordona opțiunile
+
+<Note>
+  **Folosiți numele API pentru importuri.** Activați **modul Avansat** în Setări pentru a vedea numele API. Consultați [Maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### Pentru câmpurile de monedă
+
+Setați **moneda implicită** (USD, EUR, etc.) pentru noile înregistrări.
+
+### Pentru câmpurile de telefon
+
+Setați **codul de țară implicit** care să fie precompletat pentru noile numere de telefon.
+
+### Setarea unui câmp ca unic
+
+Comutați **Unic** pentru a preveni valorile duplicate în înregistrări.
+
+<Note>
+  Dacă există duplicate (inclusiv în înregistrările șterse), veți primi o eroare. Eliminați mai întâi duplicatele.
+</Note>
+
+### Setarea valorilor implicite
+
+Pentru câmpurile de tip Selectare, puteți alege care opțiune este preselectată pentru noile înregistrări. Pentru câmpurile de tip Casetă de bifare, setați dacă este bifată sau debifată în mod implicit.
+
+## Dezactivarea unui câmp
+
+1. Accesați **Setări → Model de date**
+2. Găsiți câmpul
+3. Faceți clic pe **⋮ → Dezactivează**
+
+Datele sunt păstrate. Puteți reactiva sau șterge definitiv mai târziu.
+
+## Conexe
+
+* [Câmpuri](/l/ro/user-guide/data-model/capabilities/fields) — toate tipurile de câmpuri explicate
+* [Întrebări frecvente despre modelul de date](/l/ro/user-guide/data-model/how-tos/data-model-faq) — întrebări uzuale

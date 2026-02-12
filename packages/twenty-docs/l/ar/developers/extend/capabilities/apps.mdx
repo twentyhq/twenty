@@ -1,0 +1,662 @@
+---
+title: تطبيقات Twenty
+description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
+---
+
+<Warning>
+  التطبيقات حاليًا في مرحلة الاختبار الألفا. الميزة تعمل لكنها لا تزال قيد التطور.
+</Warning>
+
+## ما هي التطبيقات؟
+
+تتيح لك التطبيقات إنشاء وإدارة تخصيصات Twenty **ككود**. بدلًا من تكوين كل شيء عبر واجهة المستخدم، تُعرِّف نموذج بياناتك ووظائف المنطق في الكود — مما يجعل البناء والصيانة والنشر إلى مساحات عمل متعددة أسرع.
+
+**ما الذي يمكنك فعله اليوم:**
+
+* عرِّف كائنات وحقولًا مخصصة على شكل كود (نموذج بيانات مُدار)
+* أنشئ وظائف منطقية مع مشغلات مخصصة
+* انشر التطبيق نفسه عبر مساحات عمل متعددة
+
+## المتطلبات الأساسية
+
+* Node.js 24+ وYarn 4
+* مساحة عمل Twenty ومفتاح واجهة برمجة التطبيقات (أنشئ واحدًا على https://app.twenty.com/settings/api-webhooks)
+
+## البدء
+
+أنشئ تطبيقًا جديدًا باستخدام المُهيئ الرسمي، ثم قم بالمصادقة وابدأ التطوير:
+
+```bash filename="Terminal"
+# إنشاء تطبيق جديد
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# إذا كنت لا تستخدم yarn@4
+corepack enable
+yarn install
+
+# قم بالمصادقة باستخدام مفتاح واجهة برمجة التطبيقات الخاص بك (سيُطلب منك ذلك)
+yarn auth:login
+
+# ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
+yarn app:dev
+```
+
+من هنا يمكنك:
+
+```bash filename="Terminal"
+# Add a new entity to your application (guided)
+yarn entity:add
+
+# Generate a typed Twenty client and workspace entity types
+yarn app:generate
+
+# Watch your application's function logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{"name": "test"}'
+
+# Uninstall the application from the current workspace
+yarn app:uninstall
+
+# Display commands' help
+yarn help
+```
+
+راجع أيضًا: صفحات مرجع CLI لـ [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) و[twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+
+## هيكل المشروع (مُنشأ بالقالب)
+
+عند تشغيل `npx create-twenty-app@latest my-twenty-app`، يقوم المُهيئ بما يلي:
+
+* ينسخ تطبيقًا أساسيًا مصغّرًا إلى `my-twenty-app/`
+* يضيف اعتمادًا محليًا `twenty-sdk` وتهيئة Yarn 4
+* ينشئ ملفات ضبط ونصوصًا مرتبطة بـ `twenty` CLI
+* يُولّد ضبطًا افتراضيًا للتطبيق ودورًا افتراضيًا للوظيفة
+
+يبدو التطبيق المُنشأ حديثًا بالقالب كما يلي:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  eslint.config.mjs
+  tsconfig.json
+  README.md
+  public/                           # مجلد الأصول العامة (صور، خطوط، إلخ)
+  src/
+  ├── application-config.ts           # مطلوب - التكوين الرئيسي للتطبيق
+  ├── roles/
+  │   └── default-role.ts               # الدور الافتراضي لوظائف المنطق
+  ├── logic-functions/
+  │   └── hello-world.ts                # مثال لوظيفة منطقية
+  └── front-components/
+      └── hello-world.tsx               # مثال لمكوّن الواجهة الأمامية
+```
+
+بشكل عام:
+
+* **package.json**: يصرّح باسم التطبيق والإصدار والمحرّكات (Node 24+، Yarn 4)، ويضيف `twenty-sdk` فضلًا عن نصوص مثل `app:dev` و`app:generate` و`entity:add` و`function:logs` و`function:execute` و`app:uninstall` وأوامر المصادقة التي تُفوِّض إلى `twenty` CLI المحلي.
+* **.gitignore**: يتجاهل العناصر الشائعة مثل `node_modules` و`.yarn` و`generated/` (عميل مضبوط الأنواع) و`dist/` و`build/` ومجلدات التغطية وملفات السجلات وملفات `.env*`.
+* **yarn.lock**، **.yarnrc.yml**، **.yarn/**: تقوم بقفل وتكوين حزمة أدوات Yarn 4 المستخدمة في المشروع.
+* **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
+* **eslint.config.mjs** و**tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
+* **README.md**: ملف README قصير في جذر التطبيق يتضمن تعليمات أساسية.
+* **public/**: مجلد لتخزين الأصول العامة (صور، خطوط، ملفات ثابتة) التي سيتم تقديمها مع تطبيقك. الملفات الموضوعة هنا تُرفع أثناء المزامنة وتكون متاحة أثناء وقت التشغيل.
+* **src/**: المكان الرئيسي حيث تعرّف تطبيقك ككود
+
+### اكتشاف الكيانات
+
+يكتشف SDK الكيانات عبر تحليل ملفات TypeScript الخاصة بك بحثًا عن استدعاءات **`export default define<Entity>({...})`**. يحتوي كل نوع كيان على دالة مساعدة مقابلة يتم تصديرها من `twenty-sdk`:
+
+| دالة مساعدة              | نوع الكيان                        |
+| ------------------------ | --------------------------------- |
+| `defineObject()`         | تعريفات كائنات مخصصة              |
+| `defineLogicFunction()`  | تعريفات الوظائف المنطقية          |
+| `defineFrontComponent()` | Front component definitions       |
+| `defineRole()`           | تعريفات الأدوار                   |
+| `defineField()`          | امتدادات الحقول للكائنات الموجودة |
+
+<Note>
+  **تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
+</Note>
+
+مثال على كيان تم اكتشافه:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
+
+ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
+
+* `yarn app:generate` سيُنشئ مجلدًا `generated/` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
+* `yarn entity:add` سيضيف ملفات تعريف الكيانات تحت `src/` لكائناتك المخصصة أو الوظائف أو المكونات الواجهية أو الأدوار.
+
+## المصادقة
+
+في المرة الأولى التي تشغّل فيها `yarn auth:login`، سيُطلب منك إدخال:
+
+* عنوان URL لواجهة برمجة التطبيقات (الافتراضي http://localhost:3000 أو ملف تعريف مساحة العمل الحالية لديك)
+* مفتاح واجهة برمجة التطبيقات
+
+تُخزَّن بيانات اعتمادك لكل مستخدم في `~/.twenty/config.json`. You can maintain multiple profiles and switch between them.
+
+### Managing workspaces
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn auth:login
+
+# Login to a specific workspace profile
+yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
+```
+
+Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+
+## استخدم موارد SDK (الأنواع والتكوين)
+
+يوفّر twenty-sdk كتلَ بناءٍ مضبوطة الأنواع ودوال مساعدة تستخدمها داخل تطبيقك. فيما يلي الأجزاء الأساسية التي ستتعامل معها غالبًا.
+
+### دوال مساعدة
+
+يوفّر SDK دوالًا مساعدة لتعريف كيانات تطبيقك. كما هو موضح في [اكتشاف الكيانات](#entity-detection)، يجب استخدام `export default define<Entity>({...})` كي يتم اكتشاف كياناتك:
+
+| دالة                     | الغرض                                                |
+| ------------------------ | ---------------------------------------------------- |
+| `defineApplication()`    | تهيئة بيانات التعريف للتطبيق (مطلوب، واحد لكل تطبيق) |
+| `defineObject()`         | تعريف كائنات مخصصة مع حقول                           |
+| `defineLogicFunction()`  | تعريف وظائف منطقية مع معالجات                        |
+| `defineFrontComponent()` | عرِّف مكوّنات أمامية لواجهة مستخدم مخصّصة            |
+| `defineRole()`           | تهيئة صلاحيات الدور والوصول إلى الكائنات             |
+| `defineField()`          | وسّع الكائنات الموجودة بحقول إضافية                  |
+
+تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
+
+### تعريف الكائنات
+
+تصف الكائنات المخصصة كلًا من المخطط والسلوك للسجلات في مساحة عملك. استخدم `defineObject()` لتعريف كائنات مع تحقق مدمج:
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+النقاط الرئيسية:
+
+* استخدم `defineObject()` للحصول على تحقق مدمج ودعم أفضل من IDE.
+* `universalIdentifier` يجب أن يكون فريدًا وثابتًا عبر عمليات النشر.
+* يتطلب كل حقل `name` و`type` و`label` ومعرّف `universalIdentifier` ثابتًا خاصًا به.
+* المصفوفة `fields` اختيارية — يمكنك تعريف كائنات بدون حقول مخصصة.
+* يمكنك إنشاء كائنات جديدة باستخدام `yarn entity:add`، والذي يرشدك خلال التسمية والحقول والعلاقات.
+
+<Note>
+  **يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية مثل `name` و`createdAt` و`updatedAt` و`createdBy` و`position` و`deletedAt`. لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
+</Note>
+
+### تكوين التطبيق (application-config.ts)
+
+كل تطبيق لديه ملف واحد `application-config.ts` يصف:
+
+* **هوية التطبيق**: المعرفات، اسم العرض، والوصف.
+* **كيفية تشغيل وظائفه**: الدور الذي تستخدمه للأذونات.
+* **متغيرات (اختياري)**: أزواج مفتاح-قيمة تُعرض لوظائفك كمتغيرات بيئة.
+
+Use `defineApplication()` to define your application configuration:
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+الملاحظات:
+
+* حقول `universalIdentifier` هي معرّفات حتمية تخصك؛ أنشئها مرة واحدة واحتفظ بها ثابتة عبر عمليات المزامنة.
+* `applicationVariables` تصبح متغيرات بيئة لوظائفك (على سبيل المثال، `DEFAULT_RECIPIENT_NAME` متاح كـ `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` يجب أن يطابق ملف الدور (انظر أدناه).
+
+#### الأدوار والصلاحيات
+
+يمكن للتطبيقات تعريف أدوار تُغلّف الصلاحيات على كائنات وإجراءات مساحة العمل لديك. يعين الحقل `defaultRoleUniversalIdentifier` في `application-config.ts` الدور الافتراضي الذي تستخدمه وظائف المنطق في تطبيقك.
+
+* مفتاح واجهة البرمجة في وقت التشغيل المحقون باسم `TWENTY_API_KEY` مستمد من دور الوظيفة الافتراضي هذا.
+* سيُقيَّد العميل مضبوط الأنواع بالأذونات الممنوحة لذلك الدور.
+* اتبع مبدأ أقل الامتياز: أنشئ دورًا مخصصًا بالأذونات التي تحتاجها وظائفك فقط، ثم أشِر إلى معرّفه الشامل.
+
+##### الدور الافتراضي للوظيفة (\*.role.ts)
+
+عند توليد تطبيق جديد بالقالب، ينشئ CLI أيضًا ملف دور افتراضي. استخدم `defineRole()` لتعريف أدوار مع تحقق مدمج:
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+يُشار بعد ذلك إلى `universalIdentifier` لهذا الدور في `application-config.ts` باسم `defaultRoleUniversalIdentifier`. بعبارة أخرى:
+
+* **\\*.role.ts** يحدد ما يمكن أن يفعله الدور الافتراضي للوظيفة.
+* **application-config.ts** يشير إلى ذلك الدور بحيث ترث وظائفك أذوناته.
+
+الملاحظات:
+
+* ابدأ من الدور المُنشأ بالقالب، ثم قيّده تدريجيًا باتباع مبدأ أقل الامتياز.
+* استبدل `objectPermissions` و`fieldPermissions` بالكائنات/الحقول التي تحتاجها وظائفك.
+* `permissionFlags` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في الحد الأدنى؛ أضف فقط ما تحتاجه.
+* اطّلع على مثال عملي في تطبيق Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### تكوين الوظيفة المنطقية ونقطة الدخول
+
+كل ملف وظيفة يستخدم `defineLogicFunction()` لتصدير تكوين مع معالج ومشغّلات اختيارية.
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import Twenty, { type Person } from '~/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new Twenty(); // generated typed client
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+أنواع المشغلات الشائعة:
+
+* **route**: يعرِض وظيفتك على مسار وطريقة HTTP **تحت نقطة النهاية `/s/`**:
+
+> مثال: `path: '/post-card/create',` -> الاستدعاء على `<APP_URL>/s/post-card/create`
+
+* **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
+* **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة.
+
+> مثال: `person.updated`
+
+الملاحظات:
+
+* المصفوفة `triggers` اختيارية. يمكن استخدام الوظائف بدون مشغلات كوظائف مساعدة تُستدعى بواسطة وظائف أخرى.
+* يمكنك مزج أنواع متعددة من المشغلات في وظيفة واحدة.
+
+### حمولة مشغل المسار
+
+<Warning>
+  **تغيير غير متوافق (v1.16، يناير 2026):** لقد تغير تنسيق حمولة مشغل المسار. قبل v1.16، كانت معلمات الاستعلام، ومعلمات المسار، وجسم الطلب تُرسل مباشرةً كحمولة. بدءًا من v1.16، أصبحت متداخلة داخل كائن منظَّم `RoutePayload`.
+
+  **قبل v1.16:**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **بعد v1.16:**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **لترحيل الدوال الحالية:** حدّث المعالج لديك لفكّ البنية من `event.body` أو `event.queryStringParameters` أو `event.pathParameters` بدلاً من القراءة مباشرةً من كائن params.
+</Warning>
+
+عندما يستدعي مشغّل المسار وظيفتك المنطقية، يتلقى كائنًا من النوع `RoutePayload` يتبع تنسيق AWS HTTP API v2. استورد النوع من `twenty-sdk`:
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+يحتوي نوع `RoutePayload` على البنية التالية:
+
+| الخاصية                      | النوع                                 | الوصف                                                                                   |
+| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)                                |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل)                            |
+| `pathParameters`             | `Record<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار (على سبيل المثال، `/users/:id` → `{ id: '123' }`) |
+| `المحتوى`                    | `object \| null`                      | جسم الطلب المُحلَّل (JSON)                                                              |
+| `isBase64Encoded`            | `قيمة منطقية`                         | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                                            |
+| `requestContext.http.method` | `string`                              | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                              |
+| `requestContext.http.path`   | `string`                              | المسار الخام للطلب                                                                      |
+
+### تمرير رؤوس HTTP
+
+افتراضيًا، **لا** تُمرَّر رؤوس HTTP من الطلبات الواردة إلى وظيفتك المنطقية لأسباب أمنية. للوصول إلى رؤوس محددة، قم بإدراجها صراحةً في مصفوفة `forwardedRequestHeaders`:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+في المعالج الخاص بك، يمكنك حينها الوصول إلى هذه الرؤوس:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  تُحوَّل أسماء الرؤوس إلى أحرف صغيرة. يمكنك الوصول إليها باستخدام مفاتيح بأحرف صغيرة (على سبيل المثال، `event.headers['content-type']`).
+</Note>
+
+يمكنك إنشاء وظائف جديدة بطريقتين:
+
+* **مُنشأ بالقالب**: شغّل `yarn entity:add` واختر خيار إضافة وظيفة منطقية جديدة. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
+* **يدوي**: أنشئ ملفًا جديدًا `*.logic-function.ts` واستخدم `defineLogicFunction()` مع اتباع النمط نفسه.
+
+### المكوّنات الأمامية
+
+تتيح لك المكوّنات الأمامية إنشاء مكوّنات React مخصّصة تُعرَض داخل واجهة مستخدم Twenty. استخدم `defineFrontComponent()` لتعريف مكوّنات مع تحقّق مدمج:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+النقاط الرئيسية:
+
+* المكوّنات الأمامية هي مكوّنات React تُعرَض ضمن سياقات معزولة داخل Twenty.
+* استخدم لاحقة الملف `*.front-component.tsx` للاكتشاف التلقائي.
+* يشير الحقل `component` إلى مكوّن React الخاص بك.
+* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn app:dev`.
+
+يمكنك إنشاء مكوّنات أمامية جديدة بطريقتين:
+
+* **مُنشأ بالقالب**: شغّل `yarn entity:add` واختر خيار إضافة مكوّن أمامي جديد.
+* **يدوي**: أنشئ ملفًا جديدًا `*.front-component.tsx` واستخدم `defineFrontComponent()`.
+
+### عميل مُولَّد مضبوط الأنواع
+
+شغّل yarn app:generate لإنشاء عميل محلي مضبوط الأنواع في generated/ استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
+
+```typescript
+import Twenty from '~/generated';
+
+const client = new Twenty();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+```
+
+يُعاد توليد العميل بواسطة `yarn app:generate`. أعِد التشغيل بعد تغيير كائناتك أو عند الانضمام إلى مساحة عمل جديدة.
+
+#### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
+
+عندما تعمل وظيفتك على Twenty، يقوم النظام الأساسي بحقن بيانات الاعتماد كمتغيرات بيئة قبل تنفيذ كودك:
+
+* `TWENTY_API_URL`: عنوان URL الأساسي لواجهة Twenty البرمجية التي يستهدفها تطبيقك.
+* `TWENTY_API_KEY`: مفتاح قصير العمر ذو نطاق يقتصر على الدور الافتراضي لوظيفة تطبيقك.
+
+الملاحظات:
+
+* لا تحتاج إلى تمرير عنوان URL أو مفتاح واجهة برمجة التطبيقات إلى العميل المُولَّد. يقوم بقراءة `TWENTY_API_URL` و`TWENTY_API_KEY` من process.env وقت التشغيل.
+* تُحدَّد أذونات مفتاح واجهة برمجة التطبيقات بواسطة الدور المشار إليه في `application-config.ts` عبر `defaultRoleUniversalIdentifier`. هذا هو الدور الافتراضي الذي تستخدمه الوظائف المنطقية في تطبيقك.
+* يمكن للتطبيقات تعريف أدوار لاتباع مبدأ أقل الامتياز. امنح فقط الأذونات التي تحتاجها وظائفك، ثم وجّه `defaultRoleUniversalIdentifier` إلى المعرّف الشامل لذلك الدور.
+
+### مثال Hello World
+
+استكشف مثالًا بسيطًا شاملًا من البداية إلى النهاية يوضح الكائنات والوظائف المنطقية والمكوّنات الأمامية ومشغّلات متعددة [هنا](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+## إعداد يدوي (بدون المهيئ)
+
+بينما نوصي باستخدام `create-twenty-app` للحصول على أفضل تجربة للبدء، يمكنك أيضًا إعداد مشروع يدويًا. لا تثبّت CLI عالميًا. بدل ذلك، أضف `twenty-sdk` كاعتماد محلي ووصل السكربتات في ملف package.json لديك:
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+ثم أضف نصوصًا مثل هذه:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
+  }
+}
+```
+
+يمكنك الآن تشغيل الأوامر نفسها عبر Yarn، مثل `yarn app:dev` و`yarn app:generate`، إلخ.
+
+## استكشاف الأخطاء وإصلاحها
+
+* أخطاء المصادقة: شغّل `yarn auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
+* يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة البرمجة وأن خادم Twenty قابل للوصول.
+* الأنواع أو العميل مفقود/قديم: شغّل `yarn app:generate`.
+* وضع التطوير لا يزامن: تأكد من أن `yarn app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
+
+قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

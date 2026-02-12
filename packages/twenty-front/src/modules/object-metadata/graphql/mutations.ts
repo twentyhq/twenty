@@ -41,6 +41,7 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       defaultValue
       options
       isLabelSyncedWithName
+      applicationId
       object {
         id
       }
@@ -68,6 +69,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       updatedAt
       settings
       isLabelSyncedWithName
+      applicationId
       object {
         id
       }
@@ -138,6 +140,7 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       createdAt
       updatedAt
       settings
+      applicationId
       object {
         id
       }

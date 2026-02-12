@@ -5,7 +5,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlOperationFindDuplicatesResult } from '@/object-record/graphql/types/RecordGqlOperationFindDuplicatesResults';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -20,7 +20,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   skip,
 }: ObjectMetadataItemIdentifier & {
   objectRecordIds: string[] | undefined;
-  onCompleted?: (data: RecordGqlConnection[]) => void;
+  onCompleted?: (data: RecordGqlConnectionEdgesRequired[]) => void;
   skip?: boolean;
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
@@ -69,7 +69,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const results = useMemo(
     () =>
-      objectResults?.map((result: RecordGqlConnection) => {
+      objectResults?.map((result: RecordGqlConnectionEdgesRequired) => {
         return result
           ? (getRecordsFromRecordConnection({
               recordConnection: result,

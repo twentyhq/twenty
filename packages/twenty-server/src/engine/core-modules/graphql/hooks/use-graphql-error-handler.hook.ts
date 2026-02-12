@@ -79,6 +79,7 @@ export const useGraphQLErrorHandlerHook = <
   }
 
   return {
+    // TODO: define onSubscribe here to handle subscription errors too
     async onExecute({ args }) {
       const exceptionHandlerService = options.exceptionHandlerService;
       const rootOperation = args.document.definitions.find(
@@ -265,6 +266,7 @@ export const useGraphQLErrorHandlerHook = <
 
         if (
           requestMetadataVersion &&
+          isDefined(currentMetadataVersion) &&
           requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
           options.metricsService.incrementCounter({

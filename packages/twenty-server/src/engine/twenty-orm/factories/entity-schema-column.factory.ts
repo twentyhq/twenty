@@ -13,7 +13,6 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -24,6 +23,7 @@ import {
   type EntitySchemaObjectMetadata,
 } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;
@@ -37,7 +37,7 @@ export class EntitySchemaColumnFactory {
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    const fieldMetadataCollection = objectMetadata.fieldMetadataIds
+    const fieldMetadataCollection = objectMetadata.fieldIds
       .map((fieldId) => fieldMetadataMaps.byId[fieldId])
       .filter(isDefined);
 

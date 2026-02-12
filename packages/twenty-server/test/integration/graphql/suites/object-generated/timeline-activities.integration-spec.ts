@@ -21,16 +21,16 @@ describe('timelineActivitiesResolver (e2e)', () => {
                 updatedAt
                 deletedAt
                 workspaceMemberId
-                personId
-                companyId
-                opportunityId
-                noteId
-                taskId
-                workflowId
-                workflowVersionId
-                workflowRunId
-                petId
-                surveyResultId
+                targetPersonId
+                targetCompanyId
+                targetOpportunityId
+                targetNoteId
+                targetTaskId
+                targetWorkflowId
+                targetWorkflowVersionId
+                targetWorkflowRunId
+                targetPetId
+                targetSurveyResultId
               }
             }
           }
@@ -69,16 +69,16 @@ describe('timelineActivitiesResolver (e2e)', () => {
           expect(timelineActivities).toHaveProperty('updatedAt');
           expect(timelineActivities).toHaveProperty('deletedAt');
           expect(timelineActivities).toHaveProperty('workspaceMemberId');
-          expect(timelineActivities).toHaveProperty('personId');
-          expect(timelineActivities).toHaveProperty('companyId');
-          expect(timelineActivities).toHaveProperty('opportunityId');
-          expect(timelineActivities).toHaveProperty('noteId');
-          expect(timelineActivities).toHaveProperty('taskId');
-          expect(timelineActivities).toHaveProperty('workflowId');
-          expect(timelineActivities).toHaveProperty('workflowVersionId');
-          expect(timelineActivities).toHaveProperty('workflowRunId');
-          expect(timelineActivities).toHaveProperty('petId');
-          expect(timelineActivities).toHaveProperty('surveyResultId');
+          expect(timelineActivities).toHaveProperty('targetPersonId');
+          expect(timelineActivities).toHaveProperty('targetCompanyId');
+          expect(timelineActivities).toHaveProperty('targetOpportunityId');
+          expect(timelineActivities).toHaveProperty('targetNoteId');
+          expect(timelineActivities).toHaveProperty('targetTaskId');
+          expect(timelineActivities).toHaveProperty('targetWorkflowId');
+          expect(timelineActivities).toHaveProperty('targetWorkflowVersionId');
+          expect(timelineActivities).toHaveProperty('targetWorkflowRunId');
+          expect(timelineActivities).toHaveProperty('targetPetId');
+          expect(timelineActivities).toHaveProperty('targetSurveyResultId');
         }
       });
   });

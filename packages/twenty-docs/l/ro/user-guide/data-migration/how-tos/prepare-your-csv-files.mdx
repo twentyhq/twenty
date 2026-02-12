@@ -1,0 +1,270 @@
+---
+title: "Pregătiți fișierele CSV "
+description: Ghid complet, pas cu pas, pentru a formata datele pentru import în Twenty.
+---
+
+## Prezentare generală
+
+Acest ghid vă ghidează în pregătirea fișierului CSV pentru un import reușit. Urmați acești pași pentru a evita erorile.
+
+## Pasul 1: Verificați cerințele fișierului
+
+Înainte de a începe, asigurați-vă că fișierul îndeplinește aceste cerințe:
+
+| Cerință                  | Detalii                          |
+| ------------------------ | -------------------------------- |
+| **Format**               | CSV, XLSX sau XLS                |
+| **Limită de dimensiune** | 10.000 de înregistrări pe fișier |
+| **Codificare**           | UTF-8 recomandat                 |
+| **Structură**            | Un tip de obiect pe fișier       |
+
+<Note>Pentru seturi de date mai mari de 10.000 de înregistrări, împărțiți-le în mai multe fișiere sau folosiți [importul prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+
+## Pasul 2: Descărcați fișierul de mostră
+
+**Acesta este cel mai important pas.** Fișierul de mostră vă arată exact denumirile de coloane și formatul pe care îl așteaptă Twenty.
+
+1. Accesați vizualizarea obiectului (Persoane, Companii etc.)
+2. Faceți clic pe **⋮** → **Importați înregistrări**
+3. Faceți clic pe **Descărcați fișierul de mostră**
+4. Folosiți acest fișier ca șablon
+
+<Note>**Sfat util:** Exportați în schimb câteva înregistrări existente. Acest lucru vă oferă exemple reale despre cum ar trebui să fie formatate datele, iar denumirile coloanelor se vor asocia automat în timpul importului.</Note>
+
+## Pasul 3: Eliminați valorile duplicate
+
+Twenty impune unicitatea pentru anumite câmpuri. Valorile duplicate vor provoca erori la import.
+
+| Obiect                    | Câmpuri unice                                           |
+| ------------------------- | ------------------------------------------------------- |
+| **Persoane**              | `id`, `email`                                           |
+| **Companii**              | `id`, `domain`                                          |
+| **Obiecte personalizate** | `id`, precum și orice câmp pe care l-ați marcat ca unic |
+
+**Înainte de import:**
+
+1. Sortați foaia de calcul după câmpul unic (email sau domeniu)
+2. Eliminați sau îmbinați rândurile duplicate
+3. Verificați duplicatele care există deja în Twenty
+
+<Warning>**Înregistrările șterse temporar se iau în calcul pentru unicitate.** Înregistrările din Meniul Comenzi → Vezi înregistrările șterse vor provoca erori de duplicat. Ștergeți-le definitiv sau restaurați-le și actualizați-le.</Warning>
+
+## Pasul 4: Formatați corect fiecare tip de câmp
+
+Tipurile de câmpuri diferite necesită formate specifice. Iată referința completă:
+
+### Câmpuri text
+
+* Nu este necesară o formatare specială
+* Spațiile de la început/sfârșit sunt eliminate automat
+
+### Câmpuri e-mail
+
+* Trebuie să fie într-un format de e-mail valid: `name@domain.com`
+* Trebuie să fie unic (fără duplicate în fișier sau în Twenty)
+* Pentru adresele e-mail suplimentare, folosiți acest format în coloana **Emails / Additional Emails**:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Câmpuri domeniu
+
+* **Format recomandat**: `https://domain.com`
+* Acesta corespunde formatului folosit de sincronizarea căsuței poștale/calendarului (previne duplicatele)
+* Completați ambele coloane:
+  * **Domain / Domain Label**: `domain.com`
+  * **Domain / Domain URL**: `https://domain.com`
+* Trebuie să fie unic în fișierul dvs. și în Twenty
+
+### Câmpuri telefon
+
+Telefonul este un **câmp îmbricat** care necesită mai multe coloane:
+
+| Coloană                                 | Exemplu      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Câmpuri adresă
+
+Adresa este un **câmp îmbricat** cu mai multe coloane (unele pot fi lăsate necompletate):
+
+* **Adresă / Adresă 1**: Linia 1 a adresei stradale
+* **Adresă / Adresă 2**: Linia 2 a adresei stradale (opțional)
+* **Adresă / Oraș**: Numele orașului
+* **Adresă / Stat**: Stat sau provincie
+* **Adresă / Țară**: Numele țării
+* **Adresă / Cod poștal**: Cod poștal/ZIP
+
+### Câmpuri de dată
+
+Folosiți un format consecvent în tot fișierul:
+
+* `YYYY-MM-DD` (recomandat): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Câmpuri numerice
+
+* Doar numere (fără text)
+* Folosiți punctul pentru zecimale: `1234.56`
+* Fără separatori pentru mii (nu `1,234.56`)
+
+### Câmpuri de monedă
+
+Moneda este un **câmp îmbricat** care necesită două coloane ce **trebuie ambele completate**:
+
+| Coloană           | Exemplu   |
+| ----------------- | --------- |
+| **Sumă / Sumă**   | `1234.56` |
+| **Sumă / Monedă** | `USD`     |
+
+### Câmpuri booleene
+
+Folosiți majuscule: `TRUE` sau `FALSE`
+
+<Warning>`true` sau `false` cu litere mici nu vor funcționa.</Warning>
+
+### Câmpuri de selectare
+
+Folosiți **numele API** al opțiunii, nu eticheta de afișare.
+
+**Cum găsiți numele API:**
+
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul și câmpul
+3. Activați **Modul avansat** (comutator în dreapta jos)
+4. Copiați numele API (de ex., `OPTION_1`, nu "Option 1")
+
+<Note>Opțiunile noi de selectare nu sunt create automat. Adăugați-le în **Setări → Model de date** înainte de import.</Note>
+
+### Câmpuri cu selecție multiplă
+
+Folosiți numele API în format de array:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Câmpuri de tip array
+
+Folosiți formatul JSON de tip array:
+
+```
+["value1","value2"]
+```
+
+### Câmpuri de rating
+
+Folosiți formatul: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` sau `RATING_5`
+
+### Câmpuri pentru linkuri/URL
+
+Completați ambele coloane:
+
+* **Linkuri / Etichetă link**: `Twenty`
+* **Linkuri / URL link**: `https://twenty.com`
+
+Pentru linkurile secundare, folosiți coloana **Linkuri / Linkuri secundare**:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### Câmpuri JSON
+
+Folosiți un format JSON valid:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### Câmpuri ID
+
+* **Opțional**: Twenty generează automat ID-uri dacă nu sunt furnizate
+* **Format**: UUID (de ex., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Caz de utilizare**: Includeți ID-ul pentru a actualiza înregistrările existente în loc să creați altele noi
+
+## Pasul 5: Adăugați coloane de relație (dacă legați înregistrări)
+
+Pentru a lega înregistrări de alte obiecte (de ex., Persoane la Companii), adăugați o coloană cu identificatorul unic al înregistrării asociate.
+
+**Exemplu**: Legarea Persoanelor la Companii
+
+Adăugați o coloană în CSV-ul Persoane:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Reguli importante pentru relații:**
+
+* Înregistrarea părinte trebuie să existe deja în Twenty
+* Folosiți formatul **URL de domeniu** (`https://domain.com`), nu eticheta
+* Mapați doar UN identificator unic (nu includeți atât `companyId` cât și `companyDomain`)
+* Pentru membrii spațiului de lucru, folosiți **emailul** (nu numele)
+
+<Warning>
+  **Ordinea de import contează!**
+
+  Importați partea "unu" înaintea părții "mulți":
+
+  1. **Companii** mai întâi
+  2. **Persoane** în al doilea rând (cu referință la companie)
+  3. **Oportunități** în al treilea rând
+
+  Înregistrarea părinte trebuie să existe înainte de a o putea referi.
+</Warning>
+
+Consultați [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pentru instrucțiuni detaliate.
+
+## Pasul 6: Asigurați-vă că câmpurile există în Twenty
+
+Importul creează **înregistrări**, nu **câmpuri**. Toate câmpurile pe care doriți să le importați trebuie să existe deja în modelul de date.
+
+**Înainte de import:**
+
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul
+3. Creați câmpurile personalizate de care aveți nevoie
+4. Notați denumirile exacte ale câmpurilor (trebuie să se potrivească antetelor coloanelor)
+
+## Pasul 7: Lista finală de verificare
+
+Înainte de a încărca fișierul, verificați:
+
+<Check>Fișierul este în format CSV, XLSX sau XLS</Check>
+<Check>Fișierul are mai puțin de 10.000 de înregistrări</Check>
+<Check>Codarea este UTF-8</Check>
+<Check>Fără emailuri duplicate (pentru Persoane) sau domenii (pentru Companii)</Check>
+<Check>Datele folosesc un format consecvent peste tot</Check>
+<Check>Domeniile folosesc formatul `https://domain.com`</Check>
+<Check>Câmpurile booleene folosesc `TRUE` sau `FALSE` (majuscule)</Check>
+<Check>Câmpurile de selectare folosesc nume API, nu etichete de afișare</Check>
+<Check>Toate câmpurile personalizate există în Setări → Model de date</Check>
+<Check>Înregistrările părinte importate înaintea înregistrărilor copil</Check>
+<Check>Coloanele de relație fac referire la înregistrări existente</Check>
+
+## Greșeli comune de evitat
+
+| Greșeală                                                       | Soluție                                           |
+| -------------------------------------------------------------- | ------------------------------------------------- |
+| Folosirea lui `true` în loc de `TRUE`                          | Valorile booleene trebuie să fie cu majuscule     |
+| Folosirea etichetelor de afișare pentru câmpurile de selectare | Găsiți și folosiți numele API în Setări           |
+| Importarea Persoanelor înaintea Companiilor                    | Importați întotdeauna mai întâi obiectele părinte |
+| Lipsește codul monedei pentru câmpurile de monedă              | Completați ambele coloane, Sumă și Monedă         |
+| Format de domeniu greșit                                       | Folosiți `https://domain.com` în mod consecvent   |
+| Maparea mai multor câmpuri unice pentru relații                | Mapați doar UNUL (domeniu SAU id, nu ambele)      |
+
+## Pașii următori
+
+Fișierul este gata! Acum:
+
+* [Importați companii](/l/ro/user-guide/data-migration/how-tos/import-companies-via-csv) (importați-le pe acestea mai întâi)
+* [Importați contacte](/l/ro/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Remediați eventualele erori de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)

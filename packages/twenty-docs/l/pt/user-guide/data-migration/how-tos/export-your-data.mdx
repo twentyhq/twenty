@@ -1,0 +1,209 @@
+---
+title: Exporte Seus Dados
+description: Guia completo passo a passo para exportar dados do Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Visão geral
+
+Exporte os dados do seu espaço de trabalho para CSV para backups, relatórios ou migração.
+
+**Casos de uso:**
+
+* **Backups regulares** — mantenha cópias dos seus dados
+* **Relatórios externos** — analise os dados no Excel, Google Sheets ou em ferramentas de BI
+* **Migração** — mova dados para outro sistema
+* **Atualizações em massa** — exporte, edite e reimporte para atualizar registros
+
+## O Que Você Precisa Saber
+
+### Limites de Exportação
+
+* **Máximo de 20,000 registros** por exportação
+* Apenas **as colunas visíveis** são exportadas
+* Apenas **os registros filtrados** são exportados (com base na sua visualização atual)
+
+<Note>Para exportações maiores (20,000+ registros), use filtros para exportar em lotes ou use a [API](/l/pt/developers/extend/capabilities/apis).</Note>
+
+### Permissões
+
+Você precisa da permissão **"Export CSV"** para exportar dados. Entre em contato com o administrador do seu espaço de trabalho se você não tiver essa opção.
+
+## Etapa 1: Navegue até o Objeto
+
+Vá para o objeto que você deseja exportar:
+
+* **Pessoas** — para contatos
+* **Empresas** — para organizações
+* **Oportunidades** — para negócios
+* **Objetos personalizados** — qualquer objeto que você criou
+
+## Etapa 2: Configure Sua Visualização
+
+**Importante:** A exportação inclui apenas o que está visível na sua visualização atual.
+
+### Adicionar/Remover Colunas
+
+1. Clique em **Opções → Campos** (ou no **+** no final das colunas)
+2. Marque os campos que você deseja exportar
+3. Desmarque os campos de que você não precisa
+
+### Filtrar Registros (Opcional)
+
+Se você precisa apenas de um subconjunto de dados:
+
+1. Clique em **Filtrar**
+2. Adicione condições de filtro (ex.: "Data de criação > 1 de janeiro de 2024")
+3. Somente os registros correspondentes serão exportados
+
+### Ordenar Registros (Opcional)
+
+1. Clique no cabeçalho de uma coluna para ordenar
+2. A exportação seguirá sua ordem de classificação
+
+<Note>**Crie uma visualização dedicada para exportação.** Salve uma visualização configurada especificamente para exportações para que você não precise reconfigurar a cada vez.</Note>
+
+## Etapa 3: Exporte os Dados
+
+1. Clique no ícone **⋮** no canto superior direito da tabela
+2. Selecione **Exportar visualização**
+3. Escolha onde salvar o arquivo CSV
+4. Aguarde a conclusão do download
+
+## O Que É Exportado
+
+| Incluído                                      | Não incluído                         |
+| --------------------------------------------- | ------------------------------------ |
+| Todas as colunas visíveis                     | Colunas ocultas                      |
+| Registros que correspondem aos filtros atuais | Registros excluídos pelos filtros    |
+| Valores de campos personalizados              | Campos que não estão na visualização |
+| IDs dos registros                             | Anexos de arquivo                    |
+| IDs de relacionamento                         | Imagens                              |
+
+### Campos de Relação
+
+IDs de relacionamento são exportados apenas no **lado "muitos"** de um relacionamento:
+
+* **Exportação de Pessoas** inclui uma coluna `companyId` (relação Pessoas → Empresa)
+* **Exportação de Empresas** NÃO inclui `peopleIds` (Empresas é o lado "um")
+
+Isso significa que você pode usar a exportação de Pessoas para reimportar e manter o vínculo com Empresas, mas será necessário reimportar Pessoas após Empresas para recriar os relacionamentos.
+
+## Exportação para Finalidades Específicas
+
+### Para Backups
+
+1. Crie uma visualização com **todos os campos** visíveis
+2. Remova todos os filtros para incluir todos os registros
+3. Exporte cada tipo de objeto separadamente
+4. Armazene as exportações em um local seguro
+5. Defina um lembrete recorrente (semanal/mensal)
+
+### Para Relatórios Externos
+
+1. Inclua apenas os campos necessários para a análise
+2. Aplique filtros para focar nos dados relevantes
+3. Considere ordenar pelo campo que você analisará
+
+### Para Atualizações em Massa
+
+1. Exporte os registros que você deseja atualizar
+2. Inclua o identificador único (`email`, `domain` ou `id`)
+3. Edite o arquivo exportado
+4. Reimporte para atualizar os registros
+   Veja: [Como Atualizar Registros Existentes](/l/pt/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Para Migração
+
+Se você está exportando para migrar para outro sistema:
+
+1. **Exporte cada objeto separadamente** — Pessoas, Empresas, Oportunidades, etc.
+2. **Inclua campos de ID** — eles ajudam a manter os relacionamentos
+3. **Documente os mapeamentos de campos** — observe como os campos do Twenty se mapeiam para o seu sistema de destino
+
+## Como Lidar com Conjuntos de Dados Grandes (20,000+ Registros)
+
+O limite de exportação é de 20,000 registros. Para conjuntos de dados maiores:
+
+### Opção 1: Exportar em Lotes
+
+1. Adicione um filtro (por exemplo, intervalos de "Data de criação")
+2. Exporte o primeiro lote
+3. Altere o filtro
+4. Exporte o próximo lote
+5. Combine os arquivos na sua planilha
+
+**Exemplos de filtros para lotes:**
+
+* Por intervalo de datas (janeiro, fevereiro, março...)
+* Por responsável (Membro da equipe A, Membro da equipe B...)
+* Por status (Ativo, Inativo...)
+
+### Opção 2: Usar a API
+
+A API não tem limite de registros:
+
+1. Obtenha sua chave de API em **Configurações → Desenvolvedores**
+2. Use a API GraphQL para consultar registros
+3. Processe os resultados no seu aplicativo
+
+Veja: [Documentação da API](/l/pt/developers/extend/capabilities/apis)
+
+## Dicas e Boas Práticas
+
+### Crie Visualizações de Exportação
+
+Salve visualizações configuradas especificamente para exportações:
+
+1. Configure colunas e filtros
+2. Clique em **Opções da visualização** → **Salvar como nova visualização**
+3. Nomeie como "Export - [Finalidade]"
+
+### Proteja Suas Exportações
+
+Arquivos exportados podem conter dados sensíveis:
+
+* Armazene em locais seguros
+* Exclua exportações antigas quando não forem mais necessárias
+* Tenha cuidado ao compartilhar arquivos de exportação
+
+### Verifique Antes de Exportar
+
+<Check>As colunas corretas estão visíveis</Check>
+<Check>Os filtros estão configurados corretamente (ou removidos para exportação completa)</Check>
+<Check>Você tem permissão de Exportação</Check>
+
+## Perguntas frequentes
+
+<AccordionGroup>
+  <Accordion title="Por que algumas colunas estão ausentes na minha exportação?">
+    Apenas as colunas visíveis são exportadas. Adicione as colunas necessárias em **Opções → Campos** antes de exportar.
+  </Accordion>
+
+  <Accordion title="Por que minha exportação não tem todos os registros?">
+    Verifique seus filtros. A exportação inclui apenas registros que correspondem aos filtros da sua visualização atual. Remova os filtros para exportar todos os registros.
+  </Accordion>
+
+  <Accordion title="Posso exportar mais de 20,000 registros?">
+    Não em uma única exportação. Use filtros para exportar em lotes ou use a API para conjuntos de dados maiores.
+  </Accordion>
+
+  <Accordion title="Qual é o formato do arquivo de exportação?">
+    CSV (valores separados por vírgula). Abre no Excel, Google Sheets ou qualquer aplicativo de planilha.
+  </Accordion>
+
+  <Accordion title="Os IDs de relacionamento são incluídos?">
+    Sim, mas apenas no lado "muitos" dos relacionamentos. Por exemplo, uma exportação de Pessoas inclui `companyId`, mas uma exportação de Empresas não inclui IDs de pessoas.
+  </Accordion>
+
+  <Accordion title="Posso automatizar exportações?">
+    Não diretamente pela interface. Use a API para criar fluxos de trabalho de exportação automatizados.
+  </Accordion>
+</AccordionGroup>
+
+## Próximos Passos
+
+* [Como Atualizar Registros Existentes](/l/pt/user-guide/data-migration/how-tos/update-existing-records-via-import) — edite e reimporte sua exportação
+* [Como Importar Dados via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) — para conjuntos de dados grandes
+* [Documentação da API](/l/pt/developers/extend/capabilities/apis) — crie fluxos de trabalho de exportação personalizados

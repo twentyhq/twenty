@@ -1,4 +1,4 @@
-import { type TabLayouts } from '@/page-layout/types/tab-layouts';
+import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 
 export const removeWidgetLayoutFromTab = (
   allTabLayouts: TabLayouts,

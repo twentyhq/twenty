@@ -1,0 +1,66 @@
+---
+title: Branches de flux de travail},{
+description: Créez des chemins parallèles et une logique conditionnelle dans vos flux de travail.
+---
+
+Les branches vous permettent de scinder votre flux de travail en plusieurs chemins pouvant s’exécuter simultanément ou de façon conditionnelle selon vos données.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## Fonctionnement des branches
+
+Lorsque vous créez plusieurs connexions à partir d’un seul nœud, chaque chemin devient une branche. Par défaut, **toutes les branches s’exécutent en parallèle** — elles ne s’attendent pas les unes les autres.
+
+## Création de branches
+
+### Ajouter une nouvelle branche
+
+1. **Cliquez avec le bouton droit sur la zone de travail principale** du flux de travail (et non sur un nœud existant)
+2. Cliquez sur **Ajouter un nœud**
+3. Choisissez le type de nœud pour votre nouvelle branche
+4. Faites glisser une flèche depuis le bas de l’étape précédente vers le haut de cette nouvelle action
+5. Répétez pour ajouter d’autres branches à partir du même nœud
+
+<Note>
+  Chaque branche est indépendante. L’ajout d’une branche n’affecte pas les autres chemins existants à partir de ce nœud.
+</Note>
+
+### Disposition visuelle
+
+Les branches apparaissent comme des chemins parallèles dans l’éditeur de flux de travail. Vous pouvez faire glisser les nœuds pour réorganiser la disposition visuelle sans affecter l’exécution.
+
+## Branches conditionnelles
+
+Puisque toutes les branches s’exécutent par défaut, utilisez des nœuds **Filtre** pour contrôler quels chemins s’exécutent réellement :
+
+| Branche | Condition de filtre   | Action                             |
+| ------- | --------------------- | ---------------------------------- |
+| A       | Étape = "Gagnée"      | Envoyer un e-mail de félicitations |
+| B       | Étape = "Perdue"      | Créer une tâche de suivi           |
+| C       | Étape = "Négociation" | Notifier le responsable            |
+
+1. Créez des branches à partir de votre déclencheur ou action
+2. Ajoutez un nœud **Filtre** comme première étape de chaque branche
+3. Configurez chaque filtre avec des conditions mutuellement exclusives
+4. Ajoutez vos actions après chaque filtre
+
+Seules les branches pour lesquelles la condition du filtre est remplie poursuivront l’exécution.
+
+## Fusion de branches
+
+**Les branches ne fusionnent pas automatiquement.** Chaque branche s’exécute indépendamment jusqu’à sa fin. Vous avez toute latitude quant à la manière de gérer cela :
+
+* **Option 1 : Garder les branches séparées**
+  Chaque branche gère ses propres actions de suivi de manière indépendante. C’est l’approche la plus simple lorsque les branches n’ont pas besoin de converger.
+
+* **Option 2 : Fusionner les branches manuellement**
+  Lors de la création de votre flux de travail, vous pouvez connecter manuellement plusieurs branches à la même action en aval. Il suffit de faire glisser des flèches depuis la fin de chaque branche vers un nœud commun.
+
+<Note>
+  Bien que vous puissiez utiliser un nœud [Delay](/l/fr/user-guide/workflows/capabilities/workflow-actions#delay) pour mettre l’exécution en pause, il n’est pas actuellement configurable pour attendre "jusqu’à ce qu’une autre branche se termine".
+</Note>
+
+## Contenus associés
+
+* [Comment utiliser les branches dans les flux de travail](/l/fr/user-guide/workflows/capabilities/use-branches-in-workflows) - Guide étape par étape
+* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions) - Actions disponibles, y compris Filtre

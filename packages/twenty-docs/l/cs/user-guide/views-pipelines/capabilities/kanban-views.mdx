@@ -1,0 +1,99 @@
+---
+title: Zobrazení kanbanové tabule
+description: Zjistěte, jak používat kanbanová zobrazení k vizualizaci a správě svých pracovních postupů.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## O zobrazení Kanban
+
+Kanban zobrazení vizuálně zobrazují tok procesů, kde každý sloupec představuje odlišnou fázi a každá karta reprezentuje záznam.
+
+## Přesun karet mezi fázemi
+
+Každou kartu můžete přesouvat mezi fázemi, jak prochází vaším pracovní postupem, tažením a pouštěním. Pro pokračování podržte klik na kartě a přesuňte ji do další fáze.
+
+<VimeoEmbed videoId="927888627" title="Ukázka videa" />
+
+## Přidání a odstranění fází
+
+Workflow si můžete přizpůsobit tak, aby vyhovoval vašim potřebám, pomocí fází, které představují hodnotu ve výběrovém poli:
+
+### Přidat fáze
+
+Pro přidání fáze přejděte do nastavení výběrového pole tak, že přejdete na Nastavení > Datový model, zvolíte svůj objekt a poté pole, na němž vaše Kanban tabule závisí.
+
+<VimeoEmbed videoId="927890428" title="Ukázka videa" />
+
+### Odstranit fáze
+
+Chcete-li odstranit fázi, najeďte na název fáze nebo na ikonu `⋮`, klikněte na `Upravit ze nastavení` v nastavení pole výběru a poté klikněte na **Odstranit** vedle příslušné fáze.
+
+## Zobrazená pole
+
+Svou Kanban tabuli můžete nakonfigurovat tak, aby zobrazovala některá pole a skrývala jiná. Chcete-li skrýt pole, klikněte vpravo nahoře na **Možnosti** a poté na **Pole**, abyste zobrazili seznam možností. Vyhledejte požadované pole v sekci Skrytá pole a klikněte na tlačítko s ikonou oka, abyste pole zobrazili.
+
+Pole můžete také přeuspořádat tak, že podržíte název pole a přetáhnete ho tam, kam chcete.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## Kompaktní zobrazení
+
+Můžete skrýt všechna pole a získat přehled o všech záznamech na první pohled. Chcete-li zapnout:
+
+1. Klikněte vpravo nahoře na **Možnosti**
+2. Zapněte přepínač **Kompaktní zobrazení**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Agregace sloupců
+
+Každý sloupec v kanbanovém zobrazení může nahoře zobrazovat agregované hodnoty, což pomáhá rychle pochopit vaše data.
+
+### Dostupné agregace
+
+| Agregace    | Popis                                        |
+| ----------- | -------------------------------------------- |
+| **Počet**   | Počet záznamů ve sloupci                     |
+| **Součet**  | Součet číselného pole (např. částky obchodů) |
+| **Průměr**  | Průměrná hodnota číselného pole              |
+| **Minimum** | Nejnižší hodnota                             |
+| **Maximum** | Nejvyšší hodnota                             |
+
+### Nastavení agregací
+
+1. Klikněte na číslo zobrazené vedle hodnoty fáze v horní části sloupce
+2. Vyberte typ agregace
+3. Zvolte pole pro agregaci
+
+**Příklad:** Zobrazte celkovou hodnotu obchodu podle fází agregováním pole Částka pomocí součtu.
+
+## Kdy používat kanbanová zobrazení
+
+Kanbanová zobrazení jsou ideální pro:
+
+* **Prodejní pipeline**: Sledujte obchody napříč fázemi od leadu po uzavření
+* **Projektové řízení**: Sledujte úkoly napříč stavy pracovního postupu
+* **Nábor**: Sledujte kandidáty jednotlivými fázemi náboru
+* **Jakýkoli vícestupňový proces**: Vizualizujte jakýkoli pracovní postup s definovanými fázemi
+
+## Osvědčené postupy
+
+### Uspořádejte své fáze
+
+* **Omezte počet fází**: 5-7 fází je ideálních pro přehlednost
+* **Jasné pojmenování**: Používejte popisné názvy fází
+* **Logické pořadí**: Uspořádejte fáze podle pořadí procesu
+
+### Optimalizujte zobrazení karet
+
+* **Zobrazujte klíčová pole**: Zobrazte pouze nejdůležitější informace
+* **Používejte kompaktní zobrazení**: Pro stručné přehledy
+* **Barevné rozlišení**: Používejte barvy fází pro rychlou identifikaci stavu
+
+### Udržujte kvalitu dat
+
+* **Pravidelně aktualizujte**: Udržujte karty v pohybu napříč fázemi
+* **Archivujte dokončené**: Přesuňte uzavřené položky mimo aktivní zobrazení
+* **Projděte zastaralé karty**: Řešte karty, které ustrnuly ve fázích

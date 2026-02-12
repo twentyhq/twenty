@@ -1,0 +1,125 @@
+---
+title: フォルダ構成
+info: 当社のサーバーフォルダ構造の詳細な観察
+---
+
+バックエンドのディレクトリ構造は以下の通りです:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## 能力
+
+各エンティティの権限を定義し、ハンドラーを含みます。
+
+## デコレータ
+
+NestJS で機能を拡張するためのカスタムデコレーターを定義します。
+
+詳細については、[カスタムデコレータ](https://docs.nestjs.com/custom-decorators) を参照してください。
+
+## フィルター
+
+GraphQLエンドポイントで発生する可能性のある例外を処理するための例外フィルターを含みます。
+
+## ガード
+
+詳細については、[ガード](https://docs.nestjs.com/guards) を参照してください。
+
+## ヘルス
+
+データベースが期待通りに動作しているかを確認するためのJSONを返す公開されたREST API (healthz) を含みます。
+
+## メタデータ
+
+カスタムオブジェクトを定義し、GraphQL API (graphql/metadata) を利用可能にします。
+
+## ワークスペース
+
+メタデータに基づいてカスタムGraphQLスキーマを生成し、提供します。
+
+### ワークスペースディレクトリ構造
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+ワークスペースディレクトリのルートには、`workspace.factory.ts` が含まれ、`createGraphQLSchema` 関数が含まれています。 この関数は、メタデータを使用して、個々のワークスペース用のスキーマを調整し、ワークスペース固有のスキーマを生成します。 スキーマとリゾルバーの構築を分離することで、`makeExecutableSchema` 関数を使用し、これらの個別要素を組み合わせます。 この関数は、メタデータを使用して、個々のワークスペース用のスキーマを調整し、ワークスペース固有のスキーマを生成します。 スキーマとリゾルバーの構築を分離することで、`makeExecutableSchema` 関数を使用し、これらの個別要素を組み合わせます。 この関数は、メタデータを使用して、個々のワークスペース用のスキーマを調整し、ワークスペース固有のスキーマを生成します。 スキーマとリゾルバーの構築を分離することで、`makeExecutableSchema` 関数を使用し、これらの個別要素を組み合わせます。
+
+この戦略は、組織化だけでなく、パフォーマンスやスケーラビリティを向上させるための型定義のキャッシングのような最適化にも役立ちます。
+
+### ワークスペーススキーマビルダー
+
+GraphQLスキーマを生成し、含まれるもの:
+
+#### ファクトリー:
+
+GraphQL関連の構造を生成するための専門的なコンストラクター。
+
+* type.factoryは、フィールドメタデータを`TypeMapperService`を使用してGraphQLタイプに変換します。
+* type-definition.factoryは、`objectMetadata`から導出されるGraphQLの入力または出力オブジェクトを作成します。
+
+#### GraphQLタイプ
+
+列挙型、入力、オブジェクト、スカラーを含み、スキーマ構築の基礎となります。
+
+#### インターフェースとオブジェクト定義
+
+GraphQLエンティティの設計図を含み、`MONEY`や`URL`のような定義済みおよびカスタムタイプが含まれます。
+
+#### サービス
+
+FieldMetadataTypeに対応するGraphQLスカラーまたはクエリ修飾子を関連付けるためのサービスを含みます。
+
+#### ストレージ
+
+GraphQLタイプの重複を防ぐための再利用可能な型定義を含む`TypeDefinitionsStorage`クラスを含みます。
+
+### ワークスペースリゾルバービルダー
+
+GraphQLスキーマのクエリおよび変更を行うリゾルバー関数を作成します。
+
+このディレクトリ内の各ファクトリーは、様々なテーブルに適用可能な`FindManyResolverFactory`のように、異なるリゾルバータイプを生成する役割を果たします。
+
+### ワークスペースクエリランナー
+
+データベースで生成されたクエリを実行し、その結果を解析します。

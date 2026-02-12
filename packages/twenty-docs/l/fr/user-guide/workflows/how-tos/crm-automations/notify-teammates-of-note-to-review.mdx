@@ -1,0 +1,127 @@
+---
+title: Notifier les collègues d'une note à relire
+description: Envoyez des notifications par e-mail automatiques lorsque vous assignez un collègue pour relire une note.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **La mention directe des collègues dans les notes n'est pas encore prise en charge.** Cette fonctionnalité est prévue pour le second semestre 2026. En attendant, ce workflow constitue une solution de contournement pratique.
+</Note>
+
+## Le défi
+
+Vous souhaitez mentionner un collègue dans une note afin qu'il reçoive une notification pour la relire. À ce jour, Twenty ne prend pas en charge les @mentions dans les notes ou les tâches.
+
+## La solution de contournement
+
+Au lieu de mentionner dans le texte de la note, vous pouvez :
+
+1. Créez un champ de relation **Relecteur** sur l'objet Notes
+2. Attribuez le relecteur lors de la création ou de la modification de la note
+3. Un workflow envoie automatiquement un e-mail au relecteur avec un lien vers la note
+
+<Warning>
+  **Limitation** : Cette approche permet d'attribuer un seul relecteur par champ. Si vous devez notifier plusieurs personnes, créez des champs de relation supplémentaires (par ex. : Relecteur 1, Relecteur 2). Cela ne s'adaptera pas bien si vous devez mentionner de nombreux collaborateurs à la fois.
+</Warning>
+
+## Configuration pas à pas
+
+### Étape 1 : Créer le champ Relecteur
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. Allez dans **Paramètres → Modèle de données → Notes**
+2. Cliquez sur **Ajouter un champ**
+3. Configurer :
+
+| Paramètre            | Valeur                                             |
+| -------------------- | -------------------------------------------------- |
+| **Name**             | Relecteur                                          |
+| **Type**             | Relation                                           |
+| **Objet lié**        | Membre de l'espace de travail                      |
+| **Type de relation** | Plusieurs notes → Un membre de l'espace de travail |
+
+4. Enregistrez le champ
+
+### Étape 2 : Créer le workflow
+
+<VimeoEmbed videoId="1151897168" title="Démonstration vidéo" />
+
+#### Créer le déclencheur du workflow
+
+1. Allez dans la vue principale et créez un nouveau workflow
+2. Sélectionnez **Record Updated** comme déclencheur
+3. Choisissez **Note** comme objet et indiquez le champ Relecteur.
+4. Cela se déclenchera chaque fois que le relecteur d'une note est mis à jour.
+
+#### Ajouter un filtre pour vérifier qu'un relecteur vient d'être attribué
+
+Ajoutez une action **Filtre** pour garantir que le workflow ne continue que lorsqu'un relecteur est attribué :
+
+| Condition     | Valeur         |
+| ------------- | -------------- |
+| **Relecteur** | n'est pas vide |
+
+#### Rechercher le membre de l'espace de travail
+
+1. Ajoutez une action **Search Records**
+2. Sélectionnez **Membre de l'espace de travail** (dans les objets avancés)
+3. Ajoutez un filtre :
+
+| Condition | Valeur                       |
+| --------- | ---------------------------- |
+| **ID**    | égal à `{{note.reviewerId}}` |
+
+Cela récupère l'enregistrement complet du membre de l'espace de travail, y compris son adresse e-mail et son nom.
+
+#### Envoyer l'e-mail de notification
+
+1. Ajoutez l'action **Envoyer un e-mail**
+2. Configurer :
+
+| Champ                | Valeur                                              |
+| -------------------- | --------------------------------------------------- |
+| **À**                | Search Record → First Workspace Member → User Email |
+| **Objet**            | Une note nécessite votre relecture                  |
+| **Corps du message** | Voir l'exemple ci-dessous                           |
+
+**Exemple de corps de l'e-mail :**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  Remplacez `yourSubDomain` par le sous-domaine réel de votre espace de travail Twenty.
+</Note>
+
+#### Tester et activer
+
+1. Cliquez sur **Test** pour exécuter le workflow manuellement
+2. Créez ou modifiez une note et attribuez un relecteur
+3. Vérifiez la boîte de réception du relecteur pour l'e-mail de notification
+4. Activez le flux de travail
+
+## Utilisation
+
+Une fois configuré, votre équipe peut utiliser ce workflow de la manière suivante :
+
+1. Créer une nouvelle note (ou en modifier une existante)
+2. Sélectionner un collègue dans le champ **Relecteur**
+3. Le collègue reçoit automatiquement un e-mail avec un lien direct vers la note
+
+## Articles connexes
+
+* [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Envoyer des e-mails depuis des flux de travail](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Créer des champs personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-fields)
+* [Créer des champs de relation](/l/fr/user-guide/data-model/how-tos/create-relation-fields)

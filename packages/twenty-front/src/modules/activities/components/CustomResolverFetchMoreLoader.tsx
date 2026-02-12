@@ -1,10 +1,15 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
 
 type CustomResolverFetchMoreLoaderProps = {
   loading: boolean;
   onLastRowVisible: (...args: any[]) => any;
 };
+
+const StyledContainer = styled.div`
+  min-height: 1px;
+`;
 
 const StyledText = styled.div`
   align-items: center;
@@ -21,12 +26,16 @@ export const CustomResolverFetchMoreLoader = ({
   onLastRowVisible,
 }: CustomResolverFetchMoreLoaderProps) => {
   const { ref: tbodyRef } = useInView({
-    onChange: onLastRowVisible,
+    onChange: (inView) => {
+      if (inView) {
+        onLastRowVisible();
+      }
+    },
   });
 
   return (
-    <div ref={tbodyRef}>
-      {loading && <StyledText>Loading more...</StyledText>}
-    </div>
+    <StyledContainer ref={tbodyRef}>
+      {loading && <StyledText>{t`Loading more...`}</StyledText>}
+    </StyledContainer>
   );
 };

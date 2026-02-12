@@ -4,7 +4,7 @@
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
   "tags": [
-    "scope:frontend"
+    "scope:shared"
   ],
   "targets": {
     "build": {
@@ -101,16 +101,8 @@
         "test": {}
       }
     },
-    "storybook:coverage": {},
-    "storybook:test": {
-      "options": {
-        "port": 6007
-      }
-    },
-    "storybook:serve-and-test:static": {
-      "options": {
-        "port": 6007
-      }
-    }
+    "storybook:test": {},
+    "storybook:test:no-coverage": {},
+    "storybook:coverage": {}
   }
 }

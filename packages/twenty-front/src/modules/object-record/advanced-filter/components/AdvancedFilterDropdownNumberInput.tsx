@@ -4,6 +4,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 
 export const AdvancedFilterDropdownNumberInput = () => {
   const selectedOperandInDropdown = useRecoilComponentValue(
@@ -32,7 +33,7 @@ export const AdvancedFilterDropdownNumberInput = () => {
     <TextInput
       value={objectFilterDropdownFilterValue}
       onChange={handleChange}
-      placeholder="Enter value"
+      placeholder={t`Enter value`}
       fullWidth
       type="number"
     />

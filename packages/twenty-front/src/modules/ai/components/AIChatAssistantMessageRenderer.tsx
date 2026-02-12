@@ -1,3 +1,4 @@
+import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { IconDotsVertical } from 'twenty-ui/display';
@@ -56,6 +57,40 @@ const InitialLoadingIndicator = () => {
   );
 };
 
+const MessagePartRenderer = ({ part }: { part: ExtendedUIMessagePart }) => {
+  switch (part.type) {
+    case 'reasoning':
+      return (
+        <ReasoningSummaryDisplay
+          content={part.text}
+          isThinking={part.state === 'streaming'}
+        />
+      );
+    case 'text':
+      return <LazyMarkdownRenderer text={part.text} />;
+    case 'data-routing-status':
+      return <RoutingStatusDisplay data={part.data} />;
+    case 'data-code-execution':
+      return (
+        <CodeExecutionDisplay
+          code={part.data.code}
+          stdout={part.data.stdout}
+          stderr={part.data.stderr}
+          exitCode={part.data.exitCode}
+          files={part.data.files}
+          isRunning={
+            part.data.state === 'running' || part.data.state === 'pending'
+          }
+        />
+      );
+    default:
+      if (isToolUIPart(part)) {
+        return <ToolStepRenderer toolPart={part} />;
+      }
+      return null;
+  }
+};
+
 export const AIChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
@@ -65,38 +100,25 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
-  const renderMessagePart = (part: ExtendedUIMessagePart, index: number) => {
-    switch (part.type) {
-      case 'reasoning':
-        return (
-          <ReasoningSummaryDisplay
-            key={index}
-            content={part.text}
-            isThinking={part.state === 'streaming'}
-          />
-        );
-      case 'text':
-        return <LazyMarkdownRenderer key={index} text={part.text} />;
-      case 'data-routing-status':
-        return <RoutingStatusDisplay data={part.data} key={index} />;
-      default:
-        {
-          if (isToolUIPart(part)) {
-            return <ToolStepRenderer key={index} toolPart={part} />;
-          }
-        }
-        return null;
-    }
-  };
+  // Filter out data-code-execution parts when tool-code_interpreter exists
+  // (the tool part contains the final result, data-code-execution is for streaming updates)
+  const hasCodeInterpreterTool = messageParts.some(
+    (part) => part.type === 'tool-code_interpreter',
+  );
+  const filteredParts = hasCodeInterpreterTool
+    ? messageParts.filter((part) => part.type !== 'data-code-execution')
+    : messageParts;
 
-  if (!messageParts.length && !hasError) {
+  if (!filteredParts.length && !hasError) {
     return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
       <StyledMessagePartsContainer>
-        {messageParts.map(renderMessagePart)}
+        {filteredParts.map((part, index) => (
+          <MessagePartRenderer key={index} part={part} />
+        ))}
       </StyledMessagePartsContainer>
       {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>

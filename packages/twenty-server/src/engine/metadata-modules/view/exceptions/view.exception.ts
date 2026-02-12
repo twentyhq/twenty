@@ -4,14 +4,15 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewException extends CustomException {
-  declare code: ViewExceptionCode;
+export class ViewException extends CustomException<ViewExceptionCode> {
   constructor(
     message: string,
     code: ViewExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage: userFriendlyMessage ?? msg`A view error occurred.`,
+    });
   }
 }
 

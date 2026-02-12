@@ -1,0 +1,179 @@
+---
+title: Automatizări pentru Closed Won
+description: Automatizați activitățile de după câștig atunci când oportunitățile se închid.
+---
+
+Când o tranzacție se închide, trebuie să se întâmple mai multe lucruri: actualizați starea companiei, notificați membrii echipei, creați sarcini de onboarding. Automatizați totul cu un singur flux de lucru.
+
+## Problema
+
+Atunci când o oportunitate trece la "Closed Won":
+
+* Tipul companiei trebuie să se schimbe din "Prospect" în "Customer"
+* Trebuie create sarcini de onboarding
+* Echipa de Customer Success trebuie notificată
+* Reprezentantul de vânzări are nevoie de confirmare
+
+Efectuarea manuală a acestor pași consumă timp și este predispusă la erori.
+
+## Soluția
+
+Creați un flux de lucru care gestionează automat toate activitățile de după câștig.
+
+## Configurare completă a fluxului de lucru
+
+### Pasul 1: Creați fluxul de lucru
+
+1. Accesați **Setări → Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l "Deal Won - Post-Win Automation"
+
+### Pasul 2: Configurați declanșatorul
+
+1. Selectați **Record is Updated**
+2. Alegeți **Oportunități**
+3. La "Fields to monitor", selectați **Stage**
+
+### Pasul 3: Adăugați filtrul de stadiu
+
+1. Adăugați acțiunea **Filter**
+2. Condiție: `{{trigger.object.stage}}` este egal cu "Closed Won"
+
+### Pasul 4: Actualizați tipul companiei
+
+1. Adăugați acțiunea **Update Record**
+2. Configurați:
+
+| Câmp                       | Valoare                         |
+| -------------------------- | ------------------------------- |
+| **Obiect**                 | Companii                        |
+| **Înregistrare**           | `{{trigger.object.company.id}}` |
+| **Tip**                    | Client                          |
+| **Data primei tranzacții** | `{{trigger.object.closedAt}}`   |
+| **Proprietarul contului**  | `{{trigger.object.owner.id}}`   |
+
+### Pasul 5: Creați o sarcină de onboarding
+
+1. Adăugați acțiunea **Create Record**
+2. Configurați:
+
+| Câmp                      | Valoare                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Obiect**                | Sarcini                                                                                                          |
+| **Titlu**                 | `Onboarding: {{trigger.object.name}}`                                                                            |
+| **Responsabil**           | Membru al echipei de Customer Success                                                                            |
+| **Data scadenței**        | Peste 3 zile                                                                                                     |
+| **Prioritate**            | Ridicată                                                                                                         |
+| **Companie asociată**     | `{{trigger.object.company.id}}`                                                                                  |
+| **Oportunitate asociată** | `{{trigger.object.id}}`                                                                                          |
+| **Descriere**             | `Onboarding pentru noul client {{trigger.object.company.name}}. Valoarea tranzacției: {{trigger.object.amount}}` |
+
+### Pasul 6: Notificați echipa de Customer Success
+
+1. Adăugați acțiunea **Send Email**
+2. Configurați:
+
+| Câmp        | Valoare                                          |
+| ----------- | ------------------------------------------------ |
+| **Către**   | customer-success@yourcompany.com                 |
+| **Subiect** | `🎉 Client nou: {{trigger.object.company.name}}` |
+| **Corp**    | Consultați exemplul de mai jos                   |
+
+**Exemplu de corp al e-mailului**:
+
+```
+Bună, echipă CS,
+
+Avem un client nou!
+
+Companie: {{trigger.object.company.name}}
+Tranzacție: {{trigger.object.name}}
+Valoare: {{trigger.object.amount}}
+Reprezentant de vânzări: {{trigger.object.owner.name}}
+Data închiderii: {{trigger.object.closedAt}}
+
+O sarcină de onboarding a fost creată automat.
+
+Să le oferim un început grozav!
+```
+
+### Pasul 7: Confirmare către reprezentantul de vânzări
+
+1. Adăugați încă o acțiune **Send Email**
+2. Configurați:
+
+| Câmp        | Valoare                                                                                                           |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Către**   | `{{trigger.object.owner.email}}`                                                                                  |
+| **Subiect** | `✅ Tranzacție închisă: {{trigger.object.name}}`                                                                   |
+| **Corp**    | Felicitări! Tranzacția a fost procesată. Echipa de Customer Success a fost notificată și onboarding-ul a început. |
+
+### Pasul 8: Testați și activați
+
+1. Testați mutând o oportunitate de test la "Closed Won"
+2. Verifică:
+   * Tipul companiei schimbat la "Customer"
+   * Sarcină de onboarding creată
+   * Echipa de Customer Success a primit e-mailul
+   * Reprezentantul de vânzări a primit confirmarea
+3. Activați când sunteți gata
+
+## Gestionarea Closed Lost
+
+Creați un flux de lucru similar pentru tranzacțiile pierdute:
+
+### Declanșator
+
+* Record is Updated (Oportunități, Stage = "Closed Lost")
+
+### Acțiuni
+
+1. **Create Record**: Sarcină pentru "Lost Deal Analysis"
+2. **Update Record**: Adăugați motivul pierderii în înregistrarea companiei
+3. **Send Email**: Notificați managerul privind tranzacția pierdută
+
+## Avansat: Onboarding în mai mulți pași
+
+Pentru onboarding complex, creați mai multe sarcini:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Utilizați **Iterator** pentru a crea fiecare sarcină din array.
+
+## Idei de personalizare
+
+### Mențineți celelalte instrumente actualizate
+
+* Creați un client în sistemul de facturare cu un **HTTP Request**
+
+### Acțiuni condiționale
+
+Utilizați acțiunile **Filter** pentru:
+
+* Onboarding diferit pentru enterprise vs IMM
+* Responsabili diferiți în funcție de regiune
+* Omiteți notificările pentru tranzacții mici
+
+### Includeți detaliile tranzacției
+
+Utilizați acțiunea **Code** pentru a formata:
+
+* Documente cu rezumatul tranzacției
+* Note de predare pentru echipa de Customer Success
+* Liste de verificare personalizate pentru onboarding
+
+## Conexe
+
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)

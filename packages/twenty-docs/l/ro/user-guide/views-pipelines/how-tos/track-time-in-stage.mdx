@@ -1,0 +1,231 @@
+---
+title: Urmăriți cât timp rămân oportunitățile în fiecare etapă.
+description: Monitorizați viteza tranzacțiilor urmărind momentul când oportunitățile intră în fiecare etapă.
+---
+
+<Tip>
+  Acesta este un exemplu de creare a [Câmpurilor de formulă](/l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields) folosind fluxuri de lucru — în special calcule de date.
+</Tip>
+
+Urmărirea momentului în care oportunitățile intră în fiecare etapă vă ajută să identificați blocajele și să măsurați viteza tranzacțiilor.
+
+Acest ghid vă ghidează prin configurarea câmpurilor personalizate și a unui flux de lucru pentru a înregistra automat când o oportunitate trece în fiecare etapă și a calcula câte zile a petrecut în etapa anterioară.
+
+## Pasul 1: Creați câmpuri personalizate
+
+Aveți nevoie de două tipuri de câmpuri pentru fiecare etapă:
+
+* **Câmpuri Dată și oră**: înregistrează când oportunitatea a intrat în fiecare etapă
+* **Câmpuri Număr**: stochează câte zile a petrecut oportunitatea în fiecare etapă
+
+### Creați câmpurile "Ultima intrare"
+
+1. Accesați **Setări → Model de date → Oportunități**
+2. Pentru fiecare etapă, faceți clic pe **+ Adăugați câmp** și configurați:
+   * **Nume**: Ultima intrare în [numele etapei] (de ex., "Ultima intrare în Nou", "Ultima intrare în Calificat")
+   * **Tip**: Dată și oră
+   * **Descriere**: marcaj temporal când oportunitatea a intrat în această etapă
+3. Faceți clic pe **Salvare**
+
+Creați aceste câmpuri:
+
+* Ultima intrare în Nou
+* Ultima intrare în Calificat
+* Ultima intrare în Întâlnire
+* Ultima intrare în Propunere
+* Ultima intrare în Negociere
+* Ultima intrare în Închis - câștigat
+* Ultima intrare în Închis - pierdut
+
+### Creați câmpurile "Zile în etapă"
+
+1. Pentru fiecare etapă, faceți clic pe **+ Adăugați câmp** și configurați:
+   * **Nume**: Zile în [numele etapei] (de ex., "Zile în Nou", "Zile în Calificat")
+   * **Tip**: Număr
+   * **Descriere**: numărul de zile petrecute în această etapă
+2. Faceți clic pe **Salvare**
+
+Creați aceste câmpuri:
+
+* Zile în Nou
+* Zile în Calificat
+* Zile în Întâlnire
+* Zile în Propunere
+* Zile în Negociere
+
+<Note>
+  Nu aveți nevoie de câmpuri "Zile în" pentru Închis - câștigat și Închis - pierdut, deoarece acestea sunt etape finale.
+</Note>
+
+### Opțional: Faceți câmpurile doar pentru citire
+
+Dacă nu doriți ca utilizatorii să editeze manual aceste câmpuri calculate:
+
+1. Accesați **Setări → Roluri**
+2. Selectați rolul de configurat
+3. Găsiți obiectul Oportunități
+4. Setați câmpurile "Ultima intrare" și "Zile în" ca doar pentru citire
+
+## Pasul 2: Creați fluxul de lucru
+
+Acest flux de lucru unic gestionează ambele sarcini:
+
+* Înregistrează marcajul temporal la intrarea într-o etapă nouă
+* Calculează zilele petrecute în etapa anterioară
+
+### Creați fluxul de lucru
+
+1. Accesați **Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l "Urmăriți timpul în etapă"
+
+### Configurați declanșatorul
+
+1. Adăugați un declanșator **Record Updated**
+2. Selectați **Oportunități** ca obiect
+3. Filtrați după: câmpul **Etapă** este actualizat
+
+### Adăugați ramuri pentru fiecare etapă
+
+<Note>
+  Pentru a crea o ramură nouă, faceți clic dreapta pe planșa fluxului de lucru și faceți clic pe **Acțiune nouă**. Apoi, legați această acțiune de nodul anterior trăgând săgeata de la nodul anterior către această acțiune nouă.
+</Note>
+
+---
+
+**Ramura 1: Etapă = Nou (prima etapă)**
+
+Deoarece aceasta este prima etapă, înregistrăm doar marcajul temporal de intrare — nu există etapă anterioară de calculat.
+
+1. Adăugați un nod **Filtru**: Etapă = Nou
+2. Adăugați o acțiune **Cod**:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. Adăugați o acțiune **Update Record**:
+   * Înregistrare: oportunitatea declanșatoare
+   * Câmp: Ultima intrare în Nou
+   * Valoare: `now` din nodul Cod
+
+---
+
+**Ramura 2: Etapă = Calificat**
+
+Când treceți la Calificat, înregistrați momentul intrării ȘI calculați zilele petrecute în Nou.
+
+1. Adăugați un nod **Filtru**: Etapă = Calificat
+2. Adăugați o acțiune **Cod**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configurați intrarea nodului Cod: mapați `lastEnteredPreviousStage` la câmpul **Ultima intrare în Nou**
+4. Adăugați o acțiune **Update Record**:
+   * Înregistrare: oportunitatea declanșatoare
+   * Câmpuri de actualizat:
+     * Ultima intrare în Calificat = `now`
+     * Zile în Nou = `daysInPreviousStage`
+
+---
+
+**Ramura 3: Etapă = Întâlnire**
+
+Când treceți la Întâlnire, înregistrați momentul intrării ȘI calculați zilele petrecute în Calificat.
+
+1. Adăugați un nod **Filtru**: Etapă = Întâlnire
+2. Adăugați o acțiune **Cod**:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Configurați intrarea nodului Cod: mapați `lastEnteredPreviousStage` la câmpul **Ultima intrare în Calificat**
+4. Adăugați o acțiune **Update Record**:
+   * Înregistrare: oportunitatea declanșatoare
+   * Câmpuri de actualizat:
+     * Ultima intrare în Întâlnire = `now`
+     * Zile în Calificat = `daysInPreviousStage`
+
+---
+
+**Continuați pentru etapele rămase:**
+
+| Etapa             | Înregistrări                        | Calculează        |
+| ----------------- | ----------------------------------- | ----------------- |
+| Propunere         | Ultima intrare în Propunere         | Zile în Întâlnire |
+| Negociere         | Ultima intrare în Negociere         | Zile în Propunere |
+| Închis - câștigat | Ultima intrare în Închis - câștigat | Zile în Negociere |
+| Închis - pierdut  | Ultima intrare în Închis - pierdut  | Zile în Negociere |
+
+Ramurile nu trebuie să se reunească — fiecare rulează independent când condiția etapei sale este îndeplinită.
+
+## Pasul 3: Analizați timpul în etapă
+
+Cu marcajele temporale și numărul de zile înregistrate, puteți acum analiza viteza tranzacțiilor.
+
+### Creați o vizualizare "Tranzacții lente"
+
+1. Creați o vizualizare Tabel a Oportunităților
+2. Adăugați coloane: Nume, Etapă, Zile în [etapa anterioară], Sumă
+3. Sortați după câmpul "Zile în" (descrescător)
+4. Filtrați după Etapă pentru a vă concentra pe câte o etapă o dată
+
+Tranzacțiile din partea de sus au petrecut cel mai mult timp în etapa anterioară.
+
+### Utilizați agregări
+
+În vizualizarea Kanban a pipeline-ului dvs.:
+
+1. Faceți clic pe numărul de lângă numele unei Etape
+2. Selectați **Medie**
+3. Alegeți un câmp "Zile în"
+
+Aceasta arată timpul mediu pe care tranzacțiile îl petrec în fiecare etapă.
+
+## Rezumat
+
+| Componentă                  | Scop                                                                        |
+| --------------------------- | --------------------------------------------------------------------------- |
+| **Câmpuri Ultima intrare**  | Stochează când oportunitatea a intrat în fiecare etapă                      |
+| **Câmpuri Zile în**         | Stochează câte zile au fost petrecute în fiecare etapă                      |
+| **Flux de lucru**           | Înregistrează marcajul temporal ȘI calculează zilele într-o singură trecere |
+| **Vizualizări și agregări** | Analizați viteza tranzacțiilor și identificați blocajele                    |
+
+## Articole conexe
+
+* [Fluxuri de lucru](/l/ro/user-guide/workflows/overview) — elemente de bază ale automatizării
+* [Cum să creați câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields) — configurarea câmpurilor
+* [Vizualizări Kanban](/l/ro/user-guide/views-pipelines/capabilities/kanban-views) — agregări

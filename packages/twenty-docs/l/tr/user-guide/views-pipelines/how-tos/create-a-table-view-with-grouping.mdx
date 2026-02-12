@@ -1,0 +1,51 @@
+---
+title: Gruplama ile Tablo Görünümü oluşturun
+description: Kayıtlarınızı alan değerine göre daraltılabilir gruplar halinde düzenleyin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Kayıtları daraltılabilir bölümler halinde düzenlemek için tablo görünümünüzü bir Select alanına göre gruplayın.
+
+<img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
+
+## Adımlar
+
+1. Nesneye gidin (Kişiler, Şirketler vb.)
+2. Görünüm açılır menüsüne tıklayın → **+ Görünüm ekle**
+3. Görünümünüze ad verin (örn. "Türe Göre Şirketler")
+4. **Oluştur**'a tıklayın
+5. **Seçenekler → Grupla**'ya tıklayın
+6. Gruplamak için bir Select alanı seçin
+7. **Kaydet**'e tıklayın
+
+## Grup Sırasını Yapılandırın
+
+**Seçenekler → Grupla → Sırala** altında, grupların nasıl sıralanacağını seçin:
+
+| Seçenek             | Açıklama                                                             |
+| ------------------- | -------------------------------------------------------------------- |
+| **Alfabetik**       | A'dan Z'ye                                                           |
+| **Ters alfabetik**  | Z'den A'ya                                                           |
+| **El ile sıralama** | "Görünür gruplar" altında grupları yeniden sıralamak için sürükleyin |
+
+Bir grubu görünümden gizlemek için yanındaki **göz simgesine** tıklayın.
+
+<Note>
+  **En iyi performans için görünür grupları 10-15 ile sınırlandırın.** Daha fazlasına ihtiyacınız varsa, bunun yerine bir Dashboard kullanmayı düşünün.
+</Note>
+
+## Örnek: Sektöre Göre Şirketler
+
+1. **Şirketler**'e gidin
+2. "Sektöre Göre" adlı yeni bir görünüm oluşturun
+3. **Seçenekler → Grupla**'ya tıklayın
+4. **Sektör** alanını seçin
+5. Kaydet
+
+Artık şirketleriniz sektöre göre düzenlendi; böylece tek bir segmente odaklanmanız kolaylaşır.
+
+## İlgili
+
+* [Tablo Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/table-views) — tüm tablo görünümü özellikleri
+* [Filtreler ve Sıralama](/l/tr/user-guide/views-pipelines/capabilities/filters-and-sorting) — gruplamayı filtrelerle birleştirin

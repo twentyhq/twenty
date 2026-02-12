@@ -1,0 +1,120 @@
+---
+title: 영업 파이프라인 설정
+description: 영업 파이프라인을 구성하여 단계별로 기회를 추적하세요.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty의 영업 파이프라인은 기회 객체의 칸반 보기로, 각 열은 영업 프로세스의 단계를 나타냅니다.
+
+## 1단계: 단계 구성
+
+단계는 기회 객체의 **Stage** 필드에서 정의됩니다.
+
+1. **설정 → 데이터 모델**로 이동
+2. **Opportunities**를 선택하세요
+3. **Stage** 필드를 찾아 클릭하세요
+4. 프로세스에 맞게 단계를 추가, 제거 또는 이름 변경하세요
+
+<VimeoEmbed videoId="927890428" title="동영상 시연" />
+
+### 권장 단계
+
+| 단계              | 목적           |
+| --------------- | ------------ |
+| **New**         | 방금 식별된 신규 기회 |
+| **Qualified**   | 적합한 것으로 확인됨  |
+| **Meeting**     | 논의 진행 중      |
+| **Proposal**    | 제안서 발송됨      |
+| **Negotiation** | 조건 협의 중      |
+| **Closed Won**  | 거래 성사        |
+| **Closed Lost** | 거래 실패        |
+
+<Note>
+  **5-7개 단계가 최적입니다.** 단계가 너무 많으면 파이프라인을 한눈에 파악하기 어렵고, 너무 적으면 거래 진행 상황의 가시성이 떨어집니다.
+</Note>
+
+## 2단계: 파이프라인 보기 만들기
+
+1. **Opportunities**로 이동
+2. 뷰 드롭다운에서 → **+ 뷰 추가**를 클릭하세요
+3. "Sales Pipeline"으로 이름을 지정하세요
+4. **Create**를 클릭하세요
+5. **Options**을 열고 레이아웃으로 **Kanban**을 선택하세요
+
+해당 보기는 열로 Stage 필드를 자동으로 사용합니다.
+
+## 3단계: 보기 구성
+
+### 핵심 필드 표시
+
+1. **Options → Fields**를 클릭하세요
+2. "Hidden Fields" 섹션에서 필드를 찾으세요
+3. 눈 모양 아이콘을 클릭하여 다음을 표시하세요: Company, Amount, Close Date, Owner
+
+### 집계 사용
+
+각 열 상단에 합계를 표시합니다:
+
+1. 열 상단의 Stage 이름 옆에 표시된 숫자를 클릭하세요
+2. 집계 유형(Count, Sum, Average 등)을 선택하세요
+3. 집계할 필드(예: Amount)를 선택하세요
+
+**예시:** Amount를 Sum으로 집계하여 단계별 총 거래 금액을 표시합니다.
+
+### Compact View 사용(선택 사항)
+
+카드 내용을 최소화하고 한눈에 개요를 보려면:
+
+1. **Options**를 클릭하세요
+2. **Compact view** 토글을 켜세요
+
+## 4단계: 개인 및 팀 보기 만들기
+
+### "My Pipeline"
+
+* **Filter**: Owner = Me
+* **Visibility**: Unlisted (개인용 보기)
+
+### "Team Pipeline"
+
+* **Filter**: None (모두 표시)
+* **Visibility**: Workspace (공유 보기)
+
+### "Closing This Month"
+
+* **Type**: Table
+* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
+* **Sort**: Close Date ascending
+
+## 기회 다루기
+
+### 기회 만들기
+
+* Opportunities 보기에서 **+ New**를 클릭하세요
+* 또는 특정 단계 열에서 \*\*+\*\*를 클릭하세요
+
+### 단계 진행
+
+열 사이로 기회 카드를 드래그 앤 드롭하여 단계를 업데이트하세요.
+
+<VimeoEmbed videoId="927888627" title="동영상 시연" />
+
+## 모범 사례
+
+### 파이프라인 위생 관리
+
+* 거래 진행 상황을 매일 업데이트하세요
+* 오래된 거래는 신속히 이동하거나 종료하세요
+* 종결일을 현실적으로 유지하세요
+
+### 단계 규율
+
+* 각 단계에 대한 명확한 기준을 정의하세요
+* 기준이 충족되면 거래를 신속히 이동하세요
+* 거래가 단계에 너무 오래 머물지 않도록 하세요
+
+## 관련 항목
+
+* [칸반 보기](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — 집계 및 컴팩트 보기
+* [필터 및 정렬](/l/ko/user-guide/views-pipelines/capabilities/filters-and-sorting) — 필터된 보기 만들기

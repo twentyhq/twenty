@@ -1,5 +1,5 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { localStorageEffect } from '~/utils/recoil-effects';
+import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
 
 export const isNavigationSectionOpenFamilyState = createFamilyState<
   boolean,

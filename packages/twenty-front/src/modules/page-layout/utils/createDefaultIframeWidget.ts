@@ -1,8 +1,9 @@
 import {
   type GridPosition,
   type PageLayoutWidget,
+  WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const createDefaultIframeWidget = (
   id: string,
@@ -19,6 +20,7 @@ export const createDefaultIframeWidget = (
     title,
     type: WidgetType.IFRAME,
     configuration: {
+      configurationType: WidgetConfigurationType.IFRAME,
       url,
     },
     gridPosition,

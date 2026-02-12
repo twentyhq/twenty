@@ -15,18 +15,23 @@ import {
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
+import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 
-interface SendMessageInput {
+type EmailAddress = string | string[];
+
+type SendMessageInput = {
   body: string;
   subject: string;
-  to: string;
+  to: EmailAddress;
+  cc?: EmailAddress;
+  bcc?: EmailAddress;
   html: string;
   attachments?: {
     filename: string;
     content: Buffer;
     contentType: string;
   }[];
-}
+};
 
 @Injectable()
 export class MessagingSendMessageService {
@@ -75,6 +80,8 @@ export class MessagingSendMessageService {
             ? `"${mimeEncode(fromName)}" <${fromEmail}>`
             : `${fromEmail}`,
           to: sendMessageInput.to,
+          cc: sendMessageInput.cc,
+          bcc: sendMessageInput.bcc,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
@@ -90,7 +97,11 @@ export class MessagingSendMessageService {
             : {}),
         });
 
-        const messageBuffer = await mail.compile().build();
+        const compiledMessage = mail.compile();
+
+        compiledMessage.keepBcc = true;
+
+        const messageBuffer = await compiledMessage.build();
         const encodedMessage = Buffer.from(messageBuffer).toString('base64');
 
         await gmailClient.users.messages.send({
@@ -113,7 +124,9 @@ export class MessagingSendMessageService {
             contentType: 'HTML',
             content: sendMessageInput.html,
           },
-          toRecipients: [{ emailAddress: { address: sendMessageInput.to } }],
+          toRecipients: toMicrosoftRecipients(sendMessageInput.to),
+          ccRecipients: toMicrosoftRecipients(sendMessageInput.cc),
+          bccRecipients: toMicrosoftRecipients(sendMessageInput.bcc),
           ...(sendMessageInput.attachments &&
           sendMessageInput.attachments.length > 0
             ? {
@@ -154,6 +167,8 @@ export class MessagingSendMessageService {
         const mail = new MailComposer({
           from: handle,
           to: sendMessageInput.to,
+          cc: sendMessageInput.cc,
+          bcc: sendMessageInput.bcc,
           subject: sendMessageInput.subject,
           text: sendMessageInput.body,
           html: sendMessageInput.html,
@@ -174,6 +189,8 @@ export class MessagingSendMessageService {
         await smtpClient.sendMail({
           from: handle,
           to: sendMessageInput.to,
+          cc: sendMessageInput.cc,
+          bcc: sendMessageInput.bcc,
           raw: messageBuffer,
         });
 

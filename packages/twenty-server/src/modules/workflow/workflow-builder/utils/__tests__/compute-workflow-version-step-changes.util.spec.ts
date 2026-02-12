@@ -41,7 +41,11 @@ describe('computeWorkflowVersionStepChanges', () => {
       settings: {
         input: {
           connectedAccountId: '',
-          email: '',
+          recipients: {
+            to: '',
+            cc: '',
+            bcc: '',
+          },
           subject: '',
           body: '',
         },
@@ -98,9 +102,8 @@ describe('computeWorkflowVersionStepChanges', () => {
         type: WorkflowActionType.CODE,
         settings: {
           input: {
-            serverlessFunctionId: '',
-            serverlessFunctionVersion: '',
-            serverlessFunctionInput: {},
+            logicFunctionId: '',
+            logicFunctionInput: {},
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },

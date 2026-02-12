@@ -16,11 +16,15 @@ export const parseEditorContent = (json: JSONContent): string => {
     }
 
     if (node.type === 'hardBreak') {
-      return '\n';
+      return '  \n';
     }
 
     if (node.type === 'variableTag') {
       return node.attrs?.variable || '';
+    }
+
+    if (node.type === 'textTag') {
+      return node.attrs?.text || '';
     }
 
     return '';

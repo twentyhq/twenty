@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/react';
-import { parseEditorContent } from '../parseEditorContent';
+import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 
 describe('parseEditorContent', () => {
   it('should parse empty doc', () => {
@@ -265,7 +265,7 @@ describe('parseEditorContent', () => {
       ],
     };
 
-    expect(parseEditorContent(input)).toBe('First line\nSecond line');
+    expect(parseEditorContent(input)).toBe('First line  \nSecond line');
   });
 
   it('should handle spaces between variables correctly', () => {

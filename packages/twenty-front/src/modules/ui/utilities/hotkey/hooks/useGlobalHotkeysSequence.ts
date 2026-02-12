@@ -2,7 +2,7 @@ import { type Options, useHotkeys } from 'react-hotkeys-hook';
 import { type Keys } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
-import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
+import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
 
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { isDefined } from 'twenty-shared/utils';

@@ -1,12 +1,11 @@
 import { msg, t } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 const STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX =
   /^[a-z][a-zA-Z0-9]*$/;
@@ -34,15 +33,6 @@ export const validateFlatFieldMetadataName = ({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: t`Name is too short`,
       userFriendlyMessage: msg`Name is too short`,
-      value: name,
-    });
-  }
-
-  if (name !== camelCase(name)) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: t`Name should be in camelCase`,
-      userFriendlyMessage: msg`Name should be in camelCase`,
       value: name,
     });
   }

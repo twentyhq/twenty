@@ -106,7 +106,7 @@ export const CreateRelatedRecordAction = ({
     if (isDefined(labelIdentifierFieldMetadataItem)) {
       openRecordTitleCell({
         recordId: createdRecord.id,
-        fieldName: labelIdentifierFieldMetadataItem.name,
+        fieldMetadataItemId: labelIdentifierFieldMetadataItem.id,
         instanceId: getRecordFieldInputInstanceId({
           recordId: createdRecord.id,
           fieldName: labelIdentifierFieldMetadataItem.name,

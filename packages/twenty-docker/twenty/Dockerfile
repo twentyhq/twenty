@@ -8,13 +8,13 @@ COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /ap
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./.yarn/patches /app/.yarn/patches
 
-COPY ./.prettierrc /app/
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 
 # Install all dependencies
 RUN yarn && yarn cache clean && npx nx reset
@@ -40,6 +40,7 @@ ARG REACT_APP_SERVER_BASE_URL
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
+COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 RUN npx nx build twenty-front
 
 

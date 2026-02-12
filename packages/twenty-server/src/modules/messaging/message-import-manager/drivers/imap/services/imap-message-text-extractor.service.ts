@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
-import DOMPurify from 'dompurify';
+import createDOMPurify from 'dompurify';
 import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
 import * as planer from 'planer';
+import { safeDecodeURIComponent } from 'twenty-shared/utils';
 import { type Email as ParsedEmail } from 'postal-mime';
-
-import { safeDecodeURIComponent } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/safe-decode-uri-component.util';
 
 @Injectable()
 export class ImapMessageTextExtractorService {
   private readonly jsdomInstance: JSDOM;
-  private readonly purify: DOMPurify.DOMPurify;
+  private readonly purify: ReturnType<typeof createDOMPurify>;
 
   constructor() {
     this.jsdomInstance = new JSDOM('');
-    this.purify = DOMPurify(this.jsdomInstance.window);
+    this.purify = createDOMPurify(this.jsdomInstance.window);
   }
 
   extractTextWithoutReplyQuotations(parsed: ParsedEmail): string {

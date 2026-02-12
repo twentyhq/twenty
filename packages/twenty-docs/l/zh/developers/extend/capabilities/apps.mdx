@@ -1,0 +1,662 @@
+---
+title: Twenty 应用
+description: 以代码的形式构建并管理 Twenty 自定义项。
+---
+
+<Warning>
+  应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
+</Warning>
+
+## 什么是应用？
+
+应用使你能够**以代码的形式**构建和管理 Twenty 自定义项。 无需通过 UI 配置所有内容，你可以在代码中定义数据模型和逻辑函数——从而更快地构建、维护，并推广到多个工作空间。
+
+**你现在可以做什么:**
+
+* 以代码定义自定义对象和字段（受管理的数据模型）
+* 构建带有自定义触发器的逻辑函数
+* 将同一个应用部署到多个工作空间
+
+## 先决条件
+
+* Node.js 24+ 和 Yarn 4
+* 一个 Twenty 工作空间和一个 API 密钥（在 https://app.twenty.com/settings/api-webhooks 创建）
+
+## 开始使用
+
+使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
+
+```bash filename="Terminal"
+# 搭建一个新应用
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# 如果你不使用 yarn@4
+corepack enable
+yarn install
+
+# 使用你的 API 密钥进行身份验证（系统会提示你）
+yarn auth:login
+
+# 启动开发模式：会将本地更改自动同步到你的工作区
+yarn app:dev
+```
+
+从这里您可以：
+
+```bash filename="Terminal"
+# Add a new entity to your application (guided)
+yarn entity:add
+
+# Generate a typed Twenty client and workspace entity types
+yarn app:generate
+
+# Watch your application's function logs
+yarn function:logs
+
+# Execute a function by name
+yarn function:execute -n my-function -p '{\"name\": \"test\"}'
+
+# Uninstall the application from the current workspace
+yarn app:uninstall
+
+# Display commands' help
+yarn help
+```
+
+另请参阅：[create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 和 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) 的 CLI 参考页面。
+
+## 项目结构（脚手架生成）
+
+当你运行 `npx create-twenty-app@latest my-twenty-app` 时，脚手架将：
+
+* 将一个最小的基础应用复制到 `my-twenty-app/` 中
+* 添加本地 `twenty-sdk` 依赖和 Yarn 4 配置
+* 创建与 `twenty` CLI 关联的配置文件和脚本
+* 生成默认的应用配置和默认的函数角色
+
+一个新生成的脚手架应用如下所示：
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  eslint.config.mjs
+  tsconfig.json
+  README.md
+  public/                           # 公共资源文件夹（图像、字体等）
+  src/
+  ├── application-config.ts           # 必需 - 主应用程序配置
+  ├── roles/
+  │   └── default-role.ts               # 用于逻辑函数的默认角色
+  ├── logic-functions/
+  │   └── hello-world.ts                # 示例逻辑函数
+  └── front-components/
+      └── hello-world.tsx               # 示例前端组件
+```
+
+总体来说：
+
+* **package.json**：声明应用名称、版本、运行时（Node 24+、Yarn 4），并添加 `twenty-sdk`，以及诸如 `app:dev`、`app:generate`、`entity:add`、`function:logs`、`function:execute`、`app:uninstall` 等脚本和认证命令，它们都会委托给本地的 `twenty` CLI。
+* **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
+* **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
+* **.nvmrc**：固定项目期望的 Node.js 版本。
+* **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
+* **README.md**：应用根目录中的简短 README，包含基本说明。
+* **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
+* **src/**：你以代码形式定义应用的主要位置
+
+### 实体检测
+
+该 SDK 通过在你的 TypeScript 文件中解析 **`export default define<Entity>({...})`** 调用来检测实体。 每种实体类型都有一个从 `twenty-sdk` 导出的对应辅助函数：
+
+| 辅助函数                     | 实体类型      |
+| ------------------------ | --------- |
+| `defineObject()`         | 自定义对象定义   |
+| `defineLogicFunction()`  | 逻辑函数定义    |
+| `defineFrontComponent()` | 前端组件定义    |
+| `defineRole()`           | 角色定义      |
+| `defineField()`          | 现有对象的字段扩展 |
+
+<Note>
+  **文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
+</Note>
+
+已检测实体的示例：
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
+
+后续命令将添加更多文件和文件夹：
+
+* `yarn app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
+* `yarn entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
+
+## 身份验证
+
+首次运行 `yarn auth:login` 时，你将被提示输入：
+
+* API URL（默认为 http://localhost:3000 或你当前的工作空间配置）
+* API 密钥
+
+你的凭据按用户存储在 `~/.twenty/config.json` 中。 你可以维护多个配置文件并在它们之间切换。
+
+### 管理工作空间
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn auth:login
+
+# Login to a specific workspace profile
+yarn auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn auth:list
+
+# Switch the default workspace (interactive)
+yarn auth:switch
+
+# Switch to a specific workspace
+yarn auth:switch production
+
+# Check current authentication status
+yarn auth:status
+```
+
+使用 `auth:switch` 切换工作空间后，后续所有命令将默认使用该工作空间。 你仍可通过 `--workspace <name>` 临时覆盖。
+
+## 使用 SDK 资源（类型与配置）
+
+twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以下是你最常接触的关键部分。
+
+### 辅助函数
+
+该 SDK 提供辅助函数用于定义你的应用实体。 如 [实体检测](#entity-detection) 中所述，你必须使用 `export default define<Entity>({...})` 才能让你的实体被检测到：
+
+| 函数                       | 目的                 |
+| ------------------------ | ------------------ |
+| `defineApplication()`    | 配置应用元数据（必需，每个应用一个） |
+| `defineObject()`         | 定义带字段的自定义对象        |
+| `defineLogicFunction()`  | 定义带处理程序的逻辑函数       |
+| `defineFrontComponent()` | 为自定义 UI 定义前端组件     |
+| `defineRole()`           | 配置角色权限和对象访问        |
+| `defineField()`          | 为现有对象扩展额外字段        |
+
+这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
+
+### 定义对象
+
+自定义对象同时描述工作空间中记录的架构与行为。 使用 `defineObject()` 以内置校验定义对象：
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+关键点：
+
+* 使用 `defineObject()` 以获得内置校验和更好的 IDE 支持。
+* `universalIdentifier` 必须在各次部署间保持唯一且稳定。
+* 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
+* `fields` 数组是可选的——你可以定义没有自定义字段的对象。
+* 你可以使用 `yarn entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
+
+<Note>
+  **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+</Note>
+
+### 应用配置（application-config.ts）
+
+每个应用都有一个 `application-config.ts` 文件，用于描述：
+
+* **应用的身份**：标识符、显示名称和描述。
+* **函数如何运行**：它们用于权限的角色。
+* **（可选）变量**：以环境变量形式提供给函数的键值对。
+
+使用 `defineApplication()` 定义你的应用配置：
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+备注:
+
+* `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
+* `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
+* `defaultRoleUniversalIdentifier` 必须与角色文件一致（见下文）。
+
+#### 角色和权限
+
+应用可以定义角色，以封装对工作空间对象与操作的权限。 `application-config.ts` 中的 `defaultRoleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
+
+* 作为 `TWENTY_API_KEY` 注入的运行时 API 密钥源自该默认函数角色。
+* 类型化客户端将受限于该角色授予的权限。
+* 遵循最小权限原则：仅授予函数所需权限来创建一个专用角色，然后引用其通用标识符。
+
+##### 默认函数角色（\*.role.ts）
+
+当你脚手架生成新应用时，CLI 也会创建一个默认角色文件。 使用 `defineRole()` 定义带内置校验的角色：
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+随后，该角色的 `universalIdentifier` 会在 `application-config.ts` 中被引用为 `defaultRoleUniversalIdentifier`。 换句话说：
+
+* **\*.role.ts** 定义默认函数角色可以执行的操作。
+* **application-config.ts** 指向该角色，使你的函数继承其权限。
+
+备注:
+
+* 从脚手架生成的角色开始，然后按照最小权限原则逐步收紧权限。
+* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数所需的对象/字段。
+* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化；仅添加所需项。
+* 在 Hello World 应用中查看可运行示例：[`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
+
+### 逻辑函数的配置与入口点
+
+每个函数文件都使用 `defineLogicFunction()` 导出包含处理程序和可选触发器的配置。
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import Twenty, { type Person } from '~/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new Twenty(); // generated typed client
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+常见触发器类型：
+
+* **route**：在\*\*`/s/` 端点\*\*下通过 HTTP 路径与方法公开你的函数：
+
+> 例如 `path: '/post-card/create',` -> 调用 `<APP_URL>/s/post-card/create`
+
+* **cron**：使用 CRON 表达式按计划运行你的函数。
+* **databaseEvent**：在工作空间对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
+
+> 例如 `person.updated`
+
+备注:
+
+* `triggers` 数组是可选的。 没有触发器的函数可作为实用函数，被其他函数调用。
+* 你可以在单个函数中混用多种触发器类型。
+
+### 路由触发器负载
+
+<Warning>
+  **破坏性变更（v1.16，2026 年 1 月）：** 路由触发器的负载格式已更改。 在 v1.16 之前，查询参数、路径参数和请求体会直接作为负载发送。 从 v1.16 开始，它们被嵌套在结构化的 `RoutePayload` 对象中。
+
+  **v1.16 之前：**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **v1.16 之后：**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **迁移现有函数：** 将处理程序更新为从 `event.body`、`event.queryStringParameters` 或 `event.pathParameters` 解构，而不是直接从参数对象解构。
+</Warning>
+
+当路由触发器调用你的逻辑函数时，它会接收一个遵循 AWS HTTP API v2 格式的 `RoutePayload` 对象。 从 `twenty-sdk` 导入该类型：
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+`RoutePayload` 类型具有以下结构：
+
+| 属性                           | 类型                                    | 描述                                               |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------ |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些）    |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                                |
+| `pathParameters`             | `Record<string, string \| undefined>` | 从路由模式中提取的路径参数（例如，`/users/:id` → `{ id: '123' }`） |
+| `请求体`                        | `object \| null`                      | 已解析的请求体（JSON）                                    |
+| `isBase64Encoded`            | `布尔值`                                 | 请求体是否为 base64 编码                                 |
+| `requestContext.http.method` | `string`                              | HTTP 方法（GET、POST、PUT、PATCH、DELETE）               |
+| `requestContext.http.path`   | `string`                              | 原始请求路径                                           |
+
+### 转发 HTTP 请求头
+
+出于安全原因，默认**不会**将传入请求的 HTTP 请求头传递给你的逻辑函数。 如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+随后你可以在处理程序中访问这些请求头：
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
+</Note>
+
+你可以通过两种方式创建新函数：
+
+* **脚手架生成**：运行 `yarn entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
+* **手动**：创建一个新的 `*.logic-function.ts` 文件，并使用 `defineLogicFunction()`，遵循相同的模式。
+
+### 前端组件
+
+前端组件使你可以构建在 Twenty 的 UI 中渲染的自定义 React 组件。 使用 `defineFrontComponent()` 以内置校验定义组件：
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+关键点：
+
+* 前端组件是在 Twenty 中的隔离上下文中渲染的 React 组件。
+* 使用 `*.front-component.tsx` 文件后缀以便自动检测。
+* `component` 字段引用你的 React 组件。
+* 组件会在 `yarn app:dev` 期间自动构建并同步。
+
+你可以通过两种方式创建新的前端组件：
+
+* **脚手架生成**：运行 `yarn entity:add` 并选择添加新前端组件的选项。
+* **手动**：创建一个新的 `*.front-component.tsx` 文件，并使用 `defineFrontComponent()`。
+
+### 生成的类型化客户端
+
+运行 yarn app:generate，根据你的工作空间模式在 generated/ 中创建本地类型化客户端。 在你的函数中使用它：
+
+```typescript
+import Twenty from '~/generated';
+
+const client = new Twenty();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+```
+
+客户端会通过 `yarn app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
+
+#### 逻辑函数中的运行时凭据
+
+当你的函数在 Twenty 上运行时，平台会在代码执行前将凭据作为环境变量注入：
+
+* `TWENTY_API_URL`：你的应用所针对的 Twenty API 的基础 URL。
+* `TWENTY_API_KEY`：作用域限定于你的应用默认函数角色的短期密钥。
+
+备注:
+
+* 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
+* API 密钥的权限由 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
+* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `defaultRoleUniversalIdentifier` 指向该角色的通用标识符。
+
+### Hello World 示例
+
+在[此处](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world)查看一个最小的端到端示例，展示对象、逻辑函数、前端组件和多种触发器：
+
+## 手动设置（不使用脚手架）
+
+虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 相反，请将 `twenty-sdk` 添加为本地依赖，并在你的 package.json 中连接相关脚本：
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+然后添加如下脚本：
+
+```json filename="package.json"
+{
+  "scripts": {
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
+  }
+}
+```
+
+现在你可以通过 Yarn 运行相同的命令，例如 `yarn app:dev`、`yarn app:generate` 等。
+
+## 故障排除
+
+* 身份验证错误：运行 `yarn auth:login`，并确保你的 API 密钥具有所需权限。
+* 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
+* 类型或客户端缺失/过期：运行 `yarn app:generate`。
+* 开发模式未同步：确保 `yarn app:dev` 正在运行，并且你的环境不会忽略变更。
+
+Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

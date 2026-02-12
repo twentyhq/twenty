@@ -1,5 +1,4 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -43,8 +42,6 @@ const StyledErrorMessage = styled.div`
 
 type AIChatErrorMessageProps = {
   error: Error;
-  records?: ObjectRecord[];
-  isRetrying?: boolean;
 };
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {

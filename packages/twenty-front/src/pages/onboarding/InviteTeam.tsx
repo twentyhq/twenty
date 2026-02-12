@@ -26,7 +26,7 @@ import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
   display: flex;

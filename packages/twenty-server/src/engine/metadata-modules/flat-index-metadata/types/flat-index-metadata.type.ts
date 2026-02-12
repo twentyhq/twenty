@@ -1,30 +1,10 @@
-import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
-import { type MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
-export type IndexMetadataRelationProperties =
-  ExtractRecordTypeOrmRelationProperties<
-    IndexMetadataEntity,
-    MetadataEntitiesRelationTarget
-  >;
+export type FlatIndexFieldMetadata = FlatEntityFrom<IndexFieldMetadataEntity>;
 
-export type IndexFieldMetadataEntityRelationProperties =
-  ExtractRecordTypeOrmRelationProperties<
-    IndexFieldMetadataEntity,
-    MetadataEntitiesRelationTarget
-  >;
-
-export type FlatIndexFieldMetadata = FlatEntityFrom<
-  IndexFieldMetadataEntity,
-  IndexFieldMetadataEntityRelationProperties
->;
-
-export type FlatIndexMetadata = FlatEntityFrom<
-  IndexMetadataEntity,
-  IndexMetadataRelationProperties
-> & {
-  universalIdentifier: string;
+export type FlatIndexMetadata = FlatEntityFrom<IndexMetadataEntity> & {
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
-};
+} & Pick<UniversalFlatIndexMetadata, 'universalFlatIndexFieldMetadatas'>;

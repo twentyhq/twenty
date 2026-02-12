@@ -141,4 +141,18 @@ describe('getSentFolderCandidatesByRegex', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('matches Sent folder when nested under INBOX', () => {
+    const input: ListResponse[] = [
+      { path: 'INBOX', name: 'Inbox' } as ListResponse,
+      { path: 'INBOX/Sent', name: 'Sent' } as ListResponse,
+      { path: 'INBOX/Archive', name: 'Archive' } as ListResponse,
+    ];
+
+    const result = getImapSentFolderCandidatesByRegex(input);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].path).toBe('INBOX/Sent');
+    expect(result[0].name).toBe('Sent');
+  });
 });

@@ -2,6 +2,7 @@ import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
@@ -31,7 +32,7 @@ export const AdvancedFilterLogicalOperatorCell = ({
   return (
     <StyledContainer>
       {index === 0 ? (
-        <StyledText>Where</StyledText>
+        <StyledText>{t`Where`}</StyledText>
       ) : index === 1 ? (
         <AdvancedFilterLogicalOperatorDropdown
           recordFilterGroup={recordFilterGroup}

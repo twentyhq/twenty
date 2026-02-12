@@ -1,0 +1,53 @@
+---
+title: Ich sehe keine E-Mails in Datensätzen
+description: Fehlerbehebung bei fehlenden E-Mails in Datensätzen.
+---
+
+## Häufige Ursachen
+
+### 1. Erstsynchronisierung läuft noch
+
+Die E-Mail-Synchronisierung braucht Zeit, insbesondere bei großen Postfächern. Twenty importiert E-Mails mit etwa **400 Nachrichten pro Minute** (begrenzt durch die Ratenbegrenzung der Gmail API).
+
+* **Kalendersynchronisierung**: in wenigen Minuten abgeschlossen
+* **E-Mail-Synchronisierung**: Abhängig von der Postfachgröße (z. B. 10.000 E-Mails ≈ 25 Minuten, 50.000 E-Mails ≈ 2 Stunden)
+
+**Lösung**: Warten Sie, bis der Erstimport abgeschlossen ist. Die Dauer lässt sich anhand der Größe Ihres Postfachs abschätzen.
+
+### 2. Kontakt existiert in Twenty nicht
+
+E-Mails erscheinen nur bei vorhandenen Personen-Datensätzen. Wenn der Kontakt noch nicht erstellt wurde:
+
+* Aktivieren Sie die **automatische Kontakterstellung** in Ihren Postfach-Einstellungen
+* Oder erstellen Sie zunächst den Personen-Datensatz manuell
+
+**Lösung**: Gehen Sie zu **Einstellungen → Accounts**, wählen Sie Ihr Postfach aus und aktivieren Sie die automatische Kontakterstellung.
+
+### 3. Interne E-Mails sind ausgeschlossen
+
+E-Mails zwischen Kolleginnen und Kollegen (gleiche E-Mail-Domain) werden nie synchronisiert, um die Privatsphäre zu wahren.
+
+**Lösung**: Dieses Verhalten ist beabsichtigt. Es werden nur externe E-Mails synchronisiert.
+
+### 4. E-Mail stammt aus einer Gruppe oder Verteilerliste
+
+Gruppen-E-Mails und Verteilerlisten sind von der Synchronisierung ausgeschlossen.
+
+**Lösung**: Dieses Verhalten ist beabsichtigt.
+
+### 5. Ordner nicht für die Synchronisierung ausgewählt
+
+Wenn Sie die Funktion Message Folder verwenden, können einige Ordner ausgeschlossen sein.
+
+**Lösung**: Gehen Sie zu **Einstellungen → Accounts**, wählen Sie Ihr Postfach aus und überprüfen Sie die Einstellungen zur Ordnersynchronisierung.
+
+### 6. Falsche E-Mail-Adresse im Datensatz
+
+Der Personen-Datensatz könnte eine andere E-Mail-Adresse enthalten als die, die in der E-Mail verwendet wurde.
+
+**Lösung**: Fügen Sie die korrekte E-Mail-Adresse zum Personen-Datensatz hinzu.
+
+## Funktioniert es immer noch nicht?
+
+1. Versuchen Sie, Ihr Postfach zu trennen und erneut zu verbinden
+2. Kontaktieren Sie den Support, wenn das Problem weiterhin besteht

@@ -1,83 +1,73 @@
 ---
-title: 圖標
+title: 图标
 image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="标题" />
 </Frame>
 
-我們應用程式中使用的圖標列表。
+我们应用程序中使用的图标列表。
 
-## Tabler 圖標
+## Tabler图标
 
-We use Tabler icons for React throughout the app.
+我们在整个应用程序中使用了React的Tabler图标。
 
 <Tabs>
+  <Tab title="安装">
+    <br />
 
-<Tab title="Installation"><br/>
+    ```
+    yarn add @tabler/icons-react
+    ```
+  </Tab>
 
-```
-yarn add @tabler/icons-react
-```
+  <Tab title="属性">
+    您可以将每个图标导入为组件。 以下是一个示例：
 
-</Tab>
+    <br />
 
-<Tab title="Props">
+    ```jsx
+    import { IconArrowLeft } from "@tabler/icons-react";
 
-您可以將每個圖標匯入為一個組件。 Here's an example: <br />
+    export const MyComponent = () => {
+      return <IconArrowLeft color="red" size={48} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconArrowLeft } from "@tabler/icons-react";
-
-export const MyComponent = () => {
-  return <IconArrowLeft color="red" size={48} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性 | 類型 | 描述               | 預設值          |
-| -- | -- | ---------------- | ------------ |
-| 大小 | 數字 | 圖標的高度和寬度（以像素為單位） | 24           |
-| 顏色 | 字串 | 圖標的顏色            | currentColor |
-| 筆劃 | 數字 | 圖標的筆劃寬度（以像素為單位）  | 2            |
-
-</Tab>
-
+  <Tab title="属性">
+    | 属性 | 类型     | 描述               | 默认           |
+    | -- | ------ | ---------------- | ------------ |
+    | 大小 | 数字     | 图标的高度和宽度（以像素为单位） | 24           |
+    | 颜色 | string | 图标的颜色            | currentColor |
+    | 描边 | 数字     | 图标的描边宽度（以像素为单位）  | 2            |
+  </Tab>
 </Tabs>
 
-## 自訂圖標
+## 自定义图标
 
-除了 Tabler 圖標，該應用程式還使用了一些自訂圖標。
+除了Tabler图标外，该应用程序还使用了一些自定义图标。
 
-### 圖標通訊錄
+### 图标通讯录
 
-顯示一個通訊錄圖標。
+显示一个通讯录图标。
 
 <Tabs>
+  <Tab title="用法">
+    ```jsx
+    import { IconAddressBook } from 'twenty-ui/display';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return <IconAddressBook size={24} stroke={2} />;
+    };
+    ```
+  </Tab>
 
-```jsx
-import { IconAddressBook } from 'twenty-ui/display';
-
-export const MyComponent = () => {
-  return <IconAddressBook size={24} stroke={2} />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性 | 類型 | 描述               | 預設值 |
-| -- | -- | ---------------- | --- |
-| 大小 | 數字 | 圖標的高度和寬度（以像素為單位） | 24  |
-| 筆劃 | 數字 | 圖標的筆劃寬度（以像素為單位）  | 2   |
-
-</Tab>
-
+  <Tab title="属性">
+    | 属性 | 类型 | 描述               | 默认 |
+    | -- | -- | ---------------- | -- |
+    | 大小 | 数字 | 图标的高度和宽度（以像素为单位） | 24 |
+    | 描边 | 数字 | 图标的描边宽度（以像素为单位）  | 2  |
+  </Tab>
 </Tabs>

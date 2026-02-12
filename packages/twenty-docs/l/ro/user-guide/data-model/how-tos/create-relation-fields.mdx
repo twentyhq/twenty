@@ -1,0 +1,60 @@
+---
+title: Creați câmpuri de relație
+description: Ghid pas cu pas pentru conectarea obiectelor cu câmpuri de relație.
+---
+
+Câmpurile de relație conectează înregistrări din obiecte diferite — de exemplu, legând Persoane de Companii.
+
+<Note>
+  **Numele relațiilor nu pot fi schimbate după creare** (afectează API-ul). Planificați cu atenție denumirile.
+</Note>
+
+## Înainte de a începe
+
+Decideți:
+
+* Ce obiecte conectați? (de ex., Persoane → Companii)
+* Care este partea „unu”? (de ex., Companie)
+* Care este partea „mulți”? (de ex., Persoane — multe persoane lucrează la o singură companie)
+* Cum ar trebui să se numească câmpul pe fiecare parte?
+
+Consultați [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) pentru explicații despre tipurile de relații.
+
+## Pași
+
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul în care doriți relația (de obicei partea „mulți”)
+3. Faceți clic pe **+ Adaugă câmp**
+4. Selectați **Relație** ca tip de câmp
+5. Alegeți **obiectul țintă**
+6. Selectați **Unu-la-mulți** sau **Mulți-la-unu**
+7. Introduceți nume de câmp pentru **ambele părți** ale relației
+8. Faceți clic pe **Salvare**
+
+## Exemplu: Persoane → Companii
+
+* Accesați **Setări → Model de date → Persoane**
+* Adăugați un câmp Relație
+* Țintă: **Companii**
+* Tip: **Mulți-la-unu**
+* Câmp pe Persoane: **Companie**
+* Câmp pe Companii: **Angajați**
+
+Acum fiecare persoană poate fi legată de o companie, iar fiecare companie își afișează persoanele.
+
+## Ștergerea unei relații
+
+1. Accesați **Setări → Model de date**
+2. Găsiți câmpul de relație
+3. Faceți clic pe **⋮ → Dezactivează**
+
+Legăturile sunt păstrate, dar ascunse. Reactivați pentru a restabili.
+
+<Note>
+  **Ștergerea unei relații nu șterge înregistrările.** Doar legătura dintre ele este eliminată.
+</Note>
+
+## Conexe
+
+* [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) — tipuri și limitări
+* [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — import în masă a înregistrărilor legate

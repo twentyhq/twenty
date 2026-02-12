@@ -17,6 +17,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -32,6 +33,7 @@ const StyledDropdownMenuContainer = styled.div`
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
+  const { t } = useLingui();
   const { actions } = useContext(ActionMenuContext);
 
   const recordIndexActions = actions.filter(
@@ -103,7 +105,7 @@ export const RecordIndexActionMenuDropdown = () => {
                       openCommandMenu();
                     }}
                     focused={selectedItemId === 'more-actions'}
-                    text="More actions"
+                    text={t`More actions`}
                   />
                 </SelectableListItem>
               </SelectableList>

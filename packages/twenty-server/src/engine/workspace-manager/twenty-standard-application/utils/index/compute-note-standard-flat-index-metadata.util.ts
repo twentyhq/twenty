@@ -10,7 +10,7 @@ export const buildNoteStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'note'>, 'context'>): Record<
@@ -25,7 +25,7 @@ export const buildNoteStandardFlatIndexMetadatas = ({
       relatedFieldNames: ['searchVector'],
       indexType: IndexType.GIN,
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

@@ -1,0 +1,325 @@
+---
+title: 最佳实践
+---
+
+本文档概述了在前端工作时应遵循的最佳实践。
+
+## 状态管理
+
+React 和 Recoil 在代码库中处理状态管理。
+
+### 使用 `useRecoilState` 来存储状态
+
+根据需要创建足够多的原子来存储你的状态，是一种良好实践。
+
+<Warning>
+  与其为了通过 props 层层传递而过度精简，不如使用额外的原子。
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### 不要使用 `useRef` 来存储状态
+
+避免使用 `useRef` 来存储状态。
+
+如果想存储状态，应该使用 `useState` 或 `useRecoilState`。
+
+如果您觉得需要通过使用 `useRef` 来防止一些再渲染，请了解[如何管理再渲染](#managing-re-renders)。
+
+## 管理再渲染
+
+在 React 中管理再渲染可能很困难。
+
+这里有一些规则以帮助避免不必要的再渲染。
+
+请记住，通过了解其原因，可以**始终**避免再渲染。
+
+### 在根级别工作
+
+通过从根级消除它们，现在在新功能中避免再渲染变得容易。
+
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+
+这样您就知道只有一个地方可以触发再渲染。
+
+### Always think twice before adding `useEffect` in your codebase
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+您还可以在如 Apollo 的库中找到它们：`onCompleted`，`onError` 等。
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+对于数据获取逻辑也可以采用相同的方法，使用 Apollo hooks。
+
+```tsx
+// ❌ 不佳：即使数据未发生变化也会导致重新渲染，
+//    因为需要重新评估 useEffect
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ 良好：如果数据未发生变化，将不会导致重新渲染，
+//   因为 useEffect 会在另一个同级组件中重新评估
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### 使用 Recoil 状态族和 Recoil 选择器族
+
+Recoil 状态族和选择器族是避免再渲染的好方法。
+
+当您需要存储项目列表时，它们很有用。
+
+### 您不应使用 `React.memo(MyComponent)`
+
+避免使用 `React.memo()` 因为它不能解决再渲染的原因，而是中断了再渲染链，可能导致意外行为并使代码难以重构。
+
+### 限制 `useCallback` 或 `useMemo` 的使用
+
+它们通常没有必要，会使代码难以阅读和维护，而性能提升难以察觉。
+
+## Console.logs
+
+`console.log` 语句在开发过程中非常有价值，提供关于变量值和代码流的实时洞察。 但是，将它们留在生产代码中可能导致几个问题：
+
+1. **性能**：过多的日志记录会影响运行时性能，尤其是在客户端应用程序中。
+
+2. **安全性**：记录敏感数据可能会将重要信息暴露给任何检查浏览器控制台的人。
+
+3. **清洁度**：在控制台中填满日志可能会遮蔽开发人员或工具需要查看的重要警告或错误。
+
+4. **专业性**：检查控制台的最终用户或客户看到数量众多的日志语句，可能会质疑代码的质量和精致度。
+
+确保在提交代码到生产环境前移除所有 `console.logs`。
+
+## 命名
+
+### 变量命名
+
+变量名称应该准确描述变量的用途或功能。
+
+#### 泛化的名称问题
+
+在编程中使用泛化的名称不是理想的，因为缺乏具体性，导致模糊性和降低代码的可读性。 这种名称无法传达变量或函数的目的，使得开发人员在不进行深入调查的情况下难以理解代码的意图。 这样会导致调试时间增加、错误的易发性提高以及在维护和协作中遇到困难。 同时，描述性的命名使代码自解释，更易于导航，提高代码质量和开发人员的生产力。
+
+```tsx
+// ❌ 不佳：使用了过于笼统的名称，无法清晰表达其
+//    用途或内容
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ 良好：使用了更具描述性的名称
+const [email, setEmail] = useState('');
+```
+
+#### 变量名称中应避免使用的一些词
+
+* 空壳
+
+### 事件处理
+
+事件处理器名称应以 `handle` 开头，而 `on` 是用于命名组件属性事件的前缀。
+
+```tsx
+// ❌ 不佳
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ 良好
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## 可选属性
+
+避免为可选属性传递默认值。
+
+**示例**
+
+参见下面定义的 `EmailField` 组件：
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**用法**
+
+```tsx
+// ❌ 不佳：传入与默认值相同的值没有任何意义
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ 良好：采用默认值
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## 组件作为属性
+
+尽可能将未实例化的组件作为属性传递，以便子组件可以自行决定需要传递哪些属性。
+
+最常见的例子是图标组件：
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// 在 MyComponent 中
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+为了让 React 理解一个组件就是一个组件，需要使用 PascalCase，然后用 `<MyIcon>` 来实例化它。
+
+## 属性传递：保持简约
+
+在 React 中，属性传递是指通过多个组件层传递状态变量及其设置器，即使中介组件不使用它们。 虽然有时是必要的，过多的属性传递可能会导致：
+
+1. **可读性降低**：在深嵌套组件结构中追踪属性的来源或使用位置可能会变得复杂。
+
+2. **维护挑战**：一个组件的属性结构变化可能需要在多个组件中进行调整，即便它们不直接使用该属性。
+
+3. **组件重用性降低**：一个仅接受众多属性用于向下传递的组件变得不那么通用，且在不同上下文中更难以重用。
+
+如果您觉得使用了过多的属性传递，请参见[状态管理最佳实践](#state-management)。
+
+## 导入
+
+导入时，选择指定的别名而不是指定完整或相对路径。
+
+**句柄别名**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**用法**
+
+```tsx
+// ❌ 不佳：使用了完整的相对路径
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ 良好：使用了指定的别名
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## 模式验证
+
+[Zod](https://github.com/colinhacks/zod) 是用于无类型对象的模式验证器：
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## 重大变更
+
+在进行下一步之前，始终进行彻底的手动测试，以确保修改没有在其他地方造成干扰，因为测试尚未全面集成。

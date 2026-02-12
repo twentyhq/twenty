@@ -13,6 +13,9 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -48,6 +51,10 @@ export const useLoadRecordIndexStates = () => {
     useSetRecoilComponentState(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
+
+  const setRecordIndexShouldHideEmptyRecordGroups = useSetRecoilComponentState(
+    recordIndexShouldHideEmptyRecordGroupsComponentState,
+  );
 
   const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilState(
     recordIndexCalendarFieldMetadataIdState,
@@ -195,10 +202,13 @@ export const useLoadRecordIndexStates = () => {
 
         setRecordIndexViewType(view.type);
         setRecordIndexOpenRecordIn(view.openRecordIn);
+        jotaiStore.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
 
         setRecordIndexCalendarFieldMetadataIdState(
           view.calendarFieldMetadataId ?? null,
         );
+
+        setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
 
         if (isDefined(view.mainGroupByFieldMetadataId)) {
           const recordIndexGroupFieldMetadataItemId =
@@ -243,6 +253,7 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexViewType,
       setRecordIndexOpenRecordIn,
       setRecordIndexCalendarFieldMetadataIdState,
+      setRecordIndexShouldHideEmptyRecordGroups,
       setRecordIndexGroupAggregateFieldMetadataItem,
       setRecordIndexGroupAggregateOperation,
       getFieldMetadataItemByIdOrThrow,

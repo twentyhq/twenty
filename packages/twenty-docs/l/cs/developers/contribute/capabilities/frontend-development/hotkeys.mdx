@@ -1,0 +1,178 @@
+---
+title: Klávesové zkratky
+---
+
+## Úvod
+
+Pokud potřebujete poslouchat klávesovou zkratku, obvykle použijete posluchač událostí `onKeyDown`.
+
+Ve `twenty-front` však můžete mít konflikty mezi stejnými klávesovými zkratkami, které jsou použity v různých komponentách, nasazených současně.
+
+Například, pokud máte stránku, která poslouchá klávesu Enter, a modal, který poslouchá klávesu Enter, s komponentou Select uvnitř tohoto modalu, která poslouchá klávesu Enter, můžete mít konflikt, když jsou všechny nasazeny současně.
+
+## Funkce hook `useScopedHotkeys`
+
+K řešení tohoto problému máme vlastní hook, který umožňuje poslouchat klávesové zkratky bez jakéhokoliv konfliktu.
+
+Umístíte ho do komponenty a bude poslouchat klávesové zkratky pouze když je komponenta nasazena A když je aktivní specifikovaný **hotkey scope**.
+
+## Jak v praxi poslouchat klávesové zkratky?
+
+Jsou potřebné dva kroky k nastavení poslouchání klávesových zkratek :
+
+1. Nastavte [hotkey scope](#what-is-a-hotkey-scope-), který bude poslouchat klávesové zkratky
+2. Použijte hook `useScopedHotkeys` k poslouchání klávesových zkratek
+
+Nastavení oblastí klávesových zkratek je potřebné i na jednoduchých stránkách, protože jiné UI prvky jako levé menu nebo příkazové menu mohou také poslouchat klávesové zkratky.
+
+## Použití klávesových zkratek
+
+Obecně budete mít dva případy použití, které vyžadují klávesové zkratky :
+
+1. Na stránce nebo v komponentě nasazené na stránce
+2. V komponentě typu modal, která přebírá fokus kvůli akci uživatele
+
+Druhý případ použití se může stát rekurzivně: například rozbalovací seznam v modalu.
+
+### Poslouchání klávesových zkratek na stránce
+
+Příklad :
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Poslouchání klávesových zkratek v komponentě typu modal
+
+V tomto příkladu použijeme komponentu typu modal, která poslouchá klávesu Escape, aby svému nadřazenému komponentu řekla, že se má zavřít.
+
+Zde interakce uživatele mění rozsah.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Pak v komponentě modalu :
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## Co je to hotkey scope?
+
+Rozsah klávesových zkratek je řetězec, který představuje kontext, ve kterém jsou klávesové zkratky aktivní. Obecně je kódován jako enum.
+
+Když změníte rozsah klávesových zkratek, klávesové zkratky, které poslouchají tento rozsah, budou povolené a klávesové zkratky, které poslouchají jiné rozsahy, budou zakázané.
+
+Můžete nastavit pouze jeden rozsah najednou.
+
+Například rozsahy klávesových zkratek pro každou stránku jsou definovány v `PageHotkeyScope` enumu:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Interně je aktuálně vybraný rozsah uložen v Recoil stavu, který je sdílen napříč aplikací :
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Ale tento Recoil stav by neměl být nikdy řízen ručně! Ukážeme si, jak jej používat v příští sekci.
+
+## Jak to funguje interně?
+
+Vytvořili jsme tenkou vrstvu nad [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro), která je výkonnější a vyhýbá se zbytečným překreslením.
+
+Také jsme vytvořili Recoil stav, abychom mohli řídit stav rozsahu klávesových zkratek a učinit jej dostupným kdekoli v aplikaci.

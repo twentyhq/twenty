@@ -1,0 +1,125 @@
+---
+title: Configurare SSO
+description: Configurați Single Sign-On pentru autentificare securizată la nivel de întreprindere.
+---
+
+## Despre SSO
+
+Single Sign-On (SSO) le permite membrilor echipei dvs. să se autentifice în Twenty folosind furnizorul de identitate al organizației dvs. Acest lucru oferă:
+
+* **Control centralizat al accesului**: Gestionați accesul dintr-un singur loc
+* **Securitate îmbunătățită**: Valorificați politicile de securitate existente
+* **Experiență mai bună pentru utilizatori**: Un singur set de credențiale pentru toate instrumentele
+
+## Furnizori acceptați
+
+Twenty acceptă SSO cu:
+
+* **SAML 2.0**: Funcționează cu majoritatea furnizorilor de identitate pentru întreprinderi
+* **Google Workspace**: Pentru organizațiile care folosesc Google
+* **Microsoft Entra ID**: (fostul Azure AD) Pentru mediile Microsoft
+
+## Configurarea SSO
+
+### Cerințe
+
+* Plan de organizație (spații de lucru în cloud și auto-găzduite)
+* Acces de administrator la furnizorul dvs. de identitate
+* Acces de administrator la spațiul de lucru Twenty
+
+<Note>
+  **Pentru utilizatorii care se auto-găzduiesc și doresc să configureze SSO**, contactați contact@twenty.com
+</Note>
+
+### Pași de configurare
+
+#### 1. Accesați setările SSO
+
+1. Accesați **Setări → Securitate**
+2. Găsiți secțiunea **Configurare SSO**
+3. Faceți clic pe **Configure SSO**
+
+#### 2) Alegeți furnizorul
+
+Selectați furnizorul dvs. de identitate din listă sau alegeți "Custom SAML" pentru alți furnizori.
+
+#### 3. Configurați furnizorul dvs. de identitate
+
+Va trebui să configurați furnizorul dvs. de identitate cu:
+
+* **Entity ID**: Furnizat de Twenty
+* **ACS URL**: URL-ul de callback pentru autentificare
+* **Certificate**: Pentru comunicare securizată
+
+#### 4. Introduceți detaliile furnizorului în Twenty
+
+* **SSO URL**: URL-ul de autentificare de la furnizorul dvs.
+* **Entity ID**: Identificatorul furnizorului dvs.
+* **Certificate**: Certificat X.509 de la furnizorul dvs.
+
+#### 5. Testați și activați
+
+1. Faceți clic pe **Test Configuration** pentru a verifica configurarea
+2. Activați SSO atunci când testarea este reușită
+3. Configurați preferințele de provisionare a utilizatorilor
+
+## Provisionare utilizatori
+
+### Provisionare Just-in-Time (JIT)
+
+* Utilizatorii sunt creați automat la prima autentificare
+* Li se atribuie automat rolul implicit
+* Nu este necesară crearea manuală a utilizatorilor
+
+### Provisionare manuală
+
+* Invitați utilizatorii înainte de a se putea autentifica
+* Atribuiți în prealabil roluri specifice
+* Mai mult control asupra celor care pot accesa
+
+## Gestionarea utilizatorilor SSO
+
+### Atribuirea rolurilor
+
+Utilizatorilor SSO li se pot atribui roluri la fel ca utilizatorilor obișnuiți:
+
+1. Mergi la **Setări → Membri**
+2. Găsiți utilizatorul
+3. Schimbați rolul lor după nevoie
+
+### Revocarea accesului
+
+Pentru a elimina accesul pentru utilizatorii SSO:
+
+* Eliminați-i din furnizorul dvs. de identitate sau
+* Eliminați-i din spațiul de lucru Twenty
+
+## Cele mai bune practici
+
+### Securitate
+
+* **Impuneți SSO**: Dezactivați autentificarea cu parolă pentru utilizatorii SSO
+* **Audituri periodice**: Revizuiți accesul periodic
+* **Politici IdP stricte**: Impuneți MFA la furnizorul de identitate
+
+### Gestionarea utilizatorilor
+
+* **Denumire clară**: Utilizați denumiri consecvente din directorul dvs.
+* **Maparea grupurilor**: Mapați grupurile IdP la rolurile Twenty (dacă este disponibilă)
+* **Proces de offboarding**: Includeți Twenty în fluxul dvs. de deprovisionare
+
+## Depanare
+
+### Probleme comune
+
+* **Erori de certificat**: Asigurați-vă că certificatul nu a expirat
+* **Nepotriviri de URL**: Verificați că URL-ul ACS se potrivește exact
+* **Utilizator negăsit**: Verificați setările de provisionare JIT
+
+### Obținerea de ajutor
+
+Dacă întâmpinați probleme, contactați asistența și furnizați:
+
+* Mesajele de eroare primite
+* Furnizorul de identitate utilizat
+* Detalii de configurare (fără date sensibile)

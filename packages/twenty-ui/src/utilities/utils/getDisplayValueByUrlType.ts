@@ -31,4 +31,13 @@ export const getDisplayValueByUrlType = ({
       return '@twitter';
     }
   }
+
+  if (type === 'facebook') {
+    const matches = href.match(/(?:https?:\/\/)?(?:www.)?facebook.com\/(.+)/);
+    if (isDefined(matches?.[1])) {
+      return decodeURIComponent(matches?.[1]);
+    } else {
+      return 'Facebook';
+    }
+  }
 };

@@ -151,7 +151,7 @@ export const WorkflowEditActionDelay = ({
             onChange={handleDateTimeChange}
             readonly={actionOptions.readonly}
             VariablePicker={WorkflowVariablePicker}
-            placeholder="Select a date"
+            placeholder={t`Select a date`}
           />
         )}
         {action.settings.input.delayType === 'DURATION' && (
@@ -162,7 +162,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('days', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
             <FormNumberFieldInput
               label={t`Hours`}
@@ -170,7 +170,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('hours', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
             <FormNumberFieldInput
               label={t`Minutes`}
@@ -178,7 +178,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('minutes', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
             <FormNumberFieldInput
               label={t`Seconds`}
@@ -186,7 +186,7 @@ export const WorkflowEditActionDelay = ({
               onChange={(value) => handleDurationChange('seconds', value)}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
-              placeholder="0"
+              placeholder={t`0`}
             />
           </>
         )}

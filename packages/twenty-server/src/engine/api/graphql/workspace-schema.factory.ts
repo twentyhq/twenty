@@ -9,19 +9,21 @@ import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -34,62 +36,90 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
-    if (!authContext.workspace?.id) {
-      return new GraphQLSchema({});
-    }
-
+  async createGraphQLSchema(
+    workspace: WorkspaceEntity,
+    applicationId?: string,
+  ): Promise<GraphQLSchema> {
     const dataSourcesMetadata =
       await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        authContext.workspace.id,
+        workspace.id,
       );
 
     if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
       return new GraphQLSchema({});
     }
 
-    const workspaceId = authContext.workspace.id;
+    const {
+      flatObjectMetadataMaps: allFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+      flatIndexMaps: allFlatIndexMaps,
+      flatApplicationMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId: workspace.id,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+          'flatIndexMaps',
+          'flatApplicationMaps',
+        ],
+      },
+    );
 
-    if (!workspaceId) {
-      throw new AuthException(
-        'Unauthenticated',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-          ],
-        },
-      );
-
-    if (!isDefined(flatObjectMetadataMaps)) {
+    if (!isDefined(allFlatObjectMetadataMaps)) {
       throw new FlatEntityMapsException(
         'Object metadata collection not found',
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
       );
     }
 
-    if (!isDefined(flatFieldMetadataMaps)) {
+    if (!isDefined(allFlatFieldMetadataMaps)) {
       throw new FlatEntityMapsException(
         'Field metadata collection not found',
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
       );
     }
 
+    let flatObjectMetadataMaps = allFlatObjectMetadataMaps;
+    let flatFieldMetadataMaps = allFlatFieldMetadataMaps;
+    let flatIndexMaps = allFlatIndexMaps;
+
+    if (isDefined(applicationId)) {
+      const twentyStandardApplicationId =
+        flatApplicationMaps?.idByUniversalIdentifier[
+          TWENTY_STANDARD_APPLICATION.universalIdentifier
+        ];
+
+      const applicationIds = isDefined(twentyStandardApplicationId)
+        ? [twentyStandardApplicationId, applicationId]
+        : [applicationId];
+
+      flatObjectMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
+        allFlatObjectMetadataMaps,
+        applicationIds,
+      );
+      flatFieldMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
+        allFlatFieldMetadataMaps,
+        applicationIds,
+      );
+
+      if (isDefined(allFlatIndexMaps)) {
+        flatIndexMaps = this.filterFlatEntityMapsByApplicationIds(
+          allFlatIndexMaps,
+          applicationIds,
+        );
+      }
+    }
+
     let metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
     if (!isDefined(metadataVersion)) {
-      metadataVersion = authContext.workspace.metadataVersion ?? 0;
+      metadataVersion = isDefined(workspace.metadataVersion)
+        ? workspace.metadataVersion
+        : 0;
       await this.workspaceCacheStorageService.setMetadataVersion(
-        workspaceId,
+        workspace.id,
         metadataVersion,
       );
     }
@@ -99,13 +129,15 @@ export class WorkspaceSchemaFactory {
     );
 
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
-      authContext.workspace.id,
+      workspace.id,
       metadataVersion,
+      applicationId,
     );
     let usedScalarNames =
       await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
-        authContext.workspace.id,
+        workspace.id,
         metadataVersion,
+        applicationId,
       );
 
     if (!typeDefs || !usedScalarNames) {
@@ -121,19 +153,20 @@ export class WorkspaceSchemaFactory {
       typeDefs = printSchema(autoGeneratedSchema);
 
       await this.workspaceCacheStorageService.setGraphQLTypeDefs(
-        authContext.workspace.id,
+        workspace.id,
         metadataVersion,
         typeDefs,
+        applicationId,
       );
       await this.workspaceCacheStorageService.setGraphQLUsedScalarNames(
-        authContext.workspace.id,
+        workspace.id,
         metadataVersion,
         usedScalarNames,
+        applicationId,
       );
     }
 
     const autoGeneratedResolvers = await this.workspaceResolverFactory.create(
-      authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       idByNameSingular,
@@ -153,5 +186,17 @@ export class WorkspaceSchemaFactory {
     });
 
     return executableSchema;
+  }
+
+  private filterFlatEntityMapsByApplicationIds<
+    T extends FlatObjectMetadata | FlatFieldMetadata | FlatIndexMetadata,
+  >(
+    flatEntityMaps: FlatEntityMaps<T>,
+    applicationIds: string[],
+  ): FlatEntityMaps<T> {
+    return getSubFlatEntityMapsByApplicationIdsOrThrow({
+      applicationIds,
+      flatEntityMaps,
+    });
   }
 }

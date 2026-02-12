@@ -1,5 +1,6 @@
 import { type CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
 import { isDefined } from 'twenty-shared/utils';
@@ -84,7 +85,7 @@ export const CommandMenuContextChip = ({
       {text?.trim?.() ? (
         <OverflowingTextWithTooltip text={text} />
       ) : !forceEmptyText ? (
-        <StyledEmptyText>Untitled</StyledEmptyText>
+        <StyledEmptyText>{t`Untitled`}</StyledEmptyText>
       ) : (
         ''
       )}

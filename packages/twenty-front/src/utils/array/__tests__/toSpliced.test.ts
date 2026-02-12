@@ -1,4 +1,4 @@
-import { toSpliced } from '../toSpliced';
+import { toSpliced } from '~/utils/array/toSpliced';
 
 describe('toSpliced', () => {
   it('removes elements from the array starting at the given index', () => {

@@ -1,0 +1,51 @@
+---
+title: Créer une vue de tableau avec regroupement
+description: Organisez vos enregistrements en groupes repliables selon la valeur d'un champ.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Regroupez votre vue de tableau par un champ Sélection pour organiser les enregistrements en sections repliables.
+
+<img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
+
+## Étapes
+
+1. Accédez à l'objet (Personnes, Entreprises, etc.).
+2. Cliquez sur le menu déroulant de la vue → **+ Ajouter une vue**
+3. Nommez votre vue (par exemple, "Entreprises par type")
+4. Cliquez sur **Créer**
+5. Cliquez sur **Options → Regrouper**
+6. Choisissez un champ Sélection pour regrouper
+7. Cliquez sur **Enregistrer**
+
+## Configurer l'ordre des groupes
+
+Dans **Options → Regrouper → Trier**, choisissez comment les groupes sont ordonnés :
+
+| Option                   | Description                                                             |
+| ------------------------ | ----------------------------------------------------------------------- |
+| **Alphabétique**         | De A à Z                                                                |
+| **Alphabétique inversé** | De Z à A                                                                |
+| **Ordre manuel**         | Faites glisser les groupes pour les réorganiser sous "Groupes visibles" |
+
+Cliquez sur l'**icône en forme d'œil** à côté d'un groupe pour le masquer de la vue.
+
+<Note>
+  **Pour des performances optimales, limitez-vous à 10-15 groupes visibles.** Si vous en avez besoin de plus, envisagez d'utiliser plutôt un tableau de bord.
+</Note>
+
+## Exemple : Entreprises par secteur d'activité
+
+1. Accédez à **Entreprises**
+2. Créez une nouvelle vue nommée "Par secteur d'activité"
+3. Cliquez sur **Options → Regrouper**
+4. Sélectionnez le champ **Secteur d'activité**
+5. Enregistrer
+
+Vos entreprises sont maintenant organisées par secteur d'activité, ce qui facilite la concentration sur un segment à la fois.
+
+## Articles connexes
+
+* [Vues de tableau](/l/fr/user-guide/views-pipelines/capabilities/table-views) — toutes les fonctionnalités des vues de tableau
+* [Filtres et tri](/l/fr/user-guide/views-pipelines/capabilities/filters-and-sorting) — combinez le regroupement avec des filtres

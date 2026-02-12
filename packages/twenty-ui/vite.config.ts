@@ -41,7 +41,7 @@ export default defineConfig(({ command }) => {
 
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.lib.json')
-    : path.resolve(__dirname, './tsconfig.dev.json');
+    : path.resolve(__dirname, './tsconfig.json');
 
   const checkersConfig: Checkers = {
     typescript: {
@@ -55,6 +55,12 @@ export default defineConfig(({ command }) => {
   };
 
   return {
+    resolve: {
+      alias: {
+        '@ui/': path.resolve(__dirname, 'src') + '/',
+        '@assets/': path.resolve(__dirname, 'src/assets') + '/',
+      },
+    },
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',

@@ -1,0 +1,53 @@
+---
+title: Nevidím e-maily u záznamů
+description: Odstraňování problémů s chybějícími e-maily u záznamů.
+---
+
+## Časté příčiny
+
+### 1. Počáteční synchronizace stále probíhá
+
+Synchronizace e-mailů nějakou dobu trvá, zejména u velkých poštovních schránek. Twenty importuje e-maily rychlostí přibližně **400 zpráv za minutu** (omezeno limity rychlosti Gmail API).
+
+* **Synchronizace kalendáře**: dokončí se během několika minut
+* **Synchronizace e-mailů**: Závisí na velikosti poštovní schránky (např. 10 000 e-mailů ≈ 25 minut, 50 000 e-mailů ≈ 2 hodiny)
+
+**Řešení**: Počkejte na dokončení počátečního importu. Čas můžete odhadnout podle velikosti své poštovní schránky.
+
+### 2. Kontakt v Twenty neexistuje
+
+E-maily se zobrazují pouze u existujících záznamů osob. Pokud kontakt ještě nebyl vytvořen:
+
+* Povolte **automatické vytváření kontaktů** v nastavení vaší poštovní schránky
+* Nebo nejprve ručně vytvořte záznam osoby
+
+**Řešení**: Přejděte do **Nastavení → Účty**, vyberte svou poštovní schránku a povolte automatické vytváření kontaktů.
+
+### 3. Interní e-maily jsou vyloučeny
+
+E-maily mezi kolegy (stejná e-mailová doména) se z důvodu zachování soukromí nikdy nesynchronizují.
+
+**Řešení**: Toto je očekávané chování. Synchronizují se pouze externí e-maily.
+
+### 4. E-mail je ze skupiny nebo distribučního seznamu
+
+Skupinové e-maily a distribuční seznamy jsou ze synchronizace vyloučeny.
+
+**Řešení**: Toto je očekávané chování.
+
+### 5. Složka není vybrána pro synchronizaci
+
+Pokud používáte funkci Message Folder, některé složky mohou být vyloučeny.
+
+**Řešení**: Přejděte do **Nastavení → Účty**, vyberte svou poštovní schránku a zkontrolujte nastavení synchronizace složek.
+
+### 6. Nesprávná e-mailová adresa v záznamu
+
+Záznam osoby může mít jinou e-mailovou adresu než tu použitou v e-mailu.
+
+**Řešení**: Přidejte správnou e-mailovou adresu do záznamu osoby.
+
+## Stále to nefunguje?
+
+1. Zkuste odpojit a znovu připojit svou poštovní schránku
+2. Pokud potíže přetrvávají, kontaktujte podporu

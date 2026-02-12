@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId in predicate does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find fieldMetadata for given fieldMetadataId",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId in predicate is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find objectMetadata for given objectMetadataId",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when objectMetadataId is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when parentRowLevelPermissionPredicateGroupId in group does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find rowLevelPermissionPredicateGroup for given parentRowLevelPermissionPredicateGroupId",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when roleId is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissionPredicateGroupId in predicate does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find rowLevelPermissionPredicateGroup for given rowLevelPermissionPredicateGroupId",
+  "name": "NotFoundError",
+}
+`;

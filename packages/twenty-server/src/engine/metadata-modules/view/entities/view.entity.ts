@@ -9,17 +9,15 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -30,6 +28,7 @@ import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
@@ -38,6 +37,12 @@ import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visi
   'objectMetadataId',
 ])
 @Index('IDX_VIEW_VISIBILITY', ['visibility'])
+@Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])
+@Index('IDX_VIEW_KANBAN_FIELD_METADATA', [
+  'kanbanAggregateOperationFieldMetadataId',
+])
+@Index('IDX_VIEW_MAIN_GROUP_BY_FIELD_METADATA', ['mainGroupByFieldMetadataId'])
+@Index('IDX_VIEW_CREATED_BY_USER_WORKSPACE', ['createdByUserWorkspaceId'])
 @Check(
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
@@ -114,7 +119,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     },
   )
   @JoinColumn({ name: 'kanbanAggregateOperationFieldMetadataId' })
-  kanbanAggregateOperationFieldMetadata: Relation<FieldMetadataEntity>;
+  kanbanAggregateOperationFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({
     type: 'enum',
@@ -136,7 +141,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     },
   )
   @JoinColumn({ name: 'calendarFieldMetadataId' })
-  calendarFieldMetadata: Relation<FieldMetadataEntity>;
+  calendarFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   mainGroupByFieldMetadataId: string | null;
@@ -150,10 +155,10 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     },
   )
   @JoinColumn({ name: 'mainGroupByFieldMetadataId' })
-  mainGroupByFieldMetadata: Relation<FieldMetadataEntity>;
+  mainGroupByFieldMetadata: Relation<FieldMetadataEntity> | null;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  shouldHideEmptyGroups: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
@@ -184,14 +189,14 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @JoinColumn({ name: 'createdByUserWorkspaceId' })
   createdBy: Relation<UserWorkspaceEntity>;
 
-  @ManyToOne(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
   @OneToMany(() => ViewFieldEntity, (viewField) => viewField.view)
   viewFields: Relation<ViewFieldEntity[]>;
+
+  @OneToMany(
+    () => ViewFieldGroupEntity,
+    (viewFieldGroup) => viewFieldGroup.view,
+  )
+  viewFieldGroups: Relation<ViewFieldGroupEntity[]>;
 
   @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.view)
   viewFilters: Relation<ViewFilterEntity[]>;

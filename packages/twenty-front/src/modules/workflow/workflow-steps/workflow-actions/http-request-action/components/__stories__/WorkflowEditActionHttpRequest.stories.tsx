@@ -1,8 +1,8 @@
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, waitFor, within } from '@storybook/test';
+import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, waitFor, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -13,7 +13,6 @@ import {
   getWorkflowNodeIdMock,
   MOCKED_STEP_ID,
 } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionHttpRequest } from '../WorkflowEditActionHttpRequest';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
   id: getWorkflowNodeIdMock(),
@@ -84,7 +83,6 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
   ],
 };
@@ -218,7 +216,7 @@ export const WithObjectStringBody: Story = {
           body: `{
   "hey": "frontend",
   "oh": "backend",
-  "amazing": "database {{${MOCKED_STEP_ID}.salary}}"
+  "amazing": "database {{${MOCKED_STEP_ID}.name}}"
 }`,
         },
         outputSchema: {},
@@ -253,7 +251,7 @@ export const WithObjectStringBody: Story = {
 
     expect(textboxes[6]).toHaveTextContent('frontend');
     expect(textboxes[8]).toHaveTextContent('backend');
-    expect(textboxes[10]).toHaveTextContent('database Salary');
+    expect(textboxes[10]).toHaveTextContent('database');
   },
 };
 
@@ -273,7 +271,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
           },
           body: `[
   "frontend",
-  {{${MOCKED_STEP_ID}.salary}},
+  {{${MOCKED_STEP_ID}.name}},
   "database"
 ]`,
         },
@@ -300,9 +298,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
-        '[ "frontend", Salary, "database"]',
-      );
+      expect(textboxes[5]).toHaveTextContent('[ "frontend", Name, "database"]');
     });
   },
 };
@@ -323,7 +319,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
           },
           body: `{
   "speciality": "frontend",
-  "salary": {{${MOCKED_STEP_ID}.salary}}
+  "name": {{${MOCKED_STEP_ID}.name}}
 }`,
         },
         outputSchema: {},
@@ -350,7 +346,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
       const textboxes = canvas.getAllByRole('textbox');
 
       expect(textboxes[5]).toHaveTextContent(
-        '{ "speciality": "frontend", "salary": Salary}',
+        '{ "speciality": "frontend", "name": Name}',
       );
     });
   },

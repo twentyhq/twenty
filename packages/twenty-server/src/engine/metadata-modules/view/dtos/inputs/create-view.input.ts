@@ -60,6 +60,11 @@ export class CreateViewInput {
   isCompact?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
+  shouldHideEmptyGroups?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewOpenRecordIn)
   @Field(() => ViewOpenRecordIn, {
     nullable: true,

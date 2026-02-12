@@ -1,0 +1,148 @@
+---
+title: Importați relațiile dintre obiecte
+description: Importați relațiile dintre înregistrări prin CSV.
+---
+
+## Prezentare generală
+
+Twenty acceptă importul relațiilor dintre obiecte în timpul importului CSV. Acest lucru vă permite să conectați înregistrări (de ex., să atașați Persoane la Companii) ca parte a migrării datelor.
+
+<Note>**În prezent acceptat pentru import**: Relații de tip unu-la-mulți care indică spre un singur tip de obiect pe fiecare parte (de ex., Persoane → Companii). Relațiile care indică către mai multe tipuri de obiecte nu sunt încă acceptate pentru import/export.</Note>
+
+## Cum funcționează relațiile în Twenty
+
+### Unu la mulți / Mulți la unu
+
+Twenty acceptă relații standard în care o înregistrare se leagă de multe altele:
+
+* **O Companie → Multe Persoane**: O companie poate avea mai mulți angajați, dar fiecare persoană aparține unei singure companii
+* **O Companie → Multe Oportunități**: O companie poate avea mai multe oportunități, dar fiecare oportunitate aparține unei singure companii
+
+### Relații care pot indica către mai multe tipuri de obiecte
+
+Unele relații se pot conecta la diferite tipuri de obiecte. Acest lucru funcționează în două moduri:
+
+**Modelul 1: Multe înregistrări care se leagă fiecare de o singură înregistrare din tipuri de obiecte diferite**
+
+Mai multe Note, Sarcini sau Activități pot fi atașate, fiecare, simultan la mai multe tipuri de obiecte:
+
+* **Notele** pot fi legate simultan de o Persoană, o Companie și o Oportunitate
+* **Sarcinile** pot fi legate simultan de o Persoană, o Companie și o Oportunitate
+
+Aici, Notele/Sarcinile se află pe partea „mulți”. Fiecare se leagă de o singură înregistrare pentru fiecare tip de obiect.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Modelul 2: O înregistrare care primește legături de la multe înregistrări din tipuri de obiecte diferite**
+
+Un Proiect poate primi legături de la multiple înregistrări din diferite tipuri de obiecte:
+
+* **Un Proiect** poate avea multe Persoane legate de el, multe Companii legate de el și multe Note atașate la el
+
+Aici, Proiectul se află pe partea „unu”. Mai multe înregistrări din obiecte diferite se pot conecta toate la același Proiect.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitare de import/export**: Relațiile care indică către mai multe tipuri de obiecte (cum ar fi Note → Persoane/Companii/Oportunități) nu sunt **încă acceptate** la importul sau exportul CSV.
+
+  * **Import**: Numai relațiile unu-la-mulți care indică spre un singur tip de obiect pe fiecare parte pot fi importate
+  * **Export**: Coloanele pentru relațiile care indică către mai multe tipuri de obiecte sunt în prezent lăsate necompletate
+
+  Această funcționalitate este în planul nostru de dezvoltare.
+</Warning>
+
+### Ce nu este acceptat astăzi
+
+**Relațiile mulți-la-mulți** nu sunt încă disponibile. De exemplu, în prezent nu puteți crea o relație în care:
+
+* Multe Persoane sunt legate de multe Proiecte
+
+<Note>Relațiile mulți-la-mulți sunt planificate pentru H1 2026.</Note>
+
+## Asocierea înregistrărilor în timpul importului
+
+<Note>**Reamintire**: Doar relațiile unu-la-mulți care indică spre un singur tip de obiect pot fi importate (de ex., Persoane → Companii). Relațiile care indică către mai multe tipuri de obiecte (de ex., Note → Persoane/Companii/Oportunități) nu sunt încă acceptate.</Note>
+
+### Pasul 1: Identificați părțile „unu” și „mulți”
+
+Mai întâi, determinați care obiect se află pe partea „unu” și care pe partea „mulți” a relației.
+
+**Exemplu**:
+
+* **Compania** este partea „unu” (o companie are mulți angajați)
+* **Persoane** este partea „mulți” (fiecare persoană aparține unei singure companii)
+
+### Pasul 2: Asigurați existența înregistrărilor de pe partea „unu”
+
+Înainte de a importa partea „mulți”, înregistrările de pe partea „unu” trebuie să existe deja în Twenty.
+
+* Importați sau creați mai întâi înregistrările de pe partea „unu” (de ex., Companii)
+* Validați identificatorul lor unic. Acesta poate fi:
+  * `id` (UUID-ul Twenty)
+  * Un câmp setat ca unic (de ex., `domain` pentru Companii sau un ID extern din sistemul dvs. anterior)
+
+<Warning>Importul va eșua dacă se face referire la o înregistrare care nu există.</Warning>
+
+### Pasul 3: Pregătiți fișierul CSV
+
+Adăugați o coloană în fișierul CSV pentru partea „mulți” care face referire la înregistrarea de pe partea „unu”.
+
+**Exemplu**: Pentru un fișier CSV cu Persoane care se leagă de Companii:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Important**:
+
+* Valoarea trebuie să se potrivească **exact** cu câmpul unic din înregistrarea Companiei
+* Pentru domenii, folosiți **URL-ul domeniului** (de ex., `https://acme.com`), nu eticheta domeniului
+* Mapați doar **un** identificator unic per relație: acest lucru duce la un import mai lin
+
+### Pasul 4: Verificați existența câmpului de relație
+
+Înainte de a încărca fișierul, asigurați-vă că există câmpul de relație între obiectele dvs.
+
+Dacă nu există:
+
+1. Accesați **Setări → Model de date**
+2. Selectați obiectul (de ex., Persoane)
+3. Creați un câmp de relație care indică spre obiectul țintă (de ex., Companie)
+
+### Pasul 5: Încărcați și mapați relația
+
+1. Încărcați fișierul CSV prin interfața de import
+2. În pasul de mapare a câmpurilor, găsiți coloana relației (de ex., `companyDomain`)
+3. Mapați-o la câmpul de relație (de ex., Companie)
+4. Twenty va lega automat fiecare înregistrare de părintele corespunzător
+
+### Câmpuri unice disponibile pentru relații
+
+| Obiect                                     | Câmpuri unice disponibile                    |
+| ------------------------------------------ | -------------------------------------------- |
+| **Companii**                               | `id`, `domain`, orice câmp unic personalizat |
+| **Persoane**                               | `id`, `email`, orice câmp unic personalizat  |
+| **Membri ai spațiului de lucru**           | `id`, `email` (nu numele)                    |
+| **Alte obiecte standard și personalizate** | `id`, orice câmp marcat ca unic              |
+
+<Note>**Conectarea la Membrii Workspace-ului**: Când relația indică către Membrii Workspace-ului (echipa dvs. care se autentifică în Twenty), referiți-vă la ei prin **adresa de email**, nu prin nume.</Note>
+
+<Note>Recomandăm folosirea `domain` pentru Companii și `email` pentru Persoane, deoarece acestea sunt ușor de citit și ușor de întreținut în foi de calcul.</Note>
+
+<Note>**Reamintire**: Înregistrările șterse soft (vizibile în Command Menu → See deleted records) se iau în calcul pentru criteriile de unicitate. Dacă importați o înregistrare cu aceeași valoare unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi restaurată. Consultați [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints) pentru mai multe detalii.</Note>
+
+## Regula ordinii de import
+
+<Warning>
+  **Importați întotdeauna mai întâi partea „unu”!**
+
+  1. **Companii** mai întâi (fără dependențe)
+  2. **Persoane** în al doilea rând (legate de Companii)
+  3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
+  4. **Obiecte personalizate** respectând dependențele lor
+
+  Înregistrarea părinte trebuie să existe înainte de a o putea referi.
+</Warning>

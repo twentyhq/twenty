@@ -46,5 +46,14 @@ export const computeEventSelectQueryBuilder = <T extends ObjectLiteral>({
   eventSelectQueryBuilder.expressionMap.aliases = expressionMap.aliases;
   eventSelectQueryBuilder.setParameters(expressionMap.parameters);
 
+  if (
+    eventSelectQueryBuilder.expressionMap.selects.length === 0 &&
+    eventSelectQueryBuilder.expressionMap.mainAlias
+  ) {
+    eventSelectQueryBuilder.expressionMap.selects = [
+      { selection: eventSelectQueryBuilder.expressionMap.mainAlias.name },
+    ];
+  }
+
   return eventSelectQueryBuilder;
 };

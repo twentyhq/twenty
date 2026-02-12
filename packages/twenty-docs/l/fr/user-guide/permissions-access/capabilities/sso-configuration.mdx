@@ -1,0 +1,125 @@
+---
+title: Configuration du SSO
+description: Configurez l'authentification unique (SSO) pour une authentification d'entreprise sécurisée.
+---
+
+## À propos du SSO
+
+L'authentification unique (SSO) permet aux membres de votre équipe de se connecter à Twenty en utilisant le fournisseur d'identité de votre organisation. Cela offre :
+
+* **Contrôle d'accès centralisé** : Gérez les accès depuis un seul endroit
+* **Sécurité renforcée** : Exploitez vos politiques de sécurité existantes
+* **Meilleure expérience utilisateur** : Un seul jeu d'identifiants pour tous les outils
+
+## Fournisseurs pris en charge
+
+Twenty prend en charge le SSO avec :
+
+* **SAML 2.0** : Fonctionne avec la plupart des fournisseurs d'identité d'entreprise
+* **Google Workspace** : Pour les organisations utilisant Google
+* **Microsoft Entra ID** : (anciennement Azure AD) Pour les environnements Microsoft
+
+## Configuration du SSO
+
+### Prérequis
+
+* Offre Organization (espaces de travail cloud et auto-hébergés)
+* Accès administrateur à votre fournisseur d'identité
+* Accès administrateur à l'espace de travail Twenty
+
+<Note>
+  **Pour les utilisateurs en auto-hébergement souhaitant configurer le SSO**, contactez contact@twenty.com
+</Note>
+
+### Étapes de configuration
+
+#### 1. Accédez aux paramètres du SSO
+
+1. Allez dans **Paramètres → Sécurité**
+2. Retrouvez la section Configuration du SSO
+3. Cliquez sur **Configurer le SSO**
+
+#### 2) Choisissez votre fournisseur
+
+Sélectionnez votre fournisseur d'identité dans la liste ou choisissez "Custom SAML" pour d'autres fournisseurs.
+
+#### 3. Configurez votre fournisseur d'identité
+
+Vous devrez configurer votre fournisseur d'identité avec :
+
+* **Entity ID** : Fourni par Twenty
+* **URL ACS** : L'URL de rappel pour l'authentification
+* **Certificat** : Pour une communication sécurisée
+
+#### 4. Saisissez les informations du fournisseur dans Twenty
+
+* **URL SSO** : L'URL de connexion fournie par votre fournisseur
+* **Entity ID** : L'identifiant de votre fournisseur
+* **Certificat** : Certificat X.509 de votre fournisseur
+
+#### 5. Tester et activer
+
+1. Cliquez sur **Tester la configuration** pour vérifier la configuration
+2. Activez le SSO lorsque le test est réussi
+3. Configurez les préférences d'approvisionnement des utilisateurs
+
+## Approvisionnement des utilisateurs
+
+### Approvisionnement Just-in-Time (JIT)
+
+* Les utilisateurs sont créés automatiquement lors de la première connexion
+* Le rôle par défaut est attribué automatiquement
+* Aucune création manuelle d'utilisateurs nécessaire
+
+### Approvisionnement manuel
+
+* Invitez les utilisateurs avant qu'ils ne puissent se connecter
+* Préattribuez des rôles spécifiques
+* Plus de contrôle sur les personnes autorisées à accéder
+
+## Gestion des utilisateurs SSO
+
+### Attribution des rôles
+
+Les utilisateurs SSO peuvent se voir attribuer des rôles comme les utilisateurs classiques :
+
+1. Allez dans **Paramètres → Membres**
+2. Recherchez l'utilisateur
+3. Modifiez leur rôle selon les besoins
+
+### Révocation de l'accès
+
+Pour supprimer l'accès des utilisateurs SSO :
+
+* Retirez-les de votre fournisseur d'identité, ou
+* Retirez-les de l'espace de travail Twenty
+
+## Meilleures pratiques
+
+### Sécurité
+
+* **Exiger le SSO** : Désactivez la connexion par mot de passe pour les utilisateurs SSO
+* **Audits réguliers** : Passez en revue les accès régulièrement
+* **Politiques IdP strictes** : Imposez l'AMF au niveau du fournisseur d'identité
+
+### Gestion des utilisateurs
+
+* Utilisez un nommage cohérent avec votre annuaire
+* **Correspondance de groupes** : Faites correspondre les groupes IdP aux rôles Twenty (si disponible)
+* **Processus de départ** : Incluez Twenty dans votre workflow de déprovisionnement
+
+## Résolution des problèmes
+
+### Problèmes courants
+
+* **Erreurs de certificat** : Assurez-vous que le certificat n'a pas expiré
+* **Incohérences d'URL** : Vérifiez que l'URL ACS correspond exactement
+* **Utilisateur introuvable** : Vérifiez les paramètres d'approvisionnement JIT
+
+### Obtenir de l'aide
+
+Si vous rencontrez des problèmes, contactez le support avec :
+
+* Messages d'erreur reçus
+* Fournisseur d'identité utilisé
+* Détails de configuration (sans données sensibles)

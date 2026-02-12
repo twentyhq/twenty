@@ -1,0 +1,80 @@
+---
+title: İş Akışları
+description: Twenty'de otomasyonlar oluşturmayı öğrenin.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="İş Akışları" />
+</Frame>
+
+## İş Akışları Neden Önemlidir?
+
+Twenty, kullanıcılarına maksimum esneklik sağlamak için tasarlandı. İş süreçlerinizi katı, önceden oluşturulmuş özelliklere uyarlamak yerine, iş akışları, benzersiz iş kullanım durumlarınızı en iyi destekleyen CRM'yi oluşturmanıza olanak tanır.
+
+İş akışları, bu otomasyonları oluşturmak için Twenty'nin uygulama içi özelliğidir. Bunlar, işletmenizin gerektiğinde tam olarak ihtiyaç duyduğu şeyi oluşturmanız için size yapı taşları sunarlar.
+
+## İş akışlarıyla ne yapabilirim?
+
+İki ana amaç için otomasyonlar oluşturmanızı öneririz:
+
+1. **Ekibinizin günlük işlerini kolaylaştırmak için iç otomasyonlar**: Ekibinizin yavaşlamasına neden olan manuel giriş ve tekrarlanan görevleri azaltın.
+2. **Verileri içeri ve dışarı getirin**: Twenty'yi API çağrıları ve webhooks aracılığıyla veritabanınıza ve diğer araçlara bağlayın.
+
+## İlk İş Akışınızı Oluşturma
+
+### Adım 1: Yeni bir İş Akışı oluşturun
+
+1. Diğer nesnelerin altında bulunan **İş Akışları**'na gidin
+2. **+ Yeni Kayıt**'a tıklayın
+3. İş akışınıza bir ad verin
+
+### Adım 2: Bir Tetikleyici ekleyin
+
+Her iş akışı bir tetikleyiciyle başlar. Şunlardan birini seçin:
+
+* **Kayıt olayları**: Bir kayıt oluşturulduğunda, güncellendiğinde veya silindiğinde
+* **Zamanlama**: Belirli zamanlarda çalıştırın (günlük, haftalık vb.)
+* **Manuel**: Bir kullanıcı eylemiyle tetiklenir
+* **Webhook**: Bir webhook tarafından tetiklenir
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Adım 3: Eylemler ekleyin
+
+Tetikleyicinizden sonra bir veya daha fazla eylem ekleyin:
+
+* **Kayıt Oluştur**: Herhangi bir nesneye yeni kayıtlar ekleyin
+* **Kaydı Güncelle**: Mevcut kayıt verilerini değiştirin
+* **Kaydı Sil**: Nesnelerden kayıtları kaldırın
+* **Kayıtları Ara**: Kriterlerle eşleşen kayıtları bulun
+* **Kaydı Ekle/Güncelle**: Eşleşen kriterlere göre oluşturun veya güncelleyin
+* **Yineleyici**: Kayıt dizileri üzerinde döngü kurun
+* **Filtre**: Hangi kayıtların ilerleyeceğini kontrol edin
+* **Gecikme**: Devam etmeden önce bekleyin (süre veya planlanan tarih)
+* **E-posta Gönder**: Bağlı hesabınız aracılığıyla e-postalar gönderin
+* **Kod**: Özel JavaScript çalıştırın
+* **HTTP İsteği**: Harici API'leri çağırın
+* **Form**: Yürütme sırasında Twenty UI içinde kullanıcı girdilerini alın
+* **AI Agent** (Yakında): Akıllı yapay zekâ görevlerini çalıştırın
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Adım 4: Test Edin ve Etkinleştirin
+
+1. İş akışınızı örnek verilerle çalıştırmak için **Test** düğmesini kullanın
+2. Beklendiği gibi çalıştığından emin olmak için sonuçları inceleyin
+3. Hazır olduğunda iş akışını **Aktif** durumuna getirin
+
+## İş Akışı En İyi Uygulamaları
+
+* **Adım isimlerini düzenleyin**: Her biri ne yaptığını açıkça tanımlamak için iş akışı adımlarınızı yeniden adlandırın. Bakım açısından yardımcı olur ve iş arkadaşlarına devretmeyi kolaylaştırır
+* **Önceki adım verilerinden yararlanın**: İş akışınızdaki herhangi bir önceki adım tarafından döndürülen kayıtlardan alanları kullanabilirsiniz
+* **Basit başlayın**: Temel iş akışlarıyla başlayın ve sistemle daha rahat hale geldikçe zamanla karmaşıklık ekleyin
+* **Oluşturmadan önce plan yapın**: Yarı yolda takılıp kalmamak için oluşturmaya başlamadan önce iş akışınızın mantığını haritalandırın
+
+## Sonraki Adımlar
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [CRM Otomasyonları](/l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

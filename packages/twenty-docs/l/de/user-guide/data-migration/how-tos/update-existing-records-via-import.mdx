@@ -1,0 +1,198 @@
+---
+title: Vorhandene Datensätze per Import aktualisieren
+description: Vollständige Schritt-für-Schritt-Anleitung zur Massenaktualisierung von Datensätzen per CSV-Import.
+---
+
+## Übersicht
+
+Müssen Sie viele Datensätze auf einmal aktualisieren? Statt sie einzeln zu bearbeiten, verwenden Sie den CSV-Import, um vorhandene Datensätze massenhaft zu aktualisieren.
+
+**Anwendungsfälle:**
+
+* Positionsbezeichnungen für mehrere Personen aktualisieren
+* Unternehmensinformationen in großem Umfang ändern
+* Daten zu neuen benutzerdefinierten Feldern hinzufügen
+* Datenfehler in vielen Datensätzen korrigieren
+
+## Wie es funktioniert
+
+Wenn Sie eine Datei importieren, die einen **eindeutigen Bezeichner** enthält, der mit einem vorhandenen Datensatz übereinstimmt, aktualisiert Twenty diesen Datensatz, anstatt ein Duplikat zu erstellen.
+
+| Wenn der eindeutige Bezeichner...              | Twenty wird...                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------- |
+| Stimmt mit einem vorhandenen Datensatz überein | **Aktualisiert** den vorhandenen Datensatz                          |
+| Stimmt mit keinem Datensatz überein            | **Erstellt** einen neuen Datensatz                                  |
+| Fehlt in Ihrer Datei                           | **Erstellt** einen neuen Datensatz (mit automatisch generierter ID) |
+
+<Warning>
+  **Mehrfachauswahl-Felder werden überschrieben, nicht zusammengeführt.**
+
+  Wenn in einem Datensatz `Option A` und `Option B` ausgewählt sind und Sie `[\"Option C\"]` importieren, hat der Datensatz nach dem Import nur noch `Option C`. Der Import ersetzt alle bisherigen Auswahlen — er fügt ihnen nichts hinzu.
+
+  Um vorhandene Werte beizubehalten, schließen Sie sie alle in Ihren Import ein: `[\"Option A\",\"Option B\",\"Option C\"]`
+</Warning>
+
+## Schritt 1: Exportieren Sie Ihre aktuellen Daten
+
+Exportieren Sie zunächst die Datensätze, die Sie aktualisieren möchten:
+
+1. Navigieren Sie zum Objekt (Personen, Unternehmen usw.)
+2. **Fügen Sie die benötigten Spalten hinzu** — klicken Sie auf **Optionen → Felder**, um die Felder anzuzeigen, die Sie aktualisieren möchten
+3. **Filtern Sie bei Bedarf** — grenzen Sie auf genau die Datensätze ein, die Sie aktualisieren möchten
+4. Klicken Sie auf **⋮** → **Ansicht exportieren**
+5. Speichern Sie die CSV-Datei
+
+<Note>**Warum zuerst exportieren?** Die exportierte Datei hat das richtige Format, enthält eindeutige Bezeichner und wird beim Import automatisch zugeordnet.</Note>
+
+### Was exportiert wird
+
+* Alle sichtbaren Spalten in Ihrer aktuellen Ansicht
+* Die eindeutigen Bezeichner des Datensatzes (`id`, `email`, `domain`)
+* Aktuelle Feldwerte, die Sie ändern können
+
+## Schritt 2: Bearbeiten Sie die CSV-Datei
+
+Öffnen Sie die exportierte Datei in Ihrer Tabellenkalkulation (Excel, Google Sheets usw.):
+
+1. **Behalten Sie die Spalte mit dem eindeutigen Bezeichner bei** — löschen Sie `id`, `email` oder `domain` nicht
+2. **Aktualisieren Sie die Werte** in den Spalten, die Sie ändern möchten
+3. **Entfernen Sie Spalten, die Sie nicht aktualisieren müssen** (optional, aber übersichtlicher)
+4. **Ändern Sie die Werte der eindeutigen Bezeichner nicht** — sonst erstellt Twenty neue Datensätze
+
+### Beispiel: Aktualisieren von Positionsbezeichnungen
+
+**Exportierte Datei:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Sales Rep
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Sales Rep
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
+```
+
+**Nach Ihren Änderungen:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Account Executive
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Senior Account Executive
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Account Executive
+```
+
+<Warning>
+  **Ändern Sie die Werte der eindeutigen Bezeichner nicht.**
+
+  Wenn Sie `john@acme.com` in `john.smith@acme.com` ändern, erstellt Twenty einen neuen Datensatz, anstatt den vorhandenen zu aktualisieren.
+</Warning>
+
+## Schritt 3: Importieren Sie die aktualisierte Datei
+
+1. Navigieren Sie zum Objekt
+2. Klicken Sie auf **⋮** → **Datensätze importieren**
+3. Laden Sie Ihre bearbeitete CSV-Datei hoch
+4. **Stellen Sie sicher, dass der eindeutige Bezeichner zugeordnet ist** — prüfen Sie, ob `email`, `domain` oder `id` korrekt zugeordnet ist
+5. Überprüfen Sie die Feldzuordnungen
+6. Auf Fehler prüfen
+7. Klicken Sie auf **Bestätigen**
+
+Twenty gleicht Datensätze anhand des eindeutigen Bezeichners ab und aktualisiert sie mit neuen Werten.
+
+## Den richtigen eindeutigen Bezeichner wählen
+
+| Objekt                         | Empfohlen                   | Alternative | Notizen                                                |
+| ------------------------------ | --------------------------- | ----------- | ------------------------------------------------------ |
+| **Personen**                   | `e-Mail`                    | `id`        | E-Mail ist menschenlesbar                              |
+| **Unternehmen**                | `domäne`                    | `id`        | Domain ist menschenlesbar                              |
+| **Benutzerdefinierte Objekte** | Beliebiges eindeutiges Feld | `id`        | Verwenden Sie Ihr benutzerdefiniertes eindeutiges Feld |
+
+<Note>**Verwenden Sie nur EINEN eindeutigen Bezeichner.** Ordnen Sie nicht sowohl `email` ALS AUCH `id` zu. Dies kann zu Verwirrung und Fehlern führen.</Note>
+
+### Benutzerdefinierte eindeutige Felder verwenden
+
+Wenn Sie ein benutzerdefiniertes Feld als eindeutig markiert haben (z. B. eine externe ID aus einem anderen System):
+
+1. Schließen Sie dieses Feld in Ihren Export und Import ein
+2. Ordnen Sie es beim Import zu
+3. Twenty gleicht anhand dieses Feldes ab
+
+## Schritt 4: Überprüfen Sie die Aktualisierungen
+
+Nach dem Import:
+
+1. Öffnen Sie einige aktualisierte Datensätze
+2. Prüfen Sie, ob die Änderungen übernommen wurden
+3. Stellen Sie sicher, dass keine doppelten Datensätze erstellt wurden
+
+## Was ist mit Feldern, die nicht in Ihrer Datei enthalten sind?
+
+**Felder, die nicht in Ihrer Importdatei enthalten sind, bleiben unverändert.**
+
+| Ihre Datei enthält ...       | Ergebnis                                                            |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `email`, `jobTitle`          | Nur `jobTitle` wird aktualisiert; andere Felder bleiben unverändert |
+| `email`, `jobTitle`, `phone` | `jobTitle` und `phone` werden aktualisiert                          |
+
+Das heißt, Sie müssen nur die Felder einschließen, die Sie ändern möchten (plus den eindeutigen Bezeichner).
+
+## Aktualisierungen und neue Datensätze kombinieren
+
+Sie können vorhandene Datensätze aktualisieren UND neue im selben Import erstellen:
+
+```csv
+email,firstName,lastName,jobTitle
+john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
+newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
+```
+
+## Häufige Fehler, die Sie vermeiden sollten
+
+| Fehler                                     | Problem                                                        | Ergebnis                                              | Lösung                                                  |
+| ------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------- |
+| **Eindeutigen Bezeichner ändern**          | `john@acme.com` in `john.smith@acme.com` geändert              | Erstellt einen neuen Datensatz statt zu aktualisieren | Eindeutige Bezeichner unverändert lassen                |
+| **Mehrere eindeutige Felder**              | Zuordnung sowohl von `email` ALS AUCH `id`                     | Mögliche Abgleichkonflikte                            | Ordnen Sie nur EINEN eindeutigen Bezeichner zu          |
+| **Kein eindeutiger Bezeichner**            | Datei enthält nur `firstName`, `lastName`, `jobTitle`          | Alle Zeilen erstellen neue Datensätze                 | Schließen Sie immer `email`, `domain` oder `id` ein     |
+| **Unterschiedliche Groß-/Kleinschreibung** | Datei enthält `John@acme.com`, aber Twenty hat `john@acme.com` | Erstellt neuen Datensatz                              | Exportieren Sie aus Twenty, um exakte Werte zu erhalten |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Was ist, wenn einige Datensätze noch nicht existieren?">
+    Datensätze mit eindeutigen Bezeichnern, die nicht mit vorhandenen Datensätzen übereinstimmen, werden als neue Datensätze erstellt. So können Sie im selben Import aktualisieren und erstellen.
+  </Accordion>
+
+  <Accordion title="Kann ich einen Feldwert löschen/leeren?">
+    Ja, lassen Sie die Zelle in Ihrer CSV leer. Der Import löscht den Wert dieses Feldes im vorhandenen Datensatz.
+  </Accordion>
+
+  <Accordion title="Was passiert mit Feldern, die ich nicht in den Import aufnehme?">
+    Felder, die nicht in Ihrer Importdatei enthalten sind, bleiben in vorhandenen Datensätzen unverändert. Es werden nur die Felder aktualisiert, die Sie einschließen.
+  </Accordion>
+
+  <Accordion title="Kann ich Beziehungsfelder (z. B. Unternehmen) aktualisieren?">
+    Ja! Fügen Sie den eindeutigen Bezeichner der Beziehung hinzu (z. B. `companyDomain`) und ordnen Sie ihn dem Beziehungsfeld zu. Die Beziehung wird aktualisiert.
+  </Accordion>
+
+  <Accordion title="Woher weiß ich, welche Datensätze aktualisiert bzw. erstellt werden?">
+    Im Überprüfungsschritt des Imports zeigt Twenty Ihnen anhand der Übereinstimmungen der eindeutigen Bezeichner, wie viele Datensätze aktualisiert bzw. erstellt werden.
+  </Accordion>
+
+  <Accordion title="Kann ich eine Massenaktualisierung rückgängig machen?">
+    Es gibt kein automatisches Rückgängigmachen. Wir empfehlen, Ihre Daten vor Massenaktualisierungen als Sicherung zu exportieren.
+  </Accordion>
+</AccordionGroup>
+
+## Beste Praktiken
+
+1. **Zuerst exportieren** — beginnen Sie immer mit einem Export, um das richtige Format sicherzustellen
+2. **Vor dem Aktualisieren sichern** — exportieren Sie Ihre Daten, bevor Sie umfangreiche Änderungen vornehmen
+3. **Mit einigen Datensätzen testen** — versuchen Sie zunächst, 5-10 Datensätze zu aktualisieren, bevor Sie eine große Menge verarbeiten
+4. **Verwenden Sie menschenlesbare Bezeichner** — `email` und `domain` sind leichter zu überprüfen als `id`
+5. **Nur notwendige Spalten einschließen** — weniger Spalten bedeuten geringere Fehlerwahrscheinlichkeit
+
+## Fehlerbehebung
+
+Gibt es Probleme? Prüfen Sie:
+
+* [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+* [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Referenz zur Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)

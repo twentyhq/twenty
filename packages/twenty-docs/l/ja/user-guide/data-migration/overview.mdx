@@ -1,0 +1,89 @@
+---
+title: データ移行
+description: CSVファイルまたはAPIを使用してCRMデータをインポートおよびエクスポートできます。
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="データ移行" />
+</Frame>
+
+## インポート方法
+
+Twenty では、データのインポート方法として主に次の2つをサポートしています。
+
+| メソッド         | 最適用途          | 件数上限            |
+| ------------ | ------------- | --------------- |
+| **CSVインポート** | 標準的な移行や定期的な更新 | 1ファイルあたり10,000件 |
+| **APIインポート** | 大規模な移行や自動化    | 無制限             |
+
+<Note>非常に大きなデータセット（数十万件のレコード）の場合は、API を使用してください。 必要に応じて、当社の[実装パートナー](/l/ja/user-guide/getting-started/capabilities/implementation-services)がこれらのスクリプトの実行を支援できます。</Note>
+
+## CSVインポートの基本
+
+CSV、XLSX、または XLS ファイルを使用して、任意のオブジェクトのデータをインポートできます。 各ファイルには、**1種類のオブジェクトのみ**を含めてください（例：People レコードのみ）。
+
+<Note>**インポート前にフィールドが存在している必要があります。** CSV をアップロードするとレコードは作成されますが、フィールドは作成されません。 カスタムフィールドが必要な場合は、まず**Settings → Data Model**で作成してください。</Note>
+
+### 手順
+
+1. データをインポートする対象のオブジェクトに移動します。
+2. 右上の**⋮**アイコン（コマンドメニュー）をクリックし、**Import records**をクリックします。
+3. テンプレートファイルをダウンロードし、データが想定された形式になっていることを確認します。
+4. フォーマット済みのCSVファイルをアップロードします。
+5. 列を Twenty のフィールドにマッピングします。
+6. エラー（黄色でハイライト）を確認し、UI 上で直接編集して修正します。
+7. インポートを確定します。
+
+### オブジェクト間の関係をインポート
+
+CSV インポート機能を使用して、オブジェクト間の関係をインポートできます。 関連オブジェクトは、一意のフィールドを使って参照します。使用できる例：`id`、People と Workspace Members では `email`、Companies では `domain`、そのほかのオブジェクトではデータモデルで一意に設定した任意のフィールド。
+
+<Note>**削除済みレコードも一意性に含まれます。** ソフト削除されたレコード（Command Menu → See deleted records で表示可能）も一意性チェックに含まれます。 削除済みレコードと同じ一意値のレコードをインポートすると、その削除済みレコードが復元されます。</Note>
+
+<Warning>
+  **インポートの順序が重要です！**
+
+  関連オブジェクトをインポートする場合は、次の順序でファイルをアップロードしてください。
+
+  1. **Companies** を最初に（リレーションの「one」側）
+  2. **People** を2番目に（companyId を介して Companies にリンク）
+  3. **Opportunities** を3番目に（Companies／People にリンク）
+  4. リレーションのある **Custom objects** は最後に
+
+  なぜですか？ 1対多のリレーションでは、「one」側が参照される前に存在している必要があります。 例えば、その会社のIDを持つ Person をインポートする前に、Company レコードが存在している必要があります。
+</Warning>
+
+手順の詳細については、[こちらの記事](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)を参照してください。
+
+## データをエクスポート
+
+バックアップ、レポーティング、または移行のためにワークスペースのデータをエクスポートします。
+
+### 手順
+
+1. エクスポートしたいオブジェクトに移動します。
+2. 必要な列を含むようにビューを設定します。
+3. **⋮** → **Export view** をクリックします。
+4. CSV ファイルを保存します。
+
+<Note>**表示されている列のみがエクスポートされます。** CSV ファイルには、現在のビューに表示されている列だけが含まれます。 どのデータを含めるかを制御するために、エクスポート前に列を追加または非表示にしてください。</Note>
+
+<Note>**エクスポートの上限**: 1回のエクスポートにつき最大20,000件。</Note>
+
+## 権限
+
+データのインポートとエクスポートには特定の権限が必要です。
+
+* **Import**: "Import CSV" 権限が必要
+* **Export**: "Export CSV" 権限が必要
+
+これらの権限がない場合は、ワークスペース管理者に連絡してください。
+
+## 次のステップ
+
+* [CSV ファイルの準備](/l/ja/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [オブジェクト間の関係をインポート](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [大規模データセットをAPIでインポート](/l/ja/user-guide/data-migration/how-tos/import-data-via-api)

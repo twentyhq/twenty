@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -117,6 +118,8 @@ export const RecordTableRecordGroupSection = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
+  const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
+
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const recordGroup = useRecoilValue(
@@ -177,6 +180,10 @@ export const RecordTableRecordGroupSection = () => {
   const fieldsPlaceholderWidth =
     sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField +
     sumOfBorderWidthForFields;
+
+  if (shouldHide) {
+    return null;
+  }
 
   if (!isDefined(recordGroup)) {
     return null;

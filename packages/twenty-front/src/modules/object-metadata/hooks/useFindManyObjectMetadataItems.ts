@@ -10,8 +10,8 @@ import { logError } from '~/utils/logError';
 
 import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
-import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '../utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
+import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 
 export const useFindManyObjectMetadataItems = ({
   skip,

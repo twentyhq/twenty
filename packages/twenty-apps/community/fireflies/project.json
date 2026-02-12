@@ -24,10 +24,7 @@
       }
     },
     "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsc --noEmit --project {projectRoot}/tsconfig.json"
-      }
+      "dependsOn": ["^build"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",

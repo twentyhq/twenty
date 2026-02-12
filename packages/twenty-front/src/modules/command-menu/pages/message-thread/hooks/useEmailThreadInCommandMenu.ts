@@ -36,7 +36,7 @@ export const useEmailThreadInCommandMenu = () => {
       id: true,
     },
     onCompleted: (record) => {
-      upsertRecordsInStore([record]);
+      upsertRecordsInStore({ partialRecords: [record] });
     },
   });
 

@@ -1,7 +1,7 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
 import { PIE_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartTooltipOffsetPx';
 import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 import { getPieChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
@@ -15,7 +15,7 @@ type GraphPieChartTooltipProps = {
   enrichedData: PieChartEnrichedData[];
   formatOptions: GraphValueFormatOptions;
   displayType?: string;
-  onSliceClick?: (datum: PieChartDataItem) => void;
+  onSliceClick?: (datum: PieChartDataItemWithColor) => void;
 };
 
 export const GraphPieChartTooltip = ({

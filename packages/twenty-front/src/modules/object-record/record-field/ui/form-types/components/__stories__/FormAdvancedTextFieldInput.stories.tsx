@@ -1,10 +1,9 @@
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -19,7 +18,7 @@ const DEFAULT_PROPS = {
   defaultValue: '',
   onChange: fn(),
   readonly: false,
-  maxHeight: 200,
+  minHeight: 200,
   maxWidth: 800,
 };
 
@@ -101,7 +100,6 @@ const meta: Meta<typeof FormAdvancedTextFieldInput> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
   ],
 };
 
@@ -255,7 +253,7 @@ export const CustomSize: Story = {
   args: {
     ...DEFAULT_PROPS,
     label: 'Custom Size Field',
-    maxHeight: 300,
+    minHeight: 300,
     maxWidth: 600,
     placeholder: 'This field has custom dimensions...',
   },

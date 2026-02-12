@@ -1,0 +1,130 @@
+---
+title: Typeform 응답을 Twenty로 가져오기
+description: Typeform의 Webhook 페이로드를 처리하여 폼 제출에서 리드를 생성합니다.
+---
+
+표준 Webhook 설정은 [Webhook 트리거 설정](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)을 참조하세요. 이 문서는 Typeform의 맞춤형 페이로드 구조에 필요한 특정 처리 방법을 다룹니다.
+
+### 1단계: Webhook 워크플로우 생성
+
+1. **설정 → 워크플로우**로 이동
+2. **+ 새 워크플로우**를 클릭
+3. 트리거로 **Webhook**을 선택합니다
+4. Webhook URL을 복사합니다
+
+### 2단계: Typeform 구성
+
+1. Typeform에서 폼을 엽니다
+2. **Connect → Webhooks**로 이동
+3. Twenty Webhook URL을 붙여넣습니다
+4. 저장
+
+### 3단계: Typeform 페이로드 이해하기
+
+Typeform은 중첩된 JSON 구조를 전송합니다. 간단한 예시는 다음과 같습니다:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+주요 유의 사항:
+
+* 폼 데이터는 `form_response` 아래에 중첩됩니다
+* **답변은 명명된 필드가 아니라 배열로 반환됩니다**
+* 각 답변에는 참고용으로 필드 유형과 제목이 포함됩니다
+
+### 4단계: 답변 배열에서 필드 추출
+
+`answers`가 배열이므로 이후 단계에서는 전체 배열만 선택할 수 있으며, 개별 필드는 선택할 수 없습니다. 필요한 필드를 추출하기 위해 **Code** 액션을 추가합니다:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+이후 단계에서는 변수 선택기에서 `contact.firstName` 및 `contact.email`과 같은 개별 필드를 선택할 수 있습니다.
+
+<Tip>
+  배열 처리에 대한 자세한 내용은 [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)를 참조하세요.
+</Tip>
+
+### 5단계: 레코드 생성
+
+**레코드 생성** 액션을 추가합니다:
+
+| 필드      | 값                                        |
+| ------- | ---------------------------------------- |
+| **객체**  | 사람들                                      |
+| **이름**  | `{{code.contact.firstName}}`             |
+| **성**   | `{{code.contact.lastName}}`              |
+| **이메일** | `{{code.contact.email}}`                 |
+| **회사**  | `{{code.contact.company}}` 기준으로 검색 또는 생성 |
+
+### 6단계: 테스트 및 활성화
+
+1. Typeform에서 테스트 응답을 제출합니다
+2. 워크플로우 실행을 확인해 데이터가 수집되었는지 검증합니다
+3. 워크플로우를 활성화합니다
+
+## 관련 항목
+
+* [Webhook 트리거 설정](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

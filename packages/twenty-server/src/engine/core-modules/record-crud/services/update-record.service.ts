@@ -1,27 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import deepEqual from 'deep-equal';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
+import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
+import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/types/update-record-params.type';
-import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
+import { removeUndefinedFromRecord } from 'src/engine/core-modules/record-crud/utils/remove-undefined-from-record.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class UpdateRecordService {
   private readonly logger = new Logger(UpdateRecordService.name);
 
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly recordInputTransformerService: RecordInputTransformerService,
+    private readonly commonUpdateOneRunner: CommonUpdateOneQueryRunnerService,
+    private readonly commonApiContextBuilder: CommonApiContextBuilderService,
   ) {}
 
   async execute(params: UpdateRecordParams): Promise<ToolOutput> {
@@ -30,17 +29,8 @@ export class UpdateRecordService {
       objectRecordId,
       objectRecord,
       fieldsToUpdate,
-      workspaceId,
-      rolePermissionConfig,
+      authContext,
     } = params;
-
-    if (!workspaceId) {
-      return {
-        success: false,
-        message: 'Failed to update record: Workspace ID is required',
-        error: 'Workspace ID not found',
-      };
-    }
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
       return {
@@ -51,66 +41,15 @@ export class UpdateRecordService {
     }
 
     try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          rolePermissionConfig,
-        );
-
       const {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      } = repository.internalContext;
-
-      const objectId = objectIdByNameSingular[objectName];
-
-      if (!isDefined(objectId)) {
-        throw new RecordCrudException(
-          `Object ${objectName} not found`,
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: objectId,
-      });
-
-      const restrictedFields =
-        repository.objectRecordsPermissions?.[flatObjectMetadata.id]
-          ?.restrictedFields;
-
-      const selectedColumns = getSelectedColumnsFromRestrictedFields(
-        restrictedFields,
+        queryRunnerContext,
+        selectedFields,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      );
-
-      const previousObjectRecord = await repository.findOne({
-        where: {
-          id: objectRecordId,
-        },
-        select: selectedColumns,
+      } = await this.commonApiContextBuilder.build({
+        authContext,
+        objectName,
       });
-
-      if (!previousObjectRecord) {
-        throw new RecordCrudException(
-          `Failed to update: Record ${objectName} with id ${objectRecordId} not found`,
-          RecordCrudExceptionCode.RECORD_NOT_FOUND,
-        );
-      }
-
-      const fieldsToUpdateArray = fieldsToUpdate || Object.keys(objectRecord);
-
-      if (fieldsToUpdateArray.length === 0) {
-        return {
-          success: true,
-          message: 'No fields to update',
-          result: previousObjectRecord,
-        };
-      }
 
       if (
         !canObjectBeManagedByWorkflow({
@@ -124,13 +63,21 @@ export class UpdateRecordService {
         );
       }
 
-      const objectRecordWithFilteredFields = Object.keys(objectRecord).reduce(
+      const fieldsToUpdateArray = fieldsToUpdate ?? Object.keys(objectRecord);
+
+      if (fieldsToUpdateArray.length === 0) {
+        return {
+          success: true,
+          message: 'No fields to update',
+          result: undefined,
+        };
+      }
+
+      // Filter objectRecord to only include fieldsToUpdate
+      const filteredObjectRecord = Object.keys(objectRecord).reduce(
         (acc, key) => {
           if (fieldsToUpdateArray.includes(key)) {
-            return {
-              ...acc,
-              [key]: objectRecord[key],
-            };
+            return { ...acc, [key]: objectRecord[key] };
           }
 
           return acc;
@@ -138,35 +85,36 @@ export class UpdateRecordService {
         {},
       );
 
-      const transformedObjectRecord =
-        await this.recordInputTransformerService.process({
-          recordInput: objectRecordWithFilteredFields,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        });
+      // Clean undefined values from the record data (including nested composite fields)
+      // This prevents validation errors for partial composite field inputs
+      const cleanedRecord = removeUndefinedFromRecord(filteredObjectRecord);
 
-      const updatedObjectRecord = {
-        ...previousObjectRecord,
-        ...objectRecordWithFilteredFields,
-      };
-
-      if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
-        await repository.update(
-          objectRecordId,
-          {
-            ...transformedObjectRecord,
-          },
-          undefined,
-          selectedColumns,
-        );
-      }
+      const updatedRecord = await this.commonUpdateOneRunner.execute(
+        {
+          id: objectRecordId,
+          data: cleanedRecord,
+          selectedFields,
+        },
+        queryRunnerContext,
+      );
 
       this.logger.log(`Record updated successfully in ${objectName}`);
 
       return {
         success: true,
         message: `Record updated successfully in ${objectName}`,
-        result: updatedObjectRecord,
+        result: params.slimResponse ? { id: objectRecordId } : updatedRecord,
+        recordReferences: [
+          {
+            objectNameSingular: objectName,
+            recordId: objectRecordId,
+            displayName: getRecordDisplayName(
+              updatedRecord,
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+            ),
+          },
+        ],
       };
     } catch (error) {
       if (error instanceof RecordCrudException) {

@@ -18,8 +18,10 @@ import { useRecoilState } from 'recoil';
 import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useSetMeteredSubscriptionPriceMutation } from '~/generated-metadata/graphql';
-import { SubscriptionInterval } from '~/generated/graphql';
+import {
+  useSetMeteredSubscriptionPriceMutation,
+  SubscriptionInterval,
+} from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -60,9 +62,13 @@ export const MeteredPriceSelector = ({
 
   const toOption = (meteredBillingPrice: MeteredBillingPrice) => {
     const price = formatNumber(meteredBillingPrice.tiers[0].flatAmount / 100);
+    const credits = formatNumber(meteredBillingPrice.tiers[0].upTo, {
+      abbreviate: true,
+      decimals: 2,
+    });
 
     return {
-      label: `${formatNumber(meteredBillingPrice.tiers[0].upTo, { abbreviate: true, decimals: 2 })} Credits - $${price}`,
+      label: t`${credits} Credits - $${price}`,
       value: meteredBillingPrice.stripePriceId,
     };
   };

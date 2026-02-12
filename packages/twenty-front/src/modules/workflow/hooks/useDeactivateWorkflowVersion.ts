@@ -19,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type DeactivateWorkflowVersionMutation,
   type DeactivateWorkflowVersionMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -111,12 +111,14 @@ export const useDeactivateWorkflowVersion = () => {
               statuses: () => Array.from(newStatuses),
             },
           });
-          upsertRecordsInStore([
-            {
-              ...cachedWorkflow,
-              statuses: Array.from(newStatuses) as WorkflowStatus[],
-            },
-          ]);
+          upsertRecordsInStore({
+            partialRecords: [
+              {
+                ...cachedWorkflow,
+                statuses: Array.from(newStatuses) as WorkflowStatus[],
+              },
+            ],
+          });
         }
       },
     });

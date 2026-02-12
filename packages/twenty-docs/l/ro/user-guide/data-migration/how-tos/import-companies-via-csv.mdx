@@ -1,0 +1,201 @@
+---
+title: Importați companii via CSV
+description: Ghid complet, pas cu pas, pentru importul companiilor în Twenty.
+---
+
+## Prezentare generală
+
+Acest ghid vă arată cum să importați companiile în Twenty. **Companiile ar trebui importate mai întâi** deoarece Persoanele și Oportunitățile se leagă de Companii.
+
+## Înainte de a începe
+
+### Listă de verificare a condițiilor prealabile
+
+<Check>
+  Fișierul este în format CSV, XLSX sau XLS
+</Check>
+
+<Check>
+  Fișierul are mai puțin de 10.000 de înregistrări
+</Check>
+
+<Check>
+  Niciun domeniu duplicat în fișierul dvs.
+</Check>
+
+<Check>
+  Toate câmpurile personalizate există în **Setări → Model de date**
+</Check>
+
+<Note>
+  Trebuie să importați mai mult de 10.000 de companii? Împărțiți în mai multe fișiere sau utilizați [importul prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
+
+## Pasul 1: Pregătiți datele companiei
+
+### Câmpuri obligatorii și recomandate
+
+| Câmp                      | Obligatoriu? | Format               | Notițe                               |
+| ------------------------- | ------------ | -------------------- | ------------------------------------ |
+| **Name**                  | Recomandat   | Text                 | Numele afișat al companiei           |
+| **Domeniu**               | Recomandat   | `https://domain.com` | Identificator unic                   |
+| **Adresă**                | Opțional     | Mai multe coloane    | Consultați mai jos                   |
+| **Angajați**              | Opțional     | Număr                | Număr de angajați                    |
+| **Câmpuri personalizate** | Opțional     | Variază              | Trebuie să existe în Modelul de date |
+
+### Formatul domeniului
+
+<Warning>
+  **Folosiți formatul `https://domain.com` pentru domenii.**
+
+  Acesta corespunde formatului folosit când Companiile sunt create automat din sincronizarea emailului/calendarului, prevenind duplicatele ulterior.
+</Warning>
+
+**Coloane pentru domeniu:**
+
+* **Domeniu / Etichetă de domeniu**: `acme.com`
+* **Domeniu / URL domeniu**: `https://acme.com`
+
+### Formatul adresei
+
+Adresa este un câmp îmbricat cu mai multe coloane:
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### Exemplu de structură CSV
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **Sfat profesional:** Faceți clic pe **Download sample file** în timpul importului pentru a vedea denumirile exacte ale coloanelor pe care le așteaptă Twenty.
+</Note>
+
+## Pasul 2: Accesați funcția de import
+
+**Opțiunea 1: Din vizualizarea Companii**
+
+1. Navigați la **Companii** în bara laterală stângă
+2. Faceți clic pe pictograma **⋮** din dreapta sus
+3. Selectați **Importă înregistrări**
+
+**Opțiunea 2: Folosind meniul de comenzi**
+
+1. Apăsați `Cmd + K` (Mac) sau `Ctrl + K` (Windows)
+2. Tastați "import"
+3. Selectați **Importă înregistrări**
+4. Alegeți **Companii**
+
+## Pasul 3: Încărcați fișierul
+
+1. Faceți clic pe **Select file**
+2. Alegeți fișierul CSV, XLSX sau XLS
+3. Așteptați ca Twenty să analizeze fișierul
+
+## Pasul 4: Mapați coloanele
+
+Twenty încearcă automat să potrivească coloanele cu câmpurile. Revizuiți și ajustați:
+
+1. **Verificați mapările automate** — confirmați că sunt corecte
+2. **Corectați mapările incorecte** — faceți clic pe lista derulantă pentru a selecta câmpul corect
+3. **Omiteți coloanele** — selectați **Do not map** pentru coloanele pe care nu doriți să le importați
+
+### Reguli importante de mapare
+
+* **Domeniu**: Mapați la **Domain / Domain URL** (nu la Domain Label)
+* **Adresă**: Mapați fiecare parte la coloana sa specifică (City, State etc.)
+* **Câmpuri Select**: Valorile trebuie să corespundă opțiunilor existente (sau le veți mapa în pasul următor)
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## Pasul 5: Mapați valorile câmpurilor Select
+
+Dacă aveți câmpuri Select sau Multi-Select:
+
+1. Twenty afișează valorile dvs. alături de opțiunile existente
+2. Asociați fiecare valoare din fișierul dvs. cu o opțiune Twenty
+3. Sau creați opțiuni noi, dacă este necesar
+
+<Note>
+  Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele API.
+</Note>
+
+## Pasul 6: Revizuiți și remediați erorile
+
+Înainte de a finaliza importul, Twenty vă validează datele:
+
+1. Faceți clic pe **Pașii următori**
+2. Rândurile cu erori sunt evidențiate cu **galben**
+3. **Remediați erorile direct** — faceți clic pe o celulă și editați valoarea
+4. **Eliminați rândurile problematice** — faceți clic pe X pentru a sări peste acel rând
+
+### Erori frecvente la importul companiilor
+
+| Eroare                        | Cauză                          | Soluție                                                      |
+| ----------------------------- | ------------------------------ | ------------------------------------------------------------ |
+| **Domeniu duplicat**          | Domeniul există deja în Twenty | Eliminați din fișier sau actualizați înregistrarea existentă |
+| **Format de domeniu invalid** | Format greșit                  | Folosiți `https://domain.com`                                |
+| **Câmp obligatoriu lipsă**    | Câmpul obligatoriu este gol    | Completați valoarea sau eliminați rândul                     |
+
+## Pasul 7: Finalizați importul
+
+1. Revizuiți rezumatul importului
+2. Faceți clic pe **Confirmă** pentru a importa
+3. Așteptați finalizarea importului
+4. Verificați consultând câteva înregistrări
+
+## După importarea companiilor
+
+Acum puteți importa înregistrări care se leagă de Companii:
+
+1. **[Importați Persoane](/l/ro/user-guide/data-migration/how-tos/import-contacts-via-csv)** — legați-le de Companii folosind domeniul
+2. **Importați Oportunități** — legați-le de Companii
+3. **Verificați importul** — verificați punctual câteva înregistrări pentru a vă asigura că datele sunt corecte
+
+## Actualizarea companiilor existente
+
+Pentru a actualiza companiile în loc să creați unele noi:
+
+1. Includeți coloana `domain` sau `id` în fișierul dvs.
+2. Twenty potrivește înregistrările după acest identificator unic
+3. Companiile existente sunt actualizate; cele noi sunt create
+
+Consultați [Cum să actualizați înregistrările existente](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import) pentru detalii.
+
+## Întrebări frecvente
+
+<AccordionGroup>
+  <Accordion title="De ce nu pot două companii să aibă același domeniu?">
+    Domeniul este un identificator unic în Twenty. Acest lucru previne companiile duplicate și asigură că sincronizarea emailului leagă corect emailurile de compania potrivită.
+  </Accordion>
+
+  <Accordion title="Ce fac dacă am companii fără domeniu?">
+    Puteți lăsa domeniul necompletat. Totuși, recomandăm să adăugați domenii atunci când este posibil, pentru o calitate mai bună a datelor și pentru legarea automată a emailurilor.
+  </Accordion>
+
+  <Accordion title="Pot importa companii fără nicio Persoană asociată?">
+    Da! Puteți importa mai întâi companiile, apoi să importați ulterior Persoane și să le asociați folosind domeniul companiei.
+  </Accordion>
+
+  <Accordion title="Ce se întâmplă dacă import un domeniu care există deja?">
+    Dacă includeți un identificator unic (domeniu sau id) care se potrivește unei companii existente, Twenty actualizează acea companie în loc să creeze un duplicat.
+  </Accordion>
+
+  <Accordion title="Cum remediez erorile 'duplicate domain'?">
+    Eliminați duplicatul din fișier sau includeți `id`-ul companiei pentru a actualiza în schimb înregistrarea existentă.
+  </Accordion>
+</AccordionGroup>
+
+## Depanare
+
+Aveți probleme? Verificați:
+
+* [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
+* [Referință pentru maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+* [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)

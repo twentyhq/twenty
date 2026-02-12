@@ -24,14 +24,17 @@ import {
   useVerifyEmailAndGetLoginTokenMutation,
   useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
   type AuthTokenPair,
+  type AuthToken,
 } from '~/generated-metadata/graphql';
 
+import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { tokenPairState } from '../states/tokenPairState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -56,17 +59,16 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { iconsState } from 'twenty-ui/display';
-import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { loginTokenState } from '../states/loginTokenState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -121,11 +123,14 @@ export const useAuth = () => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async () => {
+        const sseClient = getSnapshotValue(snapshot, sseClientState);
+
+        sseClient?.dispose();
+
         const emptySnapshot = snapshot_UNSTABLE();
 
-        const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
           .getLoadable(workspaceAuthProvidersState)
           .getValue();
@@ -152,9 +157,11 @@ export const useAuth = () => {
         const workspacePublicData = snapshot
           .getLoadable(workspacePublicDataState)
           .getValue();
+        const lastAuthenticatedMethod = snapshot
+          .getLoadable(lastAuthenticatedMethodState)
+          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState, iconsValue);
           set(workspaceAuthProvidersState, authProvidersValue);
           set(billingState, billing);
           set(
@@ -174,12 +181,14 @@ export const useAuth = () => {
           return undefined;
         });
 
-        goToRecoilSnapshot(initialSnapshot);
-
         sessionStorage.clear();
         localStorage.clear();
+
+        goToRecoilSnapshot(initialSnapshot);
+
+        set(lastAuthenticatedMethodState, lastAuthenticatedMethod);
+
         await client.clearStore();
-        // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
         await loadMockedObjectMetadataItems();
         navigate(AppPath.SignInUp);

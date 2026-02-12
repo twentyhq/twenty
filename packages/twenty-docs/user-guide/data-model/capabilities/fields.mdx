@@ -1,0 +1,118 @@
+---
+title: Fields
+description: Understand the role of fields and how to manage them.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+
+## About Fields
+
+Fields are like columns in a spreadsheet. They store different types of data like text, numbers, or dates. Fields can be standard (built-in) or custom (the ones you create).
+
+### Standard Fields
+
+Standard fields come built-in with Twenty to handle common business needs.
+
+For example, `First Name` and `Last Name` are standard fields in the `People` object. They store text data for individual names.
+
+You cannot delete standard fields, but you can deactivate them if you don't need them.
+
+You can also customize the options of the standard `SELECT` type fields, for example the options for the `Stage` on Opportunities.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Custom Fields
+
+Custom fields can be added to any object. You can store text, numbers, dates, dropdown selections, and more. Use custom fields to track information that's specific to your business.
+
+For instance, a custom field for SpaceX could be `Rocket Active Status`, indicating if a rocket is operational.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}}/>
+
+## Field Types
+
+Twenty supports various field types:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| Address | Structured address with street, city, state, country, postal code | Office Address |
+| Array | List of text values | Tags |
+| Boolean | True/false checkbox | Is Active |
+| Currency | Monetary value with currency code | Deal Amount (USD) |
+| Date | Date values | Close Date |
+| Date & Time | Date with time | Meeting Time |
+| Domain | Website domain (used for Companies) | acme.com |
+| Email | Email addresses (with primary + additional) | Contact Email |
+| JSON | Structured JSON data | Custom metadata |
+| Links | URLs with labels (primary + secondary) | Website, LinkedIn |
+| Long Text | Multi-line text | Description, Notes |
+| Multi-Select | Multiple choices from a predefined list | Tags, Categories |
+| Number | Numeric values (integers or decimals) | Quantity, Score |
+| Phone | Phone numbers with country code | Work Phone |
+| Rating | Star rating (1-5) | Priority, Score |
+| Relation | Links to records in other objects | Company → People |
+| Select | Single choice from a predefined list | Stage, Status |
+| Text | Single line of text | Name, Title |
+
+## Create a Custom Field
+
+To add a custom field to any object, follow these steps:
+1. Go to `Settings` in the left sidebar.
+2. Go to `Data Model`, then select the object you wish to customize.
+3. Proceed by clicking on `Add Field`.
+4. Choose a field name and type that suits your requirements. Consider adding a field description for better understanding.
+
+Your newly created field is now available within the application's fields. To display it on a specific view, click on the options menu, then select `Fields`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Quick way:** Click the **+** button at the top right of any object table, then select `Customize fields`. This takes you directly to the Data Model settings.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Deactivate a Field
+
+You can deactivate a field to hide it from the app without losing your data. Think of it as hiding the field rather than deleting it.
+
+Here's how you can do it:
+
+1. Find the field you want to deactivate in your object settings.
+
+2. Click the three dots `⋮` next to the field to open the menu.
+
+3. Select `Deactivate` from the dropdown.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+What happens when you deactivate a field?
+
+1. **In the app:** The field disappears and you can't add new values to it.
+
+2. **Existing relationships:** If it's a relation field, existing connections stay but you can't create new ones.
+
+3. **API access:** You can still access the field and its data through the API.
+
+You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+
+## Make Fields Unique
+
+Make a field unique to ensure distinct records cannot have the same value. For example, email addresses are unique for each person.
+
+If you get an error when setting uniqueness, check for duplicate values in your data (including deleted records).
+
+## Field Configuration Best Practices
+
+### Naming Conventions and Limitations
+- **Singular and plural named must be distinct**: Our GraphQL API needs distinct names for mutations
+- **Protected field names**: some names are reserved for system usage (e.g., `Type`, `Application`)
+
+### Currency and Phone Fields
+- **Default currency**: can be configured via the data model
+- **Default country codes**: can be configured for phone fields via the data model
+
+### Select Fields
+- **A default option can be selected** for each Select field
+
+### Record Text Fields
+- **Each object has one main display field**: This field appears in the leftmost column and represents the record when linked to other objects. It must be a text field. For example, People uses `Name` as the main field, so when you link a person to a company, you'll see their name in the company's view.

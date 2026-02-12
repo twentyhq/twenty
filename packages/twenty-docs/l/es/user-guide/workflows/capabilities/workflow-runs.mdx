@@ -1,0 +1,92 @@
+---
+title: Ejecuciones de flujos de trabajo
+description: Supervise y gestione las ejecuciones de flujos de trabajo.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Acerca de las ejecuciones
+
+Una **Ejecución** es un registro de la ejecución de un flujo de trabajo. Cada vez que se activa un flujo de trabajo—ya sea por un evento de registro, una programación, una acción manual o un webhook—se crea una nueva ejecución.
+
+## Visualización de ejecuciones
+
+### Desde el editor de flujos de trabajo
+
+1. Abra el flujo de trabajo que desea supervisar
+2. Haga clic en el panel **Ejecuciones** en el lado derecho
+3. Vea una lista de ejecuciones recientes con su estado
+
+### Desde la vista de ejecuciones de flujos de trabajo
+
+1. Vaya a **Ejecuciones de flujos de trabajo** en la barra lateral
+2. Vea ejecuciones en todos los flujos de trabajo
+3. Filtre por estado, flujo de trabajo o fecha
+
+## Estados de las ejecuciones
+
+| Estado           | Descripción                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| **En ejecución** | El flujo de trabajo se está ejecutando actualmente                                                      |
+| **Completado**   | El flujo de trabajo finalizó correctamente                                                              |
+| **Fallido**      | El flujo de trabajo encontró un error y se detuvo                                                       |
+| **En espera**    | El flujo de trabajo está en pausa (p. ej., esperando una acción de Retardo o el envío de un Formulario) |
+
+## Detalles de la ejecución
+
+Haga clic en cualquier ejecución para ver:
+
+* **Estado**: Estado actual de la ejecución
+* **Iniciado**: Momento en que comenzó la ejecución
+* **Duración**: Tiempo que tardó la ejecución
+* **Datos del disparador**: La entrada que inició el flujo de trabajo
+* **Salidas de los pasos**: Datos devueltos por cada paso
+* **Mensajes de error**: Si la ejecución falló, qué salió mal
+
+## Ejecución paso a paso
+
+Cada ejecución muestra el progreso a través de su flujo de trabajo:
+
+1. Vea qué pasos se completaron correctamente
+2. Identifique dónde se produjeron fallos
+3. Vea los datos transferidos entre pasos
+4. Depure problemas examinando las entradas y salidas de los pasos
+
+## Gestión de errores
+
+Cuando una ejecución falla:
+
+1. Abra la ejecución fallida
+2. Encuentre el paso que causó el fallo
+3. Revise el mensaje de error para obtener detalles
+4. Problemas comunes:
+   * Faltan campos obligatorios
+   * Formato de datos no válido
+   * Errores de API externa
+   * Problemas de permisos
+
+## Volver a ejecutar flujos de trabajo
+
+Si una ejecución falla, puede:
+
+* Corrija el problema subyacente y espere al siguiente disparador
+* Para los flujos de trabajo manuales, vuelva a activarlos con los mismos datos o actualizados
+* Revise la lógica del flujo de trabajo para prevenir fallos futuros
+
+## Consejos de rendimiento
+
+### Gestión del historial de ejecuciones
+
+* Las ejecuciones se conservan como referencia histórica
+* Las ejecuciones muy antiguas pueden archivarse automáticamente
+* Exporte los datos de las ejecuciones si necesita conservar registros
+
+### Mejores prácticas de supervisión
+
+* Revise las ejecuciones con regularidad después de activar nuevos flujos de trabajo
+* Revise las ejecuciones fallidas para identificar patrones
+
+## Relacionado
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Solución de problemas de flujos de trabajo](/l/es/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

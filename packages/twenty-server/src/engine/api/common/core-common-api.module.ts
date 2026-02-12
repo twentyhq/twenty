@@ -13,6 +13,7 @@ import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-que
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
@@ -23,7 +24,6 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -35,6 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserRoleModule,
     ApiKeyModule,
     FileModule,
+    FilesFieldModule,
     ViewModule,
     ViewFilterModule,
     ViewFilterGroupModule,
@@ -42,7 +43,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
     RecordPositionModule,
     RecordTransformerModule,
-    GlobalWorkspaceDataSourceModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
   ],

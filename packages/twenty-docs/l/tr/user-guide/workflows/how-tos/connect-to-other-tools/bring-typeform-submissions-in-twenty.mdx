@@ -1,0 +1,130 @@
+---
+title: Typeform Yanıtlarını Twenty'ye Aktarın
+description: Form yanıtlarından potansiyel müşteriler oluşturmak için Typeform'un webhook yükünü işleyin.
+---
+
+Standart webhook kurulumu için bkz. [Bir Webhook Tetikleyicisi Kurun](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). Bu makale, Typeform'un özel yük yapısı için gereken özel işlemeyi kapsar.
+
+### Adım 1: Bir Webhook İş Akışı Oluşturun
+
+1. **Ayarlar → İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Tetikleyici olarak **Webhook**'u seçin
+4. Webhook URL'sini kopyalayın
+
+### Adım 2: Typeform'u Yapılandırın
+
+1. Typeform'da formunuzu açın
+2. **Connect → Webhooks** bölümüne gidin
+3. Twenty webhook URL'nizi yapıştırın
+4. Kaydet
+
+### Adım 3: Typeform Yükünü Anlayın
+
+Typeform iç içe geçmiş bir JSON yapısı gönderir. İşte basitleştirilmiş bir örnek:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Dikkat edilmesi gereken başlıca noktalar:
+
+* Form verileri `form_response` altında iç içe yapıdadır
+* **Yanıtlar bir dizi olarak döndürülür**, adlandırılmış alanlar olarak değil
+* Her yanıt, referans için alan türünü ve başlığını içerir
+
+### Adım 4: Yanıtlar Dizisinden Alanları Çıkarın
+
+`answers` bir dizi olduğundan, sonraki adımlarda yalnızca tüm diziyi seçebilirsiniz — tek tek alanları değil. Gerekli alanları çıkarmak için bir **Kod** eylemi ekleyin:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+Sonraki adımlarda, değişken seçiciden `contact.firstName` ve `contact.email` gibi tekil alanları artık seçebilirsiniz.
+
+<Tip>
+  Kod eylemlerinde dizileri ele alma hakkında daha fazla ayrıntı için bkz. [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Adım 5: Kaydı Oluşturun
+
+**Kayıt Oluştur** eylemini ekleyin:
+
+| Alan        | Değer                                                   |
+| ----------- | ------------------------------------------------------- |
+| **Nesne**   | İnsanlar                                                |
+| **Ad**      | `{{code.contact.firstName}}`                            |
+| **Soyadı**  | `{{code.contact.lastName}}`                             |
+| **E-posta** | `{{code.contact.email}}`                                |
+| **Şirket**  | `{{code.contact.company}}` temelinde ara veya oluşturun |
+
+### Adım 6: Test Edin ve Etkinleştirin
+
+1. Typeform'da bir test yanıtı gönderin
+2. Verilerin yakalandığını doğrulamak için iş akışı çalıştırmasını kontrol edin
+3. İş akışını etkinleştirin
+
+## İlgili
+
+* [Bir Webhook Tetikleyicisi Kurun](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

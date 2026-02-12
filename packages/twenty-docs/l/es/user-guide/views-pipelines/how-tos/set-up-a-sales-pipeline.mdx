@@ -1,0 +1,120 @@
+---
+title: Configura un pipeline de ventas
+description: Configura tu pipeline de ventas para hacer seguimiento de las oportunidades a lo largo de las etapas.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Un pipeline de ventas en Twenty es una vista Kanban de tu objeto Oportunidades, donde cada columna representa una etapa de tu proceso de ventas.
+
+## Paso 1: Configura tus etapas
+
+Las etapas se definen en el campo **Stage** del objeto Oportunidades.
+
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona **Oportunidades**
+3. Busca y haz clic en el campo **Stage**
+4. Agrega, elimina o renombra etapas para que coincidan con tu proceso
+
+<VimeoEmbed videoId="927890428" title="Demostración en video" />
+
+### Etapas recomendadas
+
+| Etapa               | Propósito                                 |
+| ------------------- | ----------------------------------------- |
+| **Nuevo**           | Oportunidades nuevas recién identificadas |
+| **Calificado**      | Confirmadas como buen ajuste              |
+| **Reunión**         | En conversaciones activas                 |
+| **Propuesta**       | Propuesta enviada                         |
+| **Negociación**     | Trabajando en las condiciones             |
+| **Cerrado ganado**  | Negocio ganado                            |
+| **Cerrado perdido** | Negocio perdido                           |
+
+<Note>
+  **De 5 a 7 etapas es lo óptimo.** Demasiadas etapas hacen que el pipeline sea difícil de revisar; muy pocas reducen la visibilidad del progreso de los acuerdos.
+</Note>
+
+## Paso 2: Crea una vista de pipeline
+
+1. Ve a **Oportunidades**
+2. Haz clic en el menú desplegable de la vista → **+ Agregar vista**
+3. Ponle el nombre "Sales Pipeline"
+4. Haz clic en **Crear**
+5. Abre **Opciones** y selecciona **Kanban** como diseño
+
+La vista usa automáticamente el campo Stage para las columnas.
+
+## Paso 3: Configura tu vista
+
+### Mostrar campos clave
+
+1. Haz clic en **Opciones → Campos**
+2. Busca campos en la sección "Campos ocultos"
+3. Haz clic en el **icono de ojo** para mostrar: Empresa, Importe, Fecha de cierre, Propietario
+
+### Activa las agregaciones
+
+Muestra los totales en la parte superior de cada columna:
+
+1. Haz clic en el número que se muestra junto al nombre de una etapa en la parte superior de una columna
+2. Selecciona el tipo de agregación (Conteo, Suma, Promedio, etc.)
+3. Elige el campo a agregar (p. ej., Importe)
+
+**Ejemplo:** Muestra el valor total de los acuerdos por etapa agregando Importe con Suma.
+
+### Usa la vista compacta (opcional)
+
+Para una vista general con contenido mínimo en las tarjetas:
+
+1. Haz clic en **Opciones**
+2. Activa la opción de **Vista compacta**
+
+## Paso 4: Crea vistas personales y del equipo
+
+### "Mi pipeline"
+
+* **Filtro**: Propietario = Yo
+* **Visibilidad**: No listada (vista personal)
+
+### "Pipeline del equipo"
+
+* **Filtro**: Ninguno (mostrar todo)
+* **Visibilidad**: Espacio de trabajo (vista compartida)
+
+### "Cierres de este mes"
+
+* **Tipo**: Tabla
+* **Filtro**: Fecha de cierre = Este mes, Etapa ≠ Cerrado ganado, Etapa ≠ Cerrado perdido
+* **Orden**: Fecha de cierre ascendente
+
+## Trabajando con Oportunidades
+
+### Crear Oportunidades
+
+* Haz clic en **+ Nuevo** en la vista de Oportunidades
+* O haz clic en **+** en la columna de una etapa específica
+
+### Moverse por las etapas
+
+Arrastra y suelta las tarjetas de oportunidad entre columnas para actualizar su etapa.
+
+<VimeoEmbed videoId="927888627" title="Demostración en video" />
+
+## Mejores prácticas
+
+### Higiene del pipeline
+
+* Actualiza los acuerdos a diario conforme avancen
+* Mueve o cierra los acuerdos estancados con prontitud
+* Mantén realistas las fechas de cierre
+
+### Disciplina de las etapas
+
+* Define criterios claros para cada etapa
+* Mueve los acuerdos con prontitud cuando se cumplan los criterios
+* No dejes que los acuerdos permanezcan demasiado tiempo en las etapas
+
+## Relacionado
+
+* [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones y vista compacta
+* [Filtros y ordenación](/l/es/user-guide/views-pipelines/capabilities/filters-and-sorting) — creación de vistas filtradas

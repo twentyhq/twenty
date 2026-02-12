@@ -1,5 +1,5 @@
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 
 export type CombinedFindManyRecordsQueryResult = {
-  [namePlural: string]: RecordGqlConnection;
+  [namePlural: string]: RecordGqlConnectionEdgesRequired;
 };

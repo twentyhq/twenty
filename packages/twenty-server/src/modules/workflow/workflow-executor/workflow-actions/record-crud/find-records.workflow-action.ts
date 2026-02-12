@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -17,6 +17,7 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -71,9 +72,12 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    const fields = flatObjectMetadata.fieldMetadataIds
+    const fields = flatObjectMetadata.fieldIds
       .map((fieldId) => {
-        const field = flatFieldMetadataMaps.byId[fieldId];
+        const field = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
 
         if (!field) {
           return null;
@@ -101,7 +105,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
             fields,
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
-            filterValueDependencies: {},
+            filterValueDependencies: {
+              timeZone: 'UTC',
+            },
           })
         : {};
 
@@ -110,7 +116,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
-      workspaceId,
+      authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 

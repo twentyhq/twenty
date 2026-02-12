@@ -7,16 +7,38 @@
  *                              |___/
  */
 
-export type { ApplicationManifest } from './applicationManifestType';
-export type { Application } from './applicationType';
-export type { ApplicationVariables } from './applicationVariablesType';
-export type { FieldManifest } from './fieldManifestType';
-export type { ObjectManifest } from './objectManifestType';
-export type { PackageJson } from './packageJsonType';
 export type {
-  ServerlessFunctionManifest,
-  DatabaseEventTrigger,
-  CronTrigger,
-  RouteTrigger,
-  ServerlessFunctionTriggerManifest,
-} from './serverlessFunctionManifestType';
+  ApplicationMarketplaceData,
+  ApplicationManifest,
+} from './applicationType';
+export type { ApplicationVariables } from './applicationVariablesType';
+export type { AssetManifest } from './assetManifestType';
+export { ASSETS_DIR } from './constants/AssetDirectory';
+export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
+export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
+export { GENERATED_DIR } from './constants/GeneratedDirectory';
+export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
+export { OUTPUT_DIR } from './constants/OutputDirectory';
+export { SyncableEntity } from './enums/syncable-entities.enum';
+export type {
+  RegularFieldManifest,
+  RelationFieldManifest,
+  FieldManifest,
+} from './fieldManifestType';
+export type { FrontComponentManifest } from './frontComponentManifestType';
+export type {
+  InputJsonSchema,
+  LogicFunctionManifest,
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from './logicFunctionManifestType';
+export type { Manifest } from './manifestType';
+export type { ObjectFieldManifest } from './objectFieldManifest.type';
+export type { ObjectManifest } from './objectManifestType';
+export type {
+  ObjectPermissionManifest,
+  FieldPermissionManifest,
+  RoleManifest,
+} from './roleManifestType';
+export type { SyncableEntityOptions } from './syncableEntityOptionsType';

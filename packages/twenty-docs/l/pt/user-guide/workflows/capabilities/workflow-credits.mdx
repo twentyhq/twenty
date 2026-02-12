@@ -1,0 +1,76 @@
+---
+title: Créditos de Fluxo de Trabalho
+description: Entenda o consumo e o gerenciamento de créditos de fluxo de trabalho.
+---
+
+Os créditos de fluxo de trabalho alimentam suas automações no Twenty. Entender como eles funcionam ajuda você a otimizar custos e gerenciar seu orçamento de automação de maneira eficaz.
+
+## Alocação de créditos
+
+Os créditos de fluxo de trabalho são alocados com base no seu ciclo de faturamento, não no seu nível de plano:
+
+| Ciclo de faturamento  | Créditos                       |
+| --------------------- | ------------------------------ |
+| **Assinatura mensal** | 5 milhões de créditos por mês  |
+| **Assinatura anual**  | 50 milhões de créditos por ano |
+
+<Note>
+  5 milhões de créditos mensais são generosos para automações padrão. A maioria das equipes não excederá esse limite com o uso típico de fluxos de trabalho. Créditos adicionais são necessários principalmente para ações de Code avançadas e fluxos de trabalho com tecnologia de IA.
+</Note>
+
+## Como Funciona o Consumo de Créditos
+
+Os créditos são consumidos quando os fluxos de trabalho são executados, não quando você os cria. Cada ação de fluxo de trabalho consome créditos com base em sua complexidade:
+
+### Consumo de Créditos por Tipo de Ação
+
+* **Operações internas básicas**: Consumo de créditos muito baixo
+  * Pesquisar Registros
+  * Criar Registro
+  * Atualizar Registro
+  * Excluir Registro
+  * Ações de formulário
+
+* **Operações complexas**: Maior consumo de créditos
+  * Ações de código (execução de JavaScript)
+  * Solicitações HTTP para serviços externos
+
+* **Recursos de IA**: Maior consumo de créditos
+  * As ações do Agente de IA consomem créditos com base no modelo de IA usado
+  * Prompts mais complexos e saídas mais longas consomem mais créditos
+
+* **Ações de Delay**: Consumo mínimo de créditos
+  * O nó Delay consome **1 crédito** quando é executado
+  * **Nenhum crédito é consumido** durante o período de espera
+  * Um atraso de 5 minutos custa o mesmo que um atraso de 5 dias
+
+### Dedução em Tempo Real
+
+Os créditos são deduzidos em tempo real à medida que os fluxos de trabalho são executados. Isso significa:
+
+* Fluxos de trabalho em rascunho não consomem créditos
+* Apenas fluxos de trabalho ativos e em execução usam sua alocação de crédito
+* Fluxos de trabalho com falha ainda consomem créditos para etapas concluídas
+
+## Gerenciamento de Créditos
+
+### Verificar Uso de Créditos
+
+1. Vá para **Configurações → Faturamento**
+2. Veja o seu consumo atual de créditos e o saldo restante
+3. Monitore padrões de uso para otimizar seus fluxos de trabalho
+
+### Compra de Créditos Adicionais
+
+Se você precisar de mais créditos além da alocação do seu plano:
+
+1. Vá para **Configurações → Faturamento**
+2. Clique na opção para comprar créditos adicionais. Pacotes de diferentes tamanhos estão disponíveis.
+3. Os créditos são adicionados ao seu saldo atual
+
+## Melhores Práticas
+
+* **Processamento em Lote**: Use operações em massa e ações de Iterador de forma eficiente
+* **Otimização de Gatilhos Manuais**: Para gatilhos manuais, escolha a disponibilidade `Em Massa` para processar vários registros em uma única execução de fluxo de trabalho
+* Otimize as ações de código para eficiência
+* Operações em lote para reduzir chamadas de ação individual

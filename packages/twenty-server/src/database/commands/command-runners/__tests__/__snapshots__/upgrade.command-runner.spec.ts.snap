@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`UpgradeCommandRunner Workspace upgrade should fail when APP_VERSION is not defined 1`] = `[Error: Cannot run upgrade command when APP_VERSION is not defined, please double check your env variables]`;
 

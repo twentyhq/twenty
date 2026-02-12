@@ -1,0 +1,144 @@
+---
+title: 从 Twenty 生成报价单或发票
+description: 在交易达成时，自动在外部工具中创建发票。
+---
+
+自动将交易数据发送到您的开票系统（Stripe、QuickBooks、Xero 等） 当机会赢单时。
+
+## 工作流结构
+
+1. **触发器**：记录已更新（机会对象）
+2. **筛选器**：阶段 = 赢单
+3. **搜索记录**：获取公司详细信息
+4. **代码**（可选）：格式化负载
+5. **HTTP 请求**：发送到开票系统
+
+## 步骤 1：设置触发器
+
+1. 创建新的工作流
+2. 选择 **记录已更新** 触发器
+3. 选择 **机会** 作为对象
+
+## 步骤 2：筛选赢单
+
+添加一个 **筛选** 操作，仅在机会赢单时才继续：
+
+| 设置     | 值                     |
+| ------ | --------------------- |
+| **字段** | 阶段                    |
+| **条件** | 等于                    |
+| **值**  | `CLOSED_WON`（或您的阶段名称） |
+
+<Tip>
+  该触发器会在任何机会更新时触发。 筛选器确保仅当阶段变更为赢单时，工作流才会继续。
+</Tip>
+
+## 步骤 3：获取公司详细信息
+
+机会记录可能不包含开票所需的所有公司字段。 添加一个 **搜索记录** 操作：
+
+| 设置       | 值                                    |
+| -------- | ------------------------------------ |
+| **对象**   | 公司                                   |
+| **匹配方式** | ID 等于 `{{trigger.object.companyId}}` |
+
+这将检索包含账单地址、税号等在内的完整公司记录。
+
+## 步骤 4：格式化负载（可选）
+
+如果您的开票系统需要特定格式，请添加一个 **代码** 操作：
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## 步骤 5：发送到开票系统
+
+添加一个 **HTTP 请求** 操作：
+
+| 设置      | 值                                    |
+| ------- | ------------------------------------ |
+| **方法**  | POST                                 |
+| **URL** | 您的开票 API 端点                          |
+| **请求头** | `Authorization: Bearer YOUR_API_KEY` |
+| **请求体** | `{{code.invoice}}` 或直接映射字段           |
+
+### 示例：Stripe 发票
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### 示例：QuickBooks 发票
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## 完整的工作流摘要
+
+| 步骤 | 操作        | 目的              |
+| -- | --------- | --------------- |
+| 1  | 触发器：记录已更新 | 当任何机会发生更改时触发    |
+| 2  | 过滤        | 仅当阶段 = 赢单时才继续   |
+| 3  | 搜索记录      | 获取用于开票的完整公司详细信息 |
+| 4  | 代码        | 为开票 API 格式化数据   |
+| 5  | HTTP请求    | 在外部系统中创建发票      |
+
+## 提示
+
+* **存储外部 ID**：使用 **更新记录** 操作将 API 返回的发票 ID 保存回机会
+* **错误处理**：添加一个分支，在 HTTP 请求失败时发送通知
+* **先测试**：在上线之前，使用开票系统的沙盒/测试模式
+
+## 相关内容
+
+* [从 Twenty 生成 PDF](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — 将生成的 PDF 附加到记录
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [赢单自动化](/l/zh/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

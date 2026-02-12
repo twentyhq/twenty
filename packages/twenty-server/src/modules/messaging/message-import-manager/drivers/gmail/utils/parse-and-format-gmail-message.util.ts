@@ -29,6 +29,7 @@ export const parseAndFormatGmailMessage = (
     text,
     attachments,
     deliveredTo,
+    labelIds,
   } = parseGmailMessage(message);
 
   if (
@@ -83,5 +84,6 @@ export const parseAndFormatGmailMessage = (
     participants,
     text: sanitizeString(textWithoutReplyQuotations),
     attachments,
+    labelIds,
   };
 };

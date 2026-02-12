@@ -1,4 +1,4 @@
-import { getActivitySummary } from '../getActivitySummary';
+import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 
 describe('getActivitySummary', () => {
   it('should work for empty body ""', () => {

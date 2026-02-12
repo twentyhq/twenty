@@ -1,0 +1,290 @@
+---
+title: スタイルガイド
+---
+
+このドキュメントには、コードを書く際に従うべきルールが含まれています。
+
+ここでの目標は、一貫性があり、読みやすく、メンテナンスしやすいコードベースにすることです。
+
+そのためには、簡潔すぎるよりも少し冗長な方が良いです。
+
+常に念頭に置いておくべきは、コードは書くより読む方が多いということ、特にオープンソースプロジェクトでは、誰でも貢献できるためです。
+
+ここでは定義されていない、多くの規則がありますが、リンターにより自動的にチェックされます。
+
+## React
+
+### 関数コンポーネントを使用する
+
+常にTSXの関数コンポーネントを使用してください。
+
+`const`を使ったデフォルトの`import`は避けてください。読むことや、コード補完でのインポートが難しくなるからです。
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### プロパティ
+
+プロップスの型を作成し、エクスポートの必要がない場合にはそれを`(ComponentName)Props`と呼んでください。
+
+プロップスの分割代入を使用する。
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### プロップス型の定義に`React.FC`または`React.FunctionComponent`を使用しない
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - 良い例: プロップス用に別個のタイプ（OwnProps）を明示的に
+ *      定義する
+ *    - この方法は、デフォルトでchildrenプロップを含まないため、
+ *      必要な場合にOwnPropsに指定する必要があります。
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### JSX要素内で単一の変数プロップスプレーディングを使用しない
+
+`{...props}`のようにJSX要素内で単一の変数プロップスプレーディングを避けてください。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - 良い例: すべてのプロップスを明示的にリストする
+ *    - 可読性と維持性を高める
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+根拠:
+
+* ひと目で、コードがどのプロップスを渡しているかが明確になり、理解とメンテナンスが容易になります。
+* これにより、コンポーネント間のプロップスによる密結合を防ぐのに役立ちます。
+* プロップスを明示的にリストすれば、lintingツールが綴り間違いや未使用のプロップスを特定しやすくなります。
+
+## JavaScript
+
+### `??`（ヌリッシュ合体演算子）を使う
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### `?.`（オプショナルチェイニング）を使う
+
+```tsx
+// ❌ 悪い例
+onClick && onClick();
+
+// ✅ 良い例
+onClick?.();
+```
+
+## TypeScript
+
+### `type`を使い、常に`interface`の代わりにする
+
+`type`は多くの場合、`interface`と重複し、`type`の方が柔軟性が高いため、常に`type`を使用してください。
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### 列挙型の代わりに文字列リテラルを使う
+
+[文字列リテラル](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) は、TypeScriptで列挙型のような値を扱うための推奨方法です。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。
+
+なぜTypeScriptが列挙型を避けることを推奨しているかは[ここ](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)をご覧ください。
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQLと内部ライブラリ
+
+GraphQLのcodegenが生成する列挙型を使用する必要があります。
+
+内部ライブラリを使用する際にも列挙型を使用する方が良いので、内部ライブラリが内部APIに関連しない文字列リテラル型を公開する必要がなくなります。
+
+例:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## スタイリング
+
+### StyledComponentsを使用する
+
+コンポーネントを[styled-components](https://emotion.sh/docs/styled)でスタイル設定する。
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+スタイル付きコンポーネントを"Styled"で接頭辞にして、"本物の"コンポーネントと区別する。
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### テーマ
+
+大部分のコンポーネントのスタイルをテーマに基づかせるのが推奨される手法です。
+
+#### 測定の単位
+
+Styledコンポーネント内で`px`または`rem`値を直接使用しない 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。
+
+#### カラー
+
+新しい色を追加するのではなく、テーマから既存のパレットを使用してください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## タイプ無しのインポートの強制
+
+タイプインポートを避けてください。 タイプインポートを避けてください。 この標準を強制するために、ESLintルールがどのタイプのインポートもチェックして報告します。 これにより、TypeScriptコードの一貫性と可読性が維持されます。 これにより、TypeScriptコードの一貫性と可読性が維持されます。
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### なぜタイプなしインポートなのか
+
+* **一貫性**: 型インポートを避け、型と値の両方に単一のアプローチを使用することで、モジュールインポートスタイルの一貫性が保たれます。
+
+* **可読性**: 型専用インポートは、値をインポートしているのか型をインポートしているのかを明確にすることで、コードの可読性を高めます。 これにより曖昧さが減り、インポートされたシンボルの目的を理解しやすくなります。
+
+* **維持性**: コードベースの維持性を向上させます。開発者がコードを確認/変更する際に、タイプのみのインポートを特定して見つけることができるからです。
+
+### ESLintルール
+
+ESLint のルール `@typescript-eslint/consistent-type-imports` は、型専用インポートの標準を強制します。 このルールは、タイプインポート違反のエラーや警告を生成します。
+
+このルールは、意図せず型をインポートしてしまう稀なエッジケースに特化して対処することに留意してください。 TypeScript自体、[TypeScript 3.8 リリースノート](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)でこのプラクティスを避けています。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。
+
+コードがこのルールに準拠していることを確実にするため、開発ワークフローの一環として ESLint を実行してください。

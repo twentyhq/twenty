@@ -1,0 +1,89 @@
+---
+title: Migrazione dei dati
+description: Importa ed esporta i dati del tuo CRM tramite file CSV o API.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Migrazione dei dati" />
+</Frame>
+
+## Metodi di importazione
+
+Twenty supporta due metodi principali per importare dati:
+
+| Metodo               | Ideale per                                  | Limite di volume       |
+| -------------------- | ------------------------------------------- | ---------------------- |
+| **Importazione CSV** | Migrazioni standard, aggiornamenti regolari | 10.000 record per file |
+| **Importazione API** | Migrazioni su larga scala, automazione      | Illimitato             |
+
+<Note>Per set di dati molto grandi (centinaia di migliaia di record), usa le API. I nostri [partner di implementazione](/l/it/user-guide/getting-started/capabilities/implementation-services) possono aiutarti a eseguire questi script se necessario.</Note>
+
+## Nozioni di base sull'importazione CSV
+
+Puoi importare dati per qualsiasi oggetto utilizzando file CSV, XLSX o XLS. Ogni file dovrebbe contenere **solo un tipo di oggetto** (ad esempio, solo record di Persone).
+
+<Note>**I campi devono esistere prima dell'importazione.** Il caricamento di un file CSV crea record ma non crea campi. Se ti servono campi personalizzati, creali prima in **Impostazioni → Modello dati**.</Note>
+
+### Passaggi
+
+1. Vai all'oggetto in cui vuoi importare i dati
+2. Fai clic sull'icona **⋮** in alto a destra (questo è il Menu comandi) e fai clic su **Importa record**
+3. Scarica il file modello per assicurarti che i dati siano nel formato previsto
+4. Carica il tuo file CSV formattato
+5. Abbina le tue colonne ai campi di Twenty
+6. Esamina gli errori (evidenziati in giallo) e correggili, modificando direttamente nell'interfaccia utente (UI)
+7. Conferma l'importazione
+
+### Importazione delle relazioni tra oggetti
+
+Puoi importare le relazioni tra oggetti utilizzando la funzione di importazione CSV. Devi fare riferimento all'oggetto correlato utilizzando un campo univoco di tale oggetto: l'`id`, l'`email` per Persone e Membri dello spazio di lavoro, il `domain` per le aziende, qualsiasi altro campo impostato come univoco nel modello dati per qualsiasi altro oggetto.
+
+<Note>**I record eliminati influiscono sull'unicità.** I record eliminati in modo non definitivo (visibili nel Menu comandi → Vedi record eliminati) sono inclusi nei controlli di unicità. Se importi un record con lo stesso valore univoco di un record eliminato, il record eliminato verrà ripristinato.</Note>
+
+<Warning>
+  **L'ordine di importazione è importante!**
+
+  Quando importi oggetti correlati, carica i file in questo ordine:
+
+  1. **Aziende** per prime (il lato "uno" delle relazioni)
+  2. **Persone** in secondo luogo (collegate alle aziende tramite companyId)
+  3. **Opportunità** in terzo luogo (collegate ad aziende/persone)
+  4. **Oggetti personalizzati** con relazioni per ultimi
+
+  Perché? Il lato "uno" di una relazione uno-a-molti deve esistere prima di potervi fare riferimento. Ad esempio, il record Azienda deve esistere prima di importare una Persona con l'ID di quella azienda.
+</Warning>
+
+Consulta [questo articolo](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) per una guida passo passo su come procedere.
+
+## Esporta Dati
+
+Esporta i dati del tuo spazio di lavoro per backup, reportistica o migrazione.
+
+### Passaggi
+
+1. Vai all'oggetto che vuoi esportare
+2. Configura la vista con le colonne di cui hai bisogno
+3. Fai clic su **⋮** → **Esporta vista**
+4. Salva il file CSV
+
+<Note>**Vengono esportate solo le colonne visibili.** Il file CSV conterrà solo le colonne visualizzate nella vista corrente. Aggiungi o nascondi colonne prima dell'esportazione per controllare quali dati includere.</Note>
+
+<Note>**Limiti di esportazione**: fino a 20.000 record per esportazione.</Note>
+
+## Permessi
+
+L'importazione e l'esportazione dei dati richiedono autorizzazioni specifiche:
+
+* **Importazione**: Richiede l'autorizzazione "Import CSV"
+* **Esportazione**: Richiede l'autorizzazione "Export CSV"
+
+Contatta l'amministratore dello spazio di lavoro se non disponi di queste autorizzazioni.
+
+## Prossimi Passi
+
+* [Prepara i file CSV](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Importa le relazioni tra oggetti](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Importa tramite API per set di dati di grandi dimensioni](/l/it/user-guide/data-migration/how-tos/import-data-via-api)

@@ -3,11 +3,11 @@ import { useContext } from 'react';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import type { PartialBlock } from '@blocknote/core';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FieldContext } from '../../contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useRichTextFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -20,7 +20,7 @@ export const useRichTextFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldRichTextValue | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldRichTextValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

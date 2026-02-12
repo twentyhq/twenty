@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
@@ -13,8 +13,8 @@ import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/type
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -37,7 +37,7 @@ export class AgentService {
         'flatRoleTargetByAgentIdMaps',
       ]);
 
-    return Object.values(flatAgentMaps.byId)
+    return Object.values(flatAgentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .map((flatAgent) => {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
@@ -106,6 +106,12 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
+    const { flatApplicationMaps, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+        'flatRoleMaps',
+      ]);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -113,14 +119,19 @@ export class AgentService {
         },
       );
 
+    const flatApplication = isDefined(input.applicationId)
+      ? flatApplicationMaps.byId[input.applicationId]
+      : undefined;
+
+    const resolvedFlatApplication =
+      flatApplication ?? workspaceCustomFlatApplication;
+
     const { flatAgentToCreate, flatRoleTargetToCreate } =
       fromCreateAgentInputToFlatAgent({
-        createAgentInput: {
-          ...input,
-          applicationId:
-            input.applicationId ?? workspaceCustomFlatApplication.id,
-        },
+        createAgentInput: input,
         workspaceId,
+        flatApplication: resolvedFlatApplication,
+        flatRoleMaps,
       });
 
     const validateAndBuildResult =
@@ -142,11 +153,13 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating agent',
       );
@@ -175,10 +188,18 @@ export class AgentService {
     input: UpdateAgentInput;
     workspaceId: string;
   }): Promise<FlatAgentWithRoleId> {
-    const { flatRoleTargetByAgentIdMaps, flatAgentMaps } =
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const { flatRoleTargetByAgentIdMaps, flatAgentMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleTargetByAgentIdMaps',
         'flatAgentMaps',
+        'flatRoleMaps',
       ]);
 
     const {
@@ -190,6 +211,7 @@ export class AgentService {
       updateAgentInput: input,
       flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
+      flatRoleMaps,
     });
 
     const validateAndBuildResult =
@@ -215,11 +237,13 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating agent',
       );
@@ -251,27 +275,65 @@ export class AgentService {
     id: string,
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-    const {
-      flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetByAgentIdMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetByAgentIdMaps',
-    ]);
-
-    const agentToDelete = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
-      flatEntityMaps: existingFlatAgentMaps,
+    const deletedAgents = await this.deleteManyAgents({
+      ids: [id],
+      workspaceId,
     });
 
-    if (!isDefined(agentToDelete)) {
+    if (deletedAgents.length !== 1) {
       throw new AgentException(
-        `Agent not found`,
+        'Could not retrieve deleted agent',
         AgentExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
-    const roleId = flatRoleTargetByAgentIdMaps[agentToDelete.id]?.roleId;
+    const [deletedAgent] = deletedAgents;
+
+    return deletedAgent;
+  }
+
+  async deleteManyAgents({
+    ids,
+    workspaceId,
+    isSystemBuild = false,
+  }: {
+    ids: string[];
+    workspaceId: string;
+    isSystemBuild?: boolean;
+  }): Promise<FlatAgentWithRoleId[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatAgentMaps',
+        'flatRoleTargetByAgentIdMaps',
+      ]);
+
+    const agentsToDelete = ids
+      .map((id) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: flatAgentMaps,
+        }),
+      )
+      .filter(isDefined);
+
+    if (agentsToDelete.length === 0) {
+      return [];
+    }
+
+    const roleTargetsToDelete = agentsToDelete
+      .map((agent) => flatRoleTargetByAgentIdMaps[agent.id])
+      .filter(isDefined);
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -279,25 +341,54 @@ export class AgentService {
           allFlatEntityOperationByMetadataName: {
             agent: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [agentToDelete],
+              flatEntityToDelete: agentsToDelete,
+              flatEntityToUpdate: [],
+            },
+            roleTarget: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: roleTargetsToDelete,
               flatEntityToUpdate: [],
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting agent',
+        `Multiple validation errors occurred while deleting agent${ids.length > 1 ? 's' : ''}`,
       );
     }
 
-    return {
-      ...agentToDelete,
-      roleId: roleId ?? null,
-    };
+    return agentsToDelete.map((agent) => ({
+      ...agent,
+      roleId: flatRoleTargetByAgentIdMaps[agent.id]?.roleId ?? null,
+    }));
+  }
+
+  async searchAgents(
+    query: string,
+    workspaceId: string,
+    options: { limit: number } = { limit: 2 },
+  ): Promise<AgentEntity[]> {
+    const queryLower = query.toLowerCase();
+
+    return this.agentRepository.find({
+      where: [
+        { workspaceId, deletedAt: IsNull(), name: ILike(`%${queryLower}%`) },
+        {
+          workspaceId,
+          deletedAt: IsNull(),
+          description: ILike(`%${queryLower}%`),
+        },
+        { workspaceId, deletedAt: IsNull(), label: ILike(`%${queryLower}%`) },
+      ],
+      take: options.limit,
+      order: { name: 'ASC' },
+    });
   }
 }

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { t } from '@lingui/core/macro';
 import type { CountryCode } from 'libphonenumber-js';
 import { IconCircleOff, type IconComponentProps } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -35,7 +36,7 @@ export const FormCountryCodeSelectInput = ({
     );
     return [
       {
-        label: 'No country',
+        label: t`No country`,
         value: '',
         Icon: IconCircleOff,
       },

@@ -1,0 +1,170 @@
+---
+title: Resolución de problemas de flujo de trabajo
+description: Problemas comunes de flujos de trabajo y cómo resolverlos.
+---
+
+## Problemas Comunes y Soluciones
+
+### Flujo de trabajo no se activa
+
+**Síntomas**: Tu flujo de trabajo no se ejecuta cuando lo esperas.
+
+**Posibles causas**:
+
+1. **Flujo de trabajo no activado**: Asegúrate de que el flujo de trabajo esté configurado como "Active", no como "Draft"
+2. **Condiciones del disparador no cumplidas**: Verifica que el disparador coincida con el evento esperado
+3. **Campo no monitoreado**: Para disparadores "Record is Updated", asegúrate de que se esté monitoreando el campo específico
+4. **Permisos**: Verifica que tengas permiso para ejecutar flujos de trabajo
+
+**Soluciones**:
+
+* Verifica el estado del flujo de trabajo en la lista de flujos de trabajo
+* Prueba con la acción específica que esperas que lo dispare
+* Revisa la configuración del disparador
+* Contacta a tu administrador acerca de los permisos
+
+### Los disparadores del flujo de trabajo se activan demasiado pronto (campos vacíos)
+
+**Síntomas**: Al crear un registro manualmente en la IU, tu flujo de trabajo se dispara antes de que tengas tiempo de completar todos los campos. El flujo de trabajo se ejecuta con valores de campo en su mayoría vacíos.
+
+**Por qué sucede esto**: Twenty guarda todo en tiempo real; no hay un modo separado de "editar" y "lectura". Cuando creas un registro, se guarda de inmediato, lo que activa el evento "Record is created" antes de que puedas completar campos adicionales.
+
+**Cuándo funciona bien "Record is created"**:
+
+* Registros creados mediante llamadas de API (los campos se completan en una sola solicitud)
+* Registros creados mediante importación
+* Creación automática de registros desde otros flujos de trabajo
+
+**Solución**: Para los registros creados manualmente en la IU, usa **"Record is created or updated"** como disparador. De esta forma:
+
+* El flujo de trabajo se dispara después de que el usuario haya terminado de completar y guardar los campos
+* Obtienes los datos completos en lugar de valores vacíos
+
+<Tip>
+  Si solo quieres que el flujo de trabajo se ejecute una vez por registro, agrega una acción de filtro para comprobar un campo como `createdAt equals updatedAt` (primer guardado) o usa un campo de casilla de verificación personalizada para registrar si el flujo de trabajo ya se ejecutó.
+</Tip>
+
+### Acciones que fallan
+
+**Síntomas**: El flujo de trabajo se ejecuta, pero algunas acciones fallan.
+
+**Posibles causas**:
+
+1. **Datos faltantes**: Los campos obligatorios están vacíos
+2. **Referencias no válidas**: Las variables de pasos anteriores no existen
+3. **Errores de API**: Los servicios externos devuelven errores
+4. **Problemas de permisos**: La acción requiere permisos que no tienes
+
+**Soluciones**:
+
+* Revisa los detalles de la ejecución del flujo de trabajo para ver mensajes de error
+* Verifica que todos los campos obligatorios tengan valores
+* Prueba las conexiones de API de forma independiente
+* Revisa los permisos del rol
+
+### Errores de solicitudes HTTP
+
+**Síntomas**: Las acciones de solicitud HTTP fallan o devuelven resultados inesperados.
+
+**Códigos de error comunes**:
+
+* **400**: Solicitud incorrecta: verifica el formato del cuerpo de la solicitud
+* **401**: No autorizado: verifica la clave de API
+* **403**: Prohibido: verifica los permisos de la API
+* **404**: No encontrado: verifica la URL del endpoint
+* **429**: Demasiadas solicitudes: implementa limitación de tasa
+* **500**: Error del servidor: problema del servicio externo
+
+**Soluciones**:
+
+* Verifica la URL del endpoint de la API
+* Verifica los encabezados de autenticación
+* Primero prueba la llamada a la API fuera de Twenty
+* Agrega manejo de errores en las acciones de código
+
+### Errores en acciones de código
+
+**Síntomas**: El código JavaScript no se ejecuta.
+
+**Problemas comunes**:
+
+1. **Errores de sintaxis**: errores tipográficos o JavaScript no válido
+2. **Variables indefinidas**: hacer referencia a variables que no existen
+3. **Errores de tipo**: operaciones sobre tipos de datos incorrectos
+4. **Tiempos de espera agotados**: el código tarda demasiado en ejecutarse
+
+**Soluciones**:
+
+* Usa la validación integrada del editor de código
+* Prueba primero la lógica del código en una consola de JavaScript
+* Agrega sentencias console.log para depuración
+* Simplifica las operaciones complejas
+
+### El correo electrónico no se envía
+
+**Síntomas**: La acción Send Email no entrega correos electrónicos.
+
+**Posibles causas**:
+
+1. **Ninguna cuenta de correo conectada**: verifica Configuración → Cuentas
+2. **Dirección de correo electrónico no válida**: el correo electrónico del destinatario está mal formado
+3. **Límites de envío**: se alcanzaron los límites de tasa del proveedor de correo electrónico
+4. **Filtros de spam**: los correos electrónicos están siendo bloqueados
+
+**Soluciones**:
+
+* Verifica la conexión de la cuenta de correo electrónico
+* Valida las direcciones de correo electrónico de los destinatarios
+* Verifica los límites del proveedor de correo electrónico
+* Revisa el contenido del correo electrónico en busca de desencadenantes de spam
+
+## Depuración de flujos de trabajo
+
+### Uso de las ejecuciones de flujos de trabajo
+
+1. Ve al editor de flujos de trabajo
+2. Abre el panel **Runs**
+3. Busca la ejecución fallida
+4. Haz clic para ver detalles paso a paso
+5. Revisa los mensajes de error y los datos de salida
+
+### Prueba de pasos individuales
+
+1. Para las acciones de código, usa el botón **Test**
+2. Para las solicitudes HTTP, prueba el endpoint por separado
+3. Crea registros de prueba para disparar flujos de trabajo
+4. Usa disparadores manuales para pruebas controladas
+
+### Patrones comunes de depuración
+
+**Agrega registros**:
+Usa acciones de código para registrar valores intermedios para depuración.
+
+**Aísla pasos**:
+Prueba cada paso de forma independiente para identificar fallas.
+
+**Verifica el flujo de datos**:
+Comprueba que cada paso reciba los datos de entrada esperados.
+
+## Mejores prácticas para evitar problemas
+
+### Antes de la activación
+
+* Prueba exhaustivamente en modo borrador
+* Valida todas las conexiones de API
+* Revisa cuidadosamente las condiciones del disparador
+* Documenta el comportamiento esperado
+
+### Durante el desarrollo
+
+* Usa nombres de pasos descriptivos
+* Agrega comentarios en las acciones de código
+* Prueba con datos realistas
+* Planifica casos límite
+
+### Después de la activación
+
+* Supervisa de cerca las ejecuciones iniciales
+* Configura alertas para fallas
+* Revisa el historial de ejecuciones con regularidad
+* Mantén los flujos de trabajo simples cuando sea posible

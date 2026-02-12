@@ -14,7 +14,7 @@ export class MetricsCacheService {
   private readonly healthCacheTtl: number;
 
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.EngineHealth)
+    @InjectCacheStorage(CacheStorageNamespace.EngineMetrics)
     private readonly cacheStorage: CacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {

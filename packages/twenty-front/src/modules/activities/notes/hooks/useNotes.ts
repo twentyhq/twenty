@@ -5,27 +5,32 @@ import { useActivities } from '@/activities/hooks/useActivities';
 import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
 import { type Note } from '@/activities/types/Note';
-import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { type RecordGqlOperationVariables } from 'twenty-shared/types';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type ActivityTargetableObject } from '../../types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const notesQueryVariables = useMemo(
     () =>
       ({
-        filter: {},
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
       }) as RecordGqlOperationVariables,
     [],
   );
 
-  const { activities, loading } = useActivities<Note>({
+  const {
+    activities,
+    loading,
+    totalCountActivities,
+    fetchMoreActivities,
+    hasNextPage,
+  } = useActivities<Note>({
     objectNameSingular: CoreObjectNameSingular.Note,
-    activitiesFilters: notesQueryVariables.filter ?? {},
-    activitiesOrderByVariables: notesQueryVariables.orderBy ?? [{}],
+    activityTargetsOrderByVariables: notesQueryVariables.orderBy ?? [{}],
     targetableObjects: [targetableObject],
+    limit: 10,
   });
 
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
@@ -45,5 +50,8 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   return {
     notes: activities as Note[],
     loading,
+    totalCountNotes: totalCountActivities,
+    fetchMoreNotes: fetchMoreActivities,
+    hasNextPage,
   };
 };

@@ -1,0 +1,80 @@
+---
+title: Crea una vista Kanban para proyectos
+description: Supervisa los proyectos a través de etapas con un tablero visual.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Usa una vista Kanban para visualizar tus proyectos (o cualquier objeto con etapas) como tarjetas que se mueven por columnas.
+
+<VimeoEmbed videoId="927888627" title="Demostración en video" />
+
+## Prerrequisitos
+
+Tu objeto necesita un **campo de selección** para usar como columnas (p. ej., Estado, Etapa, Fase).
+
+Si no tienes uno:
+
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona tu objeto
+3. Agrega un campo de selección con tus opciones de etapa
+
+## Pasos
+
+1. Ve a tu objeto (p. ej., Proyectos, Tareas)
+2. Haz clic en el menú desplegable de la vista → **+ Agregar vista**
+3. Asigna un nombre a tu vista (p. ej., "Tablero de proyecto")
+4. Haz clic en **Crear**
+5. Haz clic en **Opciones** y selecciona **Kanban** como diseño
+6. La vista usa tu campo de selección para las columnas automáticamente
+7. Haga clic en **Guardar**
+
+## Configura tu tablero
+
+### Muestra campos clave en las tarjetas
+
+1. Haz clic en **Opciones → Campos**
+2. Busca campos en la sección "Campos ocultos"
+3. Haz clic en el **icono de ojo** para mostrarlos en las tarjetas
+4. Arrastra para reordenar
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+### Habilita la vista compacta
+
+Para una vista general:
+
+1. Haz clic en **Opciones**
+2. Activa **Vista compacta**
+
+Las tarjetas muestran solo el nombre del registro.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+### Agrega agregaciones
+
+Muestra recuentos o totales en la parte superior de cada columna:
+
+1. Haz clic en el número junto al nombre de una columna
+2. Selecciona una agregación (Conteo, Suma, etc.)
+3. Elige un campo si es necesario
+
+## Mover tarjetas
+
+Arrastra y suelta las tarjetas entre columnas para actualizar su estado.
+
+<VimeoEmbed videoId="927888627" title="Demostración en video" />
+
+## Ejemplo: tablero de tareas
+
+| Columna (Estado) | Tarjetas                |
+| ---------------- | ----------------------- |
+| **Por hacer**    | Nuevas tareas           |
+| **En progreso**  | Trabajo activo          |
+| **Revisión**     | En espera de aprobación |
+| **Completado**   | Completado              |
+
+## Relacionado
+
+* [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones, vista compacta, etapas
+* [Cómo configurar un pipeline de ventas](/l/es/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban para oportunidades

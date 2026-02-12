@@ -7,22 +7,20 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewField', schema: 'core' })
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
+@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
@@ -67,8 +65,8 @@ export class ViewFieldEntity
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  viewFieldGroupId: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
@@ -79,13 +77,20 @@ export class ViewFieldEntity
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date | null;
 
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
   @ManyToOne(() => ViewEntity, (view) => view.viewFields, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })
   view: Relation<ViewEntity>;
+
+  @ManyToOne(
+    () => ViewFieldGroupEntity,
+    (viewFieldGroup) => viewFieldGroup.viewFields,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'viewFieldGroupId' })
+  viewFieldGroup: Relation<ViewFieldGroupEntity> | null;
 }

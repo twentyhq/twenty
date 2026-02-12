@@ -1,6 +1,5 @@
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
-
-import { pascalCase } from 'src/utils/pascal-case';
+import { pascalCase } from 'twenty-shared/utils';
 
 export const expectRestCreateInputValidationSuccess = async (
   objectMetadataPluralName: string,

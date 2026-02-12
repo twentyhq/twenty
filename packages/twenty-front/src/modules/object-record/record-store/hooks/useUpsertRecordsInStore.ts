@@ -1,23 +1,66 @@
 import { useRecoilCallback } from 'recoil';
 
+import { filterRecordOnGqlFields } from '@/object-record/cache/utils/filterRecordOnGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+type UpsertRecordsInStoreProps = {
+  partialRecords: ObjectRecord[];
+  recordGqlFields?: RecordGqlFields;
+};
 
 export const useUpsertRecordsInStore = () => {
   const upsertRecordsInStore = useRecoilCallback(
     ({ set, snapshot }) =>
-      (records: ObjectRecord[]) => {
-        for (const record of records) {
+      ({ partialRecords, recordGqlFields }: UpsertRecordsInStoreProps) => {
+        for (const partialRecord of partialRecords) {
           const currentRecord = snapshot
-            .getLoadable(recordStoreFamilyState(record.id))
+            .getLoadable(recordStoreFamilyState(partialRecord.id))
             .getValue();
 
-          if (!isDeeplyEqual(currentRecord, record)) {
-            set(recordStoreFamilyState(record.id), {
+          const filteredPartialRecord = isDefined(recordGqlFields)
+            ? filterRecordOnGqlFields({
+                record: partialRecord,
+                recordGqlFields,
+              })
+            : partialRecord;
+
+          if (!isDefined(currentRecord)) {
+            const newRecord = {
+              id: partialRecord.id,
+              __typename: partialRecord.__typename,
+              ...filteredPartialRecord,
+            };
+            set(recordStoreFamilyState(partialRecord.id), newRecord);
+            jotaiStore.set(
+              recordStoreFamilyStateV2.atomFamily(partialRecord.id),
+              newRecord,
+            );
+            continue;
+          }
+
+          const filteredCurrentRecord = isDefined(recordGqlFields)
+            ? filterRecordOnGqlFields({
+                record: currentRecord,
+                recordGqlFields,
+              })
+            : currentRecord;
+
+          if (!isDeeplyEqual(filteredCurrentRecord, filteredPartialRecord)) {
+            const updatedRecord = {
               ...currentRecord,
-              ...record,
-            });
+              ...filteredPartialRecord,
+            };
+            set(recordStoreFamilyState(partialRecord.id), updatedRecord);
+            jotaiStore.set(
+              recordStoreFamilyStateV2.atomFamily(partialRecord.id),
+              updatedRecord,
+            );
           }
         }
       },

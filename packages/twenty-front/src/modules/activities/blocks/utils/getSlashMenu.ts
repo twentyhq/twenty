@@ -2,7 +2,7 @@ import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
 import { type SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 
-import { type BLOCK_SCHEMA } from '../constants/Schema';
+import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import {
   IconBlockquote,
   IconCode,

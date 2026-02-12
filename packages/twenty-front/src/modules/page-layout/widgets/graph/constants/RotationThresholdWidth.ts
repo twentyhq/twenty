@@ -1,0 +1,1 @@
+export const ROTATION_THRESHOLD_WIDTH = 50;

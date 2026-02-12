@@ -1,0 +1,178 @@
+---
+title: Atajos de teclado
+---
+
+## Introducción
+
+Cuando necesitas escuchar una tecla de acceso rápido, normalmente usarías el evento `onKeyDown`.
+
+En `twenty-front`, sin embargo, podrías tener conflictos entre los mismos atajos de teclado utilizados en diferentes componentes, montados al mismo tiempo.
+
+Por ejemplo, si tienes una página que escucha la tecla Enter y un modal que escucha la tecla Enter, con un componente Select dentro de ese modal que también escucha la tecla Enter, podrías tener un conflicto cuando todos están montados al mismo tiempo.
+
+## El gancho `useScopedHotkeys`
+
+Para manejar este problema, tenemos un gancho personalizado que hace posible escuchar atajos de teclado sin ningún conflicto.
+
+Lo colocas en un componente, y escuchará los atajos de teclado solo cuando el componente está montado Y cuando el **ámbito del atajo de teclado** especificado está activo.
+
+## ¿Cómo escuchar atajos de teclado en la práctica?
+
+Hay dos pasos involucrados en configurar la escucha de atajos de teclado:
+
+1. Establece el [ámbito del atajo de teclado](#qué-es-un-ambito-de-atajo-de-teclado-) que escuchará los atajos de teclado
+2. Usa el gancho `useScopedHotkeys` para escuchar atajos de teclado
+
+Configurar los ámbitos de atajos de teclado es necesario incluso en páginas simples, porque otros elementos de la interfaz de usuario como el menú lateral o el menú de comandos también podrían escuchar atajos de teclado.
+
+## Casos de uso para atajos de teclado
+
+En general, tendrás dos casos de uso que requieren atajos de teclado:
+
+1. En una página o un componente montado en una página
+2. En un componente tipo modal que toma el enfoque debido a la acción del usuario
+
+El segundo caso de uso puede ocurrir recursivamente: un desplegable en un modal, por ejemplo.
+
+### Escuchando atajos de teclado en una página
+
+Ejemplo:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Escuchando atajos de teclado en un componente tipo modal
+
+Para este ejemplo utilizaremos un componente modal que escucha la tecla Escape para indicar a su padre que lo cierre.
+
+Aquí la interacción del usuario está cambiando el ámbito.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Luego, en el componente modal:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## ¿Qué es un ámbito de atajo de teclado?
+
+Un ámbito de atajo de teclado es una cadena que representa un contexto en el que los atajos de teclado están activos. Por lo general, se codifica como un enum.
+
+Cuando cambias el ámbito del atajo de teclado, se habilitarán los atajos que están escuchando este ámbito y se deshabilitarán los atajos que escuchan otros ámbitos.
+
+Solo puedes establecer un ámbito a la vez.
+
+Como ejemplo, los ámbitos de atajos de teclado para cada página se definen en el enum `PageHotkeyScope`:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Internamente, el ámbito seleccionado se almacena en un estado de Recoil que se comparte en toda la aplicación:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+¡Pero este estado de Recoil nunca debe manejarse manualmente! Veremos cómo usarlo en la siguiente sección.
+
+## ¿Cómo funciona internamente?
+
+Hicimos un contenedor delgado sobre [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que lo hace más eficiente y evita renders innecesarios.
+
+También creamos un estado de Recoil para manejar el estado del ámbito de atajos de teclado y hacerlo disponible en toda la aplicación.

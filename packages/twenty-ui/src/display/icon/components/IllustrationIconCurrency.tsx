@@ -4,21 +4,20 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconCurrencyRaw from '@assets/icons/illustration-currency.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconCurrencyProps = Pick<IconComponentProps, 'size'>;
+export type IllustrationIconCurrencyProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconCurrency = (
   props: IllustrationIconCurrencyProps,
 ) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
-  const { color, fill } = theme.IllustrationIcon;
   return (
     <IllustrationIconWrapper>
       <IllustrationIconCurrencyRaw
         height={size}
         width={size}
-        fill={fill.blue}
-        color={color.blue}
+        fill={theme.accent.accent3}
+        color={theme.accent.accent8}
       />
     </IllustrationIconWrapper>
   );

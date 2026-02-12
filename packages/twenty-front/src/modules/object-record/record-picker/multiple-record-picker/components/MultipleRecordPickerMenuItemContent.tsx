@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -16,7 +17,7 @@ import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
-import { type SearchRecord } from '~/generated-metadata/graphql';
+import { type SearchRecord } from '~/generated/graphql';
 
 export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;
@@ -62,9 +63,9 @@ export const MultipleRecordPickerMenuItemContent = ({
     });
   };
 
+  const labelSingular = objectMetadataItem.labelSingular;
   const displayText =
-    searchRecord.label?.trim() ||
-    `Untitled ${objectMetadataItem.labelSingular}`;
+    searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
   const searchableObjectMetadataItems = useRecoilComponentValue(
     multipleRecordPickerSearchableObjectMetadataItemsComponentState,
@@ -95,7 +96,7 @@ export const MultipleRecordPickerMenuItemContent = ({
         text={displayText}
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectNameSingular)
+            ? capitalize(objectMetadataItem.labelSingular)
             : undefined
         }
       />

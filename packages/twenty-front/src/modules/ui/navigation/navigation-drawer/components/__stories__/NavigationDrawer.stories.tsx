@@ -1,7 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -36,13 +36,12 @@ import {
 } from 'twenty-ui/display';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
-import { NavigationDrawer } from '../NavigationDrawer';
-import { NavigationDrawerItem } from '../NavigationDrawerItem';
-import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
-import { NavigationDrawerSection } from '../NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
+import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
@@ -52,7 +51,6 @@ const meta: Meta<typeof NavigationDrawer> = {
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
     PrefetchLoadedDecorator,
-    I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
@@ -123,8 +121,8 @@ export const Default: Story = {
       </>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Workspace')).toBeInTheDocument();
   },
@@ -202,8 +200,8 @@ export const Settings: Story = {
       </>
     ),
   },
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     expect(await canvas.findByText('User')).toBeInTheDocument();
   },

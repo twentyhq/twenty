@@ -26,13 +26,15 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -46,8 +48,9 @@ const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 @Injectable()
 export class SearchService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly fileService: FileService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async getAllRecordsWithObjectMetadataItems({
@@ -84,26 +87,30 @@ export class SearchService {
     for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
-          const repository =
-            await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
-              workspaceId,
-              flatObjectMetadata.nameSingular,
-              rolePermissionConfig,
-            );
+          return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+            async () => {
+              const repository =
+                await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
+                  workspaceId,
+                  flatObjectMetadata.nameSingular,
+                  rolePermissionConfig,
+                );
 
-          return {
-            objectMetadataItem: flatObjectMetadata,
-            records: await this.buildSearchQueryAndGetRecords({
-              entityManager: repository,
-              flatObjectMetadata,
-              flatFieldMetadataMaps,
-              searchTerms: formatSearchTerms(searchInput, 'and'),
-              searchTermsOr: formatSearchTerms(searchInput, 'or'),
-              limit: limit as number,
-              filter: filter ?? ({} as ObjectRecordFilter),
-              after,
-            }),
-          };
+              return {
+                objectMetadataItem: flatObjectMetadata,
+                records: await this.buildSearchQueryAndGetRecords({
+                  entityManager: repository,
+                  flatObjectMetadata,
+                  flatFieldMetadataMaps,
+                  searchTerms: formatSearchTerms(searchInput, 'and'),
+                  searchTermsOr: formatSearchTerms(searchInput, 'or'),
+                  limit: limit as number,
+                  filter: filter ?? ({} as ObjectRecordFilter),
+                  after,
+                }),
+              };
+            },
+          );
         }),
       );
 
@@ -122,19 +129,24 @@ export class SearchService {
     includedObjectNameSingulars: string[];
     excludedObjectNameSingulars: string[];
   }) {
-    return flatObjectMetadatas.filter(({ nameSingular, isSearchable }) => {
-      if (!isSearchable) {
-        return false;
-      }
-      if (excludedObjectNameSingulars.includes(nameSingular)) {
-        return false;
-      }
-      if (includedObjectNameSingulars.length > 0) {
-        return includedObjectNameSingulars.includes(nameSingular);
-      }
+    return flatObjectMetadatas.filter(
+      ({ nameSingular, isSearchable, isActive }) => {
+        if (!isSearchable) {
+          return false;
+        }
+        if (!isActive) {
+          return false;
+        }
+        if (excludedObjectNameSingulars.includes(nameSingular)) {
+          return false;
+        }
+        if (includedObjectNameSingulars.length > 0) {
+          return includedObjectNameSingulars.includes(nameSingular);
+        }
 
-      return true;
-    });
+        return true;
+      },
+    );
   }
 
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
@@ -297,10 +309,10 @@ export class SearchService {
       );
     }
 
-    const labelIdentifierField =
-      flatFieldMetadataMaps.byId[
-        flatObjectMetadata.labelIdentifierFieldMetadataId
-      ];
+    const labelIdentifierField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     if (!isDefined(labelIdentifierField)) {
       throw new SearchException(
@@ -344,10 +356,10 @@ export class SearchService {
       return null;
     }
 
-    const imageIdentifierField =
-      flatFieldMetadataMaps.byId[
-        flatObjectMetadata.imageIdentifierFieldMetadataId
-      ];
+    const imageIdentifierField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadata.imageIdentifierFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     if (!isDefined(imageIdentifierField)) {
       return null;
@@ -374,7 +386,10 @@ export class SearchService {
       flatFieldMetadataMaps,
     );
 
-    if (flatObjectMetadata.nameSingular === 'company') {
+    if (
+      flatObjectMetadata.nameSingular === 'company' &&
+      this.twentyConfigService.get('ALLOW_REQUESTS_TO_TWENTY_ICONS')
+    ) {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
@@ -440,6 +455,9 @@ export class SearchService {
           return {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
+            objectLabelSingular:
+              objectMetadataItem.standardOverrides?.labelSingular ??
+              objectMetadataItem.labelSingular,
             label: this.getLabelIdentifierValue(
               record,
               objectMetadataItem,

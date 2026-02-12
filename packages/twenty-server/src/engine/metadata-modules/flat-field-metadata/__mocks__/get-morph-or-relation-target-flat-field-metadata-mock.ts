@@ -29,7 +29,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
   relationTargetObjectMetadataId,
   ...overrides
 }: GetMorphOrRelationFlatFieldMetadataMockArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType> => {
-  const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
+  const createdAt = '2024-01-01T00:00:00.000Z';
 
   return {
     calendarViewIds: [],
@@ -51,7 +51,6 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     isUIReadOnly: false,
     isLabelSyncedWithName: false,
     isSystem: false,
-    standardId: null,
     standardOverrides: null,
     workspaceId: faker.string.uuid(),
     objectMetadataId,
@@ -65,5 +64,15 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     defaultValue: null,
     options: null,
     applicationId: faker.string.uuid(),
+    applicationUniversalIdentifier: faker.string.uuid(),
+    objectMetadataUniversalIdentifier: faker.string.uuid(),
+    relationTargetObjectMetadataUniversalIdentifier: faker.string.uuid(),
+    relationTargetFieldMetadataUniversalIdentifier: faker.string.uuid(),
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: settings,
   };
 };

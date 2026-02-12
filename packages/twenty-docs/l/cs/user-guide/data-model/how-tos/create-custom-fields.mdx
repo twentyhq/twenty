@@ -1,0 +1,72 @@
+---
+title: Vytváření vlastních polí
+description: Návod krok za krokem k přidání vlastních polí k libovolnému objektu.
+---
+
+Vlastní pole vám umožňují zachytit informace specifické pro vaše podnikání. Přidejte je k libovolnému objektu—standardnímu i vlastnímu.
+
+## Postup
+
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt, ke kterému chcete přidat pole
+3. Klikněte na **+ Add Field**
+4. Zvolte **typ pole** (všechny typy viz [Pole](/l/cs/user-guide/data-model/capabilities/fields))
+5. Zadejte **název pole** a volitelný popis
+6. Nakonfigurujte nastavení specifická pro dané pole (viz níže)
+7. Klikněte na **Uložit**
+
+**Rychlá metoda:** Klikněte na **+** na konci záhlaví sloupců v libovolném tabulkovém zobrazení → **Customize fields**.
+
+## Zobrazit pole v zobrazeních
+
+Nová pole nejsou automaticky viditelná. Pro zobrazení:
+
+1. Otevřete tabulkové zobrazení objektu
+2. Klikněte na **Možnosti → Pole**
+3. Klikněte na **ikonu oka** vedle svého pole a zobrazte jej
+4. Přetažením změňte pořadí
+
+## Možnosti konfigurace
+
+### Pro výběr / vícevýběr
+
+1. Klikněte na **+ Add option** a vytvořte možnosti
+2. Nastavte **výchozí možnost**, pokud chcete
+3. Přetažením změňte pořadí možností
+
+<Note>
+  **Pro importy používejte názvy API.** V Nastavení povolte **Advanced mode**, abyste viděli názvy API. Viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### Pro měnová pole
+
+Nastavte **výchozí měnu** (USD, EUR apod.) pro nové záznamy.
+
+### Pro telefonní pole
+
+Nastavte **výchozí kód země**, který se předvyplní pro nová telefonní čísla.
+
+### Nastavení jedinečnosti pole
+
+Přepněte **Unique**, abyste zabránili duplicitním hodnotám napříč záznamy.
+
+<Note>
+  Pokud existují duplicity (včetně těch ve smazaných záznamech), zobrazí se chyba. Nejprve odstraňte duplicity.
+</Note>
+
+### Nastavení výchozích hodnot
+
+U výběrových polí můžete zvolit, která možnost bude u nových záznamů předvybraná. U zaškrtávacích polí nastavte, zda bude ve výchozím stavu zaškrtnuto, nebo ne.
+
+## Deaktivace pole
+
+1. Přejděte do **Nastavení → Datový model**
+2. Najděte pole
+3. Klikněte na **⋮ → Deactivate**
+
+Data jsou zachována. Později můžete znovu aktivovat nebo trvale smazat.
+
+## Související
+
+* [Pole](/l/cs/user-guide/data-model/capabilities/fields) — vysvětlení všech typů polí
+* [FAQ k datovému modelu](/l/cs/user-guide/data-model/how-tos/data-model-faq) — časté otázky

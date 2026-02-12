@@ -1,5 +1,5 @@
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
-import { getWorkflowVersionDiagram } from '../getWorkflowVersionDiagram';
+import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 
 jest.mock('uuid', () => ({
   v4: getUuidV4Mock(),
@@ -126,9 +126,8 @@ describe('getWorkflowVersionDiagram', () => {
                 continueOnFailure: { value: false },
               },
               input: {
-                serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-                serverlessFunctionVersion: '1',
-                serverlessFunctionInput: {},
+                logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+                logicFunctionInput: {},
               },
               outputSchema: {},
             },

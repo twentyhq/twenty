@@ -6,17 +6,21 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
-import { expect } from '@storybook/test';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
+import {
+  email,
+  mocks,
+  password,
+  results,
+  token,
+} from '@/auth/hooks/__mocks__/useAuth';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
-import { iconsState } from 'twenty-ui/display';
-import { SupportDriver } from '~/generated/graphql';
-import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { SupportDriver } from '~/generated-metadata/graphql';
 
 const redirectSpy = jest.fn();
 
@@ -154,7 +158,6 @@ describe('useAuth', () => {
     const { result } = renderHook(
       () => {
         const client = useApolloClient();
-        const icons = useRecoilValue(iconsState);
         const workspaceAuthProviders = useRecoilValue(
           workspaceAuthProvidersState,
         );
@@ -170,7 +173,6 @@ describe('useAuth', () => {
           ...useAuth(),
           client,
           state: {
-            icons,
             workspaceAuthProviders,
             billing,
             isDeveloperDefaultSignInPrefilled,
@@ -195,7 +197,6 @@ describe('useAuth', () => {
 
     const { state } = result.current;
 
-    expect(state.icons).toEqual({});
     expect(state.workspaceAuthProviders).toEqual(null);
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);

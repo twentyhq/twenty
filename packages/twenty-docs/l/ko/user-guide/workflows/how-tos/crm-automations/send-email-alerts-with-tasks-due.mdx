@@ -1,0 +1,106 @@
+---
+title: 마감 예정 작업에 대한 이메일 알림 보내기
+description: 예정되었거나 기한이 지난 작업에 대해 팀 구성원에게 자동으로 알립니다.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+오늘 마감인 작업에 대해 각 팀원에게 매일 이메일 알림을 보냅니다.
+
+## 개요
+
+이 워크플로우는 일정에 따라 실행되며 다음을 수행합니다:
+
+1. 모든 워크스페이스 구성원을 가져옵니다
+2. 각 구성원을 순회합니다
+3. 각 구성원의 오늘 마감 작업을 찾습니다
+4. 개인화된 이메일을 작성해 전송합니다
+
+## 단계별 설정
+
+<VimeoEmbed videoId="1147463514" title="동영상 시연" />
+
+### 1단계: 트리거 구성
+
+1. **Settings → Workflows**로 이동해 새 워크플로우를 생성합니다
+2. 트리거로 **On a Schedule**를 선택합니다
+3. 매일 오전 8시에 실행되도록 다음 cron 표현식을 사용하세요: `0 8 * * *`
+
+### 2단계: 모든 워크스페이스 구성원 검색
+
+1. **레코드 검색** 액션을 추가합니다
+2. 고급 객체(advanced objects) 아래의 **Workspace Members**를 선택합니다
+3. 필터는 필요 없습니다 — 모든 구성원이 반환됩니다
+
+### 3단계: 이터레이터 추가
+
+1. **Iterator** 액션을 추가합니다
+2. 입력 배열을 이전 단계의 워크스페이스 구성원으로 설정합니다
+3. 이터레이터 내부의 모든 액션은 구성원당 한 번씩 실행됩니다
+
+### 4단계: 오늘 마감 작업 검색(이터레이터 내부)
+
+1. 이터레이터 내부에 **레코드 검색** 액션을 추가합니다
+2. 객체로 **Tasks**를 선택합니다
+3. 필터 추가:
+   * **Assignee** = 현재 워크스페이스 구성원(이터레이터에서 가져옴)
+   * **Due Date** = 오늘
+
+### 5단계: 작업을 이메일 본문 형식으로 정리(이터레이터 내부)
+
+작업을 링크가 포함된 읽기 쉬운 목록으로 형식화하기 위해 **Code** 액션을 추가합니다:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  `yourSubDomain`을 실제 Twenty 워크스페이스 서브도메인으로 바꾸세요.
+</Note>
+
+### 6단계: 이메일 보내기(이터레이터 내부)
+
+1. **Send Email** 액션을 추가합니다(여전히 이터레이터 내부)
+2. 구성:
+
+| 필드        | 값                                                      |
+| --------- | ------------------------------------------------------ |
+| **받는 사람** | `{{iterator.currentItem.userEmail}}` (워크스페이스 구성원의 이메일) |
+| **제목**    | 오늘 마감인 작업                                              |
+| **본문**    | `{{code.formattedTasks}}`                              |
+
+### 7단계: 테스트 및 활성화
+
+1. 워크플로우를 수동으로 실행하려면 **Test**를 클릭합니다
+2. 이메일이 도착했는지 받은편지함을 확인하세요
+3. 워크플로우를 활성화합니다
+
+## 관련 항목
+
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [워크플로우에서 이메일 보내기](/l/ko/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

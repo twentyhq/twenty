@@ -1,0 +1,106 @@
+---
+title: Süresi Gelen Görevler için E-posta Uyarıları Gönderin
+description: Takım üyelerini yaklaşan veya gecikmiş görevleri hakkında otomatik olarak bilgilendirin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Her takım üyesine, son tarihi bugün olan görevleri hakkında günlük e-posta hatırlatmaları gönderin.
+
+## Genel Bakış
+
+Bu iş akışı bir zamanlamaya göre çalışır ve:
+
+1. Tüm çalışma alanı üyelerini getirir
+2. Her bir üye üzerinde döner
+3. Son tarihi bugün olan görevlerini bulur
+4. Kişiselleştirilmiş bir e-postayı biçimlendirir ve gönderir
+
+## Adım adım kurulum
+
+<VimeoEmbed videoId="1147463514" title="Video gösterimi" />
+
+### Adım 1: Tetikleyiciyi Yapılandırın
+
+1. **Ayarlar → İş Akışları**'na gidin ve yeni bir iş akışı oluşturun
+2. Tetikleyici olarak **Zamanlanmış Olarak**'ı seçin
+3. Her gün saat 08:00 için bir cron ifadesi kullanın: `0 8 * * *`
+
+### Adım 2: Tüm Çalışma Alanı Üyelerini Arayın
+
+1. Bir **Kayıtları Ara** eylemi ekleyin
+2. (Gelişmiş nesneler altında) **Çalışma Alanı Üyeleri**'ni seçin
+3. Filtre gerekmez — bu, tüm üyeleri döndürür
+
+### Adım 3: Bir Yineleyici Ekleyin
+
+1. Bir **Iterator** eylemi ekleyin
+2. Girdi dizisini önceki adımdaki çalışma alanı üyelerine ayarlayın
+3. Yineleyici içindeki tüm eylemler, üye başına bir kez çalışır
+
+### Adım 4: Bugün Son Tarihi Olan Görevleri Arayın (Yineleyici İçinde)
+
+1. Yineleyici içinde bir **Kayıtları Ara** eylemi ekleyin
+2. Nesne olarak **Görevler**'i seçin
+3. Filtreler ekleyin:
+   * **Atanan** = mevcut çalışma alanı üyesi (yineleyiciden)
+   * **Son Tarih** = bugün
+
+### Adım 5: Görevleri E-posta Gövdesine Biçimlendirin (Yineleyici İçinde)
+
+Görevleri bağlantılarla okunabilir bir listeye dönüştürmek için bir **Kod** eylemi ekleyin:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  `yourSubDomain` değerini, gerçek Twenty çalışma alanı alt alan adınızla değiştirin.
+</Note>
+
+### Adım 6: E-posta Gönderin (Yineleyici İçinde)
+
+1. Bir **E-posta Gönder** eylemi ekleyin (halen yineleyici içinde)
+2. Yapılandırın:
+
+| Alan       | Değer                                                                   |
+| ---------- | ----------------------------------------------------------------------- |
+| **Kime**   | `{{iterator.currentItem.userEmail}}` (çalışma alanı üyesinin e-postası) |
+| **Konu**   | Bugün Son Tarihi Olan Görevleriniz                                      |
+| **İçerik** | `{{code.formattedTasks}}`                                               |
+
+### Adım 7: Test Edin ve Etkinleştirin
+
+1. İş akışını manuel olarak çalıştırmak için **Test**'e tıklayın
+2. E-postalar için gelen kutularını kontrol edin
+3. İş akışını etkinleştirin
+
+## İlgili
+
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

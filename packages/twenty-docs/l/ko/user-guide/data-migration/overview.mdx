@@ -1,0 +1,89 @@
+---
+title: 데이터 마이그레이션
+description: CSV 파일 또는 API를 통해 CRM 데이터를 가져오고 내보내세요.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="데이터 마이그레이션" />
+</Frame>
+
+## 가져오기 방법
+
+Twenty는 데이터를 가져오는 두 가지 주요 방법을 지원합니다:
+
+| 방법           | 권장 용도              | 건수 제한           |
+| ------------ | ------------------ | --------------- |
+| **CSV 가져오기** | 표준 마이그레이션, 정기 업데이트 | 파일당 10,000개 레코드 |
+| **API 가져오기** | 대규모 마이그레이션, 자동화    | 무제한             |
+
+<Note>매우 큰 데이터셋(레코드 수가 수십만 건)에 대해서는 API를 사용하세요. 필요한 경우 당사의 [구현 파트너](/l/ko/user-guide/getting-started/capabilities/implementation-services)가 이러한 스크립트 실행을 도와드릴 수 있습니다.</Note>
+
+## CSV 가져오기 기본 사항
+
+CSV, XLSX, 또는 XLS 파일을 사용하여 모든 객체의 데이터를 가져올 수 있습니다. 각 파일에는 **객체 유형 하나만** 포함해야 합니다(예: People 레코드만).
+
+<Note>**가져오기 전에 필드가 존재해야 합니다.** CSV를 업로드하면 레코드가 생성되지만 필드는 생성되지 않습니다. 사용자 지정 필드가 필요하면 먼저 **Settings → Data Model**에서 생성하세요.</Note>
+
+### 단계
+
+1. 데이터를 가져올 객체로 이동하세요
+2. 오른쪽 상단의 **⋮** 아이콘(명령 메뉴)을 클릭하고 **레코드 가져오기**를 클릭하세요
+3. 데이터가 예상된 형식인지 확인하려면 템플릿 파일을 다운로드하세요
+4. 형식에 맞춘 CSV 파일을 업로드하세요
+5. 열을 Twenty 필드에 매핑하세요
+6. 오류(노란색으로 강조 표시됨)를 검토하고 UI에서 직접 편집하여 수정하세요
+7. 가져오기를 확인하세요
+
+### 객체 간 관계 가져오기
+
+CSV 가져오기 기능을 사용하여 객체 간의 관계를 가져올 수 있습니다. 이 객체에서 고유 필드를 사용하여 관련 객체를 참조해야 합니다: `id`, People 및 워크스페이스 구성원의 경우 `email`, 회사의 경우 `domain`, 기타 객체의 경우 데이터 모델에서 고유로 설정된 다른 필드.
+
+<Note>**삭제된 레코드도 고유성에 포함됩니다.** 소프트 삭제된 레코드(Command Menu → See deleted records에서 표시됨) 역시 고유성 검사에 포함됩니다. 삭제된 레코드와 동일한 고유 값을 가진 레코드를 가져오면, 해당 삭제된 레코드가 복원됩니다.</Note>
+
+<Warning>
+  **가져오기 순서가 중요합니다!**
+
+  연관된 객체를 가져올 때 파일을 다음 순서로 업로드하세요:
+
+  1. **Companies** 먼저(일대다 관계의 '1' 측)
+  2. **People** 두 번째(companyId를 통해 회사에 연결)
+  3. **Opportunities** 세 번째(회사/People에 연결)
+  4. 관계가 있는 **사용자 지정 객체**는 마지막
+
+  왜 그런가요? 일대다 관계의 '1' 측은 참조하기 전에 먼저 존재해야 합니다. 예를 들어, 해당 회사의 ID로 Person을 가져오기 전에 Company 레코드가 먼저 존재해야 합니다.
+</Warning>
+
+단계별 진행 방법은 [이 문서](/l/ko/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)를 참고하세요.
+
+## 데이터 내보내기
+
+백업, 보고 또는 마이그레이션을 위해 워크스페이스 데이터를 내보내세요.
+
+### 단계
+
+1. 내보낼 객체로 이동하세요
+2. 필요한 열로 뷰를 구성하세요
+3. **⋮** → **뷰 내보내기**를 클릭하세요
+4. CSV 파일을 저장하세요
+
+<Note>**표시된 열만 내보내집니다.** CSV 파일에는 현재 뷰에 표시된 열만 포함됩니다. 포함할 데이터를 제어하려면 내보내기 전에 열을 추가하거나 숨기세요.</Note>
+
+<Note>**내보내기 제한**: 내보내기당 최대 20,000개 레코드.</Note>
+
+## 권한
+
+데이터 가져오기 및 내보내기에는 특정 권한이 필요합니다:
+
+* **가져오기**: "Import CSV" 권한이 필요합니다
+* **내보내기**: "Export CSV" 권한이 필요합니다
+
+해당 권한이 없다면 워크스페이스 관리자에게 문의하세요.
+
+## 다음 단계
+
+* [CSV 파일 준비하기](/l/ko/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [객체 간 관계 가져오기](/l/ko/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [대용량 데이터셋을 API로 가져오기](/l/ko/user-guide/data-migration/how-tos/import-data-via-api)

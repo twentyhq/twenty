@@ -1,0 +1,155 @@
+---
+title: FAQ sur le modèle de données
+description: Foire aux questions sur le modèle de données de Twenty.
+---
+
+## Gestion des objets
+
+<AccordionGroup>
+  <Accordion title="Puis-je supprimer un objet personnalisé ?">
+    Oui, les objets personnalisés peuvent être supprimés. Vous pouvez également les désactiver d'abord, ce qui masque l'objet et ses données dans l'interface tout en préservant les données.
+  </Accordion>
+
+  <Accordion title="Puis-je supprimer des objets standard (Personnes, Entreprises, etc.) ?">
+    Non, les objets standards ne peuvent pas être supprimés. Vous pouvez seulement les désactiver, ce qui les masque dans l'interface tout en préservant les données.
+  </Accordion>
+
+  <Accordion title="Combien d'objets personnalisés puis-je créer ?">
+    Vous pouvez créer autant d'objets et de champs personnalisés que vous le souhaitez — le prix ne change pas.
+  </Accordion>
+
+  <Accordion title="Puis-je renommer un objet standard ?">
+    Vous pouvez renommer le libellé des objets standard (Personnes, Entreprises, Opportunités), mais pas leurs noms d'API. Les noms d'API sont fixes pour assurer la cohérence dans tous les espaces de travail Twenty.
+  </Accordion>
+
+  <Accordion title="Puis-je modifier l'icône d'un objet ?">
+    Oui, vous pouvez modifier l'icône des objets standard et personnalisés dans **Paramètres → Modèle de données**.
+  </Accordion>
+
+  <Accordion title="Puis-je réorganiser les objets dans la barre de navigation à gauche ?">
+    Pas encore. L'ordre des objets dans la navigation est actuellement fixe, mais cette fonctionnalité est prévue pour une future version.
+  </Accordion>
+
+  <Accordion title="Puis-je masquer des objets de la barre de navigation à gauche ?">
+    Tous les objets actifs apparaissent dans la navigation. Vous pouvez désactiver les objets dont vous n'avez pas besoin sous **Paramètres → Modèle de données**.
+  </Accordion>
+</AccordionGroup>
+
+## Capacités des champs
+
+<AccordionGroup>
+  <Accordion title="Puis-je modifier le type d'un champ après sa création ?">
+    Non, les types de champ ne peuvent pas être modifiés après leur création. Si vous avez besoin d'un type différent, créez un nouveau champ avec le type correct, migrez vos données, puis désactivez l'ancien champ.
+  </Accordion>
+
+  <Accordion title="Pourquoi ai-je besoin de noms singuliers et pluriels différents ?">
+    Notre API GraphQL utilise les deux formes pour différentes opérations:
+
+    * `createPerson` (singulier) pour des actions sur un seul enregistrement
+    * `createPeople` (pluriel) pour des opérations en masse
+
+    Cela crée des limitations lorsque les formes singulier et pluriel sont identiques, mais cela améliore l'expérience développeur.
+  </Accordion>
+
+  <Accordion title="Pourquoi certains noms de champs sont-ils protégés ?">
+    Certains noms de champs comme `Type` ou `Application` sont réservés à l'usage du système. Choisissez des noms alternatifs comme `Catégorie` ou `Classification`.
+  </Accordion>
+
+  <Accordion title="Que se passe-t-il lorsque je désactive un champ ?">
+    * Le champ est masqué dans l'interface
+    * Les données existantes sont conservées
+    * Vous pouvez toujours accéder au champ via l'API
+    * Les relations existantes demeurent, mais vous ne pouvez pas en créer de nouvelles
+    * Vous pouvez réactiver le champ plus tard
+  </Accordion>
+
+  <Accordion title="Puis-je rendre un champ obligatoire ?">
+    Actuellement, vous ne pouvez pas rendre les champs personnalisés obligatoires. Tous les champs acceptent les valeurs vides. Vous pouvez utiliser des flux de travail pour imposer des champs obligatoires en envoyant des alertes ou en bloquant des actions lorsque des champs sont vides.
+  </Accordion>
+
+  <Accordion title="Quelle est la différence entre unique et obligatoire ?">
+    * **Unique** : Aucun enregistrement ne peut avoir la même valeur dans ce champ
+    * **Obligatoire** : Le champ doit avoir une valeur (actuellement non pris en charge pour les champs personnalisés)
+  </Accordion>
+
+  <Accordion title="Puis-je créer des champs de formule ?">
+    Les champs de formule arrivent en **T1 2026**. En attendant, vous pouvez utiliser les workflows pour calculer et mettre à jour automatiquement les valeurs des champs.
+  </Accordion>
+
+  <Accordion title="Puis-je avoir des champs imbriqués dans mes objets ?">
+    Les champs imbriqués arrivent en **T1 2026**. Actuellement, vous pouvez utiliser des workflows pour extraire des valeurs de champs à partir d'objets connexes. Par exemple, pour afficher le secteur d'une entreprise sur une fiche Personne, créez un champ personnalisé sur Personnes et utilisez un workflow pour synchroniser la valeur.
+  </Accordion>
+
+  <Accordion title="Puis-je réorganiser les champs dans les objets ?">
+    Le réagencement des champs sera disponible avec les mises en page personnalisées en **T4 2025**. Actuellement, les champs apparaissent par ordre alphabétique.
+  </Accordion>
+</AccordionGroup>
+
+## Relations
+
+<AccordionGroup>
+  <Accordion title="Puis-je avoir une relation pointant vers le même objet ?">
+    Oui! Les relations auto-référencées sont prises en charge et recommandées pour des cas d'utilisation comme les hiérarchies de comptes. Par exemple, créez une relation d'Entreprises vers Entreprises pour suivre les comptes parent/enfant.
+  </Accordion>
+
+  <Accordion title="Puis-je créer des relations plusieurs-à-plusieurs ?">
+    Les relations plusieurs-à-plusieurs arrivent en **S1 2026**. Actuellement, créez un objet intermédiaire avec deux relations un-à-plusieurs comme solution de contournement.
+
+    Par exemple, pour lier Personnes et Projets (plusieurs-à-plusieurs), créez un objet "Affectations de projet" avec :
+
+    * Une relation vers Personnes (plusieurs affectations → une personne)
+    * Une relation vers Projets (plusieurs affectations → un projet)
+  </Accordion>
+
+  <Accordion title="Que sont les relations vers plusieurs types d'objets (relations Morph) ?">
+    Celles-ci permettent à un objet d'être lié à plusieurs types d'objets différents via un seul champ. Par exemple, des Notes peuvent être rattachées simultanément à des Personnes ET à des Entreprises ET à des Opportunités.
+
+    Chaque Note est liée en même temps à une Personne, une Entreprise et une Opportunité.
+
+    En savoir plus dans [Champs de relation](/l/fr/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Puis-je avoir plusieurs relations entre les mêmes objets ?">
+    Oui, vous pouvez créer plusieurs relations entre les deux mêmes objets. Par exemple, une Entreprise pourrait avoir à la fois une relation "Contact principal" et "Contact de facturation" vers Personnes.
+  </Accordion>
+
+  <Accordion title="Que se passe-t-il avec les relations lorsque je supprime un enregistrement ?">
+    Lorsque vous supprimez un enregistrement, le lien de relation est supprimé des enregistrements associés. Les enregistrements associés ne sont pas supprimés.
+  </Accordion>
+
+  <Accordion title="Puis-je créer des relations circulaires ?">
+    Bien que techniquement possible, les relations circulaires (A → B → C → A) doivent être évitées car elles peuvent entraîner de la confusion et des problèmes potentiels de performance.
+  </Accordion>
+</AccordionGroup>
+
+## Accès et Permissions
+
+<AccordionGroup>
+  <Accordion title="Où puis-je voir et modifier mon modèle de données ?">
+    Accédez à **Paramètres → Modèle de données** pour afficher et modifier tous vos objets et champs.
+  </Accordion>
+
+  <Accordion title="Pourquoi ne puis-je pas voir le modèle de données sous Paramètres ?">
+    Contactez votre administrateur d'espace de travail. L'accès au modèle de données est généralement limité aux administrateurs uniquement.
+  </Accordion>
+</AccordionGroup>
+
+## Gestion des données
+
+<AccordionGroup>
+  <Accordion title="Y a-t-il une limite au nombre d'enregistrements que je peux avoir ?">
+    Il n'y a pas de limite stricte au nombre d'enregistrements. Cependant, des ensembles de données très volumineux peuvent affecter les performances dans certaines vues. Utilisez des filtres et des vues pour gérer efficacement de grands ensembles de données.
+  </Accordion>
+
+  <Accordion title="Puis-je importer des données dans des objets personnalisés ?">
+    Oui, vous pouvez importer des données CSV dans n'importe quel objet, y compris les objets personnalisés. Le processus d'import prend en charge le mappage des champs pour les champs personnalisés. Voir [Comment préparer vos fichiers CSV](/l/fr/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Puis-je exporter la configuration de mon modèle de données ?">
+    Actuellement, il n'existe pas d'export intégré pour la configuration du modèle de données. Contactez le support si vous devez migrer votre modèle de données entre des espaces de travail.
+  </Accordion>
+</AccordionGroup>
+
+## Besoin de plus d'aide ?
+
+Consultez nos [services de mise en œuvre](/l/fr/user-guide/getting-started/capabilities/implementation-services) pour obtenir de l'aide pour la conception de modèles de données complexes.

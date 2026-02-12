@@ -1,17 +1,21 @@
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { getActivityTargetFieldNameForObject } from '@/activities/utils/getActivityTargetFieldNameForObject';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
@@ -40,6 +44,7 @@ export const useUpdateActivityTargetFromCell = ({
       joinObjectNameSingular === ''
         ? activityObjectNameSingular
         : joinObjectNameSingular,
+    shouldMatchRootQueryFilter: true,
   });
 
   const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
@@ -48,6 +53,16 @@ export const useUpdateActivityTargetFromCell = ({
         ? activityObjectNameSingular
         : joinObjectNameSingular,
   });
+  const isNoteTargetMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
+  );
+  const isTaskTargetMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
+  );
+  const isMorphRelation =
+    activityObjectNameSingular === CoreObjectNameSingular.Task
+      ? isTaskTargetMigrated
+      : isNoteTargetMigrated;
 
   const setActivityFromStore = useSetRecoilState(
     recordStoreFamilyState(activityId),
@@ -64,16 +79,30 @@ export const useUpdateActivityTargetFromCell = ({
             ? 'task'
             : 'note';
 
-        const pickedObjectMetadataItem = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue()
-          .find(
-            (objectMetadataItem) =>
-              objectMetadataItem.id === morphItem.objectMetadataId,
-          );
+        const objectMetadataItems = snapshot
+          .getLoadable<ObjectMetadataItem[]>(objectMetadataItemsState)
+          .getValue();
+
+        const pickedObjectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === morphItem.objectMetadataId,
+        );
 
         if (!isDefined(pickedObjectMetadataItem)) {
           throw new Error('Could not find object metadata item');
+        }
+
+        const targetFieldName = getActivityTargetFieldNameForObject({
+          activityObjectNameSingular,
+          targetObjectMetadataId: morphItem.objectMetadataId,
+          objectMetadataItems,
+          isMorphRelation,
+        });
+
+        if (!isDefined(targetFieldName)) {
+          throw new Error(
+            `Could not find field on activity target for object ${pickedObjectMetadataItem.nameSingular}`,
+          );
         }
 
         let activityTargetsAfterUpdate: (TaskTarget | NoteTarget)[] = [];
@@ -117,7 +146,7 @@ export const useUpdateActivityTargetFromCell = ({
 
           const targetRecord = searchRecord.record;
 
-          const activityTarget =
+          const activityTarget: NoteTarget | TaskTarget =
             activityObjectNameSingular === CoreObjectNameSingular.Task
               ? {
                   id: v4(),
@@ -131,7 +160,7 @@ export const useUpdateActivityTargetFromCell = ({
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
                   },
-                  [pickedObjectMetadataItem.nameSingular]: targetRecord,
+                  [targetFieldName]: targetRecord,
                 }
               : {
                   id: v4(),
@@ -145,22 +174,24 @@ export const useUpdateActivityTargetFromCell = ({
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
                   },
-                  [pickedObjectMetadataItem.nameSingular]: targetRecord,
+                  [targetFieldName]: targetRecord,
                 };
 
           activityTargetsAfterUpdate = [
             ...activityTargetWithTargetRecords.map((activityTarget) => {
               return activityTarget.activityTarget;
             }),
-            activityTarget as NoteTarget | TaskTarget,
+            activityTarget,
           ];
 
-          await createOneActivityTarget({
+          const activityTargetInput: Partial<NoteTarget | TaskTarget> = {
             ...activityTarget,
             [targetObjectName]: undefined,
-            [pickedObjectMetadataItem.nameSingular]: undefined,
-            [`${pickedObjectMetadataItem.nameSingular}Id`]: morphItem.recordId,
-          } as Partial<NoteTarget | TaskTarget>);
+            [targetFieldName]: undefined,
+            [`${targetFieldName}Id`]: morphItem.recordId,
+          };
+
+          await createOneActivityTarget(activityTargetInput);
         }
 
         setActivityFromStore((currentActivity) => {
@@ -179,6 +210,7 @@ export const useUpdateActivityTargetFromCell = ({
       activityObjectNameSingular,
       createOneActivityTarget,
       deleteOneActivityTarget,
+      isMorphRelation,
       setActivityFromStore,
     ],
   );

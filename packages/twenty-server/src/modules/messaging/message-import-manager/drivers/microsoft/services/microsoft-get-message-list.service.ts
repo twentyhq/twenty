@@ -6,15 +6,12 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import pLimit from 'p-limit';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -24,6 +21,9 @@ import {
 
 // Microsoft API limit is 999 messages per request on this endpoint
 const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
+
+/* reference: https://learn.microsoft.com/en-us/graph/throttling-limits#limits-per-mailbox */
+const FOLDER_PROCESSING_CONCURRENCY = 4;
 
 @Injectable()
 export class MicrosoftGetMessageListService {
@@ -38,25 +38,36 @@ export class MicrosoftGetMessageListService {
     connectedAccount,
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    const result: GetMessageListsResponse = [];
+    const foldersToProcess =
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? messageFolders.filter((folder) => folder.isSynced)
+        : messageFolders;
 
-    if (messageFolders.length === 0) {
-      throw new MessageImportDriverException(
-        `Message channel ${messageChannel.id} has no message folders`,
-        MessageImportDriverExceptionCode.NOT_FOUND,
+    if (foldersToProcess.length === 0) {
+      this.logger.warn(
+        `Connected account ${connectedAccount.id}: Message Channel: ${messageChannel.id}: No folders to process`,
       );
+
+      return [];
     }
 
-    for (const folder of messageFolders) {
-      const response = await this.getMessageList(connectedAccount, folder);
+    const limit = pLimit(FOLDER_PROCESSING_CONCURRENCY);
 
-      result.push({
-        ...response,
-        folderId: folder.id,
-      });
-    }
+    const results = await Promise.all(
+      foldersToProcess.map((folder) =>
+        limit(async () => {
+          const response = await this.getMessageList(connectedAccount, folder);
 
-    return result;
+          return {
+            ...response,
+            folderId: folder.id,
+          };
+        }),
+      ),
+    );
+
+    return results;
   }
 
   public async getMessageList(
@@ -115,13 +126,6 @@ export class MicrosoftGetMessageListService {
     await pageIterator.iterate().catch((error) => {
       this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
-
-    if (!isDefined(messageFolder.syncCursor)) {
-      throw new MessageImportDriverException(
-        'Message folder sync cursor is required',
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
-    }
 
     return {
       messageExternalIds,

@@ -1,0 +1,125 @@
+---
+title: Configuración de SSO
+description: Configure el inicio de sesión único (SSO) para una autenticación empresarial segura.
+---
+
+## Acerca de SSO
+
+El inicio de sesión único (SSO) permite que los miembros de su equipo inicien sesión en Twenty utilizando el proveedor de identidad de su organización. Esto proporciona:
+
+* **Control de acceso centralizado**: Gestione el acceso desde un solo lugar
+* **Mayor seguridad**: Aproveche sus políticas de seguridad existentes
+* **Mejor experiencia de usuario**: Un único conjunto de credenciales para todas las herramientas
+
+## Proveedores compatibles
+
+Twenty admite SSO con:
+
+* **SAML 2.0**: Funciona con la mayoría de los proveedores de identidad empresariales
+* **Google Workspace**: Para organizaciones que usan Google
+* **Microsoft Entra ID**: (anteriormente Azure AD) Para entornos de Microsoft
+
+## Configuración de SSO
+
+### Prerrequisitos
+
+* Plan de organización (espacios de trabajo en la nube y autoalojados)
+* Acceso de administrador a su proveedor de identidad
+* Acceso de administrador al espacio de trabajo de Twenty
+
+<Note>
+  **Para usuarios de autoalojamiento que deseen configurar SSO**, comuníquese con contact@twenty.com
+</Note>
+
+### Pasos de configuración
+
+#### 1. Acceda a la configuración de SSO
+
+1. Vaya a **Ajustes → Seguridad**
+2. Busque la sección **Configuración de SSO**
+3. Haga clic en **Configurar SSO**
+
+#### 2) Elija su proveedor
+
+Seleccione su proveedor de identidad de la lista o elija "Custom SAML" para otros proveedores.
+
+#### 3. Configure su proveedor de identidad
+
+Deberá configurar su proveedor de identidad con:
+
+* **Entity ID**: Proporcionado por Twenty
+* **ACS URL**: La URL de retorno para la autenticación
+* **Certificado**: Para comunicación segura
+
+#### 4. Introduzca los detalles del proveedor en Twenty
+
+* **SSO URL**: URL de inicio de sesión de su proveedor
+* **Entity ID**: Identificador de su proveedor
+* **Certificado**: Certificado X.509 de su proveedor
+
+#### 5. Probar y habilitar
+
+1. Haga clic en **Probar configuración** para verificar la configuración
+2. Habilite SSO cuando las pruebas sean satisfactorias
+3. Configure las preferencias de aprovisionamiento de usuarios
+
+## Aprovisionamiento de usuarios
+
+### Aprovisionamiento Just-in-Time (JIT)
+
+* Los usuarios se crean automáticamente en su primer inicio de sesión
+* Se asigna automáticamente el rol predeterminado
+* No se requiere creación manual de usuarios
+
+### Aprovisionamiento manual
+
+* Invite a los usuarios antes de que puedan iniciar sesión
+* Preasigne roles específicos
+* Mayor control sobre quién puede acceder
+
+## Gestión de usuarios de SSO
+
+### Asignación de roles
+
+A los usuarios de SSO se les pueden asignar roles como a los usuarios habituales:
+
+1. Ir a **Ajustes → Miembros**
+2. Busque al usuario
+3. Cambie su rol según sea necesario
+
+### Revocación de acceso
+
+Para eliminar el acceso de los usuarios de SSO:
+
+* Elimínelos de su proveedor de identidad o
+* Elimínelos del espacio de trabajo de Twenty
+
+## Mejores prácticas
+
+### Seguridad
+
+* **Requerir SSO**: Deshabilite el inicio de sesión con contraseña para usuarios de SSO
+* **Auditorías periódicas**: Revise el acceso periódicamente
+* **Políticas sólidas del IdP**: Aplique MFA en el proveedor de identidad
+
+### Gestión de usuarios
+
+* **Nomenclatura clara**: Utilice una nomenclatura coherente en su directorio
+* **Asignación de grupos**: Asigne los grupos del IdP a roles de Twenty (si está disponible)
+* **Proceso de desvinculación**: Incluya Twenty en su flujo de trabajo de desaprovisionamiento
+
+## Solución de Problemas
+
+### Problemas comunes
+
+* **Errores de certificado**: Asegúrese de que el certificado no haya caducado
+* **Incongruencias de URL**: Verifique que la URL de ACS coincida exactamente
+* **Usuario no encontrado**: Verifique la configuración de aprovisionamiento JIT
+
+### Obtención de Ayuda
+
+Si encuentra problemas, póngase en contacto con soporte y proporcione:
+
+* Mensajes de error recibidos
+* Proveedor de identidad en uso
+* Detalles de la configuración (sin datos sensibles)

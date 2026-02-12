@@ -1,0 +1,228 @@
+---
+title: Создание PDF в Twenty
+description: Создайте рабочий процесс для создания и прикрепления PDF (например, коммерческого предложения) к записи.
+---
+
+Автоматически создавайте или получайте PDF и прикрепляйте его к записи в Twenty. Это часто используют для создания коммерческих предложений, счетов или отчетов, связанных с компаниями, сделками или другими объектами.
+
+## Обзор
+
+В этом рабочем процессе используется **Ручной триггер**, чтобы пользователи могли по запросу создавать PDF для любой выбранной записи. За обработку отвечает **Логическая функция**:
+
+1. Загрузка PDF по URL (из сервиса генерации PDF)
+2. Загрузка файла в Twenty
+3. Создание вложения, связанного с записью
+
+## Требования
+
+Прежде чем настраивать рабочий процесс:
+
+1. **Создайте ключ API**: перейдите в **Настройки → APIs** и создайте новый ключ API. Этот токен понадобится для логической функции.
+2. **Настройте сервис генерации PDF** (необязательно): если вы хотите динамически генерировать PDF (например, коммерческие предложения), используйте такие сервисы, как Carbone, PDFMonkey или DocuSeal, чтобы создать PDF и получить URL для скачивания.
+
+## Пошаговая настройка
+
+### Шаг 1: Настройте триггер
+
+1. Перейдите в **Рабочие процессы** и создайте новый рабочий процесс
+2. Выберите **Ручной триггер**
+3. Выберите объект, к которому нужно прикреплять PDF (например, **Company** или **Opportunity**)
+
+<Tip>
+  С помощью ручного триггера пользователи могут запускать этот рабочий процесс с кнопки, которая появляется в правом верхнем углу после выбора записи, чтобы сгенерировать и прикрепить PDF.
+</Tip>
+
+### Шаг 2: Добавьте логическую функцию
+
+1. Добавьте действие **Code** (логическая функция)
+2. Создайте новую функцию с кодом ниже
+3. Настройте входные параметры
+
+#### Входные параметры
+
+| Параметр    | Значение                |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  Если прикрепляете к другому объекту (Person, Opportunity и т. д.), переименуйте параметр соответствующим образом (например, `personId`, `opportunityId`) и обновите логическую функцию.
+</Note>
+
+#### Код логической функции
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### Шаг 3: Настройте под ваш сценарий
+
+#### Чтобы прикреплять к другому объекту
+
+Замените `companyId` на соответствующее поле:
+
+| Объект                  | Имя поля             |
+| ----------------------- | -------------------- |
+| Компания                | `companyId`          |
+| Контакт                 | `personId`           |
+| Сделка                  | `opportunityId`      |
+| Пользовательский объект | `yourCustomObjectId` |
+
+Обновите и параметр функции, и объект `variables.data` в мутации вложения.
+
+#### Чтобы использовать динамический URL PDF
+
+Если используете сервис генерации PDF, вы можете:
+
+1. Сначала выполните действие HTTP Request, чтобы сгенерировать PDF
+2. Передайте возвращенный URL PDF в логическую функцию как параметр
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### Шаг 4: Протестируйте и активируйте
+
+1. Сохраните рабочий процесс
+2. Перейдите к записи Company
+3. Нажмите меню **⋮** и выберите ваш рабочий процесс
+4. Проверьте раздел **Attachments** в записи, чтобы убедиться, что PDF прикреплен
+5. Активируйте рабочий процесс
+
+## Совмещение с сервисами генерации PDF
+
+Для создания динамических коммерческих предложений или счетов:
+
+### Пример: Сгенерировать коммерческое предложение → Прикрепить PDF
+
+| Шаг | Действие                 | Назначение                                 |
+| --- | ------------------------ | ------------------------------------------ |
+| 1   | Ручной триггер (Company) | Пользователь запускает на записи           |
+| 2   | Поиск записи             | Получить сведения о сделке или позициях    |
+| 3   | HTTP-запрос              | Вызвать API генерации PDF с данными записи |
+| 4   | Бессерверная функция     | Скачать и прикрепить сгенерированный PDF   |
+
+### Популярные сервисы генерации PDF
+
+* **Carbone** — генерация документов на основе шаблонов
+* **PDFMonkey** — динамическое создание PDF из шаблонов
+* **DocuSeal** — платформа автоматизации документооборота
+* **Documint** — генерация документов, ориентированная на API
+
+Каждый сервис предоставляет API, который возвращает URL PDF; затем его можно передать в логическую функцию.
+
+## Устранение неполадок
+
+| Проблема                      | Решение                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| "Не удалось скачать PDF"      | Проверьте, что URL PDF доступен и возвращает корректный PDF                   |
+| "Не удалось загрузить"        | Убедитесь, что ваш ключ API действителен и имеет права на запись              |
+| "Не удалось создать вложение" | Убедитесь, что имя поля идентификатора объекта соответствует целевому объекту |
+
+## Связанные материалы
+
+* [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
+* [Логические функции](/l/ru/user-guide/workflows/capabilities/workflow-actions#code)
+* [Создание коммерческого предложения или счета в Twenty](/l/ru/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

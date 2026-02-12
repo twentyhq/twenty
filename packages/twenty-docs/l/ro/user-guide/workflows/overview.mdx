@@ -1,0 +1,80 @@
+---
+title: Fluxuri de lucru
+description: Aflați cum să creați automatizări în Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Fluxuri de lucru" />
+</Frame>
+
+## De ce Contează Fluxurile de Lucru
+
+Twenty a fost construit pentru a oferi utilizatorilor săi flexibilitate maximă. În loc să vă forțeze să adaptați procesele de afaceri la funcții rigide și predefinite, fluxurile de lucru vă permit să creați automatizări care să susțină cel mai bine cazurile de utilizare unice ale afacerii dvs.
+
+Fluxurile de lucru sunt funcția in-app a Twenty pentru crearea acestor automatizări. Ele vă oferă blocurile de construcție pentru a crea exact ceea ce are nevoie afacerea dvs., când are nevoie.
+
+## Ce pot face cu fluxurile de lucru?
+
+Recomandăm construirea automatizărilor pentru două scopuri principale:
+
+1. **Automatizări interne pentru a facilita activitatea zilnică a echipei dvs.**: Reduceți numărul de intrări manuale și sarcini repetitive care încetinesc echipa dvs.
+2. **Aduceți date în și în afara Twenty**: Conectați Twenty prin apeluri API și webhooks la baza dvs. de date și alte instrumente.
+
+## Crearea primului dvs. flux de lucru
+
+### Pasul 1: Creați un flux de lucru nou
+
+1. Accesați **Workflows**, accesibil sub celelalte obiecte
+2. Faceți clic pe **+ Înregistrare nouă**
+3. Dați un nume fluxului de lucru
+
+### Pasul 2: Adăugați un declanșator
+
+Fiecare flux de lucru începe cu un declanșator. Alegeți dintre:
+
+* **Evenimente ale înregistrărilor**: Când o înregistrare este creată, actualizată sau ștearsă
+* **Programare**: Rulează la momente specifice (zilnic, săptămânal etc.)
+* **Manual**: Declanșat de o acțiune a utilizatorului
+* **Webhook**: Declanșat de un webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Pasul 3: Adăugați acțiuni
+
+După declanșator, adăugați una sau mai multe acțiuni:
+
+* **Creare înregistrare**: Adăugați înregistrări noi în orice obiect
+* **Actualizare înregistrare**: Modificați datele înregistrării existente
+* **Ștergere înregistrare**: Eliminați înregistrări din obiecte
+* **Căutare înregistrări**: Găsiți înregistrări care corespund criteriilor
+* **Upsert înregistrare**: Creați sau actualizați pe baza criteriilor de potrivire
+* **Iterator**: Parcurgeți tablouri de înregistrări
+* **Filtru**: Controlați care înregistrări continuă
+* **Întârziere**: Așteptați înainte de a continua (durată sau dată programată)
+* **Trimitere e-mail**: Trimiteți e-mailuri prin contul conectat
+* **Cod**: Rulați JavaScript personalizat
+* **Solicitare HTTP**: Apelați API-uri externe
+* **Formular**: Obțineți date de intrare de la utilizatori în interfața Twenty în momentul execuției
+* **Agent AI** (În curând): Rulați sarcini AI inteligente
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Pasul 4: Testați și activați
+
+1. Utilizați butonul **Test** pentru a rula fluxul de lucru cu date de probă
+2. Examinați rezultatele pentru a vă asigura că funcționează conform așteptărilor
+3. Comutați fluxul de lucru pe **Activ** când este gata
+
+## Cele mai bune practici ale fluxurilor de lucru
+
+* **Editați numele pașilor**: Redenumiți pașii fluxului dvs. de lucru pentru a descrie clar ce face fiecare. Acest lucru ajută la întreținere și facilitează transmiterea către colegi
+* **Folosiți datele pașilor anteriori**: Puteți utiliza câmpuri din înregistrările returnate de orice pas anterior din fluxul dvs. de lucru
+* **Începeți simplu**: Începeți cu fluxuri de lucru de bază și adăugați complexitate în timp, pe măsură ce deveniți mai familiar cu sistemul
+* **Planificați înainte de a construi**: Configurați logica fluxului de lucru înainte de a începe construcția pentru a evita blocarea la jumătatea procesului
+
+## Pașii următori
+
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizări CRM](/l/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

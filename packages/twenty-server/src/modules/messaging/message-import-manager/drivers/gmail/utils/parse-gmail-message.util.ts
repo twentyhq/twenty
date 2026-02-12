@@ -19,6 +19,7 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
   const threadId = message.threadId;
   const historyId = message.historyId;
   const internalDate = message.internalDate;
+  const labelIds = message.labelIds ?? [];
 
   assert(id, 'ID is missing');
   assert(historyId, 'History-ID is missing');
@@ -45,5 +46,6 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
     bcc: rawBcc ? safeParseEmailAddressAddress(rawBcc) : undefined,
     text,
     attachments,
+    labelIds,
   };
 };

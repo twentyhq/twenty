@@ -3,38 +3,140 @@
     "userGuide": {
       "label": "ユーザーガイド",
       "groups": {
-        "gettingStarted": {
-          "label": "始めに"
+        "discoverTwenty": {
+          "label": "Twenty を知る",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "機能"
+            },
+            "gettingStartedHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
         "dataModel": {
-          "label": "データモデル"
+          "label": "データモデル",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "機能"
+            },
+            "dataModelHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
-        "crmEssentials": {
-          "label": "CRM の基本"
+        "dataMigration": {
+          "label": "データ移行",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "機能"
+            },
+            "dataMigrationHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
-        "views": {
-          "label": "ビュー"
+        "calendarEmails": {
+          "label": "カレンダーとメール",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "機能"
+            },
+            "calendarEmailsHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
         "workflows": {
-          "label": "ワークフロー"
+          "label": "ワークフロー",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "機能"
+            },
+            "workflowsHowTos": {
+              "label": "ハウツー",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM の自動化"
+                },
+                "connectToOtherTools": {
+                  "label": "他のツールと連携"
+                },
+                "advancedConfigurations": {
+                  "label": "高度な設定"
+                },
+                "needMoreHelp": {
+                  "label": "さらにヘルプが必要な場合"
+                }
+              }
+            }
+          }
         },
-        "collaboration": {
-          "label": "コラボレーション"
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiCapabilities": {
+              "label": "機能"
+            },
+            "aiHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
-        "integrationsApi": {
-          "label": "連携とAPI"
+        "viewsPipelines": {
+          "label": "ビューとパイプライン",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "機能"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
-        "reporting": {
-          "label": "レポーティング"
+        "dashboards": {
+          "label": "ダッシュボード",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "機能"
+            },
+            "dashboardsHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "権限とアクセス",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "機能"
+            },
+            "permissionsAccessHowTos": {
+              "label": "ハウツー"
+            }
+          }
+        },
+        "billing": {
+          "label": "請求",
+          "groups": {
+            "billingCapabilities": {
+              "label": "機能"
+            },
+            "billingHowTos": {
+              "label": "ハウツー"
+            }
+          }
         },
         "settings": {
-          "label": "設定"
-        },
-        "pricing": {
-          "label": "料金"
-        },
-        "resources": {
-          "label": "リソース"
+          "label": "設定",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "機能"
+            },
+            "settingsHowTos": {
+              "label": "ハウツー"
+            }
+          }
         }
       }
     },
@@ -44,44 +146,54 @@
         "developersGroup": {
           "label": "開発者"
         },
-        "devGettingStarted": {
-          "label": "始めに",
+        "extend": {
+          "label": "拡張",
           "groups": {
-            "selfHosting": {
-              "label": "セルフホスティング"
-            },
-            "apiAndWebhooks": {
-              "label": "APIとWebhooks"
+            "extendCapabilities": {
+              "label": "機能"
             }
           }
         },
-        "contributing": {
+        "selfHost": {
+          "label": "セルフホスト",
+          "groups": {
+            "selfHostCapabilities": {
+              "label": "機能"
+            }
+          }
+        },
+        "contribute": {
           "label": "貢献",
           "groups": {
-            "frontendDevelopment": {
-              "label": "フロントエンド開発",
+            "contributeCapabilities": {
+              "label": "機能",
               "groups": {
-                "twentyUi": {
-                  "label": "Twenty UI",
+                "frontendDevelopment": {
+                  "label": "フロントエンド開発",
                   "groups": {
-                    "display": {
-                      "label": "表示"
-                    },
-                    "feedback": {
-                      "label": "フィードバック"
-                    },
-                    "input": {
-                      "label": "Input"
-                    },
-                    "navigation": {
-                      "label": "Navigation"
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "表示"
+                        },
+                        "feedback": {
+                          "label": "フィードバック"
+                        },
+                        "input": {
+                          "label": "入力"
+                        },
+                        "navigation": {
+                          "label": "ナビゲーション"
+                        }
+                      }
                     }
                   }
+                },
+                "backendDevelopment": {
+                  "label": "バックエンド開発"
                 }
               }
-            },
-            "backendDevelopment": {
-              "label": "バックエンド開発"
             }
           }
         }

@@ -31,6 +31,8 @@ import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
+import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -167,10 +169,21 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
-      executedStep: stepToExecute,
-      executedStepResult: actionOutput,
-    });
+    const { nextStepIdsToExecute, nextStepIdsToSkip } =
+      await this.getNextStepIdsToExecute({
+        executedStep: stepToExecute,
+        executedStepOutput: actionOutput,
+      });
+
+    if (isDefined(nextStepIdsToSkip) && nextStepIdsToSkip.length > 0) {
+      await this.skipStepsAndContinue({
+        stepIdsToSkip: nextStepIdsToSkip,
+        steps,
+        workflowRunId,
+        workspaceId,
+        executedStepsCount: (executedStepsCount ?? 0) + 1,
+      });
+    }
 
     if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
       await this.executeFromSteps({
@@ -185,26 +198,58 @@ export class WorkflowExecutorWorkspaceService {
 
   async getNextStepIdsToExecute({
     executedStep,
-    executedStepResult,
+    executedStepOutput,
   }: {
     executedStep: WorkflowAction;
-    executedStepResult: WorkflowActionOutput;
-  }): Promise<string[] | undefined> {
+    executedStepOutput: WorkflowActionOutput;
+  }): Promise<{
+    nextStepIdsToExecute?: string[];
+    nextStepIdsToSkip?: string[];
+  }> {
     const isIteratorStep = isWorkflowIteratorAction(executedStep);
 
     if (isIteratorStep) {
-      const iteratorStepResult = executedStepResult.result as
+      const iteratorStepResult = executedStepOutput.result as
         | WorkflowIteratorResult
         | undefined;
 
       if (!iteratorStepResult?.hasProcessedAllItems) {
-        return isString(executedStep.settings.input.initialLoopStepIds)
+        const nextStepIdsToExecute = isString(
+          executedStep.settings.input.initialLoopStepIds,
+        )
           ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
           : executedStep.settings.input.initialLoopStepIds;
+
+        return { nextStepIdsToExecute };
       }
     }
 
-    return executedStep.nextStepIds;
+    if (isWorkflowIfElseAction(executedStep)) {
+      const ifElseResult = executedStepOutput.result as
+        | WorkflowIfElseResult
+        | undefined;
+
+      if (ifElseResult?.matchingBranchId) {
+        const branches = executedStep.settings.input.branches;
+
+        const matchingBranch = branches.find(
+          (branch) => branch.id === ifElseResult.matchingBranchId,
+        );
+
+        const nonMatchingBranches = branches.filter(
+          (branch) => branch.id !== ifElseResult.matchingBranchId,
+        );
+
+        return {
+          nextStepIdsToExecute: matchingBranch?.nextStepIds,
+          nextStepIdsToSkip: nonMatchingBranches.flatMap(
+            (branch) => branch.nextStepIds,
+          ),
+        };
+      }
+    }
+
+    return { nextStepIdsToExecute: executedStep.nextStepIds };
   }
 
   private async computeWorkflowRunStatus({
@@ -397,6 +442,44 @@ export class WorkflowExecutorWorkspaceService {
         error: error.message ?? 'Execution result error, no data or error',
       };
     }
+  }
+
+  private async skipStepsAndContinue({
+    stepIdsToSkip,
+    steps,
+    workflowRunId,
+    workspaceId,
+    executedStepsCount,
+  }: {
+    stepIdsToSkip: string[];
+    steps: WorkflowAction[];
+    workflowRunId: string;
+    workspaceId: string;
+    executedStepsCount: number;
+  }) {
+    await Promise.all(
+      stepIdsToSkip.map(async (stepId) => {
+        await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+          stepId,
+          stepInfo: { status: StepStatus.SKIPPED },
+          workflowRunId,
+          workspaceId,
+        });
+
+        const skippedStep = steps.find((step) => step.id === stepId);
+        const skippedStepNextStepIds = skippedStep?.nextStepIds ?? [];
+
+        if (skippedStepNextStepIds.length > 0) {
+          await this.executeFromSteps({
+            stepIds: skippedStepNextStepIds,
+            workflowRunId,
+            workspaceId,
+            shouldComputeWorkflowRunStatus: false,
+            executedStepsCount,
+          });
+        }
+      }),
+    );
   }
 
   private async continueExecutionFromStepInAnotherJob({

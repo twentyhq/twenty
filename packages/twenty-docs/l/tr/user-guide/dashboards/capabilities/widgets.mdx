@@ -1,0 +1,149 @@
+---
+title: Widget'lar
+description: Twenty'deki widget türlerini ve görselleştirme seçeneklerini keşfedin.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Kullanılabilir widget'lar
+
+Twenty, Müşteri İlişkileri Yönetimi (CRM) verilerinizi görselleştirmek için çeşitli widget türleri sunar.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Çubuk grafikler</span>
+
+Verileri yatay veya dikey çubuklar olarak görüntüleyin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Çubuk grafik" />
+</Frame>
+
+**En uygun:**
+
+* Kategoriler arasında değerleri karşılaştırma
+* Sıralamaları gösterme
+* Metrikleri zaman dönemine göre izleme
+
+**Örnek kullanımlar:**
+
+* Aşamaya göre fırsatlar
+* Satış temsilcisine göre gelir
+* Ay başına eklenen kişi sayısı
+
+<Note>
+  **Görüntüleme sınırları**: Çubuk grafikler en fazla 100 çubuk ve Group By kullanılırken çubuk başına 50 grup gösterebilir. "Undisplayed data: max X bars per chart" uyarısını görürseniz, verilerinizi daraltmak için filtreler ekleyin veya gruplamayı değiştirin (ör. güne yerine haftaya göre gruplayın).
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pasta grafikleri</span>
+
+Bir bütünün oranlarını gösterin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pasta grafik" />
+</Frame>
+
+**En uygun:**
+
+* Bileşimi veya dağılımı gösterme
+* Parçaları bütüne göre karşılaştırma
+* Başlıca segmentleri vurgulama
+
+**Örnek kullanımlar:**
+
+* Kaynağa göre fırsat dağılımı
+* Sektöre göre kişi dağılımı
+* Sahip bazında satış boru hattı bileşimi
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Çizgi grafikler</span>
+
+Zaman içindeki eğilimleri gösterin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Çizgi grafik" />
+</Frame>
+
+**En uygun:**
+
+* Zaman içindeki değişiklikleri izleme
+* Eğilimleri belirleme
+* Birden çok metriği karşılaştırma
+
+**Örnek kullanımlar:**
+
+* Aylık fırsat sayısı eğilimi
+* Çeyrekler bazında gelir artışı
+* Zaman içindeki etkinlik düzeyleri
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Toplama grafikleri</span>
+
+Tekil kilit değerleri belirgin şekilde görüntüleyin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Toplama grafiği" />
+</Frame>
+
+**En uygun:**
+
+* KPI'leri vurgulama
+* Toplamları veya ortalamaları gösterme
+* Hızlı durum kontrolleri
+
+**Örnek kullanımlar:**
+
+* Toplam satış boru hattı değeri
+* Açık fırsat sayısı
+* Dönüşüm oranı
+
+**Gelişmiş seçenekler:**
+
+* **Oran**: Select alanları için değerler arasındaki oranları hesaplayın. **Görüntüdeki veriler**'e gidin → alanınızı seçin → **Oran** seçeneğini etkinleştirin.
+* **Ön Ek ve Son Ek**: Daha iyi okunabilirlik için sayının önüne veya sonuna özel metin ekleyin (ör. "$" öneki veya "%" soneki).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+Harici araçları ve içerikleri doğrudan panonuza gömün.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**En uygun:**
+
+* Harici raporları veya panoları görüntüleme
+* Üçüncü taraf satış araçlarını entegre etme
+* Diğer sistemlerden canlı içerik gösterme
+
+**Örnek kullanımlar:**
+
+* Destek aracınızdan metrikler
+* Arama aracınızdan metrikler
+* Satış sekans aracınızdan canlı içerik
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Zengin Metin</span>
+
+Biçimlendirilmiş metni ve içeriği doğrudan panonuza ekleyin.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Zengin Metin" />
+</Frame>
+
+**En uygun:**
+
+* Bağlam veya talimatlar ekleme
+* Pano açıklamaları
+* Notlar ve açıklamalar
+
+**Özellikler:**
+
+* Zengin metin biçimlendirme (kalın, italik, listeler vb.)
+* Görsel ve dosya yüklemeleri
+* Markdown tarzı düzenleme
+
+<Note>
+  **Yakında**: Gösterge grafikleri ve tablolar henüz mevcut değil, ancak yol haritamızda yer alıyor.
+</Note>
+
+### Widget'ları çoğaltma
+
+1. Widget'a tıklayın
+2. **Seçenekler**'i açın
+3. **Widget'ı çoğalt**'a tıklayın

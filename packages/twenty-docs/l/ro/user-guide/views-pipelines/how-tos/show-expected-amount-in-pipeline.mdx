@@ -1,0 +1,149 @@
+---
+title: Afișați suma estimată în pipeline-ul dvs.
+description: Calculați și afișați valorile ponderate ale oportunităților pe baza probabilității etapei.
+---
+
+Suma estimată este o valoare calculată: **Sumă × Probabilitate**. Acest lucru vă ajută să prognozați veniturile prin ponderarea oportunităților în funcție de cât de probabil este să se închidă.
+
+<Tip>
+  Acesta este un exemplu de creare a [Câmpurilor de formulă](/l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields) folosind fluxuri de lucru.
+</Tip>
+
+Acest ghid vă conduce prin configurarea câmpurilor personalizate și a fluxurilor de lucru necesare pentru a calcula și afișa sumele estimate în pipeline-ul dvs.
+
+## Pasul 1: Creați câmpuri personalizate
+
+Aveți nevoie de două câmpuri personalizate pe obiectul Oportunități.
+
+### Creați câmpul Probabilitate
+
+1. Accesați **Setări → Model de date → Oportunități**
+2. Faceți clic pe **+ Adaugă câmp**
+3. Configurați:
+   * **Nume**: Probabilitate
+   * **Tip**: Număr
+   * **Descriere**: Probabilitate bazată pe etapă (0–100%)
+4. Faceți clic pe **Salvare**
+
+### Creați câmpul Sumă estimată
+
+1. Faceți clic pe **+ Adaugă câmp**
+2. Configurați:
+   * **Nume**: Sumă estimată
+   * **Tip**: Monedă
+   * **Descriere**: Calculat: Sumă × Probabilitate
+3. Faceți clic pe **Salvare**
+
+### Opțional: Setați câmpurile ca numai în citire pentru utilizatori
+
+Dacă nu doriți ca utilizatorii să editeze manual aceste câmpuri calculate:
+
+1. Accesați **Setări → Roluri**
+2. Selectați rolul pe care doriți să-l configurați
+3. Găsiți obiectul Oportunități
+4. Setați câmpurile **Probabilitate** și **Sumă estimată** ca numai în citire
+
+Acest lucru asigură că doar fluxurile de lucru pot actualiza aceste valori.
+
+## Pasul 2: Creați Fluxul de lucru nr. 1 — Actualizați probabilitatea la schimbarea etapei
+
+Acest flux de lucru setează automat probabilitatea când o oportunitate trece la o nouă etapă.
+
+### Creați fluxul de lucru
+
+1. Accesați **Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l "Actualizați probabilitatea la schimbarea etapei"
+
+### Configurați declanșatorul
+
+1. Adăugați un declanșator **Înregistrare creată sau actualizată**
+2. Selectați **Oportunități** ca obiect
+3. Filtrați după: câmpul **Etapă** este actualizat
+
+### Adăugați ramuri pentru fiecare etapă
+
+Creați o ramură pentru fiecare etapă cu probabilitatea sa:
+
+| Etapa           | Probabilitate |
+| --------------- | ------------- |
+| Nou             | 10%           |
+| Calificat       | 25%           |
+| Întâlnire       | 40%           |
+| Propunere       | 60%           |
+| Negociere       | 80%           |
+| Închis câștigat | 100%          |
+| Închis pierdut  | 0%            |
+
+<Note>
+  Pentru a crea o ramură nouă, faceți clic dreapta pe planșa fluxului de lucru și faceți clic pe **Acțiune nouă**. Apoi, legați această acțiune de nodul anterior trăgând săgeata de la nodul anterior la această acțiune nouă.
+</Note>
+
+Pentru fiecare etapă:
+
+1. Adăugați un nod **Filtru**: Etapă = [numele etapei]
+2. Adăugați o acțiune **Actualizare înregistrare**:
+   * Înregistrare: Oportunitatea declanșatoare
+   * Câmp: Probabilitate
+   * Valoare: [probabilitatea pentru acea etapă]
+
+### Calculați suma estimată
+
+După ce ramurile se reunesc:
+
+1. Adăugați un nod **Filtru**: câmpul Sumă nu este gol
+2. Adăugați o acțiune **Actualizare înregistrare**:
+   * Înregistrare: Oportunitatea declanșatoare
+   * Câmp: Sumă estimată
+   * Valoare: Sumă × Probabilitate
+
+## Pasul 3: Creați Fluxul de lucru nr. 2 — Recalculați la modificarea sumei
+
+Acest flux de lucru actualizează Suma estimată atunci când suma oportunității se modifică.
+
+### Creați fluxul de lucru
+
+1. Accesați **Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l "Recalculați suma estimată la modificarea sumei"
+
+### Configurați declanșatorul
+
+1. Adăugați un declanșator **Înregistrare creată sau actualizată**
+2. Selectați **Oportunități** ca obiect
+3. Filtrați după: câmpul **Sumă** este actualizat
+
+### Adăugați logica
+
+1. Adăugați un nod **Filtru**: câmpul Sumă nu este gol
+2. Adăugați o acțiune **Actualizare înregistrare**:
+   * Înregistrare: Oportunitatea declanșatoare
+   * Câmp: Sumă estimată
+   * Valoare: Sumă × Probabilitate
+
+## Pasul 4: Afișați în pipeline-ul dvs.
+
+Acum afișați totalurile Sumei estimate în vizualizarea dvs. Kanban:
+
+1. Deschideți vizualizarea Kanban **Pipeline de vânzări**
+2. Faceți clic pe **numărul** de lângă orice nume de Etapă din partea de sus a unei coloane
+3. Selectați **Sumă**
+4. Alegeți **Sumă estimată**
+
+Fiecare coloană afișează acum valoarea totală ponderată a pipeline-ului pentru acea etapă.
+
+## Rezumat
+
+| Componentă               | Scop                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| **Câmpul Probabilitate** | Stochează probabilitatea de câștig bazată pe etapă                                 |
+| **Câmpul Sumă estimată** | Stochează Sumă × Probabilitate                                                     |
+| **Flux de lucru nr. 1**  | Actualizează probabilitatea când se schimbă etapa, apoi recalculează Suma estimată |
+| **Flux de lucru nr. 2**  | Recalculează Suma estimată când se modifică suma                                   |
+| **Agregare**             | Afișează suma valorilor estimate pentru fiecare etapă                              |
+
+## Asemănătoare
+
+* [Câmpuri de formulă](/l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields) — creați câmpuri calculate folosind fluxuri de lucru
+* [Vizualizări Kanban](/l/ro/user-guide/views-pipelines/capabilities/kanban-views) — agregări pe coloană
+* [Cum să creați câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields) — configurarea câmpurilor

@@ -1,0 +1,77 @@
+---
+title: Configura tu espacio de trabajo
+description: Cada empresa funciona de manera diferente. Empieza con estos 3 pasos para adaptar Twenty a tus necesidades.
+---
+
+<Note>**Solución rápida**: Comienza por conectar tu buzón. Esto te brinda un valor inmediato y ayuda a tu equipo a ver Twenty en acción con datos reales. Puedes hacerlo en Configuración → Cuentas.</Note>
+
+## 1. Personaliza tu modelo de datos
+
+Twenty ofrece la flexibilidad que necesitas para moldear el modelo de datos que mejor apoyará tu día a día.
+Crea objetos y campos de cualquier tipo, incluyendo relaciones entre tus diferentes objetos. Puedes hacerlo en Configuración → Modelo de Datos.
+Aquí tienes algunos consejos:
+
+* **No estás limitado en la cantidad de campos personalizados ni en los objetos personalizados**. Agregar objetos y campos personalizados no llevará a la actualización de tu plan.
+* **Personas, Empresas y Oportunidades son los tres objetos desde los cuales puedes acceder a los correos electrónicos y reuniones sincronizados desde tu buzón y calendario**. Recomendamos usarlas tanto como sea posible, añadiendo campos para categorizar tus registros si es necesario. Aquí tienes un ejemplo:
+  * Es mejor usar el objeto Personas para tus prospectos y socios, creando un campo en el objeto Personas llamado `Tipo de Persona`, en lugar de crear un objeto personalizado Socio. Porque no podrías acceder a los correos electrónicos intercambiados con esta persona desde los registros de Socio.
+  * Crea diferentes vistas bajo Personas, una para mostrar socios y otra para mostrar prospectos.
+* Dos personas no pueden tener la misma dirección de correo electrónico. Dos empresas no pueden tener el mismo dominio.
+* Puedes desactivar campos y objetos estándar que no quieras usar.
+* Puedes ocultar campos de las vistas: no dudes en crear campos, no tendrás que mostrarlos todos.
+
+Lee [este artículo](/l/es/user-guide/data-model/overview) para aprender cómo diseñar tu modelo de datos.
+
+## 2. Trae tus datos
+
+Llevar tus datos existentes a Twenty da a tu equipo contexto desde el principio.
+
+### Conecta tu buzón de correo
+
+Si no lo hiciste al crear tu espacio de trabajo, conecta tu **cuenta de Google o Microsoft** en Configuración → Cuentas. Esto permite a Twenty:
+
+* Importar tus mensajes y reuniones
+* Crear automáticamente contactos basados en interacciones (opcional)
+* Mantener el historial de comunicación visible para tu equipo
+
+**¿Usando otro proveedor?**
+Puedes agregar otro buzón de correo a través de SMTP o otro calendario a través de CalDAV. Ve a **Ajustes → Cuentas** para configurar.
+
+### Importar datos mediante CSV
+
+Usa el menú de comandos (`Cmd + K` o `Ctrl + K`) para importar Personas, Empresas, Oportunidades o cualquier objeto personalizado vía CSV.
+
+**Directrices clave**:
+
+* Descarga el archivo de muestra para entender el formato esperado
+* Limita cada archivo a 10,000 registros
+* Elimina correos electrónicos duplicados para Personas o dominios duplicados para Empresas
+* Revisa y corrige errores (resaltados en amarillo) antes de importar
+
+Lee [este artículo](/l/es/user-guide/data-migration/overview) para aprender más sobre la importación de datos.
+
+## 3. Crea tu primera vista
+
+Crear diferentes vistas es clave para que los datos sean accionables para tu equipo.
+Cómo proceder:
+
+* **Agregar u ocultar columnas**
+  Gestiona los campos visibles en una vista dada haciendo clic en Opciones → Campos (desde la parte superior derecha). Puedes mostrar/ocultar campos desde allí.
+
+* **Reordenar campos**
+  Reordena los campos de una vista dada haciendo clic en Opciones → Campos (desde la parte superior derecha). Arrastra y suelta los campos para reordenarlos.
+
+* **Filtra tu vista**
+  Reduce los registros mostrados usando los Filtros desde la parte superior derecha.
+
+* **Ordena los registros**
+  Reordena los registros mostrados usando la función de Ordenar desde la parte superior derecha, o haciendo clic directamente en el nombre de la columna.
+
+* **Elige el diseño**
+  Puedes cambiar a un diseño de **Kanban** o un diseño de lista **Agrupar por**, siempre que el objeto tenga un campo select type `Etapa` o similar.
+
+* **Guarda tu vista como Favoritos**
+  Esto se puede hacer utilizando el menú desplegable que muestra las diferentes vistas.
+
+## ¿Qué sigue?
+
+Comienza a crear automatizaciones utilizando [flujos de trabajo](/l/es/user-guide/workflows/overview).

@@ -1,0 +1,126 @@
+---
+title: 权限常见问题
+description: 关于角色和权限的常见问题。
+---
+
+## 角色
+
+<AccordionGroup>
+  <Accordion title="Twenty 默认包含哪些角色？">
+    Twenty 默认提供 **管理员** 和 **成员** 角色。 您可以根据团队需求创建额外的自定义角色（例如：销售代表、经理、只读用户）。
+  </Accordion>
+
+  <Accordion title="我可以删除管理员角色吗？">
+    不可以，无法删除管理员角色。 必须始终至少有一名成员被分配到管理员角色。
+  </Accordion>
+
+  <Accordion title="删除角色会发生什么？">
+    任何分配了该角色的工作区成员都会自动重新分配到默认角色。
+  </Accordion>
+
+  <Accordion title="如何为新成员设置默认角色？">
+    前往 **设置 → 角色**，找到 **默认角色** 选项，并选择新成员加入时应自动获得的角色。
+  </Accordion>
+
+  <Accordion title="我可以为同一用户分配多个角色吗？">
+    不可以，每个用户在同一时间只能拥有一个角色。 如果需要组合权限，请创建自定义角色。
+  </Accordion>
+</AccordionGroup>
+
+## 权限
+
+<AccordionGroup>
+  <Accordion title="对象权限与字段权限有什么区别？">
+    * **对象权限**：控制对整条记录的访问（例如，是否可查看/编辑/删除 People 记录）
+    * **字段权限**：控制对象内特定字段的访问（例如，可查看但不能编辑 Salary 字段）
+
+    字段权限可对敏感数据进行更细粒度的控制。
+  </Accordion>
+
+  <Accordion title="权限覆盖如何生效？">
+    权限从全局到具体逐级生效：
+
+    1. **所有对象** 为所有对象设定基线。
+    2. **对象级权限** 可覆盖特定对象的全局设置。
+    3. **字段级权限** 可覆盖特定字段的对象级设置。
+
+    更具体的设置始终优先生效。
+  </Accordion>
+
+  <Accordion title="不同的权限级别分别意味着什么？">
+    针对对象：
+
+    * **查看记录**：在列表和详情页中查看记录
+    * **编辑记录**：修改现有记录
+    * **删除记录**：软删除记录（可恢复）
+    * **彻底删除记录**：永久删除记录
+
+    针对字段：
+
+    * **查看字段**：查看该字段的值
+    * **编辑字段**：修改该字段的值
+    * **无访问权限**：该字段将被完全隐藏
+  </Accordion>
+
+  <Accordion title="我可以限制对特定记录的访问（行级权限）吗？">
+    行级权限将在 2026 年第一季度于 **Organization** 方案中提供。 这将允许您根据条件限制对特定记录的访问（例如，仅查看自己的商机）。
+  </Accordion>
+
+  <Accordion title="如何为特定用户将字段设为只读？">
+    1. 进入 **设置 → 角色**
+    2. 选择角色
+    3. 导航到包含该字段的对象
+    4. 将字段权限设置为 **查看字段**（不启用“编辑字段”）
+  </Accordion>
+</AccordionGroup>
+
+## 设置与操作
+
+<AccordionGroup>
+  <Accordion title="有哪些与设置相关的权限？">
+    您可以控制对以下内容的访问：
+
+    * API 密钥生成
+    * 工作区首选项
+    * 角色分配
+    * 数据模型配置
+    * 安全设置
+    * 工作流管理
+
+    使用 **Settings All Access** 授予完全访问权限，或仅启用特定权限。
+  </Accordion>
+
+  <Accordion title="有哪些操作相关的权限？">
+    您可以控制：
+
+    * **发送电子邮件**：可从 Twenty 发送邮件
+    * **导入 CSV**：可通过 CSV 导入数据
+    * **导出 CSV**：可导出数据为 CSV
+
+    使用 **Application All Access** 授予所有操作权限，或仅启用特定操作。
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="所有方案都提供 SSO 吗？">
+    不，SSO 是高级功能，仅在 **Organization** 方案中提供。
+  </Accordion>
+
+  <Accordion title="支持哪些身份提供商？">
+    Twenty 支持：
+
+    * **SAML 2.0**（适用于大多数企业身份提供商）
+    * **Google Workspace**
+    * **Microsoft Entra ID**（原 Azure AD）
+  </Accordion>
+
+  <Accordion title="什么是即时（JIT）预配？">
+    启用 JIT 预配后，用户首次通过 SSO 登录时，会在 Twenty 中自动创建其账户。 系统会自动为其分配默认角色。
+  </Accordion>
+
+  <Accordion title="是否可以要求所有用户使用 SSO？">
+    可以。配置好 SSO 后，您可以为 SSO 用户禁用密码登录，以强制其通过您的身份提供商进行身份验证。
+  </Accordion>
+</AccordionGroup>

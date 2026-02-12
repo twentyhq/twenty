@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { RelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationToOneFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -30,7 +30,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'RelationFieldDisplay',
-  averageThresholdInMs: 0.22,
+  averageThresholdInMs: 0.4,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

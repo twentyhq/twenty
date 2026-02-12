@@ -24,6 +24,7 @@ import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/uti
 import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher';
 import styled from '@emotion/styled';
 import { isNull } from '@sniptt/guards';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
 
@@ -96,18 +97,18 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
   const tabs: SingleTabProps<TabId>[] = [
     {
       id: WorkflowRunTabId.OUTPUT,
-      title: 'Output',
+      title: t`Output`,
       Icon: IconLogout,
       disabled: isOutputTabDisabled,
     },
     {
       id: WorkflowRunTabId.NODE,
-      title: 'Node',
+      title: t`Node`,
       Icon: IconStepInto,
     },
     {
       id: WorkflowRunTabId.INPUT,
-      title: 'Input',
+      title: t`Input`,
       Icon: IconLogin2,
       disabled: isInputTabDisabled,
     },

@@ -5,7 +5,10 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
@@ -61,6 +64,15 @@ describe('useSetNextOnboardingStatus', () => {
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
+  });
+
+  it('should skip SyncEmail when user is not first workspace member', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      false,
+      false,
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it('should set next onboarding status for SyncEmail', () => {

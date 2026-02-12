@@ -1,4 +1,5 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
@@ -14,6 +15,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableRecordGroupRows = () => {
   const currentRecordGroupId = useCurrentRecordGroupId();
+
+  const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
 
   const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
@@ -33,6 +36,10 @@ export const RecordTableRecordGroupRows = () => {
     () => new Map(allRecordIds.map((recordId, index) => [recordId, index])),
     [allRecordIds],
   );
+
+  if (shouldHide) {
+    return null;
+  }
 
   if (!isRecordGroupTableSectionToggled) {
     return null;

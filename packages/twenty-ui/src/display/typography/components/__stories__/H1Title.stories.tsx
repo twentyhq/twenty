@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { CatalogDecorator } from '@ui/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';

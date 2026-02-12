@@ -5,7 +5,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
-import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
+import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 
 jest.mock('uuid', () => ({
   v4: getUuidV4Mock(),
@@ -35,9 +35,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -54,9 +53,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -73,9 +71,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -272,9 +269,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -291,9 +287,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -310,9 +305,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -511,9 +505,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -530,9 +523,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -549,9 +541,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -750,9 +741,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -769,9 +759,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -788,9 +777,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -807,9 +795,8 @@ describe('generateWorkflowRunDiagram', () => {
             continueOnFailure: { value: false },
           },
           input: {
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            logicFunctionInput: {},
           },
           outputSchema: {},
         },

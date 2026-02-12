@@ -17,13 +17,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  type AccessTokenJwtPayload,
-  type FileTokenJwtPayload,
   type JwtPayload,
   JwtTokenTypeEnum,
-  type RefreshTokenJwtPayload,
-  type TransientTokenJwtPayload,
-  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -52,18 +47,8 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyJwtToken(
-    token: string,
-    type: JwtTokenTypeEnum,
-    options?: JwtVerifyOptions,
-  ) {
-    const payload = this.decode<
-      | TransientTokenJwtPayload
-      | RefreshTokenJwtPayload
-      | WorkspaceAgnosticTokenJwtPayload
-      | AccessTokenJwtPayload
-      | FileTokenJwtPayload
-    >(token, {
+  verifyJwtToken(token: string, options?: JwtVerifyOptions) {
+    const payload = this.decode<JwtPayload>(token, {
       json: true,
     });
 
@@ -71,37 +56,42 @@ export class JwtWrapperService {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
 
-    // @TODO: Migrate to use type from payload instead of parameter
-    type =
-      payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-        ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-        : type;
+    const type = payload.type;
 
-    // TODO: check if this is really needed
-    if (type !== 'FILE' && !payload.sub) {
+    const appSecretBody =
+      'workspaceId' in payload
+        ? payload.workspaceId
+        : 'userId' in payload
+          ? payload.userId
+          : undefined;
+
+    if (!isDefined(appSecretBody)) {
       throw new AuthException(
-        'No payload sub',
-        AuthExceptionCode.UNAUTHENTICATED,
+        'Invalid token type',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
       );
     }
 
     try {
-      // TODO: Deprecate this once old API KEY tokens are no longer in use
-      if (!payload.type && !('workspaceId' in payload) && type === 'ACCESS') {
-        return this.jwtService.verify(token, {
-          ...options,
-          secret: this.generateAppSecretLegacy(),
-        });
-      }
-
-      const appSecretBody =
-        'workspaceId' in payload ? payload.workspaceId : payload.userId;
-
-      if (!isDefined(appSecretBody)) {
-        throw new AuthException(
-          'Invalid token type',
-          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-        );
+      // API_KEY tokens created before 12/12/2025 were accidentally signed
+      // with ACCESS type instead of API_KEY. Try the correct secret first,
+      // fall back to the old one for backward compatibility.
+      // See https://github.com/twentyhq/twenty/pull/16504
+      if (type === JwtTokenTypeEnum.API_KEY) {
+        try {
+          return this.jwtService.verify(token, {
+            ...options,
+            secret: this.generateAppSecret(type, appSecretBody),
+          });
+        } catch {
+          return this.jwtService.verify(token, {
+            ...options,
+            secret: this.generateAppSecret(
+              JwtTokenTypeEnum.ACCESS,
+              appSecretBody,
+            ),
+          });
+        }
       }
 
       return this.jwtService.verify(token, {
@@ -114,17 +104,17 @@ export class JwtWrapperService {
           'Token has expired.',
           AuthExceptionCode.UNAUTHENTICATED,
         );
-      } else if (error instanceof jwt.JsonWebTokenError) {
+      }
+      if (error instanceof jwt.JsonWebTokenError) {
         throw new AuthException(
           'Token invalid.',
           AuthExceptionCode.UNAUTHENTICATED,
         );
-      } else {
-        throw new AuthException(
-          'Unknown token error.',
-          AuthExceptionCode.INVALID_INPUT,
-        );
       }
+      throw new AuthException(
+        'Unknown token error.',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
   }
 
@@ -138,18 +128,6 @@ export class JwtWrapperService {
     return createHash('sha256')
       .update(`${appSecret}${appSecretBody}${type}`)
       .digest('hex');
-  }
-
-  generateAppSecretLegacy(): string {
-    const accessTokenSecret = this.twentyConfigService.get(
-      'ACCESS_TOKEN_SECRET',
-    );
-
-    if (!accessTokenSecret) {
-      throw new Error('ACCESS_TOKEN_SECRET is not set');
-    }
-
-    return accessTokenSecret;
   }
 
   extractJwtFromRequest(): JwtFromRequestFunction {

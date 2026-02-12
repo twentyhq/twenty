@@ -18,18 +18,20 @@ test('Login test', async ({ loginPage, page }) => {
     'Logging in '.concat(page.url(), ' as ', process.env.DEFAULT_LOGIN),
     async () => {
       await page.waitForLoadState('networkidle');
-      if (
-        page.url().includes('app.twenty-next.com') ||
-        !page.url().includes('app.localhost:3001')
-      ) {
-        await loginPage.clickLoginWithEmail();
-      }
+      // Click "Continue with Email" if visible (may be skipped if password is the only auth method)
+      await loginPage.clickLoginWithEmailIfVisible();
       await loginPage.typeEmail(process.env.DEFAULT_LOGIN);
       await loginPage.clickContinueButton();
       await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
       await page.waitForLoadState('networkidle');
       await loginPage.clickSignInButton();
-      await expect(page.getByText(/Welcome to .+/)).not.toBeVisible();
+      await page.waitForLoadState('networkidle');
+      await expect(page.getByText(/Welcome, .+/)).not.toBeVisible();
+      await expect(page.getByText('Choose a workspace')).toBeVisible();
+      await page.getByText('Apple', {exact: true}).click();
+      await page.waitForFunction(() => window.location.href.includes('verify'));
+      await page.waitForFunction(() => !window.location.href.includes('verify'));
+      process.env.LINK = page.url();
     },
   );
 
@@ -37,6 +39,5 @@ test('Login test', async ({ loginPage, page }) => {
     await page.context().storageState({
       path: path.resolve(__dirname, '..', '.auth', 'user.json'),
     });
-    process.env.LINK = page.url();
   });
 });

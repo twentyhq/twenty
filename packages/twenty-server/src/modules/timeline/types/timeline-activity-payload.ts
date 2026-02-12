@@ -1,4 +1,4 @@
-import { type ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
+import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 
 export type TimelineActivityPayload = {
   properties: ObjectRecordBaseEvent['properties'];
@@ -8,5 +8,5 @@ export type TimelineActivityPayload = {
   workspaceMemberId?: string;
   name: string;
   recordId: string;
-  overrideObjectSingularName?: string;
+  objectSingularName?: string;
 };

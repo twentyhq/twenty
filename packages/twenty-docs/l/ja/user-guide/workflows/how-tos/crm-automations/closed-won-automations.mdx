@@ -1,0 +1,179 @@
+---
+title: Closed Won の自動化
+description: 商談が成約（Closed Won）になったときに、成約後の活動を自動化します。
+---
+
+商談がクローズしたら、複数のことを行う必要があります：会社のステータスを更新し、チームメンバーに通知し、オンボーディングタスクを作成します。 これらをひとつのワークフローで自動化します。
+
+## 問題
+
+商談が "Closed Won" に移動したとき：
+
+* 会社タイプを "Prospect" から "Customer" に変更する必要があります
+* オンボーディングタスクを作成する必要があります
+* カスタマーサクセスチームに通知する必要があります
+* 営業担当者への確認が必要です
+
+これを手作業で行うのは時間がかかり、ミスの原因になります。
+
+## 解決策
+
+成約後のすべての作業を自動で処理するワークフローを作成します。
+
+## ワークフローのセットアップを完了
+
+### ステップ 1: ワークフローを作成
+
+1. 「**Settings → Workflows**」に移動
+2. 「**+ New Workflow**」をクリック
+3. 名前を "Deal Won - Post-Win Automation" にします
+
+### ステップ 2: トリガーを設定
+
+1. 「**Record is Updated**」を選択
+2. 「**Opportunities**」を選択
+3. "Fields to monitor" で **Stage** を選択
+
+### ステップ 3: ステージフィルターを追加
+
+1. 「**Filter**」アクションを追加
+2. 条件: `{{trigger.object.stage}}` が "Closed Won" と等しい
+
+### ステップ 4: 会社タイプを更新
+
+1. 「**Update Record**」アクションを追加
+2. 設定:
+
+| フィールド         | 値                               |
+| ------------- | ------------------------------- |
+| **オブジェクト**    | 会社                              |
+| **レコード**      | `{{trigger.object.company.id}}` |
+| **種類**        | 顧客                              |
+| **初回ディール日**   | `{{trigger.object.closedAt}}`   |
+| **アカウントオーナー** | `{{trigger.object.owner.id}}`   |
+
+### ステップ 5: オンボーディングタスクを作成
+
+1. 「**Create Record**」アクションを追加
+2. 設定:
+
+| フィールド      | 値                                                                                                    |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| **オブジェクト** | タスク                                                                                                  |
+| **タイトル**   | `Onboarding: {{trigger.object.name}}`                                                                |
+| **担当者**    | カスタマーサクセスチームのメンバー                                                                                    |
+| **期日**     | 今から3日後                                                                                               |
+| **優先**     | 高                                                                                                    |
+| **関連会社**   | `{{trigger.object.company.id}}`                                                                      |
+| **関連商談**   | `{{trigger.object.id}}`                                                                              |
+| **説明**     | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+
+### ステップ 6: カスタマーサクセスに通知
+
+1. 「**Send Email**」アクションを追加
+2. 設定:
+
+| フィールド  | 値                                                  |
+| ------ | -------------------------------------------------- |
+| **宛先** | customer-success@yourcompany.com                   |
+| **件名** | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **本文** | 下記の例を参照してください                                      |
+
+**メール本文の例**:
+
+```
+Hi CS Team,
+
+We have a new customer!
+
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
+
+An onboarding task has been created automatically.
+
+Let's give them a great start!
+```
+
+### ステップ 7: 営業担当者に確認を送信
+
+1. さらに「**Send Email**」アクションを追加
+2. 設定:
+
+| フィールド  | 値                                                               |
+| ------ | --------------------------------------------------------------- |
+| **宛先** | `{{trigger.object.owner.email}}`                                |
+| **件名** | `✅ Deal Closed: {{trigger.object.name}}`                        |
+| **本文** | おめでとうございます！ ディールの処理が完了しました。 カスタマーサクセスチームに通知され、オンボーディングが開始されました。 |
+
+### ステップ 8: テストして有効化
+
+1. テスト用の商談を "Closed Won" に移動してテストします
+2. 確認:
+   * 会社の種別が "Customer" に変更された
+   * オンボーディングタスクが作成された
+   * CS チームがメールを受信した
+   * 営業担当者が確認を受け取った
+3. 準備ができたら有効化します
+
+## Closed Lost の処理
+
+失注ディール向けに同様のワークフローを作成します:
+
+### トリガー
+
+* レコードが更新（Opportunities、Stage = "Closed Lost"）
+
+### アクション
+
+1. 「**Create Record**」: "Lost Deal Analysis" 用のタスク
+2. 「**Update Record**」: 失注理由を会社レコードに追加
+3. 「**Send Email**」: 失注の旨をマネージャーに通知
+
+## 高度な設定: 多段階のオンボーディング
+
+複雑なオンボーディングには、複数のタスクを作成します:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+配列から各タスクを作成するには **Iterator** を使用します。
+
+## カスタマイズのアイデア
+
+### 他のツールも最新状態に保つ
+
+* **HTTP Request** で請求システムに顧客を作成する
+
+### 条件付きアクション
+
+「**Filter**」アクションを使用して次を行います:
+
+* エンタープライズと SMB で異なるオンボーディング
+* 地域に基づいて担当者を変える
+* 小規模ディールでは通知をスキップ
+
+### ディールの詳細を含める
+
+整形には「**Code**」アクションを使用:
+
+* ディールのサマリードキュメント
+* CS チーム向けの引き継ぎメモ
+* カスタムのオンボーディングチェックリスト
+
+## 関連
+
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [ワークフローからメールを送信](/l/ja/user-guide/workflows/capabilities/send-emails-from-workflows)

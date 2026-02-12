@@ -9,7 +9,7 @@ export function getImapSentFolderCandidatesByRegex(
   const regexCandidateFolders: string[] = [];
 
   for (const folder of list) {
-    const standardFolder = getStandardFolderByRegex(folder.path);
+    const standardFolder = getStandardFolderByRegex(folder.name);
 
     if (standardFolder === StandardFolder.SENT) {
       regexCandidateFolders.push(folder.path);

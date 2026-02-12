@@ -1,8 +1,8 @@
-import { type StoryObj } from '@storybook/react';
-import { expect, findByTestId } from '@storybook/test';
+import { type StoryObj } from '@storybook/react-vite';
+import { expect, findByTestId } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ProfilerDecorator } from '~/testing/decorators/ProfilerDecorator';
 import { getProfilingReportFromDocument } from '~/testing/profiling/utils/getProfilingReportFromDocument';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getProfilingStory = ({
   componentName,

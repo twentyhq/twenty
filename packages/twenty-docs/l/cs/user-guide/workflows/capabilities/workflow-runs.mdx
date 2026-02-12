@@ -1,0 +1,92 @@
+---
+title: Běhy průběhu práce
+description: Sledujte a spravujte běhy pracovních postupů.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## O bězích
+
+**Běh** je záznam provedení pracovního postupu. Při každém spuštění pracovního postupu—ať už událostí záznamu, plánem, ruční akcí nebo webhookem—se vytvoří nový běh.
+
+## Zobrazení běhů
+
+### Z editoru pracovních postupů
+
+1. Otevřete pracovní postup, který chcete sledovat
+2. Klikněte na panel **Běhů** na pravé straně
+3. Zobrazte seznam nedávných běhů s jejich stavem
+
+### Ze zobrazení běhů pracovních postupů
+
+1. V postranním panelu přejděte na **Běhy pracovních postupů**
+2. Zobrazte běhy napříč všemi pracovními postupy
+3. Filtrujte podle stavu, pracovního postupu nebo data
+
+## Stavy běhů
+
+| Stav          | Popis                                                                               |
+| ------------- | ----------------------------------------------------------------------------------- |
+| **Běží**      | Pracovní postup se právě provádí                                                    |
+| **Dokončeno** | Pracovní postup byl úspěšně dokončen                                                |
+| **Selhalo**   | Pracovní postup narazil na chybu a zastavil se                                      |
+| **Čekání**    | Pracovní postup je pozastaven (např. čeká na akci Zpoždění nebo odeslání formuláře) |
+
+## Podrobnosti běhu
+
+Kliknutím na libovolný běh zobrazíte:
+
+* **Stav**: Aktuální stav běhu
+* **Zahájeno**: Kdy běh začal
+* **Doba trvání**: Jak dlouho běh trval
+* **Data spouštěče**: Vstup, který spustil pracovní postup
+* **Výstupy kroků**: Data vrácená jednotlivými kroky
+* **Chybové zprávy**: Pokud běh selhal, co se pokazilo
+
+## Provádění krok za krokem
+
+Každý běh ukazuje průchod vaším pracovním postupem:
+
+1. Zjistěte, které kroky byly úspěšně dokončeny
+2. Zjistěte, kde došlo k selhání
+3. Zobrazte data předávaná mezi kroky
+4. Laděte problémy zkoumáním vstupů a výstupů kroků
+
+## Zpracování chyb
+
+Když běh selže:
+
+1. Otevřete neúspěšný běh
+2. Najděte krok, který selhání způsobil
+3. Zkontrolujte podrobnosti v chybové zprávě
+4. Běžné problémy:
+   * Chybí povinná pole
+   * Neplatný formát dat
+   * Chyby externího rozhraní API
+   * Problémy s oprávněními
+
+## Opětovné spuštění pracovních postupů
+
+Pokud běh selže, můžete:
+
+* Odstraňte základní problém a počkejte na další spuštění
+* U ručních pracovních postupů spusťte znovu se stejnými nebo aktualizovanými daty
+* Zkontrolujte logiku pracovního postupu, abyste předešli budoucím selháním
+
+## Tipy k výkonu
+
+### Správa historie běhů
+
+* Běhy jsou uchovávány pro historické účely
+* Velmi staré běhy mohou být automaticky archivovány
+* Exportujte data běhů, pokud potřebujete uchovávat záznamy
+
+### Osvědčené postupy pro monitorování
+
+* Po aktivaci nových pracovních postupů pravidelně kontrolujte běhy
+* Prohlédněte si neúspěšné běhy a hledejte opakující se vzorce
+
+## Související
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odstraňování problémů s pracovními postupy](/l/cs/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

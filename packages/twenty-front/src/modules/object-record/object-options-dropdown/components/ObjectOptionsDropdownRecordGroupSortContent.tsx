@@ -14,6 +14,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import {
   IconChevronLeft,
   IconHandMove,
@@ -67,7 +68,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
           />
         }
       >
-        Sort
+        {t`Sort`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList

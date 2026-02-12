@@ -1,0 +1,90 @@
+---
+title: フロントエンドコマンド
+---
+
+## 便利なコマンド
+
+### アプリの開始
+
+```bash
+npx nx start twenty-front
+```
+
+### APIのGraphQLスキーマに基づいてGraphQLスキーマを再生成する
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+または
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### リント
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## 翻訳
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### テスト
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## 技術スタック
+
+プロジェクトは、最小限のボイラープレートコードを持つシンプルでクリーンなスタックを持っています。
+
+**アプリ**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**テスト**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**ツール**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## アーキテクチャ
+
+### ルーティング
+
+[React Router](https://reactrouter.com/)はルーティングを処理します。
+
+To avoid unnecessary [re-renders](/l/ja/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
+
+### 状態管理
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts)は状態管理を処理します。
+
+状態管理に関する詳細な情報は[ベストプラクティス](/l/ja/developers/contribute/capabilities/frontend-development/best-practices-front#state-management)を参照してください。
+
+## テスト
+
+[Jest](https://jestjs.io/)はユニットテストのツールであり、[Storybook](https://storybook.js.org/)はコンポーネントテスト用です。
+
+Jestは主にユーティリティ関数のテスト用で、コンポーネントのテスト自体ではありません。
+
+Storybookは、独立したコンポーネントの挙動をテストし、デザインシステムを表示するためのものです。

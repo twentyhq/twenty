@@ -1,0 +1,253 @@
+---
+title: Docker Compose로 1-클릭
+---
+
+<Warning>
+  Docker 컨테이너는 프로덕션 호스팅 또는 셀프 호스팅을 위한 것입니다. 기여를 원하시면 [로컬 설정](/l/ko/developers/contribute/capabilities/local-setup)을 확인하세요.
+</Warning>
+
+## 개요
+
+이 가이드는 Docker Compose를 사용하여 Twenty 애플리케이션을 설치 및 구성하기 위한 단계별 지침을 제공합니다. 프로세스를 간단하게 만들고 설정을 망칠 수 있는 일반적인 함정을 피하는 것이 목적입니다.
+
+**중요:** 이 가이드에서 명시적으로 언급된 설정만 수정하세요. 다른 구성을 변경하면 문제가 발생할 수 있습니다.
+
+고급 설정을 위해 [환경 변수 설정](/l/ko/developers/self-host/capabilities/setup) 문서를 참조하세요. 모든 환경 변수는 서버 및/또는 작업자 수준에서 docker-compose.yml 파일에 선언되어야 합니다.
+
+## 시스템 요구 사항
+
+* RAM: 환경에 최소 2GB의 RAM이 있는지 확인하십시오. 메모리가 충분하지 않으면 프로세스가 중단될 수 있습니다.
+* Docker 및 Docker Compose: 둘 다 설치되고 최신 상태인지 확인하세요.
+
+## 옵션 1: 한 줄 스크립트
+
+단일 명령으로 최신 안정 버전의 Twenty를 설치하십시오:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+특정 버전 또는 브랜치를 설치하려면:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* 원하는 버전 번호로 x.y.z를 대체하십시오.
+* 설치할 브랜치 이름으로 branch-name을 대체하십시오.
+
+## 옵션 2: 수동 단계
+
+수동 설정을 위해 다음 단계를 따릅니다.
+
+### 단계 1: 환경 파일 설정
+
+1. **.env 파일 생성**
+
+   예제 환경 파일을 워킹 디렉토리의 새 .env 파일로 복사합니다.
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **비밀 토큰 생성**
+
+   고유한 랜덤 문자열을 생성하기 위해 다음 명령을 실행하세요:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **중요:** 이 값을 비공개로 유지/공유하지 마십시오.
+
+3. **`.env` 업데이트**
+
+   생성된 토큰으로 .env 파일의 플레이스홀더 값을 대체합니다.
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Postgres 비밀번호 설정**
+
+   .env 파일에서 특수 문자가 없는 강력한 비밀번호로 `PG_DATABASE_PASSWORD` 값을 업데이트하십시오.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### 단계 2: Docker Compose 파일 얻기
+
+작업 디렉토리에 `docker-compose.yml` 파일을 다운로드합니다.
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### 단계 3: 애플리케이션 시작
+
+Docker 컨테이너 시작:
+
+```bash
+docker compose up -d
+```
+
+### 단계 4: 애플리케이션에 액세스
+
+twentyCRM을 개인 컴퓨터에 호스팅하는 경우 브라우저를 열고 [http://localhost:3000](http://localhost:3000)으로 이동하세요.
+
+서버에서 호스팅하는 경우 서버가 실행 중이며 모든 것이 문제없는지 확인하십시오.
+
+```bash
+curl http://localhost:3000
+```
+
+## 구성
+
+### Twenty를 외부 액세스에 노출
+
+기본적으로 Twenty는 `localhost`의 포트 `3000`에서 실행됩니다. 외부 도메인 또는 IP 주소로 액세스하려면 `.env` 파일의 `SERVER_URL`을 구성해야 합니다.
+
+#### `SERVER_URL` 이해하기
+
+* **프로토콜:** 구성에 따라 `http` 또는 `https`를 사용하십시오.
+  * SSL을 설정하지 않은 경우 `http`를 사용합니다.
+  * SSL이 구성되어 있으면 `https`를 사용하십시오.
+* **도메인/IP:** 애플리케이션을 액세스할 수 있는 도메인 이름 또는 IP 주소입니다.
+* **포트:** 기본 포트(`http`의 경우 `80`, `https`의 경우 `443`)를 사용하지 않는 경우 포트 번호를 포함하십시오.
+
+### SSL 요구 사항
+
+SSL(HTTPS)는 일부 브라우저 기능이 제대로 작동하기 위해 필수입니다. 이러한 기능은 로컬 개발 중에는 작동할 수 있지만 (브라우저는 localhost를 다르게 처리합니다), 일반 도메인에 Twenty를 호스팅할 때는 적절한 SSL 설정이 필요합니다.
+
+예를 들어, 클립보드 API는 안전한 컨텍스트가 필요할 수 있습니다. 응용 프로그램 내 복사 버튼과 같은 일부 기능은 HTTPS가 활성화되지 않으면 작동하지 않을 수 있습니다.
+
+최적의 보안 및 기능을 위해 SSL 종료와 함께 Reverse Proxy 뒤에 Twenty를 설정하는 것을 강력히 권장합니다.
+
+#### `SERVER_URL` 설정
+
+1. **접속 URL 결정**
+   * **리버스 프록시 없이(직접 접속):**
+
+     리버스 프록시 없이 애플리케이션에 직접 액세스:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **리버스 프록시 사용 (표준 포트):**
+
+     SSL이 구성된 Nginx 또는 Traefik과 같은 리버스 프록시를 사용하는 경우:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **리버스 프록시 사용 (사용자 지정 포트):**
+
+     비표준 포트를 사용하는 경우:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **`.env` 파일 업데이트**
+
+   `.env` 파일을 열고 `SERVER_URL`을 업데이트하십시오:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **예시:**
+
+   * SSL 없이 직접 접근:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * SSL을 사용한 도메인 접근:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **애플리케이션 재시작**
+
+   변경 사항을 적용하기 위해 Docker 컨테이너를 재시작하십시오.
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### 고려 사항
+
+* **리버스 프록시 구성:**
+
+  리버스 프록시가 올바른 내부 포트(`3000` 기본값)로 요청을 전달하도록 확인하십시오. SSL 종료와 필요한 헤더를 구성하십시오.
+
+* **방화벽 설정:**
+
+  외부 액세스를 허용하기 위해 방화벽에서 필요한 포트를 엽니다.
+
+* **일관성:**
+
+  `SERVER_URL`은 사용자가 브라우저에서 애플리케이션에 액세스하는 방식과 일치해야 합니다.
+
+#### 영속성
+
+* **데이터 볼륨:**
+
+  Docker Compose 구성은 데이터베이스 및 서버 저장소의 데이터를 영구적으로 저장하기 위해 볼륨을 사용합니다.
+
+* **무상태 환경:**
+
+  무상태 환경(예: 특정 클라우드 서비스)에 배포하는 경우 데이터 지속성을 위해 외부 저장소를 구성합니다.
+
+## 백업 및 복원
+
+정기 백업은 CRM 데이터를 손실로부터 보호합니다.
+
+### 데이터베이스 백업 생성
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### 일일 백업 자동화
+
+crontab에 추가하세요 (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### 백업에서 복원
+
+1. 애플리케이션을 중지하세요:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. 데이터베이스를 복원하세요:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. 서비스 재시작:
+
+```bash
+docker compose up -d
+```
+
+### 백업 모범 사례
+
+* **복원을 정기적으로 테스트하세요** — 백업이 실제로 작동하는지 확인하세요
+* **백업을 오프사이트에 보관하세요** — 클라우드 스토리지(S3, GCS 등)를 사용하세요
+* **민감한 데이터를 암호화하세요** — 암호화를 통해 백업을 보호하세요
+* **여러 사본을 유지하세요** — 일간, 주간, 월간 백업을 보관하세요
+
+## 문제 해결
+
+문제가 발생하면 [문제 해결](/l/ko/developers/self-host/capabilities/troubleshooting)에서 해결책을 확인하십시오.

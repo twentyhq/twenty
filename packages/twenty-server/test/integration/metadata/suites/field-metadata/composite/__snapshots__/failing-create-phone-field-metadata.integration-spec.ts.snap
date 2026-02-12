@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`failing create phone field metadata test suite it should fail to create primary phone field with conflicting country code and calling code 1`] = `
 [

@@ -5,8 +5,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilter } from '~/generated/graphql';
-import { type ViewFilter } from '../types/ViewFilter';
+import { type CoreViewFilter } from '~/generated-metadata/graphql';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[] | CoreViewFilter[],
@@ -43,7 +43,7 @@ export const mapViewFiltersToFilters = (
             ? viewFilter.displayValue
             : viewFilter.value,
         operand,
-        recordFilterGroupId: viewFilter.viewFilterGroupId,
+        recordFilterGroupId: viewFilter.viewFilterGroupId ?? undefined,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         label,
         type: filterType,

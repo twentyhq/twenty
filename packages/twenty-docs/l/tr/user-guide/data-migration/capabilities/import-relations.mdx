@@ -1,0 +1,148 @@
+---
+title: Nesneler Arasındaki İlişkileri İçe Aktarma
+description: Kayıtlar arasındaki ilişkileri CSV ile içe aktarın.
+---
+
+## Genel Bakış
+
+Twenty, CSV içe aktarma sırasında nesneler arasındaki ilişkilerin içe aktarılmasını destekler. Bu, veri geçişinizin bir parçası olarak kayıtları birbirine bağlamanıza olanak tanır (ör. Kişileri Şirketlere iliştirme).
+
+<Note>**Şu anda içe aktarma için desteklenenler**: Her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler (ör. Kişiler → Şirketler). Birden fazla nesne türüne işaret eden ilişkiler henüz içe/dışa aktarma için desteklenmiyor.</Note>
+
+## Twenty'de İlişkiler Nasıl Çalışır
+
+### Bire-Çok / Çoktan-Bire
+
+Twenty, bir kaydın birden çok başka kayda bağlandığı standart ilişkileri destekler:
+
+* **Bir Şirket → Birçok Kişi**: Bir şirketin birden fazla çalışanı olabilir, ancak her kişi bir şirkete aittir
+* **Bir Şirket → Birçok Fırsat**: Bir şirketin birden fazla fırsatı olabilir, ancak her fırsat bir şirkete aittir
+
+### Birden Fazla Nesne Türüne İşaret Edebilen İlişkiler
+
+Bazı ilişkiler farklı türdeki nesnelere bağlanabilir. Bu iki şekilde çalışır:
+
+**Kalıp 1: Farklı nesne türlerinden birçok kayıt, her biri bir kayda bağlanır**
+
+Birden çok Not, Görev veya Aktivitenin her biri aynı anda birden fazla nesne türüne iliştirilebilir:
+
+* **Notlar** aynı anda bir Kişiye, bir Şirkete ve bir Fırsata bağlanabilir
+* **Görevler** aynı anda bir Kişiye, bir Şirkete ve bir Fırsata bağlanabilir
+
+Burada, Notlar/Görevler "çok" tarafındadır. Her biri, her nesne türü için bir kayda bağlanır.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Kalıp 2: Farklı nesne türlerinden çok sayıda kayıttan bağlantı alan tek bir kayıt**
+
+Bir Proje, farklı nesne türleri genelinde birden fazla kayıttan bağlantı alabilir:
+
+* **Bir Proje** kendisine bağlı birçok Kişi, kendisine bağlı birçok Şirket ve kendisine iliştirilmiş birçok Not barındırabilir
+
+Burada Proje, "bir" tarafındadır. Farklı nesnelerden birden çok kayıt aynı Projeye bağlanabilir.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **İçe/Dışa Aktarma sınırlaması**: Birden fazla nesne türüne işaret eden ilişkiler (ör. Notlar → Kişiler/Şirketler/Fırsatlar) CSV içe aktarma veya dışa aktarmada **henüz desteklenmiyor**.
+
+  * **İçe aktarma**: Her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler içe aktarılabilir
+  * **Dışa aktarma**: Birden fazla nesne türüne işaret eden ilişkilere ait sütunlar şu anda boş bırakılır
+
+  Bu özellik yol haritamızda.
+</Warning>
+
+### Bugün Neler Desteklenmiyor
+
+**Çoktan-Çoka ilişkiler** henüz mevcut değil. Örneğin, şu anda aşağıdaki gibi bir ilişki oluşturamazsınız:
+
+* Birçok Kişi birçok Projeye bağlıdır
+
+<Note>Çoktan-Çoka ilişkiler 2026 H1 için planlanıyor.</Note>
+
+## İçe Aktarma Sırasında Kayıtları Bağlama
+
+<Note>**Hatırlatma**: Yalnızca her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler içe aktarılabilir (ör. Kişiler → Şirketler). Birden fazla nesne türüne işaret eden ilişkiler (ör. Notlar → Kişiler/Şirketler/Fırsatlar) henüz desteklenmiyor.</Note>
+
+### Adım 1: "Bir" ve "Çok" Tarafları Belirleyin
+
+Önce, ilişkinin "bir" tarafında hangi nesnenin, "çok" tarafında hangi nesnenin olduğunu belirleyin.
+
+**Örnek**:
+
+* **Şirket** "bir" tarafıdır (bir şirketin birçok çalışanı vardır)
+* **Kişiler** "çok" tarafıdır (her kişi bir şirkete aittir)
+
+### Adım 2: "Bir" Tarafındaki Kayıtların Mevcut Olduğundan Emin Olun
+
+"Çok" tarafını içe aktarmadan önce, "bir" tarafındaki kayıtlar Twenty'de zaten mevcut olmalıdır.
+
+* Önce "bir" tarafındaki kayıtları içe aktarın veya oluşturun (ör. Şirketler)
+* Benzersiz tanımlayıcılarını doğrulayın. Bu şu olabilir:
+  * `id` (Twenty'nin UUID'si)
+  * Benzersiz olarak ayarlanmış bir alan (ör. Şirketler için `domain` veya önceki sisteminizden bir dış kimlik)
+
+<Warning>Var olmayan bir kayda referans verilirse içe aktarma başarısız olur.</Warning>
+
+### Adım 3: CSV Dosyanızı Hazırlayın
+
+"Çok" tarafındaki CSV dosyanıza, "bir" tarafındaki kayda referans veren bir sütun ekleyin.
+
+**Örnek**: Şirketlere bağlanan bir Kişiler CSV dosyası için:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Önemli**:
+
+* Değer, Şirket kaydındaki benzersiz alanla **tam olarak eşleşmelidir**
+* Alan adları için **Alan Adı URL'si**ni (ör. `https://acme.com`) kullanın, Alan Adı Etiketini değil
+* Her ilişki için yalnızca **bir** benzersiz tanımlayıcıyı eşleyin: bu, daha sorunsuz bir içe aktarma sağlar
+
+### Adım 4: İlişki Alanının Mevcut Olduğundan Emin Olun
+
+Dosyanızı yüklemeden önce, nesneleriniz arasında ilişki alanının mevcut olduğundan emin olun.
+
+Eğer mevcut değilse:
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesnenizi seçin (ör. Kişiler)
+3. Hedef nesneyi işaret eden bir ilişki alanı oluşturun (ör. Şirket)
+
+### Adım 5: İlişkiyi Yükleyin ve Eşleyin
+
+1. CSV dosyanızı içe aktarma arayüzü üzerinden yükleyin
+2. Alan eşleme adımında, ilişki sütununuzu bulun (ör. `companyDomain`)
+3. Bunu ilişki alanına eşleyin (ör. Şirket)
+4. Twenty, her kaydı otomatik olarak eşleşen ana kayda bağlar
+
+### İlişkiler İçin Kullanılabilir Benzersiz Alanlar
+
+| Nesne                               | Kullanılabilir Benzersiz Alanlar                      |
+| ----------------------------------- | ----------------------------------------------------- |
+| **Şirketler**                       | `id`, `domain`, herhangi bir özel benzersiz alan      |
+| **Kişiler**                         | `id`, `email`, herhangi bir özel benzersiz alan       |
+| **İş Alanı Üyeleri**                | `id`, `email` (isim değil)                            |
+| **Diğer standart ve özel nesneler** | `id`, benzersiz olarak işaretlenmiş herhangi bir alan |
+
+<Note>**Çalışma Alanı Üyelerine Bağlama**: İlişki Çalışma Alanı Üyelerini işaret ediyorsa (Twenty'ye giriş yapan ekibiniz), onlara adlarıyla değil, **e-posta adresleriyle** referans verin.</Note>
+
+<Note>Tablolarda okunabilir ve bakımı kolay olduğundan, Şirketler için `domain` ve Kişiler için `email` kullanmanızı öneririz.</Note>
+
+<Note>**Hatırlatma**: Yumuşak silinmiş kayıtlar (Komut Menüsü → Silinen kayıtları görüntüle altında görünür) benzersizlik ölçütlerine dahildir. Silinmiş bir kayıtla aynı benzersiz değere sahip bir kaydı içe aktarırsanız, silinmiş kayıt geri yüklenir. Daha fazla bilgi için [Benzersizlik Kısıtları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints) bölümüne bakın.</Note>
+
+## İçe Aktarma Sırası Kuralı
+
+<Warning>
+  **Her zaman önce "bir" tarafı içe aktarın!**
+
+  1. Önce **Şirketler** (bağımlılık yok)
+  2. İkinci olarak **Kişiler** (Şirketlere bağlı)
+  3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlı)
+  4. **Özel nesneler** (bağımlılıklarına uyarak)
+
+  Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
+</Warning>

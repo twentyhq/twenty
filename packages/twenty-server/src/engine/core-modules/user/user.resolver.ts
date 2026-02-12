@@ -1,36 +1,25 @@
 import { BadRequestException, UseFilters, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import type { FileUpload } from 'graphql-upload/processRequest.mjs';
-
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -73,10 +62,10 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -86,7 +75,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@Resolver(() => UserEntity)
+@MetadataResolver(() => UserEntity)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
@@ -94,7 +83,6 @@ export class UserResolver {
     private readonly userRepository: Repository<UserEntity>,
     private readonly userService: UserService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     @InjectRepository(UserWorkspaceEntity)
@@ -103,7 +91,7 @@ export class UserResolver {
     private readonly permissionsService: PermissionsService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -370,38 +358,6 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @Mutation(() => SignedFileDTO)
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
-  async uploadProfilePicture(
-    @AuthUser() { id }: UserEntity,
-    @AuthWorkspace({ allowUndefined: true })
-    { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<SignedFileDTO> {
-    if (!id) {
-      throw new Error('UserEntity not found');
-    }
-
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
-    const fileFolder = FileFolder.ProfilePicture;
-
-    const { files } = await this.fileUploadService.uploadImage({
-      file: buffer,
-      filename,
-      mimeType: mimetype,
-      fileFolder,
-      workspaceId,
-    });
-
-    if (!files.length) {
-      throw new Error('Failed to upload profile picture');
-    }
-
-    return files[0];
-  }
-
   @Mutation(() => UserEntity)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
   async deleteUser(@AuthUser() { id: userId }: UserEntity) {
@@ -416,7 +372,7 @@ export class UserResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace()
     workspace: WorkspaceEntity,
-    @AuthApiKey() apiKey?: string,
+    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     if (!workspace) {
       throw new AuthException(
@@ -425,18 +381,26 @@ export class UserResolver {
       );
     }
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspace.id,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspace.id);
 
-    const workspaceMemberToDelete = await workspaceMemberRepository.findOne({
-      where: {
-        id: workspaceMemberIdToDelete,
-      },
-    });
+    const workspaceMemberToDelete =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspace.id,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return workspaceMemberRepository.findOne({
+            where: {
+              id: workspaceMemberIdToDelete,
+            },
+          });
+        },
+        authContext,
+      );
 
     if (!isDefined(workspaceMemberToDelete)) {
       throw new BadRequestException(
@@ -453,7 +417,7 @@ export class UserResolver {
         userWorkspaceId,
         workspaceId: workspace.id,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
-        apiKeyId: apiKey ?? undefined,
+        apiKeyId: apiKey?.id,
       }));
 
     if (!canDeleteUserFromWorkspace) {

@@ -1,0 +1,144 @@
+---
+title: Generar una cotización o una factura desde Twenty
+description: Crea automáticamente facturas en herramientas externas cuando se ganan las oportunidades.
+---
+
+Envía automáticamente los datos de la oportunidad a tu sistema de facturación (Stripe, QuickBooks, Xero, etc.) cuando se gana una oportunidad.
+
+## Estructura del flujo de trabajo
+
+1. **Disparador**: Se actualiza un registro (Oportunidad)
+2. **Filtro**: Etapa = Cerrado ganado
+3. **Search Record**: Obtener detalles de la empresa
+4. **Code** (opcional): Formatear la carga útil
+5. **HTTP Request**: Enviar al sistema de facturación
+
+## Paso 1: Configurar el disparador
+
+1. Crear un nuevo flujo de trabajo
+2. Selecciona el disparador **Record is Updated**
+3. Elige **Opportunity** como objeto
+
+## Paso 2: Filtrar por Cerrado ganado
+
+Añade una acción **Filter** para continuar solo cuando la oportunidad esté ganada:
+
+| Configuración | Valor                                  |
+| ------------- | -------------------------------------- |
+| **Campo**     | Etapa                                  |
+| **Condición** | Igual a                                |
+| **Valor**     | `CLOSED_WON` (o el nombre de tu etapa) |
+
+<Tip>
+  El disparador se activa con cualquier actualización de una Oportunidad. El filtro garantiza que el flujo de trabajo solo continúe cuando la etapa cambie a Cerrado ganado.
+</Tip>
+
+## Paso 3: Obtener detalles de la empresa
+
+Es posible que el registro de Oportunidad no incluya todos los campos de Empresa que necesitas para la factura. Añade una acción **Search Record**:
+
+| Configuración     | Valor                                     |
+| ----------------- | ----------------------------------------- |
+| **Objeto**        | Empresa                                   |
+| **Coincidir por** | ID igual a `{{trigger.object.companyId}}` |
+
+Esto recupera el registro completo de Empresa con dirección de facturación, ID fiscal, etc.
+
+## Paso 4: Formatear la carga útil (opcional)
+
+Si tu sistema de facturación exige un formato específico, añade una acción **Code**:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## Paso 5: Enviar al sistema de facturación
+
+Añade una acción **HTTP Request**:
+
+| Configuración   | Valor                                               |
+| --------------- | --------------------------------------------------- |
+| **Método**      | POST                                                |
+| **URL**         | Tu endpoint de API de facturación                   |
+| **Encabezados** | `Authorization: Bearer YOUR_API_KEY`                |
+| **Cuerpo**      | `{{code.invoice}}` o asigna los campos directamente |
+
+### Ejemplo: Factura de Stripe
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### Ejemplo: Factura de QuickBooks
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## Resumen completo del flujo de trabajo
+
+| Paso | Acción                           | Propósito                                                 |
+| ---- | -------------------------------- | --------------------------------------------------------- |
+| 1    | Disparador: Registro actualizado | Se activa cuando cambia cualquier Oportunidad             |
+| 2    | Filtro                           | Procede solo si la etapa = Cerrado ganado                 |
+| 3    | Search Record                    | Obtener todos los detalles de Empresa para la facturación |
+| 4    | Código                           | Dar formato a los datos para la API de facturación        |
+| 5    | Solicitud HTTP                   | Crear la factura en el sistema externo                    |
+
+## Consejos
+
+* **Almacenar IDs externos**: Guarda el ID de la factura devuelto por la API en la Oportunidad usando una acción **Update Record**
+* **Gestión de errores**: Añade una rama para enviar una notificación si la solicitud HTTP falla
+* **Prueba primero**: Utiliza el modo sandbox/pruebas de tu sistema de facturación antes de pasar a producción
+
+## Relacionado
+
+* [Generar un PDF desde Twenty](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — adjuntar los PDF generados a los registros
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizaciones de Cerrado ganado](/l/es/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

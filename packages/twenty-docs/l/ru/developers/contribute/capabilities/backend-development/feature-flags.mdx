@@ -1,0 +1,46 @@
+---
+title: Флаги функций
+---
+
+Флаги функций используются для скрытия экспериментальных функций. Для Twenty они устанавливаются на уровне рабочей области, а не на уровне пользователя.
+
+## Добавление нового флага функции
+
+В `FeatureFlagKey.ts` добавьте флаг функции:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Также добавьте его в перечисление в `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Чтобы применить флаг функции к **бэкенд**-функции, используйте:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Чтобы применить флаг функции к **фронтенд**-функции, используйте:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Настройте флаги функций для развертывания
+
+Измените соответствующую запись в таблице `core.featureFlag`:
+
+| идентификатор | ключ                     | workspaceId | значение |
+| ------------- | ------------------------ | ----------- | -------- |
+| Случайный     | `IS_FEATURENAME_ENABLED` | WorkspaceID | `истина` |

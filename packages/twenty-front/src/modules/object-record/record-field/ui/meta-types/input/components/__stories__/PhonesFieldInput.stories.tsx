@@ -1,11 +1,11 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { PhonesFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -13,7 +13,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { PhonesFieldInput } from '../PhonesFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks } =
   getFieldInputEventContextProviderWithJestMocks();
@@ -98,6 +97,7 @@ const PhoneInputWithContext = ({
 const meta: Meta<typeof PhoneInputWithContext> = {
   title: 'UI/Input/PhonesFieldInput',
   component: PhoneInputWithContext,
+  decorators: [],
 };
 
 export default meta;
@@ -184,13 +184,13 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.click(openDropdownButtons[0]);
 
     const editOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Edit');
 
     expect(editOption).toBeVisible();
 
     const setPrimaryOption = within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).queryByText('Set as Primary');
 
     expect(setPrimaryOption).not.toBeInTheDocument();

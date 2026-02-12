@@ -1,8 +1,6 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type PageLayoutWidget,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 export const extractFieldMetadataIdsFromWidget = (
   widget: PageLayoutWidget,

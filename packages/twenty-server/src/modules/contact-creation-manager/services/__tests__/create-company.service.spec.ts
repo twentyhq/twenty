@@ -1,21 +1,19 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import axios from 'axios';
 import {
   ConnectedAccountProvider,
   FieldActorSource,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   type CompanyToCreate,
   CreateCompanyService,
 } from 'src/modules/contact-creation-manager/services/create-company.service';
-
-jest.mock('axios');
 
 describe('CreateCompanyService', () => {
   let service: CreateCompanyService;
@@ -109,17 +107,22 @@ describe('CreateCompanyService', () => {
       get: jest.fn(),
     };
 
-    (axios.create as jest.Mock).mockReturnValue(mockHttpService);
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateCompanyService,
         {
-          provide: TwentyORMGlobalManager,
+          provide: SecureHttpClientService,
           useValue: {
-            getRepositoryForWorkspace: jest
+            getHttpClient: jest.fn().mockReturnValue(mockHttpService),
+          },
+        },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: {
+            getRepository: jest.fn().mockResolvedValue(mockCompanyRepository),
+            executeInWorkspaceContext: jest
               .fn()
-              .mockResolvedValue(mockCompanyRepository),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
           },
         },
         {
@@ -127,7 +130,7 @@ describe('CreateCompanyService', () => {
           useValue: {
             findOne: jest.fn().mockResolvedValue({
               id: 'mock-object-metadata-id',
-              standardId: STANDARD_OBJECT_IDS.company,
+              universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
               workspaceId,
               nameSingular: 'company',
               namePlural: 'companies',

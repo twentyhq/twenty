@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -12,13 +16,13 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'messageThread'>, 'context'>): Record<
-  AllStandardObjectFieldName<'messageThread'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'messageThread', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'messageThread'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -33,7 +37,7 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'uuid',
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -50,9 +54,9 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -69,9 +73,9 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -87,9 +91,9 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -98,18 +102,21 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messages',
       label: 'Messages',
       description: 'Messages from the thread.',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'message',
       targetFieldName: 'messageThread',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
@@ -118,18 +125,21 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
     objectName,
     workspaceId,
     context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
       fieldName: 'messageChannelMessageAssociations',
       label: 'Message Channel Association',
       description: 'Messages from the channel.',
       icon: 'IconMessage',
       isNullable: true,
+      isUIReadOnly: true,
       targetObjectName: 'messageChannelMessageAssociation',
       targetFieldName: 'messageThread',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

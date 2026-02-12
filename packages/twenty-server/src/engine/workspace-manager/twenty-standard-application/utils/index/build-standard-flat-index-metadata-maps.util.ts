@@ -1,3 +1,4 @@
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -69,13 +70,6 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   [P in AllStandardObjectName]?: StandardIndexBuilder<P>;
 };
 
-const createEmptyFlatIndexMetadataMaps =
-  (): FlatEntityMaps<FlatIndexMetadata> => ({
-    byId: {},
-    idByUniversalIdentifier: {},
-    universalIdentifiersByApplicationId: {},
-  });
-
 export const buildStandardFlatIndexMetadataMaps = (
   args: Omit<CreateStandardIndexArgs, 'context' | 'objectName'>,
 ): FlatEntityMaps<FlatIndexMetadata> => {
@@ -95,7 +89,7 @@ export const buildStandardFlatIndexMetadataMaps = (
     return Object.values(result);
   });
 
-  let flatIndexMetadataMaps = createEmptyFlatIndexMetadataMaps();
+  let flatIndexMetadataMaps = createEmptyFlatEntityMaps();
 
   for (const indexMetadata of allIndexMetadatas) {
     flatIndexMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({

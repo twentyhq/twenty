@@ -4,70 +4,60 @@ image: /images/user-guide/fields/field.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Header" />
+  <img src="/images/user-guide/fields/field.png" alt="En-tête" />
 </Frame>
 
-## Carte de Schéma de couleurs
+## Carte de schéma de couleurs
 
 Représente différents schémas de couleurs et est spécialement adapté aux thèmes clairs et sombres.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilisation">
+    ```jsx
+    import { ColorSchemeCard } from "twenty-ui/display";
 
-```jsx
-import { ColorSchemeCard } from "twenty-ui/display";
+    export const MyComponent = () => {
+      return (
+          <ColorSchemeCard
+          variant="Dark"
+          selected={true}
+          />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-      <ColorSchemeCard
-      variant="Dark"
-      selected={true}
-      />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Propriétés                 | Type                                    | Description                                                                                                             | Par défaut |
-| -------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------- |
-| variante                   | chaîne                                  | La variante du schéma de couleurs. Les options incluent `Sombre`, `Clair` et `Système`. | clair      |
-| sélectionné                | booléen                                 | Si `vrai`, affiche une coche pour indiquer le schéma de couleurs sélectionné.                           |            |
-| propriétés supplémentaires | `React.ComponentPropsWithoutRef<'div'>` | Propriétés standard de l'élément HTML `div`.                                                            |            |
-
-</Tab>
-
+  <Tab title="Propriétés">
+    | Propriétés                 | Type                                    | Description                                                                             | Par défaut |
+    | -------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------- | ---------- |
+    | variante                   | chaîne                                  | La variante du schéma de couleurs. Les options incluent `Sombre`, `Clair` et `Système`. | clair      |
+    | sélectionné                | booléen                                 | Si `vrai`, affiche une coche pour indiquer le schéma de couleurs sélectionné.           |            |
+    | propriétés supplémentaires | `React.ComponentPropsWithoutRef<'div'>` | Propriétés standard de l'élément HTML `div`.                                            |            |
+  </Tab>
 </Tabs>
 
-## Sélecteur de Schéma de couleurs
+## Sélecteur de schéma de couleurs
 
 Permet aux utilisateurs de choisir entre différents schémas de couleurs.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilisation">
+    ```jsx
+    import { ColorSchemePicker } from "twenty-ui/display";
 
-```jsx
-import { ColorSchemePicker } from "twenty-ui/display";
+    export const MyComponent = () => {
+      return <ColorSchemePicker
+      value="Dark"
+      onChange
+      />;
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return <ColorSchemePicker
-  value="Dark"
-  onChange
-  />;
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Propriétés | Type                 | Description                                                                                                                  |
-| ---------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| valeur     | `Schéma de couleurs` | Le schéma de couleurs actuellement sélectionné.                                                              |
-| onChange   | fonction             | La fonction de rappel que vous souhaitez déclencher lorsqu'un utilisateur sélectionne un schéma de couleurs. |
-
-</Tab>
-
+  <Tab title="Propriétés">
+    | Propriétés | Type                 | Description                                                                                                  |
+    | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | valeur     | `Schéma de couleurs` | Le schéma de couleurs actuellement sélectionné.                                                              |
+    | onChange   | fonction             | La fonction de rappel que vous souhaitez déclencher lorsqu'un utilisateur sélectionne un schéma de couleurs. |
+  </Tab>
 </Tabs>

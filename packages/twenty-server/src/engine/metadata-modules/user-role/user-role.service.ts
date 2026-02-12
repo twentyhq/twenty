@@ -13,9 +13,10 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
@@ -24,7 +25,7 @@ export class UserRoleService {
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -137,6 +138,8 @@ export class UserRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
     const userWorkspaceIdsWithRole =
       await this.getUserWorkspaceIdsAssignedToRole(roleId, workspaceId);
 
@@ -150,20 +153,25 @@ export class UserRoleService {
         userWorkspaces.map((userWorkspace) => userWorkspace.userId),
       );
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    const workspaceMembers = await workspaceMemberRepository.find({
-      where: {
-        userId: In(userIds),
+        const workspaceMembers = await workspaceMemberRepository.find({
+          where: {
+            userId: In(userIds),
+          },
+        });
+
+        return workspaceMembers;
       },
-    });
-
-    return workspaceMembers;
+      authContext,
+    );
   }
 
   public async getUserWorkspaceIdsAssignedToRole(
@@ -204,7 +212,8 @@ export class UserRoleService {
 
     if (
       isDefined(roleOfUserWorkspace) &&
-      roleOfUserWorkspace.standardId === ADMIN_ROLE.standardId
+      roleOfUserWorkspace.universalIdentifier ===
+        STANDARD_ROLE.admin.universalIdentifier
     ) {
       const adminRole = roleOfUserWorkspace;
 
@@ -265,7 +274,8 @@ export class UserRoleService {
 
       if (
         isDefined(currentRole) &&
-        currentRole.standardId === ADMIN_ROLE.standardId
+        currentRole.universalIdentifier ===
+          STANDARD_ROLE.admin.universalIdentifier
       ) {
         adminRoleIdToValidate = currentRole.id;
       }

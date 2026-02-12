@@ -1,6 +1,7 @@
-import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio.constant';
+import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -29,9 +30,10 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
   );
 
   const isCurrentlyRatio =
-    widgetInEditMode?.configuration?.__typename ===
-      'AggregateChartConfiguration' &&
-    isDefined(widgetInEditMode.configuration.ratioAggregateConfig);
+    isWidgetConfigurationOfType(
+      widgetInEditMode?.configuration,
+      'AggregateChartConfiguration',
+    ) && isDefined(widgetInEditMode.configuration.ratioAggregateConfig);
 
   const isFocused = selectedItemId === DASHBOARD_AGGREGATE_OPERATION_RATIO;
 

@@ -1,0 +1,78 @@
+---
+title: Hlášení chyb, požadavky a pull requesty
+info: Nahlašujte problémy, žádejte o nové funkce a přispívejte kódem
+---
+
+## Nahlášení chyb
+
+Chcete-li nahlásit chybu, prosím [vytvořte issue na GitHubu](https://github.com/twentyhq/twenty/issues/new).
+
+O pomoc můžete také požádat na [Discordu](https://discord.gg/cx5n4Jzs57).
+
+## Požadavky na funkce
+
+Pokud si nejste jisti, zda se jedná o chybu, a máte pocit, že je to spíše žádost o funkci, pak byste pravděpodobně měli [otevřít diskuzi](https://github.com/twentyhq/twenty/discussions/new).
+
+## Odešlete pull request
+
+Přispívání kódem do Twenty začíná pull requestem (PR).
+
+### Než začnete
+
+1. Zkontrolujte [existující issues](https://github.com/twentyhq/twenty/issues) ohledně související práce
+2. Pro nové funkce nejprve otevřete issue k diskusi
+3. Prostudujte si náš [Kodex chování](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Fork a klonování
+
+1. Vytvořte fork repozitáře na GitHubu
+2. Naklonujte svůj fork:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Přidejte vzdálený upstream:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Vytvoření větve
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Používejte výstižné názvy větví:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Proveďte změny
+
+1. Pište čistý, dobře zdokumentovaný kód
+2. Dodržujte stávající styl kódu
+3. Přidejte testy pro novou funkcionalitu
+4. Podle potřeby aktualizujte dokumentaci
+
+### Odešlete svůj PR
+
+1. Odešlete svou větev:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Otevřete PR na GitHubu
+3. Vyplňte šablonu PR
+4. Propojte související issues
+
+### Kontrolní seznam PR
+
+* [ ] Kód odpovídá projektovým zásadám stylu
+* [ ] Testy procházejí lokálně
+* [ ] Dokumentace je aktualizována
+* [ ] Popis PR vysvětluje změny

@@ -18,6 +18,7 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   STACKED_BARS: msg`Stacked bars`,
   STACKED_LINES: msg`Stacked lines`,
   OMIT_NULL_VALUES: msg`Omit zero values`,
+  HIDE_EMPTY_CATEGORY: msg`Hide empty category`,
   MIN_RANGE: msg`Min range`,
   MAX_RANGE: msg`Max range`,
   DATE_GRANULARITY_X: msg`Date granularity`,

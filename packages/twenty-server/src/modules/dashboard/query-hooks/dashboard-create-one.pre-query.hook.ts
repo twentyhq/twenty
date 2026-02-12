@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
-import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
 @Injectable()
@@ -21,10 +17,7 @@ export class DashboardCreateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly pageLayoutService: PageLayoutService,
-    private readonly pageLayoutTabService: PageLayoutTabService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly dashboardToPageLayoutSyncService: DashboardToPageLayoutSyncService,
   ) {}
 
   async execute(
@@ -36,29 +29,17 @@ export class DashboardCreateOnePreQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    return await this.coreDataSource.transaction(async (manager) => {
-      const pageLayout = await this.pageLayoutService.create(
-        {
-          type: PageLayoutType.DASHBOARD,
-          objectMetadataId: null,
-          name: 'Dashboard Layout',
-        },
-        workspace.id,
-        manager,
-      );
-
-      await this.pageLayoutTabService.create(
-        {
-          title: 'Tab 1',
-          pageLayoutId: pageLayout.id,
-        },
-        workspace.id,
-        manager,
-      );
-
-      payload.data.pageLayoutId = pageLayout.id;
-
+    if (isDefined(payload.data.pageLayoutId)) {
       return payload;
-    });
+    }
+
+    const pageLayoutId =
+      await this.dashboardToPageLayoutSyncService.createPageLayoutForDashboard({
+        workspaceId: workspace.id,
+      });
+
+    payload.data.pageLayoutId = pageLayoutId;
+
+    return payload;
   }
 }

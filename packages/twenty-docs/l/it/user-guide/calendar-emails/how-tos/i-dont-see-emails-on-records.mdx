@@ -1,0 +1,53 @@
+---
+title: Non vedo le email nei record
+description: Risoluzione dei problemi delle email mancanti nei record.
+---
+
+## Cause comuni
+
+### 1. Sincronizzazione iniziale ancora in corso
+
+La sincronizzazione delle email richiede tempo, soprattutto per le caselle di posta di grandi dimensioni. Twenty importa email a circa **400 messaggi al minuto** (limitato dal rate limiting dell'API di Gmail).
+
+* **Sincronizzazione del calendario**: si completa in pochi minuti
+* **Sincronizzazione delle email**: dipende dalla dimensione della casella (es., 10.000 email ≈ 25 minuti, 50.000 email ≈ 2 ore)
+
+**Soluzione**: Attendi il completamento dell'importazione iniziale. Puoi stimare i tempi in base alla dimensione della tua casella di posta.
+
+### 2. Il contatto non esiste in Twenty
+
+Le email compaiono solo nei record Persona esistenti. Se il contatto non è stato ancora creato:
+
+* Abilita la **Creazione automatica dei contatti** nelle impostazioni della tua casella di posta
+* Oppure crea prima manualmente il record Persona
+
+**Soluzione**: Vai su **Impostazioni → Account**, seleziona la tua casella di posta e abilita la creazione automatica dei contatti.
+
+### 3. Le email interne sono escluse
+
+Le email tra colleghi (stesso dominio email) non vengono mai sincronizzate per mantenere la privacy.
+
+**Soluzione**: Questo è il comportamento previsto. Vengono sincronizzate solo le email esterne.
+
+### 4. L'email proviene da un gruppo o da una lista di distribuzione
+
+Le email di gruppo e le liste di distribuzione sono escluse dalla sincronizzazione.
+
+**Soluzione**: Questo è il comportamento previsto.
+
+### 5. Cartella non selezionata per la sincronizzazione
+
+Se stai usando la funzionalità Cartella messaggi, alcune cartelle potrebbero essere escluse.
+
+**Soluzione**: Vai su **Impostazioni → Account**, seleziona la tua casella di posta e controlla le impostazioni di sincronizzazione delle cartelle.
+
+### 6. Indirizzo email errato nel record
+
+Il record Persona potrebbe avere un indirizzo email diverso da quello usato nell'email.
+
+**Soluzione**: Aggiungi l'indirizzo email corretto al record Persona.
+
+## Non funziona ancora?
+
+1. Prova a disconnettere e riconnettere la tua casella di posta
+2. Contatta il supporto se i problemi persistono

@@ -1,0 +1,130 @@
+---
+title: Calendrier et e-mails
+description: Connectez vos comptes de messagerie et de calendrier à Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendrier et e-mails" />
+</Frame>
+
+## Options de connexion
+
+### Compte Google (Gmail & Google Calendar)
+
+1. Allez dans **Paramètres → Comptes**
+2. Cliquez sur **Ajouter un compte**
+3. Sélectionnez **Continuer avec Google**
+4. Autorisez Twenty à accéder à votre Gmail et à votre Google Calendar
+5. Configurez les paramètres de synchronisation des e-mails (visibilité, création automatique) → cliquez sur **Suivant**
+6. Configurez les paramètres de synchronisation du calendrier (visibilité, création automatique) → cliquez sur **Ajouter un compte**
+7. Vos e-mails et vos événements de calendrier commenceront à se synchroniser automatiquement
+
+### Compte Microsoft (Outlook & Calendrier Microsoft)
+
+1. Allez dans **Paramètres → Comptes**
+2. Cliquez sur **Ajouter un compte**
+3. Sélectionnez **Continuer avec Microsoft**
+4. Autorisez Twenty à accéder à votre Outlook et à votre Calendrier Microsoft
+5. Configurez les paramètres de synchronisation des e-mails (visibilité, création automatique) → cliquez sur **Suivant**
+6. Configurez les paramètres de synchronisation du calendrier (visibilité, création automatique) → cliquez sur **Ajouter un compte**
+7. Vos e-mails et vos événements de calendrier commenceront à se synchroniser automatiquement
+
+### Configuration SMTP/CalDAV (Autres fournisseurs)
+
+Pour les autres fournisseurs de services de messagerie et de calendrier :
+
+1. Allez dans **Paramètres → Comptes**
+2. Configurez les paramètres SMTP pour les e-mails
+3. Configurez les paramètres CalDAV pour le calendrier
+4. Tester la connexion
+
+### Plusieurs boîtes aux lettres
+
+* **Comptes illimités** : Connectez plusieurs comptes de messagerie par utilisateur
+* **Gestion de Compte**: Basculez entre différentes boîtes aux lettres
+* **Paramètres de Synchronisation**: Configurez différents paramètres par boîte aux lettres
+
+<Warning>
+  Seules les vraies boîtes aux lettres peuvent être connectées (par exemple, support@domain.com avec sa propre boîte de réception). Les alias email qui redirigent vers une autre boîte aux lettres ne peuvent pas être connectés à Twenty.
+</Warning>
+
+## Configuration des Emails
+
+### Visibilité des Messages
+
+Choisissez différents niveaux de visibilité pour vos e-mails :
+
+* **Métadonnées uniquement** : Partagez uniquement les informations de base (expéditeur, destinataire, date, heure)
+* **Objet et métadonnées** : Partagez la ligne d'objet ainsi que les métadonnées
+* **Tout le contenu des e-mails** : Partagez l'intégralité du contenu des e-mails, y compris les pièces jointes
+
+### Création Automatique de Contacts
+
+* **Désactivée**: Pas de création automatique de contacts
+* **Pour les messages envoyés et reçus** : Créez des contacts pour toutes les interactions par e-mail externes
+* **Pour les messages envoyés uniquement** : Créez des contacts uniquement pour les e-mails que vous envoyez
+* **Remarque** : Les emails internes (même domaine) ne sont jamais synchronisés pour maintenir la confidentialité
+
+<Note>Lorsque cette option est activée, les contacts sont automatiquement liés à leurs enregistrements Entreprise en fonction de leur domaine de messagerie. Si l'entreprise n'existe pas encore, Twenty la crée pour vous.</Note>
+
+### Contrôlez quels emails sont synchronisés avec Sélection des dossiers de messages
+
+Contrôlez quels dossiers e-mail sont synchronisés avec Twenty :
+
+1. Accédez à **Paramètres → Comptes** et sélectionnez votre compte de messagerie connecté
+2. Choisissez quels dossiers synchroniser :
+   * **Boîte de réception** : Emails entrants principaux
+   * **Envoyés** : Les e-mails sortants que vous avez envoyés
+   * **Dossiers Personnalisés** : Tous les dossiers spécifiques que vous souhaitez inclure
+   * **Exclure les Dossiers** : Ignorer les dossiers tels que Spam, Corbeille ou dossiers personnels
+
+Cela vous donne un contrôle précis sur les e-mails qui apparaissent dans votre CRM sans tout synchroniser.
+
+**Ce qui est Synchronisé :**
+
+* **E-mails externes** : Tous les e-mails avec des contacts externes provenant des dossiers sélectionnés
+* **E-mails internes** : Non synchronisés (les e-mails du même domaine restent privés)
+* **Pièces jointes** : Disponible au H1 2026
+
+**Remarque** : Nous ne fournissons pas d'adresse email CC pour une synchronisation sélective. Utilisez plutôt la fonctionnalité Message Folder ci-dessus pour obtenir le même niveau de contrôle sur les e-mails qui se synchronisent avec Twenty.
+
+## Configuration des Calendriers
+
+### Visibilité des Événements
+
+Choisissez ce qui sera visible pour les autres utilisateurs dans votre espace de travail :
+
+* **Tout** : Les détails complets de l'événement seront partagés avec votre équipe
+* **Métadonnées** : Seules la date et les participants seront partagés avec votre équipe
+
+### Création Automatique de Contacts pour les Réunions
+
+* **Oui** : Créez automatiquement des contacts pour les participants aux réunions qui ne sont pas dans votre CRM
+* **Non** : Liez uniquement les réunions à des contacts existants
+
+<Note>Lorsque cette option est activée, les contacts sont automatiquement liés à leurs enregistrements Entreprise en fonction de leur domaine de messagerie. Si l'entreprise n'existe pas encore, Twenty la crée pour vous.</Note>
+
+### Contrôlez quels événements sont synchronisés
+
+* **Importation de Réunions** : Importez automatiquement les événements de calendrier
+* **Lien de Contacts** : Associez des réunions aux enregistrements de personnes et d'entreprises
+
+**Ce qui est Synchronisé :**
+
+* **Réunions** : Événements de calendrier avec des participants externes
+* **Lien de Contacts** : Événements automatiquement liés aux enregistrements CRM
+* **Événements d'Équipe** : Visibilité partagée du calendrier
+
+## Fréquence de Synchronisation
+
+**Mises à jour toutes les 5 minutes** : Les données de messagerie et de calendrier sont synchronisées automatiquement toutes les 5 minutes après l'importation initiale.
+
+<Note>
+  **Durée de la synchronisation initiale**: La synchronisation du calendrier se termine rapidement (généralement en quelques minutes), tandis que la synchronisation des emails prend plus de temps pour les grandes boîtes aux lettres. Twenty importe des emails à environ **400 messages par minute** (soumis aux limites de débit de l'API Gmail), de sorte qu'une boîte aux lettres contenant 10,000 emails prend environ 25 minutes. Ne vous inquiétez pas si vous voyez des contacts provenant d'événements de calendrier apparaître avant vos contacts e-mail ; c'est un comportement normal.
+</Note>
+
+## Prochaines étapes
+
+* [Fonctionnalités de la boîte aux lettres](/l/fr/user-guide/calendar-emails/capabilities/mailbox)
+* [Résoudre les problèmes d'e-mails manquants](/l/fr/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

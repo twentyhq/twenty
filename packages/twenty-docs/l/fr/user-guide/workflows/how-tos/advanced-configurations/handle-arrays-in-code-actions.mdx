@@ -1,0 +1,82 @@
+---
+title: Gérer les tableaux dans les actions Code
+description: Apprenez à gérer correctement les entrées de type tableau dans les actions Code des workflows.
+---
+
+Lorsque vous travaillez avec des tableaux dans les actions Code, vous pouvez rencontrer deux difficultés courantes :
+
+1. **Tableaux passés sous forme de chaînes** — les données provenant de systèmes externes ou d'étapes précédentes arrivent sous forme de chaîne plutôt que sous forme de véritable tableau
+2. **Impossible de sélectionner des éléments individuellement** — vous ne pouvez sélectionner que le tableau entier, pas des champs spécifiques à l'intérieur
+
+Les deux peuvent être résolus avec un nœud Code.
+
+## Analyse des tableaux à partir de chaînes
+
+Les tableaux sont souvent transmis entre les étapes d'un workflow sous forme de chaînes ou de JSON plutôt que comme tableaux natifs. Cela se produit lorsque :
+
+* Réception de données depuis des API externes via HTTP Request
+* Traitement des charges utiles des webhooks
+* Transmission de données entre les étapes du workflow
+
+**Solution** : Ajoutez ce modèle au début de votre action Code :
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+La ligne clé `typeof users === "string" ? JSON.parse(users) : users` vérifie si l'entrée est une chaîne, l'analyse si nécessaire, ou l'utilise directement si c'est déjà un tableau.
+
+## Extraction de champs individuels à partir de tableaux
+
+Un webhook peut renvoyer un tableau comme `answers: [...]`, mais dans les étapes de workflow suivantes vous ne pouvez sélectionner que le tableau entier — pas des éléments individuels à l'intérieur.
+
+**Solution** : Ajoutez un nœud Code pour extraire des champs spécifiques et les renvoyer sous forme d'objet structuré :
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Le nœud Code renvoie un objet structuré au lieu d'un tableau. Dans les étapes suivantes, vous pouvez maintenant sélectionner des champs individuels comme `answer.firstname` et `answer.name` à partir du sélecteur de variables.
+
+<Note>
+  Nous travaillons activement à faciliter la gestion des tableaux dans de futures mises à jour.
+</Note>
+
+<Tip>
+  Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
+</Tip>

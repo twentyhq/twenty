@@ -4,6 +4,7 @@ import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -66,7 +67,7 @@ export const HttpRequestTestVariableInput = ({
           <FormTextFieldInput
             key={variablePath}
             label={`${variablePath}`}
-            placeholder="Enter test value"
+            placeholder={t`Enter test value`}
             readonly={readonly}
             defaultValue={
               httpRequestTestData.variableValues[variablePath] || ''

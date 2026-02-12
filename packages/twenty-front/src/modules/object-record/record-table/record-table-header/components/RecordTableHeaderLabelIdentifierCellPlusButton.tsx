@@ -23,7 +23,9 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
   });
 
   const handlePlusButtonClick = () => {
-    createNewIndexRecord();
+    createNewIndexRecord({
+      position: 'first',
+    });
   };
 
   const isReadOnly = isObjectMetadataReadOnly({

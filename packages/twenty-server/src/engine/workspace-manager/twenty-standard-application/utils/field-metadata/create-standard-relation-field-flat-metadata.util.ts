@@ -3,11 +3,11 @@ import {
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataSettings,
-  FieldMetadataType,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -15,7 +15,18 @@ import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-st
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
+> = CreateStandardMorphOrRelationFieldContext<
+  O,
+  T,
+  FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+>;
+
+export type CreateStandardMorphOrRelationFieldContext<
+  O extends AllStandardObjectName,
+  T extends AllStandardObjectName,
+  F extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
 > = {
+  type: F;
   fieldName: AllStandardObjectFieldName<O>;
   label: string;
   description: string;
@@ -26,8 +37,9 @@ export type CreateStandardRelationFieldContext<
   isNullable?: boolean;
   isUIReadOnly?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
-  settings: FieldMetadataSettings<FieldMetadataType.RELATION>;
+  settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
+  morphId: F extends FieldMetadataType.MORPH_RELATION ? string : null;
 };
 
 export type CreateStandardRelationFieldArgs<
@@ -57,28 +69,31 @@ export const createStandardRelationFieldFlatMetadata = <
     defaultValue = null,
     settings,
     options: fieldOptions = null,
+    morphId,
+    type,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
 }: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
-  const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const targetFieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[targetObjectName].fields;
+    standardObjectMetadataRelatedEntityIds[targetObjectName].fields;
+
+  const targetObjectFields = STANDARD_OBJECTS[targetObjectName].fields;
+  const targetFieldDefinition =
+    targetObjectFields[targetFieldName as keyof typeof targetObjectFields];
 
   return {
-    id: fieldIds[fieldName as keyof typeof fieldIds],
+    id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: null,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    objectMetadataId:
-      standardFieldMetadataIdByObjectAndFieldName[objectName].id,
-    type: FieldMetadataType.RELATION,
+    objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
+    type,
     name: fieldName.toString(),
     label,
     description,
@@ -94,10 +109,10 @@ export const createStandardRelationFieldFlatMetadata = <
     defaultValue,
     settings,
     options: fieldOptions,
-    relationTargetFieldMetadataId: targetFieldIds[targetFieldName],
+    relationTargetFieldMetadataId: targetFieldIds[targetFieldName].id,
     relationTargetObjectMetadataId:
-      standardFieldMetadataIdByObjectAndFieldName[targetObjectName].id,
-    morphId: null,
+      standardObjectMetadataRelatedEntityIds[targetObjectName].id,
+    morphId,
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -105,5 +120,18 @@ export const createStandardRelationFieldFlatMetadata = <
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[objectName].universalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[targetObjectName].universalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      targetFieldDefinition.universalIdentifier,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: settings,
   };
 };

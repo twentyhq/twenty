@@ -1,0 +1,171 @@
+---
+title: Configurați un declanșator webhook
+description: Primiți date de la servicii externe pentru a declanșa fluxuri de lucru.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Declanșatoarele webhook permit serviciilor externe să pornească fluxurile dvs. de lucru trimițând date către un URL unic. Folosiți-le pentru a conecta formulare, aplicații terțe și integrări personalizate.
+
+## Când să folosiți webhook-uri
+
+| Caz de utilizare            | Exemplu                                                          |
+| --------------------------- | ---------------------------------------------------------------- |
+| **Formulare web**           | Trimiterile din formularul de contact creează potențiali clienți |
+| **Aplicații terțe**         | Plată Stripe → creează o înregistrare de client                  |
+| **Integrări personalizate** | Aplicația dvs. → automatizare în Twenty                          |
+| **Instrumente no-code**     | Conexiuni Zapier, Make, n8n                                      |
+
+## Configurare pas cu pas
+
+### Pasul 1: Creați fluxul de lucru
+
+1. Accesați **Setări → Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l (de ex., "Trimitere formular site")
+
+### Pasul 2: Configurați declanșatorul webhook
+
+1. Faceți clic pe blocul declanșator
+2. Selectați **Webhook**
+3. Veți primi un URL de webhook unic, de exemplu:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Copiați acest URL — veți avea nevoie de el pentru serviciul dvs. extern
+
+### Pasul 3: Definiți structura de date așteptată
+
+Pentru cererile **POST**, definiți structura așteptată a corpului:
+
+1. Faceți clic pe **Define expected body**
+2. Introduceți un exemplu JSON care corespunde cu ceea ce va trimite serviciul dvs.:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. Faceți clic pe **Salvați** — aceasta creează variabile pe care le puteți utiliza în pașii următori
+
+### Pasul 4: Adăugați acțiuni
+
+Acum adăugați acțiuni care folosesc datele webhook-ului:
+
+**Exemplu: Creați o înregistrare Person**
+
+1. Adăugați acțiunea **Create Record**
+2. Selectați obiectul **People**
+3. Asociați câmpurile:
+
+| Câmp            | Valoare                                               |
+| --------------- | ----------------------------------------------------- |
+| Prenume         | `{{trigger.body.firstName}}`                          |
+| Nume de familie | `{{trigger.body.lastName}}`                           |
+| Email           | `{{trigger.body.email}}`                              |
+| Companie        | Căutați sau creați pe baza `{{trigger.body.company}}` |
+
+### Pasul 5: Testați webhook-ul
+
+Înainte de activare, testați webhook-ul:
+
+**Folosind cURL**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Folosind Postman sau similar**:
+
+1. Creați o cerere POST către URL-ul webhook-ului
+2. Setați antetul Content-Type la `application/json`
+3. Adăugați corpul JSON de test
+4. Trimiteți și verificați rulările fluxului de lucru
+
+### Pasul 6: Activați
+
+După testare, faceți clic pe **Activați** pentru a activa fluxul de lucru.
+
+## Gestionarea diferitelor structuri de date
+
+### Date îmbricate
+
+Dacă webhook-ul trimite date îmbricate:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Faceți referire astfel: `{{trigger.body.contact.email}}`
+
+### Tablouri
+
+Dacă datele includ tablouri:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+Modul în care gestionați tablourile depinde de cazul dvs. de utilizare:
+
+**Număr necunoscut de elemente → Folosiți Iterator**
+
+Dacă trebuie să procesați fiecare element din tablou (de ex., să creați o înregistrare pentru fiecare), adăugați o acțiune **Code** pentru a analiza tabloul, apoi folosiți **Iterator**:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Apoi utilizați Iterator pentru a itera: `{{code.items}}`
+
+**Câmpuri cunoscute/specifice → Extrageți în câmpuri denumite**
+
+Dacă tabloul conține câmpuri specifice la care doriți să accesați individual (de ex., răspunsuri de formular în care poziția 0 este întotdeauna "prenume", poziția 1 este întotdeauna "nume"), adăugați o acțiune **Code** pentru a le extrage:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Acum puteți selecta `product.name` și `product.qty` individual în pașii următori.
+
+<Tip>
+  Pentru mai multe detalii despre gestionarea tablourilor, consultați [Gestionarea tablourilor în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## Conexe
+
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)

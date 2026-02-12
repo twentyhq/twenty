@@ -11,6 +11,10 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import jsoncParser from 'jsonc-eslint-parser';
 
+const twentyRules = await nxPlugin.loadWorkspaceRules(
+  'packages/twenty-eslint-rules',
+);
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -64,6 +68,10 @@ export default [
               onlyDependOnLibsWithTags: ['scope:sdk', 'scope:shared'],
             },
             {
+              sourceTag: 'scope:create-app',
+              onlyDependOnLibsWithTags: ['scope:create-app', 'scope:shared'],
+            },
+            {
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
@@ -74,10 +82,6 @@ export default [
             {
               sourceTag: 'scope:frontend',
               onlyDependOnLibsWithTags: ['scope:shared', 'scope:frontend'],
-            },
-            {
-              sourceTag: 'scope:zapier',
-              onlyDependOnLibsWithTags: ['scope:shared'],
             },
           ],
         },
@@ -141,10 +145,10 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/no-empty-interface': [
+      '@typescript-eslint/no-empty-object-type': [
         'error',
         {
-          allowSingleExtends: true,
+          allowInterfaces: 'with-single-extends',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'off',
@@ -199,6 +203,7 @@ export default [
     plugins: {
       ...mdxPlugin.flat.plugins,
       '@nx': nxPlugin,
+      twenty: { rules: twentyRules },
     },
   },
   mdxPlugin.flatCodeBlocks,
@@ -209,9 +214,9 @@ export default [
       'unused-imports/no-unused-imports': 'off',
       'unused-imports/no-unused-vars': 'off',
       // Enforce JSX tags on separate lines to prevent Crowdin translation issues
-      '@nx/workspace-mdx-component-newlines': 'error',
+      'twenty/mdx-component-newlines': 'error',
       // Disallow angle bracket placeholders to prevent Crowdin translation errors
-      '@nx/workspace-no-angle-bracket-placeholders': 'error',
+      'twenty/no-angle-bracket-placeholders': 'error',
     },
   },
 ];

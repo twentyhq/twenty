@@ -11,14 +11,14 @@ import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential'
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import {
   mockedCoreViewsData,
   mockedViewsData,
 } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 
 const mockObjectMetadataItemNameSingular = 'company';
 

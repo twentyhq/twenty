@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 
@@ -118,7 +119,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     <>
       <StyledIntersectionObserver ref={ref} />
       {multipleRecordPickerIsFetchingMore && (
-        <StyledText>Loading more...</StyledText>
+        <StyledText>{t`Loading more...`}</StyledText>
       )}
     </>
   );

@@ -1,0 +1,100 @@
+---
+title: Comandos de Backend
+---
+
+## Comandos útiles
+
+Estos comandos deben ejecutarse desde la carpeta packages/twenty-server.
+Desde cualquier otra carpeta, puedes ejecutar `npx nx {command} twenty-server` (o `npx nx run twenty-server:{command}`).
+
+### Configuración inicial
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Iniciando el servidor
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Prueba
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Nota: puedes ejecutar `npx nx run twenty-server:test:integration:with-db-reset` en caso de que necesites restablecer la base de datos antes de ejecutar las pruebas de integración.
+
+### Restablecer la base de datos
+
+Si deseas restablecer y sembrar la base de datos, puedes ejecutar el siguiente comando:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migraciones
+
+#### Para objetos en esquemas Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Para objetos de Workspace
+
+No hay archivos de migraciones, las migraciones se generan automáticamente para cada espacio de trabajo, se almacenan en la base de datos y se aplican con este comando
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  Esto eliminará la base de datos y volverá a ejecutar las migraciones y semillas.
+
+  Asegúrate de respaldar cualquier dato que desees conservar antes de ejecutar este comando.
+</Warning>
+
+## Stack Tecnológico
+
+Twenty utiliza principalmente NestJS para el backend.
+
+Prisma fue el primer ORM que usamos. Pero para permitir a los usuarios crear campos y objetos personalizados, un nivel más bajo tenía más sentido ya que necesitamos tener un control detallado. El proyecto ahora usa TypeORM.
+
+Así es como se ve la pila tecnológica ahora.
+
+**Core**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Base de datos**
+
+* [Postgres](https://www.postgresql.org/)
+
+**Integraciones de terceros**
+
+* [Sentry](https://sentry.io/welcome/) para rastrear errores
+
+**Pruebas**
+
+* [Jest](https://jestjs.io/)
+
+**Herramientas**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**Desarrollo**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

@@ -7,8 +7,10 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { type ViewType } from '@/views/types/ViewType';
-import { type ViewVisibility } from '~/generated-metadata/graphql';
-import { type ViewCalendarLayout } from '~/generated/graphql';
+import {
+  type ViewVisibility,
+  type ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 
 export type View = {
   id: string;
@@ -25,6 +27,7 @@ export type View = {
   kanbanAggregateOperation: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId: string | null;
   mainGroupByFieldMetadataId?: string | null;
+  shouldHideEmptyGroups: boolean;
   calendarFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;

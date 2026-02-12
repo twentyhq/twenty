@@ -4,17 +4,20 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -53,9 +56,9 @@ export const useSetRecordTableData = ({
       recordTableId,
     );
 
-  const recordIdByRealIndexCallbackState =
+  const recordIdByRealIndexCallbackSelector =
     useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilyState,
+      recordIdByRealIndexComponentFamilySelector,
       recordTableId,
     );
 
@@ -89,6 +92,10 @@ export const useSetRecordTableData = ({
             };
 
             set(recordStoreFamilyState(record.id), newRecord);
+            jotaiStore.set(
+              recordStoreFamilyStateV2.atomFamily(record.id),
+              newRecord,
+            );
           }
         }
 
@@ -135,11 +142,11 @@ export const useSetRecordTableData = ({
             for (const [realIndex, recordId] of recordIds.entries()) {
               const currentRecordIdAtRealIndex = getSnapshotValue(
                 snapshot,
-                recordIdByRealIndexCallbackState({ realIndex }),
+                recordIdByRealIndexCallbackSelector(realIndex),
               );
 
               if (recordId !== currentRecordIdAtRealIndex) {
-                set(recordIdByRealIndexCallbackState({ realIndex }), recordId);
+                set(recordIdByRealIndexCallbackSelector(realIndex), recordId);
               }
             }
           }
@@ -153,7 +160,7 @@ export const useSetRecordTableData = ({
       unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
-      recordIdByRealIndexCallbackState,
+      recordIdByRealIndexCallbackSelector,
       isRecordTableInitialLoadingCallbackState,
     ],
   );

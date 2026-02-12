@@ -1,0 +1,112 @@
+---
+title: Webhooks
+description: CRM でイベントが発生したときにリアルタイム通知を受信します。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+ウェブフックは、Twenty でイベントが発生したときに、ポーリング不要でリアルタイムにお使いのシステムへデータをプッシュします。 外部システムとの同期を保ち、オートメーションをトリガーしたり、アラートを送信したりするために使用できます。
+
+## Webhookを作成
+
+1. **Settings → APIs & Webhooks → Webhooks**に移動
+2. **+ Webhookを作成**をクリック
+3. ウェブフックの URL を入力（外部からアクセス可能である必要があります）
+4. **保存**をクリック
+
+ウェブフックは直ちに有効化され、通知の送信を開始します。
+
+<VimeoEmbed videoId="928786708" title="ウェブフックの作成" />
+
+### Webhookを管理
+
+**編集**: ウェブフックをクリック → URL を更新 → **保存**
+
+**削除**: ウェブフックをクリック → **削除** → 確認
+
+## イベント
+
+Twenty は次のイベントタイプに対してウェブフックを送信します。
+
+| イベント        | 例                                                          |
+| ----------- | ---------------------------------------------------------- |
+| **レコードの作成** | `person.created`, `company.created`, `note.created`        |
+| **レコードの更新** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **レコードの削除** | `person.deleted`, `company.deleted`                        |
+
+すべてのイベントタイプはウェブフックの URL に送信されます。 イベントのフィルタリングは将来のリリースで追加される可能性があります。
+
+## ペイロード形式
+
+各ウェブフックは JSON ボディを含む HTTP POST を送信します。
+
+```json
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+| フィールド     | 説明                          |
+| --------- | --------------------------- |
+| `イベント`    | 何が起きたか（例: `person.created`） |
+| `データ`     | 作成／更新／削除された完全なレコード          |
+| `タイムスタンプ` | イベントが発生した時刻（UTC）            |
+
+<Note>
+  受信を確認するために、**2xx HTTP ステータス**（200～299）で応答してください。 2xx 以外の応答は配信失敗として記録されます。
+</Note>
+
+## ウェブフックの検証
+
+Twenty はセキュリティのために各ウェブフックリクエストに署名します。 リクエストが正当であることを確認するために署名を検証してください。
+
+### ヘッダー
+
+| ヘッダー                         | 説明             |
+| ---------------------------- | -------------- |
+| `X-Twenty-Webhook-Signature` | HMAC SHA256 署名 |
+| `X-Twenty-Webhook-Timestamp` | リクエストのタイムスタンプ  |
+
+### 検証手順
+
+1. `X-Twenty-Webhook-Timestamp` からタイムスタンプを取得
+2. 次の文字列を作成: `{timestamp}:{JSON payload}`
+3. ウェブフックシークレットを使用して HMAC SHA256 を計算
+4. `X-Twenty-Webhook-Signature` と比較
+
+### 例（Node.js）
+
+```javascript
+const crypto = require("crypto");
+
+const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const payload = JSON.stringify(req.body);
+const secret = "your-webhook-secret";
+
+const stringToSign = `${timestamp}:${payload}`;
+const expectedSignature = crypto
+  .createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+
+const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+```
+
+## ウェブフック vs ワークフロー
+
+| メソッド                    | 方向  | ユースケース                      |
+| ----------------------- | --- | --------------------------- |
+| **ウェブフック**              | OUT | あらゆるレコード変更を外部システムへ自動通知      |
+| **ワークフロー + HTTP リクエスト** | OUT | カスタムロジック（フィルター、変換）でデータを外部送信 |
+| **ワークフローのウェブフックトリガー**   | IN  | 外部システムから Twenty にデータを受信     |
+
+外部データの受信については、[Webhook トリガーを設定](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)を参照してください。

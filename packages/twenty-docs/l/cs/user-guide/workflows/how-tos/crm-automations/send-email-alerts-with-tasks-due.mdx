@@ -1,0 +1,106 @@
+---
+title: Odesílejte e-mailová upozornění na úkoly s blížícím se termínem
+description: Automaticky upozorňujte členy týmu na jejich blížící se nebo zpožděné úkoly.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Posílejte každému členovi týmu denní e-mailová připomenutí na úkoly, které mají termín dnes.
+
+## Přehled
+
+Tento pracovní postup běží podle plánu a:
+
+1. Načte všechny členy pracovního prostoru
+2. Projde každého člena
+3. Najde jejich úkoly, které mají termín dnes
+4. Naformátuje a odešle personalizovaný e-mail
+
+## Nastavení krok za krokem
+
+<VimeoEmbed videoId="1147463514" title="Ukázka videa" />
+
+### Krok 1: Nakonfigurujte spouštěč
+
+1. Přejděte do **Nastavení → Pracovní postupy** a vytvořte nový pracovní postup
+2. Vyberte **Podle plánu** jako spouštěč
+3. Použijte výraz cron pro denní spuštění v 8:00: `0 8 * * *`
+
+### Krok 2: Vyhledejte všechny členy pracovního prostoru
+
+1. Přidejte akci **Vyhledat záznamy**
+2. Vyberte **Členové pracovního prostoru** (v části pokročilé objekty)
+3. Filtry nejsou potřeba — toto vrátí všechny členy
+
+### Krok 3: Přidejte iterátor
+
+1. Přidejte akci **Iterator**
+2. Nastavte vstupní pole na členy pracovního prostoru z předchozího kroku
+3. Všechny akce uvnitř iterátoru se spustí jednou pro každého člena
+
+### Krok 4: Vyhledejte úkoly s termínem dnes (uvnitř iterátoru)
+
+1. Uvnitř iterátoru přidejte akci **Vyhledat záznamy**
+2. Vyberte jako objekt **Úkoly**
+3. Přidejte filtry:
+   * **Přiřazený** = aktuální člen pracovního prostoru (z iterátoru)
+   * **Termín splnění** = dnes
+
+### Krok 5: Naformátujte úkoly do těla e-mailu (uvnitř iterátoru)
+
+Přidejte akci **Code** pro naformátování úkolů do čitelného seznamu s odkazy:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru Twenty.
+</Note>
+
+### Krok 6: Odešlete e-mail (uvnitř iterátoru)
+
+1. Přidejte akci **Odeslat e-mail** (stále uvnitř iterátoru)
+2. Nakonfigurujte:
+
+| Pole            | Hodnota                                                                 |
+| --------------- | ----------------------------------------------------------------------- |
+| **Komu**        | `{{iterator.currentItem.userEmail}}` (e-mail člena pracovního prostoru) |
+| **Předmět**     | Vaše úkoly s termínem dnes                                              |
+| **Text zprávy** | `{{code.formattedTasks}}`                                               |
+
+### Krok 7: Otestujte a aktivujte
+
+1. Klikněte na **Test** a spusťte pracovní postup ručně
+2. Zkontrolujte doručenou poštu, zda e-maily dorazily
+3. Aktivujte pracovní postup
+
+## Související
+
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Práce s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

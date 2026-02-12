@@ -3,6 +3,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -12,11 +13,10 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { type Agent } from '~/generated-metadata/graphql';
-import { type ApiKeyForRole } from '~/generated/graphql';
+import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
-import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -111,7 +111,7 @@ export const SettingsRoleAssignmentTableRow = ({
               dateFormat,
               localeCatalog: dateLocale.localeCatalog,
             })
-          : 'Never expires';
+          : t`Never expires`;
     }
   };
 

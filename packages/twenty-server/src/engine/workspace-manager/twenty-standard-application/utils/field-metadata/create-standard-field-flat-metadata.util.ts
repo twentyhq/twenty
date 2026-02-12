@@ -1,24 +1,26 @@
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
-  type FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataDefaultValue,
+  type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
 export type CreateStandardFieldArgs<
-  O extends AllStandardObjectName = AllStandardObjectName,
+  O extends AllStandardObjectName,
+  T extends FieldMetadataType,
 > = StandardBuilderArgs<'fieldMetadata'> & {
   objectName: O;
   context: {
     fieldName: AllStandardObjectFieldName<O>;
-    type: Exclude<FieldMetadataType, typeof FieldMetadataType.RELATION>;
+    type: T;
     label: string;
     description: string;
     icon: string;
@@ -26,8 +28,8 @@ export type CreateStandardFieldArgs<
     isNullable?: boolean;
     isUnique?: boolean;
     isUIReadOnly?: boolean;
-    defaultValue?: FieldMetadataDefaultValueForAnyType;
-    settings?: Record<string, unknown> | null;
+    defaultValue?: FieldMetadataDefaultValue<T>;
+    settings?: FieldMetadataSettings<T>;
     options?:
       | FieldMetadataDefaultOption[]
       | FieldMetadataComplexOption[]
@@ -37,6 +39,7 @@ export type CreateStandardFieldArgs<
 
 export const createStandardFieldFlatMetadata = <
   O extends AllStandardObjectName,
+  T extends FieldMetadataType,
 >({
   objectName,
   workspaceId,
@@ -50,29 +53,26 @@ export const createStandardFieldFlatMetadata = <
     isNullable = true,
     isUnique = false,
     isUIReadOnly = false,
-    defaultValue = null,
-    settings = null,
+    defaultValue,
+    settings,
     options: fieldOptions = null,
   },
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
-}: CreateStandardFieldArgs<O>): FlatFieldMetadata => {
+}: CreateStandardFieldArgs<O, T>): FlatFieldMetadata => {
   const objectFields = STANDARD_OBJECTS[objectName].fields;
   const fieldDefinition = objectFields[fieldName as keyof typeof objectFields];
-  const fieldIds =
-    standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
+  const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const name = fieldName.toString();
 
   return {
-    id: fieldIds[fieldName],
+    id: fieldIds[fieldName].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: null,
     applicationId: twentyStandardApplicationId,
     workspaceId,
-    objectMetadataId:
-      standardFieldMetadataIdByObjectAndFieldName[objectName].id,
+    objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
     type,
     name,
     label,
@@ -86,8 +86,8 @@ export const createStandardFieldFlatMetadata = <
     isUIReadOnly,
     isLabelSyncedWithName: false,
     standardOverrides: null,
-    defaultValue,
-    settings,
+    defaultValue: defaultValue ?? null,
+    settings: settings ?? null,
     options: fieldOptions?.map((option) => ({ ...option, id: v4() })) ?? null,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
@@ -99,5 +99,16 @@ export const createStandardFieldFlatMetadata = <
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[objectName].universalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: settings ?? null,
   };
 };

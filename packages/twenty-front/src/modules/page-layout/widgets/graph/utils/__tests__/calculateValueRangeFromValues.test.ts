@@ -1,4 +1,4 @@
-import { calculateValueRangeFromValues } from '../calculateValueRangeFromValues';
+import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
 
 describe('calculateValueRangeFromValues', () => {
   it('should return minimum=0 and maximum=highest value for all positive values', () => {

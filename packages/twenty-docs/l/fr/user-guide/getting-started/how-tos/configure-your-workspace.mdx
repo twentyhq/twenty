@@ -1,0 +1,77 @@
+---
+title: Configurer votre espace de travail
+description: Chaque entreprise fonctionne différemment. Commencez par ces 3 étapes pour adapter Twenty à vos besoins.
+---
+
+<Note>**Gain rapide**: Commencez par connecter votre boîte aux lettres. Cela vous procure une valeur immédiate et aide votre équipe à voir Twenty en action avec de vraies données. Vous pouvez le faire sous Paramètres → Comptes.</Note>
+
+## 1. Personnalisez votre modèle de données
+
+Twenty offre la flexibilité dont vous avez besoin pour façonner le modèle de données qui soutiendra au mieux votre quotidien.
+Créez des objets et champs de tout type, y compris les relations entre vos différents objets. Vous pouvez le faire sous Paramètres → Modèle de données.
+Voici quelques conseils :
+
+* **Vous n'êtes pas limité dans le nombre de champs ou d'objets personnalisés**. Ajouter des objets et champs personnalisés n'entraînera pas de mise à jour de votre plan.
+* **Personnes, Entreprises et Opportunités sont les trois objets à partir desquels vous pouvez accéder aux e-mails et aux réunions synchronisés depuis votre boîte aux lettres et votre calendrier**. Nous recommandons d'utiliser ces éléments autant que possible, en ajoutant des champs pour catégoriser vos enregistrements si besoin. Voici un exemple :
+  * Il vaut mieux utiliser l'objet Personnes pour vos prospects et partenaires, en créant un champ sur l'objet Personnes nommé `Type de personne`, plutôt que de créer un objet personnalisé Partenaire. Parce que vous ne pourriez pas accéder aux emails échangés avec cette personne à partir des enregistrements Partenaire.
+  * Créez différentes vues sous Personnes, une pour afficher les partenaires et une pour afficher les prospects.
+* Deux personnes ne peuvent pas avoir la même adresse email. Deux entreprises ne peuvent pas avoir le même domaine.
+* Vous pouvez désactiver les champs et objets standards que vous ne souhaitez pas utiliser.
+* Vous pouvez masquer les champs des vues : n'ayez pas peur de créer des champs, vous n'aurez pas à tous les afficher.
+
+Lisez [cet article](/l/fr/user-guide/data-model/overview) pour apprendre à concevoir votre modèle de données.
+
+## 2. Importez vos données
+
+Importer vos données existantes dans Twenty donne à votre équipe le contexte dès le départ.
+
+### Connectez votre boite aux lettres
+
+Si vous ne l'avez pas fait lors de la création de votre espace de travail, connectez votre **compte Google ou Microsoft** sous Paramètres → Comptes. Cela permet à Twenty de :
+
+* Importer vos messages et réunions
+* Créer automatiquement des contacts basés sur les interactions (optionnel)
+* Garder l'historique de communication visible pour votre équipe
+
+**Utilisez un autre fournisseur ?**
+Vous pouvez ajouter une autre boite aux lettres via SMTP ou un autre calendrier via CalDAV. Allez dans **Paramètres → Comptes** pour configurer.
+
+### Importez des données via csv
+
+Utilisez le menu Commande (`Cmd + K` ou `Ctrl + K`) pour importer des Personnes, Entreprises, Opportunités ou tout autre objet personnalisé via CSV.
+
+**Lignes directrices principales** :
+
+* Téléchargez le fichier exemple pour comprendre le format attendu
+* Limitez chaque fichier à 10k enregistrements
+* Supprimez les emails en double pour les Personnes ou les domaines en double pour les Entreprises
+* Examinez et corrigez les erreurs (surlignées en jaune) avant de les importer
+
+Lisez [cet article](/l/fr/user-guide/data-migration/overview) pour en savoir plus sur l'importation de données.
+
+## 3. Créez votre première vue
+
+Créer différentes vues est essentiel pour rendre les données exploitables pour votre équipe.
+Voici comment procéder :
+
+* **Ajouter ou masquer les colonnes**
+  Gérer les champs visibles dans une vue donnée en cliquant sur Options → Champs (en haut à droite). Vous pouvez afficher/masquer des champs à partir de là.
+
+* **Réorganiser les champs**
+  Réorganisez les champs d'une vue donnée en cliquant sur Options → Champs (en haut à droite). Glisser-déposer les champs pour les réorganiser.
+
+* **Filtrer votre vue**
+  Réduisez le nombre d'enregistrements affichés en utilisant les Filtres en haut à droite.
+
+* **Trier les enregistrements**
+  Réorganisez les enregistrements affichés en utilisant la fonction de tri en haut à droite, ou en cliquant directement sur le nom de la colonne.
+
+* **Choisissez la disposition**
+  Vous pouvez passer à une disposition **Kanban** ou à une liste **Grouper Par**, tant que l'objet a un champ de type 'Étape' ou similaire.
+
+* **Enregistrez votre vue comme Favoris**
+  Cela peut être fait en utilisant le menu déroulant affichant les différentes vues.
+
+## Et après ?
+
+Commencez à créer des automatisations en utilisant [les flux de travail](/l/fr/user-guide/workflows/overview).

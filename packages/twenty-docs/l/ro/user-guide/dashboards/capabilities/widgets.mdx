@@ -1,0 +1,149 @@
+---
+title: Widgeturi
+description: Explorați tipurile de widgeturi și opțiunile de vizualizare din Twenty.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Widgeturi disponibile
+
+Twenty oferă diverse tipuri de widgeturi pentru a vă vizualiza datele CRM.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Grafice cu bare</span>
+
+Afișează datele sub formă de bare orizontale sau verticale.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Grafic cu bare" />
+</Frame>
+
+**Cel mai potrivit pentru:**
+
+* Compararea valorilor între categorii
+* Afișarea clasamentelor
+* Urmărirea indicatorilor pe perioade de timp
+
+**Exemple de utilizare:**
+
+* Oportunități după stadiu
+* Venituri după reprezentant de vânzări
+* Contacte adăugate pe lună
+
+<Note>
+  **Limite de afișare**: Graficele cu bare pot afișa maximum 100 de bare și 50 de grupuri pentru fiecare bară când se utilizează Group By. Dacă vedeți avertismentul "Date neafișate: max X bare pe grafic", adăugați filtre pentru a restrânge datele sau schimbați gruparea (de ex., grupați pe săptămână în loc de zile).
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Grafice circulare</span>
+
+Afișează proporțiile dintr-un întreg.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Grafic circular" />
+</Frame>
+
+**Cel mai potrivit pentru:**
+
+* Afișarea compoziției sau distribuției
+* Compararea părților cu întregul
+* Evidențierea segmentelor principale
+
+**Exemple de utilizare:**
+
+* Distribuția oportunităților după sursă
+* Defalcarea contactelor după industrie
+* Compoziția pipeline-ului după proprietar
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Grafice liniare</span>
+
+Afișează tendințele în timp.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Grafic liniar" />
+</Frame>
+
+**Cel mai potrivit pentru:**
+
+* Urmărirea schimbărilor în timp
+* Identificarea tendințelor
+* Compararea mai multor indicatori
+
+**Exemple de utilizare:**
+
+* Tendința lunară a numărului de oportunități
+* Creșterea veniturilor pe trimestre
+* Nivelurile de activitate în timp
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Diagrame agregate</span>
+
+Afișează proeminent valori cheie unice.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Diagramă agregată" />
+</Frame>
+
+**Cel mai potrivit pentru:**
+
+* Evidențierea indicatorilor cheie de performanță (KPI)
+* Afișarea totalurilor sau mediilor
+* Verificări rapide ale stării
+
+**Exemple de utilizare:**
+
+* Valoarea totală a pipeline-ului
+* Numărul de oportunități deschise
+* Rată de conversie
+
+**Opțiuni avansate:**
+
+* **Ratio**: Pentru câmpurile Select, calculați rapoarte între valori. Accesați **Data on display** → selectați câmpul → activați opțiunea **Ratio**.
+* **Prefix și Sufix**: Adăugați text personalizat înainte sau după număr (de ex., prefix "$" sau sufix "%") pentru o lizibilitate mai bună.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrame-uri</span>
+
+Încorporați instrumente externe și conținut extern direct în tabloul de bord.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**Cel mai potrivit pentru:**
+
+* Afișarea rapoartelor sau tablourilor de bord externe
+* Integrarea instrumentelor de vânzări terțe
+* Afișarea conținutului în timp real din alte sisteme
+
+**Exemple de utilizare:**
+
+* Indicatori din instrumentul de asistență
+* Indicatori din dialer
+* Conținut în timp real din instrumentul de secvențe de vânzări
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Text îmbogățit</span>
+
+Adăugați text formatat și conținut direct în tabloul de bord.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Text îmbogățit" />
+</Frame>
+
+**Cel mai potrivit pentru:**
+
+* Adăugarea de context sau instrucțiuni
+* Descrieri ale tabloului de bord
+* Note și adnotări
+
+**Funcționalități:**
+
+* Formatare de tip text îmbogățit (aldin, cursiv, liste etc.)
+* Încărcarea imaginilor și fișierelor
+* Editare în stil Markdown
+
+<Note>
+  **În curând**: Graficele tip indicator (gauge) și tabelele nu sunt încă disponibile, dar se află pe foaia noastră de parcurs.
+</Note>
+
+### Duplicarea widgeturilor
+
+1. Faceți clic pe widget
+2. Deschideți **Opțiuni**
+3. Faceți clic pe **Duplicare widget**

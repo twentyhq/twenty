@@ -7,7 +7,7 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 @Command({
@@ -18,11 +18,11 @@ export class MessagingMessageCleanerRemoveOrphansCommand extends ActiveOrSuspend
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
 
   override async runOnWorkspace({

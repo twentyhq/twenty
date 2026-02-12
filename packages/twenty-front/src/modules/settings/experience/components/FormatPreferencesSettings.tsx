@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -11,12 +10,13 @@ import { DateTimeSettingsDateFormatSelect } from '@/settings/experience/componen
 import { DateTimeSettingsTimeFormatSelect } from '@/settings/experience/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '@/settings/experience/components/DateTimeSettingsTimeZoneSelect';
 import { NumberFormatSelect } from '@/settings/experience/components/NumberFormatSelect';
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberNumberFormatEnum,
   WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { DateTimeSettingsCalendarStartDaySelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect';
 
 const StyledContainer = styled.div`

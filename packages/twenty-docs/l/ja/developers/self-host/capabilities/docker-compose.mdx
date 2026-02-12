@@ -1,0 +1,253 @@
+---
+title: 1-クリック w/ Docker Compose
+---
+
+<Warning>
+  Dockerコンテナは本番ホスティングまたはセルフホスティング用です。貢献するには、[ローカルセットアップ](/l/ja/developers/contribute/capabilities/local-setup)を確認してください。
+</Warning>
+
+## 概要
+
+このガイドは、Docker Composeを使用してTwentyアプリケーションをインストールおよび構成するためのステップバイステップの手順を提供します。 プロセスを簡単にし、設定を破壊する可能性のある一般的な落とし穴を防止することが目的です。 プロセスを簡単にし、設定を破壊する可能性のある一般的な落とし穴を防止することが目的です。 プロセスを簡単にし、設定を破壊する可能性のある一般的な落とし穴を防止することが目的です。 プロセスを簡単にし、設定を破壊する可能性のある一般的な落とし穴を防止することが目的です。
+
+**重要:** このガイドで明示的に言及されている設定のみを変更してください。 他の構成を変更すると、問題が発生する可能性があります。 他の構成を変更すると、問題が発生する可能性があります。 他の構成を変更すると、問題が発生する可能性があります。
+
+高度な構成については、[環境変数の設定](/l/ja/developers/self-host/capabilities/setup)を参照してください。 高度な構成については、[環境変数の設定](https://docs.twenty.com/l/ja/developers/self-hosting/setup)を参照してください。 高度な構成については、[環境変数の設定](https://docs.twenty.com/l/ja/developers/self-hosting/setup)を参照してください。 すべての環境変数は、サーバーレベルまたはワーカーレベルでdocker-compose.ymlファイルに宣言する必要があります。
+
+## システム要件
+
+* RAM: 環境に最低2GBのRAMがあることを確認してください。 メモリが不足するとプロセスがクラッシュすることがあります。 メモリが不足するとプロセスがクラッシュすることがあります。 メモリが不足するとプロセスがクラッシュすることがあります。 メモリが不足するとプロセスがクラッシュすることがあります。 メモリが不足するとプロセスがクラッシュすることがあります。 メモリが不足するとプロセスがクラッシュすることがあります。 メモリが不足するとプロセスがクラッシュすることがあります。
+* Docker & Docker Compose: 両方がインストールされ、最新であることを確認してください。
+
+## オプション 1: ワンラインスクリプト
+
+単一のコマンドで最新版のTwentyをインストールします:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+特定のバージョンまたはブランチをインストールするには:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* x.y.zを希望するバージョン番号に置き換えます。
+* branch-nameをインストールしたいブランチの名前に置き換えます。
+
+## オプション 2: 手動の手順
+
+マニュアルセットアップには、これらの手順に従ってください。
+
+### ステップ 1: 環境ファイルを設定
+
+1. **.env ファイルを作成**
+
+   例の環境ファイルを作業ディレクトリに新しい.envファイルとしてコピーします:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **シークレットトークンを生成**
+
+   ユニークなランダム文字列を生成するには、次のコマンドを実行します:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **重要:** この値を秘密にしてください/共有しないでください。
+
+3. **`.env`を更新**
+
+   生成したトークンで.envファイルのプレースホルダー値を置き換えます:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Postgres パスワードを設定**
+
+   特殊文字を含まない強力なパスワードで、.envファイルの`PG_DATABASE_PASSWORD`値を更新します。
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### ステップ 2: Docker Compose ファイルを取得
+
+作業ディレクトリに`docker-compose.yml`ファイルをダウンロードします:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### ステップ 3: アプリケーションを起動
+
+Dockerコンテナを開始します:
+
+```bash
+docker compose up -d
+```
+
+### ステップ 4: アプリケーションにアクセス
+
+自分のコンピュータでtwentyCRMをホストしている場合は、ブラウザを開いて[http://localhost:3000](http://localhost:3000)にアクセスします。
+
+サーバーでホストしている場合、サーバーが稼働していてすべてが正常であるかを確認してください
+
+```bash
+curl http://localhost:3000
+```
+
+## 構成
+
+### Twentyを外部アクセスに公開
+
+デフォルトでは、Twentyはポート`3000`で`localhost`上で動作します。 外部ドメインまたはIPアドレス経由でアクセスするには、`.env`ファイルで`SERVER_URL`を構成する必要があります。 外部ドメインまたはIPアドレス経由でアクセスするには、`.env`ファイルで`SERVER_URL`を構成する必要があります。
+
+#### `SERVER_URL`の理解
+
+* **プロトコル:** 設定に応じて`http`または`https`を使用します。
+  * SSLを設定していない場合は`http`を使用します。
+  * SSLを構成済みの場合は`https`を使用します。
+* **ドメイン/IP:** これは、アプリケーションがアクセス可能なドメイン名またはIPアドレスです。
+* **ポート:** デフォルトのポート（`http`は`80`、`https`は`443`）以外を使用している場合、ポート番号を含めます。
+
+### SSL 要件
+
+SSL（HTTPS）は、特定のブラウザ機能が正しく動作するために必要です。 SSL（HTTPS）は、特定のブラウザ機能が正しく動作するために必要です。 SSL（HTTPS）は、特定のブラウザ機能が正しく動作するために必要です。 これらの機能は、ローカル開発中に動作するかもしれませんが（ブラウザがlocalhostを異なる扱い方をするため）、Twentyを通常のドメインでホスティングする場合、適切なSSLの設定が必要です。
+
+たとえば、クリップボードAPIは安全なコンテキストが必要かもしれません - アプリケーション全体でのコピー ボタンのような機能は、HTTPSが有効でないと動作しないかもしれません。
+
+最適なセキュリティと機能のために、SSL終了を備えたリバースプロキシの背後にTwentyを設定することを強くお勧めします。
+
+#### `SERVER_URL`の構成
+
+1. **アクセスURLを特定する**
+   * **リバースプロキシがない場合（直接アクセス）:**
+
+     リバースプロキシなしでアプリケーションに直接アクセスする場合:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **リバースプロキシを使用する場合（標準ポート）:**
+
+     NginxやTraefikのようなリバースプロキシを使用し、SSLを構成している場合:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **リバースプロキシを使用する場合（カスタムポート）:**
+
+     標準以外のポートを使用している場合:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **.env ファイルを更新**
+
+   .env`ファイルを開き、`SERVER_URL\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\`を更新します:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **例:**
+
+   * SSLなしの直接アクセス:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * ドメイン経由でSSLを使用してアクセス:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **アプリケーションを再起動**
+
+   変更を反映するために、Dockerコンテナを再起動します:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### 考慮事項
+
+* **リバースプロキシ構成:**
+
+  リバースプロキシが正しい内部ポート（デフォルトでは`3000`）にリクエストを転送することを確認してください。 SSL終端と必要なヘッダーを設定します。 SSL終端と必要なヘッダーを設定します。 SSL終端と必要なヘッダーを設定します。
+
+* **ファイアウォール設定:**
+
+  外部アクセスを許可するためにファイアウォールで必要なポートを開けます。
+
+* **一貫性:**
+
+  `SERVER_URL`は、ユーザーがブラウザでアプリケーションにアクセスする方法と一致する必要があります。
+
+#### 永続性
+
+* **データボリューム:**
+
+  Docker Compose 構成では、データベースとサーバーストレージのデータを永続化するためにボリュームを使用します。
+
+* **ステートレス環境:**
+
+  ステートレス環境（例: 一部のクラウドサービス）に展開する場合、データを永続化するために外部ストレージを設定します。
+
+## バックアップと復元
+
+定期的なバックアップは、CRM データを損失から保護します。
+
+### データベースのバックアップを作成
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### 日次バックアップを自動化
+
+crontab に追加 (`crontab -e`):
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### バックアップから復元
+
+1. アプリケーションを停止します:
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. データベースを復元します:
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. サービスの再起動:
+
+```bash
+docker compose up -d
+```
+
+### バックアップのベストプラクティス
+
+* **復元を定期的にテスト** — バックアップが実際に機能することを確認
+* **バックアップをオフサイトに保管** — クラウドストレージ (S3, GCS など) を使用
+* **機密データを暗号化** — バックアップを暗号化で保護
+* **複数のコピーを保持** — 日次・週次・月次のバックアップを保持
+
+## トラブルシューティング
+
+問題が発生した場合は、[トラブルシューティング](/l/ja/developers/self-host/capabilities/troubleshooting)を確認して解決策を見つけてください。

@@ -1,0 +1,41 @@
+---
+title: メッセージキュー
+---
+
+キューは非同期処理を実行するための手段を提供します。 それらは、登録時にウェルカムメールを送信するなどのバックグラウンドタスクを実行するために使用できます。
+各ユースケースには `MessageQueueServiceBase` から拡張された独自のキュークラスが必要です。
+
+現在のところ、キュードライバとして `bull-mq`[bull-mq](https://bullmq.io/) のみをサポートしています。
+
+## 新しいキューを作成して使用する手順
+
+1. enum `MESSAGE_QUEUES` に、新しいキュー用のキュー名を追加します。
+2. 依存トークンとしてキュー名を持つキューのファクトリ実装を提供します。
+3. 依存性トークンとしてキュー名を使用して、作成したキューを必要なモジュール/サービスにインジェクトします。
+4. トークンベースのインジェクションを用いたワーカークラスをプロデューサーと同様に追加します。
+
+### 使用例
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

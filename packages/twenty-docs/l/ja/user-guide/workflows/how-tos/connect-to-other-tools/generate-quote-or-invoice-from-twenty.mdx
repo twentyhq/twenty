@@ -1,0 +1,144 @@
+---
+title: Twenty から見積書または請求書を作成
+description: 商談がクローズしたときに、外部ツールで請求書を自動作成します。
+---
+
+商談データを請求書発行システム (Stripe、QuickBooks、Xero など) に自動送信します。 商談が受注になったときに。
+
+## ワークフローの構成
+
+1. **トリガー**: レコードが更新 (商談オブジェクト)
+2. **フィルター**: ステージ = Closed Won
+3. **レコード検索**: 会社の詳細を取得
+4. **コード** (任意): ペイロードを整形
+5. **HTTP リクエスト**: 請求書発行システムに送信
+
+## ステップ 1: トリガーを設定
+
+1. 新しいワークフローを作成
+2. **Record is Updated** トリガーを選択
+3. オブジェクトとして **Opportunity** を選択
+
+## ステップ 2: Closed Won でフィルター
+
+商談が受注になったときのみ続行するように、**フィルター** アクションを追加:
+
+| 設定        | 値                           |
+| --------- | --------------------------- |
+| **フィールド** | ステージ                        |
+| **条件**    | 等しい                         |
+| **値**     | `CLOSED_WON` (またはあなたのステージ名) |
+
+<Tip>
+  このトリガーは、商談の更新があるたびに発火します。 このフィルターにより、ステージが Closed Won に変わった場合にのみワークフローが続行されます。
+</Tip>
+
+## ステップ 3: 会社の詳細を取得
+
+商談レコードには、請求書に必要なすべての会社フィールドが含まれていない可能性があります。 **レコード検索** アクションを追加:
+
+| 設定         | 値                                        |
+| ---------- | ---------------------------------------- |
+| **オブジェクト** | 会社                                       |
+| **一致条件**   | ID が `{{trigger.object.companyId}}` に等しい |
+
+これにより、請求先住所、税番号などを含む会社の完全なレコードを取得します。
+
+## ステップ 4: ペイロードを整形 (任意)
+
+請求書発行システムが特定のフォーマットを想定している場合は、**コード** アクションを追加:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## ステップ 5: 請求書発行システムに送信
+
+**HTTP リクエスト** アクションを追加:
+
+| 設定       | 値                                    |
+| -------- | ------------------------------------ |
+| **メソッド** | POST                                 |
+| **URL**  | 請求書発行 API のエンドポイント                   |
+| **ヘッダー** | `Authorization: Bearer YOUR_API_KEY` |
+| **本文**   | `{{code.invoice}}` またはフィールドを直接マッピング  |
+
+### 例: Stripe の請求書
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### 例: QuickBooks の請求書
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## ワークフロー全体の概要
+
+| 手順 | アクション                | 目的                       |
+| -- | -------------------- | ------------------------ |
+| 1  | トリガー: Record Updated | 任意の商談が変更されたときに発火         |
+| 2  | フィルター                | ステージが Closed Won の場合のみ続行 |
+| 3  | レコード検索               | 請求用の会社詳細を取得              |
+| 4  | コード                  | 請求書発行 API 向けにデータを整形      |
+| 5  | HTTPリクエスト            | 外部システムで請求書を作成            |
+
+## ヒント
+
+* **外部 ID を保存**: **Update Record** アクションを使用して、API から返された請求書 ID を商談に保存
+* **エラー処理**: HTTP リクエストが失敗した場合に通知を送信する分岐を追加
+* **まずテスト**: 本番運用前に、請求書発行システムのサンドボックス/テストモードを使用
+
+## 関連
+
+* [Twenty から PDF を生成する](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — 生成された PDF をレコードに添付する
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [Closed Won の自動化](/l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

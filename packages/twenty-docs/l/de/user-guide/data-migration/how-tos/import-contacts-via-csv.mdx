@@ -1,0 +1,242 @@
+---
+title: Kontakte über CSV importieren
+description: Vollständige Schritt-für-Schritt-Anleitung zum Importieren von Personen/Kontakten in Twenty.
+---
+
+## Übersicht
+
+Diese Anleitung führt Sie durch den Import Ihrer Kontakte (Personen) in Twenty. **Importieren Sie zuerst Unternehmen**, wenn Sie Personen mit Unternehmen verknüpfen möchten.
+
+## Bevor Sie beginnen
+
+### Checkliste der Voraussetzungen
+
+<Check>
+  Ihre Datei ist im CSV-, XLSX- oder XLS-Format
+</Check>
+
+<Check>
+  Die Datei enthält weniger als 10.000 Datensätze
+</Check>
+
+<Check>
+  Keine doppelten E-Mail-Adressen in Ihrer Datei
+</Check>
+
+<Check>
+  **Unternehmen zuerst importiert** (wenn Personen mit Unternehmen verknüpft werden)
+</Check>
+
+<Check>
+  Alle benutzerdefinierten Felder existieren in **Einstellungen → Datenmodell**
+</Check>
+
+<Warning>
+  **Unternehmen vor Personen importieren**
+
+  Wenn Sie Personen mit Unternehmen verknüpfen möchten, importieren Sie zuerst Unternehmen. Das Unternehmen muss existieren, bevor Sie darauf verweisen können.
+</Warning>
+
+## Schritt 1: Bereiten Sie Ihre Kontaktdaten vor
+
+### Erforderliche und empfohlene Felder
+
+| Feld                          | Erforderlich? | Format            | Notizen                               |
+| ----------------------------- | ------------- | ----------------- | ------------------------------------- |
+| **E-Mail**                    | Empfohlen     | `name@domain.com` | Muss eindeutig sein                   |
+| **Vorname**                   | Empfohlen     | Text              |                                       |
+| **Nachname**                  | Empfohlen     | Text              |                                       |
+| **Unternehmen**               | Optional      | Domain oder ID    | Verknüpft mit vorhandenem Unternehmen |
+| **Telefon**                   | Optional      | Mehrere Spalten   | Siehe unten                           |
+| **Berufsbezeichnung**         | Optional      | Text              |                                       |
+| **Benutzerdefinierte Felder** | Optional      | Variiert          | Muss im Datenmodell existieren        |
+
+### E-Mail-Format
+
+* Muss ein gültiges E-Mail-Format haben: `name@domain.com`
+* **Muss eindeutig sein** — keine Duplikate in Ihrer Datei oder in Twenty
+* Für zusätzliche E-Mails verwenden Sie die Spalte **Emails / Additional Emails**:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Telefonformat
+
+Telefon ist ein **verschachteltes Feld**, das mehrere Spalten erfordert:
+
+| Spalte                                  | Beispiel     |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Verknüpfung mit Unternehmen
+
+Fügen Sie eine Spalte mit dem eindeutigen Bezeichner des Unternehmens hinzu:
+
+| Spaltenname     | Format     | Beispiel                               |
+| --------------- | ---------- | -------------------------------------- |
+| `companyDomain` | URL-Format | `https://acme.com`                     |
+| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Note>
+  **Domain-URL-Format verwenden** (`https://acme.com`), nicht die Bezeichnung. Dies entspricht der Art, wie Unternehmen in Twenty gespeichert werden.
+</Note>
+
+### Beispielhafte CSV-Struktur
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
+John,Smith,john@acme.com,CEO,https://acme.com,4159095555,US
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
+```
+
+<Note>
+  **Profi-Tipp:** Klicken Sie während des Imports auf **Beispieldatei herunterladen** oder exportieren Sie einige vorhandene Personen, um die genauen Spaltennamen zu sehen, die Twenty erwartet.
+</Note>
+
+## Schritt 2: Zugriff auf die Importfunktion
+
+**Option 1: Aus der Personenansicht**
+
+1. Navigieren Sie zu **Personen** in der linken Seitenleiste
+2. Klicken Sie auf das Symbol **⋮** oben rechts
+3. Wählen Sie **Datensätze importieren**
+
+**Option 2: Über das Befehlsmenü**
+
+1. Drücken Sie `Cmd + K` (Mac) oder `Strg + K` (Windows)
+2. Geben Sie "import" ein
+3. Wählen Sie **Datensätze importieren**
+4. Wählen Sie **Personen**
+
+## Schritt 3: Laden Sie Ihre Datei hoch
+
+1. Klicken Sie auf **Datei auswählen**
+2. Wählen Sie Ihre CSV-, XLSX- oder XLS-Datei aus
+3. Warten Sie, bis Twenty Ihre Datei analysiert
+
+## Schritt 4: Ordnen Sie Ihre Spalten zu
+
+Twenty versucht automatisch, Ihre Spalten den Feldern zuzuordnen. Prüfen und anpassen:
+
+1. **Automatische Zuordnungen prüfen** — vergewissern Sie sich, dass sie korrekt sind
+2. **Falsche Zuordnungen korrigieren** — klicken Sie auf das Dropdown, um das richtige Feld auszuwählen
+3. **Spalten überspringen** — wählen Sie **Do not map** für Spalten, die Sie nicht importieren möchten
+
+### Wichtige Zuordnungsregeln
+
+| Spaltentyp           | Zuordnen zu                    | Notizen                                    |
+| -------------------- | ------------------------------ | ------------------------------------------ |
+| Unternehmensreferenz | **Company**-Beziehungsfeld     | Verwenden Sie Domain ODER ID, nicht beides |
+| E-Mail               | **E-Mail**                     | Primäre E-Mail-Adresse                     |
+| Zusätzliche E-Mails  | **Emails / Additional Emails** | Array-Format                               |
+| Telefon              | Getrennte Spalten              | Nummer, Ländercode, Telefonvorwahl         |
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+### Zuordnung der Unternehmensbeziehung
+
+Beim Zuordnen der Unternehmensspalte:
+
+1. Suchen Sie Ihre Unternehmensreferenzspalte (z. B. `companyDomain`)
+2. Ordnen Sie sie dem **Company**-Beziehungsfeld zu
+3. Twenty verknüpft jede Person mit dem passenden Unternehmen
+
+<Warning>
+  **Ordnen Sie für Beziehungen nur EINEN eindeutigen Bezeichner zu.**
+
+  Ordnen Sie nicht sowohl `companyId` als auch `companyDomain` zu. Wählen Sie eines — vorzugsweise die Domain, da sie menschenlesbar ist.
+</Warning>
+
+## Schritt 5: Werte von Auswahlfeldern zuordnen
+
+Wenn Sie Auswahl- oder Mehrfachauswahlfelder haben (wie z. B. Lead-Quelle):
+
+1. Twenty zeigt Ihre Werte neben den vorhandenen Optionen an
+2. Ordnen Sie jeden Wert in Ihrer Datei einer Twenty-Option zu
+3. Oder erstellen Sie bei Bedarf neue Optionen
+
+<Note>
+  Auswahloptionen verwenden **API-Namen**, nicht Anzeigenamen. Prüfen Sie **Einstellungen → Datenmodell** → Aktivieren Sie den **Erweiterten Modus**, um API-Namen zu sehen.
+</Note>
+
+## Schritt 6: Fehler prüfen und beheben
+
+Bevor der Import abgeschlossen wird, validiert Twenty Ihre Daten:
+
+1. Klicken Sie auf **Nächste Schritte**
+2. Zeilen mit Fehlern sind **gelb** hervorgehoben
+3. **Fehler direkt beheben** — klicken Sie auf eine Zelle und bearbeiten Sie den Wert
+4. **Problematische Zeilen entfernen** — klicken Sie auf das X, um die Zeile zu überspringen
+
+### Häufige Fehler beim Kontaktimport
+
+| Fehler                        | Ursache                                              | Lösung                                                               |
+| ----------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------- |
+| **Doppelte E-Mail**           | E-Mail existiert bereits in Twenty oder in der Datei | Duplikat entfernen oder bestehenden Datensatz aktualisieren          |
+| **Ungültiges E-Mail-Format**  | E-Mail-Format ist falsch                             | Auf `name@domain.com` korrigieren                                    |
+| **Relation nicht gefunden**   | Unternehmen existiert nicht                          | Importieren Sie zuerst Unternehmen oder korrigieren Sie die Referenz |
+| **Erforderliches Feld fehlt** | Erforderliches Feld ist leer                         | Wert ausfüllen oder Zeile entfernen                                  |
+
+## Schritt 7: Import abschließen
+
+1. Importzusammenfassung prüfen
+2. Klicken Sie auf **Bestätigen**, um zu importieren
+3. Warten Sie, bis der Import abgeschlossen ist
+4. Überprüfen Sie dies, indem Sie einige Datensätze und deren Unternehmensverknüpfungen kontrollieren
+
+## Nach dem Import von Kontakten
+
+Ihre Kontakte sind jetzt in Twenty! Nächste Schritte:
+
+1. **Unternehmensverknüpfungen überprüfen** — öffnen Sie einige Personen-Datensätze, um zu bestätigen, dass sie mit dem richtigen Unternehmen verknüpft sind
+2. **Verkaufschancen importieren** — verknüpfen Sie sie bei Bedarf mit Personen und Unternehmen
+3. **E-Mail-Synchronisierung einrichten** — verbinden Sie Ihr Postfach, um den E-Mail-Verlauf in Kontaktdatensätzen zu sehen
+
+## Vorhandene Kontakte aktualisieren
+
+So aktualisieren Sie Kontakte, statt neue zu erstellen:
+
+1. Fügen Sie die Spalte `email` oder `id` in Ihrer Datei hinzu
+2. Twenty gleicht Datensätze anhand dieses eindeutigen Bezeichners ab
+3. Vorhandene Kontakte werden aktualisiert; neue werden erstellt
+
+Details finden Sie unter [So aktualisieren Sie vorhandene Datensätze](/l/de/user-guide/data-migration/how-tos/update-existing-records-via-import).
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Warum können zwei Personen nicht dieselbe E-Mail haben?">
+    E-Mail ist ein eindeutiger Bezeichner in Twenty. Das verhindert doppelte Kontakte und stellt sicher, dass die E-Mail-Synchronisierung E-Mails der richtigen Person korrekt zuordnet.
+  </Accordion>
+
+  <Accordion title="Was ist, wenn ich Personen ohne E-Mail habe?">
+    Sie können das E-Mail-Feld leer lassen. Wir empfehlen jedoch, wenn möglich E-Mail-Adressen hinzuzufügen, um die Datenqualität und die E-Mail-Synchronisierung zu verbessern.
+  </Accordion>
+
+  <Accordion title="Wie verknüpfe ich Personen beim Import mit Unternehmen?">
+    Fügen Sie eine Spalte mit der Domain des Unternehmens (z. B. `https://acme.com`) oder der ID hinzu. Verbinden Sie diese Spalte beim Mapping mit dem Unternehmens-Relationsfeld.
+  </Accordion>
+
+  <Accordion title="Was ist, wenn das Unternehmen noch nicht existiert?">
+    Importieren Sie zuerst Unternehmen und dann Personen. Das Unternehmen muss existieren, bevor Sie darauf verweisen können.
+  </Accordion>
+
+  <Accordion title="Kann ich die ID aus meinem vorherigen CRM importieren?">
+    Ja! Erstellen Sie in Ihrem Datenmodell ein benutzerdefiniertes Feld, das als "eindeutig" markiert ist, um die externe ID zu speichern. Hinweis: Der Feldname `id` ist für die interne ID von Twenty reserviert.
+  </Accordion>
+
+  <Accordion title="Wie behebe ich Fehler vom Typ 'Relation nicht gefunden'?">
+    Das Unternehmen, auf das Sie verweisen, existiert nicht. Importieren Sie entweder zuerst das Unternehmen oder prüfen Sie, dass die Domain/ID exakt mit einem vorhandenen Unternehmen übereinstimmt.
+  </Accordion>
+</AccordionGroup>
+
+## Fehlerbehebung
+
+Gibt es Probleme? Prüfen Sie:
+
+* [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+* [So importieren Sie Beziehungen](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Referenz zur Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)

@@ -1,0 +1,198 @@
+---
+title: Permissões
+description: Controle o acesso a objetos, campos e configurações com permissões baseadas em função.
+image: /images/user-guide/permissions/permissions.png
+---
+
+O sistema de permissões do Twenty permite que você controle o acesso a três áreas principais:
+
+* **Objetos e Campos**: Controle quem pode visualizar, editar ou excluir registros e campos individuais
+* **Configurações**: Gerencie o acesso à configuração do espaço de trabalho e funções administrativas
+* **Ações**: Controle ações gerais do espaço de trabalho, como importar dados ou enviar e-mails
+
+## Criar uma Função
+
+Para criar uma nova função:
+
+1. Vá para **Configurações → Funções**
+2. Em **Todas as Funções**, clique em **+ Criar Função**
+3. Digite um nome para a função
+4. Na aba padrão **Permissões**, [configure as permissões](#customize-permissions)
+5. Clique em **Salvar** para finalizar
+
+## Excluir uma Função
+
+Para excluir uma função:
+
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja remover
+3. Abra a aba de **Configurações** e clique em **Excluir Função**
+4. Clique em **Confirmar** no modal
+
+<Note>
+  Se uma função for excluída, qualquer membro do espaço de trabalho atribuído a ela será automaticamente reatribuído à função padrão. Todas, exceto a função **Admin**, podem ser excluídas. Deve sempre haver pelo menos um membro atribuído à função **Admin**.
+</Note>
+
+## Atribuir Funções a Membros
+
+### Visualizar Atribuições Atuais
+
+* Vá para **Configurações → Funções**
+* Veja todas as funções e quantos membros estão atribuídos a cada uma
+* Veja quais membros têm quais funções
+
+### Atribuir uma Função a um Membro
+
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Clique em **+ Atribuir a membro**
+5. Selecione o membro do espaço de trabalho da lista
+6. Confirme a atribuição
+
+### Definir Função Padrão
+
+1. Vá para **Configurações → Funções**
+2. Na seção **Opções**, encontre **Função Padrão**
+3. Selecione qual função novos membros devem receber automaticamente
+4. Novos membros do espaço de trabalho serão atribuídos a essa função ao ingressar
+
+<Note>
+  Você só pode atribuir funções a membros existentes do espaço de trabalho. Para convidar novos membros, use [Gestão de Membros](/l/pt/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Personalizar Permissões
+
+As permissões determinam o que cada função pode acessar ou modificar dentro do seu espaço de trabalho, incluindo registros de objetos do espaço de trabalho, configurações e ações.
+
+### Permissões de Objetos
+
+A seção **Objetos** controla o que esta função pode fazer com registros em todo o seu espaço de trabalho.
+
+#### Definir permissões padrão (Todos os objetos)
+
+Primeiro, configure as permissões básicas que se aplicam a **todos os objetos** por padrão:
+
+| Permissão                                  | Descrição                                                 |
+| ------------------------------------------ | --------------------------------------------------------- |
+| **Ver registros em todos os objetos**      | Visualizar registros em listas e páginas de detalhes      |
+| **Editar registros em todos os objetos**   | Modificar registros existentes                            |
+| **Excluir registros em todos os objetos**  | Excluir registros de forma lógica (podem ser restaurados) |
+| **Destruir registros em todos os objetos** | Excluir registros permanentemente                         |
+
+Selecione ou desmarque com base no que deve ser o comportamento padrão desta função.
+
+<Note>
+  **Exemplo — função de Estagiário**: Um estagiário deve poder ver todos os objetos, mas não editá-los por padrão. Ative "Ver registros em todos os objetos", mas deixe "Editar registros em todos os objetos" desmarcado.
+</Note>
+
+#### Adicionar exceções em nível de objeto
+
+Após definir os padrões, use a subseção **Em nível de objeto** para adicionar regras que substituem os padrões para objetos específicos.
+
+Clique em **+ Adicionar regra** e selecione um objeto para criar uma exceção.
+
+**Regras de exemplo para uma função de Estagiário:**
+
+| Regra                                     | Efeito                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| Oportunidades → desativar "Ver registros" | O estagiário não consegue ver o objeto Oportunidades.                     |
+| Pessoas → ativar "Editar registros"       | O estagiário pode editar registros de Pessoas (mas não de outros objetos) |
+
+### Permissões de Campos
+
+Em cada regra em nível de objeto, você pode ir além e configurar **permissões em nível de campo** para controlar o acesso a campos específicos.
+
+| Permissão        | Descrição                      |
+| ---------------- | ------------------------------ |
+| **Ver campo**    | Visualizar o valor do campo    |
+| **Editar campo** | Modificar o valor do campo     |
+| **Sem acesso**   | O campo fica totalmente oculto |
+
+**Exemplo — Restringir campos sensíveis:**
+
+Para a função de Estagiário com acesso de edição em Pessoas, talvez você queira restringir certos campos:
+
+* Pessoas → E-mail → apenas **Ver campo** (não pode editar)
+* Pessoas → Endereço → **Sem acesso** (totalmente oculto)
+
+Isso permite que o estagiário edite a maioria dos campos de Pessoas enquanto protege informações sensíveis.
+
+### Como funciona a herança de permissões
+
+As permissões se propagam do geral para o específico:
+
+1. **Todos os objetos** → define a base para todos os objetos
+2. **Regras em nível de objeto** → substituem a base para objetos específicos
+3. **Regras em nível de campo** → substituem a configuração do objeto para campos específicos
+
+Configurações mais específicas sempre têm precedência.
+
+### Gerenciando Substituições de Permissões
+
+Para substituir permissões herdadas:
+
+1. Clique em **X** para remover a regra herdada
+2. Selecione as permissões específicas que você deseja
+3. Clique no ícone laranja de **Desfazer** (seta circular) para reverter alterações
+
+Quando terminar, clique em **Finalizar**, em seguida, **Salvar** ao redirecionar para a página de função.
+
+### Permissões de Configurações do Espaço de Trabalho
+
+Controle o acesso às configurações do espaço de trabalho de duas maneiras:
+
+* Ative **Acesso Total a Configurações** para conceder acesso total
+* Ou ative permissões específicas (por exemplo, geração de chave API, preferências do espaço de trabalho, atribuição de funções, configuração do modelo de dados, configurações de segurança e gestão de fluxos de trabalho)
+
+<Note>
+  **Limitação atual**: O acesso ao gerenciamento de fluxos de trabalho é atualmente necessário para acionar fluxos de trabalho manualmente. Esse comportamento pode mudar em versões futuras.
+</Note>
+
+### Permissões de Ação do Espaço de Trabalho
+
+Controle o acesso a ações gerais do espaço de trabalho:
+
+* Ative **Acesso Total à Aplicação** para conceder permissões totais
+* Ou habilite ações individuais como **Enviar Email**, **Importar CSV** e **Exportar CSV**
+
+## Atribuindo funções a chaves de API e agentes de IA
+
+Além dos membros do espaço de trabalho, funções também podem ser atribuídas a **Chaves de API** e **Agentes de IA**. Isso é particularmente útil para equipes que desejam controlar exatamente "quem" pode fazer o quê em seu espaço de trabalho — incluindo processos automatizados e integrações.
+
+### Por que atribuir funções a chaves de API e agentes de IA?
+
+* **Segurança**: Limite o que os processos automatizados podem acessar ou modificar
+* **Conformidade**: Garanta que as integrações acessem apenas os dados de que precisam
+* **Controle**: Evite alterações acidentais de dados causadas por automações mal configuradas
+* **Auditabilidade**: Acompanhe quais ações foram realizadas por qual integração ou agente
+
+### Atribuir uma função a uma chave de API
+
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Em **Chaves de API**, clique em **+ Atribuir à chave de API**
+5. Selecione a chave de API na lista
+6. Confirme a atribuição
+
+A chave de API agora herdará todas as permissões definidas por essa função. Qualquer chamada de API feita com essa chave será restringida de acordo.
+
+<Note>
+  Chaves de API sem uma função atribuída usam permissões padrão. Para maior segurança, sempre atribua uma função específica às chaves de API de produção.
+</Note>
+
+### Atribuir uma função a um agente de IA
+
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Em **Agentes de IA**, clique em **+ Atribuir ao agente de IA**
+5. Selecione o agente de IA na lista
+6. Confirme a atribuição
+
+O agente de IA só poderá acessar dados e executar ações permitidas pela função que lhe foi atribuída.
+
+<Note>
+  Para agentes de IA executados em fluxos de trabalho, isso garante que o agente não possa acessar ou modificar dados fora do seu escopo pretendido — mesmo que o fluxo de trabalho tenha permissões mais amplas.
+</Note>

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/SelectFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';

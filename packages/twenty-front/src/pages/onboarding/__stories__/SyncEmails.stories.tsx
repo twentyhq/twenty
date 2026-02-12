@@ -1,10 +1,10 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
+import { within } from 'storybook/test';
 import { AppPath } from 'twenty-shared/types';
 
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import {

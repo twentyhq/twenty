@@ -1,4 +1,4 @@
-import { turnIntoUndefinedIfWhitespacesOnly } from '../turnIntoUndefinedIfWhitespacesOnly';
+import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 describe('turnIntoUndefinedIfWhitespacesOnly', () => {
   it('should return undefined for whitespace-only input', () => {

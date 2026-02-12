@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -34,7 +35,7 @@ export const FormRawJsonFieldInput = ({
   const instanceId = useId();
 
   const editor = useTextVariableEditor({
-    placeholder: placeholder ?? 'Enter a JSON object',
+    placeholder: placeholder ?? t`Enter a JSON object`,
     multiline: true,
     readonly,
     defaultValue: defaultValue ?? undefined,

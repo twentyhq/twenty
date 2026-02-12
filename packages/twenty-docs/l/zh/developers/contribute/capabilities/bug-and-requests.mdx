@@ -1,0 +1,78 @@
+---
+title: 错误、功能请求与 Pull Request
+info: 报告问题、提出功能请求并贡献代码
+---
+
+## 报告错误
+
+要报告错误，请[在 GitHub 上创建一个 issue](https://github.com/twentyhq/twenty/issues/new)。
+
+你也可以在[Discord](https://discord.gg/cx5n4Jzs57)上寻求帮助。
+
+## 功能请求
+
+如果你不确定这是否是错误，并且觉得更像是功能请求，那么你可能应该[改为发起一个讨论](https://github.com/twentyhq/twenty/discussions/new)。
+
+## 提交 Pull Request
+
+向 Twenty 贡献代码从一个 Pull Request（PR）开始。
+
+### 开始之前
+
+1. 查看[现有的 issue](https://github.com/twentyhq/twenty/issues)以查找相关工作
+2. 对于新功能，请先打开一个 issue 进行讨论
+3. 阅读我们的[行为准则](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Fork 并克隆
+
+1. 在 GitHub 上 Fork 该仓库
+2. 克隆你的 Fork：
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. 添加上游远程仓库：
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### 创建分支
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+使用具有描述性的分支名称：
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### 进行更改
+
+1. 编写简洁、文档完善的代码
+2. 遵循现有的代码风格
+3. 为新功能添加测试
+4. 如有需要，请更新文档
+
+### 提交你的 PR
+
+1. 推送你的分支：
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. 在 GitHub 上发起 PR
+3. 填写 PR 模板
+4. 关联相关的 issue
+
+### PR 检查清单
+
+* [ ] 代码遵循项目的风格指南
+* [ ] 本地测试通过
+* [ ] 文档已更新
+* [ ] PR 描述清楚说明了更改

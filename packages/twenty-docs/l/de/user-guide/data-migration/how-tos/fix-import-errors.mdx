@@ -1,0 +1,430 @@
+---
+title: Importfehler beheben
+description: Umfassende Anleitung zur Fehlerbehebung bei CSV-Importfehlern.
+---
+
+## Übersicht
+
+Import funktioniert nicht? Diese Anleitung hilft Ihnen, häufige Importfehler Schritt für Schritt zu erkennen und zu beheben.
+
+## Wie die Importvalidierung funktioniert
+
+Nachdem Sie Ihre Datei hochgeladen und die Spalten zugeordnet haben, validiert Twenty Ihre Daten:
+
+1. **Validierung läuft** — Twenty prüft jede Zeile auf Fehler
+2. **Fehler werden hervorgehoben** — problematische Zeilen erscheinen in **gelb**
+3. **Sie können direkt korrigieren** — bearbeiten Sie Zellen direkt in der Import-UI
+4. **Oder Zeilen entfernen** — problematische Datensätze vollständig überspringen
+
+<Note>**Beheben Sie Fehler in der UI.** Sie müssen nicht zu Ihrer Tabellenkalkulation zurückkehren. Bearbeiten Sie Zellen direkt während des Imports, um Zeit zu sparen.</Note>
+
+## Schritt-für-Schritt-Fehlerbehebung
+
+### Schritt 1: Fehlertyp bestimmen
+
+Klicken Sie auf eine hervorgehobene Zeile, um die spezifische Fehlermeldung anzuzeigen. Häufige Fehlertypen:
+
+| Fehlermeldung                                                                  | Was es bedeutet                                                        |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Doppelte Werte, gelb hervorgehoben                                             | Wert existiert bereits in Twenty oder kommt in Ihrer Datei doppelt vor |
+| `{field} is not a valid {type}` (fahren Sie mit der Maus über die gelbe Zelle) | Daten entsprechen nicht dem erwarteten Format                          |
+| Erforderliches Feld hervorgehoben                                              | Erforderliches Feld ist leer                                           |
+| `Can't connect to {object}. No unique record found...` (Import schlägt fehl)   | Referenzierter Datensatz existiert nicht                               |
+| `Too many records. Up to 10000 allowed` (Upload blockiert)                     | Die Datei enthält mehr als 10.000 Datensätze                           |
+
+### Schritt 2: Fehler beheben
+
+Befolgen Sie die unten stehenden spezifischen Anweisungen für jeden Fehlertyp.
+
+---
+
+## Fehler: Doppelter Wert
+
+### Was Sie sehen werden
+
+Zeilen mit doppelten Werten werden in der Import-UI **gelb hervorgehoben**, bevor der Import startet.
+
+### Was es bedeutet
+
+Ein eindeutiges Feld (E-Mail, Domain) entweder:
+
+* Existiert bereits in Twenty
+* Kommt in Ihrer Datei doppelt vor
+
+### So beheben Sie den Fehler
+
+**Option 1: Doppelt vorhandenen Wert bearbeiten**
+
+1. Klicken Sie auf die Zelle mit dem Fehler
+2. In einen eindeutigen Wert ändern
+3. Mit dem Import fortfahren
+
+**Option 2: Die doppelte Zeile entfernen**
+
+1. Klicken Sie auf das X neben der Zeile
+2. Die Zeile wird während des Imports übersprungen
+
+**Option 3: Twenty den vorhandenen Datensatz aktualisieren lassen**
+
+1. Stellen Sie sicher, dass Ihre Datei einen eindeutigen Bezeichner enthält (`email`, `domain` oder `id`)
+2. Ordnen Sie das Feld mit dem eindeutigen Bezeichner zu
+3. Twenty aktualisiert den vorhandenen Datensatz, statt ein Duplikat zu erstellen
+
+<Note>
+  **Sie können eindeutige Felder ebenfalls aktualisieren.**
+
+  * Wenn Sie die `id` beibehalten, aber die `email` ändern → die E-Mail wird aktualisiert
+  * Wenn Sie die `email` beibehalten, aber die `id` ändern → die ID wird aktualisiert
+
+  Solange ein eindeutiger Bezeichner übereinstimmt, aktualisiert Twenty den Datensatz.
+</Note>
+
+### So vermeiden Sie diesen Fehler
+
+Vor dem Import:
+
+1. Sortieren Sie Ihre Tabellenkalkulation nach dem eindeutigen Feld
+2. Entfernen Sie doppelte Zeilen
+3. Prüfen Sie, ob Datensätze bereits in Twenty existieren
+
+<Warning>
+  **Soft-gelöschte Datensätze zählen für die Eindeutigkeit.**
+
+  Überprüfen Sie das Befehlsmenü → Gelöschte Datensätze anzeigen. Die dortigen Datensätze erzwingen weiterhin die Eindeutigkeit. Löschen Sie sie dauerhaft oder stellen Sie sie wieder her und aktualisieren Sie sie.
+</Warning>
+
+Weitere Details: [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+---
+
+## Fehler: Ungültiges Format
+
+### Was Sie sehen werden
+
+Der Zellwert ist gelb hervorgehoben. Fahren Sie mit der Maus darüber, um die Fehlermeldung zu sehen:
+
+```
+{field name} is not a valid {field type}
+```
+
+### Was es bedeutet
+
+Die Daten entsprechen nicht dem erwarteten Format für diesen Feldtyp.
+
+### So beheben Sie den Fehler — nach Feldtyp
+
+#### E-Mail
+
+**Problem:** Ungültiges E-Mail-Format
+**Lösung:** Verwenden Sie das Format `name@domain.com`
+
+```
+❌ john.smith@
+❌ john smith@acme.com
+✓ john.smith@acme.com
+```
+
+#### Domäne
+
+**Problem:** Uneinheitliches Format kann Duplikate verursachen
+**Lösung:** Verwenden Sie das Format `https://domain.com` (empfohlen)
+
+```
+⚠️ acme.com         (gültig, aber nicht empfohlen)
+⚠️ www.acme.com     (gültig, aber nicht empfohlen)
+✅ https://acme.com  (empfohlen)
+```
+
+<Note>Alle Formate sind gültig, aber `https://domain.com` wird empfohlen, da es dem von der E-Mail-/Kalendersynchronisierung verwendeten Format entspricht. Die Verwendung anderer Formate kann doppelte Unternehmen erzeugen.</Note>
+
+#### Datum
+
+**Problem:** Nicht erkanntes Datumsformat
+**Lösung:** Verwenden Sie in der gesamten Datei ein einheitliches Format
+
+```
+✓ 2024-03-15        (YYYY-MM-DD - empfohlen)
+✓ 03/15/2024        (MM/DD/YYYY)
+✓ 15/03/2024        (DD/MM/YYYY)
+```
+
+#### Telefon
+
+**Problem:** Erforderliche Spalten fehlen
+**Lösung:** Alle Telefonspalten einschließen
+
+| Spalte                                  | Beispiel     |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+#### Boolesch
+
+**Problem:** Falscher boolescher Wert
+**Lösung:** Verwenden Sie `TRUE` oder `FALSE` in Großbuchstaben
+
+```
+❌ true
+❌ yes
+❌ 1
+✓ TRUE
+✓ FALSE
+```
+
+#### Auswahl / Mehrfachauswahl
+
+**Problem:** Wert stimmt nicht mit vorhandenen Optionen überein
+**Lösung:** Verwenden Sie **API-Namen**, nicht Anzeigenamen
+
+So finden Sie API-Namen:
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das Objekt und das Feld aus
+3. Aktivieren Sie den **Erweiterten Modus** (Schalter unten rechts)
+4. Verwenden Sie den API-Namen (z. B. `OPTION_1`, nicht "Option 1")
+
+```
+❌ High Priority
+✓ HIGH_PRIORITY
+```
+
+#### Währung
+
+**Problem:** Betrag oder Währungscode fehlt
+**Lösung:** Beide Spalten ausfüllen
+
+| Spalte                | Beispiel  |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+#### Nummer
+
+**Problem:** Nichtnumerische Zeichen
+**Lösung:** Nur Zahlen, Punkt für Dezimalstellen
+
+```
+❌ $1,234.56
+❌ 1,234.56
+✓ 1234.56
+```
+
+Vollständige Formatreferenz: [Referenz zur Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)
+
+---
+
+## Fehler: Erforderliches Feld fehlt
+
+### Was Sie sehen werden
+
+Die Zeile ist gelb hervorgehoben, und die Zelle des erforderlichen Felds ist markiert.
+
+### Was es bedeutet
+
+Ein erforderliches Feld ist in dieser Zeile leer.
+
+### So beheben Sie den Fehler
+
+**Option 1: Einen Wert eingeben**
+
+1. Klicken Sie auf die leere Zelle
+2. Geben Sie einen Wert ein
+3. Mit dem Import fortfahren
+
+**Option 2: Die Zeile entfernen**
+
+1. Wenn Ihnen die Daten fehlen, klicken Sie auf X, um die Zeile zu überspringen
+
+### So vermeiden Sie diesen Fehler
+
+Identifizieren Sie vor dem Import die erforderlichen Felder:
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie Ihr Objekt aus
+3. Prüfen Sie, welche Felder als erforderlich markiert sind
+
+---
+
+## Fehler: Relation nicht gefunden
+
+### Was Sie sehen werden
+
+Dieser Fehler tritt **nach Beginn des Imports** auf — der Import schlägt mit einer Meldung wie dieser fehl:
+
+```
+Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
+```
+
+Das bedeutet, dass es in Twenty kein Unternehmen mit diesem spezifischen Bezeichner gibt.
+
+<Note>Im Gegensatz zu anderen Fehlern wird dieser im Schritt der Datenüberprüfung nicht erkannt. Der Import startet und schlägt dann fehl, wenn die fehlende Relation auftritt.</Note>
+
+### Was es bedeutet
+
+Sie versuchen, auf einen Datensatz zu verweisen, der in Twenty nicht existiert.
+
+### So beheben Sie den Fehler
+
+**Option 1: Importieren Sie zuerst die übergeordneten Datensätze**
+
+1. Brechen Sie den aktuellen Import ab
+2. Importieren Sie die übergeordneten Datensätze (z. B. Unternehmen)
+3. Importieren Sie anschließend die untergeordneten Datensätze (z. B. Personen)
+
+**Option 2: Korrigieren Sie den Referenzwert**
+
+1. Überprüfen Sie den Referenzwert in Ihrer Datei
+2. Stellen Sie sicher, dass er genau mit einem vorhandenen Datensatz übereinstimmt
+3. Format prüfen: Domains sollten das Format `https://domain.com` haben
+
+**Option 3: Entfernen Sie die Relation**
+
+1. Leeren Sie die Zelle, um ohne die Relation zu importieren
+2. Fügen Sie die Relation später manuell hinzu
+
+### So vermeiden Sie diesen Fehler
+
+1. **In der richtigen Reihenfolge importieren:**
+   * Zuerst Unternehmen
+   * Dann Personen (mit Unternehmensreferenzen)
+   * Als Drittes Opportunities
+
+2. **Referenzwerte überprüfen:**
+   * Exportieren Sie übergeordnete Datensätze, um exakte Bezeichner zu erhalten
+   * Verwenden Sie das Domain-Format `https://domain.com`
+   * Prüfen Sie auf Tippfehler und Groß-/Kleinschreibung
+
+<Warning>
+  **Der Import schlägt fehl, wenn auf einen nicht vorhandenen Datensatz verwiesen wird.**
+
+  Importieren Sie übergeordnete Objekte immer vor untergeordneten Objekten.
+</Warning>
+
+Weitere Details: [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations)
+
+---
+
+## Fehler: Datei zu groß
+
+### Was Sie sehen werden
+
+Dieser Fehler tritt **beim Hochladen Ihrer Datei** auf — der Upload wird vollständig blockiert:
+
+```
+Too many records. Up to 10000 allowed
+```
+
+Sie können erst mit dem Schritt der Datenüberprüfung fortfahren, wenn Sie die Dateigröße reduziert haben.
+
+### Was es bedeutet
+
+Ihre Datei enthält mehr als 10.000 Datensätze.
+
+### So beheben Sie den Fehler
+
+**Option 1: In mehrere Dateien aufteilen**
+
+1. Teilen Sie Ihre Daten in Dateien mit 10.000 oder weniger Datensätzen auf
+2. Importieren Sie jede Datei separat
+3. Halten Sie die Importreihenfolge ein (Unternehmen vor Personen)
+
+**Option 2: API-Import verwenden**
+Für sehr große Datensätze verwenden Sie die API, die keine Datensatzbegrenzung hat.
+Siehe: [So importieren Sie Daten über die API](/l/de/user-guide/data-migration/how-tos/import-data-via-api)
+
+---
+
+## Fehler: Feld nicht erkannt
+
+### Was es bedeutet
+
+Eine Spalte in Ihrer Datei kann nicht zugeordnet werden, weil das Feld in Twenty nicht existiert.
+
+### So beheben Sie den Fehler
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das Objekt aus, das Sie importieren
+3. Klicken Sie auf **+ Feld hinzufügen**
+4. Erstellen Sie das benutzerdefinierte Feld mit dem passenden Typ
+5. Laden Sie Ihre Datei erneut hoch
+
+<Note>Der CSV-Import erstellt Datensätze, nicht Felder. Alle Felder müssen vor dem Import vorhanden sein.</Note>
+
+---
+
+## Fehler: Benutzerrelation leer
+
+### Was es bedeutet
+
+Sie versuchen, einen Datensatz einem Benutzer zuzuweisen (Owner, Assignee), aber die Relation wird nicht zugeordnet.
+
+### Häufige Ursachen
+
+1. **Benutzer hat seine Einladung nicht angenommen** — der Benutzer existiert noch nicht in Twenty
+2. **Benutzer-ID aus altem System verwendet** — Twenty kann IDs aus einem anderen System nicht zuordnen
+3. **Falsches E-Mail-Format** — die E-Mail entspricht nicht dem Twenty-Konto des Benutzers
+
+### So beheben Sie den Fehler
+
+1. Stellen Sie sicher, dass alle Benutzer **ihre Einladung** zu Ihrem Twenty-Arbeitsbereich **angenommen haben**
+2. Verwenden Sie die **E-Mail-Adresse** des Benutzers (nicht seinen Namen oder die alte System-ID)
+3. Verwenden Sie dieselbe E-Mail, mit der sie Twenty beigetreten sind
+
+<Warning>
+  **Benutzer müssen Einladungen vor dem Import annehmen.**
+
+  Wenn ein Benutzer seine Einladung nicht angenommen hat, haben Datensätze, die auf ihn verweisen, leere Benutzerrelationen.
+</Warning>
+
+---
+
+## Checkliste vor dem Import
+
+Vermeiden Sie Fehler, indem Sie vor dem Import Folgendes prüfen:
+
+### Dateianforderungen
+
+<Check>Datei ist im CSV-, XLSX- oder XLS-Format</Check>
+<Check>Datei enthält weniger als 10.000 Datensätze</Check>
+<Check>Datei verwendet UTF-8-Kodierung</Check>
+
+### Datenqualität
+
+<Check>Keine doppelten E-Mails (für Personen)</Check>
+<Check>Keine doppelten Domains (für Unternehmen)</Check>
+<Check>Alle Datumsangaben verwenden ein einheitliches Format</Check>
+<Check>Alle Domains verwenden das Format `https://domain.com`</Check>
+
+### Feldformate
+
+<Check>Boolesche Felder verwenden `TRUE` oder `FALSE` (Großbuchstaben)</Check>
+<Check>Auswahlfelder verwenden API-Namen, nicht Anzeigenamen</Check>
+<Check>Telefonfelder enthalten alle erforderlichen Spalten</Check>
+<Check>Währungsfelder enthalten sowohl Betrag als auch Währungscode</Check>
+
+### Beziehungen
+
+<Check>Übergeordnete Datensätze vor untergeordneten Datensätzen importiert</Check>
+<Check>Relationsspalten verweisen auf vorhandene Datensätze</Check>
+<Check>Domain-Format entspricht exakt dem Format von Twenty</Check>
+
+### Datenmodell
+
+<Check>Alle benutzerdefinierten Felder existieren in Einstellungen → Datenmodell</Check>
+<Check>Auswahloptionen existieren vor dem Import</Check>
+
+---
+
+## Gibt es weiterhin Probleme?
+
+Wenn Sie die obigen Lösungen ausprobiert haben:
+
+1. **Beispieldatei herunterladen** — sehen Sie das genaue Format, das Twenty erwartet
+2. **Bestehende Datensätze exportieren** — vergleichen Sie Ihre Datei mit funktionierenden Daten
+3. **Testen Sie mit einer kleinen Stichprobe** — probieren Sie zuerst 5-10 Zeilen
+4. **Prüfen Sie die Referenzartikel:**
+   * [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)
+   * [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations)
+   * [Fehlerbehandlung](/l/de/user-guide/data-migration/capabilities/error-handling)

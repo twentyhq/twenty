@@ -4,41 +4,38 @@ image: /images/user-guide/fields/field.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Header" />
+  <img src="/images/user-guide/fields/field.png" alt="헤더" />
 </Frame>
 
-Renders a breadcrumb navigation bar.
+브레드크럼 내비게이션 바를 렌더링합니다.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="사용법">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-```jsx
-import { BrowserRouter } from "react-router-dom";
-import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
 
-export const MyComponent = () => {
-  const breadcrumbLinks = [
-    { children: "Home", href: "/" },
-    { children: "Category", href: "/category" },
-    { children: "Subcategory", href: "/category/subcategory" },
-    { children: "Current Page" },
-  ];
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
 
-  return (
-    <BrowserRouter>
-      <Breadcrumb className links={breadcrumbLinks} />
-    </BrowserRouter>
-    )
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 프로퍼티   | 유형  | 설명                                                                                                                                                                                                            |
-| ------ | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 클래스 네임 | 문자열 | 추가 스타일을 위한 선택적 클래스 이름                                                                                                                                                                                         |
-| 링크     | 배열  | An array of objects, each representing a breadcrumb link. 각 객체는 `children` 속성(링크의 텍스트 콘텐츠)과 선택적 `href` 속성(링크를 클릭할 때 이동할 URL)을 가지고 있습니다. |
-
-</Tab>
+  <Tab title="프로퍼티">
+    | 프로퍼티   | 유형  | 설명                                                                                                     |
+    | ------ | --- | ------------------------------------------------------------------------------------------------------ |
+    | 클래스 네임 | 문자열 | 추가 스타일을 위한 선택적 클래스 이름                                                                                  |
+    | 링크     | 배열  | 각 브레드크럼 링크를 나타내는 객체의 배열. 각 객체는 `children` 속성(링크의 텍스트 콘텐츠)과 선택적 `href` 속성(링크를 클릭할 때 이동할 URL)을 가지고 있습니다. |
+  </Tab>
 </Tabs>

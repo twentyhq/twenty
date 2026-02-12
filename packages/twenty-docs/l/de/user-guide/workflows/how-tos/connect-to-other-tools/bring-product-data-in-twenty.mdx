@@ -1,0 +1,182 @@
+---
+title: Produktdaten in Twenty importieren
+description: Synchronisieren Sie Produktkatalogdaten nach Zeitplan aus einem Data Warehouse in Ihr CRM.
+---
+
+Verwenden Sie dieses Muster, um Twenty mit Produktdaten aus Ihrem Data Warehouse (z. B. Snowflake, BigQuery, PostgreSQL) synchron zu halten.
+
+## Workflow-Struktur
+
+1. **Auslöser**: Nach Zeitplan
+2. **Code**: Ihr Data Warehouse abfragen
+3. **Code** (optional): Daten als Array formatieren
+4. **Iterator**: Jedes Produkt durchlaufen
+5. **Upsert Record**: In Twenty erstellen oder aktualisieren
+
+<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+
+## Schritt 1: Auslöser planen
+
+Stellen Sie den Workflow so ein, dass er mit einer Häufigkeit läuft, die Ihren Anforderungen an die Datenaktualität entspricht:
+
+* Alle 5 Minuten für eine nahezu Echtzeit-Synchronisierung
+* Stündlich für weniger kritische Daten
+* Täglich für Batch-Updates
+
+## Schritt 2: Ihr Data Warehouse abfragen
+
+Fügen Sie eine **Code**-Aktion hinzu, um aktuelle Daten abzurufen:
+
+```javascript
+export const main = async () => {
+  const intervalMinutes = 10; // Match your schedule frequency
+  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+
+  // Replace with your actual data warehouse connection
+  const response = await fetch("https://your-warehouse-api.com/query", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      query: `
+        SELECT id, name, sku, price, stock_quantity, updated_at
+        FROM products
+        WHERE updated_at >= '${cutoffTime}'
+      `
+    })
+  });
+
+  const data = await response.json();
+  return { products: data.results };
+};
+```
+
+<Tip>
+  Filtern Sie nach `updated_at >= last X minutes`, um nur kürzlich geänderte Datensätze abzurufen. So bleibt die Synchronisierung effizient.
+</Tip>
+
+## Schritt 3: Daten formatieren (optional)
+
+Wenn Ihr Data Warehouse Daten in einem Format zurückgibt, das transformiert werden muss, fügen Sie eine weitere **Code**-Aktion hinzu. Häufige Transformationen umfassen Typkonvertierungen, Feldumbenennungen und Datenbereinigung.
+
+### Beispiel: Benutzerdaten mit booleschen und Statusfeldern
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Convert string "true"/"false" to actual booleans
+  const toBool = (v: any) => v === true || v === "true";
+
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+      isActiveLast30d: toBool(user.isActiveLast30d),
+      isActiveLast7d: toBool(user.isActiveLast7d),
+      isActiveLast24h: toBool(user.isActiveLast24h),
+      isTwenty: toBool(user.isTwenty),
+    })),
+  };
+};
+```
+
+### Beispiel: Produktdaten mit Typkonvertierungen
+
+```javascript
+export const main = async (params: { products: any }) => {
+  const products = typeof params.products === "string"
+    ? JSON.parse(params.products)
+    : params.products;
+
+  return {
+    products: products.map(product => ({
+      externalId: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: parseFloat(product.price),        // String → Number
+      stockQuantity: parseInt(product.stock_quantity),
+      isActive: product.status === "active"    // String → Boolean
+    }))
+  };
+};
+```
+
+### Beispiel: Datums- und Währungsformatierung
+
+```javascript
+export const main = async (params: { deals: any }) => {
+  const deals = typeof params.deals === "string"
+    ? JSON.parse(params.deals)
+    : params.deals;
+
+  return {
+    deals: deals.map(deal => ({
+      ...deal,
+      // Convert Unix timestamp to ISO date
+      closedAt: deal.closed_timestamp
+        ? new Date(deal.closed_timestamp * 1000).toISOString()
+        : null,
+      // Ensure amount is a number (remove currency symbols)
+      amount: parseFloat(String(deal.amount).replace(/[^0-9.-]/g, "")),
+      // Normalize stage names
+      stage: deal.stage?.toLowerCase().replace(/_/g, " ")
+    }))
+  };
+};
+```
+
+### Häufige Transformationen
+
+| Quellformat          | Zielformat       | Code                                     |
+| -------------------- | ---------------- | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
+| `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | ISO-Datum        | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`             | `value \|\| ""`                          |
+
+## Schritt 4: Durch die Produkte iterieren
+
+Fügen Sie eine **Iterator**-Aktion hinzu:
+
+* Eingabe: `{{code.products}}`
+
+Dies durchläuft jedes Produkt im Array.
+
+## Schritt 5: Jeden Datensatz upserten
+
+Fügen Sie innerhalb des Iterators eine **Upsert Record**-Aktion hinzu:
+
+| Einstellung           | Wert                                         |
+| --------------------- | -------------------------------------------- |
+| **Objekt**            | Ihr benutzerdefiniertes Produktobjekt        |
+| **Abgleichen anhand** | Externe ID oder SKU (eindeutiger Bezeichner) |
+| **Name**              | `{{iterator.item.name}}`                     |
+| **SKU**               | `{{iterator.item.sku}}`                      |
+| **Preis**             | `{{iterator.item.price}}`                    |
+
+<Tip>
+  Verwenden Sie **Upsert** (aktualisieren oder erstellen), anstatt separate Verzweigungen für Erstellen vs. Aktualisieren zu bauen. Das ist schneller aufzubauen und leichter zu debuggen.
+</Tip>
+
+## Beispielanwendungsfälle
+
+| Quelle                        | Daten                                         |
+| ----------------------------- | --------------------------------------------- |
+| **ERP-System**                | Produktkatalog, Preise, Bestand               |
+| **E-Commerce-Plattform**      | Bestellungen, Kunden, Produktaktualisierungen |
+| **Data Warehouse**            | Aggregierte Metriken, angereicherte Daten     |
+| **Bestandsverwaltungssystem** | Bestandsmengen, Nachbestellwarnungen          |
+
+## Verwandt
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -32,6 +32,7 @@ export const RecordTableDraggableTr = ({
 
   return (
     <Draggable
+      key={recordId}
       draggableId={recordId}
       index={draggableIndex}
       isDragDisabled={isDragDisabled}

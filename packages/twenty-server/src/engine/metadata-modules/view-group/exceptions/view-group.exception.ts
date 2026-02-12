@@ -4,14 +4,16 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ViewGroupException extends CustomException {
-  declare code: ViewGroupExceptionCode;
+export class ViewGroupException extends CustomException<ViewGroupExceptionCode> {
   constructor(
     message: string,
     code: ViewGroupExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`A view group error occurred.`,
+    });
   }
 }
 

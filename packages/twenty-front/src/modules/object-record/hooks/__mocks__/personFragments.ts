@@ -129,6 +129,11 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
           node {
             __typename
             id
+            note {
+              __typename
+              id
+              title
+            }
           }
         }
       }
@@ -154,6 +159,11 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
           node {
             __typename
             id
+            task {
+              __typename
+              id
+              title
+            }
           }
         }
       }

@@ -1,0 +1,231 @@
+---
+title: 각 단계에서 영업 기회가 머무는 기간 추적
+description: 영업 기회가 각 단계에 진입한 시점을 추적하여 거래 속도를 모니터링하세요.
+---
+
+<Tip>
+  이는 워크플로를 사용해 [수식 필드](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields)를 만드는 예시로, 특히 날짜 계산에 관한 내용입니다.
+</Tip>
+
+영업 기회가 각 단계에 진입한 시점을 추적하면 병목을 파악하고 거래 속도를 측정할 수 있습니다.
+
+이 가이드는 사용자 정의 필드와 워크플로를 구성하여 영업 기회가 각 단계로 이동한 시점을 자동으로 기록하고, 이전 단계에서 보낸 일수를 계산하는 방법을 안내합니다.
+
+## 1단계: 사용자 정의 필드 생성
+
+각 단계마다 두 가지 유형의 필드가 필요합니다:
+
+* **날짜 및 시간 필드**: 영업 기회가 각 단계에 진입한 시점을 기록
+* **숫자 필드**: 영업 기회가 각 단계에서 보낸 일수 저장
+
+### "Last Entered" 필드 생성
+
+1. **설정 → 데이터 모델 → Opportunities**로 이동
+2. 각 단계에서 **+ Add Field**를 클릭하고 다음을 구성합니다:
+   * **Name**: Last Entered [단계 이름] (예: "Last Entered New", "Last Entered Qualified")
+   * **Type**: Date & Time
+   * **Description**: 이 단계에 영업 기회가 진입한 시각의 타임스탬프
+3. **저장** 클릭
+
+다음 필드를 생성합니다:
+
+* Last Entered New
+* Last Entered Qualified
+* Last Entered Meeting
+* Last Entered Proposal
+* Last Entered Negotiation
+* Last Entered Closed Won
+* Last Entered Closed Lost
+
+### "Days in Stage" 필드 생성
+
+1. 각 단계에서 **+ Add Field**를 클릭하고 다음을 구성합니다:
+   * **Name**: Days in [단계 이름] (예: "Days in New", "Days in Qualified")
+   * **Type**: Number
+   * **Description**: 이 단계에서 보낸 일수
+2. **저장** 클릭
+
+다음 필드를 생성합니다:
+
+* Days in New
+* Days in Qualified
+* Days in Meeting
+* Days in Proposal
+* Days in Negotiation
+
+<Note>
+  "Closed Won"과 "Closed Lost"는 마지막 단계이므로 "Days in" 필드는 필요하지 않습니다.
+</Note>
+
+### 선택 사항: 필드를 읽기 전용으로 설정
+
+사용자가 이 계산된 필드를 수동으로 편집하지 못하게 하려면:
+
+1. **설정 → 역할**로 이동
+2. 구성할 역할을 선택합니다
+3. Opportunities 오브젝트를 찾습니다
+4. "Last Entered" 및 "Days in" 필드를 읽기 전용으로 설정합니다
+
+## 2단계: 워크플로 생성
+
+이 단일 워크플로가 두 가지 작업을 모두 처리합니다:
+
+* 새 단계에 진입한 시각의 타임스탬프를 기록
+* 이전 단계에서 보낸 일수를 계산
+
+### 워크플로 생성
+
+1. **Workflows**로 이동
+2. **+ New Workflow**를 클릭
+3. "Track Stage Time"으로 이름 지정
+
+### 트리거 구성
+
+1. **Record Updated** 트리거를 추가
+2. 오브젝트로 **Opportunities**를 선택
+3. 필터: **Stage** 필드가 업데이트됨
+
+### 각 단계에 대한 브랜치 추가
+
+<Note>
+  새 브랜치를 만들려면 워크플로 캔버스에서 마우스 오른쪽 버튼을 클릭하고 **New action**을 클릭합니다. 그런 다음 이전 노드에서 이 새 액션으로 화살표를 끌어 이전 노드와 이 액션을 연결합니다.
+</Note>
+
+---
+
+**브랜치 1: Stage = New(첫 번째 단계)**
+
+이 단계는 첫 단계이므로 진입 타임스탬프만 기록하며, 계산할 이전 단계는 없습니다.
+
+1. **Filter** 노드를 추가: Stage = New
+2. **Code** 액션 추가:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. **Update Record** 액션 추가:
+   * Record: 트리거된 Opportunity
+   * Field: Last Entered New
+   * Value: Code 노드의 `now`
+
+---
+
+**브랜치 2: Stage = Qualified**
+
+Qualified로 이동할 때 진입 시각을 기록하고 New에서 보낸 일수를 계산합니다.
+
+1. **Filter** 노드 추가: Stage = Qualified
+2. **Code** 액션 추가:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Code 노드 입력 구성: `lastEnteredPreviousStage`를 **Last Entered New** 필드에 매핑
+4. **Update Record** 액션 추가:
+   * Record: 트리거된 Opportunity
+   * 업데이트할 필드:
+     * Last Entered Qualified = `now`
+     * Days in New = `daysInPreviousStage`
+
+---
+
+**브랜치 3: Stage = Meeting**
+
+Meeting으로 이동할 때 진입 시각을 기록하고 Qualified에서 보낸 일수를 계산합니다.
+
+1. **Filter** 노드 추가: Stage = Meeting
+2. **Code** 액션 추가:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Code 노드 입력 구성: `lastEnteredPreviousStage`를 **Last Entered Qualified** 필드에 매핑
+4. **Update Record** 액션 추가:
+   * Record: 트리거된 Opportunity
+   * 업데이트할 필드:
+     * Last Entered Meeting = `now`
+     * Days in Qualified = `daysInPreviousStage`
+
+---
+
+**나머지 단계 계속:**
+
+| 단계          | 기록                       | 계산                  |
+| ----------- | ------------------------ | ------------------- |
+| Proposal    | Last Entered Proposal    | Days in Meeting     |
+| Negotiation | Last Entered Negotiation | Days in Proposal    |
+| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
+| Closed Lost | Last Entered Closed Lost | Days in Negotiation |
+
+브랜치는 다시 합칠 필요가 없습니다. 각 브랜치는 해당 단계 조건이 충족되면 독립적으로 실행됩니다.
+
+## 3단계: 단계 체류 시간 분석
+
+타임스탬프와 일수 기록을 바탕으로 이제 거래 속도를 분석할 수 있습니다.
+
+### "Slow Deals" 보기 만들기
+
+1. Opportunities의 테이블 보기 생성
+2. 다음 열을 추가: Name, Stage, Days in [이전 단계], Amount
+3. "Days in" 필드로 정렬(내림차순)
+4. Stage로 필터링하여 한 번에 한 단계에 집중
+
+상단의 거래가 이전 단계에서 보낸 시간이 가장 깁니다.
+
+### 집계 사용
+
+파이프라인 칸반 보기에서:
+
+1. Stage 이름 옆의 숫자를 클릭합니다
+2. **Average**를 선택합니다
+3. "Days in" 필드를 선택합니다
+
+그러면 거래가 각 단계에서 보낸 평균 시간이 표시됩니다.
+
+## 요약
+
+| 구성 요소               | 용도                           |
+| ------------------- | ---------------------------- |
+| **Last Entered 필드** | 영업 기회가 각 단계에 진입한 시점을 저장      |
+| **Days in 필드**      | 각 단계에서 보낸 일수를 저장             |
+| **워크플로**            | 한 번의 실행으로 타임스탬프를 기록하고 일수를 계산 |
+| **보기 및 집계**         | 거래 속도를 분석하고 병목을 식별           |
+
+## 관련
+
+* [워크플로](/l/ko/user-guide/workflows/overview) — 자동화 기본
+* [사용자 정의 필드 생성 방법](/l/ko/user-guide/data-model/how-tos/create-custom-fields) — 필드 구성
+* [칸반 보기](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — 집계

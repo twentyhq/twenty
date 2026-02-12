@@ -71,11 +71,6 @@ export class UpdateRolePayload {
   @IsOptional()
   @Field({ nullable: true })
   canBeAssignedToApiKeys?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  canBeAssignedToApplications?: boolean;
 }
 
 @InputType()

@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import isEmpty from 'lodash.isempty';

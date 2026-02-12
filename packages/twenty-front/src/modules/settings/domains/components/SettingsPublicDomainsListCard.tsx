@@ -1,21 +1,16 @@
-import { SettingsPath } from 'twenty-shared/types';
-import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
-import { useFindManyPublicDomainsQuery } from '~/generated-metadata/graphql';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { type PublicDomain } from '~/generated/graphql';
 import { SettingPublicDomainRowDropdownMenu } from '@/settings/domains/components/SettingPublicDomainRowDropdownMenu';
 import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
-import { useSetRecoilState } from 'recoil';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
-import { Link } from 'react-router-dom';
-import styled from '@emotion/styled';
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
+import { useSetRecoilState } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
+import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
+import {
+  useFindManyPublicDomainsQuery,
+  type PublicDomain,
+} from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsPublicDomainsListCard = () => {
   const navigate = useNavigateSettings();
@@ -33,11 +28,15 @@ export const SettingsPublicDomainsListCard = () => {
   }
 
   if (publicDomains.length === 0) {
-    setSelectedPublicDomain(undefined);
     return (
-      <StyledLink to={getSettingsPath(SettingsPath.PublicDomain)}>
-        <SettingsCard title={t`Add Public Domain`} Icon={<IconMailCog />} />
-      </StyledLink>
+      <SettingsCard
+        title={t`Add Public Domain`}
+        Icon={<IconMailCog />}
+        onClick={() => {
+          setSelectedPublicDomain(undefined);
+          navigate(SettingsPath.PublicDomain);
+        }}
+      />
     );
   }
 
@@ -54,13 +53,13 @@ export const SettingsPublicDomainsListCard = () => {
       RowRightComponent={({ item: publicDomain }) => (
         <>
           {!publicDomain.isValidated && (
-            <Status color="orange" text="Pending" />
+            <Status color="orange" text={t`Pending`} />
           )}
           <SettingPublicDomainRowDropdownMenu publicDomain={publicDomain} />
         </>
       )}
       hasFooter
-      footerButtonLabel="Add Public Domain"
+      footerButtonLabel={t`Add Public Domain`}
       onFooterButtonClick={() => {
         setSelectedPublicDomain(undefined);
         navigate(SettingsPath.PublicDomain);

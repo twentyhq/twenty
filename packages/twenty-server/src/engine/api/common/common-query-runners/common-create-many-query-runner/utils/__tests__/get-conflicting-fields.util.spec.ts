@@ -26,7 +26,6 @@ describe('getConflictingFields', () => {
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       applicationId: null,
@@ -86,7 +85,7 @@ describe('getConflictingFields', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       universalIdentifier: objectMetadataId,
-      fieldMetadataIds: fields.map((f) => f.id),
+      fieldIds: fields.map((f) => f.id),
       indexMetadataIds: [],
       viewIds: [],
       applicationId: null,
@@ -95,17 +94,17 @@ describe('getConflictingFields', () => {
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: fields.reduce(
+    byUniversalIdentifier: fields.reduce(
       (acc, field) => {
-        acc[field.id] = field;
+        acc[field.universalIdentifier] = field;
 
         return acc;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: fields.reduce(
+    universalIdentifierById: fields.reduce(
       (acc, field) => {
-        acc[field.universalIdentifier] = field.id;
+        acc[field.id] = field.universalIdentifier;
 
         return acc;
       },

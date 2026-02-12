@@ -1,0 +1,198 @@
+---
+title: İzinler
+description: Rol tabanlı izinlerle nesnelere, alanlara ve ayarlara erişimi kontrol edin.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Twenty'nin izin sistemi, üç ana alana erişimi kontrol etmenizi sağlar:
+
+* **Objeler ve Alanlar**: Kimin kayıtları ve bireysel alanları görüntüleyebileceğini, düzenleyebileceğini veya silebileceğini kontrol edin
+* **Ayarlar**: Çalışma alanı yapılandırmasına ve yönetici işlevlerine erişimi yönetin
+* **Aksiyonlar**: Veri ithalatı veya e-posta gönderimi gibi genel çalışma alanı aksiyonlarını kontrol edin
+
+## Rol Oluştur
+
+Yeni bir rol oluşturmak için:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. **Tüm Roller** altında, **+ Rol Oluştur** seçeneğine tıklayın
+3. Bir rol adı girin
+4. Varsayılan **İzinler** sekmesinde, [izinleri yapılandırın](#customize-permissions)
+5. Bitirmek için **Kaydet**'e tıklayın
+
+## Bir Rolü Sil
+
+Bir rolü silmek için:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Kaldırmak istediğiniz role tıklayın
+3. **Ayarlar** sekmesini açın, ardından **Rolü Sil** seçeneğine tıklayın
+4. Modalde **Onayla**'ya tıklayın
+
+<Note>
+  Bir rol silinirse, ona atanmış olan herhangi bir çalışma alanı üyesi otomatik olarak varsayılan role yeniden atanır. **Yönetici** rolü hariç tüm roller silinebilir. Her zaman **Yönetici** rolüne atanmış en az bir üye olmalıdır.
+</Note>
+
+## Üyelere Rol Atama
+
+### Mevcut Atamaları Görüntüle
+
+* **Ayarlar → Roller** bölümüne gidin
+* Tüm rolleri ve her birine kaç üye atandığını görün
+* Hangi üyelerin hangi rollere sahip olduğunu görün
+
+### Bir Üyeye Rol Atama
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. **+ Üyeye Atama**'ya tıklayın
+5. Listeden çalışma alanı üyesini seçin
+6. Atamayı onaylayın
+
+### Varsayılan Rol Ayarlama
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. **Seçenekler** bölümünde, **Varsayılan Rol**'ü bulun
+3. Yeni üyelerin otomatik olarak alacağı rolü seçin
+4. Yeni çalışma alanı üyeleri katıldığında bu role atanacaklardır
+
+<Note>
+  Yalnızca mevcut çalışma alanı üyelerine roller atayabilirsiniz. Yeni üyeleri davet etmek için, [Üye Yönetimi](/l/tr/user-guide/settings/capabilities/member-management) kullanın.
+</Note>
+
+## İzinleri Özelleştirin
+
+İzinler, her rolün çalışma alanınızda hangi alanlara erişip neleri değiştirebileceğini belirler, bu çalışma alanı obje kayıtları, ayarlar ve aksiyonlar dahil.
+
+### Nesne İzinleri
+
+**Nesneler** bölümü, bu rolün çalışma alanınız genelinde kayıtlarla neler yapabileceğini denetler.
+
+#### Varsayılan İzinleri Ayarlayın (Tüm Nesneler)
+
+Önce, varsayılan olarak **tüm nesnelere** uygulanan temel izinleri yapılandırın:
+
+| İzin                                     | Açıklama                                                  |
+| ---------------------------------------- | --------------------------------------------------------- |
+| **Tüm Nesnelerdeki Kayıtları Görüntüle** | Kayıtları listelerde ve ayrıntı sayfalarında görüntüleyin |
+| **Tüm Nesnelerdeki Kayıtları Düzenle**   | Mevcut kayıtları düzenleyin                               |
+| **Tüm Nesnelerde Kayıtları Silin**       | Kayıtları geçici olarak silin (geri yüklenebilir)         |
+| **Tüm Nesnelerde Kayıtları Yok Edin**    | Kayıtları kalıcı olarak silin                             |
+
+Bu rol için varsayılan davranış ne olmalıysa buna göre seçin veya seçimi kaldırın.
+
+<Note>
+  **Örnek — Stajyer rolü**: Bir stajyer varsayılan olarak tüm nesneleri görebilmeli, ancak düzenleyememelidir. "Tüm Nesnelerde Kayıtları Gör" özelliğini etkinleştirin, ancak "Tüm Nesnelerde Kayıtları Düzenle" seçeneğini işaretlemeden bırakın.
+</Note>
+
+#### Nesne Düzeyi İstisnaları Ekleyin
+
+Varsayılanları ayarladıktan sonra, belirli nesneler için varsayılanları geçersiz kılacak kurallar eklemek üzere **Nesne Düzeyi** alt bölümünü kullanın.
+
+**+ Kural ekle**'ye tıklayın ve bir istisna oluşturmak için bir nesne seçin.
+
+**Bir Stajyer rolü için örnek kurallar:**
+
+| Kural                                           | Etkisi                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| Fırsatlar → "Kayıtları Gör"ü devre dışı bırakın | Stajyer Fırsatlar nesnesini hiç göremez                                         |
+| Kişiler → "Kayıtları Düzenle"yi etkinleştirin   | Stajyer Kişiler kayıtlarını düzenleyebilir (ancak diğer nesneleri düzenleyemez) |
+
+### Alan İzinleri
+
+Her nesne düzeyi kuralın içinde, belirli alanlara erişimi denetlemek için **alan düzeyi izinlerini** yapılandırabilirsiniz.
+
+| İzin              | Açıklama                   |
+| ----------------- | -------------------------- |
+| **Alanı Gör**     | Alan değerini görüntüleyin |
+| **Alanı Düzenle** | Alan değerini düzenleyin   |
+| **Erişim Yok**    | Alan tamamen gizlidir      |
+
+**Örnek — Hassas alanları kısıtlayın:**
+
+Kişiler düzenleme erişimi olan Stajyer rolü için, bazı alanları kısıtlamak isteyebilirsiniz:
+
+* Kişiler → E-posta → yalnızca **Alanı Gör** (düzenleyemez)
+* Kişiler → Adres → **Erişim Yok** (tamamen gizlidir)
+
+Bu, stajyerin Kişiler kayıtlarındaki alanların çoğunu düzenlemesine izin verirken hassas bilgileri korur.
+
+### İzin Devralma Nasıl Çalışır
+
+İzinler genelden özele doğru kademeli olarak uygulanır:
+
+1. **Tüm Nesneler** → tüm nesneler için temel düzeyi belirler
+2. **Nesne Düzeyi kuralları** → belirli nesneler için temel düzeyi geçersiz kılar
+3. **Alan Düzeyi kuralları** → belirli alanlar için nesne ayarını geçersiz kılar
+
+Daha özel ayarlar her zaman önceliklidir.
+
+### İzin Geçersiz Kılmalarını Yönetme
+
+Devralınan izinleri geçersiz kılmak için:
+
+1. Miras alınan kuralı kaldırmak için **X**'e tıklayın
+2. İstediğiniz belirli izinleri seçin
+3. Değişiklikleri geri almak için turuncu **Geri Al** simgesine (daire ok) tıklayın
+
+Tamamlandığında, **Bitir**'e tıklayın, ardından rol sayfasına yönlendirildiğinizde **Kaydet**'e tıklayın.
+
+### Çalışma Alanı Ayarları İzinleri
+
+Çalışma alanı ayarlarına iki şekilde erişimi kontrol edin:
+
+* Tam erişim vermek için **Ayarlar Tüm Erişim**'i değiştirin
+* Veya spesifik izinleri etkinleştirin (örneğin, API anahtarı oluşturma, çalışma alanı tercihleri, rol atama, veri modeli yapılandırma, güvenlik ayarları ve iş akışı yönetimi)
+
+<Note>
+  **Mevcut sınırlama**: İş akışlarını elle tetiklemek için şu anda iş akışı yönetimine erişim gereklidir. Bu davranış gelecekteki sürümlerde değişebilir.
+</Note>
+
+### Çalışma Alanı Aksiyon İzinleri
+
+Genel çalışma alanı aksiyonlarına erişimi kontrol edin:
+
+* Tam izin vermek için **Uygulama Tüm Erişim**'i değiştirin
+* Veya **E-posta Gönder**, **CSV İthal Et**, **CSV İhraç Et** gibi bireysel aksiyonları etkinleştirin
+
+## API Anahtarlarına ve Yapay Zeka Ajanlarına Roller Atama
+
+Çalışma alanı üyelerinin ötesinde, roller **API Anahtarları** ve **Yapay Zeka Ajanları**na da atanabilir. Bu, otomatikleştirilmiş süreçler ve entegrasyonlar dahil olmak üzere çalışma alanlarında tam olarak "kimin" ne yapabileceğini kontrol etmek isteyen ekipler için özellikle yararlıdır.
+
+### Neden API Anahtarlarına ve Yapay Zeka Ajanlarına Roller Atanmalı?
+
+* **Güvenlik**: Otomatik süreçlerin erişebileceği veya değiştirebileceği şeyleri sınırlayın
+* **Uyumluluk**: Entegrasyonların yalnızca ihtiyaç duydukları verilere erişmesini sağlayın
+* **Denetim**: Hatalı yapılandırılmış otomasyonlardan kaynaklanan kazara veri değişikliklerini önleyin
+* **Denetlenebilirlik**: Hangi işlemlerin hangi entegrasyon veya ajan tarafından gerçekleştirildiğini izleyin
+
+### Bir API Anahtarına Rol Atama
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. **API Anahtarları** altında, **+ API anahtarına ata**'ya tıklayın
+5. Listeden API anahtarını seçin
+6. Atamayı onaylayın
+
+API anahtarı artık o rol tarafından tanımlanan tüm izinleri devralır. Bu anahtarla yapılan tüm API çağrıları buna göre kısıtlanır.
+
+<Note>
+  Atanmış rolü olmayan API anahtarları varsayılan izinleri kullanır. Daha sıkı güvenlik için, üretim API anahtarlarına her zaman belirli bir rol atayın.
+</Note>
+
+### Bir Yapay Zeka Ajanına Rol Atama
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. **Yapay Zeka Ajanları** altında, **+ Yapay zeka ajanına ata**'ya tıklayın
+5. Listeden yapay zeka ajanını seçin
+6. Atamayı onaylayın
+
+Yapay zeka ajanı yalnızca atandığı rolün izin verdiği verilere erişebilir ve eylemleri gerçekleştirebilir.
+
+<Note>
+  İş akışları içinde çalışan yapay zeka ajanları için bu, iş akışının daha geniş izinleri olsa bile, ajanın amaçlanan kapsamı dışındaki verilere erişememesini veya onları değiştirememesini sağlar.
+</Note>

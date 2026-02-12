@@ -1,19 +1,20 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useDateTimeField } from '@/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { DateTimeFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/DateTimeFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
-import { useDateTimeField } from '../../../hooks/useDateTimeField';
-import { DateTimeFieldInput } from '../DateTimeFieldInput';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -90,11 +91,15 @@ const DateFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <FieldInputEventContextProviderWithJestMocks>
-          <StorybookFieldInputDropdownFocusIdSetterEffect />
-          <DateFieldValueSetterEffect value={value} />
-          <DateFieldValueGater />
-        </FieldInputEventContextProviderWithJestMocks>
+        <RecordFieldsScopeContextProvider
+          value={{ scopeInstanceId: instanceId }}
+        >
+          <FieldInputEventContextProviderWithJestMocks>
+            <StorybookFieldInputDropdownFocusIdSetterEffect />
+            <DateFieldValueSetterEffect value={value} />
+            <DateFieldValueGater />
+          </FieldInputEventContextProviderWithJestMocks>
+        </RecordFieldsScopeContextProvider>
       </FieldContext.Provider>
       <div data-testid="data-field-input-click-outside-div"></div>
     </RecordFieldComponentInstanceContext.Provider>
@@ -130,7 +135,8 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const div = await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    const div = await canvas.findByText('January', {}, { timeout: 10000 });
 
     await expect(div.innerText).toContain('January');
   },
@@ -142,7 +148,8 @@ export const ClickOutside: Story = {
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
-    await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    await canvas.findByText('January', {}, { timeout: 10000 });
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
 
@@ -155,7 +162,8 @@ export const Escape: Story = {
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
-    await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    await canvas.findByText('January', {}, { timeout: 10000 });
     await userEvent.keyboard('{escape}');
 
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
@@ -167,7 +175,8 @@ export const Enter: Story = {
     await expect(handleEnterMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
-    await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    await canvas.findByText('January', {}, { timeout: 10000 });
     await userEvent.keyboard('{enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);

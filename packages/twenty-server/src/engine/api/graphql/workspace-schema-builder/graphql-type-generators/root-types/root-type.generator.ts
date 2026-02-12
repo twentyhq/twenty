@@ -49,7 +49,7 @@ export class RootTypeGenerator {
     }
 
     const objectMetadataCollection = Object.values(
-      context.flatObjectMetadataMaps.byId,
+      context.flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     this.gqlTypesStorage.addGqlType(

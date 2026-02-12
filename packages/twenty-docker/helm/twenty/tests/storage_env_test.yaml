@@ -1,0 +1,46 @@
+suite: storage env s3
+templates:
+  - templates/deployment-server.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: injects S3 env vars when storage.type is s3
+    set:
+      storage.type: s3
+      storage.s3.bucket: my-bucket
+      storage.s3.region: us-east-1
+      storage.s3.endpoint: https://s3.amazonaws.com
+      storage.s3.accessKeyId: AKIA
+      storage.s3.secretAccessKey: secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STORAGE_TYPE
+            value: s3
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STORAGE_S3_NAME
+            value: my-bucket
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STORAGE_S3_REGION
+            value: us-east-1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STORAGE_S3_ENDPOINT
+            value: https://s3.amazonaws.com
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STORAGE_S3_ACCESS_KEY_ID
+            value: AKIA
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STORAGE_S3_SECRET_ACCESS_KEY
+            value: secret

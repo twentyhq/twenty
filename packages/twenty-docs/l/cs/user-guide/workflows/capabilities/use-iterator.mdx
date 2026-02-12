@@ -1,0 +1,176 @@
+---
+title: Použijte iterátor
+description: Procházejte pole záznamů a provádějte akce s každou položkou.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Iterátor vám umožní procházet pole záznamů a provádět akce na každém z nich. Je zásadní pro pracovní postupy, které potřebují zpracovat více záznamů vrácených akcí Search Records nebo přijatých přes webhooky.
+
+## Kdy použít iterátor
+
+| Scénář                         | Příklad                                            |
+| ------------------------------ | -------------------------------------------------- |
+| **Zpracujte výsledky hledání** | Odešlete e-mail každé nalezené osobě               |
+| **Zpracujte pole webhooků**    | Vytvořte záznamy pro každou položku v daném pořadí |
+| **Hromadné aktualizace**       | Aktualizujte více záznamů vypočtenými hodnotami    |
+| **Upozornění**                 | Upozorněte více osob na událost                    |
+
+## Porozumění iterátoru
+
+Iterátor jako vstup očekává **pole**. Poté:
+
+1. Vezme první položku z pole
+2. Spustí všechny akce uvnitř iterátoru s touto položkou
+3. Přejde na další položku
+4. Opakuje, dokud nejsou zpracovány všechny položky
+
+## Základní nastavení
+
+### Příklad: Odeslání e-mailu všem ve výsledcích hledání
+
+**Cíl**: Najděte všechny kontakty v konkrétní společnosti a každému pošlete personalizovaný e-mail.
+
+### Krok 1: Vyhledejte záznamy
+
+1. Přidejte akci **Vyhledat záznamy**
+2. Objekt: **People**
+3. Filtr: Company se rovná "Acme Inc"
+4. To vrátí pole osob
+
+### Krok 2: Zkontrolujte, že existují výsledky
+
+1. Přidejte akci **Filtr**
+2. Podmínka: `{{searchRecords.length}}` je větší než 0
+3. Tím se zabrání chybám iterátoru při prázdných výsledcích
+
+### Krok 3: Přidejte iterátor
+
+1. Přidejte akci **Iterator**
+2. Vstup pole: Vyberte `{{searchRecords}}`
+3. Tím vytvoříte smyčku
+
+### Krok 4: Přidejte akce uvnitř iterátoru
+
+Akce umístěné za iterátorem se spustí pro každou položku:
+
+1. Přidejte akci **Odeslat e-mail** (uvnitř iterátoru)
+2. Komu: `{{iterator.currentItem.email}}`
+3. Předmět: Dobrý den, `{{iterator.currentItem.firstName}}`!
+4. Tělo: Personalizovaná zpráva využívající pole aktuální položky
+
+### Výsledek
+
+Pokud Search Records vrátí 5 osob, iterátor:
+
+* Odešle e-mail osobě 1
+* Odešle e-mail osobě 2
+* ... pokračuje pro všech 5
+
+## Přístup k datům aktuální položky
+
+Uvnitř iterátoru použijte `{{iterator.currentItem}}` pro přístup k aktuálnímu záznamu:
+
+| Proměnná                                | Popis                          |
+| --------------------------------------- | ------------------------------ |
+| `{{iterator.currentItem}}`              | Celý objekt aktuálního záznamu |
+| `{{iterator.currentItem.id}}`           | ID záznamu                     |
+| `{{iterator.currentItem.email}}`        | Pole e-mailu                   |
+| `{{iterator.currentItem.company.name}}` | Název související společnosti  |
+| `{{iterator.index}}`                    | Aktuální pozice v poli (od 0)  |
+
+## Běžné vzory
+
+### Aktualizace více záznamů
+
+**Cíl**: Označit všechny zpožděné úkoly jako "Late"
+
+```
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
+```
+
+### Vytváření záznamů z pole
+
+**Cíl**: Webhook přijme objednávku s více položkami, vytvořte záznam pro každou z nich
+
+```
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
+```
+
+### Podmíněné zpracování uvnitř smyčky
+
+**Cíl**: Posílat e-mail pouze kontaktům s platnými e-mailovými adresami
+
+```
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
+```
+
+## Řešení potíží
+
+### "Iterátor očekává pole"
+
+**Příčina**: Předali jste jeden záznam místo pole.
+
+**Řešení**: Ujistěte se, že předáváte výsledek akce Search Records nebo pole, nikoli jeden záznam.
+
+```
+✅ Správně: {{searchRecords}}
+❌ Špatně: {{searchRecords[0]}}
+```
+
+### Iterátor se nespouští
+
+**Příčina**: Pole je prázdné.
+
+**Řešení**: Před iterátor přidejte filtr pro kontrolu délky pole:
+
+```
+Filtr: {{searchRecords.length}} > 0
+```
+
+### Akce se spouštějí příliš mnohokrát
+
+**Příčina**: Search Records vrátil více záznamů, než se očekávalo.
+
+**Řešení**:
+
+* Přidejte konkrétnější filtry do akce Search Records
+* Nastavte limit v akci Search Records (max. 200)
+* Přidejte filtr uvnitř iterátoru pro doplňující podmínky
+
+## Aspekty výkonu
+
+* **Spotřeba kreditů**: Každá iterace spotřebuje kredity za své akce
+* **Čas**: Zpracování velkých polí trvá déle
+* **Limity**: Zvažte dávkové zpracování velmi velkých operací
+* **Omezení rychlosti**: Volání externích API mohou při mnoha iteracích narazit na limity rychlosti
+
+## Osvědčené postupy
+
+1. **Před iterátorem vždy zkontrolujte délku pole**, abyste předešli chybám
+2. **Přidávejte filtry uvnitř smyček**, pokud není potřeba zpracovat všechny položky
+3. **Přejmenujte krok iterátoru**, aby popisoval, co prochází
+4. **Testujte s malými poli** před zpracováním velkých datových sad
+5. **Sledujte spuštění pracovních postupů**, abyste zajistili, že iterace proběhnou podle očekávání
+
+## Související
+
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Jak používat větve](/l/cs/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Často kladené dotazy k pracovním postupům](/l/cs/user-guide/workflows/how-tos/need-more-help/workflows-faq)

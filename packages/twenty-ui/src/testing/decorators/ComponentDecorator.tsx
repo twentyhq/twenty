@@ -1,4 +1,4 @@
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 
 import { GRAY_SCALE_LIGHT, MAIN_COLORS_LIGHT } from '@ui/theme';
 

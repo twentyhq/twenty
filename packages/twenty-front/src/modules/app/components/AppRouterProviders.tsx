@@ -14,14 +14,17 @@ import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvi
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
+import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
+import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { UserAndViewsProviderEffect } from '@/users/components/UserAndViewsProviderEffect';
+import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { UserProvider } from '@/users/components/UserProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
@@ -36,7 +39,7 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
-        <UserAndViewsProviderEffect />
+        <MetadataProviderEffect />
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
@@ -45,30 +48,34 @@ export const AppRouterProviders = () => {
               <UserProvider>
                 <AuthProvider>
                   <ApolloCoreProvider>
-                    <ObjectMetadataItemsLoadEffect />
-                    <ObjectMetadataItemsProvider>
-                      <PrefetchDataProvider>
-                        <UserThemeProviderEffect />
-                        <SnackBarProvider>
-                          <ErrorMessageEffect />
-                          <DialogComponentInstanceContext.Provider
-                            value={{ instanceId: 'dialog-manager' }}
-                          >
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <GotoHotkeysEffectsProvider />
-                                <PageTitle title={pageTitle} />
-                                <PageFavicon />
-                                <Outlet />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogComponentInstanceContext.Provider>
-                        </SnackBarProvider>
-                        <MainContextStoreProvider />
-                      </PrefetchDataProvider>
-                      <PageChangeEffect />
-                    </ObjectMetadataItemsProvider>
+                    <SSEProvider>
+                      <ObjectMetadataItemsLoadEffect />
+                      <ObjectMetadataItemsProvider>
+                        <PrefetchDataProvider>
+                          <UserThemeProviderEffect />
+                          <SnackBarProvider>
+                            <ErrorMessageEffect />
+                            <DialogComponentInstanceContext.Provider
+                              value={{ instanceId: 'dialog-manager' }}
+                            >
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                  <GlobalFilePreviewModal />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogComponentInstanceContext.Provider>
+                          </SnackBarProvider>
+                          <MainContextStoreProvider />
+                          <SupportChatEffect />
+                        </PrefetchDataProvider>
+                        <PageChangeEffect />
+                      </ObjectMetadataItemsProvider>
+                    </SSEProvider>
                   </ApolloCoreProvider>
                 </AuthProvider>
               </UserProvider>

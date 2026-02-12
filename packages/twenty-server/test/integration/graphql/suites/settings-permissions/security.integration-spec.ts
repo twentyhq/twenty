@@ -1,6 +1,6 @@
 import { gql } from 'graphql-tag';
 import request from 'supertest';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -27,7 +27,7 @@ describe('Security permissions', () => {
       }
     `;
 
-    const response = await makeGraphqlAPIRequest({ query });
+    const response = await makeMetadataAPIRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
   });
@@ -50,7 +50,7 @@ describe('Security permissions', () => {
         }
       `;
 
-    await makeGraphqlAPIRequest({ query: restoreQuery });
+    await makeMetadataAPIRequest({ query: restoreQuery });
   });
 
   describe('security permissions', () => {
@@ -68,7 +68,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -97,7 +97,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -128,7 +128,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -157,7 +157,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -188,7 +188,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -217,7 +217,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -247,7 +247,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -276,7 +276,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -309,7 +309,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -339,7 +339,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -368,7 +368,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -399,7 +399,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -428,7 +428,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -459,7 +459,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -488,7 +488,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -519,7 +519,7 @@ describe('Security permissions', () => {
         };
 
         return client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)
@@ -548,7 +548,7 @@ describe('Security permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
           .send(queryData)
           .expect(200)

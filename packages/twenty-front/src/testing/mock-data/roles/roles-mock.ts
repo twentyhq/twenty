@@ -3,7 +3,7 @@ import {
   type FieldPermission,
   type ObjectPermission,
   type Role,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 export const MOCK_ROLE_ID_GRANTS_ALL = 'role-id-1';
@@ -80,6 +80,8 @@ export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
     MOCK_OBJECT_PERMISSION_2_GRANTS_ALL,
     MOCK_OBJECT_PERMISSION_3_NULL_ALL,
   ],
+  rowLevelPermissionPredicateGroups: [],
+  rowLevelPermissionPredicates: [],
 };
 
 export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
@@ -110,6 +112,8 @@ export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
     MOCK_OBJECT_PERMISSION_2_GRANTS_ALL,
     MOCK_OBJECT_PERMISSION_3_NULL_ALL,
   ],
+  rowLevelPermissionPredicateGroups: [],
+  rowLevelPermissionPredicates: [],
 };
 
 export const rolesMockHookWrapper = getJestMetadataAndApolloMocksWrapper({

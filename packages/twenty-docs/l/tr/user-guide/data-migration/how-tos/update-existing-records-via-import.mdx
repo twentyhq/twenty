@@ -1,0 +1,198 @@
+---
+title: İçe Aktarma Yoluyla Mevcut Kayıtları Güncelleyin
+description: CSV içe aktarma kullanarak kayıtları toplu olarak güncelleme için eksiksiz adım adım kılavuz.
+---
+
+## Genel Bakış
+
+Birçok kaydı aynı anda güncellemeniz mi gerekiyor? Tek tek düzenlemek yerine, mevcut kayıtları toplu olarak güncellemek için CSV içe aktarmayı kullanın.
+
+**Kullanım alanları:**
+
+* Birden fazla kişi için iş unvanlarını güncelleyin
+* Şirket bilgilerini toplu olarak değiştirin
+* Yeni özel alanlara veri ekleyin
+* Birçok kayıttaki veri hatalarını düzeltin
+
+## Nasıl Çalışır
+
+Var olan bir kayıtla eşleşen bir **benzersiz tanımlayıcı** içeren bir dosyayı içe aktardığınızda, Twenty yinelenen bir kayıt oluşturmak yerine o kaydı günceller.
+
+| Eğer benzersiz tanımlayıcı... | Twenty şunu yapar...                                     |
+| ----------------------------- | -------------------------------------------------------- |
+| Mevcut bir kayıtla eşleşir    | Mevcut kaydı **güncelle**                                |
+| Herhangi bir kayıtla eşleşmez | Yeni bir kayıt **oluştur**                               |
+| Dosyanızda eksik              | Yeni bir kayıt **oluştur** (otomatik oluşturulan ID ile) |
+
+<Warning>
+  **Çoklu Seçim alanları birleştirilmez, üzerine yazılır.**
+
+  Bir kayıtta `Option A` ve `Option B` seçiliyse ve siz `["Option C"]` içe aktarırsanız, içe aktarmadan sonra kayıtta yalnızca `Option C` bulunur. İçe aktarma önceki tüm seçimlerin yerini alır—onlara ekleme yapmaz.
+
+  Mevcut değerleri korumak için, hepsini içe aktarımınıza dahil edin: `["Option A","Option B","Option C"]`
+</Warning>
+
+## Adım 1: Mevcut Verilerinizi Dışa Aktarın
+
+Önce, güncellemek istediğiniz kayıtları dışa aktarın:
+
+1. Nesneye gidin (Kişiler, Şirketler vb.)
+2. **İhtiyacınız olan sütunları ekleyin** — güncellemek istediğiniz alanları göstermek için **Options → Fields**'a tıklayın
+3. **Gerekirse filtreleyin** — yalnızca güncellemek istediğiniz kayıtlara daraltın
+4. **⋮** → **Görünümü Dışa Aktar**'a tıklayın
+5. CSV dosyasını kaydedin
+
+<Note>**Neden önce dışa aktarmalısınız?** Dışa aktarılan dosya doğru biçimdedir, benzersiz tanımlayıcıları içerir ve içe aktarma sırasında otomatik olarak eşleştirilir.</Note>
+
+### Neler Dışa Aktarılır
+
+* Geçerli görünümünüzdeki tüm görünür sütunlar
+* Kaydın benzersiz tanımlayıcıları (`id`, `email`, `domain`)
+* Değiştirebileceğiniz mevcut alan değerleri
+
+## Adım 2: CSV Dosyasını Düzenleyin
+
+Dışa aktarılan dosyayı hesap tablosu uygulamanızda açın (Excel, Google Sheets vb.):
+
+1. **Benzersiz tanımlayıcı sütununu koruyun** — `id`, `email` veya `domain` alanlarını silmeyin
+2. Değiştirmek istediğiniz sütunlardaki değerleri **güncelleyin**
+3. **Güncellemeniz gerekmeyen sütunları kaldırın** (isteğe bağlı, ancak daha temizdir)
+4. **Benzersiz tanımlayıcı değerlerini değiştirmeyin** — aksi halde Twenty yeni kayıtlar oluşturur
+
+### Örnek: İş Unvanlarını Güncelleme
+
+**Dışa aktarılan dosya:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Sales Rep
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Sales Rep
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
+```
+
+**Düzenlemelerinizden sonra:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Account Executive
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Senior Account Executive
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Account Executive
+```
+
+<Warning>
+  **Benzersiz tanımlayıcı değerlerini değiştirmeyin.**
+
+  `john@acme.com` adresini `john.smith@acme.com` olarak değiştirirseniz, Twenty mevcut kaydı güncellemek yerine yeni bir kayıt oluşturur.
+</Warning>
+
+## Adım 3: Güncellenen Dosyayı İçe Aktarın
+
+1. Nesneye gidin
+2. **⋮** → **Kayıtları içe aktar**'ı tıklayın
+3. Düzenlediğiniz CSV dosyasını yükleyin
+4. **Benzersiz tanımlayıcının eşlendiğinden emin olun** — `email`, `domain` veya `id` alanlarının doğru şekilde eşlendiğini doğrulayın
+5. Alan eşlemelerini gözden geçirin
+6. Hataları kontrol edin
+7. **Onayla**'ya tıklayın
+
+Twenty, kayıtları benzersiz tanımlayıcıya göre eşleştirir ve yeni değerlerle günceller.
+
+## Doğru Benzersiz Tanımlayıcıyı Seçme
+
+| Nesne             | Önerilen                    | Alternatif | Notlar                                  |
+| ----------------- | --------------------------- | ---------- | --------------------------------------- |
+| **Kişiler**       | `e-posta`                   | `id`       | E-posta insan tarafından okunabilirdir  |
+| **Şirketler**     | `alan Adı`                  | `id`       | Alan adı insan tarafından okunabilirdir |
+| **Özel nesneler** | Herhangi bir benzersiz alan | `id`       | Özel benzersiz alanınızı kullanın       |
+
+<Note>**Yalnızca TEK bir benzersiz tanımlayıcı kullanın.** Hem `email` HEM de `id` eşlemeyin. Bu, karışıklığa ve hatalara neden olabilir.</Note>
+
+### Özel Benzersiz Alanları Kullanma
+
+Benzersiz olarak işaretlenmiş özel bir alanınız varsa (başka bir sistemden gelen harici bir ID gibi):
+
+1. Bu alanı dışa aktarma ve içe aktarma işlemlerinize dahil edin
+2. İçe aktarma sırasında onu eşleyin
+3. Twenty, o alana göre eşleştirme yapar
+
+## Adım 4: Güncellemeleri Doğrulayın
+
+İçe aktardıktan sonra:
+
+1. Güncellenen kayıtlardan birkaçını açın
+2. Değişikliklerin uygulandığını doğrulayın
+3. Yinelenen kayıtların oluşturulmadığını kontrol edin
+
+## Dosyanızda Olmayan Alanlar Ne Olacak?
+
+**İçe aktarma dosyanıza dahil edilmeyen alanlar değişmeden kalır.**
+
+| Dosyanız şunları içerir...   | Sonuç                                                     |
+| ---------------------------- | --------------------------------------------------------- |
+| `email`, `jobTitle`          | Yalnızca `jobTitle` güncellenir; diğer alanlar aynı kalır |
+| `email`, `jobTitle`, `phone` | `jobTitle` ve `phone` güncellenir                         |
+
+Bu, yalnızca değiştirmek istediğiniz alanları (artı benzersiz tanımlayıcıyı) dahil etmeniz gerektiği anlamına gelir.
+
+## Güncellemeleri ve Yeni Kayıtları Birleştirme
+
+Aynı içe aktarma işleminde mevcut kayıtları güncelleyebilir VE yeni kayıtlar oluşturabilirsiniz:
+
+```csv
+email,firstName,lastName,jobTitle
+john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
+newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
+```
+
+## Kaçınılması Gereken Yaygın Hatalar
+
+| Hata                                    | Sorun                                                                 | Sonuç                                   | Çözüm                                                 |
+| --------------------------------------- | --------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------------- |
+| **Benzersiz tanımlayıcıyı değiştirmek** | `john@acme.com` `john.smith@acme.com` olarak değiştirildi             | Güncellemek yerine yeni kayıt oluşturur | Benzersiz tanımlayıcıları değiştirmeden bırakın       |
+| **Birden fazla benzersiz alan**         | Hem `email` HEM DE `id` alanlarını eşleme                             | Olası eşleştirme çakışmaları            | Yalnızca TEK bir benzersiz tanımlayıcıyı eşleyin      |
+| **Benzersiz tanımlayıcı yok**           | Dosyada yalnızca `firstName`, `lastName`, `jobTitle` var              | Tüm satırlar yeni kayıtlar oluşturur    | Her zaman `email`, `domain` veya `id` öğesini ekleyin |
+| **Büyük/küçük harf uyumsuzluğu**        | Dosyada `John@acme.com` var ancak Twenty'de `john@acme.com` bulunuyor | Yeni kayıt oluşturur                    | Tam değerleri almak için Twenty'den dışa aktarın      |
+
+## SSS
+
+<AccordionGroup>
+  <Accordion title="Bazı kayıtlar henüz yoksa ne olur?">
+    Benzersiz tanımlayıcıları mevcut kayıtlarla eşleşmeyen kayıtlar, yeni kayıtlar olarak oluşturulacaktır. Bu, aynı içe aktarma işleminde güncelleme ve oluşturma yapmanıza olanak tanır.
+  </Accordion>
+
+  <Accordion title="Bir alan değerini temizleyebilir/boşaltabilir miyim?">
+    Evet, CSV'nizde hücreyi boş bırakın. İçe aktarma, mevcut kayıttaki o alanın değerini temizleyecektir.
+  </Accordion>
+
+  <Accordion title="İçe aktarmaya dahil etmediğim alanlara ne olur?">
+    İçe aktarma dosyanızda olmayan alanlar mevcut kayıtlarda değişmeden kalır. Yalnızca dahil ettiğiniz alanlar güncellenir.
+  </Accordion>
+
+  <Accordion title="İlişki alanlarını (ör. Şirket) güncelleyebilir miyim?">
+    Evet! İlişkinin benzersiz tanımlayıcısını (ör. `companyDomain`) ekleyin ve ilişki alanına eşleyin. İlişki güncellenecektir.
+  </Accordion>
+
+  <Accordion title="Hangi kayıtların güncelleneceğini ve hangilerinin oluşturulacağını nasıl anlarım?">
+    İçe aktarmayı gözden geçirme adımında, Twenty benzersiz tanımlayıcı eşleşmelerine göre kaç kaydın güncelleneceğini ve kaçının oluşturulacağını gösterir.
+  </Accordion>
+
+  <Accordion title="Toplu bir güncellemeyi geri alabilir miyim?">
+    Otomatik geri alma yoktur. Toplu güncellemeler yapmadan önce verilerinizi yedek olarak dışa aktarmanızı öneririz.
+  </Accordion>
+</AccordionGroup>
+
+## En İyi Uygulamalar
+
+1. **Önce dışa aktarın** — doğru biçimi sağlamak için her zaman bir dışa aktarmayla başlayın
+2. **Güncellemeden önce yedekleyin** — toplu değişiklikler yapmadan önce verilerinizi dışa aktarın
+3. **Birkaç kayıtla test edin** — büyük bir toplu işlem yapmadan önce 5-10 kaydı güncellemeyi deneyin
+4. **İnsan tarafından okunabilir tanımlayıcılar kullanın** — `email` ve `domain`, `id`'den daha kolay doğrulanır
+5. **Yalnızca gerekli sütunları dahil edin** — daha az sütun, hata olasılığını azaltır
+
+## Sorun Giderme
+
+Sorun mu yaşıyorsunuz? Şunları kontrol edin:
+
+* [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)

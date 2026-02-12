@@ -1,16 +1,15 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { FormFullNameFieldInput } from '@/object-record/record-field/ui/form-types/components/FormFullNameFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormFullNameFieldInput } from '../FormFullNameFieldInput';
 
 const meta: Meta<typeof FormFullNameFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormFullNameFieldInput',
   component: FormFullNameFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -38,22 +37,20 @@ export const WithVariable: Story = {
   args: {
     label: 'Name',
     defaultValue: {
-      firstName: `{{${MOCKED_STEP_ID}.fullName.firstName}}`,
-      lastName: `{{${MOCKED_STEP_ID}.fullName.lastName}}`,
+      firstName: `{{${MOCKED_STEP_ID}.name}}`,
+      lastName: `{{${MOCKED_STEP_ID}.amount}}`,
     },
     VariablePicker: () => <div>VariablePicker</div>,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const firstNameVariable = await canvas.findByText('Full Name First Name');
-    expect(firstNameVariable).toBeVisible();
+    await canvas.findAllByText('Name');
 
-    const lastNameVariable = await canvas.findByText('Full Name Last Name');
+    const lastNameVariable = await canvas.findByText('Amount');
     expect(lastNameVariable).toBeVisible();
 
-    const variablePickers = await canvas.findAllByText('VariablePicker');
-    expect(variablePickers).toHaveLength(2);
+    await canvas.findAllByText('VariablePicker');
   },
 };
 

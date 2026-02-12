@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { resolveInput } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -86,6 +86,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             ? executionContext.initiator
             : undefined,
           rolePermissionConfig: executionContext.rolePermissionConfig,
+          authContext: executionContext.authContext,
         },
       );
 

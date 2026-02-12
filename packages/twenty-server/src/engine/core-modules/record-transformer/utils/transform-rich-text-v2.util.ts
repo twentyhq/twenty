@@ -5,6 +5,21 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+// Reuse a single ServerBlockNoteEditor across all calls to avoid
+// the cost of dynamic import resolution + instance creation (~90ms) on every transform.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let cachedServerBlockNoteEditor: any = null;
+
+const getServerBlockNoteEditor = async () => {
+  if (!cachedServerBlockNoteEditor) {
+    const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
+
+    cachedServerBlockNoteEditor = ServerBlockNoteEditor.create();
+  }
+
+  return cachedServerBlockNoteEditor;
+};
+
 export const transformRichTextV2Value = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   richTextValue: any,
@@ -13,9 +28,7 @@ export const transformRichTextV2Value = async (
     ? richTextV2ValueSchema.parse(richTextValue)
     : richTextValue;
 
-  const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
-
-  const serverBlockNoteEditor = ServerBlockNoteEditor.create();
+  const serverBlockNoteEditor = await getServerBlockNoteEditor();
 
   // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
   // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947

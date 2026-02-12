@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -39,7 +40,7 @@ export const FormTextFieldInput = ({
   const instanceId = useId();
 
   const editor = useTextVariableEditor({
-    placeholder: placeholder ?? 'Enter text',
+    placeholder: placeholder ?? t`Enter text`,
     multiline,
     readonly,
     defaultValue,

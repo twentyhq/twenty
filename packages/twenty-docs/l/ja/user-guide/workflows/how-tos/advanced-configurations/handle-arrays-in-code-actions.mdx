@@ -1,0 +1,82 @@
+---
+title: Code アクションで配列を扱う
+description: ワークフローの Code アクションで配列入力を適切に扱う方法を学びましょう。
+---
+
+Code アクションで配列を扱う際、次の2つの一般的な課題に直面することがあります:
+
+1. **文字列として渡される配列** — 外部システムや前のステップからのデータが、本来の配列ではなく文字列として届く
+2. **個々の項目を選べない** — 配列全体しか選択できず、その中の特定フィールドを選べない
+
+どちらも Code ノードで解決できます。
+
+## 文字列から配列をパースする
+
+配列は、ネイティブな配列ではなく、文字列や JSON としてワークフローの各ステップ間で受け渡されることがよくあります。 これは次のような場合に発生します:
+
+* HTTP Request で外部 API からデータを受け取る場合
+* Webhook ペイロードを処理する場合
+* ワークフローのステップ間でデータを受け渡す場合
+
+**解決策**: Code アクションの先頭に次のパターンを追加します:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+重要な行は `typeof users === \"string\" ? JSON.parse(users) : users` は、入力が文字列かどうかを判定し、必要であればパースし、すでに配列であればそのまま使用します。
+
+## 配列から個別のフィールドを取り出す
+
+Webhook が `answers: [...]` のような配列を返すことがありますが、その後のワークフローのステップでは、**配列全体** — その中の個別の項目は選択できません。
+
+**解決策**: 特定のフィールドを抽出して構造化オブジェクトとして返す Code ノードを追加します:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+この Code ノードは、配列ではなく構造化オブジェクトを返します。 以降のステップでは、変数ピッカーから `answer.firstname` や `answer.name` のような個別フィールドを選択できるようになります。
+
+<Note>
+  将来のアップデートで配列の扱いをより簡単にできるよう、積極的に改善を進めています。
+</Note>
+
+<Tip>
+  コードエディタ右上の四角いアイコンをクリックすると全画面表示になります — デフォルトのエディタ幅には制限があるため便利です。
+</Tip>

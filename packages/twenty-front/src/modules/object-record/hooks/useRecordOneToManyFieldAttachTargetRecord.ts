@@ -5,7 +5,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateOneRecordV2 } from '@/object-record/hooks/useUpdateOneRecordV2';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useRecordOneToManyFieldAttachTargetRecord = () => {
@@ -13,7 +13,7 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { updateOneRecord } = useUpdateOneRecordV2();
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const recordOneToManyFieldAttachTargetRecord = async ({
     sourceObjectNameSingular,

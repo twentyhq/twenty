@@ -1,0 +1,85 @@
+---
+title: Versões de Workflow
+description: Gerenciar versões e rascunhos de workflow.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Sobre versões
+
+Sempre que você ativa um workflow, uma nova versão é criada. Isso permite acompanhar as alterações ao longo do tempo e reverter para configurações anteriores, se necessário.
+
+## Status das versões
+
+| Estado         | Descrição                                         |
+| -------------- | ------------------------------------------------- |
+| **Rascunho**   | Sendo editado, ainda não publicado                |
+| **Ativo**      | Versão ao vivo respondendo a gatilhos             |
+| **Desativado** | Anteriormente ativo, mas interrompido manualmente |
+| **Arquivado**  | Versões passadas mantidas para histórico          |
+
+## Trabalhando com rascunhos
+
+Ao editar um workflow ativo, as alterações são salvas como um **rascunho**. A versão ativa continua em execução enquanto você trabalha nas atualizações.
+
+Quando terminar de editar, você pode:
+
+* **Ativar**: Publicar o rascunho como a nova versão ativa (a versão anterior é arquivada)
+* **Descartar**: Excluir o rascunho e manter a versão ativa atual
+
+## Histórico de Versões
+
+### Visualizando versões anteriores
+
+1. Abra o workflow
+2. Clique na aba **Versões**
+3. Veja todas as versões anteriores com carimbos de data e hora
+
+### Restaurando uma versão
+
+1. Encontre a versão que deseja restaurar
+2. Clique em **Usar como rascunho**
+3. A versão é copiada para um novo rascunho
+4. Faça as atualizações necessárias
+5. Ative quando estiver pronto
+
+## Melhores Práticas
+
+### Gerenciamento de versões
+
+* Ative somente quando estiver pronto para produção
+* Mantenha mudanças relevantes entre versões
+* Documente mudanças importantes em nomes ou descrições de workflows
+* Teste no modo de rascunho antes de ativar
+
+### Revertendo alterações
+
+* Se uma nova versão causar problemas, restaure a versão anterior
+* Use o histórico de versões para acompanhar o que mudou
+* Sempre teste versões restauradas antes de ativar
+
+## Workflows comuns
+
+### Edição rápida
+
+1. Faça pequenas alterações em um workflow ativo
+2. Teste no modo de rascunho
+3. Ative a nova versão
+
+### Revisão importante
+
+1. Use a versão anterior como ponto de partida
+2. Faça alterações significativas no rascunho
+3. Teste minuciosamente todos os cenários
+4. Ative quando estiver confiante
+
+### Reversão
+
+1. Identifique o problema na versão atual
+2. Encontre a última versão funcional no histórico
+3. Clique em **Usar como rascunho**
+4. Ative para restaurar o comportamento anterior
+
+## Relacionados
+
+* [Primeiros passos com Workflows](/l/pt/user-guide/workflows/overview)
+* [Execuções de Workflows](/l/pt/user-guide/workflows/capabilities/workflow-runs)

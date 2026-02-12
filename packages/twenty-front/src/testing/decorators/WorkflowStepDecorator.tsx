@@ -1,6 +1,6 @@
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -8,7 +8,8 @@ import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/st
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { type Decorator } from '@storybook/react';
+import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
+import { type Decorator } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
@@ -22,11 +23,14 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   const workflowVersion = getWorkflowMock().versions.edges[0]
     .node as WorkflowVersion;
   const { populateStepsOutputSchema } = useStepsOutputSchema();
+  const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
   const [ready, setReady] = useState(false);
 
   const handleMount = useRecoilCallback(
     ({ set }) =>
-      () => {
+      async () => {
+        await loadMockedObjectMetadataItems();
+
         set(
           workflowVisualizerWorkflowIdComponentState.atomFamily({
             instanceId: workflowVisualizerComponentInstanceId,
@@ -70,7 +74,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
         populateStepsOutputSchema(workflowVersion);
         setReady(true);
       },
-    [populateStepsOutputSchema, workflowVersion],
+    [loadMockedObjectMetadataItems, populateStepsOutputSchema, workflowVersion],
   );
 
   useEffect(() => {

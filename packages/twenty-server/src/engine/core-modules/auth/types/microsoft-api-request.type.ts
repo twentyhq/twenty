@@ -19,5 +19,6 @@ export type MicrosoftAPIsRequest = Omit<
     redirectLocation?: string;
     calendarVisibility?: CalendarChannelVisibility;
     messageVisibility?: MessageChannelVisibility;
+    skipMessageChannelConfiguration?: boolean;
   };
 };

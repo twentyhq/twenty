@@ -2,10 +2,10 @@ import { type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { reduceFlatViewGroupsByViewId } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-id.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 type HandleFlatFieldMetadataDeactivationSideEffectsArgs = FromTo<
@@ -59,14 +59,22 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     flatEntityMaps: flatViewGroupMaps,
   });
 
-  const { flatViewGroupRecordByViewId } = reduceFlatViewGroupsByViewId({
-    flatViewGroups,
-  });
+  const uniqueViewUniversalIdentifiers = [
+    ...new Set(flatViewGroups.map((vg) => vg.viewUniversalIdentifier)),
+  ];
+
+  const flatViewsWithViewGroups =
+    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
+      flatEntityMaps: flatViewMaps,
+      universalIdentifiers: uniqueViewUniversalIdentifiers,
+    });
+
+  const viewIdsFromViewGroups = flatViewsWithViewGroups.map((view) => view.id);
 
   // Note: We assume a view only has view groups related to one field
   const viewIdsToDelete = [
     ...new Set([
-      ...Object.keys(flatViewGroupRecordByViewId),
+      ...viewIdsFromViewGroups,
       ...fromFlatFieldMetadata.calendarViewIds,
       ...fromFlatFieldMetadata.mainGroupByFieldMetadataViewIds,
     ]),
@@ -88,6 +96,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...flatView,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataId: null,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
   }));
 
   return {

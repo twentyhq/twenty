@@ -11,7 +11,7 @@ import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/servi
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceCacheStorageModule,
     ApplicationModule,
     PermissionsModule,
-    WorkspaceMigrationV2Module,
+    WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ViewPermissionsModule,
   ],

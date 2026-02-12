@@ -1,0 +1,180 @@
+---
+title: Creați relații de tip mulți-la-mulți
+description: Conectați înregistrări în care multe elemente de pe ambele părți pot fi legate între ele folosind obiecte de legătură.
+---
+
+Relațiile mulți-la-mulți vă permit să conectați mai multe înregistrări pe ambele părți. De exemplu: multe Persoane pot lucra la multe Proiecte, iar fiecare Proiect poate avea multe Persoane.
+
+<Warning>
+  **Funcție din Lab**: Relațiile prin obiecte de legătură sunt în prezent în Lab. Activați-le în **Settings → Updates → Lab** înainte de a urma acest ghid.
+</Warning>
+
+<Note>
+  Această funcție necesită, de asemenea, ca **Advanced mode** să fie activat (comutator în dreapta jos în Settings).
+</Note>
+
+## Când să utilizați relațiile mulți-la-mulți
+
+Folosiți relațiile mulți-la-mulți atunci când ambele părți ale unei relații pot avea mai multe conexiuni:
+
+| Relație             | Exemplu                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| Persoane ↔ Proiecte | O persoană lucrează la mai multe proiecte; un proiect are mai mulți membri ai echipei      |
+| Companii ↔ Etichete | O companie poate avea mai multe etichete; o etichetă se poate aplica la mai multe companii |
+| Produse ↔ Comenzi   | Un produs poate apărea în mai multe comenzi; o comandă conține mai multe produse           |
+
+## Cum Funcționează
+
+Twenty folosește un model de **obiect de legătură** pentru relațiile mulți-la-mulți. Un obiect de legătură se află între două obiecte și păstrează conexiunile:
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+Obiectul **Atribuiri proiect** (obiect de legătură) are:
+
+* O relație către Persoane (mulți-la-unu)
+* O relație către Proiecte (mulți-la-unu)
+
+Când activați comutatorul pentru relația de legătură, Twenty afișează înregistrările legate direct, în loc să afișeze înregistrările intermediare ale obiectului de legătură.
+
+## Cerințe
+
+1. **Activați Junction Relations în Lab**: Mergeți la **Settings → Updates → Lab** și activați **Junction Relations**
+2. **Activați Advanced mode**: Porniți **Advanced mode** în partea dreaptă jos a barei laterale Settings
+3. Planificați modelul de date:
+   * Ce două obiecte conectați?
+   * Cum ar trebui să se numească obiectul de legătură?
+
+## Pasul 1: Creați obiectul de legătură
+
+Mai întâi, creați obiectul intermediar care va păstra conexiunile.
+
+1. Accesați **Setări → Model de date**
+2. Faceți clic pe **+ Obiect nou**
+3. Dați-i un nume descriptiv (de ex., "Atribuire proiect", "Membru al echipei", "Comandă de produs")
+4. Faceți clic pe **Salvare**
+
+<Tip>
+  **Convenție de denumire**: Folosiți un nume care descrie relația, cum ar fi "Atribuire proiect" sau "Apartenență la echipă". Acest lucru face modelul de date mai ușor de înțeles.
+</Tip>
+
+## Pasul 2: Creați relații din obiectul de legătură
+
+Adăugați câmpuri de relație din obiectul de legătură către ambele obiecte pe care doriți să le conectați.
+
+### Prima relație (Obiect de legătură → Obiectul A)
+
+1. Selectați obiectul de legătură în **Setări → Model de date**
+2. Faceți clic pe **+ Adaugă câmp**
+3. Alegeți **Relație** ca tip de câmp
+4. Selectați primul obiect (de ex., "Persoane")
+5. Setați tipul relației la **Mulți-la-unu** (multe atribuiri pot fi legate de o singură persoană)
+6. Denumiți câmpurile:
+   * Câmp pe obiectul de legătură: de ex., "Persoană"
+   * Câmp pe Persoane: de ex., "Atribuiri proiect"
+7. Faceți clic pe **Salvare**
+
+### A doua relație (Obiect de legătură → Obiectul B)
+
+1. Rămânând pe obiectul de legătură, faceți clic pe **+ Adăugați câmp**
+2. Alegeți **Relație** ca tip de câmp
+3. Selectați al doilea obiect (de ex., "Proiecte")
+4. Setați tipul relației la **Mulți-la-unu**
+5. Denumiți câmpurile:
+   * Câmp pe obiectul de legătură: de ex., "Proiect"
+   * Câmp pe Proiecte: de ex., "Membrii echipei"
+6. Faceți clic pe **Salvare**
+
+## Pasul 3: Configurați afișarea relației de joncțiune
+
+Acum configurați obiectele sursă pentru a afișa direct înregistrările legate, sărind peste obiectul intermediar de legătură.
+
+1. Accesați **Setări → Model de date**
+2. Selectați primul obiect (de ex., "Persoane")
+3. Găsiți câmpul de relație care indică spre obiectul de legătură (de ex., "Atribuiri proiect")
+4. Faceți clic pentru a edita câmpul
+5. Activați **"Aceasta este o relație către un obiect de legătură"**
+6. Selectați **Relația țintă** (de ex., "Proiect" — câmpul de pe obiectul de legătură care indică spre cealaltă parte)
+7. Faceți clic pe **Salvare**
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+Repetați pentru celălalt obiect:
+
+1. Selectați "Proiecte" în Model de date
+2. Editați câmpul de relație "Membrii echipei"
+3. Activați comutatorul de joncțiune
+4. Selectați "Persoană" ca relație țintă
+5. Salvează
+
+## Rezultat
+
+După configurare:
+
+* Pe o înregistrare **Persoană**, câmpul "Atribuiri proiect" afișează **Proiecte** direct (nu înregistrări de atribuire)
+* Pe o înregistrare **Proiect**, câmpul "Membrii echipei" afișează **Persoane** direct
+
+Obiectul de legătură există în continuare și stochează conexiunile, dar interfața oferă o vedere mulți-la-mulți mai curată.
+
+## Exemplu: Persoane ↔ Proiecte
+
+Iată un ghid complet:
+
+### Creați obiectul de legătură
+
+* Nume: **Atribuire proiect**
+* Descriere: "Leagă persoanele de proiectele la care lucrează"
+
+### Adăugați relații
+
+1. **Atribuire proiect → Persoane**
+   * Tip: Mulți-la-unu
+   * Câmp pe Atribuire proiect: "Persoană"
+   * Câmp pe Persoane: "Atribuiri proiect"
+
+2. **Atribuire proiect → Proiecte**
+   * Tip: Mulți-la-unu
+   * Câmp pe Atribuire proiect: "Proiect"
+   * Câmp pe Proiecte: "Membrii echipei"
+
+### Configurați afișarea relației de joncțiune
+
+1. Pe obiectul **Persoane**:
+   * Editați câmpul "Atribuiri proiect"
+   * Activați comutatorul de joncțiune
+   * Țintă: "Proiect"
+
+2. Pe obiectul **Proiecte**:
+   * Editați câmpul "Membrii echipei"
+   * Activați comutatorul de joncțiune
+   * Țintă: "Persoană"
+
+### Utilizați-l
+
+* Deschideți o înregistrare Persoană → Vedeți direct Proiectele sale
+* Deschideți o înregistrare Proiect → Vedeți direct membrii echipei
+* Creați conexiuni noi din oricare parte
+
+## Adăugarea de date suplimentare la conexiuni
+
+Deoarece obiectul de legătură este un obiect real, puteți adăuga câmpuri personalizate pentru a stoca informații despre relație:
+
+* **Rol**: "Dezvoltator", "Designer", "Manager"
+* **Data de început**: Când s-au alăturat proiectului
+* **Ore alocate**: Orele săptămânale pe acest proiect
+
+Pentru a accesa aceste date, navigați direct la obiectul de legătură sau interogați-l prin API.
+
+## Limitări
+
+* **Import/Export CSV**: Importul direct al relațiilor mulți-la-mulți nu este acceptat. Importați înregistrări în obiectul de legătură în schimb.
+* **Filtre**: Filtrarea după relații mulți-la-mulți poate avea opțiuni limitate.
+
+## Conexe
+
+* [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) — explicații despre tipurile de relații
+* [Creați obiecte personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-objects) — cum să creați obiecte
+* [Creați câmpuri de relație](/l/ro/user-guide/data-model/how-tos/create-relation-fields) — configurare de bază a relațiilor

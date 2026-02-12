@@ -1,8 +1,66 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import {
+  parseRecordReference,
+  RECORD_REFERENCE_REGEX,
+  RecordLink,
+} from '@/ai/components/RecordLink';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { isDefined } from 'twenty-shared/utils';
+
+const TextWithRecordLinks = ({ text }: { text: string }) => {
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+
+  RECORD_REFERENCE_REGEX.lastIndex = 0;
+
+  let match;
+
+  while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    const parsed = parseRecordReference(match[0]);
+
+    if (isDefined(parsed)) {
+      parts.push(
+        <RecordLink
+          key={match.index}
+          objectNameSingular={parsed.objectNameSingular}
+          recordId={parsed.recordId}
+          displayName={parsed.displayName}
+        />,
+      );
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return <>{parts}</>;
+};
+
+const processChildrenForRecordLinks = (
+  children: React.ReactNode,
+): React.ReactNode => {
+  if (typeof children === 'string') {
+    return <TextWithRecordLinks text={children} />;
+  }
+
+  if (Array.isArray(children)) {
+    return children.map((child, index) => (
+      <span key={index}>{processChildrenForRecordLinks(child)}</span>
+    ));
+  }
+
+  return children;
+};
 
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
@@ -14,9 +72,11 @@ const MarkdownRenderer = lazy(async () => {
     default: ({
       children,
       TableScrollContainer,
+      StyledParagraph,
     }: {
       children: string;
       TableScrollContainer: React.ComponentType<{ children: React.ReactNode }>;
+      StyledParagraph: React.ComponentType<{ children: React.ReactNode }>;
     }) => (
       <Markdown
         remarkPlugins={[remarkGfm]}
@@ -25,6 +85,14 @@ const MarkdownRenderer = lazy(async () => {
             <TableScrollContainer>
               <table>{children}</table>
             </TableScrollContainer>
+          ),
+          p: ({ children }) => (
+            <StyledParagraph>
+              {processChildrenForRecordLinks(children)}
+            </StyledParagraph>
+          ),
+          li: ({ children }) => (
+            <li>{processChildrenForRecordLinks(children)}</li>
           ),
         }}
       >
@@ -51,6 +119,19 @@ const StyledTableScrollContainer = styled.div`
   th {
     background-color: ${({ theme }) => theme.background.secondary};
     font-weight: ${({ theme }) => theme.font.weight.medium};
+  }
+`;
+
+// Using div instead of p to allow RecordLink (which contains div elements) as children
+const StyledParagraph = styled.div`
+  margin-block: 1em;
+
+  &:first-child {
+    margin-block-start: 0;
+  }
+
+  &:last-child {
+    margin-block-end: 0;
   }
 `;
 
@@ -99,7 +180,10 @@ const LoadingSkeleton = () => {
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
     <Suspense fallback={<LoadingSkeleton />}>
-      <MarkdownRenderer TableScrollContainer={StyledTableScrollContainer}>
+      <MarkdownRenderer
+        TableScrollContainer={StyledTableScrollContainer}
+        StyledParagraph={StyledParagraph}
+      >
         {text}
       </MarkdownRenderer>
     </Suspense>

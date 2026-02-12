@@ -3,6 +3,7 @@ import {
   StyledDialog,
   StyledHeading,
 } from './KeyboardShortcutMenuStyles';
+import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/input';
 import { IconX } from 'twenty-ui/display';
 
@@ -18,7 +19,7 @@ export const KeyboardMenuDialog = ({
   return (
     <StyledDialog>
       <StyledHeading>
-        Keyboard shortcuts
+        {t`Keyboard shortcuts`}
         <IconButton variant="tertiary" Icon={IconX} onClick={onClose} />
       </StyledHeading>
       <StyledContainer>{children}</StyledContainer>

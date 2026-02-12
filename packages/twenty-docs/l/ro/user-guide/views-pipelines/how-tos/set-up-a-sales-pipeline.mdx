@@ -1,0 +1,120 @@
+---
+title: Configurați un pipeline de vânzări
+description: Configurați-vă pipeline-ul de vânzări pentru a urmări oportunitățile prin etape.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Un pipeline de vânzări în Twenty este o vizualizare Kanban a obiectului Oportunități, în care fiecare coloană reprezintă o etapă în procesul dvs. de vânzări.
+
+## Pasul 1: Configurați etapele
+
+Etapele sunt definite în câmpul **Etapă** al obiectului Oportunități.
+
+1. Accesați **Setări → Model de date**
+2. Selectați **Oportunități**
+3. Găsiți și faceți clic pe câmpul **Etapă**
+4. Adăugați, eliminați sau redenumiți etapele pentru a se potrivi procesului dvs.
+
+<VimeoEmbed videoId="927890428" title="Demonstrație video" />
+
+### Etape recomandate
+
+| Etapa               | Scop                                 |
+| ------------------- | ------------------------------------ |
+| **Nou**             | Oportunități noi tocmai identificate |
+| **Calificat**       | Confirmată ca o potrivire bună       |
+| **Întâlnire**       | Se poartă discuții                   |
+| **Propunere**       | Propunere trimisă                    |
+| **Negociere**       | Se negociază termenii                |
+| **Închis câștigat** | Tranzacție reușită                   |
+| **Închis pierdut**  | Tranzacție nereușită                 |
+
+<Note>
+  **5-7 etape sunt optime.** Prea multe etape fac pipeline-ul greu de parcurs; prea puține reduc vizibilitatea asupra progresului tranzacțiilor.
+</Note>
+
+## Pasul 2: Creați o vizualizare pentru pipeline
+
+1. Accesați **Oportunități**
+2. Faceți clic pe meniul derulant al vizualizării → **+ Adaugă vizualizare**
+3. Denumiți-o "Sales Pipeline"
+4. Faceți clic pe **Creare**
+5. Deschideți **Opțiuni** și selectați **Kanban** ca tip de afișare
+
+Vizualizarea folosește automat câmpul **Etapă** pentru coloane.
+
+## Pasul 3: Configurați vizualizarea
+
+### Afișați câmpurile cheie
+
+1. Faceți clic pe **Opțiuni → Câmpuri**
+2. Căutați câmpurile în secțiunea "Câmpuri ascunse"
+3. Faceți clic pe **pictograma ochi** pentru a afișa: Companie, Sumă, Data închiderii, Proprietar
+
+### Activați agregările
+
+Afișați totalurile în partea de sus a fiecărei coloane:
+
+1. Faceți clic pe numărul afișat lângă numele unei etape în partea de sus a unei coloane
+2. Selectați tipul de agregare (Număr, Sumă, Medie etc.)
+3. Alegeți câmpul pe care să îl agregați (de ex., Sumă)
+
+**Exemplu:** Afișați valoarea totală a tranzacțiilor pe etapă prin agregarea câmpului Sumă cu operația Sumă.
+
+### Utilizați vizualizarea compactă (opțional)
+
+Pentru o privire de ansamblu la nivel înalt, cu conținut minim pe card:
+
+1. Faceți clic pe **Opțiuni**
+2. Activați comutatorul pentru **Vizualizare compactă**
+
+## Pasul 4: Creați vizualizări personale și de echipă
+
+### "Pipeline-ul meu"
+
+* **Filtru**: Proprietar = Eu
+* **Vizibilitate**: Nelistată (vizualizare personală)
+
+### "Pipeline-ul echipei"
+
+* **Filtru**: Niciunul (afișează tot)
+* **Vizibilitate**: Workspace (vizualizare partajată)
+
+### "Se închid luna aceasta"
+
+* **Tip**: Tabel
+* **Filtru**: Data închiderii = Luna aceasta, Etapa ≠ Închis câștigat, Etapa ≠ Închis pierdut
+* **Sortare**: Data închiderii crescător
+
+## Lucrul cu oportunitățile
+
+### Crearea oportunităților
+
+* Faceți clic pe **+ Nou** în vizualizarea Oportunități
+* Sau faceți clic pe **+** într-o coloană a unei etape specifice
+
+### Trecerea prin etape
+
+Trageți și plasați cardurile oportunităților între coloane pentru a le actualiza etapa.
+
+<VimeoEmbed videoId="927888627" title="Demonstrație video" />
+
+## Cele mai bune practici
+
+### Igiena pipeline-ului
+
+* Actualizați zilnic tranzacțiile pe măsură ce progresează
+* Mutați sau închideți prompt tranzacțiile stagnante
+* Mențineți datele de închidere realiste
+
+### Disciplina etapelor
+
+* Definiți criterii clare pentru fiecare etapă
+* Mutați tranzacțiile prompt atunci când criteriile sunt îndeplinite
+* Nu lăsați tranzacțiile să stea prea mult timp în etape
+
+## Conexe
+
+* [Vizualizări Kanban](/l/ro/user-guide/views-pipelines/capabilities/kanban-views) — agregări și vizualizare compactă
+* [Filtre și sortare](/l/ro/user-guide/views-pipelines/capabilities/filters-and-sorting) — crearea vizualizărilor filtrate

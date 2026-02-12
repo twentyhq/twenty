@@ -1,7 +1,7 @@
 import typescriptParser from '@typescript-eslint/parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import reactConfig from '../../eslint.config.react.mjs';
+import reactConfig from '../twenty-eslint-rules/eslint.config.react.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +23,7 @@ export default [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: [path.resolve(__dirname, 'tsconfig.*.json')],
+        project: [path.resolve(__dirname, 'tsconfig.json')],
         ecmaFeatures: {
           jsx: true,
         },
@@ -48,12 +48,47 @@ export default [
               group: ['lodash'],
               message: "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
             },
+            {
+              group: ['@lingui/*'],
+              message: 'Lingui should not be used in twenty-ui. Pass translatable strings as props from twenty-front instead.',
+            },
           ],
         },
       ],
 
       // Nx dependency checks
       '@nx/dependency-checks': 'error',
+
+      // Disable lingui rules for twenty-ui - translations should be handled in twenty-front
+      'lingui/no-unlocalized-strings': 'off',
+      'lingui/t-call-in-function': 'off',
+      'lingui/no-single-variables-to-translate': 'off',
+      'lingui/no-expression-in-message': 'off',
+      'lingui/no-single-tag-to-translate': 'off',
+      'lingui/no-trans-inside-trans': 'off',
+      'lingui/text-restrictions': 'off',
+    },
+  },
+
+  {
+    files: [
+      '**/src/input/**/*.tsx',
+      '**/src/components/**/*.tsx',
+      '**/src/display/**/*.tsx',
+      '**/src/feedback/**/*.tsx',
+      '**/src/layout/**/*.tsx',
+      '**/src/navigation/**/*.tsx',
+      '**/src/accessibility/**/*.tsx',
+    ],
+    ignores: [
+      '**/*.stories.tsx',
+      '**/__stories__/**/*.tsx',
+      '**/*.test.tsx',
+      '**/__tests__/**/*.tsx',
+      '**/testing/**/*.tsx',
+    ],
+    rules: {
+      'twenty/export-component-props': 'error',
     },
   },
 ];

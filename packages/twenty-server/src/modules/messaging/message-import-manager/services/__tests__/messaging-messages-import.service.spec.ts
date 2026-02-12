@@ -5,7 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
@@ -13,6 +13,7 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
+  MessageFolderImportPolicy,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
@@ -32,7 +33,15 @@ describe('MessagingMessagesImportService', () => {
   let saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService;
 
   const workspaceId = 'workspace-id';
-  let mockMessageChannel: MessageChannelWorkspaceEntity;
+  let mockMessageChannel: Pick<
+    MessageChannelWorkspaceEntity,
+    | 'id'
+    | 'syncStage'
+    | 'connectedAccountId'
+    | 'handle'
+    | 'messageFolders'
+    | 'messageFolderImportPolicy'
+  >;
   let mockConnectedAccount: ConnectedAccountWorkspaceEntity;
   let providersBase: Provider[];
 
@@ -52,7 +61,9 @@ describe('MessagingMessagesImportService', () => {
       syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
       connectedAccountId: mockConnectedAccount.id,
       handle: 'test@gmail.com',
-    } as MessageChannelWorkspaceEntity;
+      messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+    };
 
     providersBase = [
       MessagingMessagesImportService,
@@ -106,11 +117,14 @@ describe('MessagingMessagesImportService', () => {
         },
       },
       {
-        provide: TwentyORMGlobalManager,
+        provide: GlobalWorkspaceOrmManager,
         useValue: {
-          getRepositoryForWorkspace: jest.fn().mockResolvedValue({
+          getRepository: jest.fn().mockResolvedValue({
             update: jest.fn().mockResolvedValue(undefined),
           }),
+          executeInWorkspaceContext: jest
+            .fn()
+            .mockImplementation((fn: () => any, _authContext?: any) => fn()),
         },
       },
       {
@@ -198,7 +212,7 @@ describe('MessagingMessagesImportService', () => {
 
     expect(
       service.processMessageBatchImport(
-        mockMessageChannel,
+        mockMessageChannel as MessageChannelWorkspaceEntity,
         mockConnectedAccount,
         workspaceId,
       ),
@@ -207,7 +221,7 @@ describe('MessagingMessagesImportService', () => {
 
   it('should process message batch import successfully', async () => {
     await service.processMessageBatchImport(
-      mockMessageChannel,
+      mockMessageChannel as MessageChannelWorkspaceEntity,
       mockConnectedAccount,
       workspaceId,
     );
@@ -234,6 +248,7 @@ describe('MessagingMessagesImportService', () => {
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
       },
+      mockMessageChannel,
     );
     expect(
       saveMessagesService.saveMessagesAndEnqueueContactCreation,
@@ -290,7 +305,7 @@ describe('MessagingMessagesImportService', () => {
       );
 
     await service.processMessageBatchImport(
-      mockMessageChannel,
+      mockMessageChannel as MessageChannelWorkspaceEntity,
       mockConnectedAccount,
       workspaceId,
     );

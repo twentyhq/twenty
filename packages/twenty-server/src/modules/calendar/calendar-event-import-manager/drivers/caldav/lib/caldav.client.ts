@@ -13,6 +13,7 @@ import {
   syncCollection,
 } from 'tsdav';
 
+import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
@@ -144,6 +145,32 @@ export class CalDAVClient {
     }
   }
 
+  async validateSyncCollectionSupport(): Promise<void> {
+    const account = await this.getAccount();
+
+    const calendars = await fetchCalendars({
+      account,
+      headers: this.headers,
+    });
+
+    const eventCalendar = calendars.find((calendar) =>
+      calendar.components?.includes('VEVENT'),
+    );
+
+    if (!eventCalendar) {
+      throw new Error('No calendar with event support found');
+    }
+
+    const supportsSyncCollection =
+      eventCalendar.reports?.includes('syncCollection') ?? false;
+
+    if (!supportsSyncCollection) {
+      throw new Error(
+        'CALDAV_SYNC_COLLECTION_NOT_SUPPORTED: Your CalDAV server does not support incremental sync (RFC 6578)',
+      );
+    }
+  }
+
   /**
    * Determines if an event is a full-day event by checking the raw iCal data.
    * Full-day events use VALUE=DATE parameter in DTSTART/DTEND properties.
@@ -269,18 +296,26 @@ export class CalDAVClient {
       const event = events[0] as ical.VEvent;
       const participants = this.extractParticipantsFromEvent(event);
 
+      const title = icalDataExtractPropertyValue(
+        event.summary,
+        'Untitled Event',
+      );
+      const description = icalDataExtractPropertyValue(event.description);
+      const location = icalDataExtractPropertyValue(event.location);
+      const conferenceLinkUrl = icalDataExtractPropertyValue(event.url);
+
       return {
         id: objectUrl,
-        title: event.summary || 'Untitled Event',
+        title,
         iCalUid: event.uid || '',
-        description: event.description || '',
+        description,
         startsAt: event.start.toISOString(),
         endsAt: event.end.toISOString(),
-        location: event.location || '',
+        location,
         isFullDay: this.isFullDayEvent(rawData),
         isCanceled: event.status === 'CANCELLED',
         conferenceLinkLabel: '',
-        conferenceLinkUrl: event.url,
+        conferenceLinkUrl,
         externalCreatedAt:
           event.created?.toISOString() || new Date().toISOString(),
         externalUpdatedAt:

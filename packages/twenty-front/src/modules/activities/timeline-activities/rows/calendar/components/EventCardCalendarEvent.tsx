@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 
 import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
@@ -118,7 +119,7 @@ export const EventCardCalendarEvent = ({
       },
     },
     onCompleted: (data) => {
-      upsertRecordsInStore([data]);
+      upsertRecordsInStore({ partialRecords: [data] });
     },
   });
 
@@ -138,14 +139,14 @@ export const EventCardCalendarEvent = ({
     );
 
     if (shouldHandleNotFound) {
-      return <div>Calendar event not found</div>;
+      return <div>{t`Calendar event not found`}</div>;
     }
 
-    return <div>Error loading calendar event</div>;
+    return <div>{t`Error loading calendar event`}</div>;
   }
 
   if (loading || isUndefined(calendarEvent)) {
-    return <div>Loading...</div>;
+    return <div>{t`Loading...`}</div>;
   }
 
   const startsAtDate = calendarEvent?.startsAt;

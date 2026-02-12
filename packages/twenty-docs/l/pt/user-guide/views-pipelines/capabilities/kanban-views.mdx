@@ -1,0 +1,99 @@
+---
+title: Visualizações do quadro Kanban
+description: Aprenda a usar as visualizações Kanban para visualizar e gerenciar seus fluxos de trabalho.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Sobre Visualizações Kanban
+
+As visualizações Kanban mapeiam visualmente os fluxos de processos, onde cada coluna representa um estágio distinto e cada cartão representa um registro.
+
+## Mover Cartões entre Estágios
+
+Você pode mover cada cartão entre as etapas à medida que avança no seu fluxo de trabalho, arrastando e soltando. Para prosseguir, mantenha o clique em um cartão e mova-o para o próximo estágio.
+
+<VimeoEmbed videoId="927888627" title="Demonstração em vídeo" />
+
+## Adicionar e excluir etapas
+
+Você pode personalizar seu fluxo de trabalho para atender às suas necessidades usando estágios, que representam um valor em um Campo de Seleção:
+
+### Adicionar etapas
+
+Para adicionar um estágio, acesse as configurações do campo de Seleção navegando para Configurações > Modelo de Dados, selecionando seu objeto e depois o campo do qual seu quadro Kanban depende.
+
+<VimeoEmbed videoId="927890428" title="Demonstração em vídeo" />
+
+### Remover Estágios
+
+Para remover uma etapa, passe o mouse sobre o nome da etapa ou o ícone `⋮`, clique em `Editar das configurações` nas configurações do campo de seleção e, em seguida, clique em **Excluir** ao lado da etapa relevante.
+
+## Exibir campos
+
+Você pode configurar seu quadro Kanban para exibir alguns campos e ocultar outros. Para ocultar um campo, clique em **Opções** no canto superior direito, depois em **Campos** para abrir a lista de opções. Procure o campo necessário na seção Campos ocultos e clique no ícone de olho para exibir o campo.
+
+Você também pode reorganizar a ordem dos campos mantendo pressionado o nome do campo e arrastando-o para onde quiser.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## Vista Compacta
+
+Você pode ocultar todos os campos e obter uma visão geral de todos os registros em um relance. Para ativar:
+
+1. Clique em **Opções** no canto superior direito
+2. Ative a opção **Visualização compacta**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Agregações por coluna
+
+Cada coluna em uma visualização Kanban pode exibir valores agregados na parte superior, ajudando você a entender seus dados em um relance.
+
+### Agregações disponíveis
+
+| Agregação    | Descrição                                                     |
+| ------------ | ------------------------------------------------------------- |
+| **Contagem** | Número de registros na coluna                                 |
+| **Soma**     | Total de um campo numérico (por exemplo, valores de negócios) |
+| **Média**    | Valor médio de um campo numérico                              |
+| **Mínimo**   | Menor valor                                                   |
+| **Máximo**   | Maior valor                                                   |
+
+### Configurando agregações
+
+1. Clique no número exibido ao lado do valor da etapa, na parte superior de uma coluna
+2. Selecione o tipo de agregação
+3. Escolha o campo a agregar
+
+**Exemplo:** Mostre o valor total dos negócios por etapa agregando o campo Valor com Soma.
+
+## Quando usar visualizações Kanban
+
+As visualizações Kanban são ideais para:
+
+* **Funis de vendas**: Acompanhe os negócios pelas etapas, do lead ao fechamento
+* **Gestão de projetos**: Monitore tarefas por meio dos estados do fluxo de trabalho
+* **Recrutamento**: Acompanhe candidatos pelas etapas de contratação
+* **Qualquer processo em etapas**: Visualize qualquer fluxo de trabalho com etapas definidas
+
+## Melhores Práticas
+
+### Organize suas etapas
+
+* **Limite as etapas**: 5–7 etapas são ideais para visibilidade
+* **Nomenclatura clara**: Use nomes descritivos para as etapas
+* **Ordem lógica**: Organize as etapas na ordem do processo
+
+### Otimize a exibição dos cartões
+
+* **Mostre campos-chave**: Exiba apenas as informações mais importantes
+* **Use a visualização compacta**: Para visões gerais de alto nível
+* **Codificação por cores**: Use cores de etapa para identificar rapidamente o status
+
+### Mantenha a qualidade dos dados
+
+* **Atualize regularmente**: Mantenha os cartões avançando pelas etapas
+* **Arquive os concluídos**: Mova os itens fechados para fora da visualização ativa
+* **Revise cartões parados**: Faça acompanhamento de cartões presos nas etapas

@@ -1,0 +1,149 @@
+---
+title: Mostrar o Valor Esperado no seu pipeline
+description: Calcule e exiba valores ponderados de negócios com base na probabilidade da etapa.
+---
+
+O Valor Esperado é um valor calculado: **Amount × Probability**. Isso ajuda você a prever a receita, ponderando os negócios com base na probabilidade de fechamento.
+
+<Tip>
+  Este é um exemplo de criação de [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) usando fluxos de trabalho.
+</Tip>
+
+Este guia orienta você na configuração dos campos personalizados e fluxos de trabalho necessários para calcular e exibir valores esperados no seu pipeline.
+
+## Etapa 1: Criar campos personalizados
+
+Você precisa de dois campos personalizados no objeto Oportunidades.
+
+### Crie o campo Probability
+
+1. Acesse **Configurações → Modelo de Dados → Oportunidades**
+2. Clique em **+ Adicionar campo**
+3. Configurar:
+   * **Nome**: Probability
+   * **Tipo**: Número
+   * **Descrição**: Probabilidade baseada na etapa (0-100%)
+4. Clique em **Salvar**
+
+### Crie o campo Expected Amount
+
+1. Clique em **+ Adicionar campo**
+2. Configurar:
+   * **Nome**: Expected Amount
+   * **Tipo**: Moeda
+   * **Descrição**: Calculado: Amount × Probability
+3. Clique em **Salvar**
+
+### Opcional: tornar os campos somente leitura para os usuários
+
+Se você não quiser que os usuários editem manualmente esses campos calculados:
+
+1. Vá para **Configurações → Funções**
+2. Selecione a função a configurar
+3. Encontre o objeto Oportunidades
+4. Defina os campos **Probability** e **Expected Amount** como somente leitura
+
+Isso garante que apenas os fluxos de trabalho possam atualizar esses valores.
+
+## Etapa 2: Criar o fluxo de trabalho nº 1 — Atualizar Probability na alteração de etapa
+
+Este fluxo de trabalho define automaticamente o campo Probability quando uma oportunidade é movida para uma nova etapa.
+
+### Criar o fluxo de trabalho
+
+1. Acesse **Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Nomeie como "Update Probability on Stage Change"
+
+### Configurar o gatilho
+
+1. Adicione um gatilho **Registro criado ou atualizado**
+2. Selecione **Oportunidades** como o objeto
+3. Filtre por: o campo **Stage** é atualizado
+
+### Adicione ramificações para cada etapa
+
+Crie uma ramificação para cada etapa com sua probabilidade:
+
+| Etapa       | Probabilidade |
+| ----------- | ------------- |
+| Novo        | 10%           |
+| Qualificado | 25%           |
+| Meeting     | 40%           |
+| Proposal    | 60%           |
+| Negotiation | 80%           |
+| Closed Won  | 100%          |
+| Closed Lost | 0%            |
+
+<Note>
+  Para criar uma nova ramificação, clique com o botão direito na tela do fluxo de trabalho e clique em **Nova ação**. Em seguida, vincule essa ação ao nó anterior arrastando a seta do nó anterior para esta nova ação.
+</Note>
+
+Para cada etapa:
+
+1. Adicione um nó **Filtro**: Stage = [nome da etapa]
+2. Adicione uma ação **Atualizar registro**:
+   * Registro: a Oportunidade que acionou
+   * Campo: Probability
+   * Valor: [probabilidade para essa etapa]
+
+### Calcular o Valor Esperado
+
+Depois que as ramificações se unirem:
+
+1. Adicione um nó **Filtro**: Amount não está vazio
+2. Adicione uma ação **Atualizar registro**:
+   * Registro: a Oportunidade que acionou
+   * Campo: Expected Amount
+   * Valor: Amount × Probability
+
+## Etapa 3: Criar o fluxo de trabalho nº 2 — Recalcular na alteração de Amount
+
+Este fluxo de trabalho atualiza o campo Expected Amount quando o Amount do negócio é alterado.
+
+### Criar o fluxo de trabalho
+
+1. Acesse **Fluxos de trabalho**
+2. Clique em **+ Novo fluxo de trabalho**
+3. Nomeie como "Recalculate Expected Amount on Amount Change"
+
+### Configurar o gatilho
+
+1. Adicione um gatilho **Registro criado ou atualizado**
+2. Selecione **Oportunidades** como o objeto
+3. Filtre por: o campo **Amount** é atualizado
+
+### Adicione a lógica
+
+1. Adicione um nó **Filtro**: Amount não está vazio
+2. Adicione uma ação **Atualizar registro**:
+   * Registro: a Oportunidade que acionou
+   * Campo: Expected Amount
+   * Valor: Amount × Probability
+
+## Etapa 4: Exibir no seu pipeline
+
+Agora mostre os totais de Expected Amount na sua visualização Kanban:
+
+1. Abra a visualização Kanban do seu **Pipeline de Vendas**
+2. Clique no **número** ao lado de qualquer nome de Stage no topo de uma coluna
+3. Selecione **Soma**
+4. Escolha **Expected Amount**
+
+Cada coluna agora mostra o valor total ponderado do pipeline para essa etapa.
+
+## Resumo
+
+| Componente                 | Finalidade                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| **Campo Probability**      | Armazena a probabilidade de ganho baseada na etapa                                |
+| **Campo Expected Amount**  | Armazena Amount × Probability                                                     |
+| **Fluxo de trabalho nº 1** | Atualiza Probability quando a Stage muda e, em seguida, recalcula Expected Amount |
+| **Fluxo de trabalho nº 2** | Recalcula Expected Amount quando Amount muda                                      |
+| **Agregação**              | Exibe a soma de Expected Amount por etapa                                         |
+
+## Relacionados
+
+* [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) — crie campos calculados usando fluxos de trabalho
+* [Visualizações de Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações por coluna
+* [Como criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — configuração de campos

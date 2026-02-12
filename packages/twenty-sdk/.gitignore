@@ -1,0 +1,4 @@
+node_modules
+.twenty
+storybook-static
+src/front-component/__stories__/built

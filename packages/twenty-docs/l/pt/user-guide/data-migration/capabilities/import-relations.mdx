@@ -1,0 +1,148 @@
+---
+title: Importar Relações Entre Objetos
+description: Importar relações entre registos via CSV.
+---
+
+## Visão Geral
+
+O Twenty suporta a importação de relações entre objetos durante a importação por CSV. Isto permite-lhe ligar registos (por exemplo, associar Pessoas a Empresas) como parte da sua migração de dados.
+
+<Note>**Atualmente suportado para importação**: Relações um-para-muitos que apontam para um único tipo de objeto de cada lado (por exemplo, Pessoas → Empresas). Relações que apontam para vários tipos de objeto ainda não são suportadas na importação/exportação.</Note>
+
+## Como funcionam as relações no Twenty
+
+### Um para Muitos / Muitos para Um
+
+O Twenty suporta relações padrão em que um registo se liga a muitos outros:
+
+* **Uma Empresa → Muitas Pessoas**: Uma empresa pode ter vários colaboradores, mas cada pessoa pertence a uma empresa
+* **Uma Empresa → Muitas Oportunidades**: Uma empresa pode ter vários negócios, mas cada oportunidade pertence a uma empresa
+
+### Relações que podem apontar para vários tipos de objeto
+
+Algumas relações podem ligar-se a diferentes tipos de objetos. Isto funciona de duas formas:
+
+**Padrão 1: Muitos registos a ligar-se, cada um, a um registo de diferentes tipos de objeto**
+
+Várias Notas, Tarefas ou Atividades podem ser anexadas, cada uma, a vários tipos de objeto ao mesmo tempo:
+
+* **Notas** podem ser ligadas a uma Pessoa, uma Empresa e uma Oportunidade em simultâneo
+* **Tarefas** podem ser ligadas a uma Pessoa, uma Empresa e uma Oportunidade em simultâneo
+
+Aqui, as Notas/Tarefas estão do lado "muitos". Cada uma liga-se a um registo por tipo de objeto.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Padrão 2: Um registo a receber ligações de muitos registos de diferentes tipos de objeto**
+
+Um Projeto pode receber ligações de vários registos de diferentes tipos de objeto:
+
+* **Um Projeto** pode ter muitas Pessoas ligadas a ele, muitas Empresas ligadas a ele e muitas Notas anexadas a ele
+
+Aqui, o Projeto está do lado "um". Vários registos de diferentes objetos podem ligar-se todos ao mesmo Projeto.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitação de Importação/Exportação**: Relações que apontam para vários tipos de objeto (como Notas → Pessoas/Empresas/Oportunidades) **ainda não são suportadas** na importação ou exportação por CSV.
+
+  * **Importação**: Apenas podem ser importadas relações um-para-muitos que apontem para um único tipo de objeto de cada lado
+  * **Exportação**: As colunas para relações que apontam para vários tipos de objeto são, atualmente, deixadas em branco
+
+  Isto está no nosso roadmap.
+</Warning>
+
+### O que não é suportado hoje
+
+**Relações muitos-para-muitos** ainda não estão disponíveis. Por exemplo, atualmente não pode criar uma relação em que:
+
+* Muitas Pessoas estão ligadas a muitos Projetos
+
+<Note>Relações muitos-para-muitos estão planeadas para o 1.º semestre de 2026.</Note>
+
+## Ligar registos durante a importação
+
+<Note>**Lembrete**: Só podem ser importadas relações um-para-muitos que apontem para um único tipo de objeto (por exemplo, Pessoas → Empresas). Relações que apontem para vários tipos de objeto (por exemplo, Notas → Pessoas/Empresas/Oportunidades) ainda não são suportadas.</Note>
+
+### Passo 1: Identificar os lados "Um" e "Muitos"
+
+Primeiro, determine qual o objeto que está do lado "um" e qual está do lado "muitos" da relação.
+
+**Exemplo**:
+
+* **Empresa** é o lado "um" (uma empresa tem muitos colaboradores)
+* **Pessoas** é o lado "muitos" (cada pessoa pertence a uma empresa)
+
+### Passo 2: Garanta que existem os registos do lado "Um"
+
+Antes de importar o lado "muitos", os registos do lado "um" já devem existir no Twenty.
+
+* Importe ou crie primeiro os registos do lado "um" (por exemplo, Empresas)
+* Valide o seu identificador único. Isto pode ser:
+  * O `id` (UUID do Twenty)
+  * Um campo definido como único (por exemplo, `domain` para Empresas, ou um ID externo do seu sistema anterior)
+
+<Warning>A importação falhará se for feita referência a um registo que não existe.</Warning>
+
+### Passo 3: Prepare o seu ficheiro CSV
+
+Adicione uma coluna no seu ficheiro CSV do lado "muitos" que referencia o registo do lado "um".
+
+**Exemplo**: Para um ficheiro CSV de Pessoas ligado a Empresas:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Importante**:
+
+* O valor deve **corresponder exatamente** ao campo único no registo da Empresa
+* Para domínios, use o **URL de domínio** (por exemplo, `https://acme.com`), não o rótulo do domínio
+* Mapeie apenas **um** identificador único por relação: isto leva a uma importação mais fluida
+
+### Passo 4: Verifique se o campo de relação existe
+
+Antes de carregar o seu ficheiro, garanta que o campo de relação existe entre os seus objetos.
+
+Se não existir:
+
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o seu objeto (por exemplo, Pessoas)
+3. Crie um campo de relação que aponte para o objeto de destino (por exemplo, Empresa)
+
+### Passo 5: Carregue e mapeie a relação
+
+1. Carregue o seu ficheiro CSV através da interface de importação
+2. No passo de mapeamento de campos, encontre a sua coluna de relação (por exemplo, `companyDomain`)
+3. Mapeie-a para o campo de relação (por exemplo, Empresa)
+4. O Twenty ligará automaticamente cada registo ao pai correspondente
+
+### Campos únicos disponíveis para relações
+
+| Objeto                                     | Campos únicos disponíveis                          |
+| ------------------------------------------ | -------------------------------------------------- |
+| **Empresas**                               | `id`, `domain`, qualquer campo único personalizado |
+| **Pessoas**                                | `id`, `email`, qualquer campo único personalizado  |
+| **Membros do Espaço de Trabalho**          | `id`, `email` (não o nome)                         |
+| **Outros objetos padrão e personalizados** | `id`, qualquer campo marcado como único            |
+
+<Note>**Ligação a Membros do Espaço de Trabalho**: Quando a relação aponta para Membros do Espaço de Trabalho (a sua equipa que inicia sessão no Twenty), refira-os pelo seu **endereço de email**, não pelo nome.</Note>
+
+<Note>Recomendamos usar `domain` para Empresas e `email` para Pessoas, pois são legíveis para humanos e fáceis de manter em folhas de cálculo.</Note>
+
+<Note>**Lembrete**: Registos suavemente eliminados (visíveis em Menu de Comandos → Ver registos eliminados) contam para os critérios de unicidade. Se importar um registo com o mesmo valor único que um registo eliminado, o registo eliminado será restaurado. Veja [Restrições de unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints) para mais detalhes.</Note>
+
+## Regra da Ordem de Importação
+
+<Warning>
+  **Importe sempre primeiro o lado "um"!**
+
+  1. **Empresas** primeiro (sem dependências)
+  2. **Pessoas** em segundo (ligadas a Empresas)
+  3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
+  4. **Objetos personalizados** seguindo as suas dependências
+
+  O registo pai deve existir antes de o poder referenciar.
+</Warning>

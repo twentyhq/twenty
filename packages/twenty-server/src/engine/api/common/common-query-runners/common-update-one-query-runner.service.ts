@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import {
@@ -52,6 +52,9 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         'Record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This record does not exist or has been deleted.`,
+        },
       );
     }
 

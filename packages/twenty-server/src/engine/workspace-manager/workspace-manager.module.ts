@@ -14,12 +14,12 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
-import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
 
@@ -27,14 +27,13 @@ import { WorkspaceManagerService } from './workspace-manager.service';
   imports: [
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
-    WorkspaceMigrationV2Module,
     ObjectMetadataModule,
     DevSeederModule,
     DataSourceModule,
-    WorkspaceSyncMetadataModule,
     FeatureFlagModule,
     PermissionsModule,
     AiAgentModule,
+    TwentyStandardApplicationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     RoleModule,
@@ -44,6 +43,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
       FieldMetadataEntity,
       RoleTargetEntity,
       RoleEntity,
+      LogicFunctionEntity,
     ]),
   ],
   exports: [WorkspaceManagerService],

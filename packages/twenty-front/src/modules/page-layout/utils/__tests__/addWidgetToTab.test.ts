@@ -1,10 +1,11 @@
-import { GraphType, WidgetType } from '~/generated-metadata/graphql';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
+  WidgetConfigurationType,
+  WidgetType,
   type PageLayoutWidget,
-} from '~/generated/graphql';
-import { type PageLayoutTab } from '../../types/PageLayoutTab';
-import { addWidgetToTab } from '../addWidgetToTab';
+} from '~/generated-metadata/graphql';
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {
@@ -14,7 +15,7 @@ describe('addWidgetToTab', () => {
     title: 'Test Widget',
     type: WidgetType.GRAPH,
     configuration: {
-      graphType: GraphType.AGGREGATE,
+      configurationType: WidgetConfigurationType.AGGREGATE_CHART,
       aggregateOperation: AggregateOperations.COUNT,
       aggregateFieldMetadataId: 'id',
       displayDataLabel: false,

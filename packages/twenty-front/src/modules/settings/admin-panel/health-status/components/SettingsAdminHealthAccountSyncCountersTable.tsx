@@ -1,5 +1,6 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -17,25 +18,27 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
   title: string;
   description: string;
 }) => {
+  const { t } = useLingui();
+
   if (!details) {
     return null;
   }
 
   const items = [
     {
-      label: 'Active Sync',
+      label: t`Active Sync`,
       value: details.counters.ACTIVE,
     },
     {
-      label: 'Total Jobs',
+      label: t`Total Jobs`,
       value: details.totalJobs,
     },
     {
-      label: 'Failed Jobs',
+      label: t`Failed Jobs`,
       value: details.failedJobs,
     },
     {
-      label: 'Failure Rate',
+      label: t`Failure Rate`,
       value: `${details.failureRate}%`,
     },
   ];

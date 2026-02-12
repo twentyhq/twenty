@@ -3,8 +3,8 @@ import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
-import { type SlashCommandItem } from '../SlashCommand';
-import { SlashCommandRenderer } from '../SlashCommandRenderer';
+import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { SlashCommandRenderer } from '@/advanced-text-editor/extensions/slash-command/SlashCommandRenderer';
 
 describe('SlashCommandRenderer', () => {
   let editor: Editor;

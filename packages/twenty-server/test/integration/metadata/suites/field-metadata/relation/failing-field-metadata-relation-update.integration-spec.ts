@@ -6,18 +6,31 @@ import { getMockCreateObjectInput } from 'test/integration/metadata/suites/objec
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-type UpdateOneFieldMetadataTestingContext = EachTestingContext<{
-  name: string;
-}>;
+type UpdateOneFieldMetadataTestingContext = EachTestingContext<
+  | {
+      fieldKey: 'employerFieldMetadataId';
+      updatePayload: { name: string };
+    }
+  | {
+      fieldKey: 'employeesOneToManyFieldMetadataId';
+      updatePayload: {
+        settings: {
+          relationType: RelationType;
+          onDelete: RelationOnDeleteAction;
+        };
+      };
+    }
+>;
 
 const globalTestContext = {
   employeeObjectId: '',
   enterpriseObjectId: '',
   employerFieldMetadataId: '',
+  employeesOneToManyFieldMetadataId: '',
 };
 
 describe('Field metadata relation update should fail', () => {
@@ -25,7 +38,22 @@ describe('Field metadata relation update should fail', () => {
     [
       {
         title: 'when name is not in camel case',
-        context: { name: 'New Name' },
+        context: {
+          fieldKey: 'employerFieldMetadataId',
+          updatePayload: { name: 'New Name' },
+        },
+      },
+      {
+        title: 'when updating ONE_TO_MANY relation with onDelete action',
+        context: {
+          fieldKey: 'employeesOneToManyFieldMetadataId',
+          updatePayload: {
+            settings: {
+              relationType: RelationType.ONE_TO_MANY,
+              onDelete: RelationOnDeleteAction.SET_NULL,
+            },
+          },
+        },
       },
     ];
 
@@ -73,6 +101,27 @@ describe('Field metadata relation update should fail', () => {
     globalTestContext.employerFieldMetadataId = data.createOneField.id;
 
     expect(data).toBeDefined();
+
+    const { data: oneToManyData } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: enterpriseObjectId,
+        name: 'staff',
+        label: 'Staff',
+        isLabelSyncedWithName: false,
+        type: FieldMetadataType.RELATION,
+        relationCreationPayload: {
+          targetFieldLabel: 'company',
+          type: RelationType.ONE_TO_MANY,
+          targetObjectMetadataId: employeeObjectId,
+          targetFieldIcon: 'IconUsers',
+        },
+      },
+    });
+
+    globalTestContext.employeesOneToManyFieldMetadataId =
+      oneToManyData.createOneField.id;
+
+    expect(oneToManyData).toBeDefined();
   });
 
   afterAll(async () => {
@@ -103,10 +152,8 @@ describe('Field metadata relation update should fail', () => {
       const { errors } = await updateOneFieldMetadata({
         expectToFail: true,
         input: {
-          idToUpdate: globalTestContext.employerFieldMetadataId,
-          updatePayload: {
-            name: context.name,
-          },
+          idToUpdate: globalTestContext[context.fieldKey],
+          updatePayload: context.updatePayload,
         },
       });
 

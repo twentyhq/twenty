@@ -1,0 +1,430 @@
+---
+title: Oprava chyb importu
+description: Kompletní průvodce odstraňováním chyb při importu CSV.
+---
+
+## Přehled
+
+Nefunguje import? Tato příručka vám krok za krokem pomůže identifikovat a opravit běžné chyby při importu.
+
+## Jak funguje validace importu
+
+Po nahrání souboru a namapování sloupců Twenty vaše data ověří:
+
+1. **Proběhne validace** — Twenty zkontroluje každý řádek na chyby
+2. **Chyby jsou zvýrazněny** — problematické řádky se zobrazí **žlutě**
+3. **Můžete opravovat přímo na místě** — upravujte buňky přímo v rozhraní importu
+4. **Nebo odstraňte řádky** — problematické záznamy úplně přeskočte
+
+<Note>**Opravujte chyby v rozhraní.** Nemusíte se vracet do své tabulky. Úpravou buněk přímo během importu ušetříte čas.</Note>
+
+## Řešení problémů krok za krokem
+
+### Krok 1: Určete typ chyby
+
+Klikněte na zvýrazněný řádek a zobrazí se konkrétní chybová zpráva. Běžné typy chyb:
+
+| Chybová zpráva                                                        | Co to znamená                                                            |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Duplicitní hodnoty zvýrazněné žlutě                                   | Hodnota již existuje v Twenty nebo se ve vašem souboru vyskytuje dvakrát |
+| `{field} is not a valid {type}` (přejeďte myší na žlutou buňku)       | Data neodpovídají očekávanému formátu                                    |
+| Povinné pole je zvýrazněno                                            | Povinné pole je prázdné                                                  |
+| `Can't connect to {object}. No unique record found...` (import selže) | Odkazovaný záznam neexistuje                                             |
+| `Too many records. Up to 10000 allowed` (nahrávání zablokováno)       | Soubor obsahuje více než 10 000 záznamů                                  |
+
+### Krok 2: Opravte chybu
+
+Postupujte podle níže uvedených pokynů pro jednotlivé typy chyb.
+
+---
+
+## Chyba: Duplicitní hodnota
+
+### Co uvidíte
+
+Řádky s duplicitními hodnotami jsou v rozhraní importu před zahájením importu **zvýrazněny žlutě**.
+
+### Co to znamená
+
+Jedinečné pole (e-mail, doména):
+
+* Již existuje v Twenty
+* Se ve vašem souboru vyskytuje dvakrát
+
+### Jak to opravit
+
+**Možnost 1: Upravit duplicitní hodnotu**
+
+1. Klikněte na buňku s chybou
+2. Změňte na jedinečnou hodnotu
+3. Pokračujte v importu
+
+**Možnost 2: Odstranit duplicitní řádek**
+
+1. Klikněte na X vedle řádku
+2. Řádek bude během importu přeskočen
+
+**Možnost 3: Nechte Twenty aktualizovat existující záznam**
+
+1. Ujistěte se, že váš soubor obsahuje jedinečný identifikátor (`email`, `domain` nebo `id`)
+2. Namapujte pole jedinečného identifikátoru
+3. Twenty aktualizuje existující záznam místo vytvoření duplicity
+
+<Note>
+  **Můžete aktualizovat i jedinečná pole.**
+
+  * Pokud ponecháte `id`, ale změníte `email` → e-mail bude aktualizován
+  * Pokud ponecháte `email`, ale změníte `id` → ID bude aktualizováno
+
+  Pokud se shoduje alespoň jeden jedinečný identifikátor, Twenty záznam aktualizuje.
+</Note>
+
+### Jak této chybě předejít
+
+Před importem:
+
+1. Seřaďte svou tabulku podle jedinečného pole
+2. Odstraňte duplicitní řádky
+3. Zkontrolujte, zda záznamy v Twenty již existují
+
+<Warning>
+  **Záznamy „soft-deleted“ se započítávají do jedinečnosti.**
+
+  Zkontrolujte Command Menu → Zobrazit smazané záznamy. Záznamy tam stále vynucují jedinečnost. Natrvalo je smažte nebo je obnovte a aktualizujte.
+</Warning>
+
+Více podrobností: [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+---
+
+## Chyba: Neplatný formát
+
+### Co uvidíte
+
+Hodnota buňky je zvýrazněna žlutě. Najetím myší zobrazíte chybovou zprávu:
+
+```
+{field name} is not a valid {field type}
+```
+
+### Co to znamená
+
+Data neodpovídají očekávanému formátu pro tento typ pole.
+
+### Jak to opravit — podle typu pole
+
+#### Email
+
+**Problém:** Neplatný formát e-mailu
+**Řešení:** Použijte formát `name@domain.com`
+
+```
+❌ john.smith@
+❌ john smith@acme.com
+✓ john.smith@acme.com
+```
+
+#### Doména
+
+**Problém:** Nekonzistentní formát může způsobit duplicity
+**Řešení:** Použijte formát `https://domain.com` (doporučeno)
+
+```
+⚠️ acme.com         (valid, but not recommended)
+⚠️ www.acme.com     (valid, but not recommended)
+✅ https://acme.com  (recommended)
+```
+
+<Note>Všechny formáty jsou platné, ale `https://domain.com` je doporučený, protože odpovídá formátu používanému synchronizací e-mailu/kalendáře. Použití jiných formátů může vytvářet duplicitní společnosti.</Note>
+
+#### Datum
+
+**Problém:** Nerozpoznaný formát data
+**Řešení:** Používejte jednotný formát v celém souboru
+
+```
+✓ 2024-03-15        (YYYY-MM-DD - recommended)
+✓ 03/15/2024        (MM/DD/YYYY)
+✓ 15/03/2024        (DD/MM/YYYY)
+```
+
+#### Telefon
+
+**Problém:** Chybí požadované sloupce
+**Řešení:** Zahrňte všechny telefonní sloupce
+
+| Sloupec                                 | Příklad      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+#### Booleovská hodnota
+
+**Problém:** Nesprávná booleovská hodnota
+**Řešení:** Použijte velká písmena `TRUE` nebo `FALSE`
+
+```
+❌ true
+❌ yes
+❌ 1
+✓ TRUE
+✓ FALSE
+```
+
+#### Výběr / Vícevýběr
+
+**Problém:** Hodnota neodpovídá existujícím možnostem
+**Řešení:** Používejte **názvy API**, ne zobrazované štítky
+
+Jak najít názvy API:
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte objekt a pole
+3. Povolte **Pokročilý režim** (přepínač vpravo dole)
+4. Použijte název API (např. `OPTION_1`, ne "Option 1")
+
+```
+❌ High Priority
+✓ HIGH_PRIORITY
+```
+
+#### Měna
+
+**Problém:** Chybí částka nebo kód měny
+**Řešení:** Vyplňte oba sloupce
+
+| Sloupec               | Příklad   |
+| --------------------- | --------- |
+| **Amount / Amount**   | `1234.56` |
+| **Amount / Currency** | `USD`     |
+
+#### Číslo
+
+**Problém:** Nečíselné znaky
+**Řešení:** Pouze čísla, tečka pro desetinná místa
+
+```
+❌ $1,234.56
+❌ 1,234.56
+✓ 1234.56
+```
+
+Úplná referenční příručka k formátům: [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)
+
+---
+
+## Chyba: Chybí povinné pole
+
+### Co uvidíte
+
+Řádek je zvýrazněn žlutě a buňka povinného pole je označena.
+
+### Co to znamená
+
+U tohoto řádku je povinné pole prázdné.
+
+### Jak to opravit
+
+**Možnost 1: Zadejte hodnotu**
+
+1. Klikněte na prázdnou buňku
+2. Zadejte hodnotu
+3. Pokračujte v importu
+
+**Možnost 2: Odstraňte řádek**
+
+1. Pokud data nemáte, klikněte na X a řádek přeskočte
+
+### Jak této chybě předejít
+
+Před importem si určete povinná pole:
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte objekt
+3. Zkontrolujte, která pole jsou označena jako povinná
+
+---
+
+## Chyba: Vztah nebyl nalezen
+
+### Co uvidíte
+
+Tato chyba se objeví **po zahájení importu** — import selže se zprávou jako:
+
+```
+Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
+```
+
+To znamená, že v Twenty neexistuje společnost s tímto konkrétním identifikátorem.
+
+<Note>Na rozdíl od jiných chyb tato není zachycena během kroku kontroly dat. Import se spustí a poté selže, jakmile narazí na chybějící relaci.</Note>
+
+### Co to znamená
+
+Pokoušíte se propojit se záznamem, který v Twenty neexistuje.
+
+### Jak to opravit
+
+**Možnost 1: Nejprve importujte nadřazené záznamy**
+
+1. Zrušte aktuální import
+2. Importujte nadřazené záznamy (např. společnosti)
+3. Poté importujte podřízené záznamy (např. osoby)
+
+**Možnost 2: Opravte referenční hodnotu**
+
+1. Zkontrolujte referenční hodnotu ve svém souboru
+2. Ujistěte se, že přesně odpovídá existujícímu záznamu
+3. Ověřte formát: domény by měly být `https://domain.com`
+
+**Možnost 3: Odstraňte relaci**
+
+1. Vymažte buňku a importujte bez relace
+2. Relaci přidejte později ručně
+
+### Jak této chybě předejít
+
+1. **Importujte ve správném pořadí:**
+   * Nejprve společnosti
+   * Poté osoby (s odkazy na společnost)
+   * Nakonec příležitosti
+
+2. **Ověřte referenční hodnoty:**
+   * Exportujte nadřazené záznamy, abyste získali přesné identifikátory
+   * Používejte formát domény `https://domain.com`
+   * Zkontrolujte překlepy a velikost písmen
+
+<Warning>
+  **Import selže, pokud je odkazováno na neexistující záznam.**
+
+  Vždy importujte nadřazené objekty před podřízenými objekty.
+</Warning>
+
+Více podrobností: [Import relací](/l/cs/user-guide/data-migration/capabilities/import-relations)
+
+---
+
+## Chyba: Soubor je příliš velký
+
+### Co uvidíte
+
+Tato chyba se objeví **při nahrávání souboru** — nahrávání je zcela zablokováno:
+
+```
+Too many records. Up to 10000 allowed
+```
+
+Dokud nezmenšíte velikost souboru, nebudete moci pokračovat ke kroku kontroly dat.
+
+### Co to znamená
+
+Váš soubor má více než 10 000 záznamů.
+
+### Jak to opravit
+
+**Možnost 1: Rozdělte na více souborů**
+
+1. Rozdělte data do souborů s nejvýše 10 000 záznamy
+2. Importujte každý soubor zvlášť
+3. Dodržte pořadí importu (společnosti před osobami)
+
+**Možnost 2: Použijte import přes API**
+U velmi velkých datových sad použijte API, které nemá limit počtu záznamů.
+Viz: [Jak importovat data přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api)
+
+---
+
+## Chyba: Pole nebylo rozpoznáno
+
+### Co to znamená
+
+Sloupec ve vašem souboru nelze namapovat, protože pole v Twenty neexistuje.
+
+### Jak to opravit
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte objekt, který importujete
+3. Klikněte na **+ Add field**
+4. Vytvořte vlastní pole s odpovídajícím typem
+5. Nahrajte soubor znovu
+
+<Note>Import CSV vytváří záznamy, nikoli pole. Všechna pole musí existovat před importem.</Note>
+
+---
+
+## Chyba: Prázdná relace uživatele
+
+### Co to znamená
+
+Pokoušíte se přiřadit záznam uživateli (Owner, Assignee), ale relace se nemapuje.
+
+### Časté příčiny
+
+1. **Uživatel nepřijal pozvánku** — uživatel zatím v Twenty neexistuje
+2. **Používáte uživatelské ID ze starého systému** — Twenty nedokáže spárovat ID z jiného systému
+3. **Nesprávný formát e-mailu** — e-mail neodpovídá účtu uživatele v Twenty
+
+### Jak to opravit
+
+1. Ujistěte se, že všichni uživatelé **přijali svou pozvánku** do vašeho pracovního prostoru Twenty
+2. Použijte **e-mailovou adresu** uživatele (ne jeho jméno nebo ID ze starého systému)
+3. Použijte stejný e-mail, jaký použili k připojení do Twenty
+
+<Warning>
+  **Uživatelé musí před importem přijmout pozvánky.**
+
+  Pokud uživatel nepřijal svou pozvánku, záznamy na něj odkazující budou mít prázdnou relaci uživatele.
+</Warning>
+
+---
+
+## Kontrolní seznam před importem
+
+Vyhněte se chybám tím, že před importem zkontrolujete následující:
+
+### Požadavky na soubor
+
+<Check>Soubor je ve formátu CSV, XLSX nebo XLS</Check>
+<Check>Soubor obsahuje méně než 10 000 záznamů</Check>
+<Check>Soubor používá kódování UTF-8</Check>
+
+### Kvalita dat
+
+<Check>Žádné duplicitní e-maily (pro osoby)</Check>
+<Check>Žádné duplicitní domény (pro společnosti)</Check>
+<Check>Všechny datumy používají jednotný formát</Check>
+<Check>Všechny domény používají formát `https://domain.com`</Check>
+
+### Formáty polí
+
+<Check>Logická pole používají `TRUE` nebo `FALSE` (velkými písmeny)</Check>
+<Check>Pole typu výběr používají názvy API, ne zobrazované štítky</Check>
+<Check>Telefonní pole mají všechny požadované sloupce</Check>
+<Check>Měnová pole obsahují částku i kód měny</Check>
+
+### Vztahy
+
+<Check>Nadřazené záznamy importovány před podřízenými záznamy</Check>
+<Check>Sloupce relací odkazují na existující záznamy</Check>
+<Check>Formát domény přesně odpovídá formátu Twenty</Check>
+
+### Datový model
+
+<Check>Všechna vlastní pole existují v Nastavení → Datový model</Check>
+<Check>Možnosti výběru existují před importem</Check>
+
+---
+
+## Stále máte potíže?
+
+Pokud jste vyzkoušeli výše uvedená řešení:
+
+1. **Stáhněte si ukázkový soubor** — uvidíte přesný formát, který Twenty očekává
+2. **Exportujte existující záznamy** — porovnejte svůj soubor s funkčními daty
+3. **Otestujte s malou dávkou** — nejprve zkuste 5–10 řádků
+4. **Zkontrolujte referenční články:**
+   * [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)
+   * [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Import relací](/l/cs/user-guide/data-migration/capabilities/import-relations)
+   * [Zpracování chyb](/l/cs/user-guide/data-migration/capabilities/error-handling)

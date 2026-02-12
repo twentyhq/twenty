@@ -1,5 +1,6 @@
 import { type FieldMetadataTypesToTestForFilterInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
+  joinColumnNameForManyToOneMorphRelationField1,
   TEST_TARGET_OBJECT_RECORD_ID,
   TEST_UUID_FIELD_VALUE,
 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
@@ -135,6 +136,125 @@ export const successfulFilterInputByFieldMetadataType: {
       restFilterInput: 'manyToOneRelationFieldId[is]:"NOT_NULL"',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.manyToOneRelationFieldId);
+      },
+    },
+  ],
+  [FieldMetadataType.MORPH_RELATION]: [
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          neq: '00000000-0000-4000-8000-000000000000',
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[neq]:"00000000-0000-4000-8000-000000000000"`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] !==
+          '00000000-0000-4000-8000-000000000000'
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          eq: TEST_TARGET_OBJECT_RECORD_ID,
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[eq]:"${TEST_TARGET_OBJECT_RECORD_ID}"`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] ===
+          TEST_TARGET_OBJECT_RECORD_ID
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          gt: '00000000-0000-4000-8000-000000000000',
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[gt]:"00000000-0000-4000-8000-000000000000"`,
+      validateFilter: (record: Record<string, any>) => {
+        // Morph relation join column is a UUID stored as string
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] >
+          '00000000-0000-4000-8000-000000000000'
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          gte: '00000000-0000-4000-8000-000000000000',
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[gte]:"00000000-0000-4000-8000-000000000000"`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] >=
+          '00000000-0000-4000-8000-000000000000'
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          lt: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[lt]:"ffffffff-ffff-4fff-bfff-ffffffffffff"`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] <
+          'ffffffff-ffff-4fff-bfff-ffffffffffff'
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          lte: 'ffffffff-ffff-4fff-bfff-ffffffffffff',
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[lte]:"ffffffff-ffff-4fff-bfff-ffffffffffff"`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] <=
+          'ffffffff-ffff-4fff-bfff-ffffffffffff'
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: {
+          in: [TEST_TARGET_OBJECT_RECORD_ID],
+        },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[in]:["${TEST_TARGET_OBJECT_RECORD_ID}"]`,
+      validateFilter: (record: Record<string, any>) => {
+        return (
+          record[joinColumnNameForManyToOneMorphRelationField1] ===
+          TEST_TARGET_OBJECT_RECORD_ID
+        );
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: { is: 'NULL' },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[is]:NULL`,
+      validateFilter: (record: Record<string, any>) => {
+        return record[joinColumnNameForManyToOneMorphRelationField1] === null;
+      },
+    },
+    {
+      gqlFilterInput: {
+        [joinColumnNameForManyToOneMorphRelationField1]: { is: 'NOT_NULL' },
+      },
+      restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[is]:"NOT_NULL"`,
+      validateFilter: (record: Record<string, any>) => {
+        return isDefined(record[joinColumnNameForManyToOneMorphRelationField1]);
       },
     },
   ],
@@ -927,7 +1047,8 @@ export const successfulFilterInputByFieldMetadataType: {
       restFilterInput: 'arrayField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
         return (
-          Array.isArray(record.arrayField) && record.arrayField.length === 0
+          record.arrayField === null ||
+          (Array.isArray(record.arrayField) && record.arrayField.length === 0)
         );
       },
     },
@@ -939,5 +1060,21 @@ export const successfulFilterInputByFieldMetadataType: {
     //     return record.arrayField.length === 0;
     //   },
     // },
+  ],
+  [FieldMetadataType.FILES]: [
+    {
+      gqlFilterInput: { filesField: { is: 'NULL' } },
+      restFilterInput: 'filesField[is]:NULL',
+      validateFilter: (record: Record<string, any>) => {
+        return record.filesField === null;
+      },
+    },
+    {
+      gqlFilterInput: { filesField: { is: 'NOT_NULL' } },
+      restFilterInput: 'filesField[is]:"NOT_NULL"',
+      validateFilter: (record: Record<string, any>) => {
+        return Array.isArray(record.filesField) && record.filesField.length > 0;
+      },
+    },
   ],
 };

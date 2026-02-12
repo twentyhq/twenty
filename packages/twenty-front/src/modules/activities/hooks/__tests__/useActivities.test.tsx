@@ -15,7 +15,7 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
 }));
 
 const mockActivityTarget = {
-  __typename: 'ActivityTarget',
+  __typename: 'TaskTarget',
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
   personId: '1',
@@ -55,17 +55,10 @@ describe('useActivities', () => {
     );
     useActivityTargetsForTargetableObjectsMock.useActivityTargetsForTargetableObjects.mockReturnValue(
       {
-        activityTargets: [mockActivityTarget],
+        activityTargets: [{ ...mockActivityTarget, task: mockActivity }],
         loadingActivityTargets: false,
       },
     );
-
-    const useFindManyRecordsMock = jest.requireMock(
-      '@/object-record/hooks/useFindManyRecords',
-    );
-    useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
-      records: [mockActivity],
-    });
 
     const { result } = renderHook(
       () => {
@@ -74,9 +67,9 @@ describe('useActivities', () => {
           targetableObjects: [
             { targetObjectNameSingular: 'company', id: '123' },
           ],
-          activitiesFilters: {},
-          activitiesOrderByVariables: [{}],
           skip: false,
+          limit: 10,
+          activityTargetsOrderByVariables: [{}],
         });
         return activities;
       },

@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
   PageDecorator,
@@ -6,7 +6,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { RecordIndexPage } from '../RecordIndexPage';
+import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordIndexPage',

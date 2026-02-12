@@ -52,6 +52,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
       });
     case AuthExceptionCode.USER_NOT_FOUND:
     case AuthExceptionCode.WORKSPACE_NOT_FOUND:
+    case AuthExceptionCode.APPLICATION_NOT_FOUND:
     case AuthExceptionCode.USER_WORKSPACE_NOT_FOUND:
       throw new AuthenticationError(exception);
     case AuthExceptionCode.INTERNAL_SERVER_ERROR:

@@ -1,0 +1,176 @@
+---
+title: Iterator を使用
+description: レコードの配列をループし、各アイテムに対してアクションを実行します。
+image: /images/user-guide/workflows/workflow.png
+---
+
+Iterator を使用すると、レコードの配列をループし、各レコードに対してアクションを実行できます。 これは、Search Records で返された複数のレコードや Webhook で受信したレコードを処理する必要があるワークフローに不可欠です。
+
+## Iterator を使用するタイミング
+
+| シナリオ               | 例                  |
+| ------------------ | ------------------ |
+| **検索結果を処理**        | 見つかった各人物にメールを送信    |
+| **Webhook の配列を処理** | 各アイテムごとに順番にレコードを作成 |
+| **一括更新**           | 計算された値で複数のレコードを更新  |
+| **通知**             | イベントについて複数人に通知     |
+
+## Iterator の理解
+
+Iterator は入力として**配列**を想定しています。 その後、次を実行します:
+
+1. 配列から最初のアイテムを取り出す
+2. そのアイテムを使って Iterator 内のすべてのアクションを実行する
+3. 次のアイテムに進む
+4. すべてのアイテムが処理されるまで繰り返す
+
+## 基本的なセットアップ
+
+### 例: 検索結果の全員にメールを送信
+
+**目標**: 特定の会社のすべての連絡先を見つけ、各人にパーソナライズされたメールを送信します。
+
+### ステップ 1: レコードを検索
+
+1. 「**Search Records**」アクションを追加
+2. オブジェクト: **People**
+3. フィルター: Company が "Acme Inc" に等しい
+4. これにより、People の配列が返されます
+
+### ステップ 2: 結果の有無を確認
+
+1. 「**Filter**」アクションを追加
+2. 条件: `{{searchRecords.length}}` が 0 より大きい
+3. これにより、結果が空の場合の Iterator エラーを防止します
+
+### ステップ 3: Iterator を追加
+
+1. 「**Iterator**」アクションを追加
+2. 配列の入力: `{{searchRecords}}` を選択
+3. これでループが作成されます
+
+### ステップ 4: Iterator 内にアクションを追加
+
+Iterator の後に配置したアクションは、各アイテムに対して実行されます:
+
+1. 「**Send Email**」アクションを追加（Iterator 内）
+2. 宛先: `{{iterator.currentItem.email}}`
+3. 件名: こんにちは `{{iterator.currentItem.firstName}}`!
+4. 本文: 現在のアイテムのフィールドを使用したパーソナライズメッセージ
+
+### 結果
+
+Search Records が 5 人を返した場合、Iterator は次を実行します:
+
+* 1 人目にメールを送信
+* 2 人目にメールを送信
+* ... 5 人すべてに対して続行
+
+## 現在のアイテムのデータにアクセスする
+
+Iterator 内では、現在のレコードにアクセスするために `{{iterator.currentItem}}` を使用します:
+
+| 変数                                      | 説明               |
+| --------------------------------------- | ---------------- |
+| `{{iterator.currentItem}}`              | 現在のレコードオブジェクト全体  |
+| `{{iterator.currentItem.id}}`           | レコード ID          |
+| `{{iterator.currentItem.email}}`        | メールフィールド         |
+| `{{iterator.currentItem.company.name}}` | 関連する会社名          |
+| `{{iterator.index}}`                    | 配列内の現在の位置（0 始まり） |
+
+## よくあるパターン
+
+### 複数レコードを更新
+
+**目標**: 期限超過のタスクをすべて "Late" としてマークします。
+
+```
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
+```
+
+### 配列からレコードを作成
+
+**目標**: 複数のアイテムを含む注文を Webhook が受信したら、各アイテムのレコードを作成します。
+
+```
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
+```
+
+### ループ内の条件付き処理
+
+**目標**: 有効なメールアドレスを持つ連絡先にのみメールを送信します。
+
+```
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
+```
+
+## トラブルシューティング
+
+### "Iterator expects an array"
+
+**原因**: 配列ではなく単一のレコードを渡しました。
+
+**対処**: 単一のレコードではなく、Search Records の結果または配列フィールドを渡していることを確認してください。
+
+```
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
+```
+
+### Iterator が実行されない
+
+**原因**: 配列が空です。
+
+**対処**: Iterator の前にフィルターを追加し、配列の長さを確認します:
+
+```
+Filter: {{searchRecords.length}} > 0
+```
+
+### アクションが過剰に実行される
+
+**原因**: Search Records が想定より多くのレコードを返しました。
+
+**対処**:
+
+* Search Records により具体的なフィルターを追加する
+* Search Records に上限を設定する（最大 200）
+* 追加条件のために Iterator 内にフィルターを追加する
+
+## パフォーマンス上の考慮事項
+
+* **クレジット使用量**: 各イテレーションでアクション実行分のクレジットを消費します
+* **時間**: 大きな配列は処理に時間がかかります
+* **制限**: 非常に大きな処理はバッチ化を検討してください
+* **レート制限**: 繰り返しが多いと外部 API 呼び出しがレート制限に達する可能性があります
+
+## ベストプラクティス
+
+1. エラーを避けるため、Iterator の前に**配列の長さを必ず確認**
+2. **すべてのアイテムを処理する必要がない場合はループ内にフィルターを追加**
+3. **何をループしているか分かるように Iterator ステップの名前を変更**
+4. **小さな配列でテスト**してから大きなデータセットを処理する
+5. **ワークフローの実行を監視**して、イテレーションが想定どおりに完了することを確認する
+
+## 関連
+
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [ブランチの使い方](/l/ja/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [ワークフロー FAQ](/l/ja/user-guide/workflows/how-tos/need-more-help/workflows-faq)

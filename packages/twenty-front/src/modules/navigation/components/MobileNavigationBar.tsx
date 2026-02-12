@@ -17,8 +17,8 @@ import {
   IconSettings,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
-import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 

@@ -1,15 +1,18 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export class IndexMetadataException extends CustomException {
-  declare code: IndexMetadataExceptionCode;
+export class IndexMetadataException extends CustomException<IndexMetadataExceptionCode> {
   constructor(
     message: string,
     code: IndexMetadataExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
-    super(message, code, { userFriendlyMessage });
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ?? msg`An index metadata error occurred.`,
+    });
   }
 }
 

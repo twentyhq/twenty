@@ -5,12 +5,12 @@ import { Loader } from '@ui/feedback/loader/components/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
 import { type editor } from 'monaco-editor';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
 
-type CodeEditorProps = Pick<
+export type CodeEditorProps = Pick<
   EditorProps,
   'value' | 'language' | 'onMount' | 'onValidate' | 'height' | 'options'
 > & {
@@ -49,6 +49,10 @@ const StyledEditorLoader = styled.div<{
         `;
     }
   }}
+`;
+
+const StyledCodeEditorContainer = styled.div`
+  display: contents;
 `;
 
 const StyledEditor = styled(Editor)<{
@@ -113,6 +117,7 @@ export const CodeEditor = ({
   const [editor, setEditor] = useState<
     editor.IStandaloneCodeEditor | undefined
   >(undefined);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const setModelMarkers = (
     editor: editor.IStandaloneCodeEditor | undefined,
@@ -128,55 +133,76 @@ export const CodeEditor = ({
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isEditorFocused) {
+      event.stopPropagation();
+    }
+  };
+
   return isLoading ? (
     <StyledEditorLoader height={height} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
-    <StyledEditor
-      height={height}
-      variant={variant}
-      value={isLoading ? '' : value}
-      language={language}
-      loading=""
-      transparentBackground={transparentBackground}
-      onMount={(editor, monaco) => {
-        setMonaco(monaco);
-        setEditor(editor);
+    <StyledCodeEditorContainer onKeyDown={handleKeyDown}>
+      <input
+        type="hidden"
+        data-testid="code-editor-value"
+        value={value ?? ''}
+        readOnly
+      />
+      <StyledEditor
+        height={height}
+        variant={variant}
+        value={value}
+        language={language}
+        loading=""
+        transparentBackground={transparentBackground}
+        onMount={(editor, monaco) => {
+          setMonaco(monaco);
+          setEditor(editor);
 
-        monaco.editor.defineTheme(
-          BASE_CODE_EDITOR_THEME_ID,
-          getBaseCodeEditorTheme({
-            theme,
-          }),
-        );
-        monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
+          monaco.editor.defineTheme(
+            BASE_CODE_EDITOR_THEME_ID,
+            getBaseCodeEditorTheme({
+              theme,
+            }),
+          );
+          monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
 
-        onMount?.(editor, monaco);
-        setModelMarkers(editor, monaco);
-      }}
-      onChange={(value) => {
-        if (isDefined(value)) {
-          onChange?.(value);
+          editor.onDidFocusEditorWidget(() => {
+            setIsEditorFocused(true);
+          });
+          editor.onDidBlurEditorWidget(() => {
+            setIsEditorFocused(false);
+          });
+
+          onMount?.(editor, monaco);
           setModelMarkers(editor, monaco);
-        }
-      }}
-      onValidate={(markers) => {
-        onValidate?.(markers);
-      }}
-      options={{
-        formatOnPaste: true,
-        formatOnType: true,
-        overviewRulerLanes: 0,
-        scrollbar: {
-          vertical: 'hidden',
-          horizontal: 'hidden',
-        },
-        minimap: {
-          enabled: false,
-        },
-        ...options,
-      }}
-    />
+        }}
+        onChange={(value) => {
+          if (isDefined(value)) {
+            onChange?.(value);
+            setModelMarkers(editor, monaco);
+          }
+        }}
+        onValidate={(markers) => {
+          onValidate?.(markers);
+        }}
+        options={{
+          formatOnPaste: true,
+          formatOnType: true,
+          overviewRulerLanes: 0,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          minimap: {
+            enabled: false,
+          },
+          ...options,
+        }}
+      />
+    </StyledCodeEditorContainer>
   );
 };

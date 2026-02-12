@@ -1,0 +1,275 @@
+---
+title: Nastavení grafu
+description: Nakonfigurujte své grafy tak, aby zobrazovaly data přesně podle vašich potřeb.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Přístup k nastavení grafu
+
+1. Klikněte na tlačítko **Upravit** v pravém horním rohu svého řídicího panelu
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Režim úprav" />
+
+2. Řídicí panel přejde do režimu úprav
+3. Klikněte na libovolný widget, abyste jej vybrali.
+4. Vpravo se otevře panel nastavení
+
+Nastavení jsou uspořádána do sekcí:
+
+* **Data**: Jaká data načíst a jak je filtrovat
+* **Osa X**: Jak seskupovat a řadit kategorie (sloupcové/čárové grafy)
+* **Osa Y**: Co měřit a jak to zobrazit (sloupcové/čárové grafy)
+* **Styl**: Barvy, popisky a vizuální možnosti
+
+<Note>
+  Některá nastavení se zobrazí pouze tehdy, když jsou nakonfigurována jiná. Například **Granularita data** se zobrazí pouze tehdy, když vyberete datumové pole.
+</Note>
+
+---
+
+## Nastavení dat
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Zdroj </span>
+
+Vyberte objekt, ze kterého chcete načítat data.
+
+1. Klikněte na **Zdroj**
+2. Vyberte objekt (Příležitosti, Kontakty, Společnosti apod.)
+
+K dispozici jsou všechny vaše standardní a vlastní objekty. Změna zdroje resetuje ostatní nastavení, protože možnosti polí závisí na vybraném objektu.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Zdroj" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtr </span>
+
+Omezte, které záznamy jsou zahrnuty do grafu.
+
+1. Klikněte na **Filtr**
+2. Otevře se nástroj pro tvorbu filtrů
+3. Klikněte na **+ Přidat filtr**
+4. Vyberte pole, podmínku a hodnotu
+5. Podle potřeby přidejte další filtry
+
+Filtry fungují stejně jako v tabulkových zobrazeních. Použijte je k zaměření na konkrétní segmenty dat.
+
+**Příklad**: Filtrovat příležitosti, kde se pole Stage rovná "Won", abyste zobrazili pouze uzavřené obchody.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtr" />
+
+<Tip>
+  U datumových polí zkuste **Je relativní** k vytvoření dynamických filtrů, jako jsou "Posledních 7 dní" nebo "Tento měsíc", které se automaticky aktualizují.
+</Tip>
+
+<Tip>
+  Jsou podporovány pokročilé filtry—přidejte více pravidel filtru a kombinujte je pomocí logiky **A** nebo **Nebo**.
+</Tip>
+
+---
+
+## Nastavení osy X
+
+Tato nastavení řídí vodorovnou osu sloupcových a čárových grafů—obvykle způsob, jakým jsou data seskupena do kategorií.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Zobrazená data </span>
+
+Vyberte pole, podle kterého chcete data seskupit. To určuje kategorie zobrazené na ose X.
+
+**Příklad**: Vyberte "Stage" pro zobrazení dat seskupených podle fáze v pipeline, nebo "Created date" pro zobrazení dat v čase.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Zobrazená data" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularita data </span>
+
+Při seskupování podle datumového pole zvolte časové období pro seskupení.
+
+| Možnost            | Seskupuje data podle     | Ukázkový výstup                               |
+| ------------------ | ------------------------ | --------------------------------------------- |
+| **Den**            | Každý kalendářní den     | 1. ledna, 2. ledna, 3. ledna...               |
+| **Týden**          | Kalendářní týdny         | Týden 1, Týden 2, Týden 3...                  |
+| **Měsíc**          | Kalendářní měsíce        | leden, únor, březen...                        |
+| **Čtvrtletí**      | Fiskální čtvrtletí       | Q1, Q2, Q3, Q4                                |
+| **Rok**            | Kalendářní roky          | 2023, 2024, 2025                              |
+| **Den v týdnu**    | Den v týdnu (agregováno) | Pondělí, úterý... (všechna pondělí dohromady) |
+| **Měsíc v roce**   | Měsíc (agregováno)       | Leden, únor... (všechny ledny dohromady)      |
+| **Čtvrtletí roku** | Čtvrtletí (agregováno)   | Q1, Q2, Q3, Q4 (všechny Q1 dohromady)         |
+
+Možnosti "v týdnu/roku" agregují napříč celým časovým obdobím. Použijte **Den v týdnu**, abyste zjistili, který den v týdnu obvykle přináší nejvíce obchodů. Použijte **Měsíc** k zobrazení trendů měsíc po měsíci.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Řadit podle </span>
+
+Ovládejte pořadí kategorií na ose X.
+
+* **Pozice** – Použije pořadí definované v nastavení pole typu Select
+* **Abecedně** – A až Z (nebo chronologicky u dat)
+* **Podle hodnoty** – Seřazeno podle metriky (nejvyšší nebo nejnižší nejdříve)
+* **Ručně** – Přetažením nastavte vlastní pořadí
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Seřadit podle" />
+
+**Tip**: U fází pipeline použijte **Pozice** k zobrazení fází v pořadí vašeho prodejního procesu (Lead → Qualified → Proposal → Won).
+
+<Note>
+  Zobrazené možnosti závisí na typu pole. Pole typu Select mají všechny možnosti; datumová a textová pole jich zobrazují méně.
+</Note>
+
+<Tip>
+  Při řazení **Ručně** přetáhněte kategorie a vytvořte vlastní pořadí—ideální pro zvýraznění konkrétních segmentů nebo vyprávění příběhu pomocí dat.
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Vynechat nulové hodnoty </span>
+
+Skryjte kategorie, které mají nulová data nebo žádná data.
+
+* **Zapnuto**: Kategorie bez záznamů jsou skryty
+* **Vypnuto**: Zobrazeny jsou všechny kategorie, i prázdné
+
+Použijte to k vyčištění grafů s řídkými daty.
+
+---
+
+## Nastavení osy Y
+
+Tato nastavení určují, co měříte a jak se to zobrazuje.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Zobrazená data </span>
+
+Vyberte pole a operaci pro výpočet své metriky.
+
+* **Počty** – Počet všech, Počet prázdných, Počet neprázdných, Počet jedinečných hodnot
+* **Matematika** – Součet, Průměr, Min, Max (číselná pole)
+* **Procenta** – Procento prázdných, Procento neprázdných
+
+Booleanová pole přidávají počet true/false. Agregační grafy s datumovými poli zobrazují Nejdřívější/Nejpozdější.
+
+**Příklad**: Vyberte "Amount" se součtem (Sum) pro zobrazení celkové hodnoty obchodů podle kategorie, nebo Počet všech (Count all) pro zobrazení počtu obchodů.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Zobrazená data" />
+
+<Note>
+  Zobrazené možnosti závisí na vašem poli a typu grafu. Pokud nevidíte očekávanou operaci, zkontrolujte typ pole.
+</Note>
+
+### Poměr
+
+Pro pole typu Select, Multi-select nebo Boolean můžete spočítat procento konkrétní hodnoty.
+
+1. Vyberte pole typu Select, Multi-select nebo Boolean
+2. Povolte **Poměr**
+3. Zvolte možnost, kterou chcete měřit
+
+**Příklad**: Zobrazte obchody "Won" jako procento všech příležitostí. Pokud máte 10 "Won" z celkových 50, graf zobrazí 20 %.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Seskupit podle </span>
+
+Přidejte druhou dimenzi pro vytvoření více řad (více sloupců nebo čar).
+
+1. Nejprve nastavte pole osy X
+2. Klikněte na **Seskupit podle**
+3. Vyberte druhé pole
+
+**Příklad**: Seskupte obchody podle Stage (osa X) A podle Owner (Seskupit podle), abyste vedle sebe viděli rozpad pipeline podle jednotlivých osob.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Seskupit podle" />
+
+Když je nastaveno Seskupit podle, uvidíte v grafu více barev a zobrazí se legenda.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularita data </span>
+
+Když je Seskupit podle nastaveno na datumové pole, zvolte časové období (stejné možnosti jako u osy X).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Řadit podle </span>
+
+Když je nastaveno **Seskupit podle**, určete pořadí seskupených řad (např. který sloupec vlastníka se v rámci každé kategorie zobrazí jako první).
+
+Stejné možnosti jako u řazení osy X—Pozice, Abecedně a Ručně—s výjimkou toho, že **řazení podle hodnoty není** pro sekundární seskupení k dispozici.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Kumulativní </span>
+
+Zobrazit průběžné součty místo jednotlivých hodnot.
+
+* **Vypnuto**: Každý sloupec/bod zobrazuje svou vlastní hodnotu
+* **Zapnuto**: Každý sloupec/bod zobrazuje součet všech předchozích hodnot plus svou vlastní
+
+**Příklad**: leden = 10, únor = 15
+
+* Kumulativní vypnuto: Zobrazuje 10 a 15
+* Kumulativní zapnuto: Zobrazuje 10 a 25 (10 + 15)
+
+Použijte kumulativní zobrazení ke sledování postupu k cíli v čase.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Kumulativní" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Min. rozsah / <ChartIcon icon="math-max" />Max. rozsah </span>
+
+Nastavte pevné minimální a maximální hodnoty osy Y.
+
+* Ponechte prázdné pro automatické škálování
+* Zadejte číslo pro pevné nastavení hranice
+
+**Kdy použít:**
+
+* Nastavte Min na 0 pro přesná vizuální srovnání
+* Nastavte obojí pro konzistentní měřítko napříč několika grafy
+* Zaměřte se na konkrétní rozsah hodnot nastavením obou
+
+---
+
+## Nastavení stylu
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Barvy </span>
+
+Nastavte pro svůj graf barevné schéma. Vyberte si z řady barevných palet.
+
+<Note>
+  Při seskupení podle pole typu Select graf automaticky použije barvy definované pro každou možnost v nastavení vašeho pole.
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Název osy </span>
+
+Zvolte, které popisky os chcete zobrazit: **Žádné**, **Osa X**, **Osa Y** nebo **Obě** (pouze pro sloupcové a čárové grafy).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Skládané sloupce / Skládané čáry </span>
+
+Když je nastaveno Seskupit podle, zvolte, jak budou více řad zobrazeny.
+
+* **Vypnuto (Seskupené)**: Řady se zobrazí vedle sebe. Použijte při porovnávání přesných hodnot mezi skupinami.
+* **Zapnuto (Skládané)**: Řady se skládají na sebe. Použijte při zobrazení složení—jak části tvoří celek.
+
+**Příklad**: Obchody podle fáze, seskupené podle vlastníka
+
+* Seskupené: Uvidíte přesná čísla jednotlivých vlastníků vedle sebe
+* Skládané: Uvidíte celkový počet obchodů na fázi, s příspěvkem každého vlastníka naskládaným
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Popisky dat </span>
+
+Zobrazit hodnoty přímo na prvcích grafu (sloupce, body, výseče).
+
+* **Zapnuto**: Hodnoty se zobrazí v grafu
+* **Vypnuto**: Nezobrazují se žádné hodnoty (čistší vzhled)
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legenda </span>
+
+Zobrazit nebo skrýt legendu (objeví se pouze při nastavení Seskupit podle).
+
+* **Zapnuto**: Legenda zobrazuje, co jednotlivé barvy představují
+* **Vypnuto**: Legenda se nezobrazuje
+
+<Tip>
+  **Najetím myší** na položku legendy zvýrazníte danou skupinu. **Kliknutím** ji dočasně skryjete z grafu.
+</Tip>
+
+---
+
+## Poznámky specifické pro grafy
+
+### Koláčové grafy
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Každý výsek představuje** – Definujte, jak jsou výseče seskupeny
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Skrýt prázdnou kategorii** – Odebrat výseče s nulovou hodnotou
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Zobrazit hodnotu uprostřed** – Zobrazit agregační hodnotu (součet, průměr, počet atd.)
+
+### Agregační grafy
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefix** – Přidat text před číslo (např. `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffix** – Přidat text za číslo (např. `%`)

@@ -141,7 +141,7 @@ export class ImpersonationService {
   ) {
     const auditService = this.auditService.createContext({
       workspaceId: impersonatorUserWorkspace.workspace.id,
-      userId: impersonatorUserWorkspace.user.id,
+      userWorkspaceId: impersonatorUserWorkspace.id,
     });
 
     auditService.insertWorkspaceEvent(MONITORING_EVENT, {

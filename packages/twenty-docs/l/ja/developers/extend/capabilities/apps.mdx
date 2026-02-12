@@ -1,0 +1,652 @@
+---
+title: Twenty アプリ
+description: Twenty のカスタマイズをコードとして構築・管理します。
+---
+
+<Warning>
+  アプリは現在アルファテスト中です。 この機能は動作しますが、まだ進化の途上です。
+</Warning>
+
+## Apps とは？
+
+Apps を使うと、Twenty のカスタマイズを**コードとして**構築・管理できます。 Instead of configuring everything through the UI, you define your data model and logic functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
+
+**現在できること:**
+
+* カスタムオブジェクトとフィールドをコードとして定義（管理されたデータモデル）
+* Build logic functions with custom triggers
+* 同じアプリを複数のワークスペースにデプロイ
+
+**近日公開:**
+
+* カスタム UI レイアウトとコンポーネント
+
+## 前提条件
+
+* Node.js 24+ と Yarn 4
+* Twenty のワークスペースと API キー（https://app.twenty.com/settings/api-webhooks で作成）
+
+## 始めに
+
+公式スキャフォルダーで新しいアプリを作成し、認証して開発を開始します：
+
+```bash filename="Terminal"
+# 新しいアプリのひな型を作成
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# yarn@4 を使用していない場合
+corepack enable
+yarn install
+
+# API キーで認証（プロンプトが表示されます）
+yarn auth:login
+
+# 開発モードを開始：ローカルの変更がワークスペースに自動同期されます
+yarn app:dev
+```
+
+そこで次のことができます：
+
+```bash filename="Terminal"
+# アプリケーションに新しいエンティティを追加（ガイド付き）
+yarn entity:add
+
+# 型付きの Twenty クライアントとワークスペースのエンティティ型を生成
+yarn app:generate
+
+# アプリケーションの関数のログを監視
+yarn function:logs
+
+# 名前で関数を実行
+yarn function:execute -n my-function -p '{"name": "test"}'
+
+# 現在のワークスペースからアプリケーションをアンインストール
+yarn app:uninstall
+
+# コマンドのヘルプを表示
+yarn help},{
+```
+
+参考: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) および [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) の CLI リファレンスページをご覧ください。
+
+## プロジェクト構成（スキャフォルド作成）
+
+`npx create-twenty-app@latest my-twenty-app` を実行すると、スキャフォルダーは次を行います：
+
+* 最小限のベースアプリケーションを `my-twenty-app/` にコピーします
+* ローカルの `twenty-sdk` 依存関係と Yarn 4 の設定を追加します
+* `twenty` CLI と連携する設定ファイルとスクリプトを作成します
+* デフォルトのアプリケーション設定とデフォルトの関数ロールを生成します
+
+スキャフォルド直後のアプリは次のようになります：
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  eslint.config.mjs
+  tsconfig.json
+  README.md
+  src/
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+```
+
+### コンベンション優先
+
+アプリケーションは **コンベンション優先（設定より規約）** のアプローチを採用し、エンティティはファイルのサフィックスで検出されます。 これにより、`src/app/` フォルダー内を柔軟に構成できます：
+
+| ファイルサフィックス              | エンティティタイプ         |
+| ----------------------- | ----------------- |
+| `*.object.ts`           | カスタムオブジェクトの定義     |
+| `*.function.ts`         | サーバーレス関数の定義       |
+| `*.front-component.tsx` | フロントエンドコンポーネントの定義 |
+| `*.role.ts`             | ロールの定義            |
+
+### サポートされるフォルダー構成
+
+エンティティは次のいずれのパターンでも構成できます：
+
+**従来型（タイプ別）:**
+
+```text
+src/
+├── application.config.ts
+├── objects/
+│   └── postCard.object.ts
+├── functions/
+│   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
+└── roles/
+    └── admin.role.ts
+```
+
+**機能単位:**
+
+```text
+src/
+├── application.config.ts
+└── post-card/
+    ├── postCard.object.ts
+    ├── createPostCard.function.ts
+    ├── card.front-component.tsx
+    └── postCardAdmin.role.ts
+```
+
+**フラット:**
+
+```text
+src/
+├── application.config.ts
+├── postCard.object.ts
+├── createPostCard.function.ts
+├── card.front-component.tsx
+└── admin.role.ts
+```
+
+概要：
+
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+* **.gitignore**: `node_modules`、`.yarn`、`generated/`（型付きクライアント）、`dist/`、`build/`、カバレッジ用フォルダー、ログファイル、`.env*` ファイルなどの一般的な生成物を無視します。
+* **yarn.lock**、**.yarnrc.yml**、**.yarn/**: プロジェクトで使用する Yarn 4 ツールチェーンをロックおよび構成します。
+* **.nvmrc**: プロジェクトで想定する Node.js バージョンを固定します。
+* **eslint.config.mjs** と **tsconfig.json**: アプリの TypeScript ソース向けの Lint と TypeScript 設定を提供します。
+* **README.md**: アプリのルートにある、基本的な手順を記した短い README。
+* **src/**: The main place where you define your application-as-code:
+  * `application.config.ts`: アプリのグローバル設定（メタデータとランタイムの接続）。 「アプリケーション設定」を参照してください。
+  * `*.role.ts`: Role definitions used by your logic functions. 「デフォルトの関数ロール」を参照してください。
+  * `*.object.ts`: カスタムオブジェクトの定義。
+  * `*.function.ts`: Logic function definitions.
+  * `*.front-component.tsx`: Front component definitions.
+
+後続のコマンドにより、さらにファイルやフォルダーが追加されます：
+
+* `yarn app:generate` は `generated/` フォルダー（型付きの Twenty クライアント + ワークスペースの型）を作成します。
+* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+
+## 認証
+
+初めて `yarn auth:login` を実行すると、次が求められます：
+
+* API URL（デフォルトは http://localhost:3000 または現在のワークスペースプロファイル）
+* API キー
+
+認証情報はユーザーごとに `~/.twenty/config.json` に保存されます。 複数のプロファイルを管理し、相互に切り替えることができます。
+
+### ワークスペースの管理
+
+```bash filename="Terminal"
+# 対話的にログイン（推奨）
+yarn auth:login
+
+# 特定のワークスペースプロファイルにログイン
+yarn auth:login --workspace my-custom-workspace
+
+# 設定済みのワークスペースをすべて一覧表示
+yarn auth:list
+
+# デフォルトのワークスペースを切り替え（対話的）
+yarn auth:switch
+
+# 特定のワークスペースに切り替え
+yarn auth:switch production
+
+# 現在の認証状態を確認
+yarn auth:status
+```
+
+一度 `auth:switch` でワークスペースを切り替えると、その後のすべてのコマンドはデフォルトでそのワークスペースを使用します。 一時的に `--workspace <name>` で上書きできます。
+
+## SDK リソース（型と設定）を使う
+
+twenty-sdk は、アプリ内で使用する型付きのビルディングブロックとヘルパー関数を提供します。 以下は、最も頻繁に扱う主要な構成要素です。
+
+### ヘルパー関数
+
+この SDK は、アプリのエンティティを定義するための組み込み検証付きヘルパー関数を 4 つ提供します：
+
+| 関数                 | 目的                                   |
+| ------------------ | ------------------------------------ |
+| `defineApplication()`      | アプリケーションのメタデータを構成                    |
+| `defineObject()`   | フィールド付きのカスタムオブジェクトを定義                |
+| `defineFunction()` | Define logic functions with handlers |
+| `defineRole()`     | ロールの権限とオブジェクトアクセスを構成                 |
+
+これらの関数は実行時に設定を検証し、IDE の補完と型安全性を向上させます。
+
+### オブジェクトの定義
+
+カスタムオブジェクトは、ワークスペース内のレコードのスキーマと挙動の両方を表します。 組み込み検証付きでオブジェクトを定義するには `defineObject()` を使用します：
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+主要ポイント：
+
+* 組み込み検証と優れた IDE サポートのために `defineObject()` を使用します。
+* `universalIdentifier` は、デプロイをまたいで一意かつ安定している必要があります。
+* 各フィールドには、`name`、`type`、`label`、および自身の安定した `universalIdentifier` が必要です。
+* `fields` 配列は任意です。カスタムフィールドなしでオブジェクトを定義できます。
+* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
+
+<Note>
+  **ベースフィールドは自動作成されます。** カスタムオブジェクトを定義すると、Twenty は `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` などの標準フィールドを自動的に追加します。 これらを `fields` 配列で定義する必要はありません。カスタムフィールドのみを追加してください。
+</Note>
+
+### アプリケーション設定（application.config.ts）
+
+すべてのアプリには、次の内容を記述する単一の `application.config.ts` ファイルがあります：
+
+* **アプリの概要**: 識別子、表示名、説明。
+* **関数の実行方法**: 権限に使用するロール。
+* **（任意）変数**: 関数に環境変数として公開されるキーと値のペア。
+
+アプリケーション設定を定義するには `defineApplication()` を使用します：
+
+```typescript
+// src/app/application.config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+注記：
+
+* `universalIdentifier` フィールドは、あなたが管理する決定的な ID です。一度生成し、同期をまたいで安定したままにしてください。
+* `applicationVariables` は関数の環境変数になります（例：`DEFAULT_RECIPIENT_NAME` は `process.env.DEFAULT_RECIPIENT_NAME` として利用可能）。
+* `defaultRoleUniversalIdentifier` は、`*.role.ts` ファイルで定義するロールと一致している必要があります（下記参照）。
+
+#### ロールと権限
+
+アプリケーションは、ワークスペース内のオブジェクトやアクションに対する権限をカプセル化するロールを定義できます。 The field `defaultRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+
+* `TWENTY_API_KEY` として注入される実行時の API キーは、このデフォルトの関数ロールから派生します。
+* 型付きクライアントの権限は、そのロールに付与された権限に制限されます。
+* 最小権限の原則に従い、関数に必要な権限のみに限定した専用ロールを作成し、そのユニバーサル識別子を参照してください。
+
+##### デフォルトの関数ロール（\*.role.ts）
+
+新しいアプリをスキャフォルドすると、CLI はデフォルトのロールファイルも作成します。 組み込み検証付きでロールを定義するには `defineRole()` を使用します：
+
+```typescript
+// src/app/default-function.role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+このロールの `universalIdentifier` は、`application.config.ts` で `defaultRoleUniversalIdentifier` として参照されます。 言い換えると：
+
+* **\*.role.ts** は、デフォルトの関数ロールで可能な操作を定義します。
+* **application.config.ts** でそのロールを指定することで、関数はその権限を継承します。
+
+注記：
+
+* スキャフォルドされたロールから開始し、最小権限の原則に従って段階的に制限してください。
+* `objectPermissions` と `fieldPermissions` を、関数に必要なオブジェクト／フィールドに置き換えてください。
+* `permissionFlags` はプラットフォームレベルの機能へのアクセスを制御します。 最小限に保ち、必要なものだけを追加してください。
+* 動作例は Hello World アプリにあります: [packages/twenty-apps/hello-world/src/roles/function-role.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
+
+### Logic function config and entrypoint
+
+各関数ファイルは、ハンドラーと任意のトリガーを含む設定を `defineFunction()` でエクスポートします。 自動検出のために `*.function.ts` のファイルサフィックスを使用します。
+
+```typescript
+// src/app/createPostCard.function.ts
+import { defineFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import Twenty, { type Person } from '~/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new Twenty(); // generated typed client
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+一般的なトリガーの種類：
+
+* **route**: `/s/` エンドポイント配下で、HTTP パスとメソッドで関数を公開します：
+
+> 例: `path: '/post-card/create',` -> `<APP_URL>/s/post-card/create` で呼び出し
+
+* **cron**: CRON 式を使用してスケジュールで関数を実行します。
+* **databaseEvent**: ワークスペースのオブジェクトのライフサイクルイベントで実行されます。 イベント操作が `updated` の場合、監視する特定のフィールドを `updatedFields` 配列で指定できます。 未定義または空のままにすると、任意の更新でも関数がトリガーされます。
+
+> 例: `person.updated`
+
+注記：
+
+* `triggers` 配列は任意です。 トリガーのない関数は、他の関数から呼び出されるユーティリティ関数として使用できます。
+* 1 つの関数で複数のトリガータイプを組み合わせることができます。
+
+### ルートトリガーのペイロード
+
+<Warning>
+  **破壊的変更（v1.16、2026年1月）：** ルートトリガーのペイロード形式が変更されました。 v1.16 以前は、クエリパラメーター、パスパラメーター、および body がペイロードとして直接送信されていました。 v1.16 以降は、それらは構造化された `RoutePayload` オブジェクト内にネストされます。
+
+  **v1.16 以前:**
+
+  ```typescript
+  const handler = async (params) => {
+    const { param1, param2 } = params; // Direct access
+  };
+  ```
+
+  **v1.16 以降:**
+
+  ```typescript
+  const handler = async (event: RoutePayload) => {
+    const { param1, param2 } = event.body; // Access via .body
+    const { queryParam } = event.queryStringParameters;
+    const { id } = event.pathParameters;
+  };
+  ```
+
+  **既存の関数を移行するには：** ハンドラーで、params オブジェクトから直接ではなく、`event.body`、`event.queryStringParameters`、または `event.pathParameters` から分割代入するように更新してください。
+</Warning>
+
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. 型を `twenty-sdk` からインポートします:
+
+```typescript
+import { defineFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+`RoutePayload` 型は次の構造になっています:
+
+| プロパティ                        | タイプ                                   | 説明                                                         |
+| ---------------------------- | ------------------------------------- | ---------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP ヘッダー (`forwardedRequestHeaders` に列挙されたもののみ)           |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | クエリ文字列パラメーター (複数の値はカンマで連結)                                 |
+| `pathParameters`             | `Record<string, string \| undefined>` | ルートパターンから抽出されたパスパラメーター (例: `/users/:id` → `{ id: '123' }`) |
+| `本文`                         | `object \| null`                      | 解析済みのリクエストボディ (JSON)                                       |
+| `isBase64Encoded`            | `ブール型`                                | body が base64 エンコードされているかどうか                               |
+| `requestContext.http.method` | `string`                              | HTTP メソッド (GET, POST, PUT, PATCH, DELETE)                  |
+| `requestContext.http.path`   | `string`                              | 生のリクエストパス                                                  |
+
+### HTTP ヘッダーの転送
+
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. 特定のヘッダーにアクセスするには、`forwardedRequestHeaders` 配列に明示的に列挙してください:
+
+```typescript
+export default defineFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+ハンドラー内で、これらのヘッダーにアクセスできます:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  ヘッダー名は小文字に正規化されます。 小文字のキーを使用してアクセスしてください (例: `event.headers['content-type']`)。
+</Note>
+
+新しい関数は次の 2 通りで作成できます：
+
+* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. これにより、ハンドラーと設定を備えたスターターファイルが生成されます。
+* **手動**: 新しい `*.function.ts` ファイルを作成し、同じパターンで `defineFunction()` を使用します。
+
+### 生成された型付きクライアント
+
+ワークスペースのスキーマに基づき、generated/ にローカルの型付きクライアントを作成するには yarn app:generate を実行します。 関数内で使用します：
+
+```typescript
+import Twenty from '~/generated';
+
+const client = new Twenty();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+```
+
+このクライアントは `yarn app:generate` によって再生成されます。 Re-run after changing your objects or when onboarding to a new workspace.
+
+#### Runtime credentials in logic functions
+
+関数が Twenty 上で実行されると、コードが実行される前に、プラットフォームが認証情報を環境変数として注入します：
+
+* `TWENTY_API_URL`: アプリが対象とする Twenty API のベース URL。
+* `TWENTY_API_KEY`: アプリケーションのデフォルト関数ロールにスコープされた短命のキー。
+
+ノート:
+
+* 生成されたクライアントに URL や API キーを渡す必要はありません。 実行時に process.env から `TWENTY_API_URL` と `TWENTY_API_KEY` を読み取ります。
+* API キーの権限は、`application.config.ts` で `defaultRoleUniversalIdentifier` によって参照されるロールによって決まります。 This is the default role used by logic functions of your application.
+* アプリケーションは、最小権限の原則に従うロールを定義できます。 関数に必要な権限のみを付与し、`defaultRoleUniversalIdentifier` をそのロールのユニバーサル識別子に指定してください。
+
+### Hello World の例
+
+オブジェクト、関数、複数のトリガーを示す最小のエンドツーエンド例は[こちら](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world)をご覧ください。
+
+## 手動セットアップ（スキャフォルダーなし）
+
+最適な導入体験のために `create-twenty-app` の使用を推奨しますが、手動でプロジェクトをセットアップすることもできます。 CLI をグローバルにインストールしないでください。 代わりに、`twenty-sdk` をローカル依存関係として追加し、package.json にスクリプトを設定します：
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+次のようなスクリプトを追加します：
+
+```json filename="package.json"
+{
+  "scripts": {
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
+  }
+}
+```
+
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
+
+## トラブルシューティング
+
+* 認証エラー: `yarn auth:login` を実行し、API キーに必要な権限があることを確認してください。
+* サーバーに接続できません: API URL と、Twenty サーバーに到達可能であることを確認してください。
+* Types or client missing/outdated: run `yarn app:generate`.
+* 開発モードで同期されない: `yarn app:dev` が実行中であり、環境によって変更が無視されていないことを確認してください。
+
+Discord ヘルプチャンネル: https://discord.com/channels/1130383047699738754/1130386664812982322

@@ -1,0 +1,80 @@
+---
+title: 프로젝트를 위한 칸반 보기 만들기
+description: 시각적 보드를 사용해 단계별로 프로젝트를 추적하세요.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+칸반 보기를 사용하여 프로젝트(또는 단계가 있는 모든 객체)를 열을 따라 이동하는 카드로 시각화하세요.
+
+<VimeoEmbed videoId="927888627" title="동영상 시연" />
+
+## 사전 준비
+
+열로 사용할 **Select 필드**가 객체에 필요합니다(예: Status, Stage, Phase).
+
+없다면:
+
+1. **설정 → 데이터 모델**로 이동
+2. 객체를 선택하세요
+3. 단계 옵션이 있는 Select 필드를 추가하세요
+
+## 단계
+
+1. 객체로 이동하세요(예: 프로젝트, 작업)
+2. 뷰 드롭다운에서 → **+ 뷰 추가**를 클릭하세요
+3. 뷰의 이름을 지정하세요(예: "Project Board")
+4. **Create**를 클릭하세요
+5. **Options**를 클릭한 다음 레이아웃으로 **Kanban**을 선택하세요
+6. 뷰는 Select 필드를 열로 자동으로 사용합니다
+7. **저장** 클릭
+
+## 보드 구성
+
+### 카드에 주요 필드 표시
+
+1. **Options → Fields**를 클릭합니다
+2. "Hidden Fields" 섹션에서 필드를 찾으세요
+3. **눈 아이콘**을 클릭하여 카드에 표시합니다
+4. 드래그하여 순서를 변경합니다
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+### 컴팩트 보기 활성화
+
+상위 수준에서 확인하려면:
+
+1. **Options**를 클릭하세요
+2. **Compact view** 토글을 켜세요
+
+카드에는 레코드 이름만 표시됩니다.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+### 집계 추가
+
+각 열 상단에 개수 또는 합계를 표시합니다:
+
+1. 열 이름 옆의 숫자를 클릭하세요
+2. 집계(Count, Sum 등)를 선택하세요
+3. 필요하면 필드를 선택하세요
+
+## 카드 이동
+
+열 사이로 카드를 드래그 앤 드롭하여 상태를 업데이트하세요.
+
+<VimeoEmbed videoId="927888627" title="동영상 시연" />
+
+## 예시: 작업 보드
+
+| 열(상태)    | 카드       |
+| -------- | -------- |
+| **할 일**  | 새 작업     |
+| **진행 중** | 진행 중인 작업 |
+| **검토**   | 승인 대기 중  |
+| **완료**   | 완료됨      |
+
+## 관련 항목
+
+* [칸반 보기](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — 집계, 컴팩트 보기, 단계
+* [영업 파이프라인 설정 방법](/l/ko/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — 기회용 칸반

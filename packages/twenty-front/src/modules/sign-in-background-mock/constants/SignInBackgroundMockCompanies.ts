@@ -1,5 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -1365,7 +1365,7 @@ const baseMock = [
   },
 ];
 
-// eslint-disable-next-line @nx/workspace-max-consts-per-file, @typescript-eslint/naming-convention
+// eslint-disable-next-line twenty/max-consts-per-file, @typescript-eslint/naming-convention
 const baseMockToRecordConnection = {
   edges: baseMock.map(
     (mockCompany) =>
@@ -1377,9 +1377,9 @@ const baseMockToRecordConnection = {
   ) as any,
   pageInfo: {},
   __typename: 'CompanyConnection',
-} as RecordGqlConnection;
+} as RecordGqlConnectionEdgesRequired;
 
-// eslint-disable-next-line @nx/workspace-max-consts-per-file
+// eslint-disable-next-line twenty/max-consts-per-file
 export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = getRecordsFromRecordConnection(
   { recordConnection: baseMockToRecordConnection },
 );

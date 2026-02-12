@@ -92,7 +92,7 @@ export const NameField = ({
         label={t`Name`}
         value={displayName}
         onChange={setDisplayName}
-        placeholder="Apple"
+        placeholder={t`Apple`}
         fullWidth
       />
     </StyledComboInputContainer>

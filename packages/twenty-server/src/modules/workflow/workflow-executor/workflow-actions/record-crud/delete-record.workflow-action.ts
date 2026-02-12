@@ -61,15 +61,13 @@ export class DeleteRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { workspaceId } = runInfo;
-
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
     const toolOutput = await this.deleteRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecordId: workflowActionInput.objectRecordId,
-      workspaceId,
+      authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       soft: true,
     });

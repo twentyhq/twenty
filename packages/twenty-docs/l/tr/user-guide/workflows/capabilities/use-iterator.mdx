@@ -1,0 +1,176 @@
+---
+title: Yineleyici Kullanın
+description: Kayıt dizileri üzerinde döngü yaparak her öğe üzerinde eylemler gerçekleştirin.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Yineleyici, bir kayıt dizisi üzerinde döngü yapmanızı ve her biri için eylemler gerçekleştirmenizi sağlar. Search Records tarafından döndürülen veya Webhook'lar aracılığıyla alınan birden çok kaydı işlemeyi gerektiren iş akışları için gereklidir.
+
+## Yineleyici Ne Zaman Kullanılır
+
+| Senaryo                        | Örnek                                              |
+| ------------------------------ | -------------------------------------------------- |
+| **Arama sonuçlarını işleyin**  | Bulunan her kişiye e-posta gönderin                |
+| **Webhook dizilerini yönetin** | Her öğe için sırayla kayıtlar oluşturun            |
+| **Toplu güncellemeler**        | Birden çok kaydı hesaplanan değerlerle güncelleyin |
+| **Bildirimler**                | Bir etkinlik hakkında birden fazla kişiyi uyarın   |
+
+## Yineleyiciyi Anlama
+
+Yineleyici, girdi olarak bir **dizi** bekler. Ardından:
+
+1. Diziden ilk öğeyi alır
+2. Yineleyicinin içindeki tüm eylemleri o öğeyle çalıştırır
+3. Sonraki öğeye geçer
+4. Tüm öğeler işlenene kadar tekrarlar
+
+## Temel Kurulum
+
+### Örnek: Arama Sonuçlarındaki Herkese E-posta Gönderme
+
+**Hedef**: Belirli bir şirketteki tüm kişileri bulun ve her birine kişiselleştirilmiş bir e-posta gönderin.
+
+### Adım 1: Kayıt Ara
+
+1. **Kayıt Ara** eylemini ekleyin
+2. Nesne: **Kişiler**
+3. Filtre: Şirket "Acme Inc"'e eşit
+4. Bu, bir kişi dizisi döndürür
+
+### Adım 2: Sonuçların Mevcut Olduğunu Kontrol Edin
+
+1. **Filtre** eylemi ekleyin
+2. Koşul: `{{searchRecords.length}}` 0'dan büyüktür
+3. Bu, boş sonuçlarda Yineleyici hatalarını önler
+
+### Adım 3: Yineleyici Ekleyin
+
+1. **Yineleyici** eylemini ekleyin
+2. Dizi girişi: `{{searchRecords}}` öğesini seçin
+3. Bu bir döngü oluşturur
+
+### Adım 4: Yineleyici İçine Eylemler Ekleyin
+
+Yineleyiciden sonra yerleştirilen eylemler her öğe için çalışır:
+
+1. Bir **E-posta Gönder** eylemi ekleyin (yineleyici içinde)
+2. Kime: `{{iterator.currentItem.email}}`
+3. Konu: Merhaba `{{iterator.currentItem.firstName}}`!
+4. Gövde: Mevcut öğenin alanlarını kullanarak kişiselleştirilmiş mesaj
+
+### Sonuç
+
+Search Records 5 kişi döndürürse, Yineleyici:
+
+* 1. kişiye e-posta gönderir
+* 2. kişiye e-posta gönderir
+* ... tüm 5'i için de devam eder
+
+## Geçerli Öğe Verilerine Erişim
+
+Yineleyici içinde, geçerli kayda erişmek için `{{iterator.currentItem}}` kullanın:
+
+| Değişken                                | Açıklama                          |
+| --------------------------------------- | --------------------------------- |
+| `{{iterator.currentItem}}`              | Geçerli kayıt nesnesinin tamamı   |
+| `{{iterator.currentItem.id}}`           | Kayıt Kimliği                     |
+| `{{iterator.currentItem.email}}`        | E-posta alanı                     |
+| `{{iterator.currentItem.company.name}}` | İlgili şirket adı                 |
+| `{{iterator.index}}`                    | Dizideki mevcut konum (0 tabanlı) |
+
+## Yaygın Kalıplar
+
+### Birden Çok Kaydı Güncelleyin
+
+**Hedef**: Vadesi geçmiş tüm görevleri "Geç" olarak işaretleyin
+
+```
+1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Update Record
+       - Object: Tasks
+       - Record: {{iterator.currentItem.id}}
+       - Status: Late
+```
+
+### Diziden Kayıtlar Oluşturun
+
+**Hedef**: Webhook birden çok öğe içeren bir sipariş aldığında, her bir öğe için bir kayıt oluşturun
+
+```
+1. Webhook Trigger (receives items array)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Create Record
+       - Object: Order Items
+       - Name: {{iterator.currentItem.name}}
+       - Quantity: {{iterator.currentItem.qty}}
+       - Related Order: {{trigger.body.orderId}}
+```
+
+### Döngü İçinde Koşullu İşleme
+
+**Hedef**: Yalnızca geçerli e-postası olan kişilere e-posta gönderin
+
+```
+1. Search Records (People)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email is not empty)
+       └── Send Email
+           - To: {{iterator.currentItem.email}}
+```
+
+## Sorun Giderme
+
+### "Iterator expects an array"
+
+**Neden**: Bir dizi yerine tek bir kayıt geçtiniz.
+
+**Düzeltme**: Tek bir kayıt değil, Search Records sonucunu veya bir dizi alanını geçtiğinizden emin olun.
+
+```
+✅ Correct: {{searchRecords}}
+❌ Wrong: {{searchRecords[0]}}
+```
+
+### Yineleyici Çalışmıyor
+
+**Neden**: Dizi boş.
+
+**Düzeltme**: Dizi uzunluğunu kontrol etmek için Yineleyiciden önce bir Filtre ekleyin:
+
+```
+Filter: {{searchRecords.length}} > 0
+```
+
+### Eylemler Çok Fazla Kez Çalıştırılıyor
+
+**Neden**: Search Records beklenenden daha fazla kayıt döndürdü.
+
+**Düzeltme**:
+
+* Search Records'a daha spesifik filtreler ekleyin
+* Search Records için bir sınır belirleyin (en fazla 200)
+* Ek koşullar için Yineleyici içinde Filtre ekleyin
+
+## Performansla İlgili Hususlar
+
+* **Kredi kullanımı**: Her yineleme, eylemleri için kredi tüketir
+* **Zaman**: Büyük dizilerin işlenmesi daha uzun sürer
+* **Sınırlar**: Çok büyük işlemleri toplu olarak çalıştırmayı düşünün
+* **Oran sınırlamaları**: Çok sayıda yinelemede harici API çağrıları oran sınırlarına takılabilir
+
+## En İyi Uygulamalar
+
+1. Hatalardan kaçınmak için Yineleyiciden önce **dizi uzunluğunu her zaman kontrol edin**
+2. Tüm öğelerin işlenmesine gerek olmadığında **döngülerin içine filtreler ekleyin**
+3. Neyin üzerinden döngü yaptığını açıklamak için **Yineleyici adımınızı yeniden adlandırın**
+4. Büyük veri kümelerini işlemeye başlamadan önce **küçük dizilerle test edin**
+5. Yinelemelerin beklendiği gibi tamamlandığından emin olmak için **iş akışı çalıştırmalarını izleyin**
+
+## İlgili
+
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Dalları Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [İş Akışları SSS](/l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq)

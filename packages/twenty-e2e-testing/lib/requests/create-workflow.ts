@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test';
-import { getAuthToken } from '../utils/getAuthToken';
+import { type Page } from '@playwright/test';
+import { getAccessAuthToken } from '../utils/getAccessAuthToken';
 import { backendGraphQLUrl } from './backend';
 
 export const createWorkflow = async ({
@@ -11,7 +11,7 @@ export const createWorkflow = async ({
   workflowId: string;
   workflowName: string;
 }) => {
-  const { authToken } = await getAuthToken(page);
+  const { authToken } = await getAccessAuthToken(page);
 
   return page.request.post(backendGraphQLUrl, {
     headers: {

@@ -13,6 +13,12 @@ describe('peopleResolver (e2e)', () => {
                 jobTitle
                 city
                 avatarUrl
+                avatarFile {
+                  fileId
+                  label
+                  extension
+                  url
+                }
                 position
                 searchVector
                 id
@@ -53,6 +59,7 @@ describe('peopleResolver (e2e)', () => {
           expect(people).toHaveProperty('jobTitle');
           expect(people).toHaveProperty('city');
           expect(people).toHaveProperty('avatarUrl');
+          expect(people).toHaveProperty('avatarFile');
           expect(people).toHaveProperty('position');
           expect(people).toHaveProperty('searchVector');
           expect(people).toHaveProperty('id');

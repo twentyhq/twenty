@@ -49,7 +49,7 @@ export const SettingsDataModelFieldAddressForm = ({
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
   const countries = [
     {
-      label: 'No country',
+      label: t`No country`,
       value: '',
       Icon: IconCircleOff,
     },

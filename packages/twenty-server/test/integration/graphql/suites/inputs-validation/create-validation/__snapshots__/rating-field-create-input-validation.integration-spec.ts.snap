@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"Value "not-a-rating" does not exist in "ApiInputValidationTestObjectRatingFieldEnum" enum."`;
 

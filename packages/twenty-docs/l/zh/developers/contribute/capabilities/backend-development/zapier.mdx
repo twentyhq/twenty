@@ -1,0 +1,83 @@
+---
+title: Zapier 应用
+---
+
+通过 [Zapier](https://zapier.com/) 无缝同步 Twenty 和 3000 多个应用。 自动化任务，提高生产力，提升客户关系！
+
+## 关于 Zapier
+
+Zapier 是一款工具，可通过连接你的团队每天使用的应用来实现工作流自动化。 Zapier 的基本概念是称为 Zaps 的自动化工作流，包含触发器和操作。
+
+您可以在[这里](https://zapier.com/how-it-works)了解更多关于 Zapier 的工作原理。
+
+## 设置
+
+### 步骤 1: 安装 Zapier 包
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### 步骤 2: 使用 CLI 登录
+
+使用您的 Zapier 凭证通过 CLI 登录：
+
+```bash
+zapier login
+```
+
+### 步骤 3: 设置环境变量
+
+从 `packages/twenty-zapier` 文件夹运行：
+
+```bash
+cp .env.example .env
+```
+
+在本地运行应用程序，访问 [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)，并生成一个 API 密钥。
+
+将 `.env` 文件中的 **YOUR_API_KEY** 值替换为你刚刚生成的 API 密钥。
+
+## 开发
+
+<Warning>
+  确保在执行任何 `zapier` 命令前运行 `yarn build`。
+</Warning>
+
+### 测试
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### 编辑代码时监视并编译
+
+```bash
+yarn watch
+```
+
+### 验证您的 Zapier 应用
+
+```bash
+yarn validate
+```
+
+### 部署您的 Zapier 应用
+
+```bash
+yarn deploy
+```
+
+### 列出所有 Zapier CLI 命令
+
+```bash
+zapier
+```

@@ -1,0 +1,340 @@
+---
+title: Configuración Local
+description: La guía para los colaboradores (o desarrolladores curiosos) que quieren ejecutar Twenty localmente.
+---
+
+## Prerrequisitos
+
+<Tabs>
+  <Tab title="Linux y MacOS">
+    Antes de que puedas instalar y usar Twenty, asegúrate de instalar lo siguiente en tu computadora:
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      `npm` no funcionará, deberías usar `yarn` en su lugar. Yarn ahora se envía con Node.js, por lo que no necesitas instalarlo por separado.
+      Solo tienes que ejecutar `corepack enable` para habilitar Yarn si aún no lo has hecho.
+    </Warning>
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    1. Instalar WSL
+       Abre PowerShell como Administrador y ejecuta:
+
+    ```powershell
+    wsl --install
+    ```
+
+    Ahora deberías ver un aviso para reiniciar tu computadora. Si no, reiníciala manualmente.
+
+    Al reiniciar, se abrirá una ventana de PowerShell e instalará Ubuntu. Esto puede tomar algo de tiempo.
+    Verás un aviso para crear un nombre de usuario y contraseña para tu instalación de Ubuntu.
+
+    2. Instalar y configurar git
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Your Name"
+
+    git config --global user.email "youremail@domain.com"
+    ```
+
+    3. Instalar nvm, node.js y yarn
+
+    <Warning>
+      Usa `nvm` para instalar la versión correcta de `node`. El `.nvmrc` asegura que todos los colaboradores usen la misma versión.
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    Cierra y vuelve a abrir tu terminal para usar nvm. Luego ejecuta los siguientes comandos.
+
+    ```bash
+
+    nvm install # installs recommended node version
+
+    nvm use # use recommended node version
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Paso 1: Clonar con Git
+
+En tu terminal, ejecuta el siguiente comando.
+
+<Tabs>
+  <Tab title="SSH (Recomendado)">
+    Si aún no has configurado claves SSH, puedes aprender cómo hacerlo [aquí](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## Paso 2: Ubícate en la raíz
+
+```bash
+cd twenty
+```
+
+Debes ejecutar todos los comandos de los siguientes pasos desde la raíz del proyecto.
+
+## Paso 3: Configurar una Base de Datos PostgreSQL
+
+<Tabs>
+  <Tab title="Linux">
+    **Opción 1 (preferido):** Para aprovisionar tu base de datos localmente:
+    Usa el siguiente enlace para instalar PostgreSQL en tu máquina Linux: [Instalación de PostgreSQL](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Nota: Puede que necesites agregar `sudo -u postgres` antes del comando `psql` para evitar errores de permisos.
+
+    **Opción 2:** Si tienes Docker instalado:
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Opción 1 (preferido):** Para aprovisionar tu base de datos localmente con `brew`:
+
+    ```bash
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Puedes verificar si el servidor PostgreSQL está corriendo ejecutando:
+
+    ```bash
+      brew services list
+    ```
+
+    El instalador puede que no cree el usuario `postgres` por defecto al instalar
+    vía Homebrew en macOS. En cambio, crea un rol de PostgreSQL que coincide con tu
+    nombre de usuario de macOS (por ejemplo, "john").
+    Para comprobar y crear el usuario `postgres` si es necesario, sigue estos pasos:
+
+    ```bash
+      # Connect to PostgreSQL
+      psql postgres
+      or
+      psql -U $(whoami) -d postgres
+    ```
+
+    Una vez en el comando psql (postgres=#), ejecuta:
+
+    ```bash
+     # List existing PostgreSQL roles
+     \du
+    ```
+
+    Verás una salida similar a:
+
+    ```bash
+     Role name | Attributes  | Member of
+     -----------+-------------+-----------
+     john      | Superuser   | {}
+    ```
+
+    Si no ves un rol `postgres` listado, procede al siguiente paso.
+    Crea el rol `postgres` manualmente:
+
+    ```bash
+     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    Esto crea un rol de superusuario llamado `postgres` con acceso de inicio de sesión.
+
+    ```bash
+    Nombre del rol | Atributos  | Miembro de
+    -----------+-------------+-----------
+    postgres  | Superuser   | {}
+    john      | Superuser   | {}
+    ```
+
+    **Opción 2:** Si tienes Docker instalado:
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Todos los siguientes pasos deben ejecutarse en la terminal de WSL (dentro de tu máquina virtual)
+
+    **Opción 1:** Para aprovisionar tu PostgreSQL localmente:
+    Usa el siguiente enlace para instalar PostgreSQL en tu máquina virtual Linux: [Instalación de PostgreSQL](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    Nota: Puede que necesites agregar `sudo -u postgres` antes del comando `psql` para evitar errores de permisos.
+
+    **Opción 2:** Si tienes Docker instalado:
+    Ejecutar Docker en WSL agrega una capa extra de complejidad.
+    Solo usa esta opción si estás cómodo con los pasos extras involucrados, incluyendo activar [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Ahora puedes acceder a la base de datos en [localhost:5432](localhost:5432), con usuario `postgres` y contraseña `postgres`.
+
+## Paso 4: Configurar una Base de Datos Redis (cache)
+
+Twenty requiere un caché de redis para proporcionar el mejor rendimiento
+
+<Tabs>
+  <Tab title="Linux">
+    **Opción 1:** Para aprovisionar tu Redis localmente:
+    Usa el siguiente enlace para instalar Redis en tu máquina Linux: [Instalación de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Opción 2:** Si tienes Docker instalado:
+
+    ```bash
+      make -C packages/twenty-docker redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **Opción 1 (preferido):** Para aprovisionar tu Redis localmente con `brew`:
+
+    ```bash
+    brew install redis
+    ```
+
+    Inicia tu servidor redis:
+    `brew services start redis`
+
+    **Opción 2:** Si tienes Docker instalado:
+
+    ```bash
+      make -C packages/twenty-docker redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    **Opción 1:** Para aprovisionar tu Redis localmente:
+    Usa el siguiente enlace para instalar Redis en tu máquina virtual Linux: [Instalación de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **Opción 2:** Si tienes Docker instalado:
+
+    ```bash
+      make -C packages/twenty-docker redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+Si necesitas una interfaz gráfica de cliente, recomendamos [Redis Insight](https://redis.io/insight/) (versión gratuita disponible)
+
+## Paso 5: Configurar las variables de entorno
+
+Usa variables de entorno o archivos `.env` para configurar tu proyecto. Más información [aquí](/l/es/developers/self-host/capabilities/setup)
+
+Copia los archivos `.env.example` en `/front` y `/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **Modo de múltiples espacios de trabajo:** De forma predeterminada, Twenty se ejecuta en modo de un solo espacio de trabajo, donde solo se puede crear un espacio de trabajo. Para habilitar la compatibilidad con múltiples espacios de trabajo (útil para probar funciones basadas en subdominios), establece `IS_MULTIWORKSPACE_ENABLED=true` en el archivo `.env` de tu servidor. Consulta [Modo de múltiples espacios de trabajo](/l/es/developers/self-host/capabilities/setup#multi-workspace-mode) para más detalles.
+</Info>
+
+## Paso 6: Instalación de dependencias
+
+Para compilar el servidor de Twenty e ingresar algunos datos en tu base de datos, ejecuta el siguiente comando:
+
+```bash
+yarn
+```
+
+Ten en cuenta que `npm` o `pnpm` no funcionarán
+
+## Paso 7: Ejecutar el proyecto
+
+<Tabs>
+  <Tab title="Linux">
+    Dependiendo de tu distribución de Linux, el servidor Redis podría iniciarse automáticamente.
+    Si no, revisa la [guía de instalación de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) para tu distribución.
+  </Tab>
+
+  <Tab title="Mac OS">
+    Redis ya debería estar funcionando. Si no, ejecuta:
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="Windows (WSL)">
+    Dependiendo de tu distribución de Linux, el servidor Redis podría iniciarse automáticamente.
+    Si no es así, consulte la [guía de instalación de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) para su distribución.
+  </Tab>
+</Tabs>
+
+Configure su base de datos con el siguiente comando:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Inicie el servidor, el trabajador y los servicios frontend:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Alternativamente, puede iniciar todos los servicios a la vez:
+
+```bash
+npx nx start
+```
+
+## Paso 8: Use Twenty
+
+**Frontend**
+
+El frontend de Twenty estará ejecutándose en [http://localhost:3001](http://localhost:3001).
+Puede iniciar sesión usando la cuenta demo por defecto: `tim@apple.dev` (contraseña: `tim@apple.dev`)
+
+**Backend**
+
+* El servidor de Twenty estará operativo en [http://localhost:3000](http://localhost:3000)
+* La API GraphQL puede ser accedida en [http://localhost:3000/graphql](http://localhost:3000/graphql)
+* La API REST puede ser alcanzada en [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## Solución de Problemas
+
+Si encuentras algún problema, consulta [Solución de Problemas](/l/es/developers/self-host/capabilities/troubleshooting) para ver soluciones.

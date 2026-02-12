@@ -1,8 +1,8 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { WorkflowFieldsMultiSelect } from '../WorkflowEditUpdateEventFieldsMultiSelect';
 
 const meta: Meta<typeof WorkflowFieldsMultiSelect> = {
   title: 'Modules/Workflow/WorkflowFieldsMultiSelect',

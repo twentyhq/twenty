@@ -80,7 +80,8 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: (date: any) => parseIMaskJSDateIMaskDateInputString(date),
+      format: (date: any) =>
+        isDefined(date) ? parseIMaskJSDateIMaskDateInputString(date) : '',
       parse: parseIMaskDateInputStringToJSDate,
       lazy: false,
       autofix: true,

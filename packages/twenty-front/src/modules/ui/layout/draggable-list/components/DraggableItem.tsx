@@ -1,10 +1,12 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 type DraggableItemProps = {
   draggableId: string;
   isDragDisabled?: boolean;
+  disableInteractiveElementBlocking?: boolean;
   index: number;
   itemComponent:
     | JSX.Element
@@ -12,16 +14,19 @@ type DraggableItemProps = {
   isInsideScrollableContainer?: boolean;
   draggableComponentStyles?: React.CSSProperties;
   disableDraggingBackground?: boolean;
+  containerOffsetY?: number;
 };
 
 export const DraggableItem = ({
   draggableId,
   isDragDisabled = false,
+  disableInteractiveElementBlocking = false,
   index,
   itemComponent,
   isInsideScrollableContainer,
   draggableComponentStyles,
   disableDraggingBackground,
+  containerOffsetY,
 }: DraggableItemProps) => {
   const theme = useTheme();
 
@@ -31,6 +36,7 @@ export const DraggableItem = ({
       draggableId={draggableId}
       index={index}
       isDragDisabled={isDragDisabled}
+      disableInteractiveElementBlocking={disableInteractiveElementBlocking}
     >
       {(draggableProvided, draggableSnapshot) => {
         const draggableStyle = draggableProvided.draggableProps.style;
@@ -47,11 +53,15 @@ export const DraggableItem = ({
               ...draggableComponentStyles,
               ...draggableStyle,
               left: 'auto',
-              ...(isInsideScrollableContainer ? {} : { top: 'auto' }),
               transform: draggableStyle?.transform?.replace(
                 /\(-?\d+px,/,
                 '(0,',
               ),
+              ...(isInsideScrollableContainer
+                ? {
+                    top: `${(isDefined(draggableStyle) && 'top' in draggableStyle ? draggableStyle.top : 0) - (containerOffsetY ?? 0)}px`,
+                  }
+                : { top: 'auto' }),
               background:
                 !disableDraggingBackground && isDragging
                   ? theme.background.transparent.light

@@ -3,13 +3,14 @@ import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplay
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { t } from '@lingui/core/macro';
 
 type AppPageErrorFallbackProps = AppErrorDisplayProps;
 
 export const AppPageErrorFallback = ({
   error,
   resetErrorBoundary,
-  title = 'Sorry, something went wrong',
+  title = t`Sorry, something went wrong`,
 }: AppPageErrorFallbackProps) => {
   return (
     <PageContainer>

@@ -1,0 +1,254 @@
+---
+title: Perguntas frequentes sobre fluxos de trabalho
+description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Por que não consigo ativar um fluxo de trabalho?">
+    Isso provavelmente é um problema de permissões. Você precisa de acesso a fluxos de trabalho para criá-los e ativá-los.
+
+    **Solução**: Entre em contato com o administrador do seu espaço de trabalho para conceder acesso a fluxos de trabalho em **Configurações → Funções**.
+
+    Se você não vê a seção de fluxos de trabalho na sua barra lateral, isso confirma que é um problema de permissões.
+  </Accordion>
+
+  <Accordion title="Por que não vejo o botão do meu fluxo de trabalho manual na barra de navegação superior?">
+    Fluxos de trabalho manuais só aparecem na barra de navegação se estiverem corretamente configurados:
+
+    1. O fluxo de trabalho deve estar **ativado** (não em modo rascunho)
+    2. A posição na barra de navegação deve estar definida como **Pinned**
+    3. Para gatilhos Single/Bulk, você deve estar na página do objeto correta
+
+    **Para verificar**: Abra o fluxo de trabalho → clique no gatilho → verifique se "Navbar placement" está definido como "Pinned".
+
+    Você sempre pode acessar fluxos de trabalho manuais via **Cmd + K** (ou **Ctrl + K**), independentemente das configurações da barra de navegação.
+  </Accordion>
+
+  <Accordion title="Qual é a diferença entre gatilhos manuais Single, Global e Bulk?">
+    | Tipo | Registros necessários | Execuções de Workflow |
+    | ---- | --------------------- | --------------------- |
+
+    \| **Global** | Nenhum | Uma vez, sem entrada de registro |
+    \| **Single** | Um ou mais selecionados | Uma vez por registro selecionado |
+    \| **Bulk** | Um ou mais selecionados | Uma vez, com todos os registros como array |
+
+    * **Global**: Use quando o fluxo de trabalho não precisa de nenhum contexto de registro (por exemplo, gerar um relatório)
+    * **Single**: Use quando você quer processar cada registro selecionado de forma independente (por exemplo, enviar e-mails individuais)
+    * **Bulk**: Use quando você precisa processar registros em conjunto ou otimizar o uso de créditos (requer a ação Iterator)
+
+    Veja [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers) para obter detalhes.
+  </Accordion>
+
+  <Accordion title="Não vejo um nó If/Else. O que devo fazer?">
+    Um nó If/Else explícito ainda não está disponível, mas está em nosso roadmap.
+
+    **Solução alternativa atual**: Crie várias ramificações a partir da sua etapa, cada uma começando com uma ação **Filter**:
+
+    ```
+    Etapa 1
+       │
+       ├── Ramificação A: Filter (condition = true) → Ações...
+       │
+       └── Ramificação B: Filter (condition = false) → Ações...
+    ```
+
+    Apenas a ramificação em que a condição do filtro for atendida executará suas ações subsequentes.
+
+    Veja [Como usar ramificações](/l/pt/user-guide/workflows/capabilities/workflow-branches) para um guia passo a passo.
+  </Accordion>
+
+  <Accordion title="As ramificações do fluxo de trabalho são executadas em paralelo?">
+    **Sim**, as ramificações são executadas em paralelo por padrão.
+
+    Se você quiser que apenas uma ramificação seja executada:
+
+    * Adicione uma ação **Filter** no início de cada ramificação
+    * Defina condições opostas (por exemplo, Ramificação A: status = "Open", Ramificação B: status ≠ "Open")
+
+    Ramificações que não atendem à sua condição de filtro param de executar, enquanto as outras continuam.
+  </Accordion>
+
+  <Accordion title="Posso unir as ramificações novamente?">
+    **Sim**. Após a conclusão das ramificações em paralelo, você pode adicionar uma etapa à qual ambas as ramificações se conectam.
+
+    No editor de fluxo de trabalho:
+
+    1. Conclua suas ações ramificadas
+    2. Adicione uma nova etapa após as ramificações
+    3. Arraste conexões do final de cada ramificação para essa nova etapa
+
+    A etapa mesclada será executada após a conclusão de todas as ramificações conectadas.
+  </Accordion>
+
+  <Accordion title="Qual é o limite nos resultados de Search Records?">
+    **Search Records retorna no máximo 200 registros.**
+
+    Se você precisar processar mais:
+
+    * Adicione filtros mais específicos para reduzir os resultados
+    * Use fluxos de trabalho agendados para processar em lotes
+    * Considere usar a API para operações em massa
+
+    Para a maioria dos fluxos de trabalho, 200 registros são suficientes. Se você atingir esse limite regularmente, considere reestruturar sua automação.
+  </Accordion>
+
+  <Accordion title="Posso adicionar pessoas em CC nos e-mails do fluxo de trabalho?">
+    **Ainda não.** Os campos CC e BCC para a ação Send Email estão em nosso roadmap.
+
+    **Solução alternativa atual**: Adicione várias ações Send Email para enviar a destinatários adicionais, ou use um HTTP Request para enviar por meio de um serviço de e-mail externo que dê suporte a CC.
+  </Accordion>
+
+  <Accordion title="Como uso as saídas de etapas anteriores?">
+    Cada ação produz dados de saída que podem ser usados em etapas subsequentes.
+
+    **Para referenciar dados de etapas anteriores**:
+
+    * Use o seletor de variáveis ao configurar um campo
+    * Ou digite `{{stepName.fieldName}}` diretamente
+
+    **Exemplos**:
+
+    * Dados do gatilho: `{{trigger.object.email}}`
+    * Resultados da pesquisa: `{{searchRecords[0].name}}`
+    * Saída do código: `{{code.calculatedValue}}`
+
+    Passe o mouse sobre qualquer campo na configuração da ação para ver as variáveis disponíveis das etapas anteriores.
+  </Accordion>
+
+  <Accordion title="Por que meu Iterator falha?">
+    **Iterator requer uma entrada do tipo array.** Problemas comuns:
+
+    1. **A entrada não é um array**: garanta que você está passando resultados de Search Records ou outra ação que retorne um array
+    2. **O array está vazio**: adicione um filtro antes do Iterator para verificar `{{searchRecords.length}} > 0`
+    3. **Variável errada selecionada**: certifique-se de selecionar o próprio array, não um único registro
+
+    **Configuração correta**:
+
+    1. Search Records (retorna um array)
+    2. Filter: length > 0
+    3. Iterator: selecione `{{searchRecords}}`
+    4. Ações dentro do Iterator usam `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="Qual é o tempo máximo de execução para ações Code?">
+    As ações Code (funções lógicas) têm um **tempo limite padrão de 5 minutos** (300 segundos).
+
+    O tempo limite máximo configurável é de **15 minutos** (900 segundos).
+
+    Se seu código exceder esse limite, a ação falhará com um erro de tempo limite.
+
+    **Dicas para evitar estouros de tempo**:
+
+    * Divida operações grandes em partes menores usando o Iterator
+    * Evite computações pesadas; use serviços externos via HTTP Request para processamento intensivo
+    * Otimize seu código para reduzir o tempo de execução
+    * Se você precisar de um processamento mais longo, considere usar fluxos de trabalho agendados que processem dados em lotes
+  </Accordion>
+
+  <Accordion title="Como leio as execuções de fluxo de trabalho?">
+    As execuções de fluxo de trabalho mostram o histórico de execução e ajudam você a depurar problemas.
+
+    **Acessar execuções**:
+
+    * No editor de fluxo de trabalho → painel **Execuções** à direita
+    * Ou vá para **Execuções de Fluxo de Trabalho** na barra lateral
+
+    **Entendendo uma execução**:
+
+    * **Status**: Em execução, Concluída, Falhou, Aguardando
+    * **Etapas**: Veja quais etapas foram executadas e suas saídas
+    * **Erros**: Clique nas etapas com falha para ver as mensagens de erro
+    * **Dados**: Veja os dados de entrada/saída em cada etapa
+
+    Veja [Execuções de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-runs) para obter detalhes.
+  </Accordion>
+
+  <Accordion title="Por que não vejo minhas execuções de fluxo de trabalho?">
+    As execuções de fluxo de trabalho podem estar falhando imediatamente devido a limites de taxa.
+
+    **Limite rígido: 5.000 execuções por hora por espaço de trabalho.**
+
+    Se você exceder esse limite, os fluxos de trabalho são marcados imediatamente como falhos e não aparecerão na sua lista de execuções como esperado.
+
+    **Cenários comuns que atingem esse limite**:
+
+    * Selecionar mais de 5.000 registros com um gatilho manual Single
+    * Vários fluxos de trabalho executando simultaneamente em todo o seu espaço de trabalho
+    * Gatilhos automatizados de alta frequência (por exemplo, Record Updated em um objeto movimentado)
+
+    **Soluções**:
+
+    * Use gatilhos **Bulk** em vez de Single para processar muitos registros em uma única execução
+    * Espace operações em lotes grandes
+    * Use filtros para reduzir a frequência dos gatilhos
+    * Agende fluxos de trabalho pesados fora do horário de pico
+  </Accordion>
+
+  <Accordion title="Quais são os limites de taxa dos fluxos de trabalho?">
+    A Twenty tem dois limites de taxa para garantir a estabilidade do sistema:
+
+    | Limite | Valor | Comportamento |
+    | ------ | ----- | ------------- |
+
+    \| **Limite flexível** | 100 execuções/minuto | Execuções entram na fila com status "Not Started", processadas gradualmente |
+    \| **Limite rígido** | 5.000 execuções/hora | Execuções falham imediatamente |
+
+    **Limite flexível (100/min)**: Seus fluxos de trabalho não falharão — eles apenas aguardam na fila e são processados ao longo do tempo. Você pode acionar mais de 100 registros; a execução será mais lenta.
+
+    **Limite rígido (5.000/h)**: Isso se aplica a todo o seu espaço de trabalho. Se todos os seus fluxos de trabalho combinados excederem 5.000 execuções em uma hora, execuções adicionais falharão imediatamente.
+
+    **Dicas para permanecer dentro dos limites**:
+
+    * Use gatilhos Bulk com Iterator em vez de gatilhos Single para grandes lotes
+    * Combine automações relacionadas em menos fluxos de trabalho
+    * Use fluxos de trabalho agendados para distribuir a carga ao longo do tempo
+  </Accordion>
+
+  <Accordion title="Posso tentar novamente uma execução de fluxo de trabalho com falha?">
+    **Não, no momento não há funcionalidade de nova tentativa automática.**
+
+    Se uma execução de fluxo de trabalho falhar, você precisará:
+
+    1. Revise o erro em **Configurações → Fluxos de trabalho → [Seu Fluxo de Trabalho] → Execuções**
+    2. Corrija o problema (dados, configuração ou serviço externo)
+    3. Dispare manualmente o fluxo de trabalho novamente no(s) registro(s) afetado(s)
+
+    **Dicas para reduzir falhas**:
+
+    * Adicione nós **Filter** para validar dados antes das ações
+    * Use **Search Records** para verificar se existem registros relacionados
+    * Teste profundamente com alguns registros antes de operações em massa
+
+    A funcionalidade de nova tentativa automática está em nosso roadmap para uma versão futura.
+  </Accordion>
+
+  <Accordion title="Devo desativar fluxos de trabalho antes de importações CSV?">
+    **Sim, se seus fluxos de trabalho forem acionados por criação ou atualização de registros.**
+
+    Quando você importa dados via CSV, cada registro criado ou atualizado pode acionar fluxos de trabalho. Uma importação grande (milhares de registros) pode:
+
+    * Atingir o limite de 5.000 execuções/hora
+    * Consumir uma quantidade significativa de créditos de fluxo de trabalho
+    * Enviar e-mails ou notificações inesperadas
+    * Criar tarefas ou registros duplicados
+
+    **Antes de uma importação em massa**:
+
+    1. Vá para **Configurações → Fluxos de trabalho**
+    2. Identifique os fluxos de trabalho acionados pelo objeto que você está importando
+    3. **Desative**-os temporariamente
+    4. Execute sua importação CSV
+    5. **Reative** os fluxos de trabalho quando terminar
+
+    **Alternativa**: Se você precisar que os fluxos de trabalho sejam executados nos dados importados, importe em lotes menores para permanecer dentro dos limites de taxa.
+  </Accordion>
+
+  <Accordion title="Como organizar o layout do meu fluxo de trabalho?">
+    Se sua tela de fluxo de trabalho estiver desorganizada com nós espalhados, você pode organizá-la automaticamente:
+
+    1. Clique com o botão direito em qualquer lugar na tela do fluxo de trabalho
+    2. Clique em **Tidy up workflow**
+
+    Isso reorganizará automaticamente todos os nós em um layout limpo e organizado.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,78 @@
+---
+title: Errores, solicitudes y pull requests
+info: Informa de problemas, solicita funcionalidades y contribuye con código
+---
+
+## Reportar errores
+
+Para reportar un error, por favor [crea un problema en GitHub](https://github.com/twentyhq/twenty/issues/new).
+
+También puedes pedir ayuda en [Discord](https://discord.gg/cx5n4Jzs57).
+
+## Solicitudes de funciones
+
+Si no estás seguro de si es un error y sientes que está más cerca de una solicitud de función, entonces probablemente deberías [abrir una discusión en su lugar](https://github.com/twentyhq/twenty/discussions/new).
+
+## Envía un pull request
+
+Contribuir código a Twenty comienza con un pull request (PR).
+
+### Antes de empezar
+
+1. Consulta [los issues existentes](https://github.com/twentyhq/twenty/issues) para ver trabajos relacionados
+2. Para nuevas funcionalidades, abre primero un issue para discutir
+3. Revisa nuestro [Código de conducta](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Haz un fork y clona
+
+1. Haz un fork del repositorio en GitHub
+2. Clona tu fork:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Añade el remoto upstream:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Crea una rama
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Usa nombres de rama descriptivos:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Realiza tus cambios
+
+1. Escribe código limpio y bien documentado
+2. Sigue el estilo de código existente
+3. Añade pruebas para la nueva funcionalidad
+4. Actualiza la documentación si es necesario
+
+### Envía tu PR
+
+1. Haz push de tu rama:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Abre un PR en GitHub
+3. Rellena la plantilla del PR
+4. Vincula los issues relacionados
+
+### Lista de verificación de PR
+
+* [ ] El código sigue las pautas de estilo del proyecto
+* [ ] Las pruebas pasan localmente
+* [ ] La documentación está actualizada
+* [ ] La descripción del PR explica los cambios

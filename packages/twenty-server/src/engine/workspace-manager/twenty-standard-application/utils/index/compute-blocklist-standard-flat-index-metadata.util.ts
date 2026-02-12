@@ -9,7 +9,7 @@ export const buildBlocklistStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
+  standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<CreateStandardIndexArgs<'blocklist'>, 'context'>): Record<
@@ -23,7 +23,7 @@ export const buildBlocklistStandardFlatIndexMetadatas = ({
       indexName: 'workspaceMemberIdIndex',
       relatedFieldNames: ['workspaceMember'],
     },
-    standardFieldMetadataIdByObjectAndFieldName,
+    standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,

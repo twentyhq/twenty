@@ -1,0 +1,41 @@
+---
+title: Mesaj Kuyruğu
+---
+
+Kuyruklar, asenkron işlemlerin gerçekleştirilmesine imkan tanır. Kayıt esnasında hoş geldin e-postası göndermek gibi arka plan görevleri gerçekleştirmek için kullanılabilirler.
+Her kullanım durumu, `MessageQueueServiceBase`'den genişletilmiş kendi kuyruk sınıfına sahip olacaktır.
+
+Şu anda yalnızca kuyruk sürücüsü olarak `bull-mq`[bull-mq](https://bullmq.io/) destekliyoruz.
+
+## Yeni bir kuyruk oluşturma ve kullanma adımları
+
+1. Yeni kuyruğunuz için enum `MESSAGE_QUEUES` altında bir kuyruk adı ekleyin.
+2. Kuyruğun değişken adını bağımlılık belirteci olarak kullanarak kuyruk fabrikası uygulamasını sağlayın.
+3. Oluşturduğunuz kuyruğu, gerekli modüle/hizmete kuyruk adıyla birlikte bağımlılık belirteci kullanarak enjekte edin.
+4. Üretici gibi token tabanlı enjeksiyon ile çalışan sınıfını ekleyin.
+
+### Örnek kullanım
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

@@ -11,14 +11,14 @@ export const SettingsNewAccount = () => {
       title={t`New Account`}
       links={[
         {
-          children: 'User',
+          children: t`User`,
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: 'Accounts',
+          children: t`Accounts`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
-        { children: `New` },
+        { children: t`New` },
       ]}
     >
       <SettingsPageContainer>

@@ -2,11 +2,12 @@ import gql from 'graphql-tag';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import {
+  type ObjectPermissions,
+  type QueryCursorDirection,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-
-export type QueryCursorDirection = 'before' | 'after';
 
 export const generateFindManyRecordsQuery = ({
   objectMetadataItem,

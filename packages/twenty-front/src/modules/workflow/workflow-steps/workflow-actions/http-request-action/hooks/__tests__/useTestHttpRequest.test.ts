@@ -5,7 +5,7 @@ import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
-import { useTestHttpRequest } from '../useTestHttpRequest';
+import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
 
 // Mock Apollo Client
 jest.mock('@apollo/client', () => ({

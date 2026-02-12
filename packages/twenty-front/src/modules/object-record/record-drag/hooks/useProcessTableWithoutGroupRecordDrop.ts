@@ -2,6 +2,7 @@ import { type DropResult } from '@hello-pangea/dnd';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
+import { useTriggerTableWithoutGroupDragAndDropOptimisticUpdate } from '@/object-record/record-drag/hooks/useTriggerTableWithoutGroupDragAndDropOptimisticUpdate';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 import { processMultiDrag } from '@/object-record/record-drag/utils/processMultiDrag';
@@ -12,8 +13,6 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
-import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -25,9 +24,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useProcessTableWithoutGroupRecordDrop = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
-    objectNameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const allRecordIdsWithoutGroupCallbackSelector =
     useRecoilComponentCallbackState(allRecordIdsWithoutGroupsComponentSelector);
@@ -46,10 +43,8 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
   const { openModal } = useModal();
 
-  const { resetVirtualization } =
-    useResetVirtualizationBecauseDataChanged(objectNameSingular);
-
-  const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
+  const { triggerTableWithoutGroupDragAndDropOptimisticUpdate } =
+    useTriggerTableWithoutGroupDragAndDropOptimisticUpdate();
 
   const processTableWithoutGroupRecordDrop = useRecoilCallback(
     ({ snapshot }) =>
@@ -115,7 +110,12 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             return;
           }
 
-          updateOneRow({
+          triggerTableWithoutGroupDragAndDropOptimisticUpdate([
+            singleDragResult,
+          ]);
+
+          updateOneRecord({
+            objectNameSingular,
             idToUpdate: singleDragResult.id,
             updateOneRecordInput: {
               position: singleDragResult.position,
@@ -145,8 +145,13 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             isDroppedAfterList,
           });
 
+          triggerTableWithoutGroupDragAndDropOptimisticUpdate(
+            multiDragResult.recordUpdates,
+          );
+
           for (const update of multiDragResult.recordUpdates) {
-            updateOneRow({
+            updateOneRecord({
+              objectNameSingular,
               idToUpdate: update.id,
               updateOneRecordInput: {
                 position: update.position,
@@ -154,20 +159,16 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             });
           }
         }
-
-        await resetVirtualization();
-
-        await triggerFetchPagesWithoutDebounce();
       },
     [
+      objectNameSingular,
       selectedRowIdsSelector,
-      updateOneRow,
+      updateOneRecord,
       openModal,
       currentRecordSorts,
       originalDragSelectionCallbackState,
       allRecordIdsWithoutGroupCallbackSelector,
-      resetVirtualization,
-      triggerFetchPagesWithoutDebounce,
+      triggerTableWithoutGroupDragAndDropOptimisticUpdate,
     ],
   );
 

@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { AppTooltip, IconLock, TooltipDelay } from 'twenty-ui/display';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
@@ -31,6 +32,7 @@ type EmailThreadNotSharedProps = {
 export const EmailThreadNotShared = ({
   visibility,
 }: EmailThreadNotSharedProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const containerId = 'email-thread-not-shared';
   const isCompact = visibility === MessageChannelVisibility.SUBJECT;
@@ -39,12 +41,12 @@ export const EmailThreadNotShared = ({
     <>
       <StyledContainer id={containerId} isCompact={isCompact}>
         <IconLock size={theme.icon.size.sm} />
-        {'Not shared'}
+        {t`Not shared`}
       </StyledContainer>
       {visibility === MessageChannelVisibility.SUBJECT && (
         <AppTooltip
           anchorSelect={`#${containerId}`}
-          content="Only the subject is shared"
+          content={t`Only the subject is shared`}
           delay={TooltipDelay.mediumDelay}
           noArrow
           place="bottom"

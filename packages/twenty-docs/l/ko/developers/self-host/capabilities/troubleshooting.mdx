@@ -1,0 +1,226 @@
+---
+title: 문제 해결
+---
+
+## 문제 해결
+
+개발 환경을 설정하거나 인스턴스를 업그레이드하거나 자체 호스팅하는 도중 문제가 발생하는 경우, 여기에는 일반적인 문제들에 대한 몇 가지 해결책이 있습니다.
+
+### 셀프 호스팅
+
+#### 첫 설치 시 `사용자 "postgres"에 대한 비밀번호 인증 실패`라는 메시지가 표시됨
+
+⚠️ 경고: 다음 단계는 데이터베이스 데이터를 **영구적으로 삭제합니다!** ⚠️
+중요한 데이터가 없는 새 설치인 경우에만 진행하십시오.
+
+Twenty를 처음 설치할 때, 기본 데이터베이스 비밀번호를 변경하고 싶을 수 있습니다.
+첫 설치 시 설정한 비밀번호는 데이터베이스 볼륨에 영구 저장됩니다. 나중에 기존의 볼륨을 제거하지 않고 설정에서 비밀번호를 변경하려고 하면, 데이터베이스에서 원래 비밀번호를 사용하고 있기 때문에 인증 오류가 발생할 수 있습니다.
+
+⚠️ 경고: 다음 단계는 데이터베이스 데이터를 **영구적으로 삭제합니다!** ⚠️ 경고: 다음 단계는 데이터베이스 데이터를 **영구적으로 삭제합니다!** ⚠️
+중요한 데이터가 없는 새 설치인 경우에만 진행하십시오.
+
+`PG_DATABASE_PASSWORD`를 업데이트하려면 다음을 수행하십시오:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR 줄바꿈이 발견되었습니다 [Windows]
+
+이는 Windows 줄바꿈 문자와 git 설정 때문입니다. 다음 명령을 실행해 보세요:
+
+```
+git config --global core.autocrlf false
+```
+
+그런 다음 저장소를 삭제하고 다시 클론하세요.
+
+#### 메타데이터 스키마 누락
+
+Twenty 설치 중에 적절한 스키마, 확장, 사용자를 사용하여 postgres 데이터베이스를 프로비저닝해야 합니다.
+프로비저닝이 성공적으로 이루어지면 데이터베이스에 `기본` 및 `메타데이터` 스키마가 있어야 합니다.
+그렇지 않을 경우, 컴퓨터에서 여러 개의 postgres 인스턴스가 실행되지 않도록 하십시오.
+
+#### 모듈 'twenty-emails' 또는 해당 형식 선언을 찾을 수 없습니다.
+
+데이터베이스 초기화하기 전에 `twenty-emails` 패키지를 빌드해야 합니다: `npx nx run twenty-emails:build`
+
+#### twenty-x 패키지가 누락됨
+
+루트 디렉토리에서 yarn을 실행한 다음 `npx nx server:dev twenty-server` 를 실행하십시오. 여전히 작동하지 않으면 누락된 패키지를 수동으로 빌드해보세요.
+
+#### 저장 시 린트가 작동하지 않음
+
+eslint 확장 프로그램이 설치된 상태에서는 기본 설정으로 작동해야 합니다. 작동하지 않으면 vscode 설정(개발 컨테이너 범위)에 다음을 추가해 보세요:
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### `npx nx start` 또는 `npx nx start twenty-front` 실행 시 메모리 부족 오류 발생
+
+`packages/twenty-front/.env`에서 `VITE_DISABLE_TYPESCRIPT_CHECKER=true`와 `VITE_DISABLE_ESLINT_CHECKER=true`를 주석 해제하여 백그라운드 검사 기능을 비활성화하여 필요한 RAM의 양을 줄입니다.
+
+**작동하지 않는 경우:**
+`npx nx start` 대신 필요한 서비스만 실행하십시오. 예를 들어, 서버에서 작업하는 경우, `npx nx worker twenty-server`만 실행하십시오.
+
+**작동하지 않는 경우:**
+WSL에서 `npx nx run twenty-server:start`만 실행하려고 했으나 아래의 메모리 오류로 실패할 경우:
+
+`치명적인 오류: 효과적인 마크-컴팩트 임계값 인근 할당 실패 - JavaScript 힙 메모리 부족`
+
+해결 방법은 아래 명령을 터미널에서 실행하거나 .bashrc 프로파일에 추가하여 자동 설정을 하는 것입니다:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+\--max-old-space-size=8192 플래그는 Node.js 힙의 상한선을 8GB로 설정합니다. 사용량은 애플리케이션 수요에 따라 조정됩니다.
+참고: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**작동하지 않는 경우:**
+어떤 프로세스가 대부분의 머신 RAM을 소모하고 있는지 조사하십시오. Twenty에서는 일부 VScode 확장이 많은 RAM을 소모하고 있음을 발견하여 임시로 비활성화했습니다.
+
+**작동하지 않는 경우:**
+머신을 다시 시작하면 유령 프로세스를 정리하는 데 도움이 됩니다.
+
+#### `npx nx start`를 실행할 때 로그에 이상한 [0]과 [1]이 표시됨
+
+이는 `npx nx start` 명령이 내부적으로 더 많은 명령을 실행하기 때문에 예상된 것입니다.
+
+#### 이메일이 전송되지 않음
+
+대부분의 경우, 이는 `worker`가 백그라운드에서 실행되지 않기 때문입니다. 실행해 보세요
+
+```
+npx nx worker twenty-server
+```
+
+#### Microsoft 365 계정에 연결할 수 없음
+
+대부분의 경우, 관리자님께서 계정에 대한 Microsoft 365 라이센스를 활성화하지 않았기 때문입니다. [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)에서 확인하십시오.
+
+`AADSTS50020` 오류 코드가 표시되는 경우, 개인 Microsoft 계정을 사용하고 있을 가능성이 높습니다. 이는 아직 지원되지 않습니다. 추가 정보는 [여기](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)에서 확인하십시오
+
+#### `yarn`을 실행하는 동안 콘솔에 경고가 나타남
+
+경고는 `package.json`에 명시적으로 나타나지 않는 추가 종속성을 끌어오는 것에 대한 정보입니다. 중대한 오류가 나타나지 않는 한 모든 것이 예상대로 작동해야 합니다.
+
+#### 사용자가 로그인 페이지에 접근할 때 로그에 작업 공간에 접근하려는 승인되지 않은 사용자 오류 발생
+
+이는 로그아웃된 상태에서 사용자 신분이 확인되지 않기 때문에 예상된 것입니다.
+
+#### 작업자가 작동 중인지 확인하는 방법은?
+
+* [webhook-test.com](https://webhook-test.com/)으로 이동하여 **고유한 웹훅 URL**을 복사하십시오.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="웹훅 테스트" />
+</div>
+
+* Twenty 앱을 열고 `/settings`로 이동하여 화면 왼쪽 하단에 있는 **고급** 토글을 활성화하십시오.
+* 새 웹훅 생성.
+* **고유한 웹훅 URL**을 Twenty의 **엔드포인트 URL** 필드에 붙여넣습니다. **필터**를 `회사`와 `생성됨`으로 설정하십시오.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="웹훅 설정" />
+</div>
+
+* `/objects/companies`로 이동하여 새 회사 레코드를 만드십시오.
+* [webhook-test.com](https://webhook-test.com/)으로 돌아가 새 **POST 요청**이 수신되었는지 확인하십시오.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="웹훅 테스트 결과" />
+</div>
+
+* **POST 요청**이 수신된 경우, 작업자가 성공적으로 실행 중입니다. 그렇지 않으면, 작업자에 대한 문제 해결이 필요합니다.
+
+#### 프런트엔드 시작 실패 및 TS5042 오류: 명령줄에서 소스 파일과 함께 옵션 '프로젝트'를 사용할 수 없음
+
+`packages/twenty-ui/vite-config.ts`의 체크 플러그인을 아래 예와 같이 주석 처리하십시오
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### 관리자 패널에 액세스할 수 없음
+
+데이터베이스 컨테이너에서 관리자 패널에 액세스하기 위해 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`을 실행하십시오.
+
+### 1-클릭 Docker 구성
+
+#### 로그인할 수 없음
+
+설정 후 로그인할 수 없는 경우:
+
+1. 다음 명령어를 실행하십시오:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Docker 컨테이너를 다시 시작하십시오:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+database:reset 명령은 데이터베이스를 완전히 지우고 처음부터 다시 만듭니다.
+
+#### 리버스 프록시 뒤에서 연결 문제
+
+Twenty를 리버스 프록시 뒤에서 실행 중이며 연결 문제가 있는 경우:
+
+1. **SERVER_URL 확인:**
+
+   `.env` 파일의 `SERVER_URL`이 SSL이 활성화된 경우 외부 액세스 URL과 `https`까지 일치하는지 확인하십시오.
+
+2. **리버스 프록시 설정 확인:**
+
+   * 리버스 프록시가 Twenty 서버로 요청을 정확히 전달하는지 확인하십시오.
+   * `X-Forwarded-For`, `X-Forwarded-Proto`와 같은 헤더가 적절히 설정되어 있는지 확인하십시오.
+
+3. **서비스 재시작:**
+
+   변경 후, 리버스 프록시와 Twenty 컨테이너를 모두 다시 시작하십시오.
+
+#### 이미지 업로드 시 권한 거부 오류 발생
+
+호스트의 데이터 폴더 소유권을 루트에서 다른 사용자 및 그룹으로 전환하면 이 문제가 해결됩니다.
+
+## 도움 받기
+
+이 가이드에 다루지 않은 문제를 겪는 경우:
+
+* 로그 확인:
+
+  컨테이너 로그에서 오류 메시지 확인:
+
+  ```bash
+  docker compose logs
+  ```
+
+* 커뮤니티 지원:
+
+  [Twenty 커뮤니티](https://github.com/twentyhq/twenty/issues)나 [지원 채널](https://discord.gg/cx5n4Jzs57)에 문의하십시오.

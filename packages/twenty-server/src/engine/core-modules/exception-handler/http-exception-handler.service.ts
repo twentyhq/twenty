@@ -21,11 +21,11 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
+import { CustomException } from 'src/utils/custom-exception';
 
 interface RequestAndParams {
   request: Request | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params: any;
+  params: Record<string, string | undefined>;
 }
 
 const getErrorNameFromStatusCode = (statusCode: number) => {
@@ -34,6 +34,8 @@ const getErrorNameFromStatusCode = (statusCode: number) => {
       return 'BadRequestException';
     case 401:
       return 'UnauthorizedException';
+    case 402:
+      return 'PaymentRequiredException';
     case 403:
       return 'ForbiddenException';
     case 404:
@@ -66,13 +68,11 @@ export class HttpExceptionHandlerService {
 
   handleError = (
     exception: Error | HttpException,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    response: Response<any, Record<string, any>>,
+    response: Response,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Response<any, Record<string, any>> | undefined => {
+  ): Response | undefined => {
     const params = this.request?.params;
 
     if (params?.workspaceId) {
@@ -121,6 +121,7 @@ export class HttpExceptionHandlerService {
       statusCode,
       error: exception.name ?? getErrorNameFromStatusCode(statusCode),
       messages: [exception?.message],
+      code: exception instanceof CustomException ? exception.code : undefined,
     });
   };
 }

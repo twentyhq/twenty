@@ -1,5 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
-import { LINE_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartTooltipOffsetPx';
+import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { graphWidgetLineTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineTooltipComponentState';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartTooltipData';
@@ -14,6 +14,7 @@ type GraphLineChartTooltipProps = {
   containerRef: RefObject<HTMLDivElement>;
   enrichedSeries: LineChartEnrichedSeries[];
   formatOptions: GraphValueFormatOptions;
+  isStacked?: boolean;
   onSliceClick?: (point: Point<LineSeries>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -23,6 +24,7 @@ export const GraphLineChartTooltip = ({
   containerRef,
   enrichedSeries,
   formatOptions,
+  isStacked = false,
   onSliceClick,
   onMouseEnter,
   onMouseLeave,
@@ -57,6 +59,7 @@ export const GraphLineChartTooltip = ({
         slice: tooltipState.slice,
         enrichedSeries,
         formatOptions,
+        isStacked,
       });
 
   const reference = !isDefined(tooltipState)
@@ -71,7 +74,7 @@ export const GraphLineChartTooltip = ({
     <GraphWidgetFloatingTooltip
       reference={reference}
       boundary={containerElement}
-      tooltipOffsetFromAnchorInPx={LINE_CHART_TOOLTIP_OFFSET_PX}
+      tooltipOffsetFromAnchorInPx={LINE_CHART_CONSTANTS.TOOLTIP_OFFSET_PX}
       items={tooltipData?.items ?? []}
       indexLabel={tooltipData?.indexLabel}
       highlightedKey={tooltipState?.highlightedSeriesId}

@@ -1,3 +1,4 @@
+import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -6,20 +7,23 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 
 type ComputeFlatViewGroupsOnViewCreateArgs = {
-  flatViewToCreateId: string;
+  flatViewToCreateUniversalIdentifier: string;
   mainGroupByFieldMetadataId: string;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 
 export const computeFlatViewGroupsOnViewCreate = ({
-  flatViewToCreateId,
+  flatViewToCreateUniversalIdentifier,
   mainGroupByFieldMetadataId,
   flatFieldMetadataMaps,
-}: ComputeFlatViewGroupsOnViewCreateArgs): FlatViewGroup[] => {
-  const mainGroupByFieldMetadata =
-    flatFieldMetadataMaps.byId[mainGroupByFieldMetadataId];
+}: ComputeFlatViewGroupsOnViewCreateArgs): UniversalFlatViewGroup[] => {
+  const mainGroupByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: mainGroupByFieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (!isDefined(mainGroupByFieldMetadata)) {
     throw new FlatEntityMapsException(
@@ -30,45 +34,40 @@ export const computeFlatViewGroupsOnViewCreate = ({
 
   const createdAt = new Date().toISOString();
 
-  const flatViewGroupsFromOptions: FlatViewGroup[] = (
+  const flatViewGroupsFromOptions: UniversalFlatViewGroup[] = (
     mainGroupByFieldMetadata.options ?? []
-  ).map((option, index) => {
-    const viewGroupId = v4();
+  ).map((option, index) => ({
+    viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
+    createdAt,
+    updatedAt: createdAt,
+    deletedAt: null,
+    universalIdentifier: v4(),
+    isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
+    fieldValue: option.value,
+    position: index,
+    applicationUniversalIdentifier:
+      mainGroupByFieldMetadata.applicationUniversalIdentifier,
+  }));
 
-    return {
-      id: viewGroupId,
-      fieldMetadataId: mainGroupByFieldMetadata.id,
-      viewId: flatViewToCreateId,
-      workspaceId: mainGroupByFieldMetadata.workspaceId,
-      createdAt,
-      updatedAt: createdAt,
-      deletedAt: null,
-      universalIdentifier: viewGroupId,
-      isVisible: true,
-      fieldValue: option.value,
-      position: index,
-      applicationId: mainGroupByFieldMetadata.applicationId,
-    };
-  });
-
-  const flatViewGroups: FlatViewGroup[] = [...flatViewGroupsFromOptions];
+  const flatViewGroups: UniversalFlatViewGroup[] = [
+    ...flatViewGroupsFromOptions,
+  ];
 
   if (mainGroupByFieldMetadata.isNullable === true) {
     const emptyGroupId = v4();
+    const emptyGroupPosition = flatViewGroupsFromOptions.length;
 
     flatViewGroups.push({
-      id: emptyGroupId,
-      fieldMetadataId: mainGroupByFieldMetadata.id,
-      viewId: flatViewToCreateId,
-      workspaceId: mainGroupByFieldMetadata.workspaceId,
+      viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
       universalIdentifier: emptyGroupId,
-      isVisible: true,
+      isVisible: emptyGroupPosition < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
       fieldValue: '',
-      position: flatViewGroupsFromOptions.length,
-      applicationId: mainGroupByFieldMetadata.applicationId,
+      position: emptyGroupPosition,
+      applicationUniversalIdentifier:
+        mainGroupByFieldMetadata.applicationUniversalIdentifier,
     });
   }
 

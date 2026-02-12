@@ -1,0 +1,337 @@
+---
+title: 设置
+---
+
+# 配置管理
+
+<Warning>
+  **第一次安装？** 请按照 [Docker Compose 安装指南](/l/zh/developers/self-host/capabilities/docker-compose) 获得 Twenty 运行，然后返回此处进行配置。
+</Warning>
+
+Twenty 提供**两种配置模式**以适应不同的部署需求：
+
+**管理员面板访问：** 只有具有管理员权限的用户(`canAccessFullAdminPanel: true`) 可以访问配置界面。
+
+## 1. 管理员面板配置（默认）
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**大多数配置在安装后通过 UI 进行：**
+
+1. 访问你的 Twenty 实例（通常为 `http://localhost:3000`)
+2. 转到 **设置 / 管理员面板 / 配置变量**
+3. 配置集成、电子邮件、存储等
+4. 更改会立即生效（多容器部署在 15 秒内）
+
+<Warning>
+  **多容器部署：** 当使用数据库配置（`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`）时，server 和 worker 容器都会从同一个数据库读取。 管理员面板更改会自动影响两者，无需在容器之间重复环境变量（基础设施变量除外）。
+</Warning>
+
+**通过管理员面板可以配置的内容：**
+
+* **身份验证** - Google/Microsoft OAuth、密码设置
+* **电子邮件** - SMTP 设置、模板、验证
+* **存储** - S3 配置、本地存储路径
+* **集成** - Gmail, Google Calendar, Microsoft 服务
+* **工作流和速率限制** - 执行限制、API 限流
+* **还有更多……**
+
+![管理员面板配置变量](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  每个变量都在您的管理面板的**设置 → 管理员面板 → 配置变量**中记录了说明。
+  某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和应用程序密钥 (`APP_SECRET`) 只能通过 `.env` 文件配置。
+
+  [完整技术参考→](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. 仅限环境配置
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**所有配置通过 `.env` 文件管理：**
+
+1. 在 `.env` 文件中设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+2. 将所有配置变量添加到 `.env` 文件中
+3. 重启容器以使更改生效
+4. 管理员面板将显示当前值，但无法修改它们
+
+## 多工作区模式
+
+默认情况下，Twenty 以**单工作区模式**运行——对于大多数需要为组织部署一个 CRM 实例的自托管部署而言，这是理想之选。
+
+### 单工作区模式（默认）
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* 每个 Twenty 实例一个工作区
+* 首位用户会自动成为具有完整权限的管理员（`canImpersonate` 和 `canAccessFullAdminPanel`）
+* 创建第一个工作区后，新注册将被禁用
+* 简单的 URL 结构：`https://your-domain.com`
+
+### 启用多工作区模式
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+对于在同一 Twenty 实例上需要多个独立团队拥有各自工作区的类 SaaS 部署，启用多工作区模式。
+
+**与单工作区模式的关键区别：**
+
+* 同一实例上可以创建多个工作区
+* 每个工作区都有其自己的子域（例如，`sales.your-domain.com`、`marketing.your-domain.com`）
+* 用户在 `{DEFAULT_SUBDOMAIN}.your-domain.com` 进行注册和登录（例如，`app.your-domain.com`）
+* 不自动授予管理员权限——每个工作区的首位用户是普通用户
+* 子域、自定义域名等与工作区相关的设置将在工作区设置中可用。
+
+<Warning>
+  **仅限环境的设置：**`IS_MULTIWORKSPACE_ENABLED` 只能通过 `.env` 文件进行配置，并且需要重启。 无法通过管理面板进行更改。
+</Warning>
+
+### 多工作区模式的 DNS 配置
+
+使用多工作区模式时，请在 DNS 中配置通配符记录，以允许动态创建子域：
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+这使新工作区能够在无需手动配置 DNS 的情况下自动进行子域路由。
+
+### 限制工作区创建
+
+在多工作区模式下，你可能希望限制谁可以创建新工作区：
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+启用后，只有具有 `canAccessFullAdminPanel` 权限的用户才能创建其他工作区。 用户仍可在首次注册时创建他们的第一个工作区。
+
+## Gmail & Google Calendar 集成
+
+### 创建 Google 云项目
+
+1. 转到 [Google 云控制台](https://console.cloud.google.com/)
+2. 创建新项目或选择现有项目
+3. 启用这些 API：
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### 配置 OAuth
+
+1. 转到 [凭据](https://console.cloud.google.com/apis/credentials)
+2. 创建 OAuth 2.0 客户端 ID
+3. 添加这些重定向 URI：
+   * `https://{your-domain}/auth/google/redirect` (用于 SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (用于集成)
+
+### 在 Twenty 中配置
+
+1. 转到 **设置 → 管理员面板 → 配置变量**
+2. 找到 **Google 身份验证** 部分
+3. 设置这些变量：
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
+</Warning>
+
+**所需范围**（自动配置）：
+[查看相关源码](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### 如果你的应用程序处于测试模式
+
+如果你的应用程序处于测试模式，你需要将测试用户添加到你的项目中。
+
+在 [OAuth 同意屏幕](https://console.cloud.google.com/apis/credentials/consent) 下，将你的测试用户添加到 "测试用户" 部分。
+
+## Microsoft 365 集成
+
+<Warning>
+  用户必须拥有 [Microsoft 365 许可证](https://admin.microsoft.com/Adminportal/Home) 才能使用日历和消息传递 API。 没有许可证，他们将无法在 Twenty 上同步他们的帐户。
+</Warning>
+
+### 在 Microsoft Azure 中创建项目
+
+你需要在 [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) 中创建项目并获取凭据。
+
+### 启用 API
+
+在 Microsoft Azure 控制台中的“权限”中启用以下 API：
+
+* Microsoft Graph: Mail.ReadWrite
+* Microsoft Graph: Mail.Send
+* Microsoft Graph: Calendars.Read
+* Microsoft Graph: User.Read
+* Microsoft Graph: openid
+* Microsoft Graph: email
+* Microsoft Graph: profile
+* Microsoft Graph: offline_access
+
+注意：“Mail.ReadWrite”和“Mail.Send”仅在你想使用我们的工作流程操作发送电子邮件时是强制性的。 如果你只想接收邮件，你可以使用“Mail.Read”。
+
+### 授权重定向 URI
+
+你需要将以下重定向 URI 添加到你的项目中：
+
+* `https://{your-domain}/auth/microsoft/redirect` 如果你想使用 Microsoft SSO
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### 在 Twenty 中配置
+
+1. 转到 **设置 → 管理员面板 → 配置变量**
+2. 找到 **Microsoft 身份验证** 部分
+3. 设置这些变量：
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
+</Warning>
+
+### 配置范围
+
+[查看相关源码](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* '电子邮件'
+* '个人资料'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### 如果你的应用程序处于测试模式
+
+如果你的应用程序处于测试模式，你需要将测试用户添加到你的项目中。
+
+将你的测试用户添加到“用户和组”部分。
+
+## 日历和消息传递的后台作业
+
+在配置完 Gmail、Google Calendar 或 Microsoft 365 集成后，你需要启动同步数据的后台作业。
+
+在你的工作容器中注册以下重复作业：
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## 电子邮件配置
+
+1. 转到 **设置 → 管理员面板 → 配置变量**
+2. 找到 **电子邮件** 部分
+3. 配置你的 SMTP 设置：
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+  <ArticleTab>
+    你需要提供一个 [应用密码](https://support.google.com/accounts/answer/185833)。
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_email_address
+    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    请记住，如果您启用了双重身份验证，您需要提供一个 [应用密码](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)。
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_email_address
+    * EMAIL_SMTP_PASSWORD='office365_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev** 是一个用于开发和测试的假 SMTP 电子邮件服务器。
+
+    * 运行 smtp4dev 镜像： `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * 在此处访问 smtp4dev UI：[http://localhost:8090](http://localhost:8090)
+    * 设置以下变量：
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
+</Warning>
+
+## 逻辑函数
+
+Twenty 支持用于工作流和自定义逻辑的逻辑函数。 执行环境通过 `SERVERLESS_TYPE` 环境变量进行配置。
+
+<Warning>
+  \*\*安全提示：\*\*本地驱动（`SERVERLESS_TYPE=LOCAL`）在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
+</Warning>
+
+### 可用驱动
+
+| 驱动     | 环境变量                       | 用例             | 安全级别     |
+| ------ | -------------------------- | -------------- | -------- |
+| 禁用     | `SERVERLESS_TYPE=DISABLED` | 完全禁用逻辑函数       | 不适用      |
+| 本地     | `SERVERLESS_TYPE=LOCAL`    | 开发和可信环境        | 低（无沙箱）   |
+| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 生产环境（处理不受信任代码） | 高（硬件级隔离） |
+
+### 推荐配置
+
+**用于开发：**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**用于生产（AWS）：**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**要禁用逻辑函数：**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  使用 `SERVERLESS_TYPE=DISABLED` 时，任何尝试执行逻辑函数的操作都会返回错误。 如果你想在不启用逻辑函数能力的情况下运行 Twenty，这将很有用。
+</Note>

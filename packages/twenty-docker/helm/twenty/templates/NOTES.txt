@@ -1,0 +1,17 @@
+Thank you for installing Twenty!
+
+To access the application:
+
+- If ingress enabled:
+  {{- if and .Values.server.ingress.enabled (gt (len .Values.server.ingress.hosts) 0) }}
+  - Primary host: {{ (index .Values.server.ingress.hosts 0).host | default "<set a host>" }}
+  {{- else }}
+  - Primary host: <set a host>
+  {{- end }}
+  - URL: {{ include "twenty.serverUrl" . }}
+- If ingress disabled: expose the service as needed (e.g., `kubectl port-forward svc/{{ include "twenty.fullname" . }}-server 3000:{{ .Values.server.service.port }}` or create a LoadBalancer/NodePort).
+
+Configuration:
+- Using internal DB: {{ ternary "yes" "no" .Values.db.enabled }}
+- Using external DB: {{ ternary "yes" "no" (not .Values.db.enabled) }}
+- Using internal Redis: {{ ternary "yes" "no" .Values.redisInternal.enabled }}

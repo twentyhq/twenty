@@ -1,7 +1,6 @@
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
@@ -10,11 +9,7 @@ import {
 const meta: Meta<typeof FullScreenContainer> = {
   title: 'UI/Layout/FullScreenContainer',
   component: FullScreenContainer,
-  decorators: [
-    ComponentDecorator,
-    I18nFrontDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
 };
 export default meta;
 

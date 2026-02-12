@@ -1,0 +1,198 @@
+---
+title: Actualizați înregistrările existente prin import
+description: Ghid complet, pas cu pas, pentru actualizarea în masă a înregistrărilor folosind importul CSV.
+---
+
+## Prezentare generală
+
+Trebuie să actualizați multe înregistrări deodată? În loc să le editați una câte una, folosiți importul CSV pentru a actualiza în masă înregistrările existente.
+
+**Cazuri de utilizare:**
+
+* Actualizați titlurile de post pentru mai multe persoane
+* Modificați în masă informațiile companiilor
+* Adăugați date în câmpuri personalizate noi
+* Corectați erorile de date din multe înregistrări
+
+## Cum Funcționează
+
+Când importați un fișier care conține un **identificator unic** ce se potrivește unei înregistrări existente, Twenty actualizează acea înregistrare în loc să creeze un duplicat.
+
+| Dacă identificatorul unic...              | Twenty va...                                            |
+| ----------------------------------------- | ------------------------------------------------------- |
+| Se potrivește cu o înregistrare existentă | **Actualizează** înregistrarea existentă                |
+| Nu se potrivește cu nicio înregistrare    | **Creează** o înregistrare nouă                         |
+| Lipsește din fișierul dvs.                | **Creează** o înregistrare nouă (cu ID generat automat) |
+
+<Warning>
+  **Câmpurile Multi-Select sunt suprascrise, nu îmbinate.**
+
+  Dacă o înregistrare are selectate `Option A` și `Option B`, iar importați `["Option C"]`, înregistrarea va avea doar `Option C` după import. Importul înlocuiește toate selecțiile anterioare — nu le adaugă.
+
+  Pentru a păstra valorile existente, includeți-le pe toate în import: ["Option A","Option B","Option C"]
+</Warning>
+
+## Pasul 1: Exportați datele curente
+
+Mai întâi, exportați înregistrările pe care doriți să le actualizați:
+
+1. Navigați la obiect (Persoane, Companii etc.)
+2. **Adăugați coloanele de care aveți nevoie** — faceți clic pe **Options → Fields** pentru a afișa câmpurile pe care doriți să le actualizați
+3. **Filtrați dacă este nevoie** — restrângeți la înregistrările pe care doriți să le actualizați
+4. Faceți clic pe **⋮** → **Export view**
+5. Salvați fișierul CSV
+
+<Note>**De ce să exportați mai întâi?** Fișierul exportat are formatul corect, include identificatori unici și se mapează automat în timpul importului.</Note>
+
+### Ce se exportă
+
+* Toate coloanele vizibile din vizualizarea curentă
+* Identificatorii unici ai înregistrării (`id`, `email`, `domain`)
+* Valorile actuale ale câmpurilor pe care le puteți modifica
+
+## Pasul 2: Editați fișierul CSV
+
+Deschideți fișierul exportat în aplicația dvs. de calcul tabelar (Excel, Google Sheets etc.):
+
+1. **Păstrați coloana cu identificatorul unic** — nu ștergeți `id`, `email` sau `domain`
+2. **Actualizați valorile** în coloanele pe care doriți să le modificați
+3. **Eliminați coloanele pe care nu trebuie să le actualizați** (opțional, dar mai ordonat)
+4. **Nu modificați valorile identificatorului unic** — altfel Twenty va crea înregistrări noi
+
+### Exemplu: Actualizarea titlurilor de post
+
+**Fișier exportat:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Sales Rep
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Sales Rep
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
+```
+
+**După modificările dvs.:**
+
+```csv
+id,email,firstName,lastName,jobTitle
+550e8400-e29b-41d4-a716-446655440001,john@acme.com,John,Smith,Account Executive
+550e8400-e29b-41d4-a716-446655440002,jane@acme.com,Jane,Doe,Senior Account Executive
+550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Account Executive
+```
+
+<Warning>
+  **Nu modificați valorile identificatorului unic.**
+
+  Dacă modificați `john@acme.com` în `john.smith@acme.com`, Twenty va crea o înregistrare nouă în loc să o actualizeze pe cea existentă.
+</Warning>
+
+## Pasul 3: Importați fișierul actualizat
+
+1. Navigați la obiect
+2. Faceți clic pe **⋮** → **Import records**
+3. Încărcați fișierul CSV editat
+4. **Asigurați-vă că identificatorul unic este mapat** — verificați că `email`, `domain` sau `id` este mapat corect
+5. Revizuiți mapările câmpurilor
+6. Verificați erorile
+7. Faceți clic pe **Confirm**
+
+Twenty potrivește înregistrările după identificatorul unic și le actualizează cu valorile noi.
+
+## Alegerea identificatorului unic potrivit
+
+| Obiect                    | Recomandat      | Alternativă | Notițe                            |
+| ------------------------- | --------------- | ----------- | --------------------------------- |
+| **Persoane**              | `email`         | `id`        | Emailul este ușor de citit        |
+| **Companii**              | `domeniu`       | `id`        | Domeniul este ușor de citit       |
+| **Obiecte personalizate** | Orice câmp unic | `id`        | Folosiți câmpul unic personalizat |
+
+<Note>**Folosiți un singur identificator unic.** Nu mapați atât `email`, cât și `id`. Acest lucru poate provoca confuzii și erori.</Note>
+
+### Utilizarea câmpurilor unice personalizate
+
+Dacă aveți un câmp personalizat marcat ca unic (cum ar fi un ID extern dintr-un alt sistem):
+
+1. Includeți acel câmp în export și import
+2. Mapați-l în timpul importului
+3. Twenty va face potrivirea pe baza acelui câmp
+
+## Pasul 4: Verificați actualizările
+
+După import:
+
+1. Deschideți câteva înregistrări actualizate
+2. Verificați că modificările au fost aplicate
+3. Verificați că nu au fost create înregistrări duplicate
+
+## Ce se întâmplă cu câmpurile care nu sunt în fișierul dvs.?
+
+**Câmpurile care nu sunt incluse în fișierul de import rămân neschimbate.**
+
+| Fișierul dvs. include...     | Rezultat                                                        |
+| ---------------------------- | --------------------------------------------------------------- |
+| `email`, `jobTitle`          | Doar `jobTitle` este actualizat; celelalte câmpuri rămân la fel |
+| `email`, `jobTitle`, `phone` | `jobTitle` și `phone` sunt actualizate                          |
+
+Asta înseamnă că trebuie să includeți doar câmpurile pe care doriți să le modificați (plus identificatorul unic).
+
+## Combinarea actualizărilor și a înregistrărilor noi
+
+Puteți actualiza înregistrările existente ȘI crea unele noi în același import:
+
+```csv
+email,firstName,lastName,jobTitle
+john@acme.com,John,Smith,Senior Manager    ← Actualizează existentul (emailul se potrivește)
+newperson@acme.com,New,Person,Analyst      ← Creează unul nou (emailul nu se potrivește)
+```
+
+## Greșeli comune de evitat
+
+| Greșeală                               | Problemă                                                     | Rezultat                                          | Soluție                                              |
+| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------- | ---------------------------------------------------- |
+| **Schimbarea identificatorului unic**  | S-a schimbat `john@acme.com` în `john.smith@acme.com`        | Creează o înregistrare nouă în loc să actualizeze | Păstrați identificatorii unici neschimbați           |
+| **Câmpuri unice multiple**             | Maparea atât a `email`, cât și a `id`                        | Conflicte potențiale de potrivire                 | Mapați un singur identificator unic                  |
+| **Fără identificator unic**            | Fișierul conține doar `firstName`, `lastName`, `jobTitle`    | Toate rândurile creează înregistrări noi          | Includeți întotdeauna `email`, `domain` sau `id`     |
+| **Nepotrivire de majuscule/minuscule** | Fișierul are `John@acme.com`, dar Twenty are `john@acme.com` | Creează o înregistrare nouă                       | Exportați din Twenty pentru a obține valorile exacte |
+
+## Întrebări frecvente
+
+<AccordionGroup>
+  <Accordion title="Ce se întâmplă dacă unele înregistrări nu există încă?">
+    Înregistrările cu identificatori unici care nu se potrivesc cu înregistrările existente vor fi create ca înregistrări noi. Acest lucru vă permite să actualizați și să creați în cadrul aceluiași import.
+  </Accordion>
+
+  <Accordion title="Pot goli o valoare de câmp?">
+    Da, lăsați celula goală în CSV. Importul va goli valoarea acelui câmp în înregistrarea existentă.
+  </Accordion>
+
+  <Accordion title="Ce se întâmplă cu câmpurile pe care nu le includ în import?">
+    Câmpurile care nu se află în fișierul de import rămân neschimbate în înregistrările existente. Sunt actualizate doar câmpurile pe care le includeți.
+  </Accordion>
+
+  <Accordion title="Pot actualiza câmpurile de relație (cum ar fi Compania)?">
+    Da! Includeți identificatorul unic al relației (de ex., `companyDomain`) și mapați-l la câmpul de relație. Relația va fi actualizată.
+  </Accordion>
+
+  <Accordion title="Cum știu care înregistrări vor fi actualizate și care vor fi create?">
+    În etapa de revizuire a importului, Twenty vă arată câte înregistrări vor fi actualizate și câte vor fi create, pe baza potrivirilor după identificatorul unic.
+  </Accordion>
+
+  <Accordion title="Pot anula o actualizare în masă?">
+    Nu există o anulare automată. Recomandăm să exportați datele ca o copie de siguranță înainte de a efectua actualizări în masă.
+  </Accordion>
+</AccordionGroup>
+
+## Cele mai bune practici
+
+1. **Exportați mai întâi** — începeți întotdeauna de la un export pentru a vă asigura de formatul corect
+2. **Faceți o copie de siguranță înainte de actualizare** — exportați-vă datele înainte de a face modificări în masă
+3. **Testați cu câteva înregistrări** — încercați să actualizați mai întâi 5–10 înregistrări înainte de a face un lot mare
+4. **Folosiți identificatori ușor de citit** — `email` și `domain` sunt mai ușor de verificat decât `id`
+5. **Includeți doar coloanele necesare** — mai puține coloane înseamnă mai puține șanse de erori
+
+## Depanare
+
+Aveți probleme? Verificați:
+
+* [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
+* [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Referință pentru maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping)

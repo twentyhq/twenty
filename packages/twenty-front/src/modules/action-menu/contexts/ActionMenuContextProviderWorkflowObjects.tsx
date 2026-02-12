@@ -5,6 +5,7 @@ import {
 } from '@/action-menu/contexts/ActionMenuContext';
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
+import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -49,13 +50,20 @@ const ActionMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuItemFrontComponentActions =
+    useCommandMenuItemFrontComponentActions();
+
   return (
     <ActionMenuContext.Provider
       value={{
         isInRightDrawer,
         displayType,
         actionMenuType,
-        actions: [...actions, ...runWorkflowRecordAgnosticActions],
+        actions: [
+          ...actions,
+          ...runWorkflowRecordAgnosticActions,
+          ...commandMenuItemFrontComponentActions,
+        ],
       }}
     >
       {children}
@@ -86,13 +94,20 @@ const ActionMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticActions =
     useRunWorkflowRecordAgnosticActions();
 
+  const commandMenuItemFrontComponentActions =
+    useCommandMenuItemFrontComponentActions();
+
   return (
     <ActionMenuContext.Provider
       value={{
         isInRightDrawer,
         displayType,
         actionMenuType,
-        actions: [...actions, ...runWorkflowRecordAgnosticActions],
+        actions: [
+          ...actions,
+          ...runWorkflowRecordAgnosticActions,
+          ...commandMenuItemFrontComponentActions,
+        ],
       }}
     >
       {children}

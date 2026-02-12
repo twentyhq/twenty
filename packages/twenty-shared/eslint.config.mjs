@@ -15,6 +15,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -43,6 +45,7 @@ export default [
       'import': importPlugin,
       'unused-imports': unusedImportsPlugin,
       'unicorn': unicornPlugin,
+      'twenty': { rules: twentyRules },
     },
     rules: {
       // General rules
@@ -113,11 +116,14 @@ export default [
 
   // TypeScript specific configuration
   {
-    files: ['**/*.ts'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: [path.resolve(__dirname, 'tsconfig.*.json')],
+        ecmaFeatures: {
+          jsx: true,
+        },
+        project: [path.resolve(__dirname, 'tsconfig.json')],
       },
     },
     plugins: {
@@ -128,7 +134,7 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
           fixStyle: 'inline-type-imports'
         },
@@ -136,10 +142,10 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/no-empty-interface': [
+      '@typescript-eslint/no-empty-object-type': [
         'error',
         {
-          allowSingleExtends: true,
+          allowInterfaces: 'with-single-extends',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'off',
@@ -202,7 +208,7 @@ export default [
           },
         },
       ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      'twenty/max-consts-per-file': ['error', { max: 1 }],
     },
   },
 

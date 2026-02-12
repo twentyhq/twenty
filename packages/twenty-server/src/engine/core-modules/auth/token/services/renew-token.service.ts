@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -47,10 +47,14 @@ export class RenewTokenService {
       impersonatedUserWorkspaceId,
     } = await this.refreshTokenService.verifyRefreshToken(token);
 
-    // Revoke old refresh token
+    // Revoke old refresh token only if not already revoked.
+    // If it was already revoked (concurrent race condition within grace
+    // period), we preserve the original revokedAt timestamp so the grace
+    // window stays anchored and cannot be extended by repeated reuse.
     await this.appTokenRepository.update(
       {
         id,
+        revokedAt: IsNull(),
       },
       {
         revokedAt: new Date(),

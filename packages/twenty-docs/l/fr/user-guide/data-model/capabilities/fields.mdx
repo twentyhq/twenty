@@ -1,0 +1,122 @@
+---
+title: Champs
+description: Comprendre le rôle des champs et comment les gérer.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## À propos des Champs
+
+Les champs sont comme les colonnes d'une feuille de calcul. Ils stockent différents types de données comme du texte, des chiffres ou des dates. Les champs peuvent être standard (intégrés) ou personnalisés (ceux que vous créez).
+
+### Champs Standards
+
+Les champs standard sont intégrés à Twenty pour répondre aux besoins professionnels courants.
+
+Par exemple, `Prénom` et `Nom de famille` sont des champs standards dans l'objet `Personnes`. Ils stockent des données textuelles pour les noms individuels.
+
+Vous ne pouvez pas supprimer les champs standard, mais vous pouvez les désactiver si vous n'en avez pas besoin.
+
+Vous pouvez également personnaliser les options des champs standard de type `SELECT`, par exemple les options pour l’`Étape` des Opportunités.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+
+### Champs Personnalisés
+
+Les champs personnalisés peuvent être ajoutés à n'importe quel objet. Vous pouvez stocker du texte, des chiffres, des dates, des sélections déroulantes, et plus encore. Utilisez les champs personnalisés pour suivre des informations spécifiques à votre entreprise.
+
+Par exemple, un champ personnalisé pour SpaceX pourrait être `Statut Actif de la Fusée`, indiquant si une fusée est opérationnelle.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+
+## Types de champs
+
+Twenty prend en charge divers types de champs :
+
+| Type               | Description                                                 | Exemple                    |
+| ------------------ | ----------------------------------------------------------- | -------------------------- |
+| Adresse            | Adresse structurée avec rue, ville, état, pays, code postal | Adresse du bureau          |
+| Tableau            | Liste de valeurs textuelles                                 | Étiquettes                 |
+| Booléen            | Case à cocher vrai/faux                                     | Actif                      |
+| Devise             | Valeur monétaire avec code de devise                        | Montant de l’affaire (USD) |
+| Date               | Valeurs de date                                             | Date de clôture            |
+| Date et heure      | Date avec heure                                             | Heure de réunion           |
+| Domaine            | Domaine de site web (utilisé pour les Entreprises)          | acme.com                   |
+| E-mail             | Adresses e-mail (principale + supplémentaires)              | Adresse e-mail du contact  |
+| JSON               | Données JSON structurées                                    | Métadonnées personnalisées |
+| Liens              | URL avec libellés (primaire + secondaire)                   | Site web, LinkedIn         |
+| Texte long         | Texte sur plusieurs lignes                                  | Description, Notes         |
+| Sélection multiple | Choix multiples à partir d’une liste prédéfinie             | Étiquettes, Catégories     |
+| Nombre             | Valeurs numériques (entières ou décimales)                  | Quantité, Score            |
+| Téléphone          | Numéros de téléphone avec indicatif du pays                 | Téléphone professionnel    |
+| Note               | Notation par étoiles (1-5)                                  | Priorité, Score            |
+| Relation           | Liens vers des enregistrements dans d’autres objets         | Entreprise → Personnes     |
+| Sélection          | Choix unique à partir d’une liste prédéfinie                | Étape, Statut              |
+| Texte              | Texte sur une seule ligne                                   | Nom, Titre                 |
+
+## Créer un Champ Personnalisé
+
+Pour ajouter un champ personnalisé à n'importe quel objet, suivez ces étapes:
+
+1. Allez dans les `Paramètres` dans la barre latérale gauche.
+2. Allez dans le `Modèle de Données`, puis sélectionnez l'objet que vous souhaitez personnaliser.
+3. Continuez en cliquant sur `Ajouter un champ`.
+4. Choisissez un nom de champ et un type qui répondent à vos exigences. Envisagez d'ajouter une description du champ pour une meilleure compréhension.
+
+Votre nouveau champ est maintenant disponible dans les champs de l'application. Pour l'afficher sur une vue spécifique, cliquez sur le menu des options, puis sélectionnez `Champs`.
+
+<VimeoEmbed videoId="927628219" title="Démonstration vidéo" />
+
+**Méthode rapide:** Cliquez sur le bouton **+** en haut à droite de tout tableau d'objet, puis sélectionnez `Personnaliser les champs`. Cela vous amène directement aux paramètres du Modèle de Données.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+
+## Désactiver un champ
+
+Vous pouvez désactiver un champ pour le masquer dans l'application sans perdre vos données. Considérez cela comme masquer le champ plutôt que de le supprimer.
+
+Voici comment vous pouvez le faire:
+
+1. Trouvez le champ que vous voulez désactiver dans vos paramètres d'objet.
+
+2. Cliquez sur les trois points `⋮` à côté du champ pour ouvrir le menu.
+
+3. Sélectionnez `Désactiver` dans le menu déroulant.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+
+Que se passe-t-il lorsque vous désactivez un champ?
+
+1. **Dans l'application :** Le champ disparaît et vous ne pouvez plus ajouter de nouvelles valeurs.
+
+2. **Relations existantes :** S'il s'agit d'un champ de relation, les connexions existantes restent mais vous ne pouvez pas en créer de nouvelles.
+
+3. **Accès API :** Vous pouvez toujours accéder au champ et à ses données par l'API.
+
+Vous pouvez réactiver les champs standards et personnalisés ou avoir l'option de les supprimer définitivement.
+
+## Rendre les Champs Uniques
+
+Rendez un champ unique pour garantir que des enregistrements distincts ne peuvent pas avoir la même valeur. Par exemple, les adresses e-mail sont uniques pour chaque personne.
+
+Si vous obtenez une erreur lors de la définition de l'unicité, vérifiez les valeurs en double dans vos données (y compris les enregistrements supprimés).
+
+## Bonnes pratiques de configuration des champs
+
+### Conventions de nommage et limitations
+
+* **Les noms au singulier et au pluriel doivent être distincts** : Notre API GraphQL nécessite des noms distincts pour les mutations
+* **Noms de champs protégés** : certains noms sont réservés à l’usage du système (par exemple, `Type`, `Application`)
+
+### Champs de devise et de téléphone
+
+* **Devise par défaut** : peut être configurée via le modèle de données
+* **Codes de pays par défaut** : peuvent être configurés pour les champs téléphoniques via le modèle de données
+
+### Champs de sélection
+
+* **Une option par défaut peut être sélectionnée** pour chaque champ de sélection
+
+### Champs de texte d'enregistrement
+
+* **Chaque objet a un champ d'affichage principal**: Ce champ apparaît dans la colonne la plus à gauche et représente l'enregistrement lorsqu'il est lié à d'autres objets. Il doit s'agir d'un champ de texte. Par exemple, le champ `Nom` est utilisé pour les Personnes comme champ principal, donc lorsque vous liez une personne à une entreprise, vous verrez son nom dans la vue de l'entreprise.

@@ -1,0 +1,39 @@
+---
+title: Obiecte personalizate
+---
+
+Obiectele sunt structuri care îți permit să stochezi date (înregistrări, atribute și valori) specifice organizației tale. Twenty oferă atât obiecte standard, cât și personalizate.
+
+Obiectele standard sunt obiecte încorporate cu un set de atribute disponibile pentru toți utilizatorii. Exemple de obiecte standard în Twenty includ Companie și Persoană. Obiectele standard au câmpuri standard care sunt disponibile pentru toți utilizatorii Twenty, cum ar fi Company.displayName.
+
+Obiectele personalizate sunt acelea pe care le poți crea pentru a stoca informații unice pentru organizația ta. Nu sunt încorporate; membrii workspace-ului tău pot crea și personaliza obiecte personalizate pentru a deține informații pentru care obiectele standard nu sunt adecvate.
+
+## Schema la nivel înalt
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Schema la nivel înalt" />
+</div>
+
+<br />
+
+## Cum funcționează
+
+Obiectele personalizate provin din tabele de metadate care determină forma, numele și tipul obiectelor. Toate aceste informații sunt prezente în baza de date de schema de metadate, constând din tabele:
+
+* **DataSource**: Detalii privind locul unde sunt prezente datele.
+* **Object**: Descrie obiectul și îl leagă de un DataSource.
+* **Field**: Prezintă câmpurile unui Obiect și le conectează la Obiect.
+
+Pentru a adăuga un obiect personalizat, membrul workspace-ului va interoga API-ul /metadata. Aceasta actualizează metadatele în consecință și calculează o schemă GraphQL pe baza metadatelor, stocând-o în cache-ul GQL pentru utilizare ulterioară.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Interoghează API-ul /metadata pentru a adăuga obiecte personalizate" />
+</div>
+
+<br />
+
+Pentru a prelua datele, procesul implică realizarea de interogări prin endpoint-ul /graphql și transmiterea lor prin Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Interoghează endpoint-ul /graphql pentru a prelua date" />
+</div>

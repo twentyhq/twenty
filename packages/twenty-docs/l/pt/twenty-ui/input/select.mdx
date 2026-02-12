@@ -4,51 +4,47 @@ image: /images/user-guide/what-is-twenty/20.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Cabeçalho" />
 </Frame>
 
-Permite aos usuários selecionar um valor a partir de uma lista de opções pré-definidas.
+Permite aos utilizadores escolher um valor a partir de uma lista de opções pré-definidas.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
 
-```jsx
-import { RecoilRoot } from 'recoil';
-import { IconTwentyStar } from 'twenty-ui/display';
+    import { Select } from '@/ui/input/components/Select';
 
-import { Select } from '@/ui/input/components/Select';
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Selecione uma opção"
+            options={[
+              { value: 'option1', label: 'Opção A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Opção B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
 
-  return (
-    <RecoilRoot>
-      <Select
-        className
-        disabled={false}
-        label="Select an option"
-        options={[
-          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
-          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
-        ]}
-        value="option1"
-      />
-    </RecoilRoot>
-  );
-};
-
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props      | Tipo                                     | Descrição                                                                                                                                                                                                                                                      |
-| ---------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| className  | Nome opcional para estilização adicional | Classe CSS opcional para estilização adicional                                                                                                                                                                                                                 |
-| desativado | booleano                                 | Quando definido como `true`, desativa a interação do usuário com o componente                                                                                                                                                                                  |
-| etiqueta   | Nome opcional para estilização adicional | A etiqueta para descrever o propósito do componente `Select`                                                                                                                                                                                                   |
-| onChange   | função                                   | The function called when the selected values change                                                                                                                                                                                                            |
-| opções     | matriz                                   | Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon` |
-| valor      | Nome opcional para estilização adicional | Representa o valor atualmente selecionado. Deve corresponder a uma das propriedades `valor` na matriz `options`                                                                                                                                |
-
-</Tab>
+  <Tab title="Propriedades">
+    | Propriedades | Tipo     | Descrição                                                                                                                                                                                                |
+    | ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className    | string   | Classe CSS opcional para estilização adicional.                                                                                                                                                          |
+    | desativado   | booleano | Quando definido como `true`, desativa a interação do utilizador com o componente                                                                                                                         |
+    | etiqueta     | string   | A etiqueta para descrever o propósito do componente `Selecionar`                                                                                                                                         |
+    | aoAlterar    | função   | A função chamada quando os valores selecionados são alterados                                                                                                                                            |
+    | opções       | array    | Representa as opções disponíveis para o componente `Selected`. É uma matriz de objetos onde cada objeto tem um `valor` (o identificador único), `etiqueta` (o identificador único) e um `Ícone` opcional |
+    | valor        | string   | Representa o valor atualmente selecionado. Deverá corresponder a uma das propriedades `valor` na matriz `opções`                                                                                         |
+  </Tab>
 </Tabs>

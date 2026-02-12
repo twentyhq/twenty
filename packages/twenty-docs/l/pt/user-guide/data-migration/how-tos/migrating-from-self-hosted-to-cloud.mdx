@@ -1,0 +1,171 @@
+---
+title: Migração de Auto-Hospedagem para Nuvem
+description: Guia passo a passo para migrar a sua instância Twenty auto-hospedada para a Twenty Cloud.
+---
+
+## Visão Geral
+
+Este guia orienta-o na migração dos seus dados de uma instância Twenty auto-hospedada para a Twenty Cloud. O processo envolve configurar o seu espaço de trabalho na cloud, exportar os seus dados e voltar a importá-los.
+
+<Note>Vistas, fluxos de trabalho e funções devem ser recriados manualmente após a migração. Reserve tempo para este trabalho de configuração.</Note>
+
+## Passo 1: Crie o seu espaço de trabalho na Cloud
+
+1. Aceda a [app.twenty.com](https://app.twenty.com) e crie um novo espaço de trabalho
+2. Conclua o assistente de configuração inicial
+3. Anote o URL do seu novo espaço de trabalho
+
+## Passo 2: Recrie o seu Modelo de Dados
+
+Antes de importar os dados, recrie os seus objetos e campos personalizados:
+
+1. Aceda a **Configurações → Modelo de Dados** na sua instância na cloud
+2. Crie objetos personalizados que correspondam à sua configuração auto-hospedada
+3. Adicione campos personalizados a objetos padrão e personalizados
+4. Configure as definições dos campos (único, obrigatório, etc.)
+
+<Note>Tire capturas de ecrã do seu modelo de dados auto-hospedado para referência ou mantenha ambas as instâncias abertas lado a lado.</Note>
+
+## Passo 3: Convide todos os utilizadores
+
+<Warning>
+  **Crítico: Convide os utilizadores ANTES de importar dados.**
+
+  Os utilizadores devem aceitar os convites antes de importar quaisquer registos que os referenciem (como campos Account Owner). Se os utilizadores ainda não existirem, essas relações não poderão ser mapeadas.
+</Warning>
+
+1. Aceda a **Configurações → Membros** na sua instância na cloud
+2. Convide todos os membros da equipa que tinham contas na instância auto-hospedada
+3. **Aguarde que todos aceitem** o convite
+4. Verifique se todos os utilizadores aparecem na sua lista de Membros
+
+## Passo 4: Exportar dados da instância auto-hospedada
+
+Exporte cada objeto da sua instância auto-hospedada:
+
+1. Aceda a cada objeto (Empresas, Pessoas, Oportunidades, etc.)
+2. Configure a vista para mostrar **todas as colunas** que pretende migrar
+3. Clique em **⋮ → Export view**
+4. Guarde cada ficheiro CSV com um nome claro (por exemplo, `companies-export.csv`)
+
+**Exporte nesta ordem** (para referência durante a importação):
+
+1. Empresas
+2. Pessoas
+3. Oportunidades
+4. Objetos personalizados (seguindo as suas dependências)
+5. Tarefas, Notas
+
+## Passo 5: Atualizar referências de Membros do espaço de trabalho
+
+Os CSV exportados contêm IDs de utilizador da sua instância auto-hospedada. Esses IDs não corresponderão à sua instância na cloud, por isso precisa de os substituir por endereços de e-mail.
+
+**Para cada ficheiro CSV com referências a utilizadores (Owner, Assignee, etc.):**
+
+1. Abra o CSV numa aplicação de folha de cálculo
+2. Adicione uma nova coluna ao lado de cada coluna de ID de utilizador (por exemplo, `accountOwnerEmail` ao lado de `accountOwnerId`)
+3. Preencha o **endereço de e-mail** de cada utilizador
+4. Pode apagar a coluna de ID antiga ou deixá-la (será ignorada durante a importação)
+
+**Exemplo:**
+
+Antes:
+
+```csv
+name,domain,accountOwnerId
+Acme Corp,https://acme.com,old-uuid-123
+```
+
+Depois:
+
+```csv
+name,domain,accountOwnerEmail
+Acme Corp,https://acme.com,john@yourcompany.com
+```
+
+<Note>Use os mesmos endereços de e-mail que os utilizadores usaram para aceitar o convite do espaço de trabalho na cloud.</Note>
+
+## Passo 6: Planeie a ordem de importação
+
+Importe os ficheiros na ordem correta para manter as relações:
+
+1. **Empresas** primeiro (sem dependências)
+2. **Pessoas** em segundo (ligadas a Empresas)
+3. **Oportunidades** em terceiro (ligadas a Empresas e Pessoas)
+4. **Objetos personalizados** (seguindo as suas dependências)
+5. **Tarefas e Notas** por último (ligadas a outros registos)
+
+Veja [Como importar relações](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para detalhes sobre a manutenção das relações.
+
+## Passo 7: Importar para a Cloud
+
+Para cada ficheiro CSV, por ordem:
+
+1. Aceda ao objeto na sua instância na cloud
+2. Clique em **⋮ → Import records**
+3. Carregue o ficheiro CSV
+4. Mapeie as colunas para os campos:
+   * Mapeie as colunas de e-mail do utilizador para os campos de relação apropriados
+   * Mapeie as outras colunas como de costume
+5. Revise e corrija quaisquer erros
+6. Confirme a importação
+7. Verifique alguns registos antes de avançar para o ficheiro seguinte
+
+## Passo 8: Recriar a configuração
+
+Depois de importar os dados, recrie manualmente:
+
+### Visualizações
+
+* Recrie vistas guardadas com filtros, ordenações e configurações de colunas
+* Configure quaisquer vistas kanban ou de calendário
+
+### Fluxos de trabalho
+
+* Recrie automatizações em **Configurações → Fluxos de trabalho**
+* Teste cada fluxo de trabalho antes de confiar nele
+
+### Funções e Permissões
+
+* Configure as funções em **Configurações → Funções**
+* Atribua os utilizadores às funções apropriadas
+
+### Integrações
+
+* Volte a ligar a sincronização de e-mail e calendário para cada utilizador
+* Reconfigure quaisquer integrações de API com novas chaves de API
+
+## Lista de Verificação Pós-Migração
+
+<Check>Todos os dados importados com sucesso</Check>
+<Check>Relações entre objetos a funcionar corretamente</Check>
+<Check>Atribuições de utilizadores (Owner, Assignee) mapeadas corretamente</Check>
+<Check>Vistas recriadas</Check>
+<Check>Fluxos de trabalho recriados e testados</Check>
+<Check>Funções e permissões configuradas</Check>
+<Check>Sincronização de e-mail/calendário restabelecida</Check>
+<Check>Integrações de API atualizadas com novas chaves</Check>
+
+## Perguntas Frequentes
+
+<AccordionGroup>
+  <Accordion title="Posso migrar fluxos de trabalho automaticamente?">
+    De momento, não. Os fluxos de trabalho devem ser recriados manualmente na sua instância na cloud.
+  </Accordion>
+
+  <Accordion title="E quanto a anexos de ficheiros e imagens?">
+    Os anexos de ficheiros não estão incluídos nas exportações CSV. Terá de voltar a carregar quaisquer anexos manualmente, migrá-los via API ou contactar a nossa equipa para obter assistência em migrações de grande dimensão.
+  </Accordion>
+
+  <Accordion title="Posso manter ambas as instâncias a funcionar durante a migração?">
+    Sim, recomendamos manter a sua instância auto-hospedada em funcionamento até verificar que a migração para a cloud está concluída. Apenas tenha cuidado para não criar novos dados em ambos os locais.
+  </Accordion>
+
+  <Accordion title="E se um utilizador ainda não tiver aceite o convite?">
+    Os registos que referenciam esse utilizador não serão importados ou a relação ficará vazia. Garanta que todos os utilizadores aceitam os convites antes de importar os dados.
+  </Accordion>
+</AccordionGroup>
+
+## Precisa de ajuda?
+
+Para migrações complexas ou conjuntos de dados grandes, contacte-nos em [contact@twenty.com](mailto:contact@twenty.com) ou explore os nossos [Serviços de Implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services).

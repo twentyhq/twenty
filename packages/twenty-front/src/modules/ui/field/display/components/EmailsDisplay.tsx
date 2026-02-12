@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -10,6 +10,7 @@ import { THEME_COMMON } from 'twenty-ui/theme';
 type EmailsDisplayProps = {
   value?: FieldEmailsValue;
   isFocused?: boolean;
+  onEmailClick?: (email: string, event: React.MouseEvent<HTMLElement>) => void;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
@@ -27,7 +28,11 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
+export const EmailsDisplay = ({
+  value,
+  isFocused,
+  onEmailClick,
+}: EmailsDisplayProps) => {
   const emails = useMemo(
     () =>
       [
@@ -40,13 +45,23 @@ export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {emails.map((email, index) => (
-        <RoundedLink key={index} label={email} href={`mailto:${email}`} />
+        <RoundedLink
+          key={index}
+          label={email}
+          href={`mailto:${email}`}
+          onClick={(event) => onEmailClick?.(email, event)}
+        />
       ))}
     </ExpandableList>
   ) : (
     <StyledContainer>
       {emails.map((email, index) => (
-        <RoundedLink key={index} label={email} href={`mailto:${email}`} />
+        <RoundedLink
+          key={index}
+          label={email}
+          href={`mailto:${email}`}
+          onClick={(event) => onEmailClick?.(email, event)}
+        />
       ))}
     </StyledContainer>
   );

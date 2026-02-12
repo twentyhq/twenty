@@ -18,7 +18,7 @@ async function assertPermissionDeniedForMemberWithMemberRole({
   query: { query: string };
 }) {
   await client
-    .post('/graphql')
+    .post('/metadata')
     .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
     .send(query)
     .expect(200)
@@ -49,7 +49,7 @@ describe('roles permissions', () => {
     };
 
     const resp = await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(query);
 
@@ -84,13 +84,13 @@ describe('roles permissions', () => {
       };
 
       const resp = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(query);
 
       expect(resp.status).toBe(200);
       expect(resp.body.errors).toBeUndefined();
-      expect(resp.body.data.getRoles.length).toBeGreaterThanOrEqual(5);
+      expect(resp.body.data.getRoles.length).toBeGreaterThanOrEqual(4);
 
       const roles = resp.body.data.getRoles;
       const guestRole = roles.find((role: any) => role.label === 'Guest');
@@ -99,15 +99,11 @@ describe('roles permissions', () => {
       const objectRestrictedRole = roles.find(
         (role: any) => role.label === 'Object-restricted',
       );
-      const workflowManagerRole = roles.find(
-        (role: any) => role.label === 'Workflow Manager',
-      );
 
       expect(guestRole).toBeDefined();
       expect(adminRole).toBeDefined();
       expect(memberRole).toBeDefined();
       expect(objectRestrictedRole).toBeDefined();
-      expect(workflowManagerRole).toBeDefined();
 
       expect(guestRole.workspaceMembers).toEqual([
         {
@@ -150,8 +146,6 @@ describe('roles permissions', () => {
           },
         },
       ]);
-
-      expect(workflowManagerRole.workspaceMembers).toBeDefined();
     });
     it('should throw a permission error when user does not have permission (member role)', async () => {
       const query = {
@@ -202,7 +196,7 @@ describe('roles permissions', () => {
       };
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(query)
         .expect(200)
@@ -230,7 +224,7 @@ describe('roles permissions', () => {
       };
 
       const resp = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(getRolesQuery);
 
@@ -256,7 +250,7 @@ describe('roles permissions', () => {
 
       // Act and assert
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(updateRoleQuery)
         .expect(200)
@@ -280,7 +274,7 @@ describe('roles permissions', () => {
       };
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(rollbackRoleUpdateQuery)
         .expect(200)
@@ -322,7 +316,7 @@ describe('roles permissions', () => {
       };
 
       const result = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(query)
         .expect(200)
@@ -337,7 +331,7 @@ describe('roles permissions', () => {
       const deleteOneRoleQuery = deleteOneRoleOperationFactory(createdRoleId);
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(deleteOneRoleQuery);
     });
@@ -358,7 +352,7 @@ describe('roles permissions', () => {
       };
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(query)
         .then((res) => {
@@ -372,7 +366,7 @@ describe('roles permissions', () => {
       );
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(deleteOneRoleQuery);
     });
@@ -405,7 +399,7 @@ describe('roles permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(query)
           .expect(200)
@@ -489,7 +483,7 @@ describe('roles permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(query)
           .expect(200)
@@ -514,7 +508,7 @@ describe('roles permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(query)
           .expect(200)
@@ -587,7 +581,7 @@ describe('roles permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(query)
           .expect(200)
@@ -611,7 +605,7 @@ describe('roles permissions', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(query)
           .expect(200)

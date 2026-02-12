@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Standard field metadata update should be ignored when trying to update isLabelSyncedWithName on standard field 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FIELD_MUTATION_NOT_ALLOWED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "This field cannot be modified.",
   },
   "message": "Cannot edit standard field metadata properties: isLabelSyncedWithName",
   "name": "ForbiddenError",
@@ -17,7 +17,7 @@ exports[`Standard field metadata update should be ignored when trying to update 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FIELD_MUTATION_NOT_ALLOWED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "This field cannot be modified.",
   },
   "message": "Cannot edit standard field metadata properties: name",
   "name": "ForbiddenError",
@@ -29,7 +29,7 @@ exports[`Standard field metadata update should be ignored when trying to update 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "FIELD_MUTATION_NOT_ALLOWED",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "This field cannot be modified.",
   },
   "message": "Cannot edit standard field metadata properties: isLabelSyncedWithName, name",
   "name": "ForbiddenError",

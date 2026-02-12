@@ -1,0 +1,290 @@
+---
+title: 스타일 가이드
+---
+
+이 문서에는 코드 작성 시 따라야 할 규칙이 포함되어 있습니다.
+
+여기서 목표는 읽기 쉽고 유지 관리가 쉬운 일관된 코드베이스를 갖는 것입니다.
+
+이를 위해서는 너무 간결하기보다는 약간 더 장황한 것이 낫습니다.
+
+항상 사람들이 코드를 작성하는 것보다 더 자주 읽는다는 점을 염두에 두십시오. 특히 누구나 기여할 수 있는 오픈 소스 프로젝트에서 그렇습니다.
+
+여기에 정의되지 않은 많은 규칙이 있지만 린터에 의해 자동으로 확인됩니다.
+
+## 리액트
+
+### 함수형 컴포넌트 사용
+
+항상 TSX 함수형 컴포넌트를 사용하십시오.
+
+기본 `import`를 `const`와 함께 사용하지 마십시오. 읽기 어렵고 코드 자동 완성으로 import하기 어렵습니다.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### 프로퍼티
+
+props의 유형을 만들고 내보낼 필요가 없으면 `(ComponentName)Props`라고 명명하십시오.
+
+props 구조 분해를 사용하십시오.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### prop 유형을 정의하기 위해 `React.FC` 또는 `React.FunctionComponent`를 사용하지 마십시오.
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - 좋음, 별도의 타입(OwnProps)을 명시적으로 정의합니다
+ *      컴포넌트의 props에 대해
+ *    - 이 방법은 children prop을 자동으로 포함하지 않습니다. 포함하려면
+ *      OwnProps에 명시해야 합니다.
+ */
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### JSX 요소에서 단일 변수 prop 확산 방지
+
+JSX 요소에서 `{...props}`와 같은 단일 변수 prop 확산을 피하십시오. 이 관행은 구성 요소가 수신되는 props를 명확하게 하지 않아 가독성과 유지 관리가 어려운 코드를 생성하는 경우가 많습니다.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - 좋음, 모든 props를 명시적으로 나열합니다
+ *    - 가독성과 유지 보수성을 향상합니다
+ */
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+이유:
+
+* 한눈에 코드가 전달하는 props를 명확하게 하여 이해하고 유지하기 쉽습니다.
+* 이것은 구성 요소가 각자의 props로 긴밀하게 결합되는 것을 방지하는 데 도움이 됩니다.
+* props를 명시적으로 나열하면 Linting 도구에서 잘못된 철자나 사용되지 않는 props를 쉽게 식별할 수 있습니다.
+
+## 자바스크립트
+
+### nullish 병합 연산자 `??` 사용
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### 옵셔널 체이닝 `?.` 사용
+
+```tsx
+// ❌ 나쁨
+onClick && onClick();
+
+// ✅ 좋음
+onClick?.();
+```
+
+## 타입스크립트
+
+### `interface` 대신 `type` 사용
+
+항상 `interface` 대신 `type`을 사용하십시오. 두 개의 기능은 거의 항상 중첩되며, `type`이 더 유연합니다.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### 열거형 대신 문자열 리터럴 사용
+
+[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)는 TypeScript에서 열거형과 같은 값을 처리하는 주요 방법입니다. 그들은 Pick와 Omit으로 확장하기 쉬우며, 특히 코드 완성 기능을 사용할 때 더 나은 사용자 경험을 제공합니다.
+
+타입스크립트가 열거형 사용을 피하도록 권장하는 이유는 [여기](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)에서 확인할 수 있습니다.
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL 및 내부 라이브러리
+
+GraphQL 코드 생성기가 생성한 열거형을 사용해야 합니다.
+
+내부 라이브러리를 사용할 때도 열거형을 사용하는 것이 좋으며, 내부 API와 관련이 없는 문자열 리터럴 유형을 노출할 필요가 없습니다.
+
+예시:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## 스타일링
+
+### StyledComponents 사용
+
+[styled-components](https://emotion.sh/docs/styled)로 구성 요소를 스타일링하십시오.
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+스타일드 컴포넌트 앞에 "Styled"를 붙여 실제 컴포넌트와 구분하십시오.
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### 테마
+
+대부분의 구성 요소 스타일링에는 테마를 활용하는 것이 선호되는 접근 방식입니다.
+
+#### 측정 단위
+
+스타일드 컴포넌트 내에서 `px` 또는 `rem` 값을 직접 사용하는 것을 피하십시오. 필요한 값은 일반적으로 테마에 이미 정의되어 있으므로 이러한 목적으로 테마를 활용하는 것이 좋습니다.
+
+#### 색상
+
+새로운 색상을 도입하지 말고 테마에서 기존 팔레트를 사용하십시오. 팔레트가 맞지 않는 경우가 있다면 팀이 수정할 수 있도록 댓글을 남겨야 합니다.
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## No-Type Import 강제 실행
+
+타입 import를 피하십시오. 이 표준을 강화하기 위해 ESLint 규칙이 모든 타입 import를 확인하고 보고합니다. 이는 TypeScript 코드의 일관성과 가독성을 유지하는 데 도움이 됩니다.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### No-Type Import의 이유
+
+* **일관성**: 타입 import를 피하고, 타입과 값 import 모두의 단일 접근 방식을 사용하여 모듈 import 스타일의 일관성을 유지합니다.
+
+* **가독성**: No-Type Import는 값을 가져오거나 타입을 가져오는 것을 명확히 하여 코드 가독성을 향상시킵니다. 이는 모호성을 줄이고 가져온 기호의 목적을 이해하기 쉽게 만듭니다.
+
+* **유지관리성**: 이는 코드베이스 유지관리를 향상시킵니다. 개발자가 코드를 검토하거나 수정할 때 타입 전용 import를 식별하고 찾을 수 있습니다.
+
+### ESLint 규칙
+
+ESLint 규칙인 `@typescript-eslint/consistent-type-imports`는 타입 없는 import 표준을 강제합니다. 이 규칙은 모든 타입 import 위반에 대해 오류나 경고를 생성합니다.
+
+이 규칙은 의도치 않은 타입 import가 발생하는 드문 경계 사례를 구체적으로 다룹니다. 타입스크립트 자체는 [TypeScript 3.8 릴리스 노트](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)에서 이 관행을 권장하지 않습니다. 대부분의 상황에서 타입 전용 import를 사용할 필요가 없습니다.
+
+이 규칙을 준수하는 코드를 보장하기 위해 ESLint를 개발 워크플로의 일부로 실행하십시오.

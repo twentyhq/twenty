@@ -96,6 +96,11 @@ const StyledTooltipLabel = styled.span<{ isHighlighted?: boolean }>`
     isHighlighted ? theme.font.weight.medium : theme.font.weight.regular};
 `;
 
+const StyledNoDataMessage = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
+`;
+
 const StyledTooltipValue = styled.span<{ isHighlighted?: boolean }>`
   color: ${({ theme, isHighlighted }) =>
     isHighlighted ? theme.font.color.tertiary : theme.font.color.extraLight};
@@ -142,41 +147,43 @@ export const GraphWidgetTooltip = ({
     (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
   );
 
+  const hasData = filteredItems.length > 0;
   const shouldHighlight = filteredItems.length > 1;
-  const hasGraphWidgetTooltipClick = isDefined(onGraphWidgetTooltipClick);
+  const shouldShowClickFooter = hasData && isDefined(onGraphWidgetTooltipClick);
 
   return (
     <StyledTooltip>
-      <StyledHorizontalSectionPadding
-        addTop
-        addBottom={!hasGraphWidgetTooltipClick}
-      >
+      <StyledHorizontalSectionPadding addTop addBottom={!shouldShowClickFooter}>
         <StyledTooltipContent>
           {indexLabel && (
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
           <StyledTooltipRowContainer>
-            {filteredItems.map((item) => {
-              const isHighlighted =
-                shouldHighlight && highlightedKey === item.key;
-              return (
-                <StyledTooltipRow key={item.key}>
-                  <GraphWidgetLegendDot color={item.dotColor} />
-                  <StyledTooltipRowRightContent>
-                    <StyledTooltipLabel isHighlighted={isHighlighted}>
-                      {item.label}
-                    </StyledTooltipLabel>
-                    <StyledTooltipValue isHighlighted={isHighlighted}>
-                      {item.formattedValue}
-                    </StyledTooltipValue>
-                  </StyledTooltipRowRightContent>
-                </StyledTooltipRow>
-              );
-            })}
+            {filteredItems.length === 0 ? (
+              <StyledNoDataMessage>{t`No data`}</StyledNoDataMessage>
+            ) : (
+              filteredItems.map((item) => {
+                const isHighlighted =
+                  shouldHighlight && highlightedKey === item.key;
+                return (
+                  <StyledTooltipRow key={item.key}>
+                    <GraphWidgetLegendDot color={item.dotColor} />
+                    <StyledTooltipRowRightContent>
+                      <StyledTooltipLabel isHighlighted={isHighlighted}>
+                        {item.label}
+                      </StyledTooltipLabel>
+                      <StyledTooltipValue isHighlighted={isHighlighted}>
+                        {item.formattedValue}
+                      </StyledTooltipValue>
+                    </StyledTooltipRowRightContent>
+                  </StyledTooltipRow>
+                );
+              })
+            )}
           </StyledTooltipRowContainer>
         </StyledTooltipContent>
       </StyledHorizontalSectionPadding>
-      {hasGraphWidgetTooltipClick && (
+      {shouldShowClickFooter && (
         <>
           <StyledTooltipSeparator />
           <StyledHorizontalSectionPadding addBottom>

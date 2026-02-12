@@ -1,0 +1,92 @@
+---
+title: Workflow-Läufe
+description: Workflow-Ausführungen überwachen und verwalten.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Über Läufe
+
+Ein **Lauf** ist ein Protokoll einer Workflow-Ausführung. Jedes Mal, wenn ein Workflow ausgelöst wird – sei es durch ein Datensatzereignis, einen Zeitplan, eine manuelle Aktion oder einen Webhook – wird ein neuer Lauf erstellt.
+
+## Läufe anzeigen
+
+### Im Workflow-Editor
+
+1. Öffnen Sie den Workflow, den Sie überwachen möchten
+2. Klicken Sie auf das **Läufe**-Panel auf der rechten Seite
+3. Sehen Sie eine Liste der letzten Läufe mit ihrem Status
+
+### In der Ansicht Workflow-Läufe
+
+1. Gehen Sie in der Seitenleiste zu **Workflow-Läufe**
+2. Zeigen Sie Läufe über alle Workflows hinweg an
+3. Filtern Sie nach Status, Workflow oder Datum
+
+## Laufstatus
+
+| Status              | Beschreibung                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------- |
+| **Wird ausgeführt** | Workflow wird derzeit ausgeführt                                                                  |
+| **Abgeschlossen**   | Workflow wurde erfolgreich abgeschlossen                                                          |
+| **Fehlgeschlagen**  | Beim Workflow ist ein Fehler aufgetreten und wurde angehalten                                     |
+| **Wartend**         | Workflow ist angehalten (z. B. wartet auf eine Verzögerungsaktion oder eine Formularübermittlung) |
+
+## Laufdetails
+
+Klicken Sie auf einen beliebigen Lauf, um Folgendes zu sehen:
+
+* **Status**: Aktueller Zustand des Laufs
+* **Gestartet am**: Wann der Lauf begonnen hat
+* **Dauer**: Wie lange der Lauf gedauert hat
+* **Triggerdaten**: Die Eingabe, die den Workflow gestartet hat
+* **Schrittausgaben**: Daten, die von jedem Schritt zurückgegeben wurden
+* **Fehlermeldungen**: Falls der Lauf fehlgeschlagen ist – was schiefgelaufen ist
+
+## Ausführung Schritt für Schritt
+
+Jeder Lauf zeigt den Fortschritt in Ihrem Workflow:
+
+1. Sehen Sie, welche Schritte erfolgreich abgeschlossen wurden
+2. Ermitteln Sie, wo Fehler aufgetreten sind
+3. Sehen Sie sich die zwischen den Schritten übergebenen Daten an
+4. Beheben Sie Probleme, indem Sie die Eingaben und Ausgaben der Schritte untersuchen
+
+## Fehlerbehandlung
+
+Wenn ein Lauf fehlschlägt:
+
+1. Öffnen Sie den fehlgeschlagenen Lauf
+2. Finden Sie den Schritt, der den Fehler verursacht hat
+3. Prüfen Sie die Fehlermeldung auf Details
+4. Häufige Probleme:
+   * Fehlende erforderliche Felder
+   * Ungültiges Datenformat
+   * Externe API-Fehler
+   * Berechtigungsprobleme
+
+## Workflows erneut ausführen
+
+Wenn ein Lauf fehlschlägt, können Sie:
+
+* Beheben Sie das zugrunde liegende Problem und warten Sie auf den nächsten Trigger
+* Bei manuellen Workflows erneut auslösen – mit denselben oder aktualisierten Daten
+* Überprüfen Sie die Workflow-Logik, um künftige Fehler zu vermeiden
+
+## Tipps zur Leistung
+
+### Laufhistorie verwalten
+
+* Läufe werden zu Referenzzwecken aufbewahrt
+* Sehr alte Läufe können automatisch archiviert werden
+* Exportieren Sie Laufdaten, wenn Sie Aufzeichnungen aufbewahren müssen
+
+### Best Practices für das Monitoring
+
+* Überprüfen Sie Läufe regelmäßig, nachdem Sie neue Workflows aktiviert haben
+* Überprüfen Sie fehlgeschlagene Läufe, um Muster zu erkennen
+
+## Verwandte Themen
+
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Workflow-Fehlerbehebung](/l/de/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

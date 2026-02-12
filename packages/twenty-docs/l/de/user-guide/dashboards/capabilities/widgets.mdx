@@ -1,0 +1,149 @@
+---
+title: Widgets
+description: Erkunden Sie die Widget-Typen und Visualisierungsoptionen in Twenty.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Verfügbare Widgets
+
+Twenty bietet verschiedene Widget-Typen, um Ihre CRM-Daten zu visualisieren.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Balkendiagramme</span>
+
+Stellen Sie Daten als horizontale oder vertikale Balken dar.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Balkendiagramm" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Vergleich von Werten über Kategorien hinweg
+* Ranglisten anzeigen
+* Kennzahlen nach Zeitraum verfolgen
+
+**Beispielverwendung:**
+
+* Deals nach Phase
+* Umsatz nach Vertriebsmitarbeitern
+* Hinzugefügte Kontakte pro Monat
+
+<Note>
+  **Anzeigegrenzen**: Balkendiagramme können maximal 100 Balken anzeigen sowie bei Verwendung von Group By 50 Gruppen pro Balken. Wenn Sie die Warnung "Nicht angezeigte Daten: max. X Balken pro Diagramm" sehen, fügen Sie Filter hinzu, um Ihre Daten einzugrenzen, oder ändern Sie die Gruppierung (z. B. nach Woche statt nach Tagen).
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Tortendiagramme</span>
+
+Zeigen Sie Anteile eines Ganzen.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Tortendiagramm" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Zusammensetzung oder Verteilung anzeigen
+* Teile mit dem Ganzen vergleichen
+* Wichtige Segmente hervorheben
+
+**Beispielverwendung:**
+
+* Deal-Verteilung nach Quelle
+* Kontaktaufschlüsselung nach Branche
+* Pipeline-Zusammensetzung nach Eigentümer
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Liniendiagramme</span>
+
+Stellen Sie Trends im Zeitverlauf dar.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Liniendiagramm" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Veränderungen im Zeitverlauf verfolgen
+* Trends erkennen
+* Mehrere Kennzahlen vergleichen
+
+**Beispielverwendung:**
+
+* Monatlicher Trend der Anzahl der Deals
+* Umsatzwachstum über Quartale
+* Aktivitätsniveau im Zeitverlauf
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregierte Diagramme</span>
+
+Zeigen Sie einzelne Kennzahlen prominent an.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregiertes Diagramm" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* KPIs hervorheben
+* Summen oder Durchschnitte anzeigen
+* Schnelle Statusprüfungen
+
+**Beispielverwendung:**
+
+* Gesamtwert der Pipeline
+* Anzahl offener Chancen
+* Konversionsrate
+
+**Erweiterte Optionen:**
+
+* **Verhältnis**: Berechnen Sie für Select-Felder Verhältnisse zwischen Werten. Gehen Sie zu **Angezeigte Daten** → wählen Sie Ihr Feld → aktivieren Sie die Option **Verhältnis**.
+* **Präfix & Suffix**: Fügen Sie benutzerdefinierten Text vor oder nach der Zahl hinzu (z. B. "$"-Präfix oder "%"-Suffix) für eine bessere Lesbarkeit.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+Betten Sie externe Tools und Inhalte direkt in Ihr Dashboard ein.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Externe Berichte oder Dashboards anzeigen
+* Vertriebstools von Drittanbietern integrieren
+* Live-Inhalte aus anderen Systemen anzeigen
+
+**Beispielverwendung:**
+
+* Kennzahlen aus Ihrem Support-Tool
+* Kennzahlen aus Ihrem Dialer
+* Live-Inhalte aus Ihrem Tool für Sales-Sequenzen
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich-Text</span>
+
+Fügen Sie formatierten Text und Inhalte direkt zu Ihrem Dashboard hinzu.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich-Text" />
+</Frame>
+
+**Am besten geeignet für:**
+
+* Kontext oder Anweisungen hinzufügen
+* Dashboard-Beschreibungen
+* Notizen und Anmerkungen
+
+**Funktionen:**
+
+* Rich-Text-Formatierung (fett, kursiv, Listen usw.)
+* Bild- und Dateiuploads
+* Bearbeitung im Markdown-Stil
+
+<Note>
+  **Bald verfügbar**: Tachometerdiagramme und Tabellen sind noch nicht verfügbar, stehen aber auf unserer Roadmap.
+</Note>
+
+### Widgets duplizieren
+
+1. Klicken Sie auf das Widget
+2. Öffnen Sie **Optionen**
+3. Klicken Sie auf **Widget duplizieren**

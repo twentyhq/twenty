@@ -1,6 +1,6 @@
 import { type RulesLogic } from 'json-logic-js';
 
-import { evaluateWidgetVisibility } from '../evaluateWidgetVisibility';
+import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {

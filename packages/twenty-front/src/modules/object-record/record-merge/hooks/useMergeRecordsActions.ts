@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
@@ -7,8 +6,10 @@ import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hoo
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isMergeInProgressState } from '../states/mergeInProgressState';
-import { mergeSettingsState } from '../states/mergeSettingsState';
+import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
+import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -17,7 +18,7 @@ type UseMergeRecordsActionsProps = {
 export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
-  const mergeSettings = useRecoilValue(mergeSettingsState);
+  const mergeSettings = useRecoilValueV2(mergeSettingsState);
 
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
@@ -25,7 +26,7 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const setMergeInProgress = useSetRecoilState(isMergeInProgressState);
+  const setMergeInProgress = useSetRecoilStateV2(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -61,7 +62,7 @@ export const useMergeRecordsActions = ({
         message:
           error instanceof Error
             ? error.message
-            : 'Failed to merge records. Please try again.',
+            : t`Failed to merge records. Please try again.`,
       });
     } finally {
       setMergeInProgress(false);

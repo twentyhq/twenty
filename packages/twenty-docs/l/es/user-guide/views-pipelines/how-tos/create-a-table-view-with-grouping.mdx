@@ -1,0 +1,51 @@
+---
+title: Crear una vista de tabla con agrupación
+description: Organice sus registros en grupos contraíbles según el valor del campo.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Agrupe su vista de tabla por un campo Select para organizar los registros en secciones contraíbles.
+
+<img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
+
+## Pasos
+
+1. Navegue al objeto (Personas, Empresas, etc.)
+2. Haga clic en el menú desplegable de la vista → **+ Agregar vista**
+3. Asigne un nombre a su vista (p. ej., "Empresas por tipo")
+4. Haga clic en **Crear**
+5. Haga clic en **Opciones → Agrupar**
+6. Elija un campo Select para agrupar
+7. Haga clic en **Guardar**
+
+## Configurar el orden de los grupos
+
+En **Opciones → Agrupar → Ordenar**, elija cómo se ordenan los grupos:
+
+| Opción                 | Descripción                                                |
+| ---------------------- | ---------------------------------------------------------- |
+| **Alfabético**         | De la A a la Z                                             |
+| **Alfabético inverso** | De la Z a la A                                             |
+| **Orden manual**       | Arrastre los grupos para reordenarlos en "Grupos visibles" |
+
+Haga clic en el **icono de ojo** junto a un grupo para ocultarlo de la vista.
+
+<Note>
+  **Para un mejor rendimiento, limite a 10-15 grupos visibles.** Si necesita más, considere usar un Dashboard.
+</Note>
+
+## Ejemplo: Empresas por industria
+
+1. Vaya a **Empresas**
+2. Cree una nueva vista llamada "Por industria"
+3. Haga clic en **Opciones → Agrupar**
+4. Seleccione el campo **Industria**
+5. Guardar
+
+Ahora sus empresas están organizadas por industria, lo que facilita centrarse en un segmento a la vez.
+
+## Relacionado
+
+* [Vistas de tabla](/l/es/user-guide/views-pipelines/capabilities/table-views) — todas las funciones de las vistas de tabla
+* [Filtros y ordenación](/l/es/user-guide/views-pipelines/capabilities/filters-and-sorting) — combinar la agrupación con filtros

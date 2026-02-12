@@ -1,6 +1,6 @@
+import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isFieldOrRelationNestedFieldDateKind } from '../isFieldOrNestedFieldDateKind';
 
 describe('isFieldOrNestedFieldDateKind', () => {
   it('returns false when fieldId is null', () => {
@@ -47,12 +47,13 @@ describe('isFieldOrNestedFieldDateKind', () => {
         {
           id: 'relation-field-id',
           type: FieldMetadataType.RELATION,
-          relation: { targetObjectMetadata: { nameSingular: 'company' } },
+          relation: { targetObjectMetadata: { id: 'company-id' } },
         },
       ],
     } as ObjectMetadataItem;
 
     const companyObjectMetadataItem = {
+      id: 'company-id',
       nameSingular: 'company',
       fields: [
         {

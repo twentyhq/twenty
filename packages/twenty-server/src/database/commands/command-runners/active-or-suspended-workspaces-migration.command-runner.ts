@@ -7,7 +7,7 @@ import {
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 export type ActiveOrSuspendedWorkspacesMigrationCommandOptions =
   WorkspacesMigrationCommandOptions;
@@ -18,10 +18,10 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
 > extends WorkspacesMigrationCommandRunner<Options> {
   constructor(
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
+    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService, [
       WorkspaceActivationStatus.ACTIVE,
       WorkspaceActivationStatus.SUSPENDED,
     ]);

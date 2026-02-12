@@ -1,0 +1,149 @@
+---
+title: Afficher le Montant attendu dans votre pipeline},{
+description: Calculez et affichez les valeurs d'affaire pondérées en fonction de la probabilité de l'étape.
+---
+
+Le Montant attendu est une valeur calculée : **Montant × Probabilité**. Cela vous aide à prévoir les revenus en pondérant les affaires selon leur probabilité de conclusion.
+
+<Tip>
+  Ceci est un exemple de création de [Champs de formule](/l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields) à l'aide de workflows.
+</Tip>
+
+Ce guide vous explique comment configurer les champs personnalisés et les workflows nécessaires pour calculer et afficher les montants attendus dans votre pipeline.
+
+## Étape 1 : Créer des champs personnalisés
+
+Vous avez besoin de deux champs personnalisés sur l'objet Opportunités.
+
+### Créer le champ Probabilité
+
+1. Allez dans **Paramètres → Modèle de données → Opportunités**
+2. Cliquez sur **+ Ajouter un champ**
+3. Configurer:
+   * **Nom** : Probabilité
+   * **Type** : Nombre
+   * **Description** : Probabilité selon l'étape (0–100 %)
+4. Cliquez sur **Enregistrer**
+
+### Créer le champ Montant attendu
+
+1. Cliquez sur **+ Ajouter un champ**
+2. Configurer:
+   * **Nom** : Montant attendu
+   * **Type** : Devise
+   * **Description** : Calculé : Montant × Probabilité
+3. Cliquez sur **Enregistrer**
+
+### Facultatif : rendre les champs en lecture seule pour les utilisateurs
+
+Si vous ne souhaitez pas que les utilisateurs modifient manuellement ces champs calculés :
+
+1. Allez dans **Paramètres → Rôles**
+2. Sélectionnez le rôle à configurer
+3. Recherchez l'objet Opportunités
+4. Définissez les champs **Probabilité** et **Montant attendu** en lecture seule
+
+Cela garantit que seuls les workflows peuvent mettre à jour ces valeurs.
+
+## Étape 2 : Créer le workflow n° 1 — Mettre à jour la probabilité lors d'un changement d'étape
+
+Ce workflow définit automatiquement la Probabilité lorsqu'une opportunité passe à une nouvelle étape.
+
+### Créer le workflow
+
+1. Allez dans **Workflows**
+2. Cliquez sur **+ Nouveau workflow**
+3. Nommez-le "Mettre à jour la probabilité lors d'un changement d'étape"
+
+### Configurer le déclencheur
+
+1. Ajoutez un déclencheur **Enregistrement créé ou mis à jour**
+2. Sélectionnez **Opportunités** comme objet
+3. Filtrer sur : le champ **Étape** est mis à jour
+
+### Ajouter des branches pour chaque étape
+
+Créez une branche pour chaque étape avec sa probabilité :
+
+| Étape         | Probabilité |
+| ------------- | ----------- |
+| Nouveau       | 10 %        |
+| Qualifié      | 25 %        |
+| Réunion       | 40 %        |
+| Proposition   | 60 %        |
+| Négociation   | 80 %        |
+| Fermée gagnée | 100 %       |
+| Fermée perdue | 0%          |
+
+<Note>
+  Pour créer une nouvelle branche, cliquez avec le bouton droit sur la zone de travail du workflow et cliquez sur **Nouvelle action**. Puis, reliez cette action au nœud précédent en faisant glisser la flèche du nœud précédent vers cette nouvelle action.
+</Note>
+
+Pour chaque étape :
+
+1. Ajoutez un nœud **Filtre** : Étape = [nom de l'étape]
+2. Ajoutez une action **Mettre à jour l'enregistrement** :
+   * Enregistrement : l'opportunité déclenchante
+   * Champ : Probabilité
+   * Valeur : [probabilité pour cette étape]
+
+### Calculer le montant attendu
+
+Après la jonction des branches :
+
+1. Ajoutez un nœud **Filtre** : le champ Montant n'est pas vide
+2. Ajoutez une action **Mettre à jour l'enregistrement** :
+   * Enregistrement : l'opportunité déclenchante
+   * Champ : Montant attendu
+   * Valeur : Montant × Probabilité
+
+## Étape 3 : Créer le workflow n° 2 — Recalculer lors d'une modification du montant
+
+Ce workflow met à jour le Montant attendu lorsque le Montant de l'affaire change.
+
+### Créer le workflow
+
+1. Allez dans **Workflows**
+2. Cliquez sur **+ Nouveau workflow**
+3. Nommez-le "Recalculer le Montant attendu lors d'une modification du Montant"
+
+### Configurer le déclencheur
+
+1. Ajoutez un déclencheur **Enregistrement créé ou mis à jour**
+2. Sélectionnez **Opportunités** comme objet
+3. Filtrer sur : le champ **Montant** est mis à jour
+
+### Ajouter la logique
+
+1. Ajoutez un nœud **Filtre** : le champ Montant n'est pas vide
+2. Ajoutez une action **Mettre à jour l'enregistrement** :
+   * Enregistrement : l'opportunité déclenchante
+   * Champ : Montant attendu
+   * Valeur : Montant × Probabilité
+
+## Étape 4 : Afficher dans votre pipeline
+
+Affichez maintenant les totaux de Montant attendu dans votre vue Kanban :
+
+1. Ouvrez votre vue Kanban **Pipeline des ventes**
+2. Cliquez sur le **nombre** à côté de n'importe quel nom d'étape en haut d'une colonne
+3. Sélectionnez **Somme**
+4. Choisissez **Montant attendu**
+
+Chaque colonne affiche maintenant la valeur totale pondérée du pipeline pour cette étape.
+
+## Résumé
+
+| Composant                 | Objectif                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| **Champ Probabilité**     | Stocke la probabilité de gain selon l'étape                                         |
+| **Champ Montant attendu** | Stocke Montant × Probabilité                                                        |
+| **Workflow n° 1**         | Met à jour la Probabilité lorsque l'Étape change, puis recalcule le Montant attendu |
+| **Workflow n° 2**         | Recalcule le Montant attendu lorsque le Montant change                              |
+| **Agrégation**            | Affiche la somme du Montant attendu par étape                                       |
+
+## Connexes
+
+* [Champs de formule](/l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields) — créer des champs calculés à l'aide de workflows
+* [Vues Kanban](/l/fr/user-guide/views-pipelines/capabilities/kanban-views) — agrégations de colonnes
+* [Comment créer des champs personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-fields) — configuration des champs

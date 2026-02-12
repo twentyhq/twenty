@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
@@ -7,10 +7,9 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
@@ -34,7 +33,6 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     FormProviderDecorator,
-    I18nFrontDecorator,
   ],
   args: {
     existingFieldMetadataId: fieldMetadataItem.id,

@@ -1,0 +1,130 @@
+---
+title: Aduceți răspunsurile din Typeform în Twenty
+description: Gestionați payload-ul webhook al Typeform pentru a crea potențiali clienți din răspunsurile la formular.
+---
+
+Pentru configurarea standard a unui webhook, consultați [Configurați un declanșator Webhook](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). Acest articol acoperă gestionarea specifică necesară pentru structura payload-ului personalizat al Typeform.
+
+### Pasul 1: Creați un flux de lucru Webhook
+
+1. Accesați **Setări → Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Selectați **Webhook** ca declanșator
+4. Copiați URL-ul webhook
+
+### Pasul 2: Configurați Typeform
+
+1. În Typeform, deschideți formularul dvs.
+2. Accesați **Connect → Webhooks**
+3. Lipiți URL-ul webhook al Twenty
+4. Salvează
+
+### Pasul 3: Înțelegeți payload-ul Typeform
+
+Typeform trimite o structură JSON îmbricată. Iată un exemplu simplificat:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Lucruri importante de reținut:
+
+* Datele formularului sunt îmbricate sub `form_response`
+* **Răspunsurile sunt returnate ca un array**, nu ca câmpuri denumite
+* Fiecare răspuns include tipul și titlul câmpului pentru referință
+
+### Pasul 4: Extrageți câmpurile din array-ul răspunsurilor
+
+Deoarece `answers` este un array, în pașii următori puteți selecta doar întregul array — nu câmpuri individuale. Adăugați o acțiune **Code** pentru a extrage câmpurile de care aveți nevoie:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+Acum, în pașii următori, puteți selecta `contact.firstName`, `contact.email` etc. din selectorul de variabile.
+
+<Tip>
+  Pentru mai multe detalii despre gestionarea array-urilor în acțiunile Code, consultați [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Pasul 5: Creați înregistrarea
+
+Adăugați o acțiune **Create Record**:
+
+| Câmp                | Valoare                                               |
+| ------------------- | ----------------------------------------------------- |
+| **Obiect**          | Persoane                                              |
+| **Prenume**         | `{{code.contact.firstName}}`                          |
+| **Nume de familie** | `{{code.contact.lastName}}`                           |
+| **Email**           | `{{code.contact.email}}`                              |
+| **Companie**        | Căutați sau creați pe baza `{{code.contact.company}}` |
+
+### Pasul 6: Testați și activați
+
+1. Trimiteți un răspuns de test în Typeform
+2. Verificați rularea fluxului de lucru pentru a confirma că datele au fost capturate
+3. Activați fluxul de lucru
+
+## Conexe
+
+* [Configurați un declanșator Webhook](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

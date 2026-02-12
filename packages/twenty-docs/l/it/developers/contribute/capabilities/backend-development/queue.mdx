@@ -1,0 +1,41 @@
+---
+title: Coda di messaggi
+---
+
+Le code facilitano l'esecuzione di operazioni asincrone. Possono essere usate per eseguire attività in background come l'invio di un'email di benvenuto alla registrazione.
+Ogni caso d'uso avrà la propria classe di coda estesa da `MessageQueueServiceBase`.
+
+Al momento supportiamo solo `bull-mq`[bull-mq](https://bullmq.io/) come driver della coda.
+
+## Passaggi per creare e utilizzare una nuova coda
+
+1. Aggiungi un nome di coda per la tua nuova coda sotto l'enum `MESSAGE_QUEUES`.
+2. Fornire l'implementazione della fabbrica della coda con il nome della coda come token di dipendenza.
+3. Inserisci la coda che hai creato nel modulo/servizio richiesto con il nome della coda come token di dipendenza.
+4. Aggiungi una classe worker con iniezione basata su token, proprio come il produttore.
+
+### Esempio di utilizzo
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

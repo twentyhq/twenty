@@ -9,7 +9,17 @@ import {
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+import {
+  CLEAN_SUSPENDED_WORKSPACES_OPERATIONS,
+  CleanerWorkspaceService,
+  CleanSuspendedWorkspacesOperation,
+  type CleanSuspendedWorkspacesOptions,
+} from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
+
+type CleanSuspendedWorkspacesCommandOptions = MigrationCommandOptions &
+  Pick<CleanSuspendedWorkspacesOptions, 'ignoreDestroyGracePeriod'> & {
+    onlyOperation?: CleanSuspendedWorkspacesOperation;
+  };
 
 @Command({
   name: 'workspace:clean',
@@ -38,11 +48,32 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
     return this.workspaceIds;
   }
 
+  @Option({
+    flags: '--ignore-destroy-grace-period',
+    description:
+      'Ignore the grace period and hard delete soft-deleted workspaces immediately',
+    required: false,
+  })
+  parseIgnoreDestroyGracePeriod(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--only-operation <operation>',
+    description:
+      'Run only a specific operation: warn, destroy (hard delete), or soft-delete',
+    required: false,
+    choices: [...CLEAN_SUSPENDED_WORKSPACES_OPERATIONS],
+  })
+  parseOnlyOperation(val: string): CleanSuspendedWorkspacesOperation {
+    return val as CleanSuspendedWorkspacesOperation;
+  }
+
   async fetchSuspendedWorkspaceIds(): Promise<string[]> {
     const suspendedWorkspaces = await this.workspaceRepository.find({
-      select: ['id'],
       where: {
         activationStatus: In([WorkspaceActivationStatus.SUSPENDED]),
+        ...(this.workspaceIds.length > 0 ? { id: In(this.workspaceIds) } : {}),
       },
       withDeleted: true,
     });
@@ -52,22 +83,25 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
 
   override async runMigrationCommand(
     _passedParams: string[],
-    options: MigrationCommandOptions,
+    options: CleanSuspendedWorkspacesCommandOptions,
   ): Promise<void> {
-    const { dryRun } = options;
+    const { dryRun, ignoreDestroyGracePeriod, onlyOperation } = options;
 
-    const suspendedWorkspaceIds =
-      this.workspaceIds.length > 0
-        ? this.workspaceIds
-        : await this.fetchSuspendedWorkspaceIds();
+    const suspendedWorkspaceIds = await this.fetchSuspendedWorkspaceIds();
+
+    const operationLabel = onlyOperation
+      ? `ONLY ${onlyOperation.toUpperCase()} - `
+      : '';
 
     this.logger.log(
-      `${dryRun ? 'DRY RUN - ' : ''}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
+      `${dryRun ? 'DRY RUN - ' : ''}${ignoreDestroyGracePeriod ? 'IGNORING GRACE PERIOD - ' : ''}${operationLabel}Cleaning ${suspendedWorkspaceIds.length} suspended workspaces`,
     );
 
-    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      suspendedWorkspaceIds,
+    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
+      workspaceIds: suspendedWorkspaceIds,
       dryRun,
-    );
+      ignoreDestroyGracePeriod,
+      onlyOperation,
+    });
   }
 }

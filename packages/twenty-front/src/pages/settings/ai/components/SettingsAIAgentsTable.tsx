@@ -14,7 +14,6 @@ import { useTheme } from '@emotion/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconChevronRight,
   IconFilter,
   IconSearch,
@@ -26,7 +25,6 @@ import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 import Skeleton from 'react-loading-skeleton';
-import { Section } from 'twenty-ui/layout';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import {
   SettingsAIAgentTableRow,
@@ -52,11 +50,7 @@ const StyledTableHeaderRow = styled(StyledAIAgentTableRow)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsAIAgentsTable = ({
-  withSearchBar = true,
-}: {
-  withSearchBar?: boolean;
-}) => {
+export const SettingsAIAgentsTable = () => {
   const { data, loading } = useFindManyAgentsQuery();
 
   const { t } = useLingui();
@@ -82,52 +76,45 @@ export const SettingsAIAgentsTable = ({
   });
 
   return (
-    <Section>
-      <H2Title
-        title={t`Agents`}
-        description={t`Agents used to route queries to specialized agents`}
-      />
-
-      {withSearchBar && (
-        <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="settings-ai-agents-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search an agent...`}
-            value={searchTerm}
-            onChange={setSearchTerm}
-          />
-          <Dropdown
-            dropdownId="settings-ai-agents-filter-dropdown"
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={
-              <Button
-                Icon={IconFilter}
-                size="medium"
-                variant="secondary"
-                accent="default"
-                ariaLabel={t`Filter`}
-              />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItemToggle
-                    LeftIcon={IconSettingsAutomation}
-                    onToggleChange={() =>
-                      setShowWorkflowAgents(!showWorkflowAgents)
-                    }
-                    toggled={showWorkflowAgents}
-                    text={t`Workflow agents`}
-                    toggleSize="small"
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </StyledSearchAndFilterContainer>
-      )}
+    <>
+      <StyledSearchAndFilterContainer>
+        <StyledSearchInput
+          instanceId="settings-ai-agents-search"
+          LeftIcon={IconSearch}
+          placeholder={t`Search an agent...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+        <Dropdown
+          dropdownId="settings-ai-agents-filter-dropdown"
+          dropdownPlacement="bottom-end"
+          dropdownOffset={{ x: 0, y: 8 }}
+          clickableComponent={
+            <Button
+              Icon={IconFilter}
+              size="medium"
+              variant="secondary"
+              accent="default"
+              ariaLabel={t`Filter`}
+            />
+          }
+          dropdownComponents={
+            <DropdownContent>
+              <DropdownMenuItemsContainer>
+                <MenuItemToggle
+                  LeftIcon={IconSettingsAutomation}
+                  onToggleChange={() =>
+                    setShowWorkflowAgents(!showWorkflowAgents)
+                  }
+                  toggled={showWorkflowAgents}
+                  text={t`Workflow agents`}
+                  toggleSize="small"
+                />
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
+          }
+        />
+      </StyledSearchAndFilterContainer>
 
       <StyledTable>
         <StyledTableHeaderRow>
@@ -165,6 +152,6 @@ export const SettingsAIAgentsTable = ({
           />
         ))}
       </StyledTable>
-    </Section>
+    </>
   );
 };

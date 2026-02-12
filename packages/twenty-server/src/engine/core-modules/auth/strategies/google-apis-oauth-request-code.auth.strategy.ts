@@ -28,6 +28,8 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
         redirectLocation: req.params.redirectLocation,
         calendarVisibility: req.params.calendarVisibility,
         messageVisibility: req.params.messageVisibility,
+        skipMessageChannelConfiguration:
+          req.params.skipMessageChannelConfiguration,
       }),
     };
 

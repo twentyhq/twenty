@@ -1,0 +1,74 @@
+---
+title: 受信メール数を表示
+description: 各連絡先から受信したメール数を自動的にカウントして表示するワークフローを作成します。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## 概要
+
+このワークフローは新しいメールを受信するたびにトリガーされ、その送信者からのメールの合計数で Person レコード上のカスタムフィールドを更新します。
+
+## 前提条件
+
+このワークフローを設定する前に、**People** オブジェクトにカスタムフィールドを作成します:
+
+1. 「**設定 → データモデル → People**」に移動します
+2. 新しい **Number** フィールドを追加します
+3. 「この人物から受信したメール数」などの名前を付けます
+
+## ステップバイステップの設定
+
+<VimeoEmbed videoId="1148700336" title="デモ動画" />
+
+### ステップ 1: トリガーを設定
+
+1. 「**Workflows**」に移動し、新しいワークフローを作成します
+2. トリガーとして **Record is Created** を選択します
+3. **Message Participants**（Advanced objects 内にあります）を選択します
+
+<Note>
+  Message Participant は、メッセージ ID と person ID の組み合わせで、メッセージごとに一意のレコードを作成します。 これは、送信者（または受信者）のメールアドレスを含む `handle` フィールドにアクセスできるため、Messages を直接扱うよりも追跡が容易です。
+</Note>
+
+### ステップ 2: Role でフィルター
+
+1. 「**Filter**」アクションを追加します
+2. 条件を設定します: **Role** が **FROM** と等しい
+
+これにより、この人物が送信したメッセージのみをカウントし、相手宛てに送られたメッセージは含めないようにします。
+
+### ステップ 3: 同じ Handle を持つすべての Message Participants を検索
+
+1. 「**Search Records**」アクションを追加します
+2. オブジェクトとして **Message Participants** を選択します
+3. フィルターを追加します: **Handle** がトリガーの handle（送信者のメールアドレス）と等しい、かつ **Role** が **FROM** と等しい
+4. **Limit** を 1 から **200**（最大値）に増やします
+
+これにより、このメールアドレスからのすべてのメッセージを見つけ、合計数を取得します。
+
+<Note>
+  Search Records アクションは、返せるレコードが最大 200 件に制限されています。 ただし、個々のレコードではなく `totalCount` の値のみを使用するため、このステップではこの人物が送信したメールの総数が返されます。
+</Note>
+
+### ステップ 4: Create or Update Record アクションで Person レコードを更新
+
+1. 「**Create or Update Record**」アクションを追加します
+
+<Warning>
+  ここでは **Update Record** の代わりに **Upsert Record** を使用します。 これにより、前のステップからレコード ID を取得する必要はなく、メールアドレス（`handle` フィールド）で人物を特定できます。
+</Warning>
+
+2. オブジェクトとして **People** を選択します
+3. Message Participant の `handle` とメールアドレスを照合して該当の人物を特定します
+4. カスタムの「受信メール数」フィールドを `{{searchRecords.totalCount}}` に設定します
+
+Search Records アクションの `totalCount` の値は、この人物から受信したメールの総数を表します。
+
+## 関連
+
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [カスタムフィールドの作成方法](/l/ja/user-guide/data-model/how-tos/customize-your-data-model)
+* [Search Records アクション](/l/ja/user-guide/workflows/capabilities/workflow-actions#search-records)

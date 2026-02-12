@@ -5,6 +5,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const mutationResendWorspaceInvitationCallSpy = jest.fn();
 
 jest.mock('~/generated-metadata/graphql', () => ({
+  ...jest.requireActual('~/generated-metadata/graphql'),
   useResendWorkspaceInvitationMutation: () => [
     mutationResendWorspaceInvitationCallSpy,
   ],

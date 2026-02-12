@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { isNumber, isString } from '@sniptt/guards';
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { type ComponentProps, type JSX } from 'react';
 
 const StyledColumnTitle = styled.h1`

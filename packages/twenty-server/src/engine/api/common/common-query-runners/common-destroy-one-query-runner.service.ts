@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { CommonDestroyManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-many-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -52,6 +53,9 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
       throw new CommonQueryRunnerException(
         'Record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This record does not exist or has been deleted.`,
+        },
       );
     }
 
@@ -89,6 +93,7 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
       throw new CommonQueryRunnerException(
         'Missing id',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
   }

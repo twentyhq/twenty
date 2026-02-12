@@ -1,1 +1,0 @@
-export { SettingsReleases } from './SettingsReleases';

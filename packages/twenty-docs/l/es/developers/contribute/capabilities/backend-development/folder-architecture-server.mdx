@@ -1,0 +1,125 @@
+---
+title: Arquitectura de Carpetas
+info: Una mirada detallada a la arquitectura de carpetas de nuestro servidor
+---
+
+La estructura del directorio backend es la siguiente:
+
+```
+servidor
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Habilidad
+
+Define permisos e incluye gestores para cada entidad.
+
+## Decoradores
+
+Define decoradores personalizados en NestJS para funcionalidad adicional.
+
+Ver [decoradores personalizados](https://docs.nestjs.com/custom-decorators) para más detalles.
+
+## Filtros
+
+Incluye filtros de excepciones para manejar excepciones que puedan ocurrir en endpoints de GraphQL.
+
+## Guardias
+
+Ver [guardias](https://docs.nestjs.com/guards) para más detalles.
+
+## Salud
+
+Incluye una API REST públicamente disponible (healthz) que devuelve un JSON para confirmar si la base de datos está funcionando como se esperaba.
+
+## Metadatos
+
+Define objetos personalizados y hace disponible una API de GraphQL (graphql/metadata).
+
+## Espacio de trabajo
+
+Genera y sirve un esquema GraphQL personalizado basado en los metadatos.
+
+### Estructura del Directorio de Espacio de Trabajo
+
+```
+workspace
+
+  └───construcción-esquema-espacio-de-trabajo
+    └───fábricas
+    └───tipos-graphql
+    └───bases-datos
+    └───interfaces
+    └───definiciones-objetos
+    └───servicios
+    └───almacenamiento
+    └───utilidades
+  └───constructor-resolver-espacio-de-trabajo
+    └───fábricas
+    └───interfaces
+  └───constructor-consultas-espacio-de-trabajo
+    └───fábricas
+    └───interfaces
+  └───ejecutor-consultas-espacio-de-trabajo
+    └───interfaces
+    └───utilidades
+  └───fuente-datos-espacio-de-trabajo
+  └───gestor-espacio-de-trabajo
+  └───ejecutor-migraciones-espacio-de-trabajo
+  └───utilidades
+  └───espacio.trabajo.module.ts
+  └───espacio.trabajo.factory.spec.ts
+  └───espacio.trabajo.factory.ts
+```
+
+La raíz del directorio de espacio de trabajo incluye el `espacio.trabajo.factory.ts`, un archivo que contiene la función `createGraphQLSchema`. Esta función genera un esquema específico para el espacio de trabajo utilizando los metadatos para adaptar un esquema para espacios de trabajo individuales. Al separar la construcción del esquema y del resolver, usamos la función `makeExecutableSchema`, que combina estos elementos discretos.
+
+Esta estrategia no solo se trata de organización, sino que también ayuda con la optimización, como el almacenamiento en caché de definiciones de tipos generados para mejorar el rendimiento y la escalabilidad.
+
+### Constructor de Esquema de Espacio de Trabajo
+
+Genera el esquema GraphQL, e incluye:
+
+#### Fábricas:
+
+Constructores especializados para generar constructos relacionados con GraphQL.
+
+* La fábrica de tipos traduce los metadatos de los campos en tipos GraphQL utilizando `TypeMapperService`.
+* La fábrica de definiciones de tipos crea objetos de entrada o salida de GraphQL derivados de `objectMetadata`.
+
+#### Tipos GraphQL
+
+Incluye enumeraciones, entradas, objetos y escalares, y sirve como bloques de construcción para la construcción del esquema.
+
+#### Interfaces y Definiciones de Objetos
+
+Contiene los planos para entidades GraphQL, e incluye tanto tipos predefinidos como personalizados como `MONEY` o `URL`.
+
+#### Servicios
+
+Contiene el servicio responsable de asociar FieldMetadataType con su escalar de GraphQL apropiado o modificadores de consulta.
+
+#### Almacenamiento
+
+Incluye la clase `TypeDefinitionsStorage` que contiene definiciones de tipos reutilizables, previniendo duplicación de tipos GraphQL.
+
+### Constructor de Resolver de Espacio de Trabajo
+
+Crea funciones de resolutor para consultar y modificar el esquema GraphQL.
+
+Cada fábrica en este directorio es responsable de producir un tipo de resolutor distinto, como el `FindManyResolverFactory`, diseñado para aplicación adaptable a través de varias tablas.
+
+### Ejecutor de Consultas de Espacio de Trabajo
+
+Ejecuta las consultas generadas en la base de datos y analiza el resultado.

@@ -1,0 +1,228 @@
+---
+title: Beziehungen zwischen Objekten per CSV importieren
+description: Vollständige Schritt-für-Schritt-Anleitung zum Verknüpfen von Datensätzen während des CSV-Imports.
+---
+
+## Übersicht
+
+Diese Anleitung führt Sie durch den Import von Beziehungen zwischen Objekten – zum Beispiel das Verknüpfen von Personen mit Unternehmen oder von Opportunities mit Personen.
+
+<Note>**Was kann importiert werden:** Nur Eins-zu-Viele-Beziehungen, die auf einen einzelnen Objekttyp verweisen. Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen, die sowohl mit Personen als auch mit Unternehmen verknüpft sind), werden beim Import noch nicht unterstützt.</Note>
+
+## Beziehungen verstehen
+
+### Was ist eine "Eins-zu-Viele"-Beziehung?
+
+In einer Eins-zu-Viele-Beziehung:
+
+* **Ein** Unternehmen hat **viele** Personen (Mitarbeitende)
+* **Ein** Unternehmen hat **viele** Opportunities
+* **Eine** Person hat **viele** Aufgaben
+
+Die "Eins"-Seite ist die **übergeordnete**. Die "Viele"-Seite ist die **untergeordnete**.
+
+### Häufige Beziehungen in Twenty
+
+| Beziehung                   | "Eins"-Seite (übergeordnet) | "Viele"-Seite (untergeordnet) |
+| --------------------------- | --------------------------- | ----------------------------- |
+| Unternehmen → Personen      | Unternehmen                 | Personen                      |
+| Unternehmen → Opportunities | Unternehmen                 | Opportunities                 |
+| Personen → Aufgaben         | Person                      | Aufgaben                      |
+| Personen → Notizen          | Person                      | Notizen                       |
+
+## Schritt 1: Identifizieren Sie die "Eins"- und "Viele"-Seiten
+
+Bestimmen Sie vor dem Import, welches Objekt übergeordnet und welches untergeordnet ist.
+
+**Fragen Sie sich:** "Hat EIN [Objekt A] VIELE [Objekt B]?"
+
+* Ein Unternehmen → Viele Personen ✓ (Unternehmen ist übergeordnet)
+* Eine Person → Viele Unternehmen ✗ (Das ist falsch – eine Person gehört zu einem Unternehmen)
+
+## Schritt 2: Importieren Sie zuerst die übergeordneten Datensätze
+
+Das übergeordnete Objekt ("Eins"-Seite) muss in Twenty existieren, bevor Sie darauf verweisen können.
+
+**Importreihenfolge:**
+
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (mit Unternehmen verknüpfen)
+3. **Opportunities** an dritter Stelle (mit Unternehmen und/oder Personen verknüpfen)
+4. **Aufgaben/Notizen** (mit einem der oben genannten verknüpfen)
+
+<Warning>
+  **Wenn der übergeordnete Datensatz nicht existiert, schlägt der Import fehl.**
+
+  Stellen Sie stets sicher, dass Unternehmen importiert sind, bevor Sie Personen mit Unternehmensreferenzen importieren.
+</Warning>
+
+## Schritt 3: Notieren Sie den eindeutigen Bezeichner des übergeordneten Objekts
+
+Sie müssen auf den übergeordneten Datensatz mit einem eindeutigen Bezeichner verweisen. Verfügbare Optionen:
+
+| Übergeordnetes Objekt          | Verfügbare eindeutige Bezeichner                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| **Unternehmen**                | `id` (UUID), `domain` (empfohlen) oder ein beliebiges benutzerdefiniertes eindeutiges Feld |
+| **Personen**                   | `id` (UUID), `email` oder ein beliebiges benutzerdefiniertes eindeutiges Feld              |
+| **Arbeitsbereichsmitglieder**  | `id` (UUID), `email` (nicht Name)                                                          |
+| **Benutzerdefinierte Objekte** | `id` (UUID) oder ein beliebiges als eindeutig markiertes Feld                              |
+
+<Note>**Empfehlung:** Verwenden Sie `domain` für Unternehmen und `email` für Personen. Diese sind menschenlesbar und in Ihrer Tabelle leicht zu überprüfen.</Note>
+
+### Den Bezeichner finden
+
+Wenn Sie die `id` benötigen:
+
+1. Exportieren Sie die übergeordneten Datensätze aus Twenty
+2. Der Export enthält die Spalte `id`
+3. Verwenden Sie diese IDs in Ihrer Datei mit untergeordneten Datensätzen
+
+## Schritt 4: Überprüfen Sie, ob das Beziehungsfeld existiert
+
+Stellen Sie vor dem Import sicher, dass das Beziehungsfeld zwischen Ihren Objekten existiert.
+
+**So prüfen oder erstellen Sie es:**
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie Ihr untergeordnetes Objekt aus (z. B. Personen)
+3. Suchen Sie nach einem Beziehungsfeld, das auf das übergeordnete Objekt zeigt (z. B. Unternehmen)
+4. Wenn es nicht existiert, erstellen Sie es:
+   * Klicken Sie auf **+ Feld hinzufügen**
+   * Wählen Sie den Typ **Relation**
+   * Wählen Sie das übergeordnete Objekt
+
+## Schritt 5: Bereiten Sie Ihre CSV-Datei vor
+
+Fügen Sie Ihrer untergeordneten CSV eine Spalte hinzu, die mit dem eindeutigen Bezeichner auf das übergeordnete Objekt verweist.
+
+### Beispiel: Personen, die mit Unternehmen verknüpft werden
+
+**Ihre Personen-CSV:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+Die Spalte `companyDomain` verweist auf die Domain des Unternehmens.
+
+### Formatvorgaben
+
+| Kennung | Format          | Beispiel                               |
+| ------- | --------------- | -------------------------------------- |
+| Domäne  | URL-Format      | `https://acme.com`                     |
+| E-Mail  | Standard-E-Mail | `john@acme.com`                        |
+| ID      | UUID            | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **Das Domain-Format ist wichtig!**
+
+  Verwenden Sie `https://domain.com` (nicht nur `domain.com`). Dies entspricht der Art, wie Twenty Unternehmensdomains speichert, und verhindert Zuordnungsfehler.
+</Warning>
+
+### Wichtige Regeln
+
+1. **Exakte Übereinstimmung erforderlich** — der Wert muss exakt dem übergeordneten Datensatz entsprechen
+2. **Nur EINEN eindeutigen Bezeichner zuordnen** — geben Sie nicht sowohl `companyId` als auch `companyDomain` an
+3. **Groß-/Kleinschreibung beachten** — `Acme.com` ≠ `acme.com`
+
+## Schritt 6: Beziehung hochladen und zuordnen
+
+1. Navigieren Sie zum untergeordneten Objekt (z. B. Personen)
+2. Klicken Sie auf **⋮** → **Datensätze importieren**
+3. Laden Sie Ihre CSV-Datei hoch
+4. Im Schritt zur Feldzuordnung:
+   * Suchen Sie Ihre Beziehungsspalte (z. B. `companyDomain`)
+   * Ordnen Sie sie dem **Company**-Beziehungsfeld zu
+5. Schließen Sie die übrige Zuordnung ab
+6. Prüfen Sie Fehler und bestätigen Sie
+
+Twenty verknüpft automatisch jeden untergeordneten Datensatz mit dem passenden übergeordneten Datensatz.
+
+## Schritt 7: Überprüfen Sie den Import
+
+Nach dem Import:
+
+1. Öffnen Sie einige untergeordnete Datensätze (z. B. Personen)
+2. Überprüfen Sie, ob das Beziehungsfeld das richtige übergeordnete Objekt anzeigt (z. B. Unternehmen)
+3. Öffnen Sie einen übergeordneten Datensatz und prüfen Sie den Bereich mit den zugehörigen Datensätzen
+
+## Häufige Fehler, die Sie vermeiden sollten
+
+| Fehler                                     | Problem                                                   | Lösung                                                                           |
+| ------------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Falsche Importreihenfolge**              | Personen vor Unternehmen importieren                      | Importieren Sie immer zuerst übergeordnete, dann untergeordnete Datensätze       |
+| **Falsches Domain-Format**                 | Verwendung von `acme.com` statt `https://acme.com`        | Verwenden Sie das vollständige URL-Format mit `https://`                         |
+| **Mehrere eindeutige Felder**              | Zuordnung sowohl von `companyId` als auch `companyDomain` | Ordnen Sie nur EINEN eindeutigen Bezeichner zu                                   |
+| **Beziehungsfeld fehlt**                   | Das Beziehungsfeld existiert nicht im Datenmodell         | Erstellen Sie es vor dem Import unter **Einstellungen → Datenmodell**            |
+| **Nicht vorhandene Datensätze**            | Der übergeordnete Datensatz existiert in Twenty nicht     | Importieren Sie zunächst übergeordnete Datensätze oder prüfen Sie auf Tippfehler |
+| **Unterschiedliche Groß-/Kleinschreibung** | `Acme.com` in der Datei, aber `acme.com` in Twenty        | Achten Sie auf exakt übereinstimmende Groß-/Kleinschreibung                      |
+
+## Verknüpfen mit Teammitgliedern
+
+Beim Verknüpfen mit Teammitgliedern (Ihrem Team):
+
+* Verwenden Sie ihre **E-Mail-Adresse**, nicht ihren Namen
+* Beispiel: `owner@yourcompany.com`, nicht "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Was ist, wenn mein übergeordneter Datensatz keine Domain oder E-Mail hat?">
+    Sie haben zwei Optionen:
+
+    1. Verwenden Sie die Twenty-`id` (exportieren Sie übergeordnete Datensätze, um ihre IDs zu erhalten)
+    2. Erstellen Sie ein benutzerdefiniertes eindeutiges Feld in Ihrem Datenmodell, um eine externe ID aus Ihrem vorherigen System zu speichern
+  </Accordion>
+
+  <Accordion title="Kann ich Beziehungen bei bestehenden Datensätzen aktualisieren?">
+    Ja! Geben Sie den eindeutigen Bezeichner des untergeordneten Datensatzes (z. B. `email` für Personen) und den neuen Beziehungswert an. Beim Import wird die Beziehung aktualisiert.
+  </Accordion>
+
+  <Accordion title="Kann ich Viele-zu-Viele-Beziehungen importieren?">
+    Viele-zu-Viele-Beziehungen werden beim Import noch nicht unterstützt. Dies ist für H1 2026 geplant.
+  </Accordion>
+
+  <Accordion title="Kann ich mit mehreren Objekttypen verknüpfen (z. B. Notizen mit Personen UND Unternehmen)?">
+    Beziehungen, die auf mehrere Objekttypen zeigen, werden für Import/Export noch nicht unterstützt. Dies steht auf unserer Roadmap.
+  </Accordion>
+
+  <Accordion title="Was passiert, wenn ein übergeordneter Datensatz nicht existiert?">
+    Der Import zeigt für diese Zeile einen Fehler an. Sie können entweder:
+
+    * Importieren Sie zuerst den übergeordneten Datensatz und importieren Sie dann erneut
+    * Korrigieren Sie den Referenzwert
+    * Entfernen Sie die Zeile aus dem Import
+  </Accordion>
+
+  <Accordion title="Warum wird meine Beziehung nicht korrekt verknüpft?">
+    Häufige Ursachen:
+
+    * Falsches Format (verwenden Sie für Domains `https://domain.com`)
+    * Abweichende Groß-/Kleinschreibung (prüfen Sie die exakte Schreibweise)
+    * Übergeordneter Datensatz existiert nicht (zuerst übergeordnete Datensätze importieren)
+    * Zuordnung mehrerer Bezeichner (verwenden Sie nur einen)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Denken Sie daran: soft gelöschte Datensätze zählen für die Eindeutigkeit.**
+
+  Wenn Sie "not found"-Fehler erhalten, der Datensatz aber zu existieren scheint, prüfen Sie im Befehlsmenü → Gelöschte Datensätze anzeigen. Der übergeordnete Datensatz wurde möglicherweise soft gelöscht.
+</Warning>
+
+## Fehlerbehebung
+
+Gibt es Probleme? Prüfen Sie:
+
+* [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+* [Funktionen zum Import von Beziehungen](/l/de/user-guide/data-migration/capabilities/import-relations)
+* [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)

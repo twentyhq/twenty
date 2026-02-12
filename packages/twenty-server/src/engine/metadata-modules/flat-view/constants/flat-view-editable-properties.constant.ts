@@ -1,4 +1,4 @@
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'name',
@@ -14,4 +14,5 @@ export const FLAT_VIEW_EDITABLE_PROPERTIES = [
   'calendarFieldMetadataId',
   'visibility',
   'mainGroupByFieldMetadataId',
-] as const satisfies (keyof FlatView)[];
+  'shouldHideEmptyGroups',
+] as const satisfies MetadataEntityPropertyName<'view'>[];

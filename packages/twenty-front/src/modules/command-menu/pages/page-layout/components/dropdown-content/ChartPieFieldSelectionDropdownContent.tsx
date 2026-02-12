@@ -1,9 +1,9 @@
 import { ChartGroupByFieldSelectionDropdownContentBase } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
 
 export const ChartPieFieldSelectionDropdownContent = () => {
   return (
-    <ChartGroupByFieldSelectionDropdownContentBase<PieChartConfiguration>
+    <ChartGroupByFieldSelectionDropdownContentBase<TypedPieChartConfiguration>
       fieldMetadataIdKey="groupByFieldMetadataId"
       subFieldNameKey="groupBySubFieldName"
     />

@@ -1,7 +1,7 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledCanvasContainer = styled.div`
   display: grid;
@@ -18,7 +18,7 @@ export const PageLayoutCanvasViewer = ({
   const widget = widgets.at(0);
 
   if (!isDefined(widget)) {
-    throw new Error('No widget found in canvas layout');
+    return null;
   }
 
   return (

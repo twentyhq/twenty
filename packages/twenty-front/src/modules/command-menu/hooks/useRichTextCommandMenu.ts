@@ -1,6 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { IconPencil } from 'twenty-ui/display';
@@ -25,7 +26,7 @@ export const useRichTextCommandMenu = () => {
         openCommandMenu();
         navigateCommandMenu({
           page: CommandMenuPages.EditRichText,
-          pageTitle: 'Rich Text',
+          pageTitle: t`Rich Text`,
           pageIcon: IconPencil,
         });
       },

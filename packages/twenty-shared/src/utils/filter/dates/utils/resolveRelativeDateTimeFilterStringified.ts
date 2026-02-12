@@ -1,44 +1,35 @@
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
 import { resolveRelativeDateTimeFilter } from '@/utils/filter/dates/utils/resolveRelativeDateTimeFilter';
-import { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } from '@/utils/filter/dates/utils/shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone';
-import { isDefined } from '@/utils/validation';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
+import { Temporal } from 'temporal-polyfill';
 
 export const resolveRelativeDateTimeFilterStringified = (
-  relativeDateTimeFilterStringified?: string | null,
+  relativeDateTimeFilterStringified: string | null | undefined,
 ) => {
   if (!isNonEmptyString(relativeDateTimeFilterStringified)) {
     return null;
   }
 
-  const relativeDateFilter = relativeDateFilterStringifiedSchema.parse(
-    relativeDateTimeFilterStringified,
-  );
+  const relativeDateFilterParseResult =
+    relativeDateFilterStringifiedSchema.safeParse(
+      relativeDateTimeFilterStringified,
+    );
 
-  const relativeDateFilterWithDateRange =
-    resolveRelativeDateTimeFilter(relativeDateFilter);
+  if (relativeDateFilterParseResult.success) {
+    const relativeDateFilter = relativeDateFilterParseResult.data;
 
-  if (isDefined(relativeDateFilter.timezone)) {
-    const shiftedStartDate =
-      shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone(
-        relativeDateFilterWithDateRange.start,
-        relativeDateFilter.timezone,
-        'add',
-      );
+    const referenceTodayZonedDateTime = isDefined(relativeDateFilter.timezone)
+      ? Temporal.Now.zonedDateTimeISO(relativeDateFilter.timezone)
+      : Temporal.Now.zonedDateTimeISO();
 
-    const shiftedEndDate =
-      shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone(
-        relativeDateFilterWithDateRange.end,
-        relativeDateFilter.timezone,
-        'add',
-      );
+    const relativeDateFilterWithDateRange = resolveRelativeDateTimeFilter(
+      relativeDateFilter,
+      referenceTodayZonedDateTime.round({ smallestUnit: 'second' }),
+    );
 
-    return {
-      ...relativeDateFilterWithDateRange,
-      start: shiftedStartDate,
-      end: shiftedEndDate,
-    };
+    return relativeDateFilterWithDateRange;
+  } else {
+    return null;
   }
-
-  return relativeDateFilterWithDateRange;
 };

@@ -1,16 +1,15 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailsFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormEmailsFieldInput } from '../FormEmailsFieldInput';
 
 const meta: Meta<typeof FormEmailsFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormEmailsFieldInput',
   component: FormEmailsFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;

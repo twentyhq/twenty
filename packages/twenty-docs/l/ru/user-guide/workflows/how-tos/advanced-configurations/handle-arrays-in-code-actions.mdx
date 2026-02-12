@@ -1,0 +1,82 @@
+---
+title: Работа с массивами в действиях Code
+description: Узнайте, как правильно обрабатывать входные массивы в действиях Code в рабочих процессах.
+---
+
+При работе с массивами в действиях Code вы можете столкнуться с двумя распространёнными проблемами:
+
+1. **Массивы, передаваемые как строки** — данные из внешних систем или предыдущих шагов приходят строкой, а не как настоящий массив
+2. **Невозможно выбрать отдельные элементы** — можно выбрать только весь массив, а не конкретные поля внутри него
+
+Обе проблемы решаются с помощью узла Code.
+
+## Разбор массивов из строк
+
+Массивы часто передаются между шагами рабочего процесса как строки или JSON, а не как нативные массивы. Это происходит, когда:
+
+* Получение данных из внешних API через HTTP Request
+* Обработка полезной нагрузки вебхуков
+* Передача данных между шагами рабочего процесса
+
+**Решение**: Добавьте этот шаблон в начало вашего действия Code:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+Ключевая строка `typeof users === "string" ? JSON.parse(users) : users` проверяет, является ли входное значение строкой, парсит его при необходимости или использует напрямую, если это уже массив.
+
+## Извлечение отдельных полей из массивов
+
+Вебхук может вернуть массив вида `answers: [...]`, но на последующих шагах рабочего процесса вы сможете выбрать только **весь массив** — не отдельные элементы внутри него.
+
+**Решение**: Добавьте узел Code, чтобы извлечь нужные поля и вернуть их в виде структурированного объекта:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+Узел Code возвращает структурированный объект вместо массива. На последующих шагах теперь можно выбирать отдельные поля, такие как `answer.firstname` и `answer.name`, в селекторе переменных.
+
+<Note>
+  Мы активно работаем над упрощением работы с массивами в будущих обновлениях.
+</Note>
+
+<Tip>
+  Нажмите квадратный значок в правом верхнем углу редактора кода, чтобы отобразить его на весь экран — это полезно, поскольку ширина редактора по умолчанию ограничена.
+</Tip>

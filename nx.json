@@ -58,6 +58,19 @@
       },
       "dependsOn": ["^build"]
     },
+    "lint:diff-with-main": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs \"$@\"; fi' _",
+        "pattern": "\\.(ts|tsx|js|jsx)$"
+      },
+      "configurations": {
+        "fix": {
+          "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs --fix \"$@\"; fi' _"
+        }
+      }
+    },
     "fmt": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -84,11 +97,11 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json --incremental"
+        "command": "tsgo -p tsconfig.json"
       },
       "configurations": {
         "watch": {
-          "watch": true
+          "command": "tsgo -p tsconfig.json --watch"
         }
       },
       "dependsOn": ["^build"]
@@ -133,7 +146,7 @@
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
+        "command": "NODE_OPTIONS='--max-old-space-size=10240' VITE_DISABLE_TYPESCRIPT_CHECKER=true storybook build --test",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
       },
@@ -168,15 +181,8 @@
       "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir} --shard={args.shard}",
-          "nx storybook:coverage {projectName} --coverageDir={args.coverageDir} --checkCoverage={args.checkCoverage}"
-        ],
-        "shard": "1/1",
-        "parallel": false,
-        "coverageDir": "coverage/storybook",
-        "port": 6006,
-        "checkCoverage": true
+        "command": "vitest run --coverage --shard={args.shard}",
+        "shard": "1/1"
       }
     },
     "storybook:test:no-coverage": {
@@ -184,10 +190,8 @@
       "inputs": ["^default", "excludeTests"],
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=2"
-        ],
-        "port": 6006
+        "command": "vitest run --shard={args.shard}",
+        "shard": "1/1"
       }
     },
     "storybook:coverage": {
@@ -212,17 +216,6 @@
         "text": {
           "reporter": "text"
         }
-      }
-    },
-    "storybook:serve-and-test:static": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --shard={args.shard} --checkCoverage={args.checkCoverage} --port={args.port} --configuration={args.scope}'"
-        ],
-        "shard": "1/1",
-        "checkCoverage": true,
-        "port": 6006
       }
     },
     "chromatic": {
@@ -266,21 +259,21 @@
       "inputs": [
         "default",
         "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/tools/eslint-rules/**/*"
+        "{workspaceRoot}/packages/twenty-eslint-rules/**/*"
       ]
-    },
-    "@nx/vite:test": {
-      "cache": true,
-      "inputs": ["default", "^default"]
     },
     "@nx/vite:build": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"]
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
     }
   },
   "installation": {
-    "version": "22.0.3"
+    "version": "22.3.3"
   },
   "generators": {
     "@nx/react": {

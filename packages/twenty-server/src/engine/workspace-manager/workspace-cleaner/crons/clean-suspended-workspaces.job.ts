@@ -33,8 +33,8 @@ export class CleanSuspendedWorkspacesJob {
       withDeleted: true,
     });
 
-    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces(
-      suspendedWorkspaceIds.map((workspace) => workspace.id),
-    );
+    await this.cleanerWorkspaceService.batchWarnOrCleanSuspendedWorkspaces({
+      workspaceIds: suspendedWorkspaceIds.map((workspace) => workspace.id),
+    });
   }
 }

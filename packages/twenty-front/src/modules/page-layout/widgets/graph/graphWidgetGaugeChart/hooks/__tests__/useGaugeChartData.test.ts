@@ -1,7 +1,7 @@
 import { type GaugeChartData } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/types/GaugeChartData';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
-import { useGaugeChartData } from '../useGaugeChartData';
+import { useGaugeChartData } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/hooks/useGaugeChartData';
 
 describe('useGaugeChartData', () => {
   const mockColorRegistry: GraphColorRegistry = {

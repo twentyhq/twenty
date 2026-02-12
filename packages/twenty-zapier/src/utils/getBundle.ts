@@ -1,6 +1,6 @@
-import { Bundle } from 'zapier-platform-core';
+import { type Bundle } from 'zapier-platform-core';
 
-import { InputData } from '../utils/data.types';
+import { type InputData } from '../utils/data.types';
 
 const getBundle = (inputData?: InputData): Bundle => {
   return {

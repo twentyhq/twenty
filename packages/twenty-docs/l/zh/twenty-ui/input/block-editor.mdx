@@ -1,34 +1,31 @@
 ---
-title: 塊編輯器
+title: 区块编辑器
 image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="标题" />
 </Frame>
 
-使用來自 [BlockNote](https://www.blocknotejs.org/) 的基於塊的富文本編輯器，允許用戶編輯和查看內容塊。
+使用来自 [BlockNote](https://www.blocknotejs.org/) 的基于区块的富文本编辑器，允许用户编辑和查看内容块。
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="**用法**">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-```jsx
-import { useBlockNote } from "@blocknote/react";
-import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
 
-export const MyComponent = () => {
-  const BlockNoteEditor = useBlockNote();
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
 
-  return <BlockEditor editor={BlockNoteEditor} />;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| 屬性  | 類型             | 描述        |
-| --- | -------------- | --------- |
-| 編輯器 | `BlockNote編輯器` | 塊編輯器實例或配置 |
-
-</Tab>
+  <Tab title="属性">
+    | 属性  | 类型                | 描述         |
+    | --- | ----------------- | ---------- |
+    | 编辑器 | `BlockNoteEditor` | 区块编辑器实例或配置 |
+  </Tab>
 </Tabs>

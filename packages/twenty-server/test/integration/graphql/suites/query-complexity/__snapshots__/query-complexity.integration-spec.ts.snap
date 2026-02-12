@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Query Complexity should fail to execute a query with duplicate root resolvers 1`] = `"Duplicate root resolver: "people""`;
 

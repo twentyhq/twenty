@@ -1,0 +1,53 @@
+---
+title: Je ne vois pas les emails sur les enregistrements.
+description: Dépannage des emails manquants sur les enregistrements.
+---
+
+## Causes courantes
+
+### 1. Synchronisation initiale toujours en cours
+
+La synchronisation des emails prend du temps, surtout pour les boîtes aux lettres volumineuses. Twenty importe des emails à environ **400 messages par minute** (soumis aux limites de débit de l'API Gmail).
+
+* **Synchronisation du calendrier** : se termine en quelques minutes
+* **Synchronisation des emails** : dépend de la taille de la boîte aux lettres (par exemple, 10 000 emails ≈ 25 minutes, 50 000 emails ≈ 2 heures)
+
+**Solution** : Attendez la fin de l'importation initiale. Vous pouvez estimer la durée en fonction de la taille de votre boîte aux lettres.
+
+### 2. Le contact n'existe pas dans Twenty
+
+Les emails n'apparaissent que sur les enregistrements de personnes existants. Si le contact n'a pas encore été créé :
+
+* Activez la **création automatique de contacts** dans les paramètres de votre boîte aux lettres
+* Ou créez d'abord manuellement l'enregistrement de la personne
+
+**Solution** : Accédez à **Paramètres → Comptes**, sélectionnez votre boîte aux lettres et activez la création automatique de contacts.
+
+### 3. Les emails internes sont exclus
+
+Les emails entre collègues (même domaine de messagerie) ne sont jamais synchronisés afin de préserver la confidentialité.
+
+**Solution** : Il s'agit du fonctionnement attendu. Seuls les emails externes sont synchronisés.
+
+### 4. L'email provient d'un groupe ou d'une liste de distribution
+
+Les emails de groupe et les listes de distribution sont exclus de la synchronisation.
+
+**Solution** : Il s'agit du fonctionnement attendu.
+
+### 5. Dossier non sélectionné pour la synchronisation
+
+Si vous utilisez la fonctionnalité Dossier de messages, certains dossiers peuvent être exclus.
+
+**Solution** : Accédez à **Paramètres → Comptes**, sélectionnez votre boîte aux lettres et vérifiez les paramètres de synchronisation des dossiers.
+
+### 6. Mauvaise adresse email dans l'enregistrement
+
+L'enregistrement de la personne peut avoir une adresse email différente de celle utilisée dans l'email.
+
+**Solution** : Ajoutez la bonne adresse email à l'enregistrement de la personne.
+
+## Ça ne fonctionne toujours pas ?
+
+1. Essayez de déconnecter puis de reconnecter votre boîte aux lettres
+2. Contactez l'assistance si le problème persiste

@@ -9,15 +9,24 @@ type UseTasksProps = {
 };
 
 export const useTasks = ({ targetableObjects }: UseTasksProps) => {
-  const { activities: tasks, loading: tasksLoading } = useActivities<Task>({
+  const {
+    activities: tasks,
+    loading: tasksLoading,
+    fetchMoreActivities: fetchMoreTasks,
+    hasNextPage,
+    totalCountActivities,
+  } = useActivities<Task>({
     objectNameSingular: CoreObjectNameSingular.Task,
     targetableObjects,
-    activitiesFilters: {},
-    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    activityTargetsOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    limit: 200,
   });
 
   return {
     tasks: (tasks ?? []) as Task[],
     tasksLoading,
+    fetchMoreTasks,
+    hasNextPage,
+    totalCountTasks: totalCountActivities,
   };
 };

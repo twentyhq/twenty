@@ -1,0 +1,60 @@
+---
+title: Crear campos de relación},{
+description: Guía paso a paso para conectar objetos con campos de relación.
+---
+
+Los campos de relación conectan registros de distintos objetos—por ejemplo, vinculando Personas con Empresas.
+
+<Note>
+  **Los nombres de relación no se pueden cambiar después de la creación** (afectan a la API). Planifica bien los nombres.
+</Note>
+
+## Antes de empezar
+
+Decide:
+
+* ¿Qué objetos vas a conectar? (p. ej., Personas → Empresas)
+* ¿Cuál es el lado "uno"? (p. ej., Empresa)
+* ¿Cuál es el lado "muchos"? (p. ej., Personas — muchas personas trabajan en una empresa)
+* ¿Qué nombre debería tener el campo en cada lado?
+
+Consulta [Campos de Relación](/l/es/user-guide/data-model/capabilities/relation-fields) para ver los tipos de relación explicados.
+
+## Pasos
+
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona el objeto donde quieres la relación (normalmente el lado "muchos")
+3. Haz clic en **+ Añadir Campo**
+4. Selecciona **Relación** como tipo de campo
+5. Elige el **objeto de destino**
+6. Selecciona **Uno a muchos** o **Muchos a uno**
+7. Introduce nombres de campo para **ambos lados** de la relación
+8. Haga clic en **Guardar**
+
+## Ejemplo: Personas → Empresas
+
+* Ve a **Configuración → Modelo de datos → Personas**
+* Añade un campo de Relación
+* Destino: **Empresas**
+* Tipo: **Muchos a uno**
+* Campo en Personas: **Empresa**
+* Campo en Empresas: **Empleados**
+
+Ahora cada persona puede vincularse a una empresa, y cada empresa muestra a sus personas.
+
+## Eliminar una relación
+
+1. Ve a **Configuración → Modelo de datos**
+2. Busca el campo de relación
+3. Haz clic en **⋮ → Desactivar**
+
+Los enlaces se conservan, pero están ocultos. Vuelve a activar para restaurar.
+
+<Note>
+  **Eliminar una relación no elimina registros.** Solo se quita el enlace entre ellos.
+</Note>
+
+## Relacionado
+
+* [Campos de Relación](/l/es/user-guide/data-model/capabilities/relation-fields) — tipos y limitaciones
+* [Cómo importar relaciones](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importación masiva de registros vinculados

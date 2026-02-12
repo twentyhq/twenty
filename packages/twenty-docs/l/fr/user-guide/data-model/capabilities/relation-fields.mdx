@@ -1,0 +1,96 @@
+---
+title: Champs de relation
+description: Reliez des enregistrements entre différents objets à l'aide de champs de relation.
+---
+
+## Types de relations
+
+### Un-à-plusieurs
+
+Un enregistrement de l'Objet A peut être lié à de nombreux enregistrements de l'Objet B.
+
+**Exemple :** Une Entreprise peut avoir de nombreuses Personnes (employés).
+
+### Plusieurs-à-un
+
+De nombreux enregistrements de l'Objet A peuvent être liés à un enregistrement de l'Objet B.
+
+**Exemple :** De nombreuses Personnes peuvent appartenir à une Entreprise.
+
+### Relations vers plusieurs types d'objets
+
+Certains objets peuvent se lier à plusieurs types d'objets sur un côté de la relation.
+
+**Exemple :** Une Note peut être rattachée simultanément à une Personne ET à une Entreprise ET à une Opportunité. La Note est du côté "plusieurs", et se connecte à plusieurs côtés "un".
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+De même, un Projet (du côté "un") pourrait recevoir des liens de plusieurs Personnes, de plusieurs Entreprises et de plusieurs Notes.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitation d'import/export** : Les relations pointant vers plusieurs types d'objets ne sont pas encore prises en charge pour l'import/export CSV. C'est sur notre feuille de route.
+</Warning>
+
+### Plusieurs-à-plusieurs
+
+De nombreux enregistrements de l'Objet A peuvent être liés à de nombreux enregistrements de l'Objet B.
+
+**Exemple :** De nombreuses Personnes peuvent être liées à de nombreux Projets, et inversement.
+
+Les relations plusieurs-à-plusieurs utilisent un modèle d'**objet de jonction**: un objet intermédiaire qui relie les deux côtés. Avec la fonctionnalité de relation via objet de jonction, Twenty affiche directement les enregistrements finaux liés, en masquant l'objet intermédiaire dans l'interface utilisateur.
+
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Fonctionnalité de laboratoire**: Les relations de jonction doivent être activées dans **Settings → Updates → Lab** avant utilisation.
+</Warning>
+
+Voir [Comment créer des relations plusieurs-à-plusieurs](/l/fr/user-guide/data-model/how-tos/create-many-to-many-relations) pour un guide pas à pas complet.
+
+## Créer un champ de relation
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l'objet dans lequel vous souhaitez ajouter la relation
+3. Cliquez sur **+ Ajouter un champ**
+4. Sélectionnez **Relation** comme type de champ
+5. Choisissez l'objet cible ou les objets cibles à relier
+6. Configurez les paramètres de la relation :
+   * **Nom du champ sur l'objet source** : Le nom du champ de relation sur l'objet que vous modifiez
+   * **Nom du champ sur l'objet de destination** : Le nom du champ de relation qui apparaîtra sur l'objet cible
+   * Type de relation (un-à-plusieurs, plusieurs-à-un)
+7. Cliquez sur **Enregistrer**
+
+## Relations standard
+
+Twenty est livré avec des relations prédéfinies entre des objets standard :
+
+| Objet source | Objet de destination | Type de relation |
+| ------------ | -------------------- | ---------------- |
+| Personnes    | Entreprises          | Plusieurs-à-un   |
+| Opportunités | Entreprises          | Plusieurs-à-un   |
+| Opportunités | Personnes            | Plusieurs-à-un   |
+
+## Meilleures pratiques
+
+### Planifier les relations
+
+* **Cartographiez votre modèle de données** : Planifiez les relations avant de les créer
+* **Tenez compte de la direction** : Réfléchissez à l'objet qui "possède" la relation
+* **Évitez les dépendances circulaires** : Gardez votre modèle de données propre
+
+### Nommer les relations
+
+* **Utilisez des noms clairs** : Indiquez clairement ce que représente la relation
+* **Soyez cohérent** : Utilisez des conventions de nommage similaires dans l'ensemble des relations
+* **Prenez en compte les deux côtés** : Nommez correctement les deux côtés de la relation
+
+### Performances
+
+* **N'abusez pas des relations** : Trop de relations peuvent ralentir votre espace de travail
+
+## Limitations
+
+* **La suppression des relations** supprime le lien, mais pas les enregistrements associés
+* **Les relations circulaires** doivent être évitées pour préserver l'intégrité des données

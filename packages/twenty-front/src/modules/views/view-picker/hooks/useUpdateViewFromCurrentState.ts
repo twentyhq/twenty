@@ -1,8 +1,7 @@
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -39,8 +38,7 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerVisibilityComponentState,
   );
 
-  const { updateView } = usePersistView();
-  const { changeView } = useChangeView();
+  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
 
   const updateViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -71,7 +69,7 @@ export const useUpdateViewFromCurrentState = () => {
           viewPickerVisibilityCallbackState,
         );
 
-        await updateView({
+        await performViewAPIUpdate({
           id: viewPickerReferenceViewId,
           input: {
             name: viewPickerInputName,
@@ -79,7 +77,6 @@ export const useUpdateViewFromCurrentState = () => {
             visibility: visibility,
           },
         });
-        changeView(viewPickerReferenceViewId);
       },
     [
       canPersistChanges,
@@ -90,8 +87,7 @@ export const useUpdateViewFromCurrentState = () => {
       viewPickerInputNameCallbackState,
       viewPickerSelectedIconCallbackState,
       viewPickerVisibilityCallbackState,
-      updateView,
-      changeView,
+      performViewAPIUpdate,
     ],
   );
 

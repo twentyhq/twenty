@@ -1,0 +1,100 @@
+---
+title: 백엔드 명령어
+---
+
+## 유용한 명령어
+
+이 명령어들은 packages/twenty-server 폴더에서 실행되어야 합니다.
+다른 폴더에서 `npx nx {command} twenty-server` (또는 `npx nx run twenty-server:{command}`)를 실행할 수 있습니다.
+
+### 최초 설정
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### 서버 시작
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # lint 오류를 수정하려면 --fix를 사용
+```
+
+### 테스트
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+참고: 데이터베이스를 재설정한 뒤 통합 테스트를 실행해야 하는 경우 `npx nx run twenty-server:test:integration:with-db-reset`을 실행할 수 있습니다.
+
+### 데이터베이스 재설정
+
+데이터베이스를 재설정하고 시드 하려면 다음 명령어를 실행하십시오:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### 마이그레이션
+
+#### Core/Metadata 스키마의 객체용 (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### 워크스페이스 객체용
+
+마이그레이션 파일이 없으며, 각 작업 공간에 대해 자동 생성되고 데이터베이스에 저장되어 이 명령으로 적용됩니다.
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  이 작업은 데이터베이스를 삭제하고 마이그레이션과 시드를 다시 실행합니다.
+
+  이 명령을 실행하기 전에 유지하고 싶은 데이터를 백업하십시오.
+</Warning>
+
+## 기술 스택
+
+Twenty는 주로 NestJS를 백엔드에 사용합니다.
+
+Prisma가 우리가 처음으로 사용한 ORM이었습니다. 그러나 사용자들이 사용자 지정 필드와 사용자 지정 객체를 만들 수 있도록 하려면 세밀하게 제어할 수 있어야 하므로 더 낮은 수준이 더 합리적이었습니다. 현재 프로젝트는 TypeORM을 사용합니다.
+
+다음은 현재 기술 스택의 모습입니다.
+
+**코어**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**데이터베이스**
+
+* [Postgres](https://www.postgresql.org/)
+
+**서드파티 연동**
+
+* 버그 추적을 위한 [Sentry](https://sentry.io/welcome/)
+
+**테스트**
+
+* [Jest](https://jestjs.io/)
+
+**도구**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**개발**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

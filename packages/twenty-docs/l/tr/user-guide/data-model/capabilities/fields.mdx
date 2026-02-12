@@ -1,0 +1,122 @@
+---
+title: Alanlar
+description: Alanların rolünü anlayın ve bunları nasıl yöneteceğinizi öğrenin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Alanlar Hakkında
+
+Alanlar bir elektronik tablo içindeki sütunlar gibidir. Metin, sayı veya tarih gibi farklı türde verileri depolarlar. Alanlar standart (gömülü) veya özel (kendi oluşturduğunuz) olabilir.
+
+### Standart Alanlar
+
+Standart alanlar, yaygın iş ihtiyaçlarını karşılamak için Twenty ile yerleşik olarak gelir.
+
+Örneğin, `Ad` ve `Soyad` `Kişi` nesnesinde standart alanlardır. Bireylerin isimleri için metin verileri depolarlar.
+
+Standart alanları silemezsiniz, ancak ihtiyacınız yoksa devre dışı bırakabilirsiniz.
+
+Ayrıca standart `SELECT` türü alanların seçeneklerini özelleştirebilirsiniz; örneğin Fırsatlar'daki `Stage` alanının seçeneklerini.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+
+### Özel Alanlar
+
+Özel alanlar herhangi bir nesneye eklenebilir. Metin, sayı, tarih, açılan seçimler ve daha fazlasını depolayabilirsiniz. Özel alanları, işinize özgü bilgileri izlemek için kullanın.
+
+Örneğin, SpaceX için özel bir alan `Roket Aktif Durumu` olabilir, çalışır durumda olup olmadığını gösterecek.
+
+<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+
+## Alan Türleri
+
+Twenty çeşitli alan türlerini destekler:
+
+| Tür           | Açıklama                                                            | Örnek                  |
+| ------------- | ------------------------------------------------------------------- | ---------------------- |
+| Adres         | Sokak, şehir, eyalet, ülke, posta kodu içeren yapılandırılmış adres | Ofis Adresi            |
+| Dizi          | Metin değerlerinin listesi                                          | Etiketler              |
+| Boolean       | Doğru/Yanlış onay kutusu                                            | Aktif mi               |
+| Para Birimi   | Para birimi koduyla parasal değer                                   | Anlaşma Tutarı (USD)   |
+| Tarih         | Tarih değerleri                                                     | Kapanış Tarihi         |
+| Tarih ve Saat | Saat içeren tarih                                                   | Toplantı Saati         |
+| Alan Adı      | Web sitesi alan adı (Şirketler için kullanılır)                     | acme.com               |
+| E-posta       | E-posta adresleri (birincil + ek)                                   | Kişi E-postası         |
+| JSON          | Yapılandırılmış JSON verisi                                         | Özel meta veri         |
+| Bağlantılar   | Etiketli URL'ler (birincil + ikincil)                               | Web Sitesi, LinkedIn   |
+| Uzun Metin    | Çok satırlı metin                                                   | Açıklama, Notlar       |
+| Çoklu Seçim   | Önceden tanımlı bir listeden birden fazla seçim                     | Etiketler, Kategoriler |
+| Sayı          | Sayısal değerler (tam sayılar veya ondalık sayılar)                 | Miktar, Puan           |
+| Telefon       | Ülke kodlu telefon numaraları                                       | İş Telefonu            |
+| Puan          | Yıldız derecelendirmesi (1-5)                                       | Öncelik, Puan          |
+| İlişki        | Diğer nesnelerdeki kayıtlara bağlantılar                            | Şirket → Kişiler       |
+| Seç           | Önceden tanımlı bir listeden tek seçim                              | Aşama, Durum           |
+| Metin         | Tek satırlık metin                                                  | Ad, Başlık             |
+
+## Özel Alan Oluştur
+
+Herhangi bir nesneye özel bir alan eklemek için şu adımları izleyin:
+
+1. Sol kenar çubuğundaki `Ayarlar`a gidin.
+2. `Veri Modeli`ne gidin, ardından özelleştirmek istediğiniz nesneyi seçin.
+3. `Alan Ekle`ye tıklayarak devam edin.
+4. İhtiyaçlarınıza uygun bir alan adı ve türü seçin. Daha iyi anlama için bir alan açıklaması eklemeyi düşünün.
+
+Yeni oluşturulan alanınız artık uygulamanın alanları içinde kullanılabilir durumda. Belirli bir görünümde görüntülemek için, seçenekler menüsüne tıklayın ve ardından `Alanlar`ı seçin.
+
+<VimeoEmbed videoId="927628219" title="Video gösterimi" />
+
+**Hızlı yol:** Herhangi bir nesne tablosunun sağ üst kısmındaki **+** düğmesine tıklayın, ardından `Alanları özelleştir`i seçin. Bu sizi doğrudan Veri Modeli ayarlarına götürür.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+
+## Bir alanı devre dışı bırakın
+
+Verilerinizi kaybetmeden alanı uygulamadan gizlemek için devre dışı bırakabilirsiniz. Alanı silmek yerine gizleme olarak düşünün.
+
+İşte bu işlemi nasıl yapacağınız:
+
+1. Nesne ayarlarınızda devre dışı bırakmak istediğiniz alanı bulun.
+
+2. Alan yanındaki üç noktaya `⋮` tıklayarak menüyü açın.
+
+3. Açılacak listeden `Devre Dışı Bırak`ı seçin.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+
+Bir alanı devre dışı bıraktığınızda ne olur?
+
+1. **Uygulamada:** Alan kaybolur ve ona yeni değerler ekleyemezsiniz.
+
+2. **Mevcut ilişki:** Eğer bir ilişki alanıysa, mevcut bağlantılar kalır ama yeni bağlantılar oluşturamazsınız.
+
+3. **API erişimi:** Halen alanı ve verilerini API aracılığıyla erişebilirsiniz.
+
+Standart ve Özel Alanları tekrar etkin hale getirebilir veya kalıcı olarak silebilirsiniz.
+
+## Alanları Benzersiz Yap
+
+Farklı kayıtların aynı değere sahip olamaması için bir alanı benzersiz yapın. Örneğin, e-posta adresleri her kişi için benzersizdir.
+
+Benzersizliği ayarlarken bir hata alırsanız, verilerinizde (silinen kayıtlar dahil) yinelenen değerleri kontrol edin.
+
+## Alan Yapılandırma En İyi Uygulamaları
+
+### Adlandırma Kuralları ve Kısıtlamaları
+
+* **Tekil ve çoğul adlar farklı olmalıdır**: GraphQL API'miz için mutasyonlar için farklı adlar gerekmektedir
+* **Korunan alan adları**: bazı adlar sistem kullanımı için ayrılmıştır (ör. `Type`, `Application`)
+
+### Para ve Telefon Alanları
+
+* **Varsayılan para birimi**: veri modeli aracılığıyla yapılandırılabilir
+* **Varsayılan ülke kodları**: telefon alanları için veri modeli aracılığıyla yapılandırılabilir
+
+### Seçim Alanları
+
+* **Her Seçim alanı için varsayılan bir seçenek** seçilebilir
+
+### Kayıt Metin Alanları
+
+* **Her nesnenin bir ana gösterim alanı vardır**: Bu alan sol sütunda görünür ve diğer nesnelerle bağlantı kurulduğunda kaydı temsil eder. Bu bir metin alanı olmalıdır. Örneğin, Kişiler bir kişi bir şirkete bağlantı kurulduğunda `İsim` ana alanını kullanır, şirketin görünümünde isimlerini görürsünüz.

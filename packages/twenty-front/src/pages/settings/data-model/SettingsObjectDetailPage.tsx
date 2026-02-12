@@ -14,16 +14,13 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  H3Title,
   IconCodeCircle,
   IconListDetails,
   IconPlus,
@@ -32,7 +29,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -43,22 +40,13 @@ const StyledContentContainer = styled.div`
   padding-left: 0;
 `;
 
-const StyledObjectTypeTag = styled(SettingsItemTypeTag)`
-  box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(5)};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTitleContainer = styled.div`
-  display: flex;
-`;
-
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
   const theme = useTheme();
 
   const { objectNamePlural = '' } = useParams();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
@@ -69,11 +57,8 @@ export const SettingsObjectDetailPage = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural) ??
     findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const readonly = isObjectMetadataSettingsReadOnly({
+  const readonly = isObjectMetadataReadOnly({
     objectMetadataItem,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
   });
 
   const activeTabId = useRecoilComponentValue(
@@ -156,18 +141,16 @@ export const SettingsObjectDetailPage = () => {
   return (
     <>
       <SubMenuTopBarContainer
-        title={
-          <StyledTitleContainer>
-            <H3Title title={objectMetadataItem.labelPlural} />
-            <StyledObjectTypeTag item={objectMetadataItem} />
-          </StyledTitleContainer>
-        }
+        title={objectMetadataItem.labelPlural}
         links={[
           {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
-          { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
+          {
+            children: t`Objects`,
+            href: getSettingsPath(SettingsPath.Objects),
+          },
           {
             children: objectMetadataItem.labelPlural,
           },

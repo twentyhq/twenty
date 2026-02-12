@@ -1,4 +1,4 @@
-import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
+import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 
 export const cleanupPageLayoutWidgetRecords = async (): Promise<void> => {
   await global.testDataSource.query(`DELETE from "core"."pageLayoutWidget"`);

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { google } from 'googleapis';
 
 import {
-  MessageFolder,
+  DiscoveredMessageFolder,
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
@@ -14,7 +14,7 @@ import { GmailFoldersErrorHandlerService } from 'src/modules/messaging/message-f
 import { extractGmailFolderName } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/extract-gmail-folder-name.util';
 import { getGmailFolderParentId } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/get-gmail-folder-parent-id.util';
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
-import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
+import { MESSAGING_GMAIL_DEFAULT_EXCLUDED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-excluded-labels.constant';
 
 @Injectable()
 export class GmailGetAllFoldersService implements MessageFolderDriver {
@@ -34,7 +34,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
       MessageChannelWorkspaceEntity,
       'messageFolderImportPolicy'
     >,
-  ): Promise<MessageFolder[]> {
+  ): Promise<DiscoveredMessageFolder[]> {
     try {
       const oAuth2Client =
         await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -60,7 +60,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
 
       const labels = response.data.labels || [];
 
-      const folders: MessageFolder[] = [];
+      const folders: DiscoveredMessageFolder[] = [];
 
       const labelNameToIdMap = new Map<string, string>();
 
@@ -77,7 +77,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
           continue;
         }
 
-        if (MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS.includes(label.id)) {
+        if (MESSAGING_GMAIL_DEFAULT_EXCLUDED_LABELS.includes(label.id)) {
           continue;
         }
 
@@ -100,7 +100,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
         });
       }
 
-      this.logger.log(
+      this.logger.debug(
         `Found ${folders.length} folders for Gmail account ${connectedAccount.handle}`,
       );
 

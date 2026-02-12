@@ -21,4 +21,8 @@ describe('checkUrlType', () => {
   it('should return "url", if neither linkedin nor twitter url', () => {
     expect(checkUrlType('https://www.example.com')).toBe('url');
   });
+
+  it('should return "facebook", if facebook url', () => {
+    expect(checkUrlType('https://www.facebook.com/john-doe')).toBe('facebook');
+  });
 });

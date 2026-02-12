@@ -1,16 +1,17 @@
 import styled from '@emotion/styled';
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
-import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.strong};
@@ -163,6 +164,7 @@ const PageLayoutTabListPlayground = ({
         onAddTab={isReorderEnabled ? handleAddTab : undefined}
         isReorderEnabled={isReorderEnabled}
         onReorder={isReorderEnabled ? handleReorder : undefined}
+        pageLayoutType={PageLayoutType.DASHBOARD}
       />
     </StyledContainer>
   );

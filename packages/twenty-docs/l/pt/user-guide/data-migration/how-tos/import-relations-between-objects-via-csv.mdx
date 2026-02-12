@@ -1,0 +1,228 @@
+---
+title: Importar Relações Entre Objetos via CSV
+description: Guia completo, passo a passo, para associar registos durante a importação de CSV.
+---
+
+## Visão Geral
+
+Este guia orienta-o na importação de relações entre objetos — por exemplo, ligar Pessoas a Empresas ou Oportunidades a Pessoas.
+
+<Note>**O que pode ser importado:** Apenas relações um-para-muitos que apontem para um único tipo de objeto. Relações que apontam para vários tipos de objeto (como Notas ligadas a Pessoas E Empresas) ainda não são suportadas para importação.</Note>
+
+## Compreender as Relações
+
+### O que é uma relação "Um-para-Muitos"?
+
+Numa relação um-para-muitos:
+
+* **Uma** Empresa tem **muitas** Pessoas (colaboradores)
+* **Uma** Empresa tem **muitas** Oportunidades
+* **Uma** Pessoa tem **muitas** Tarefas
+
+O lado "um" é o **pai**. O lado "muitos" é o **filho**.
+
+### Relações Comuns no Twenty
+
+| Relação                  | Lado "Um" (Pai) | Lado "Muitos" (Filho) |
+| ------------------------ | --------------- | --------------------- |
+| Empresas → Pessoas       | Empresa         | Pessoas               |
+| Empresas → Oportunidades | Empresa         | Oportunidades         |
+| Pessoas → Tarefas        | Pessoa          | Tarefas               |
+| Pessoas → Notas          | Pessoa          | Notas                 |
+
+## Passo 1: Identificar os lados "Um" e "Muitos"
+
+Antes de importar, determine qual objeto é o pai e qual é o filho.
+
+**Pergunte a si mesmo:** "UM [Objeto A] tem MUITOS [Objeto B]?"
+
+* Uma Empresa → Muitas Pessoas ✓ (A Empresa é o pai)
+* Uma Pessoa → Muitas Empresas ✗ (Isto está errado — uma pessoa pertence a uma empresa)
+
+## Passo 2: Importe primeiro os registos pai
+
+O pai (lado "um") deve existir no Twenty antes de poder referenciá-lo.
+
+**Ordem de importação:**
+
+1. **Empresas** primeiro (sem dependências)
+2. **Pessoas** em segundo (ligar a Empresas)
+3. **Oportunidades** em terceiro (ligar a Empresas e/ou Pessoas)
+4. **Tarefas/Notas** (ligar a qualquer um dos anteriores)
+
+<Warning>
+  **Se o registo pai não existir, a importação falhará.**
+
+  Verifique sempre que as Empresas são importadas antes de importar Pessoas com referências a empresas.
+</Warning>
+
+## Passo 3: Anote o identificador único do pai
+
+Precisa de referenciar o registo pai usando um **identificador único**. Opções disponíveis:
+
+| Objeto Pai                 | Identificadores Únicos Disponíveis                                        |
+| -------------------------- | ------------------------------------------------------------------------- |
+| **Empresas**               | `id` (UUID), `domain` (recomendado) ou qualquer campo único personalizado |
+| **Pessoas**                | `id` (UUID), `email` ou qualquer campo único personalizado                |
+| **Membros do Workspace**   | `id` (UUID), `email` (não o nome)                                         |
+| **Objetos personalizados** | `id` (UUID) ou qualquer campo marcado como único                          |
+
+<Note>**Recomendado:** Use `domain` para Empresas e `email` para Pessoas. São legíveis por humanos e fáceis de verificar na sua folha de cálculo.</Note>
+
+### Encontrar o identificador
+
+Se precisar do `id`:
+
+1. Exporte os registos pai do Twenty
+2. A exportação inclui a coluna `id`
+3. Use estes IDs no seu ficheiro de registos filho
+
+## Passo 4: Verifique se o campo de relação existe
+
+Antes de importar, garanta que o campo de relação existe entre os seus objetos.
+
+**Para verificar ou criar:**
+
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o seu objeto filho (por exemplo, Pessoas)
+3. Procure um campo de relação que aponte para o pai (por exemplo, Empresa)
+4. Se não existir, crie-o:
+   * Clique em **+ Adicionar campo**
+   * Selecione o tipo **Relação**
+   * Escolha o objeto pai
+
+## Passo 5: Prepare o seu ficheiro CSV
+
+Adicione uma coluna ao seu CSV de registos filho que faça referência ao pai utilizando o seu identificador único.
+
+### Exemplo: Pessoas ligadas a Empresas
+
+**O seu CSV de Pessoas:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+A coluna `companyDomain` faz referência ao domínio da Empresa.
+
+### Requisitos de Formato
+
+| Identificador | Formato        | Exemplo                                |
+| ------------- | -------------- | -------------------------------------- |
+| Domínio       | Formato de URL | `https://acme.com`                     |
+| E-mail        | Email padrão   | `john@acme.com`                        |
+| ID            | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **O formato do domínio é importante!**
+
+  Use `https://domain.com` (não apenas `domain.com`). Isto corresponde à forma como a Twenty armazena domínios de Empresas e evita erros de correspondência.
+</Warning>
+
+### Regras Importantes
+
+1. **Correspondência exata obrigatória** — o valor deve corresponder exatamente ao registo pai
+2. **Mapeie apenas UM identificador único** — não inclua `companyId` E `companyDomain`
+3. **Sensível a maiúsculas/minúsculas** — `Acme.com` ≠ `acme.com`
+
+## Passo 6: Carregue e mapeie a relação
+
+1. Navegue até ao objeto filho (por exemplo, Pessoas)
+2. Clique em **⋮** → **Importar registos**
+3. Carregue o seu ficheiro CSV
+4. Na etapa de mapeamento de campos:
+   * Encontre a sua coluna de relação (por exemplo, `companyDomain`)
+   * Mapeie-a para o campo de relação **Empresa**
+5. Conclua o mapeamento restante
+6. Revise os erros e confirme
+
+A Twenty ligará automaticamente cada registo filho ao pai correspondente.
+
+## Passo 7: Verifique a importação
+
+Após a importação:
+
+1. Abra alguns registos filho (por exemplo, Pessoas)
+2. Verifique se o campo de relação mostra o pai correto (por exemplo, Empresa)
+3. Abra um registo pai e verifique a secção de registos relacionados
+
+## Erros Comuns a Evitar
+
+| Erro                                           | Problema                                         | Solução                                                                |
+| ---------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
+| **Ordem de importação incorreta**              | Importar Pessoas antes de Empresas               | Importe sempre primeiro os pais e depois os filhos                     |
+| **Formato de domínio incorreto**               | Usar `acme.com` em vez de `https://acme.com`     | Use o formato completo de URL com `https://`                           |
+| **Vários campos únicos**                       | Mapear ambos `companyId` E `companyDomain`       | Mapeie apenas UM identificador único                                   |
+| **Campo de relação em falta**                  | O campo de relação não existe no modelo de dados | Crie-o em **Definições → Modelo de Dados** antes de importar           |
+| **Registos inexistentes**                      | O registo pai não existe no Twenty               | Importe primeiro os registos pai ou verifique se há erros ortográficos |
+| **Incompatibilidade de maiúsculas/minúsculas** | `Acme.com` no ficheiro mas `acme.com` no Twenty  | Garanta correspondência exata de maiúsculas/minúsculas                 |
+
+## Ligar a Membros do Espaço de Trabalho
+
+Ao ligar a Membros do Espaço de Trabalho (a sua equipa):
+
+* Use o **endereço de email** deles, não o nome
+* Exemplo: `owner@yourcompany.com`, não "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## Perguntas Frequentes
+
+<AccordionGroup>
+  <Accordion title="E se o meu registo pai não tiver um domínio ou email?">
+    Tem duas opções:
+
+    1. Use o `id` da Twenty (exporte os registos pai para obter os respetivos IDs)
+    2. Crie um campo único personalizado no seu modelo de dados para armazenar um ID externo do seu sistema anterior
+  </Accordion>
+
+  <Accordion title="Posso atualizar relações em registos existentes?">
+    Sim! Inclua o identificador único do registo filho (por exemplo, `email` para Pessoas) e o novo valor da relação. A importação atualizará a relação.
+  </Accordion>
+
+  <Accordion title="Posso importar relações muitos-para-muitos?">
+    Relações muitos-para-muitos ainda não são suportadas para importação. Isto está planeado para o 1.º semestre de 2026.
+  </Accordion>
+
+  <Accordion title="Posso ligar a vários tipos de objeto (como Notas a Pessoas E Empresas)?">
+    Relações que apontam para vários tipos de objeto ainda não são suportadas para importação/exportação. Isto está no nosso roadmap.
+  </Accordion>
+
+  <Accordion title="O que acontece se um registo pai não existir?">
+    A importação mostrará um erro para essa linha. Você pode:
+
+    * Importe primeiro o registo pai e depois volte a importar
+    * Corrija o valor de referência
+    * Remova a linha da importação
+  </Accordion>
+
+  <Accordion title="Porque é que a minha relação não está a ligar corretamente?">
+    Causas comuns:
+
+    * Formato incorreto (use `https://domain.com` para domínios)
+    * Incompatibilidade de maiúsculas/minúsculas (verifique a grafia exata)
+    * O pai não existe (importe primeiro os pais)
+    * Mapeamento de vários identificadores (use apenas um)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Lembre-se: registos eliminados logicamente contam para a unicidade.**
+
+  Se estiver a receber erros de "not found", mas o registo parece existir, verifique Menu de Comandos → Ver registos eliminados. O pai pode ter sido eliminado logicamente.
+</Warning>
+
+## Resolução de Problemas
+
+Está a ter problemas? Consulte:
+
+* [Como Corrigir Erros de Importação](/l/pt/user-guide/data-migration/how-tos/fix-import-errors)
+* [Capacidades de Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
+* [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)

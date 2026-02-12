@@ -54,6 +54,13 @@ export const computeDraftValueFromString = <FieldValue>({
   if (isFieldAddress(fieldDefinition)) {
     return {
       addressStreet1: value,
+      addressStreet2: null,
+      addressCity: null,
+      addressState: null,
+      addressPostcode: null,
+      addressCountry: null,
+      addressLat: null,
+      addressLng: null,
     } as FieldInputDraftValue<FieldValue>;
   }
 

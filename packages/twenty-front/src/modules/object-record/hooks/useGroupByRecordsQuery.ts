@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateGroupByRecordsQuery } from '@/object-record/utils/generateGroupByRecordsQuery';
 

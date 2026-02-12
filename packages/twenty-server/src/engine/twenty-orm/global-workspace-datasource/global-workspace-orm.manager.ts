@@ -1,19 +1,20 @@
 import { Injectable, type Type } from '@nestjs/common';
 
-import { ObjectLiteral } from 'typeorm';
+import { type ObjectLiteral } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class GlobalWorkspaceOrmManager {
@@ -35,7 +36,7 @@ export class GlobalWorkspaceOrmManager {
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceId: string,
+    _workspaceId: string,
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>> {
@@ -49,8 +50,7 @@ export class GlobalWorkspaceOrmManager {
       );
     }
 
-    const globalDataSource =
-      this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
+    const globalDataSource = await this.getGlobalWorkspaceDataSource();
 
     return globalDataSource.getRepository<T>(
       objectMetadataName,
@@ -58,15 +58,20 @@ export class GlobalWorkspaceOrmManager {
     );
   }
 
-  async getGlobalWorkspaceDataSource() {
+  async getGlobalWorkspaceDataSource(): Promise<GlobalWorkspaceDataSource> {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
   }
 
+  async getGlobalWorkspaceDataSourceReplica(): Promise<GlobalWorkspaceDataSource> {
+    return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSourceReplica();
+  }
+
   async executeInWorkspaceContext<T>(
-    authContext: WorkspaceAuthContext,
     fn: () => T | Promise<T>,
+    authContext?: WorkspaceAuthContext,
   ): Promise<T> {
-    const context = await this.loadWorkspaceContext(authContext);
+    const resolvedAuthContext = authContext ?? getWorkspaceAuthContext();
+    const context = await this.loadWorkspaceContext(resolvedAuthContext);
 
     return withWorkspaceContext(context, fn);
   }
@@ -83,6 +88,9 @@ export class GlobalWorkspaceOrmManager {
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
       ORMEntityMetadatas: entityMetadatas,
+      userWorkspaceRoleMap,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -90,6 +98,9 @@ export class GlobalWorkspaceOrmManager {
       'featureFlagsMap',
       'rolesPermissions',
       'ORMEntityMetadatas',
+      'userWorkspaceRoleMap',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -100,10 +111,13 @@ export class GlobalWorkspaceOrmManager {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       permissionsPerRoleId,
       entityMetadatas,
+      userWorkspaceRoleMap,
     };
   }
 }

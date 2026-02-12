@@ -1,0 +1,228 @@
+---
+title: Importar relaciones entre objetos mediante CSV
+description: Guía completa paso a paso para vincular registros durante la importación de CSV.
+---
+
+## Resumen
+
+Esta guía explica cómo importar relaciones entre objetos—por ejemplo, vincular Personas con Empresas u Oportunidades con Personas.
+
+<Note>**Qué se puede importar:** Solo relaciones de uno a muchos que apunten a un único tipo de objeto. Las relaciones que apuntan a varios tipos de objeto (como Notas vinculadas a Personas Y Empresas) aún no son compatibles con la importación.</Note>
+
+## Comprender las relaciones
+
+### ¿Qué es una relación "de uno a muchos"?
+
+En una relación de uno a muchos:
+
+* **Una** Empresa tiene **muchas** Personas (empleados)
+* **Una** Empresa tiene **muchas** Oportunidades
+* **Una** Persona tiene **muchas** Tareas
+
+El lado "uno" es el **padre**. El lado "muchos" es el **hijo**.
+
+### Relaciones comunes en Twenty
+
+| Relación                 | Lado "Uno" (Padre) | Lado "Muchos" (Hijo) |
+| ------------------------ | ------------------ | -------------------- |
+| Empresas → Personas      | Empresa            | Personas             |
+| Empresas → Oportunidades | Empresa            | Oportunidades        |
+| Personas → Tareas        | Persona            | Tareas               |
+| Personas → Notas         | Persona            | Notas                |
+
+## Paso 1: Identificar los lados "Uno" y "Muchos"
+
+Antes de importar, determine qué objeto es el padre y cuál es el hijo.
+
+**Pregúntese:** "¿UNO [Objeto A] tiene MUCHOS [Objeto B]?"
+
+* Una Empresa → Muchas Personas ✓ (la Empresa es el padre)
+* Una Persona → Muchas Empresas ✗ (Esto es incorrecto: una persona pertenece a una sola empresa)
+
+## Paso 2: Importar primero los registros padre
+
+El padre (lado "uno") debe existir en Twenty antes de poder hacer referencia a él.
+
+**Orden de importación:**
+
+1. **Empresas** primero (sin dependencias)
+2. **Personas** en segundo lugar (enlazadas a Empresas)
+3. **Oportunidades** en tercer lugar (enlazadas a Empresas y/o Personas)
+4. **Tareas/Notas** (enlazadas a cualquiera de las anteriores)
+
+<Warning>
+  **Si el registro padre no existe, la importación fallará.**
+
+  Verifique siempre que las Empresas estén importadas antes de importar Personas con referencias a Empresas.
+</Warning>
+
+## Paso 3: Anotar el identificador único del padre
+
+Debe hacer referencia al registro padre mediante un **identificador único**. Opciones disponibles:
+
+| Objeto padre                        | Identificadores únicos disponibles                                        |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| **Empresas**                        | `id` (UUID), `domain` (recomendado) o cualquier campo único personalizado |
+| **Personas**                        | `id` (UUID), `email` o cualquier campo único personalizado                |
+| **Miembros del espacio de trabajo** | `id` (UUID), `email` (no el nombre)                                       |
+| **Objetos personalizados**          | `id` (UUID) o cualquier campo marcado como único                          |
+
+<Note>**Recomendado:** Use `domain` para Empresas y `email` para Personas. Son legibles para humanos y fáciles de verificar en su hoja de cálculo.</Note>
+
+### Cómo encontrar el identificador
+
+Si necesita el `id`:
+
+1. Exporte los registros padre desde Twenty
+2. La exportación incluye la columna `id`
+3. Use estos IDs en su archivo de registros hijo
+
+## Paso 4: Verificar que el campo de relación exista
+
+Antes de importar, asegúrese de que exista el campo de relación entre sus objetos.
+
+**Para revisar o crear:**
+
+1. Vaya a **Configuración → Modelo de datos**
+2. Seleccione su objeto hijo (p. ej., Personas)
+3. Busque un campo de relación que apunte al padre (p. ej., Empresa)
+4. Si no existe, créelo:
+   * Haga clic en **+ Add field**
+   * Seleccione el tipo **Relation**
+   * Elija el objeto padre
+
+## Paso 5: Preparar su archivo CSV
+
+Agregue una columna a su archivo CSV de registros hijo que haga referencia al padre utilizando su identificador único.
+
+### Ejemplo: Personas vinculadas a Empresas
+
+**Su CSV de Personas:**
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain
+John,Smith,john@acme.com,CEO,https://acme.com
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co
+Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
+```
+
+La columna `companyDomain` hace referencia al dominio de la Empresa.
+
+### Requisitos de formato
+
+| Identificador      | Formato                     | Ejemplo                                |
+| ------------------ | --------------------------- | -------------------------------------- |
+| Dominio            | Formato de URL              | `https://acme.com`                     |
+| Correo electrónico | Correo electrónico estándar | `john@acme.com`                        |
+| ID                 | UUID                        | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Warning>
+  **¡El formato del dominio importa!**
+
+  Use `https://domain.com` (no solo `domain.com`). Esto coincide con cómo Twenty almacena los dominios de las Empresas y evita errores de coincidencia.
+</Warning>
+
+### Reglas importantes
+
+1. **Se requiere coincidencia exacta** — el valor debe coincidir exactamente con el registro padre
+2. **Asigne solo UN identificador único** — no incluya `companyId` Y `companyDomain`
+3. **Sensible a mayúsculas/minúsculas** — `Acme.com` ≠ `acme.com`
+
+## Paso 6: Cargar y asignar la relación
+
+1. Vaya al objeto hijo (p. ej., Personas)
+2. Haga clic en **⋮** → **Importar registros**
+3. Cargue su archivo CSV
+4. En el paso de asignación de campos:
+   * Encuentre su columna de relación (p. ej., `companyDomain`)
+   * Asígnela al campo de relación **Company**
+5. Complete las asignaciones restantes
+6. Revise los errores y confirme
+
+Twenty vinculará automáticamente cada registro hijo con el padre correspondiente.
+
+## Paso 7: Verificar la importación
+
+Después de importar:
+
+1. Abra algunos registros hijo (p. ej., Personas)
+2. Verifique que el campo de relación muestre el padre correcto (p. ej., Empresa)
+3. Abra un registro padre y revise la sección de registros relacionados
+
+## Errores comunes que se deben evitar
+
+| Error                                     | Problema                                             | Solución                                                                    |
+| ----------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Orden de importación incorrecto**       | Importar Personas antes que Empresas                 | Importe siempre primero los padres y luego los hijos                        |
+| **Formato de dominio incorrecto**         | Usar `acme.com` en lugar de `https://acme.com`       | Use el formato de URL completo con `https://`                               |
+| **Varios campos únicos**                  | Asignar ambos `companyId` Y `companyDomain`          | Asigne solo UN identificador único                                          |
+| **Falta el campo de relación**            | El campo de relación no existe en el modelo de datos | Créelo en **Configuración → Modelo de datos** antes de importar             |
+| **Registros inexistentes**                | El registro padre no existe en Twenty                | Importe primero los registros padre o verifique si hay errores tipográficos |
+| **Diferencia de mayúsculas y minúsculas** | `Acme.com` en el archivo pero `acme.com` en Twenty   | Asegure una coincidencia exacta de mayúsculas y minúsculas                  |
+
+## Vincular a miembros del espacio de trabajo
+
+Al vincular a miembros del espacio de trabajo (su equipo):
+
+* Use su **dirección de correo electrónico**, no su nombre
+* Ejemplo: `owner@yourcompany.com`, no "John Smith"
+
+```csv
+taskName,assignedTo
+Follow up with client,john@yourcompany.com
+Review proposal,jane@yourcompany.com
+```
+
+## Preguntas frecuentes
+
+<AccordionGroup>
+  <Accordion title="¿Qué pasa si mi registro padre no tiene dominio ni correo electrónico?">
+    Tiene dos opciones:
+
+    1. Use el `id` de Twenty (exporte los registros padre para obtener sus IDs)
+    2. Cree un campo único personalizado en su modelo de datos para almacenar un ID externo de su sistema anterior
+  </Accordion>
+
+  <Accordion title="¿Puedo actualizar relaciones en registros existentes?">
+    ¡Sí! Incluya el identificador único del registro hijo (p. ej., `email` para Personas) y el nuevo valor de la relación. La importación actualizará la relación.
+  </Accordion>
+
+  <Accordion title="¿Puedo importar relaciones de muchos a muchos?">
+    Las relaciones de muchos a muchos aún no son compatibles con la importación. Está previsto para el primer semestre de 2026.
+  </Accordion>
+
+  <Accordion title="¿Puedo vincular a varios tipos de objeto (como Notas a Personas Y Empresas)?">
+    Las relaciones que apuntan a varios tipos de objeto aún no son compatibles con la importación/exportación. Esto está en nuestra hoja de ruta.
+  </Accordion>
+
+  <Accordion title="¿Qué ocurre si un registro padre no existe?">
+    La importación mostrará un error para esa fila. Puedes hacerlo de las siguientes maneras:
+
+    * Importe el registro padre primero y luego vuelva a importar
+    * Corrija el valor de la referencia
+    * Elimine la fila de la importación
+  </Accordion>
+
+  <Accordion title="¿Por qué mi relación no se vincula correctamente?">
+    Causas comunes:
+
+    * Formato incorrecto (use `https://domain.com` para dominios)
+    * Diferencia de mayúsculas y minúsculas (verifique la ortografía exacta)
+    * El padre no existe (importe primero los padres)
+    * Asignar varios identificadores (use solo uno)
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  **Recuerde: los registros eliminados lógicamente cuentan para la unicidad.**
+
+  Si recibe errores de "no encontrado" pero el registro parece existir, consulte Menú de comandos → Ver registros eliminados. Es posible que el padre haya sido eliminado lógicamente.
+</Warning>
+
+## Solución de Problemas
+
+¿Tiene problemas? Revise:
+
+* [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
+* [Capacidades de importación de relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
+* [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)

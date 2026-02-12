@@ -46,8 +46,5 @@ export const ActionDisplay = ({
     return <ActionDropdownItem action={action} onClick={onClick} to={to} />;
   }
 
-  return assertUnreachable(
-    displayType,
-    `Unsupported display type: ${displayType}`,
-  );
+  return assertUnreachable(displayType, 'Unsupported display type');
 };

@@ -28,6 +28,7 @@ describe('Granular settings permissions', () => {
     originalMemberRoleId = memberRole.id;
 
     // Create a custom role with canUpdateAllSettings = false
+    // canUpdateAllObjectRecords must be true to allow creating records like workflows
     const createRoleQuery = {
       query: `
         mutation CreateOneRole {
@@ -36,7 +37,7 @@ describe('Granular settings permissions', () => {
             description: "Role for testing specific setting permissions"
             canUpdateAllSettings: false
             canReadAllObjectRecords: true
-            canUpdateAllObjectRecords: false
+            canUpdateAllObjectRecords: true
             canSoftDeleteAllObjectRecords: false
             canDestroyAllObjectRecords: false
           }) {
@@ -49,7 +50,7 @@ describe('Granular settings permissions', () => {
     };
 
     const createRoleResponse = await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(createRoleQuery);
 
@@ -72,7 +73,7 @@ describe('Granular settings permissions', () => {
     };
 
     await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(upsertSettingPermissionsQuery);
 
@@ -100,7 +101,7 @@ describe('Granular settings permissions', () => {
     const deleteRoleQuery = deleteOneRoleOperationFactory(customRoleId);
 
     await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(deleteRoleQuery);
 
@@ -167,7 +168,7 @@ describe('Granular settings permissions', () => {
       };
 
       const response = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
         .send(updateWorkspaceQuery);
 
@@ -193,7 +194,7 @@ describe('Granular settings permissions', () => {
       };
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(restoreWorkspaceQuery);
     });
@@ -257,7 +258,7 @@ describe('Granular settings permissions', () => {
       };
 
       const response = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
         .send(createRoleQuery);
 
@@ -283,7 +284,7 @@ describe('Granular settings permissions', () => {
       };
 
       const response = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
         .send(inviteWorkspaceMemberQuery);
 
@@ -309,7 +310,7 @@ describe('Granular settings permissions', () => {
       };
 
       const response = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
         .send(createApiKeyQuery);
 
@@ -375,7 +376,7 @@ describe('Granular settings permissions', () => {
       };
 
       const response = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(upsertSecurityPermissionQuery);
 
@@ -427,7 +428,7 @@ describe('Granular settings permissions', () => {
       };
 
       const response = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(upsertReducedPermissionsQuery);
 

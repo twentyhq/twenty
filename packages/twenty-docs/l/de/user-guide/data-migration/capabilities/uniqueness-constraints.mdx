@@ -1,0 +1,72 @@
+---
+title: Eindeutigkeitsbeschränkungen
+description: Wie Twenty während des Imports die Dateneindeutigkeit erzwingt.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Überblick
+
+Twenty erzwingt die Eindeutigkeit bei bestimmten Feldern, um doppelte Datensätze zu verhindern und die Datenintegrität sicherzustellen. Das Verständnis dieser Einschränkungen ist für erfolgreiche Importe entscheidend.
+
+## Standardmäßige eindeutige Felder
+
+| Objekt                         | Eindeutige Felder        |
+| ------------------------------ | ------------------------ |
+| **Personen**                   | `id`, `email`            |
+| **Unternehmen**                | `id`, `domain`           |
+| **Benutzerdefinierte Objekte** | nur `id` (standardmäßig) |
+
+<Note>Das Feld `id` ist die interne Kennung von Twenty und wird für jeden Datensatz automatisch generiert. Es verwendet das UUID-Format (z. B. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Benutzerdefinierte eindeutige Felder
+
+Sie können unter **Einstellungen → Datenmodell** zusätzliche eindeutige Felder definieren:
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie ein Objekt aus
+3. Klicken Sie auf ein Feld
+4. Aktivieren Sie **Eindeutig** in den Feldeinstellungen
+
+### Anwendungsfälle für benutzerdefinierte eindeutige Felder
+
+* **Externe IDs**: IDs aus anderen Systemen speichern (Salesforce-ID, HubSpot-ID)
+* **Geschäftskennungen**: Mitarbeiternummern, Kundencodes
+* **Alternative Kontaktinformationen**: LinkedIn-Profil, Telefonnummer
+
+<Note>Der Feldname `id` ist für die interne ID von Twenty reserviert. Verwenden Sie für externe Kennungen einen anderen Namen wie `externalId` oder `legacyId`.</Note>
+
+## Importverhalten
+
+### Erstellen neuer Datensätze
+
+Wenn ein eindeutiger Feldwert nicht existiert, wird ein neuer Datensatz erstellt.
+
+### Aktualisieren vorhandener Datensätze
+
+Wenn ein eindeutiger Feldwert mit einem vorhandenen Datensatz übereinstimmt, wird dieser Datensatz mit den neuen Daten **aktualisiert**.
+<Warning>Um **vorhandene Datensätze zu aktualisieren**, wird empfohlen, **nur ein eindeutiges Feld abzugleichen**.</Warning>
+
+### Soft-gelöschte Datensätze
+
+<Warning>
+  **Gelöschte Datensätze zählen für die Eindeutigkeit.**
+
+  Soft-gelöschte Datensätze (sichtbar unter Befehlsmenü → Gelöschte Datensätze anzeigen) werden in die Eindeutigkeitsprüfungen einbezogen. Wenn Sie einen Datensatz mit demselben eindeutigen Wert wie ein gelöschter Datensatz importieren, wird der gelöschte Datensatz mit den neuen Daten **wiederhergestellt**.
+</Warning>
+
+## Duplikaterkennung während des Imports
+
+Während der Validierungsphase:
+
+* Duplikate in Ihrer Datei werden gelb hervorgehoben
+* Sie können doppelte Zeilen in der Benutzeroberfläche bearbeiten oder entfernen, bevor Sie den Import starten
+
+<VimeoEmbed videoId="1145246326" title="Video-Demonstration" />
+
+## Beste Praktiken
+
+1. **Entfernen Sie Duplikate** aus Ihrer Datei vor dem Import
+2. **Prüfen Sie vorhandene Datensätze** in Twenty vor dem Import
+3. **Verwenden Sie externe IDs**, wenn Sie aus anderen Systemen migrieren
+4. **Fügen Sie eindeutige Felder hinzu**, wenn Sie vorhandene Datensätze aktualisieren möchten

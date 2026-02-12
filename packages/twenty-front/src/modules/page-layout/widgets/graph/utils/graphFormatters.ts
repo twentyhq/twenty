@@ -1,9 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
+import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import {
   formatNumber as utilFormatNumber,
   type FormatNumberOptions,
 } from '~/utils/format/formatNumber';
-import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 export type GraphValueFormatOptions = {
   displayType?: 'percentage' | 'number' | 'shortNumber' | 'currency' | 'custom';

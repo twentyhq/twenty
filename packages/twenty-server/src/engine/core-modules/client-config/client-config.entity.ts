@@ -47,6 +47,9 @@ export class ClientAIModelConfig {
 
   @Field(() => NativeModelCapabilities, { nullable: true })
   nativeCapabilities?: NativeModelCapabilities;
+
+  @Field(() => Boolean, { nullable: true })
+  deprecated?: boolean;
 }
 
 @ObjectType()
@@ -105,8 +108,8 @@ export class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
-  @Field(() => String, { nullable: false, defaultValue: '' })
-  imagePath: string;
+  @Field(() => String, { nullable: true })
+  imagePath?: string;
 }
 
 @ObjectType()
@@ -192,6 +195,15 @@ export class ClientConfig {
   @Field(() => Boolean)
   isImapSmtpCaldavEnabled: boolean;
 
+  @Field(() => Boolean)
+  allowRequestsToTwentyIcons: boolean;
+
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
+
+  @Field(() => Boolean)
+  isCloudflareIntegrationEnabled: boolean;
+
+  @Field(() => Boolean)
+  isClickHouseConfigured: boolean;
 }

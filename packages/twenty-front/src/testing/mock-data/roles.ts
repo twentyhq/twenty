@@ -1,4 +1,4 @@
-import { PermissionFlagType, type Role } from '~/generated/graphql';
+import { PermissionFlagType, type Role } from '~/generated-metadata/graphql';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 const rolesMock: Role[] = [
@@ -39,6 +39,8 @@ const rolesMock: Role[] = [
         canDestroyObjectRecords: true,
       },
     ],
+    rowLevelPermissionPredicateGroups: [],
+    rowLevelPermissionPredicates: [],
   },
   {
     __typename: 'Role',
@@ -70,6 +72,8 @@ const rolesMock: Role[] = [
         canDestroyObjectRecords: false,
       },
     ],
+    rowLevelPermissionPredicateGroups: [],
+    rowLevelPermissionPredicates: [],
   },
 ];
 

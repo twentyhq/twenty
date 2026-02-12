@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Index metadata creation through object metadata creation v2 Should create an index on ts-search-vector standard field when creating a custom object 1`] = `
 {

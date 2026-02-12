@@ -3,9 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
+import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update-input.dto';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -31,12 +33,13 @@ import {
 @Injectable()
 export class WorkflowVersionWorkspaceService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
+  @WithLock('workflowId')
   async createDraftFromWorkflowVersion({
     workspaceId,
     workflowId,
@@ -46,90 +49,99 @@ export class WorkflowVersionWorkspaceService {
     workflowId: string;
     workflowVersionIdToCopy: string;
   }) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflowVersionToCopy = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionIdToCopy,
-        workflowId,
-      },
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    if (!isDefined(workflowVersionToCopy)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion to copy not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    assertWorkflowVersionTriggerIsDefined(workflowVersionToCopy);
-    assertWorkflowVersionHasSteps(workflowVersionToCopy);
-
-    let draftWorkflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        workflowId,
-        status: WorkflowVersionStatus.DRAFT,
-      },
-    });
-
-    if (!isDefined(draftWorkflowVersion)) {
-      const workflowVersionsCount = await workflowVersionRepository.count({
-        where: {
-          workflowId,
-        },
-      });
-
-      const position = await this.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: {
-          isCustom: false,
-          nameSingular: 'workflowVersion',
-        },
-        workspaceId,
-      });
-
-      const insertResult = await workflowVersionRepository.insert({
-        workflowId,
-        name: `v${workflowVersionsCount + 1}`,
-        status: WorkflowVersionStatus.DRAFT,
-        position,
-      });
-
-      draftWorkflowVersion = insertResult
-        .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
-    }
-
-    assertWorkflowVersionIsDraft(draftWorkflowVersion);
-
-    const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
-    const newWorkflowVersionSteps: WorkflowAction[] = [];
-
-    for (const step of workflowVersionToCopy.steps) {
-      const duplicatedStep =
-        await this.workflowVersionStepWorkspaceService.createDraftStep({
-          step,
-          workspaceId,
+        const workflowVersionToCopy = await workflowVersionRepository.findOne({
+          where: {
+            id: workflowVersionIdToCopy,
+            workflowId,
+          },
         });
 
-      newWorkflowVersionSteps.push(duplicatedStep);
-    }
+        if (!isDefined(workflowVersionToCopy)) {
+          throw new WorkflowVersionStepException(
+            'WorkflowVersion to copy not found',
+            WorkflowVersionStepExceptionCode.NOT_FOUND,
+          );
+        }
 
-    await workflowVersionRepository.update(draftWorkflowVersion.id, {
-      steps: newWorkflowVersionSteps,
-      trigger: newWorkflowVersionTrigger,
-    });
+        assertWorkflowVersionTriggerIsDefined(workflowVersionToCopy);
+        assertWorkflowVersionHasSteps(workflowVersionToCopy);
 
-    return {
-      ...draftWorkflowVersion,
-      name: draftWorkflowVersion.name ?? '',
-      steps: newWorkflowVersionSteps,
-      trigger: newWorkflowVersionTrigger,
-    };
+        let draftWorkflowVersion = await workflowVersionRepository.findOne({
+          where: {
+            workflowId,
+            status: WorkflowVersionStatus.DRAFT,
+          },
+        });
+
+        if (!isDefined(draftWorkflowVersion)) {
+          const workflowVersionsCount = await workflowVersionRepository.count({
+            where: {
+              workflowId,
+            },
+          });
+
+          const position = await this.recordPositionService.buildRecordPosition(
+            {
+              value: 'first',
+              objectMetadata: {
+                isCustom: false,
+                nameSingular: 'workflowVersion',
+              },
+              workspaceId,
+            },
+          );
+
+          const insertResult = await workflowVersionRepository.insert({
+            workflowId,
+            name: `v${workflowVersionsCount + 1}`,
+            status: WorkflowVersionStatus.DRAFT,
+            position,
+          });
+
+          draftWorkflowVersion = insertResult
+            .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
+        }
+
+        assertWorkflowVersionIsDraft(draftWorkflowVersion);
+
+        const newWorkflowVersionTrigger = workflowVersionToCopy.trigger;
+        const newWorkflowVersionSteps: WorkflowAction[] = [];
+
+        for (const step of workflowVersionToCopy.steps) {
+          const duplicatedStep =
+            await this.workflowVersionStepWorkspaceService.createDraftStep({
+              step,
+              workspaceId,
+            });
+
+          newWorkflowVersionSteps.push(duplicatedStep);
+        }
+
+        await workflowVersionRepository.update(draftWorkflowVersion.id, {
+          steps: newWorkflowVersionSteps,
+          trigger: newWorkflowVersionTrigger,
+        });
+
+        return {
+          ...draftWorkflowVersion,
+          name: draftWorkflowVersion.name ?? '',
+          steps: newWorkflowVersionSteps,
+          trigger: newWorkflowVersionTrigger,
+        };
+      },
+      authContext,
+    );
   }
 
   async duplicateWorkflow({
@@ -141,159 +153,167 @@ export class WorkflowVersionWorkspaceService {
     workflowIdToDuplicate: string;
     workflowVersionIdToCopy: string;
   }) {
-    const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true },
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workflowRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    const sourceWorkflow = await workflowRepository.findOne({
-      where: {
-        id: workflowIdToDuplicate,
-      },
-    });
+        const workflowVersionRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    if (!isDefined(sourceWorkflow)) {
-      throw new WorkflowVersionStepException(
-        'Source workflow not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    const sourceVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionIdToCopy,
-        workflowId: workflowIdToDuplicate,
-      },
-    });
-
-    if (!isDefined(sourceVersion)) {
-      throw new WorkflowVersionStepException(
-        'WorkflowVersion to copy not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    assertWorkflowVersionTriggerIsDefined(sourceVersion);
-    assertWorkflowVersionHasSteps(sourceVersion);
-
-    const workflowPosition =
-      await this.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: {
-          isCustom: false,
-          nameSingular: 'workflow',
-        },
-        workspaceId,
-      });
-
-    const insertWorkflowResult = await workflowRepository.insert({
-      name: `${sourceWorkflow.name} (Duplicate)`,
-      statuses: [WorkflowStatus.DRAFT],
-      position: workflowPosition,
-    });
-
-    const newWorkflowId = (
-      insertWorkflowResult.generatedMaps[0] as WorkflowWorkspaceEntity
-    ).id;
-
-    const versionPosition =
-      await this.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: {
-          isCustom: false,
-          nameSingular: 'workflowVersion',
-        },
-        workspaceId,
-      });
-
-    const insertVersionResult = await workflowVersionRepository.insert({
-      workflowId: newWorkflowId,
-      name: 'v1',
-      status: WorkflowVersionStatus.DRAFT,
-      position: versionPosition,
-    });
-
-    const newDraftVersion = insertVersionResult
-      .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
-
-    const newTrigger = sourceVersion.trigger;
-    const sourceToClonedPairs: Array<{
-      source: WorkflowAction;
-      duplicated: WorkflowAction;
-    }> = [];
-    const oldToNewIdMap = new Map<string, string>();
-
-    for (const step of sourceVersion.steps ?? []) {
-      const clonedStep =
-        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
-          step,
-          workspaceId,
+        const sourceWorkflow = await workflowRepository.findOne({
+          where: {
+            id: workflowIdToDuplicate,
+          },
         });
 
-      sourceToClonedPairs.push({
-        source: step,
-        duplicated: clonedStep,
-      });
-      oldToNewIdMap.set(step.id, clonedStep.id);
-    }
-
-    const remappedTrigger = isDefined(newTrigger)
-      ? {
-          ...newTrigger,
-          nextStepIds: (newTrigger.nextStepIds ?? []).map(
-            (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-          ),
+        if (!isDefined(sourceWorkflow)) {
+          throw new WorkflowVersionStepException(
+            'Source workflow not found',
+            WorkflowVersionStepExceptionCode.NOT_FOUND,
+          );
         }
-      : undefined;
 
-    const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
-      ({ source, duplicated }) => {
-        const remappedStep = {
-          ...duplicated,
-          nextStepIds: (source.nextStepIds ?? []).map(
-            (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-          ),
-        };
+        const sourceVersion = await workflowVersionRepository.findOne({
+          where: {
+            id: workflowVersionIdToCopy,
+            workflowId: workflowIdToDuplicate,
+          },
+        });
 
-        if (
-          source.type === WorkflowActionType.ITERATOR &&
-          isDefined(source.settings?.input?.initialLoopStepIds)
-        ) {
-          remappedStep.settings = {
-            ...remappedStep.settings,
-            input: {
-              ...remappedStep.settings.input,
-              initialLoopStepIds: source.settings.input.initialLoopStepIds.map(
+        if (!isDefined(sourceVersion)) {
+          throw new WorkflowVersionStepException(
+            'WorkflowVersion to copy not found',
+            WorkflowVersionStepExceptionCode.NOT_FOUND,
+          );
+        }
+
+        assertWorkflowVersionTriggerIsDefined(sourceVersion);
+        assertWorkflowVersionHasSteps(sourceVersion);
+
+        const workflowPosition =
+          await this.recordPositionService.buildRecordPosition({
+            value: 'first',
+            objectMetadata: {
+              isCustom: false,
+              nameSingular: 'workflow',
+            },
+            workspaceId,
+          });
+
+        const insertWorkflowResult = await workflowRepository.insert({
+          name: `${sourceWorkflow.name} (Duplicate)`,
+          statuses: [WorkflowStatus.DRAFT],
+          position: workflowPosition,
+        });
+
+        const newWorkflowId = (
+          insertWorkflowResult.generatedMaps[0] as WorkflowWorkspaceEntity
+        ).id;
+
+        const versionPosition =
+          await this.recordPositionService.buildRecordPosition({
+            value: 'first',
+            objectMetadata: {
+              isCustom: false,
+              nameSingular: 'workflowVersion',
+            },
+            workspaceId,
+          });
+
+        const insertVersionResult = await workflowVersionRepository.insert({
+          workflowId: newWorkflowId,
+          name: 'v1',
+          status: WorkflowVersionStatus.DRAFT,
+          position: versionPosition,
+        });
+
+        const newDraftVersion = insertVersionResult
+          .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
+
+        const newTrigger = sourceVersion.trigger;
+        const sourceToClonedPairs: Array<{
+          source: WorkflowAction;
+          duplicated: WorkflowAction;
+        }> = [];
+        const oldToNewIdMap = new Map<string, string>();
+
+        for (const step of sourceVersion.steps ?? []) {
+          const clonedStep =
+            await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+              step,
+              workspaceId,
+            });
+
+          sourceToClonedPairs.push({
+            source: step,
+            duplicated: clonedStep,
+          });
+          oldToNewIdMap.set(step.id, clonedStep.id);
+        }
+
+        const remappedTrigger = isDefined(newTrigger)
+          ? {
+              ...newTrigger,
+              nextStepIds: (newTrigger.nextStepIds ?? []).map(
                 (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
               ),
-            },
-          };
-        }
+            }
+          : undefined;
 
-        return remappedStep;
+        const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
+          ({ source, duplicated }) => {
+            const remappedStep = {
+              ...duplicated,
+              nextStepIds: (source.nextStepIds ?? []).map(
+                (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+              ),
+            };
+
+            if (
+              source.type === WorkflowActionType.ITERATOR &&
+              isDefined(source.settings?.input?.initialLoopStepIds)
+            ) {
+              remappedStep.settings = {
+                ...remappedStep.settings,
+                input: {
+                  ...remappedStep.settings.input,
+                  initialLoopStepIds:
+                    source.settings.input.initialLoopStepIds.map(
+                      (oldId: string) => oldToNewIdMap.get(oldId) ?? oldId,
+                    ),
+                },
+              };
+            }
+
+            return remappedStep;
+          },
+        );
+
+        await workflowVersionRepository.update(newDraftVersion.id, {
+          steps: remappedSteps,
+          trigger: remappedTrigger,
+        });
+
+        return {
+          ...newDraftVersion,
+          name: newDraftVersion.name ?? '',
+          steps: remappedSteps,
+          trigger: remappedTrigger ?? null,
+        };
       },
+      authContext,
     );
-
-    await workflowVersionRepository.update(newDraftVersion.id, {
-      steps: remappedSteps,
-      trigger: remappedTrigger,
-    });
-
-    return {
-      ...newDraftVersion,
-      name: newDraftVersion.name ?? '',
-      steps: remappedSteps,
-      trigger: remappedTrigger ?? null,
-    };
   }
 
   async updateWorkflowVersionPositions({
@@ -305,51 +325,57 @@ export class WorkflowVersionWorkspaceService {
     positions: WorkflowStepPositionUpdateInput[];
     workspaceId: string;
   }) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-        { shouldBypassPermissionChecks: true },
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const workflowVersion = await workflowVersionRepository.findOneOrFail({
+        where: {
+          id: workflowVersionId,
+        },
+      });
+
+      assertWorkflowVersionIsDraft(workflowVersion);
+
+      const triggerPosition = positions.find(
+        (position) => position.id === TRIGGER_STEP_ID,
       );
 
-    const workflowVersion = await workflowVersionRepository.findOneOrFail({
-      where: {
-        id: workflowVersionId,
-      },
-    });
+      const updatedTrigger =
+        isDefined(triggerPosition) && isDefined(workflowVersion.trigger)
+          ? {
+              ...workflowVersion.trigger,
+              position: triggerPosition.position,
+            }
+          : undefined;
 
-    assertWorkflowVersionIsDraft(workflowVersion);
+      const updatedSteps = workflowVersion.steps?.map((step) => {
+        const updatedStep = positions.find(
+          (position) => position.id === step.id,
+        );
 
-    const triggerPosition = positions.find(
-      (position) => position.id === TRIGGER_STEP_ID,
-    );
+        if (updatedStep) {
+          return {
+            ...step,
+            position: updatedStep.position,
+          };
+        }
 
-    const updatedTrigger =
-      isDefined(triggerPosition) && isDefined(workflowVersion.trigger)
-        ? {
-            ...workflowVersion.trigger,
-            position: triggerPosition.position,
-          }
-        : undefined;
+        return step;
+      });
 
-    const updatedSteps = workflowVersion.steps?.map((step) => {
-      const updatedStep = positions.find((position) => position.id === step.id);
+      const updatePayload = {
+        ...(!isDefined(updatedTrigger) ? {} : { trigger: updatedTrigger }),
+        ...(!isDefined(updatedSteps) ? {} : { steps: updatedSteps }),
+      };
 
-      if (updatedStep) {
-        return {
-          ...step,
-          position: updatedStep.position,
-        };
-      }
-
-      return step;
-    });
-
-    const updatePayload = {
-      ...(!isDefined(updatedTrigger) ? {} : { trigger: updatedTrigger }),
-      ...(!isDefined(updatedSteps) ? {} : { steps: updatedSteps }),
-    };
-
-    await workflowVersionRepository.update(workflowVersionId, updatePayload);
+      await workflowVersionRepository.update(workflowVersionId, updatePayload);
+    }, authContext);
   }
 }

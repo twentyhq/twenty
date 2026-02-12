@@ -3,6 +3,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
 export const getFieldLinkDefinedLinks = (fieldValue: FieldLinksValue) => {
+  if (!isDefined(fieldValue)) {
+    return [];
+  }
+
   return [
     isNonEmptyString(fieldValue.primaryLinkUrl)
       ? {

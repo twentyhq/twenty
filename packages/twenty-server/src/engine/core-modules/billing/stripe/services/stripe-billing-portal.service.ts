@@ -36,4 +36,18 @@ export class StripeBillingPortalService {
         returnUrl ?? this.domainServerConfigService.getBaseUrl().toString(),
     });
   }
+
+  async createBillingPortalSessionForPaymentMethodUpdate(
+    stripeCustomerId: string,
+    returnUrl?: string,
+  ): Promise<Stripe.BillingPortal.Session> {
+    return await this.stripe.billingPortal.sessions.create({
+      customer: stripeCustomerId,
+      return_url:
+        returnUrl ?? this.domainServerConfigService.getBaseUrl().toString(),
+      flow_data: {
+        type: 'payment_method_update',
+      },
+    });
+  }
 }

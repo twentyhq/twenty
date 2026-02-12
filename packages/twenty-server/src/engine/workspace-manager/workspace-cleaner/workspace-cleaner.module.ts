@@ -15,7 +15,6 @@ import { CleanOnboardingWorkspacesCommand } from 'src/engine/workspace-manager/w
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
-import { DeleteWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/delete-workspaces.command';
 import { DestroyWorkspaceCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/destroy-workspace.command';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
@@ -35,7 +34,6 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
     MetricsModule,
   ],
   providers: [
-    DeleteWorkspacesCommand,
     DestroyWorkspaceCommand,
     CleanSuspendedWorkspacesCronCommand,
     CleanSuspendedWorkspacesCommand,

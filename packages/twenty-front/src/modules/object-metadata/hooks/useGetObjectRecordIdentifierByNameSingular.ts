@@ -4,7 +4,9 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
-export const useGetObjectRecordIdentifierByNameSingular = () => {
+export const useGetObjectRecordIdentifierByNameSingular = (
+  allowRequestsToTwentyIcons: boolean,
+) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   return (record: any, objectNameSingular: string): ObjectRecordIdentifier => {
@@ -21,6 +23,7 @@ export const useGetObjectRecordIdentifierByNameSingular = () => {
     return getObjectRecordIdentifier({
       objectMetadataItem,
       record,
+      allowRequestsToTwentyIcons,
     });
   };
 };

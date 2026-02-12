@@ -13,14 +13,22 @@ describe('computeSchemaComponents', () => {
     const flatObjectMetadata: FlatObjectMetadata = {
       ...objectMetadataItemMock,
       universalIdentifier: 'objectName',
-      fieldMetadataIds: objectMetadataItemMock.fields.map((f) => f.id),
+      fieldIds: objectMetadataItemMock.fields.map((f) => f.id),
     } as any;
 
     const flatFieldMetadataMaps = {
-      byId: Object.fromEntries(
-        objectMetadataItemMock.fields.map((f) => [f.id, f as any]),
+      byUniversalIdentifier: Object.fromEntries(
+        objectMetadataItemMock.fields.map((f) => [
+          f.universalIdentifier || f.id,
+          f as any,
+        ]),
       ),
-      idByUniversalIdentifier: {},
+      universalIdentifierById: Object.fromEntries(
+        objectMetadataItemMock.fields.map((f) => [
+          f.id,
+          f.universalIdentifier || f.id,
+        ]),
+      ),
       universalIdentifiersByApplicationId: {},
     };
 
@@ -29,15 +37,21 @@ describe('computeSchemaComponents', () => {
       nameSingular: 'relationTargetObject',
       namePlural: 'relationTargetObjects',
       universalIdentifier: 'relationTargetObject',
-      fieldMetadataIds: [],
+      fieldIds: [],
     } as any;
 
     const flatObjectMetadataMaps = {
-      byId: {
-        [flatObjectMetadata.id]: flatObjectMetadata,
-        [relationTargetObjectMetadata.id]: relationTargetObjectMetadata,
+      byUniversalIdentifier: {
+        [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
+        [relationTargetObjectMetadata.universalIdentifier as string]:
+          relationTargetObjectMetadata,
       },
-      idByUniversalIdentifier: {},
+      universalIdentifierById: {
+        [flatObjectMetadata.id]:
+          flatObjectMetadata.universalIdentifier as string,
+        [relationTargetObjectMetadata.id]:
+          relationTargetObjectMetadata.universalIdentifier as string,
+      },
       universalIdentifiersByApplicationId: {},
     };
 
@@ -53,7 +67,7 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": 284000000,
+        "amountMicros": "284000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
@@ -554,7 +568,7 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": 253000000,
+        "amountMicros": "253000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
@@ -814,7 +828,7 @@ describe('computeSchemaComponents', () => {
     Pick<
       FieldMetadataEntity<FieldMetadataType.NUMBER>,
       'id' | 'name' | 'type' | 'isNullable' | 'defaultValue' | 'settings'
-    >
+    > & { universalIdentifier: string }
   >[] = [
     {
       title: 'Integer dataType with decimals',
@@ -825,6 +839,7 @@ describe('computeSchemaComponents', () => {
         isNullable: false,
         defaultValue: null,
         settings: { type: 'number', decimals: 1, dataType: NumberDataType.INT },
+        universalIdentifier: 'number1',
       },
     },
     {
@@ -836,6 +851,7 @@ describe('computeSchemaComponents', () => {
         isNullable: false,
         defaultValue: null,
         settings: { type: 'number', dataType: NumberDataType.FLOAT },
+        universalIdentifier: 'number2',
       },
     },
     {
@@ -847,6 +863,7 @@ describe('computeSchemaComponents', () => {
         isNullable: false,
         defaultValue: null,
         settings: { type: 'number', decimals: 0, dataType: NumberDataType.INT },
+        universalIdentifier: 'number3',
       },
     },
   ];
@@ -858,22 +875,27 @@ describe('computeSchemaComponents', () => {
       nameSingular: 'objectName',
       namePlural: 'objectsName',
       universalIdentifier: 'objectName',
-      fieldMetadataIds: [field.id],
+      fieldIds: [field.id],
     } as any;
 
     const flatFieldMetadataMaps = {
-      byId: {
-        [field.id]: field as any,
+      byUniversalIdentifier: {
+        [field.universalIdentifier || field.id]: field as any,
       },
-      idByUniversalIdentifier: {},
+      universalIdentifierById: {
+        [field.id]: field.universalIdentifier || field.id,
+      },
       universalIdentifiersByApplicationId: {},
     };
 
     const flatObjectMetadataMaps = {
-      byId: {
-        [flatObjectMetadata.id]: flatObjectMetadata,
+      byUniversalIdentifier: {
+        [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
       },
-      idByUniversalIdentifier: {},
+      universalIdentifierById: {
+        [flatObjectMetadata.id]:
+          flatObjectMetadata.universalIdentifier as string,
+      },
       universalIdentifiersByApplicationId: {},
     };
 

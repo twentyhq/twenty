@@ -1,0 +1,176 @@
+---
+title: Import dat přes API
+description: Kdy a jak používat API Twenty pro hromadné importy dat.
+---
+
+## Přehled
+
+Twenty poskytuje pro programový import dat jak **GraphQL**, tak **REST API**. API použijte, když import CSV není vzhledem k objemu vašich dat praktický, nebo když potřebujete automatizované, opakované importy.
+
+## Kdy použít import přes API
+
+| Scénář                           | Doporučená metoda                 |
+| -------------------------------- | --------------------------------- |
+| Méně než 10 000 záznamů          | Import CSV                        |
+| 10 000–50 000 záznamů            | Import CSV (rozdělený do souborů) |
+| **50 000+ záznamů**              | **Import přes API**               |
+| Jednorázová migrace              | Obojí (dle objemu)                |
+| **Pravidelné importy**           | **Import přes API**               |
+| **Synchronizace v reálném čase** | **Import přes API**               |
+| **Integrace s jinými systémy**   | **Import přes API**               |
+
+<Note>Pro datové sady o stovkách tisíc záznamů je API výrazně rychlejší a spolehlivější než více importů CSV.</Note>
+
+## Limity rychlosti API
+
+Twenty uplatňuje limity rychlosti, aby zajistilo stabilitu systému:
+
+| Limit                               | Hodnota                  |
+| ----------------------------------- | ------------------------ |
+| **Požadavků za minutu**             | 100                      |
+| **Záznamů na jedno dávkové volání** | 60                       |
+| **Maximální propustnost**           | ~6 000 záznamů za minutu |
+
+<Warning>
+  **Naplánujte import s ohledem na tyto limity.**
+
+  Pro 100 000 záznamů při maximální propustnosti počítejte s přibližně 17 minutami importu. Přidejte rezervu na zpracování chyb a opakování.
+</Warning>
+
+## Začínáme
+
+### Krok 1: Získejte svůj klíč API
+
+1. Přejděte do **Nastavení → Vývojáři**
+2. Klikněte na **+ Vytvořit klíč API**
+3. Dejte svému klíči API výstižný název
+4. Klíč API si ihned zkopírujte (znovu se již nezobrazí)
+5. Uložte ho bezpečně
+
+<Warning>
+  **Chraňte svůj klíč API v tajnosti.**
+
+  Kdokoli s vaším klíčem API může přistupovat k datům vašeho pracovního prostoru a upravovat je. Nikdy ho neukládejte do repozitářů kódu ani jej veřejně nesdílejte.
+</Warning>
+
+### Krok 2: Vyberte si API
+
+Twenty podporuje dva typy API:
+
+| API         | Vhodné pro                                                        | Dokumentace                                             |
+| ----------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
+| **GraphQL** | Flexibilní dotazy, získávání souvisejících dat, komplexní operace | [Dokumentace API](/l/cs/developers/extend/capabilities/apis) |
+| **REST**    | Jednoduché CRUD operace, známé postupy REST                       | [Dokumentace API](/l/cs/developers/extend/capabilities/apis) |
+
+Obě API podporují:
+
+* Vytváření, čtení, aktualizace a mazání záznamů
+* **Dávkové operace** — vytvoření nebo aktualizace až 60 záznamů na jedno volání
+
+**Pro importy používejte dávkové operace**, abyste maximalizovali propustnost v rámci limitů rychlosti.
+
+### Krok 3: Naplánujte pořadí importu
+
+Stejně jako u importů CSV na **pořadí záleží** kvůli vazbám:
+
+1. **Společnosti** jako první (bez závislostí)
+2. **Lidé** jako druzí (mohou se propojit se společnostmi)
+3. **Příležitosti** jako třetí (mohou se propojit se společnostmi a lidmi)
+4. **Úkoly/Poznámky** (mohou se propojit s kteroukoli z výše uvedených entit)
+5. **Vlastní objekty** (podle jejich závislostí)
+
+## Osvědčené postupy
+
+### Dávkujte své požadavky
+
+* Neposílejte záznamy po jednom
+* Seskupte až **60 záznamů na jedno volání API**
+* Tím maximalizujete propustnost v rámci limitů rychlosti
+
+### Práce s limity rychlosti
+
+* Zaveďte prodlevy mezi požadavky (minimálně 600 ms pro dlouhodobé importy)
+* Při dosažení limitů použijte exponenciální backoff
+* Sledujte odpovědi 429 (Too Many Requests)
+
+### Nejprve ověřte data
+
+* Před importem data vyčistěte a ověřte
+* Zkontrolujte, že jsou vyplněna povinná pole
+* Ověřte, že formáty odpovídají požadavkům Twenty (viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping))
+
+### Zaznamenávejte vše
+
+* Zaznamenávejte každý importovaný záznam (včetně ID)
+* Zaznamenávejte chyby s plným kontextem
+* To pomáhá při ladění problémů a ověření dokončení
+
+### Nejprve testujte
+
+* Testujte s malou dávkou (10–20 záznamů)
+* Ověřte, že se data v Twenty zobrazují správně
+* Poté spusťte celý import
+
+### Upsert pro zamezení duplicit
+
+GraphQL API podporuje **dávkový upsert** — pokud záznam existuje, aktualizuje; pokud ne, vytvoří. To zabrání duplicitám při opakovaném spouštění importů.
+
+## Hledání názvů objektů a polí
+
+Chcete-li zobrazit dostupné objekty a pole:
+
+1. Přejděte do **Nastavení → API a webhooky**
+2. Procházejte **Metadata API**
+3. Zobrazte všechny standardní i vlastní objekty s jejich poli
+
+Dokumentace uvádí všechny standardní i vlastní objekty, jejich pole a očekávané datové typy.
+
+## Profesionální služby
+
+S náročnými migracemi přes API mohou pomoci naši partneři:
+
+| Služba                    | Co je součástí                        |
+| ------------------------- | ------------------------------------- |
+| **Návrh datového modelu** | navrhnout optimální datovou strukturu |
+| **Migrační skripty**      | napsat a spustit importní skripty     |
+| **Transformace dat**      | zpracovat složité mapování a čištění  |
+| **Validace a QA**         | ověřit, že je migrace dokončená       |
+
+**Vhodné pro:**
+
+* Migrace 100 000+ záznamů
+* Složité transformace dat
+* Napjaté časové plány
+* Týmy bez vývojářských kapacit
+
+Kontaktujte nás na [contact@twenty.com](mailto:contact@twenty.com) nebo prozkoumejte naše [Implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services).
+
+## Časté dotazy
+
+<AccordionGroup>
+  <Accordion title="Jaký je rozdíl mezi GraphQL a REST?">
+    GraphQL vám umožní vyžádat si v jediném dotazu přesně ta data, která potřebujete, a je vhodnější pro složité operace. REST používá standardní metody HTTP (GET, POST, PUT, DELETE) a může vám být bližší, pokud jste pracovali s tradičními API.
+  </Accordion>
+
+  <Accordion title="Mohu aktualizovat existující záznamy přes API?">
+    Ano! Použijte aktualizační mutace (GraphQL) nebo požadavky PUT/PATCH (REST) s `id` záznamu.
+  </Accordion>
+
+  <Accordion title="Jak mám řešit duplicity?">
+    Nejprve vyhledejte existující záznamy pomocí jedinečných identifikátorů (e-mail, doména). Pokud existuje, aktualizujte; pokud ne, vytvořte.
+  </Accordion>
+
+  <Accordion title="Mohu mazat záznamy přes API?">
+    Ano, použijte mutace pro smazání (GraphQL) nebo požadavky DELETE (REST).
+  </Accordion>
+
+  <Accordion title="Existuje SDK pro Python nebo Node.js?">
+    V současnosti ne, ale obě API fungují s jakýmkoli klientem HTTP v libovolném jazyce.
+  </Accordion>
+</AccordionGroup>
+
+## Dokumentace API
+
+Úplné podrobnosti implementace, ukázky kódu a referenci schématu najdete zde:
+
+* [Dokumentace API](/l/cs/developers/extend/capabilities/apis)

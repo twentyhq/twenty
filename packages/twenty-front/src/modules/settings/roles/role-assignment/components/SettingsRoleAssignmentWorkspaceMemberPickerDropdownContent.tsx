@@ -3,8 +3,8 @@ import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
-import { type SearchRecord } from '~/generated-metadata/graphql';
-import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
+import { type SearchRecord } from '~/generated/graphql';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;

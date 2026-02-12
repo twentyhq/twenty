@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { filesFieldSchema } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -22,6 +23,8 @@ const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
     case 'createdAt':
     case 'updatedAt':
     case 'deletedAt':
+    case 'createdBy':
+    case 'updatedBy':
       return false;
     default:
       return true;
@@ -243,12 +246,20 @@ export const generateRecordPropertiesZodSchema = (
         });
         break;
 
+      case FieldMetadataType.FILES:
+        fieldSchema = filesFieldSchema;
+        break;
+
       default:
         fieldSchema = getFieldZodType(field);
         break;
     }
 
-    if (field.description) {
+    if (field.name === 'position') {
+      fieldSchema = fieldSchema.describe(
+        'Leave empty to place at the top of the list (recommended).',
+      );
+    } else if (field.description) {
       fieldSchema = fieldSchema.describe(field.description);
     }
 

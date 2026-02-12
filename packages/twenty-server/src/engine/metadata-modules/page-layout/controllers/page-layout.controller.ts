@@ -11,20 +11,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
-import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
-import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
-import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
-import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
-import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
+import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
+import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
+import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 
 @Controller('rest/metadata/pageLayouts')
 @UseGuards(WorkspaceAuthGuard)
@@ -37,12 +37,16 @@ export class PageLayoutController {
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('objectMetadataId') objectMetadataId?: string,
+    @Query('pageLayoutType') pageLayoutType?: PageLayoutType,
   ): Promise<PageLayoutDTO[]> {
     if (isDefined(objectMetadataId)) {
-      return this.pageLayoutService.findByObjectMetadataId(
-        workspace.id,
-        objectMetadataId,
-      );
+      return this.pageLayoutService.findBy({
+        workspaceId: workspace.id,
+        filter: {
+          objectMetadataId,
+          pageLayoutType,
+        },
+      });
     }
 
     return this.pageLayoutService.findByWorkspaceId(workspace.id);
@@ -54,7 +58,10 @@ export class PageLayoutController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
-    return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
+    return this.pageLayoutService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Post()
@@ -63,7 +70,10 @@ export class PageLayoutController {
     @Body() input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.create(input, workspace.id);
+    return this.pageLayoutService.create({
+      createPageLayoutInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Patch(':id')
@@ -73,26 +83,24 @@ export class PageLayoutController {
     @Body() input: UpdatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
-    const updatedPageLayout = await this.pageLayoutService.update(
+    const updatedPageLayout = await this.pageLayoutService.update({
       id,
-      workspace.id,
-      input,
-    );
+      workspaceId: workspace.id,
+      updateData: input,
+    });
 
     return updatedPageLayout;
   }
 
   @Delete(':id')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
-  async delete(
+  async destroy(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutEntity> {
-    const deletedPageLayout = await this.pageLayoutService.delete(
+  ): Promise<boolean> {
+    return this.pageLayoutService.destroy({
       id,
-      workspace.id,
-    );
-
-    return deletedPageLayout;
+      workspaceId: workspace.id,
+    });
   }
 }

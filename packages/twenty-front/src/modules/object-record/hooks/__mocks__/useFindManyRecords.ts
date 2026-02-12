@@ -125,8 +125,6 @@ export const query = gql`
                 personId
                 companyId
                 id
-                authorId
-                type
                 fullPath
               }
             }

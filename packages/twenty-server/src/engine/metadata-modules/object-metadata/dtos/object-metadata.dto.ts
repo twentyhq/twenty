@@ -77,8 +77,8 @@ export class ObjectMetadataDTO {
   @HideField()
   workspaceId: string;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId?: string;
+  @Field(() => UUIDScalarType)
+  applicationId: string;
 
   @Field()
   createdAt: Date;

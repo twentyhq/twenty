@@ -1,0 +1,178 @@
+---
+title: Raccourcis clavier
+---
+
+## Introduction
+
+Lorsque vous devez écouter une touche de raccourci, vous utilisez normalement l'événement `onKeyDown`.
+
+Cependant, dans `twenty-front`, vous pourriez avoir des conflits entre les mêmes raccourcis utilisés dans différents composants, montés en même temps.
+
+Par exemple, si vous avez une page qui écoute la touche Entrée, et une fenêtre modale qui écoute aussi la touche Entrée, avec un composant Select à l'intérieur de cette fenêtre qui écoute également la touche Entrée, vous risquez d'avoir un conflit lorsque tous sont montés en même temps.
+
+## Le hook `useScopedHotkeys`
+
+Pour résoudre ce problème, nous avons un hook personnalisé qui permet d'écouter les raccourcis sans aucun conflit.
+
+Vous l'insérez dans un composant et il écoutera les raccourcis uniquement lorsque le composant est monté ET lorsque le **périmètre du raccourci** spécifié est actif.
+
+## Comment écouter les raccourcis en pratique ?
+
+Deux étapes sont nécessaires pour configurer l'écoute des raccourcis :
+
+1. Définir le [périmètre du raccourci](#what-is-a-hotkey-scope-) qui écoutera les raccourcis
+2. Utiliser le hook `useScopedHotkeys` pour écouter les raccourcis
+
+La configuration des périmètres de raccourcis est nécessaire même sur des pages simples, car d'autres éléments de l'interface utilisateur comme le menu de gauche ou le menu de commandes pourraient également écouter les raccourcis.
+
+## Cas d'utilisation des raccourcis
+
+En général, vous aurez deux cas d'utilisation nécessitant des raccourcis :
+
+1. Dans une page ou un composant monté dans une page
+2. Dans un composant de type modal qui prend le focus à la suite d'une action utilisateur
+
+Le deuxième cas d'utilisation peut se produire de manière récursive : un menu déroulant dans une fenêtre modale par exemple.
+
+### Écouter les raccourcis dans une page
+
+Exemple :
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Écouter les raccourcis dans un composant de type modal
+
+Pour cet exemple, nous allons utiliser un composant modal qui écoute la touche Échap pour informer son parent de le fermer.
+
+Ici, l'interaction utilisateur change le périmètre.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Ensuite, dans le composant modal :
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Utilisez le hook useScopedHotkeys pour écouter la touche Échap.
+  // Notez que la touche Échap est un raccourci courant qui peut être utilisé par de nombreux autres composants
+  // Il est donc important d'utiliser une portée de raccourci clavier pour éviter les conflits
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>Mon composant modal</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## Qu'est-ce qu'un périmètre de raccourci ?
+
+Un périmètre de raccourci est une chaîne de caractères qui représente un contexte dans lequel les raccourcis sont actifs. Il est généralement encodé sous forme d'enum.
+
+Lorsque vous modifiez le périmètre de raccourci, les raccourcis qui écoutent ce périmètre seront activés et ceux qui écoutent d'autres périmètres seront désactivés.
+
+Vous ne pouvez définir qu'un seul périmètre à la fois.
+
+Par exemple, les périmètres de raccourcis pour chaque page sont définis dans l'`enum PageHotkeyScope` :
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+En interne, le périmètre sélectionné est stocké dans un état Recoil qui est partagé dans toute l'application :
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Mais cet état Recoil ne doit jamais être manipulé manuellement ! Nous verrons comment l'utiliser dans la prochaine section.
+
+## Comment cela fonctionne-t-il en interne ?
+
+Nous avons créé un léger emballage au-dessus de [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) qui le rend plus performant et évite les rendus inutiles.
+
+Nous créons également un état Recoil pour gérer l'état du périmètre des raccourcis et le rendre disponible partout dans l'application.

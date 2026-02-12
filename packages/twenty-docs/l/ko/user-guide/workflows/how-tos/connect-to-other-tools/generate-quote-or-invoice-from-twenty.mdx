@@ -1,0 +1,144 @@
+---
+title: Twenty에서 견적서 또는 인보이스 생성
+description: 거래가 성사되면 외부 도구에서 인보이스를 자동으로 생성합니다.
+---
+
+거래 데이터를 인보이스 시스템(Stripe, QuickBooks, Xero 등)으로 자동으로 전송합니다. 기회가 성사되었을 때.
+
+## 워크플로우 구조
+
+1. **트리거**: 레코드가 업데이트됨(기회)
+2. **필터**: Stage = Closed Won
+3. **레코드 검색**: 회사 세부정보 가져오기
+4. **코드**(선택): 페이로드 형식 지정
+5. **HTTP 요청**: 인보이스 시스템으로 전송
+
+## 단계 1: 트리거 설정
+
+1. 새 워크플로우 만들기
+2. **레코드가 업데이트됨** 트리거 선택
+3. 객체로 **기회(Opportunity)** 선택
+
+## 단계 2: Closed Won 필터링
+
+거래가 성사된 경우에만 계속되도록 **필터** 작업을 추가합니다:
+
+| 설정     | 값                               |
+| ------ | ------------------------------- |
+| **필드** | 단계                              |
+| **조건** | 같음                              |
+| **값**  | `CLOSED_WON` (또는 사용 중인 스테이지 이름) |
+
+<Tip>
+  트리거는 모든 기회 업데이트에서 실행됩니다. 필터는 스테이지가 Closed Won으로 변경될 때만 워크플로우가 계속 진행되도록 보장합니다.
+</Tip>
+
+## 단계 3: 회사 세부정보 가져오기
+
+기회 레코드에는 인보이스에 필요한 모든 회사 필드가 포함되지 않을 수 있습니다. **레코드 검색** 작업을 추가합니다:
+
+| 설정        | 값                                      |
+| --------- | -------------------------------------- |
+| **객체**    | 회사                                     |
+| **일치 기준** | ID가 `{{trigger.object.companyId}}`와 같음 |
+
+청구지 주소, 세금 ID 등과 함께 전체 회사 레코드를 가져옵니다.
+
+## 단계 4: 페이로드 형식 지정(선택)
+
+인보이스 시스템에서 특정 형식이 필요한 경우 **코드** 작업을 추가합니다:
+
+```javascript
+export const main = async (params: {
+  opportunity: any;
+  company: any;
+}): Promise<object> => {
+  const { opportunity, company } = params;
+
+  return {
+    invoice: {
+      // Customer info from Company
+      customer_name: company.name,
+      customer_email: company.email || "",
+      billing_address: {
+        line1: company.address?.street || "",
+        city: company.address?.city || "",
+        postal_code: company.address?.postalCode || "",
+        country: company.address?.country || ""
+      },
+      tax_id: company.taxId || null,
+
+      // Invoice details from Opportunity
+      amount: opportunity.amount,
+      currency: opportunity.currency || "USD",
+      description: `Invoice for ${opportunity.name}`,
+      due_days: 30,
+
+      // Reference back to Twenty
+      metadata: {
+        opportunity_id: opportunity.id,
+        company_id: company.id
+      }
+    }
+  };
+};
+```
+
+## 단계 5: 인보이스 시스템으로 전송
+
+**HTTP 요청** 작업을 추가합니다:
+
+| 설정      | 값                                    |
+| ------- | ------------------------------------ |
+| **방법**  | POST                                 |
+| **URL** | 인보이스 API 엔드포인트                       |
+| **헤더**  | `Authorization: Bearer YOUR_API_KEY` |
+| **본문**  | `{{code.invoice}}` 또는 필드를 직접 매핑      |
+
+### 예시: Stripe 인보이스
+
+```
+POST https://api.stripe.com/v1/invoices
+Headers:
+  Authorization: Bearer sk_live_xxx
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  customer: {{company.stripeCustomerId}}
+  collection_method: send_invoice
+  days_until_due: 30
+```
+
+### 예시: QuickBooks 인보이스
+
+```
+POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
+Headers:
+  Authorization: Bearer YOUR_ACCESS_TOKEN
+  Content-Type: application/json
+
+Body: {{code.invoice}}
+```
+
+## 전체 워크플로우 요약
+
+| 단계 | 작업             | 목적                          |
+| -- | -------------- | --------------------------- |
+| 1  | 트리거: 레코드 업데이트됨 | 어떤 기회가 변경되면 실행              |
+| 2  | 필터             | Stage = Closed Won인 경우에만 진행 |
+| 3  | 레코드 검색         | 청구를 위한 전체 회사 세부정보 가져오기      |
+| 4  | 코드             | 인보이스 API용 데이터 형식 지정         |
+| 5  | HTTP 요청        | 외부 시스템에서 인보이스 생성            |
+
+## 팁
+
+* **외부 ID 저장**: **레코드 업데이트** 작업을 사용하여 API가 반환한 인보이스 ID를 기회에 다시 저장합니다
+* **오류 처리**: HTTP 요청이 실패하면 알림을 보내는 분기 추가
+* **먼저 테스트**: 실제 운영 전에 인보이스 시스템의 샌드박스/테스트 모드를 사용하세요
+
+## 관련 항목
+
+* [Twenty에서 PDF 생성](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — 생성된 PDF를 레코드에 첨부
+* [워크플로우 트리거](/l/ko/user-guide/workflows/capabilities/workflow-triggers)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [Closed Won 자동화](/l/ko/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

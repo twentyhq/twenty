@@ -1,0 +1,135 @@
+---
+title: Workflow-Auslöser
+description: Erfahren Sie mehr über die verschiedenen Auslöser, die Ihre Workflows starten.
+---
+
+## Über Auslöser
+
+Workflows beginnen immer mit einem einzelnen Auslöser, der festlegt, wann die Automatisierung ausgeführt werden soll.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Erweiterte Objekte werden unterstützt!** Über die standardmäßigen CRM-Objekte hinaus (Personen, Unternehmen, Chancen) können Sie auch Workflows auslösen und Aktionen ausführen für:
+
+  * Arbeitsbereichsmitglieder
+  * Kalenderereignisse
+  * Nachrichten (E-Mails)
+  * Aufgaben, Notizen und viele andere Systemobjekte
+
+  Dies ermöglicht leistungsstarke Automatisierungen, etwa das Benachrichtigen von Teammitgliedern, wenn Kalenderereignisse erstellt werden, oder das automatische Verarbeiten eingehender E-Mails.
+</Tip>
+
+## Datensatz wird erstellt
+
+Startet den Workflow, wenn ein neuer Datensatz in einem ausgewählten Objekt (Personen, Unternehmen, Gelegenheiten oder ein benutzerdefiniertes Objekt) erstellt wird.
+
+**Konfiguration**: Wählen Sie den Objekttyp aus, der auf neue Datensätze überwacht werden soll.
+
+<Note>
+  * Dieser Auslöser eignet sich hervorragend für Datensätze, die durch CSV-, Postfach- und Kalender-Synchronisierung oder per API erstellt wurden.
+  * **Für manuell erstellte Datensätze nicht empfohlen**: Mit diesem Auslöser starten Workflows, sobald der Datensatz erstellt wird. Da Twenty UI ein automatisches Speichern in Echtzeit bietet (es gibt keinen Bearbeitungsmodus und anschließend eine Validierung zum Speichern von Datensätzen), wird der Workflow ausgelöst, bevor der Benutzer alle Felder eingibt.
+    Um diesen Workflow bei manuell erstellten Datensätzen auszulösen, wird empfohlen, stattdessen den Auslöser `Record is created or updated` zu verwenden.
+</Note>
+
+## Datensatz wird aktualisiert
+
+Startet den Workflow, wenn Änderungen an einem bestehenden Datensatz vorgenommen werden.
+
+**Konfiguration**:
+
+* Wählen Sie den Objekttyp aus
+* Optional angeben, welche Felder auf Änderungen überwacht werden sollen
+
+## Datensatz wird aktualisiert oder erstellt
+
+Startet den Workflow, wenn ein Datensatz in einem ausgewählten Objekt entweder erstellt oder aktualisiert wird.
+
+**Warum das wichtig ist**: Dieser Auslöser ist besonders hilfreich, da auf verschiedene Arten erstellte Datensätze sich unterschiedlich verhalten:
+
+* **API-/CSV-Importe**: Datensätze werden sofort mit allen Feldern befüllt erstellt
+* **Manuelle Erstellung**: Datensätze werden zuerst erstellt, dann werden Felder in nachfolgenden Aktualisierungen hinzugefügt
+
+**Konfiguration**:
+
+* Wählen Sie den Objekttyp aus, der überwacht werden soll
+* Optional angeben, welche Felder auf Änderungen überwacht werden sollen
+* Der Workflow wird sowohl bei der ersten Erstellung als auch bei nachfolgenden Aktualisierungen ausgelöst
+
+## Datensatz wird gelöscht
+
+Startet den Workflow, wenn ein Datensatz aus einem Objekt entfernt wird.
+
+**Konfiguration**: Wählen Sie den Objekttyp aus, der auf Löschungen überwacht werden soll.
+
+## Manueller Auslöser
+
+Startet den Workflow, wenn er durch eine Benutzeraktion ausgelöst wird. Dieser Auslöser ist über das `Cmd+K`-Menü oder über eine benutzerdefinierte Schaltfläche zugänglich, die nach Auswahl von Datensätzen in der oberen Navigationsleiste angezeigt wird.
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Verfügbarkeitskonfiguration**: Wählen Sie aus, wie der Workflow die Datensatzauswahl handhaben soll:
+
+* **Global**: Für das Auslösen dieses Workflows ist kein Datensatz erforderlich. Der Workflow wird überall (von jedem Objekt aus) über das Befehlsmenü `Cmd + K` ausgelöst und verwendet keine Datensätze als Eingabe.
+
+* **Einzeln**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird von Anfang bis Ende so oft ausgeführt, wie Datensätze ausgewählt sind.
+
+  <Note>
+    **Soft-Limit: 100 Ausführungen/Minute**. Darüber hinaus verbleiben Workflows im Status "Nicht gestartet" und werden schrittweise verarbeitet—entweder durch einen Hintergrundauftrag oder wenn ein anderer Workflow in die Warteschlange gelangt. Das bedeutet, Sie können mit einem einzelnen Auslöser mehr als 100 Datensätze auswählen; die Ausführung wird dann lediglich langsamer.
+  </Note>
+
+* **Bulk**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird einmal ausgeführt, wobei die gesamte Liste der Datensätze als Eingabe verwendet wird. Das bedeutet, dass der Workflow eine [Iterator-Aktion](/l/de/user-guide/workflows/capabilities/workflow-actions#iterator) enthalten muss.
+
+<Note>
+  Dies ist fortgeschrittener und am besten für Personen geeignet, die die Anzahl der Workflow-Ausführungen optimieren möchten.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Zusätzliche Konfiguration**:
+
+* Wählen Sie das Zielobjekt aus (für Einzel- und Bulk-Verfügbarkeit)
+* Wählen Sie ein Befehls-Symbol für den Workflow-Trigger
+* Platzierung in der Navigationsleiste konfigurieren (angeheftet oder nicht angeheftet)
+
+**Zugriffsmethoden**:
+
+* `Cmd+K`-Menü zum Finden und Starten manueller Workflows
+* Benutzerdefinierte Schaltfläche in der oberen Navigationsleiste (falls konfiguriert)
+
+## Zeitbasierter Auslöser: Nach Zeitplan
+
+Startet den Workflow auf regelmäßiger Basis, die Sie definieren.
+
+**Konfiguration**:
+
+* Zeiteinheit auswählen (Minuten, Stunden, Tage)
+* Geben Sie einen Wert ein oder verwenden Sie benutzerdefinierte Cron-Ausdrücke für erweitertes Scheduling
+
+<Note>
+  **Zeitzone**: Geplante Workflows laufen in **UTC**. Wenn Sie Uhrzeiten für tägliche Zeitpläne festlegen, konvertieren Sie Ihre lokale Zeit in UTC.
+</Note>
+
+## Externer Auslöser: Webhook
+
+Startet den Workflow, wenn eine GET- oder POST-Anfrage von einem externen Dienst empfangen wird.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Konfiguration**:
+
+* Der Workflow stellt eine eindeutige Webhook-URL bereit—kopieren Sie diese und fügen Sie sie in Ihrem externen System als aufzurufenden Endpunkt hinzu.
+* Für POST-Anfragen definieren Sie die erwartete Body-Struktur, damit Twenty weiß, welche Daten zu erwarten sind. Fügen Sie hier die Felder hinzu, die Sie erhalten und die weiter unten in Ihrem Workflow benötigt werden.
+* Konfigurieren Sie die Authentifizierung (bald verfügbar).
+
+## Den richtigen Auslöser wählen
+
+| Anwendungsfall                               | Empfohlener Auslöser                      |
+| -------------------------------------------- | ----------------------------------------- |
+| Neue Leads müssen verarbeitet werden         | Datensatz wird erstellt                   |
+| Datenänderungen müssen synchronisiert werden | Datensatz wird aktualisiert               |
+| Import/manuelle Datenverarbeitung            | Datensatz wird aktualisiert oder erstellt |
+| Bereinigung nach dem Löschen                 | Datensatz wird gelöscht                   |
+| Vom Benutzer initiierte Aktion               | Manuell auslösen                          |
+| Wiederkehrende Berichte                      | Nach Zeitplan                             |
+| Externe Integration                          | Webhook oder Nach Zeitplan                |

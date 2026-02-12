@@ -1,12 +1,11 @@
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
-import { WorkflowEditActionFormFieldSettings } from '../WorkflowEditActionFormFieldSettings';
 
 const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFieldSettings',
@@ -14,7 +13,6 @@ const meta: Meta<typeof WorkflowEditActionFormFieldSettings> = {
   decorators: [
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
-    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
   ],
 };

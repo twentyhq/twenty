@@ -2,7 +2,7 @@ import { usePlans } from '@/billing/hooks/usePlans';
 import {
   type BillingPriceLicensed,
   type BillingPriceMetered,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useAllBillingPrices = () => {
   const { listPlans } = usePlans();

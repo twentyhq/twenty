@@ -1,44 +1,41 @@
 ---
-title: Breadcrumb
+title: Trilha de navegação
 image: /images/user-guide/fields/field.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Header" />
+  <img src="/images/user-guide/fields/field.png" alt="Cabeçalho" />
 </Frame>
 
-Renderiza uma barra de navegação breadcrumb.
+Renderiza uma barra de trilha de navegação.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { BrowserRouter } from "react-router-dom";
+    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-```jsx
-import { BrowserRouter } from "react-router-dom";
-import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+    export const MyComponent = () => {
+      const breadcrumbLinks = [
+        { children: "Home", href: "/" },
+        { children: "Category", href: "/category" },
+        { children: "Subcategory", href: "/category/subcategory" },
+        { children: "Current Page" },
+      ];
 
-export const MyComponent = () => {
-  const breadcrumbLinks = [
-    { children: "Home", href: "/" },
-    { children: "Category", href: "/category" },
-    { children: "Subcategory", href: "/category/subcategory" },
-    { children: "Current Page" },
-  ];
+      return (
+        <BrowserRouter>
+          <Breadcrumb className links={breadcrumbLinks} />
+        </BrowserRouter>
+        )
+    };
+    ```
+  </Tab>
 
-  return (
-    <BrowserRouter>
-      <Breadcrumb className links={breadcrumbLinks} />
-    </BrowserRouter>
-    )
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props     | Tipo                                     | Descrição                                                                                                                                                                                                                                                              |
-| --------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| className | Nome opcional para estilização adicional | Nome de classe opcional para estilização adicional                                                                                                                                                                                                                     |
-| links     | matriz                                   | Um array de objetos, cada um representando um link de breadcrumb. Cada objeto possui uma propriedade `children` (o texto do link) e uma propriedade `href` opcional (a URL para navegar quando o link é clicado) |
-
-</Tab>
+  <Tab title="Propriedades">
+    | Propriedades | Tipo   | Descrição                                                                                                                                                                                                                         |
+    | ------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className    | string | Nome de classe opcional para estilo adicional                                                                                                                                                                                     |
+    | links        | array  | Um array de objetos, cada um representando um link da trilha de navegação. Cada objeto tem uma propriedade `children` (o conteúdo textual do link) e uma propriedade opcional `href` (a URL para navegar quando se clica no link) |
+  </Tab>
 </Tabs>

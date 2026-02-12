@@ -1,0 +1,78 @@
+---
+title: Hatalar, İstekler ve Çekme İstekleri
+info: Sorunları bildirin, özellik talep edin ve koda katkıda bulunun
+---
+
+## Hataları Bildirme
+
+Bir hatayı bildirmek için lütfen [GitHub'da bir sorun oluşturun](https://github.com/twentyhq/twenty/issues/new).
+
+[Discord'da](https://discord.gg/cx5n4Jzs57) da yardım isteyebilirsiniz.
+
+## Özellik İstekleri
+
+Eğer bunun bir hata olmadığından emin değilseniz ve bir özellik isteğine daha yakın olduğunu düşünüyorsanız, muhtemelen [bunun yerine bir tartışma başlatmalısınız](https://github.com/twentyhq/twenty/discussions/new).
+
+## Çekme İsteği Gönderin
+
+Twenty'ye koda katkıda bulunmak bir çekme isteği (PR) ile başlar.
+
+### Başlamadan Önce
+
+1. İlgili çalışmalar için [mevcut sorunları](https://github.com/twentyhq/twenty/issues) kontrol edin
+2. Yeni özellikler için, tartışmak üzere önce bir sorun açın
+3. [Davranış Kuralları](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md) belgemizi inceleyin
+
+### Fork'layın ve Klonlayın
+
+1. Depoyu GitHub'da fork'layın
+2. Fork'unuzu klonlayın:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Upstream uzak depoyu ekleyin:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Bir Dal Oluşturun
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Açıklayıcı dal adları kullanın:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Değişikliklerinizi Yapın
+
+1. Temiz, iyi belgelenmiş kod yazın
+2. Mevcut kod stilini izleyin
+3. Yeni işlevsellik için testler ekleyin
+4. Gerektiğinde belgeleri güncelleyin
+
+### PR'nizi Gönderin
+
+1. Dalınızı gönderin:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. GitHub'da bir PR açın
+3. PR şablonunu doldurun
+4. İlgili sorunları ilişkilendirin
+
+### PR Kontrol Listesi
+
+* [ ] Kod, proje stil yönergelerine uyuyor
+* [ ] Testler yerelde geçiyor
+* [ ] Belgeler güncellendi
+* [ ] PR açıklaması değişiklikleri açıklar

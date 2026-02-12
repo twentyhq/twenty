@@ -21,6 +21,7 @@ import {
   buildOutputSchemaFromValue,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
+import { t } from '@lingui/core/macro';
 import { IconCopy } from 'twenty-ui/display';
 
 import { useDebouncedCallback } from 'use-debounce';
@@ -80,7 +81,7 @@ export const WorkflowEditTriggerWebhookForm = ({
     <>
       <WorkflowStepBody>
         <TextInput
-          label="Live URL"
+          label={t`Live URL`}
           value={displayWebhookUrl}
           RightIcon={() => (
             <IconCopy
@@ -93,7 +94,7 @@ export const WorkflowEditTriggerWebhookForm = ({
         />
         <Select
           dropdownId="workflow-edit-webhook-trigger-http-method"
-          label="HTTP method"
+          label={t`HTTP method`}
           fullWidth
           disabled={triggerOptions.readonly}
           value={trigger.settings.httpMethod}
@@ -116,8 +117,8 @@ export const WorkflowEditTriggerWebhookForm = ({
         />
         {trigger.settings.httpMethod === 'POST' && (
           <FormRawJsonFieldInput
-            label="Expected Body"
-            placeholder="Enter a JSON object"
+            label={t`Expected Body`}
+            placeholder={t`Enter a JSON object`}
             error={
               errorMessagesVisible ? errorMessages.expectedBody : undefined
             }
@@ -173,7 +174,7 @@ export const WorkflowEditTriggerWebhookForm = ({
         )}
         <Select
           dropdownId="workflow-edit-webhook-trigger-auth"
-          label="Auth"
+          label={t`Auth`}
           fullWidth
           disabled
           value={trigger.settings.authentication}

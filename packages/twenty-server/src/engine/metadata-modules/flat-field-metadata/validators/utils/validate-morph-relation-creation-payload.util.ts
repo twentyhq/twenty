@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { type RelationCreationPayload } from 'twenty-shared/types';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
@@ -20,12 +21,12 @@ type RelationCreationPayloadAndObjectMetadata = {
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  objectMetadataId: string;
+  objectMetadataUniversalIdentifier: string;
 };
 export const validateMorphRelationCreationPayload = async ({
   existingFlatObjectMetadataMaps,
   morphRelationCreationPayload,
-  objectMetadataId,
+  objectMetadataUniversalIdentifier,
 }: ValidateMorphRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<RelationCreationPayloadAndObjectMetadata[]>
 > => {
@@ -58,7 +59,7 @@ export const validateMorphRelationCreationPayload = async ({
           code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           message:
             'Morph relation creation payloads must have the same relation type',
-          userFriendlyMessage: msg`Morph relation creation payloads must have the same relation type`,
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
         },
       ],
     };
@@ -71,7 +72,9 @@ export const validateMorphRelationCreationPayload = async ({
     ...new Set(allRelatedObjectMetadataIds),
   ];
 
-  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
+  if (
+    allRelatedObjectMetadataIdsSet.includes(objectMetadataUniversalIdentifier)
+  ) {
     return {
       status: 'fail',
       errors: [
@@ -79,7 +82,7 @@ export const validateMorphRelationCreationPayload = async ({
           code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           message:
             'Morph relation creation payloads must not target source object metadata',
-          userFriendlyMessage: msg`Morph relation creation payloads must only contain relation to other object metadata`,
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
         },
       ],
     };
@@ -95,7 +98,7 @@ export const validateMorphRelationCreationPayload = async ({
           code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           message:
             'Morph relation creation payloads must have only relation to the same object metadata',
-          userFriendlyMessage: msg`Morph relation creation payloads must only contain relation to the same object metadata`,
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
         },
       ],
     };

@@ -27,7 +27,6 @@ describe('computeCursorArgFilter', () => {
       universalIdentifier: overrides.id,
       viewFieldIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       applicationId: null,
@@ -59,17 +58,17 @@ describe('computeCursorArgFilter', () => {
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: fields.reduce(
+    byUniversalIdentifier: fields.reduce(
       (acc, field) => {
-        acc[field.id] = field;
+        acc[field.universalIdentifier] = field;
 
         return acc;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: fields.reduce(
+    universalIdentifierById: fields.reduce(
       (acc, field) => {
-        acc[field.universalIdentifier] = field.id;
+        acc[field.id] = field.universalIdentifier;
 
         return acc;
       },
@@ -102,7 +101,7 @@ describe('computeCursorArgFilter', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     universalIdentifier: objectMetadataId,
-    fieldMetadataIds: ['name-id', 'age-id', 'fullname-id'],
+    fieldIds: ['name-id', 'age-id', 'fullname-id'],
     indexMetadataIds: [],
     viewIds: [],
     applicationId: null,

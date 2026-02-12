@@ -6,7 +6,10 @@ import {
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
+} from 'twenty-shared/workflow';
 
 const getRecordObjectLabel = (
   recordSchema: RecordOutputSchemaV2,
@@ -77,6 +80,7 @@ const buildVariableResult = (
   targetSchema: RecordFieldNodeValue,
   targetFieldName: string,
   isFullRecord: boolean,
+  stepNameLabel?: string,
 ): VariableSearchResult => {
   const targetField = getFieldFromSchema(targetFieldName, targetSchema);
   // Determine the variable label based on whether we want the full record or a specific field
@@ -97,7 +101,10 @@ const buildVariableResult = (
 
   // Build the full path: stepName > field1 > field2 > targetField
   const fullPathSegments = [stepName, ...pathLabels, variableLabel];
-  const variablePathLabel = fullPathSegments.join(' > ');
+  const basePath = fullPathSegments.join(' > ');
+  const variablePathLabel = stepNameLabel
+    ? `${basePath} (${stepNameLabel})`
+    : basePath;
 
   return {
     variableLabel,
@@ -117,12 +124,14 @@ export const searchRecordOutputSchema = ({
   path,
   selectedField,
   isFullRecord,
+  stepNameLabel,
 }: {
   stepName: string;
   recordOutputSchema: RecordOutputSchemaV2;
   path: string[];
   selectedField: string;
   isFullRecord: boolean;
+  stepNameLabel?: string;
 }): VariableSearchResult => {
   const navigationResult = navigateToTargetField(recordOutputSchema, path);
 
@@ -140,6 +149,7 @@ export const searchRecordOutputSchema = ({
     navigationResult.schema,
     selectedField,
     isFullRecord,
+    stepNameLabel,
   );
 };
 
@@ -153,7 +163,7 @@ const parseVariableName = (rawVariableName: string) => {
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
 
   return {
     stepId: parts.at(0),

@@ -1,0 +1,170 @@
+---
+title: İlişkili Kayıt Verilerini Görüntüle
+description: İş akışlarını kullanarak ilişkili kayıtlardaki verileri gösterin (ör. Fırsatlarda Şirket bilgileri).
+---
+
+İlişkili kayıtlardaki verileri doğrudan kendi kayıtlarınızda görüntüleyin — örneğin, bir Şirketin çalışan sayısını o Şirketin Fırsatlarında gösterin. İç içe alanlar yerel olarak kullanılabilir olana kadar bu iş akışı geçici çözümü faydalıdır.
+
+## Ortak Kullanım Durumları
+
+| Kaynak | Hedef  | Kopyalanacak Alanlar                   |
+| ------ | ------ | -------------------------------------- |
+| Şirket | Fırsat | Sektör, Şirket Büyüklüğü, ARR          |
+| Kişi   | Fırsat | E-posta, Telefon, Unvan                |
+| Fırsat | Şirket | Son Anlaşma Tutarı, Son Kazanma Tarihi |
+
+## Temel Alan Kopyalama
+
+### Örnek: İrtibat Kişisinin E-postasını Fırsata Kopyalama
+
+**Hedef**: Bir fırsatta İletişim Noktası belirlerken, kolay erişim için e-postasını fırsata kopyalayın.
+
+### Ön Gereksinim
+
+İş akışını oluşturmadan önce **Ayarlar → Veri Modeli → Fırsatlar** içinde hedef alanları oluşturun:
+
+* İrtibat E-postası (türü: E-posta)
+* İrtibat Telefonu (türü: Telefon)
+
+### Kurulum
+
+1. **Tetikleyici**: Kayıt Güncellenir (Fırsatlar, İletişim Noktası alanı)
+
+2. **Filtre**: İletişim Noktasının boş olmadığını kontrol edin
+
+3. **Kayıtları Ara**: Bağlantılı kişiyi bulun
+   * Nesne: Kişiler
+   * Filtre: ID `{{trigger.object.pointOfContact.id}}` değerine eşittir
+
+4. **Kayıt Güncelle**:
+   * Nesne: Fırsatlar
+   * Kayıt: `{{trigger.object.id}}`
+   * İrtibat E-postası: `{{searchRecords[0].email}}`
+   * İrtibat Telefonu: `{{searchRecords[0].phone}}`
+
+## Birden Fazla Alanı Kopyalama
+
+### Örnek: Şirket Bilgilerini Tüm İlişkili Fırsatlarla Senkronize Edin
+
+**Hedef**: Şirket detayları değiştiğinde tüm ilişkili fırsatları güncelleyin.
+
+### Kurulum
+
+1. **Tetikleyici**: Kayıt Güncellenir (Şirketler)
+   * Alanlar: Sektör, Şirket Büyüklüğü, Yıllık Gelir
+
+2. **Kayıtları Ara**: Bu şirket için tüm fırsatları bulun
+   * Nesne: Fırsatlar
+   * Filtre: Şirket ID'si `{{trigger.object.id}}` değerine eşittir
+
+3. **Yineleyici**: Her fırsat üzerinde döngü kurun
+
+4. **Kayıt Güncelle** (yineleyici içinde):
+   * Nesne: Fırsatlar
+   * Kayıt: `{{iterator.currentItem.id}}`
+   * Şirket Sektörü: `{{trigger.object.industry}}`
+   * Şirket Büyüklüğü: `{{trigger.object.companySize}}`
+   * Şirket ARR: `{{trigger.object.annualRevenue}}`
+
+## Kayıt Oluşturma Sırasında Kopyalama
+
+### Örnek: Fırsatı Şirket Verileriyle Önceden Doldurma
+
+**Hedef**: Bir şirkete bağlı bir fırsat oluştururken, temel şirket bilgilerini otomatik olarak kopyalayın.
+
+### Ön Gereksinim
+
+Hedef alanları **Ayarlar → Veri Modeli → Fırsatlar** içinde oluşturun:
+
+* Şirket Sektörü (türü: Metin)
+* Şirket Büyüklüğü (türü: Sayı)
+
+### Kurulum
+
+1. **Tetikleyici**: Kayıt Oluşturulur (Fırsatlar)
+   * Filtre: Şirket boş değil
+
+2. **Kayıtları Ara**: Bağlantılı şirketin detaylarını alın
+   * Nesne: Şirketler
+   * Filtre: ID `{{trigger.object.company.id}}` değerine eşittir
+
+3. **Kayıt Güncelle**:
+   * Nesne: Fırsatlar
+   * Kayıt: `{{trigger.object.id}}`
+   * Şirket Sektörü: `{{searchRecords[0].industry}}`
+   * Şirket Büyüklüğü: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Görevler ve Notlar sınırlaması**: Görevler ve Notlar üzerindeki ilişkiler çoktan çoğa olarak sabit kodlanmıştır ve henüz iş akışı tetikleyicileri veya eylemlerinde mevcut değildir. Bu ilişkilere erişmek için bunun yerine [API](/l/tr/developers/extend/capabilities/apis) kullanın.
+</Note>
+
+## Çift Yönlü Senkronizasyon
+
+### Örnek: Birincil İrtibatı Senkron Tutun
+
+**Hedef**: Bir şirketin birincil irtibatı değiştiğinde, ilgili kişiyi güncelleyin. Bir kişi birincil olduğunda, şirketi güncelleyin.
+
+### İş Akışı 1: Şirket → Kişi
+
+1. **Tetikleyici**: Kayıt Güncellenir (Şirketler, Birincil İrtibat alanı)
+2. **Kayıt Güncelle**: Kişinin "Birincil İrtibat mı" alanını true yapın
+3. **Kayıtları Ara**: Önceki birincil irtibatı bulun
+4. **Kayıt Güncelle**: Önceki irtibatın "Birincil İrtibat mı" alanını false yapın
+
+### İş Akışı 2: Kişi → Şirket
+
+1. **Tetikleyici**: Kayıt Güncellenir (Kişiler, Birincil İrtibat mı = true)
+2. **Kayıt Güncelle**: Şirketin Birincil İrtibatını bu kişi olarak ayarlayın
+
+<Note>
+  Sonsuz döngülerden kaçınmak için çift yönlü senkronizasyonlarda dikkatli olun. Güncellemeden önce değerin gerçekten değişip değişmediğini kontrol etmek için filtreler kullanın.
+</Note>
+
+## Karmaşık Eşleştirme için Kod Kullanma
+
+### Örnek: Kopyalama Sırasında Verileri Dönüştürme
+
+**Hedef**: Kişiden fırsata telefon numarasını kopyalayın ve biçimlendirin.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## En İyi Uygulamalar
+
+### Döngülerden Kaçının
+
+* Birbirini sonsuza dek tetikleyen iş akışları oluşturmayın
+* Belirli alan koşulları kullanın
+* Değerin gerçekten değişip değişmediğini görmek için kontroller ekleyin
+
+### Eksik Verileri Ele Alma
+
+* Kopyalamadan önce kaynak kaydın var olup olmadığını daima kontrol edin
+* İsteğe bağlı alanlar için varsayılan değerler sağlayın
+* Kaynak alan boş olduğunda atlamak için filtreler kullanın
+
+### Performans
+
+* Birçok kayda kopyalama yaparken toplu güncellemeler kullanın
+* Toplu senkronizasyon işlemleri için zamanlanmış iş akışları kullanın
+* Birden fazla kayıt güncellemesi için Yineleyici kullanmayı değerlendirin
+
+## İlgili
+
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)

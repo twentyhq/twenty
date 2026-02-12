@@ -9,9 +9,8 @@ const StyledButtonGroupContainer = styled.div`
   display: flex;
 `;
 
-export type ButtonGroupProps = Pick<
-  ButtonProps,
-  'variant' | 'size' | 'accent'
+export type ButtonGroupProps = Partial<
+  Pick<ButtonProps, 'variant' | 'size' | 'accent'>
 > & {
   className?: string;
   children: ReactNode[];

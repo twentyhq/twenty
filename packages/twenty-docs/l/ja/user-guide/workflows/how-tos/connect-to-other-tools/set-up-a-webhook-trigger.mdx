@@ -1,0 +1,171 @@
+---
+title: Webhook トリガーの設定
+description: 外部サービスからデータを受け取り、ワークフローをトリガーします。
+image: /images/user-guide/workflows/workflow.png
+---
+
+Webhook トリガーは、一意の URL にデータを送信することで外部サービスがあなたのワークフローを開始できるようにします。 フォーム、サードパーティアプリ、カスタム統合に接続するために使用します。
+
+## Webhook を使用するタイミング
+
+| ユースケース         | 例                       |
+| -------------- | ----------------------- |
+| **Web フォーム**   | お問い合わせフォームの送信でリードを作成    |
+| **サードパーティアプリ** | Stripe の支払い → 顧客レコードを作成 |
+| **カスタム統合**     | 自社アプリ → Twenty の自動化     |
+| **ノーコードツール**   | Zapier、Make、n8n との連携    |
+
+## ステップバイステップの設定
+
+### ステップ 1: ワークフローを作成
+
+1. 「**Settings → Workflows**」に移動
+2. 「**+ New Workflow**」をクリック
+3. 名前を付ける（例: "Website Form Submission"）
+
+### ステップ 2: Webhook トリガーを設定
+
+1. トリガーブロックをクリック
+2. 「**Webhook**」を選択
+3. 次のような一意の Webhook URL が発行されます:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. この URL をコピーします—外部サービスで使用します
+
+### ステップ 3: 想定されるデータ構造を定義
+
+**POST** リクエストの場合、想定されるボディ構造を定義します:
+
+1. 「**Define expected body**」をクリック
+2. サービスが送信する内容に一致するサンプル JSON を入力します:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. 「**Save**」をクリック—これにより、後続のステップで使用できる変数が作成されます
+
+### ステップ 4: アクションを追加
+
+Webhook データを使用するアクションを追加します:
+
+**例: Person レコードを作成**
+
+1. 「**Create Record**」アクションを追加
+2. 「**People**」オブジェクトを選択
+3. フィールドをマッピング:
+
+| フィールド | 値                                       |
+| ----- | --------------------------------------- |
+| 名     | `{{trigger.body.firstName}}`            |
+| 姓     | `{{trigger.body.lastName}}`             |
+| メール   | `{{trigger.body.email}}`                |
+| 会社    | `{{trigger.body.company}}` に基づいて検索または作成 |
+
+### ステップ 5: Webhook をテスト
+
+有効化する前に、Webhook をテストします:
+
+**cURL を使用**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Postman などを使用**:
+
+1. Webhook URL に対して POST リクエストを作成
+2. Content-Type ヘッダーを `application/json` に設定
+3. テスト用の JSON ボディを追加
+4. 送信してワークフローの実行を確認
+
+### ステップ 6: 有効化
+
+テストが完了したら、ワークフローを稼働させるために「**Activate**」をクリックします。
+
+## さまざまなデータ構造の扱い
+
+### ネストされたデータ
+
+Webhook がネストされたデータを送信する場合:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+次のように参照します: `{{trigger.body.contact.email}}`
+
+### 配列
+
+データに配列が含まれる場合:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+配列の扱い方はユースケースによって異なります:
+
+**項目数が不明 → Iterator を使用**
+
+配列内の各項目を処理する必要がある場合（例: 各項目ごとにレコードを作成）、配列を解析するために **Code** アクションを追加し、その後 **Iterator** を使用します:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+次に Iterator を使用してループ処理します: `{{code.items}}`
+
+**既知／特定のフィールド → 名前付きフィールドとして抽出**
+
+配列に個別にアクセスしたい特定のフィールドが含まれている場合（例: フォーム回答で位置 0 が常に "first name"、位置 1 が常に "last name" のようなケース）、それらを抽出するために **Code** アクションを追加します:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+これで、後続のステップで `product.name` と `product.qty` を個別に選択できます。
+
+<Tip>
+  配列の扱いの詳細については、[Code アクションで配列を扱う](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)を参照してください。
+</Tip>
+
+## 関連
+
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)

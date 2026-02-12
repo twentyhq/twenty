@@ -2,7 +2,10 @@ import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/u
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { searchRecordOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
+} from 'twenty-shared/workflow';
 
 /**
  * Parses a variable name to extract its components
@@ -14,10 +17,10 @@ const parseVariableName = (rawVariableName: string) => {
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
   const stepId = parts.at(0);
   // after stepId, we have a prefix (properties.after or properties.before). Path segments are the rest of the string
-  // join the first 3 parts to get the event prefix
+  // join the next 3 parts to get the event prefix (properties, after/before, objectName)
   const firstFieldWithEventPrefix = parts.slice(1, 4).join('.');
   const remainingParts = parts.slice(4);
   const partsWithoutStepId = [firstFieldWithEventPrefix, ...remainingParts];

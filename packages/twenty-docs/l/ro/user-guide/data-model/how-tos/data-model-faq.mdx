@@ -1,0 +1,155 @@
+---
+title: Întrebări frecvente despre modelul de date
+description: Întrebări frecvente despre modelul de date al Twenty.
+---
+
+## Gestionarea obiectelor
+
+<AccordionGroup>
+  <Accordion title="Pot să șterg un obiect personalizat?">
+    Da, obiectele personalizate pot fi șterse. Le poți și dezactiva mai întâi, ceea ce ascunde obiectul și datele sale din interfață, păstrându-le.
+  </Accordion>
+
+  <Accordion title="Pot să șterg obiectele standard (Persoane, Companii, etc.)?">
+    Nu, obiectele standard nu pot fi șterse. Le poți doar dezactiva, ceea ce le ascunde din interfață, dar păstrează datele.
+  </Accordion>
+
+  <Accordion title="Câte obiecte personalizate pot să creez?">
+    Poți crea câte obiecte și câmpuri personalizate ai nevoie — prețul nu se schimbă.
+  </Accordion>
+
+  <Accordion title="Pot să redenumesc un obiect standard?">
+    Poți redenumi eticheta obiectelor standard (Persoane, Companii, Oportunități), dar nu și numele lor API. Denumirile API sunt fixe pentru a asigura consistența în toate spațiile de lucru Twenty.
+  </Accordion>
+
+  <Accordion title="Pot să schimb pictograma unui obiect?">
+    Da, poți schimba pictograma atât pentru obiectele standard, cât și pentru cele personalizate, în **Setări → Model de date**.
+  </Accordion>
+
+  <Accordion title="Pot să rearanjez obiectele în bara de navigare din stânga?">
+    Încă nu. Ordinea obiectelor în navigare este momentan fixă, însă această funcționalitate este planificată pentru o versiune viitoare.
+  </Accordion>
+
+  <Accordion title="Pot să ascund obiectele din bara de navigare din stânga?">
+    Toate obiectele active apar în navigare. Poți dezactiva obiectele de care nu ai nevoie sub **Setări → Model de Date**.
+  </Accordion>
+</AccordionGroup>
+
+## Capabilitățile câmpurilor
+
+<AccordionGroup>
+  <Accordion title="Pot să schimb tipul unui câmp după creare?">
+    Nu, tipurile de câmp nu pot fi modificate după creare. Dacă ai nevoie de un alt tip, creează un câmp nou cu tipul corect, migrează-ți datele, apoi dezactivează câmpul vechi.
+  </Accordion>
+
+  <Accordion title="De ce am nevoie de nume diferite pentru singular și plural?">
+    API-ul nostru GraphQL folosește ambele forme pentru diferite operațiuni:
+
+    * `createPerson` (singular) pentru acțiuni cu un singur înregistrare
+    * `createPeople` (plural) pentru operațiuni în bloc
+
+    Aceasta creează limitări atunci când formele singular și plural sunt aceleași, dar îmbunătățește experiența dezvoltatorului.
+  </Accordion>
+
+  <Accordion title="De ce sunt unele nume de câmpuri protejate?">
+    Anumite nume de câmpuri, precum `Type` sau `Application`, sunt rezervate pentru utilizarea sistemului. Alege nume alternative precum `Category` sau `Classification`.
+  </Accordion>
+
+  <Accordion title="Ce se întâmplă când dezactivez un câmp?">
+    * Câmpul este ascuns din interfață
+    * Datele existente sunt păstrate
+    * Poți accesa în continuare câmpul prin API
+    * Relațiile existente rămân, dar nu poți crea altele noi
+    * Poți reactiva câmpul ulterior
+  </Accordion>
+
+  <Accordion title="Pot să fac un câmp obligatoriu?">
+    În prezent, nu poți face câmpurile personalizate obligatorii. Toate câmpurile acceptă valori goale. Poți folosi fluxuri de lucru pentru a impune câmpuri obligatorii, trimițând alerte sau blocând acțiuni atunci când câmpurile sunt goale.
+  </Accordion>
+
+  <Accordion title="Care este diferența dintre unic și obligatoriu?">
+    * **Unic**: Nu pot exista două înregistrări cu aceeași valoare în acest câmp
+    * **Obligatoriu**: Câmpul trebuie să aibă o valoare (în prezent nu este acceptat pentru câmpurile personalizate)
+  </Accordion>
+
+  <Accordion title="Pot să creez câmpuri cu formule?">
+    Câmpurile cu formule vor fi disponibile în **T1 2026**. Între timp, poți folosi fluxuri de lucru pentru a calcula și actualiza automat valorile câmpurilor.
+  </Accordion>
+
+  <Accordion title="Pot să am câmpuri imbricate în obiectele mele?">
+    Câmpurile imbricate vor fi disponibile în **T1 2026**. În prezent, poți folosi fluxuri de lucru pentru a prelua valorile câmpurilor din obiectele înrudite. De exemplu, pentru a afișa industria unei companii pe un document despre o Persoană, creează un câmp personalizat la Persoane și folosește un flux de lucru pentru a sincroniza valoarea.
+  </Accordion>
+
+  <Accordion title="Pot să rearanjez câmpurile din obiecte?">
+    Rearanjarea câmpurilor va fi disponibilă cu machete personalizate în **T4 2025**. În prezent, câmpurile apar în ordine alfabetică.
+  </Accordion>
+</AccordionGroup>
+
+## Relații
+
+<AccordionGroup>
+  <Accordion title="Pot să am o relație care indică către același obiect?">
+    Da! Relațiile auto-referențiale sunt acceptate și recomandate pentru cazuri precum ierarhiile de conturi. De exemplu, creează o relație de la Companii la Companii pentru a urmări conturile părinte/copil.
+  </Accordion>
+
+  <Accordion title="Pot să creez relații de tip mulți-la-mulți?">
+    Relațiile de tip mulți-la-mulți vor fi disponibile în **S1 2026**. În prezent, creează un obiect intermediar cu două relații de tip unu-la-mulți ca soluție temporară.
+
+    De exemplu, pentru a lega Persoane și Proiecte (mulți-la-mulți), creează un obiect "Atribuiri de proiect" cu:
+
+    * O relație către Persoane (multe atribuiri → o persoană)
+    * O relație către Proiecte (multe atribuiri → un proiect)
+  </Accordion>
+
+  <Accordion title="Ce sunt relațiile către tipuri multiple de obiecte (relații Morph)?">
+    Acestea permit unui obiect să se raporteze la mai multe tipuri diferite de obiecte printr-un singur câmp. De exemplu, Notele pot fi atașate simultan la Persoane ȘI Companii ȘI Oportunități.
+
+    Fiecare Notă se leagă în același timp de o Persoană, o Companie și o Oportunitate.
+
+    Află mai multe în [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Pot să am mai multe relații între aceleași obiecte?">
+    Da, poți crea mai multe relații între aceleași două obiecte. De exemplu, o Companie ar putea avea atât o relație "Contact principal", cât și "Contact de facturare" către Persoane.
+  </Accordion>
+
+  <Accordion title="Ce se întâmplă cu relațiile când șterg o înregistrare?">
+    Când ștergi o înregistrare, legătura de relație este eliminată din înregistrările asociate. Înregistrările asociate în sine nu sunt șterse.
+  </Accordion>
+
+  <Accordion title="Pot să creez relații circulare?">
+    Deși sunt posibile tehnic, relațiile circulare (A → B → C → A) ar trebui evitate, deoarece pot cauza confuzie și potențiale probleme de performanță.
+  </Accordion>
+</AccordionGroup>
+
+## Acces și permisiuni
+
+<AccordionGroup>
+  <Accordion title="Unde pot vedea și edita modelul de date?">
+    Accesează **Setări → Model de date** pentru a vizualiza și edita toate obiectele și câmpurile tale.
+  </Accordion>
+
+  <Accordion title="De ce nu pot să văd Modelul de Date sub Setări?">
+    Contactează-ți administratorul de spațiu de lucru. Accesul la modelul de date este de obicei restricționat doar la administratori.
+  </Accordion>
+</AccordionGroup>
+
+## Gestionarea datelor
+
+<AccordionGroup>
+  <Accordion title="Există o limită pentru câte înregistrări pot avea?">
+    Nu există o limită strictă pentru numărul de înregistrări. Totuși, seturi de date foarte mari pot afecta performanța în unele vizualizări. Folosește filtre și vizualizări pentru a gestiona eficient seturile de date mari.
+  </Accordion>
+
+  <Accordion title="Pot să import date în obiectele personalizate?">
+    Da, poți importa date CSV în orice obiect, inclusiv în obiectele personalizate. Procesul de import acceptă maparea câmpurilor pentru câmpurile personalizate. Vezi [Cum să îți pregătești fișierele CSV](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Pot să export configurația modelului de date?">
+    În prezent, nu există un export integrat pentru configurația modelului de date. Contactează asistența dacă ai nevoie să migrezi modelul de date între spații de lucru.
+  </Accordion>
+</AccordionGroup>
+
+## Ai nevoie de mai mult ajutor?
+
+Consultă [Serviciile noastre de implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services) pentru ajutor cu proiectarea complexă a modelului de date.

@@ -9,7 +9,6 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
@@ -60,10 +59,7 @@ export const CommandMenuWorkflowStepInfo = ({
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
-  const { updateOneRecord: updateOneWorkflowVersion } =
-    useUpdateOneRecord<WorkflowVersion>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
+  const { updateOneRecord: updateOneWorkflowVersion } = useUpdateOneRecord();
 
   const {
     trigger,
@@ -97,9 +93,9 @@ export const CommandMenuWorkflowStepInfo = ({
       ? isTrigger
         ? (stepDefinition.definition.name ??
           (stepDefinition.definition.type === 'MANUAL'
-            ? 'Launch manually'
-            : 'Trigger'))
-        : (stepDefinition.definition.name ?? 'Action')
+            ? t`Launch manually`
+            : t`Trigger`))
+        : (stepDefinition.definition.name ?? t`Action`)
       : '';
 
   const [editedTitle, setEditedTitle] = useState<string | null>(null);
@@ -135,7 +131,7 @@ export const CommandMenuWorkflowStepInfo = ({
         actionType: stepDefinition.definition.type,
       });
 
-  const headerType = isTrigger ? 'Trigger' : 'Action';
+  const headerType = isTrigger ? t`Trigger` : t`Action`;
 
   const Icon = getIcon(headerIcon ?? 'IconDefault');
 
@@ -153,6 +149,7 @@ export const CommandMenuWorkflowStepInfo = ({
 
     if (isTrigger) {
       await updateOneWorkflowVersion({
+        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
         idToUpdate: targetWorkflowVersionId,
         updateOneRecordInput: {
           trigger: {

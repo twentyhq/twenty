@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 
 import { ThemeSchemeContext } from '@/ui/theme/components/BaseThemeProvider';
-import { useColorScheme } from '../hooks/useColorScheme';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 
 export const UserThemeProviderEffect = () => {
   const { colorScheme } = useColorScheme();

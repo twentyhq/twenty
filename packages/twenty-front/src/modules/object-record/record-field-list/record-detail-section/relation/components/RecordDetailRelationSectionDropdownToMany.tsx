@@ -1,9 +1,10 @@
-import { useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
@@ -22,11 +23,18 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailRelationSectionDropdownToMany = () => {
+type RecordDetailRelationSectionDropdownToManyProps = {
+  dropdownTriggerClickableComponent?: ReactNode;
+};
+
+export const RecordDetailRelationSectionDropdownToMany = ({
+  dropdownTriggerClickableComponent,
+}: RecordDetailRelationSectionDropdownToManyProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldMetadataId } = fieldDefinition;
   const {
@@ -72,6 +80,7 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId: scopeInstanceId,
   });
 
   const { closeDropdown } = useCloseDropdown();
@@ -160,17 +169,23 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
       clickableComponent={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconPlus}
-          accent="tertiary"
-        />
+        dropdownTriggerClickableComponent ?? (
+          <LightIconButton
+            className="displayOnHover"
+            Icon={IconPlus}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          onCreate={handleCreateNew}
+          onCreate={
+            isDefined(createNewRecordAndOpenRightDrawer)
+              ? handleCreateNew
+              : undefined
+          }
           objectMetadataItemIdForCreate={relationObjectMetadataItem.id}
           onChange={updateRelation}
           onSubmit={() => {

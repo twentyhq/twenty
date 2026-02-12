@@ -4,10 +4,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
-import { removeWidgetFromTab } from '../utils/removeWidgetFromTab';
-import { removeWidgetLayoutFromTab } from '../utils/removeWidgetLayoutFromTab';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
+import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
 
 export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
