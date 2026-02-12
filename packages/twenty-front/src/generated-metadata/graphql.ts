@@ -215,6 +215,7 @@ export enum AllMetadataName {
   skill = 'skill',
   view = 'view',
   viewField = 'viewField',
+  viewFieldGroup = 'viewFieldGroup',
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
@@ -5635,7 +5636,6 @@ export type UploadFilesFieldFileMutationVariables = Exact<{
 
 export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
-<<<<<<< HEAD
 export type FindManyFrontComponentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5647,7 +5647,7 @@ export type FindOneFrontComponentQueryVariables = Exact<{
 
 
 export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, applicationAccessToken?: string | null, applicationRefreshToken?: string | null, apiUrl?: string | null } | null };
-=======
+
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type CreateOneLogicFunctionMutationVariables = Exact<{
@@ -5663,7 +5663,6 @@ export type DeleteOneLogicFunctionMutationVariables = Exact<{
 
 
 export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
->>>>>>> upstream/main
 
 export type ExecuteOneLogicFunctionMutationVariables = Exact<{
   input: ExecuteOneLogicFunctionInput;
@@ -10258,7 +10257,6 @@ export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHoo
 export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
-<<<<<<< HEAD
 export const FindManyFrontComponentsDocument = gql`
     query FindManyFrontComponents {
   frontComponents {
@@ -10335,7 +10333,6 @@ export function useFindOneFrontComponentLazyQuery(baseOptions?: Apollo.LazyQuery
 export type FindOneFrontComponentQueryHookResult = ReturnType<typeof useFindOneFrontComponentQuery>;
 export type FindOneFrontComponentLazyQueryHookResult = ReturnType<typeof useFindOneFrontComponentLazyQuery>;
 export type FindOneFrontComponentQueryResult = Apollo.QueryResult<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>;
-=======
 export const CreateOneLogicFunctionDocument = gql`
     mutation CreateOneLogicFunction($input: CreateLogicFunctionFromSourceInput!) {
   createOneLogicFunction(input: $input) {
@@ -10402,7 +10399,6 @@ export function useDeleteOneLogicFunctionMutation(baseOptions?: Apollo.MutationH
 export type DeleteOneLogicFunctionMutationHookResult = ReturnType<typeof useDeleteOneLogicFunctionMutation>;
 export type DeleteOneLogicFunctionMutationResult = Apollo.MutationResult<DeleteOneLogicFunctionMutation>;
 export type DeleteOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<DeleteOneLogicFunctionMutation, DeleteOneLogicFunctionMutationVariables>;
->>>>>>> upstream/main
 export const ExecuteOneLogicFunctionDocument = gql`
     mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
   executeOneLogicFunction(input: $input) {
