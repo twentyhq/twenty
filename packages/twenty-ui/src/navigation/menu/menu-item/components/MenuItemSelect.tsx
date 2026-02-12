@@ -41,7 +41,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   }}
 `;
 
-type MenuItemSelectProps = {
+export type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
   withIconContainer?: boolean;
   selected: boolean;

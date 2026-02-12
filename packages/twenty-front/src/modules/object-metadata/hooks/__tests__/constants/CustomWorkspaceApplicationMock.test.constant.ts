@@ -1,4 +1,4 @@
-import { type Application } from '~/generated/graphql';
+import { type Application } from '~/generated-metadata/graphql';
 
 export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',

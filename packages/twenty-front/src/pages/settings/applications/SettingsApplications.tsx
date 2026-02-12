@@ -8,8 +8,10 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload } from 'twenty-ui/display';
-import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
-import { type FeatureFlagKey } from '~/generated/graphql';
+import {
+  type FeatureFlagKey,
+  useFindManyApplicationsQuery,
+} from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsCreateTab } from '~/pages/settings/applications/tabs/SettingsApplicationsCreateTab';

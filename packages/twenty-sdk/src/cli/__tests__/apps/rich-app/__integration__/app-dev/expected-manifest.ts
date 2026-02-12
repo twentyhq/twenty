@@ -3,7 +3,6 @@ import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const EXPECTED_MANIFEST: Manifest = {
-  sources: {},
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',

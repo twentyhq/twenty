@@ -1,4 +1,4 @@
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const shouldEnableTabEditingFeatures = (
   pageLayoutType: PageLayoutType,

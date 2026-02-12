@@ -25,7 +25,7 @@ import {
   IconEyeOff,
   IconSettings,
 } from 'twenty-ui/display';
-import { PermissionFlagType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UseRecordGroupActionsParams = {

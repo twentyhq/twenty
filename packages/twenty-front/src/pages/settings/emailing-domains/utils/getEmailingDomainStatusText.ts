@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { EmailingDomainStatus } from '~/generated/graphql';
+import { EmailingDomainStatus } from '~/generated-metadata/graphql';
 
 export const getTextByEmailingDomainStatus = (status: EmailingDomainStatus) => {
   switch (status) {

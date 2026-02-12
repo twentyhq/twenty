@@ -77,19 +77,26 @@ export default defineConfig(() => {
           }
           warn(warning);
         },
-        external: [
-          ...Object.keys((packageJson as any).dependencies || {}),
-          'path',
-          'fs',
-          'fs/promises',
-          'url',
-          'crypto',
-          'stream',
-          'util',
-          'os',
-          'module',
-          /^node:/,
-        ],
+        external: (id: string) => {
+          if (/^node:/.test(id)) return true;
+
+          const builtins = [
+            'path',
+            'fs',
+            'fs/promises',
+            'url',
+            'crypto',
+            'stream',
+            'util',
+            'os',
+            'module',
+          ];
+          if (builtins.includes(id)) return true;
+
+          const deps = Object.keys((packageJson as any).dependencies || {});
+
+          return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
+        },
         output: [
           {
             format: 'es',

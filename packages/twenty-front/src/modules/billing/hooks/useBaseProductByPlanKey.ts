@@ -1,4 +1,7 @@
-import { BillingProductKey, type BillingPlanKey } from '~/generated/graphql';
+import {
+  BillingProductKey,
+  type BillingPlanKey,
+} from '~/generated-metadata/graphql';
 import { findOrThrow } from 'twenty-shared/utils';
 import { usePlanByPlanKey } from '@/billing/hooks/usePlanByPlanKey';
 

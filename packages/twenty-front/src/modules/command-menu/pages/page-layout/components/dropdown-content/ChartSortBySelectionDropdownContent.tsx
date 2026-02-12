@@ -26,7 +26,7 @@ import {
   type BarChartConfiguration,
   GraphOrderBy,
   type LineChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const ChartSortBySelectionDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);

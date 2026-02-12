@@ -1,4 +1,4 @@
-import { type ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 type IsFieldMetadataReadOnlyByPermissionParams = {
   objectPermissions: ObjectPermission;

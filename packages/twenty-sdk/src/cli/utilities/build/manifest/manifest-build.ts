@@ -11,9 +11,8 @@ import {
   type LogicFunctionConfig,
 } from '@/sdk';
 import { glob } from 'fast-glob';
-import * as fs from 'fs-extra';
 import { readFile } from 'fs-extra';
-import { basename, extname, relative, sep } from 'path';
+import { basename, extname, relative } from 'path';
 import {
   type ApplicationManifest,
   type AssetManifest,
@@ -25,7 +24,6 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { type Sources } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
@@ -42,32 +40,6 @@ const loadAssets = async (appPath: string) => {
     cwd: appPath,
     onlyFiles: true,
   });
-};
-
-const computeSources = async (
-  appPath: string,
-  sourceFilePaths: string[],
-): Promise<Sources> => {
-  const sources: Sources = {};
-
-  for (const filepath of sourceFilePaths) {
-    const relPath = relative(appPath, filepath);
-    const parts = relPath.split(sep);
-    const content = await fs.readFile(filepath, 'utf8');
-
-    let current: Sources = sources;
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      if (i === parts.length - 1) {
-        current[part] = content;
-      } else {
-        current[part] = (current[part] ?? {}) as Sources;
-        current = current[part] as Sources;
-      }
-    }
-  }
-
-  return sources;
 };
 
 export const buildManifest = async (
@@ -240,7 +212,6 @@ export const buildManifest = async (
         logicFunctions,
         frontComponents,
         publicAssets,
-        sources: await computeSources(appPath, filePaths),
       };
 
   const entityFilePaths: EntityFilePaths = {

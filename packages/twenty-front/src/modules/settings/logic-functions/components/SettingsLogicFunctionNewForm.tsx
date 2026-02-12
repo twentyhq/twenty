@@ -1,4 +1,4 @@
-import { type LogicFunctionNewFormValues } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { type LogicFunctionNewFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';

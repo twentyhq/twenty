@@ -13,7 +13,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, OnboardingStatus } from '~/generated/graphql';
+import { FeatureFlagKey, OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const SSEEventStreamEffect = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);

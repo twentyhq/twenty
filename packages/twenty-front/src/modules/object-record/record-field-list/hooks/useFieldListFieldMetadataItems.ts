@@ -7,7 +7,7 @@ import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import groupBy from 'lodash.groupby';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UseFieldListFieldMetadataItemsProps = {
   objectNameSingular: string;

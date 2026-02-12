@@ -5,7 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType, RelationType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type PrefillRecordArgs = {
   objectMetadataItem: ObjectMetadataItem;

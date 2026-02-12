@@ -4,7 +4,7 @@ import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/ss
 import { turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents } from '@/sse-db-event/utils/turnSseObjectRecordEventToObjectRecordOperationBrowserEvent';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type EventWithQueryIds } from '~/generated/graphql';
+import { type EventWithQueryIds } from '~/generated-metadata/graphql';
 
 export const useDispatchObjectRecordEventsFromSseToBrowserEvents = () => {
   const { objectMetadataItems } = useObjectMetadataItems();

@@ -1,4 +1,4 @@
-import { type AuthTokenPair } from '~/generated/graphql';
+import { type AuthTokenPair } from '~/generated-metadata/graphql';
 
 export const isValidAuthTokenPair = (
   tokenPair: any,

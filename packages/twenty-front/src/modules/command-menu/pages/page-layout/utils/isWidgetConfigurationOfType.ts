@@ -22,7 +22,7 @@ import {
   type WorkflowConfiguration,
   type WorkflowRunConfiguration,
   type WorkflowVersionConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type WidgetConfigurationTypenameMap = {
   AggregateChartConfiguration: Omit<

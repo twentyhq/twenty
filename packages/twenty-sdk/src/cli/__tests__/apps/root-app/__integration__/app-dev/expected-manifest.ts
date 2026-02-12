@@ -2,7 +2,6 @@ import { FieldType } from '@/sdk';
 import type { Manifest } from 'twenty-shared/application';
 
 export const EXPECTED_MANIFEST: Manifest = {
-  sources: {},
   application: {
     universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000001',
     displayName: 'Root App',

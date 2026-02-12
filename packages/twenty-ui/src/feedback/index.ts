@@ -7,7 +7,9 @@
  *                              |___/
  */
 
+export type { LoaderProps } from './loader/components/Loader';
 export { Loader } from './loader/components/Loader';
+export type { CircularProgressBarProps } from './progress-bar/components/CircularProgressBar';
 export { CircularProgressBar } from './progress-bar/components/CircularProgressBar';
 export type {
   ProgressBarProps,

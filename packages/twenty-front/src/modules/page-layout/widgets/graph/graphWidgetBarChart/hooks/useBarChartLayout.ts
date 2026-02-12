@@ -9,7 +9,7 @@ import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxis
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { resolveAxisFontSizes } from '@/page-layout/widgets/graph/utils/resolveAxisFontSizes';
 import { useMemo } from 'react';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type UseBarChartLayoutParams = {
   axisTheme: ChartAxisTheme;

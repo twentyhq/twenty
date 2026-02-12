@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { LINE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/lineChartData';
@@ -17,7 +16,7 @@ import {
   type LineChartConfiguration,
   type LineChartDataPoint,
   type LineChartSeries,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
   objectMetadataItemId: string;
@@ -46,8 +45,6 @@ export const useGraphLineChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const apolloCoreClient = useApolloCoreClient();
-
   const dataConfiguration = extractLineChartDataConfiguration(configuration);
 
   const {
@@ -55,7 +52,6 @@ export const useGraphLineChartWidgetData = ({
     loading,
     error,
   } = useQuery(LINE_CHART_DATA, {
-    client: apolloCoreClient,
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,

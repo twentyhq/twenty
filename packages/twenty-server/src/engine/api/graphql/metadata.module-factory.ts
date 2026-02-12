@@ -5,6 +5,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
@@ -28,6 +29,9 @@ export const metadataModuleFactory = async (
     autoSchemaFile: true,
     include: [MetadataGraphQLApiModule],
     resolverSchemaScope: 'metadata',
+    buildSchemaOptions: {
+      orphanedTypes: [ClientConfig],
+    },
     renderGraphiQL() {
       return renderApolloPlayground({ path: 'metadata' });
     },
