@@ -5,7 +5,7 @@ import { type z } from 'zod';
 import {
   type IdentityProviderType,
   type SsoIdentityProviderStatus,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type SSOIdentityProvider = {
   __typename: 'SSOIdentityProvider';

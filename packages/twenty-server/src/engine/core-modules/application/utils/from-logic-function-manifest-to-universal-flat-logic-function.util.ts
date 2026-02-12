@@ -35,6 +35,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
       logicFunctionManifest.databaseEventTriggerSettings ?? null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
+    isBuildUpToDate: true,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

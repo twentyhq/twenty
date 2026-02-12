@@ -12,7 +12,7 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type CoreView } from '~/generated/graphql';
+import { type CoreView } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {

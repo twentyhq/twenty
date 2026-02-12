@@ -149,6 +149,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     handlerName: { toStringify: false, universalProperty: undefined },
     toolInputSchema: { toStringify: true, universalProperty: undefined },
     isTool: { toStringify: false, universalProperty: undefined },
+    isBuildUpToDate: { toStringify: false, universalProperty: undefined },
     deletedAt: { toStringify: false, universalProperty: undefined },
     cronTriggerSettings: { toStringify: true, universalProperty: undefined },
     databaseEventTriggerSettings: {

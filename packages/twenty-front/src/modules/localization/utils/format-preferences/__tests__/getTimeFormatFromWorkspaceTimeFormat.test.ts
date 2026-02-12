@@ -1,6 +1,6 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/format-preferences/getTimeFormatFromWorkspaceTimeFormat';
-import { WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberTimeFormatEnum } from '~/generated-metadata/graphql';
 
 // Mock detectTimeFormat
 jest.mock('@/localization/utils/detection/detectTimeFormat', () => ({

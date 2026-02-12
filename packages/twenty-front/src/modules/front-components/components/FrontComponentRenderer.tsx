@@ -1,13 +1,12 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
-
-import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;

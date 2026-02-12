@@ -4,7 +4,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',

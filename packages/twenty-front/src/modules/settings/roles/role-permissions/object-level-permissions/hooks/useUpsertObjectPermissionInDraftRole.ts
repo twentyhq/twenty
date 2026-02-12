@@ -1,7 +1,7 @@
 import { getRoleWithUpsertedObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/getRoleWithUpsertedObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetRecoilState } from 'recoil';
-import { type ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export const useUpsertObjectPermissionInDraftRole = (roleId: string) => {
   const setSettingsDraftRole = useSetRecoilState(

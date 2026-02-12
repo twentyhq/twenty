@@ -2,7 +2,7 @@ import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMembe
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { WorkspaceMemberNumberFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberNumberFormatEnum } from '~/generated-metadata/graphql';
 
 export const getNumberFormatFromWorkspaceMember = (
   workspaceMember: WorkspaceMember | CurrentWorkspaceMember,

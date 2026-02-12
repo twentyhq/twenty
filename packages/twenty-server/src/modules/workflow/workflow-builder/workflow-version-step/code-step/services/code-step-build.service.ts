@@ -14,29 +14,24 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
-import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
+import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-flat-logic-function.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-
-const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 
 @Injectable()
 export class CodeStepBuildService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
+    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
   ) {}
-
-  private getSourceSubfolderForCodeStep(logicFunctionId: string) {
-    return `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}`;
-  }
 
   async createCodeStepLogicFunction({
     logicFunctionId,
@@ -45,33 +40,13 @@ export class CodeStepBuildService {
     logicFunctionId: string;
     workspaceId: string;
   }) {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-    const { sourceHandlerPath, builtHandlerPath, handlerName, checksum } =
-      await this.logicFunctionResourceService.seedSourceFiles({
-        sourceSubfolder: this.getSourceSubfolderForCodeStep(logicFunctionId),
-        workspaceId,
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      });
-
-    return await this.logicFunctionMetadataService.createOne({
+    return await this.logicFunctionFromSourceService.createOne({
       input: {
         id: logicFunctionId,
-        name: 'A Logic Function Code Workflow Step',
+        name: 'A Code Step',
         description: '',
-        sourceHandlerPath,
-        builtHandlerPath,
-        handlerName,
-        checksum,
-        toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
       },
       workspaceId,
-      ownerFlatApplication: workspaceCustomFlatApplication,
     });
   }
 
@@ -114,7 +89,6 @@ export class CodeStepBuildService {
       existingLogicFunction.id,
       newId,
     );
-
     const toBuiltHandlerPath = builtHandlerPath.replace(
       existingLogicFunction.id,
       newId,
@@ -122,9 +96,9 @@ export class CodeStepBuildService {
 
     await this.logicFunctionResourceService.copyResources({
       fromSourceHandlerPath: sourceHandlerPath,
-      fromBuiltHandlerPath: builtHandlerPath,
       toSourceHandlerPath,
-      toBuiltHandlerPath,
+      fromBuiltHandlerPath: builtHandlerPath,
+      toBuiltHandlerPath: toBuiltHandlerPath,
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -136,8 +110,8 @@ export class CodeStepBuildService {
           id: newId,
           universalIdentifier: newUniversalIdentifier,
           description: existingLogicFunction.description ?? undefined,
-          builtHandlerPath: toBuiltHandlerPath,
           sourceHandlerPath: toSourceHandlerPath,
+          builtHandlerPath: toBuiltHandlerPath,
           toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
           checksum: existingLogicFunction.checksum ?? '[default-checksum]', // TODO: checksum should never be null, update column in logicFunction entity to set it non nullable
           cronTriggerSettings: existingLogicFunction.cronTriggerSettings as
@@ -230,7 +204,7 @@ export class CodeStepBuildService {
       if (
         !isDefined(flatLogicFunction) ||
         flatLogicFunction.deletedAt ||
-        !this.isWorkflowCodeStepLogicFunction(flatLogicFunction)
+        flatLogicFunction.isBuildUpToDate
       ) {
         continue;
       }
@@ -246,63 +220,10 @@ export class CodeStepBuildService {
         continue;
       }
 
-      const { checksum } =
-        await this.logicFunctionResourceService.buildFromSource({
-          sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-          builtHandlerPath: flatLogicFunction.builtHandlerPath,
-          workspaceId,
-          applicationUniversalIdentifier,
-        });
-
-      await this.logicFunctionMetadataService.updateChecksum({
-        id: flatLogicFunction.id,
-        checksum,
+      await this.logicFunctionFromSourceService.buildOneFromSource({
         workspaceId,
+        id: logicFunctionId,
       });
     }
-  }
-
-  isWorkflowCodeStepLogicFunction(
-    flatLogicFunction: FlatLogicFunction,
-  ): boolean {
-    return (
-      flatLogicFunction.sourceHandlerPath.startsWith(
-        `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
-      ) ||
-      flatLogicFunction.builtHandlerPath.startsWith(
-        `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
-      )
-    );
-  }
-
-  async getFlatLogicFunctionForCodeStepOrNull({
-    logicFunctionId,
-    workspaceId,
-  }: {
-    logicFunctionId: string;
-    workspaceId: string;
-  }): Promise<FlatLogicFunction | null> {
-    const { flatLogicFunctionMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: logicFunctionId,
-      flatEntityMaps: flatLogicFunctionMaps,
-    });
-
-    if (
-      !isDefined(flatLogicFunction) ||
-      flatLogicFunction.deletedAt ||
-      !this.isWorkflowCodeStepLogicFunction(flatLogicFunction)
-    ) {
-      return null;
-    }
-
-    return flatLogicFunction;
   }
 }

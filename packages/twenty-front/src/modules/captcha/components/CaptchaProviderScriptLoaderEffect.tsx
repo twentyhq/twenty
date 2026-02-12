@@ -9,7 +9,7 @@ import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPa
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { captchaState } from '@/client-config/states/captchaState';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { CaptchaDriverType } from '~/generated/graphql';
+import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
   const captcha = useRecoilValue(captchaState);

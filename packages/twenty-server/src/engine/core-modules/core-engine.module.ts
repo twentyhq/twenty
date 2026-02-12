@@ -66,7 +66,6 @@ import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.modul
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
-import { ApplicationLayerModule } from 'src/engine/core-modules/application-layer/application-layer.module';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 import { AuditModule } from './audit/audit.module';
@@ -89,7 +88,6 @@ import { FileModule } from './file/file.module';
     RowLevelPermissionModule,
     OpenApiModule,
     ApplicationModule,
-    ApplicationLayerModule,
     ApplicationSyncModule,
     AppTokenModule,
     TimelineMessagingModule,

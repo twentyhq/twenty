@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { AxisNameDisplay } from '~/generated/graphql';
+import { AxisNameDisplay } from '~/generated-metadata/graphql';
 
 export const getChartAxisNameDisplayOptions = (option: AxisNameDisplay) => {
   switch (option) {

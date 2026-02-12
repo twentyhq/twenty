@@ -5,7 +5,7 @@ import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graph
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { computeMaxLabelLengthForMargin } from '@/page-layout/widgets/graph/utils/computeMaxLabelLengthForMargin';
 import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export type BarChartTickConfig = {
   categoryTickValues: (string | number)[];

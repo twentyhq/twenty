@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 const StyledOuterContainer = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { useRecoilState } from 'recoil';
-import { type FeatureFlagKey } from '~/generated/graphql';
+import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFeatureFlagState = () => {

@@ -10,7 +10,7 @@ import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/build
 import { useLazyQuery } from '@apollo/client';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageInfo } from '~/generated/graphql';
+import { type PageInfo } from '~/generated-metadata/graphql';
 
 export type GroupsRecordsGroupByLazyResult = {
   [queryGqlFieldName: string]: Array<{

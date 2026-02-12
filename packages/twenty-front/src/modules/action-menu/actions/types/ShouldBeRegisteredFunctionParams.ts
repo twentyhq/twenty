@@ -4,7 +4,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { type FeatureFlagKey } from '~/generated/graphql';
+import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;

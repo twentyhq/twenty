@@ -1,7 +1,7 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 interface PropertyBoxProps {
   children: React.ReactNode;

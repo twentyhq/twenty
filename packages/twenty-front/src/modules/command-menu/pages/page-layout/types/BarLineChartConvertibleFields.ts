@@ -1,7 +1,7 @@
 import {
   type GraphOrderBy,
   type ObjectRecordGroupByDateGranularity,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type BarLineChartConvertibleFields = {
   primaryAxisGroupByFieldMetadataId?: string;

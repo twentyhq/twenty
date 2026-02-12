@@ -1,4 +1,4 @@
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { WorkspaceNavigationMenuItems } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItems';
