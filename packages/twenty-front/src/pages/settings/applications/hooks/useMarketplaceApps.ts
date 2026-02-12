@@ -1,7 +1,7 @@
 import {
-  type MarketplaceApp,
   useFindManyMarketplaceAppsQuery,
-} from '~/generated/graphql';
+  type MarketplaceApp,
+} from '~/generated-metadata/graphql';
 
 export type MarketplaceAppWithContentCounts = MarketplaceApp & {
   content: {
