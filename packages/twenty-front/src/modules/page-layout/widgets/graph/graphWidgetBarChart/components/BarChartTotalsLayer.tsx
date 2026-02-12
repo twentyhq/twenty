@@ -6,7 +6,7 @@ import { computeBarChartStackedLabels } from '@/page-layout/widgets/graph/graphW
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 import styled from '@emotion/styled';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartTotalsLayerProps = {
   bars: BarPosition[];

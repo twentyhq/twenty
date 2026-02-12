@@ -84,6 +84,7 @@
     "graphql": "16.8.1",
     "graphql-sse": "^2.5.4",
     "input-otp": "^1.4.2",
+    "jotai": "^2.17.1",
     "js-cookie": "^3.0.5",
     "json-2-csv": "^5.4.0",
     "json-logic-js": "^2.0.5",

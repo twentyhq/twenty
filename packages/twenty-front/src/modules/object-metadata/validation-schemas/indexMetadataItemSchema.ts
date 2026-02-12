@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { indexFieldMetadataItemSchema } from '@/object-metadata/validation-schemas/indexFieldMetadataItemSchema';
-import { IndexType } from '~/generated/graphql';
+import { IndexType } from '~/generated-metadata/graphql';
 
 export const indexMetadataItemSchema = z.object({
   __typename: z.literal('Index'),

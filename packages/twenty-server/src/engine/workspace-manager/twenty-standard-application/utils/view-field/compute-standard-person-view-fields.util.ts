@@ -9,6 +9,7 @@ export const computeStandardPersonViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'person'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
+    // allPeople view fields
     allPeopleName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -130,6 +131,138 @@ export const computeStandardPersonViewFields = (
         position: 9,
         isVisible: true,
         size: 150,
+      },
+    }),
+
+    // personRecordPageFields view fields
+    personRecordPageFieldsEmails: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'emails',
+        fieldName: 'emails',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    personRecordPageFieldsPhones: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'phones',
+        fieldName: 'phones',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    personRecordPageFieldsCompany: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'company',
+        fieldName: 'company',
+        position: 2,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    personRecordPageFieldsJobTitle: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'jobTitle',
+        fieldName: 'jobTitle',
+        position: 3,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    personRecordPageFieldsLinkedinLink: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'linkedinLink',
+        fieldName: 'linkedinLink',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'additional',
+      },
+    }),
+    personRecordPageFieldsXLink: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'xLink',
+        fieldName: 'xLink',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'additional',
+      },
+    }),
+    personRecordPageFieldsCity: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'city',
+        fieldName: 'city',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    personRecordPageFieldsAvatarUrl: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'avatarUrl',
+        fieldName: 'avatarUrl',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    personRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 2,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    personRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 3,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
       },
     }),
   };

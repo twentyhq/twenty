@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
@@ -13,7 +13,7 @@ export const useNumberFieldDisplay = () => {
   assertFieldMetadata(FieldMetadataType.NUMBER, isFieldNumber, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
-  const fieldValue = useRecordFieldValue<number | null>(
+  const fieldValue = useRecordFieldValueV2<number | null>(
     recordId,
     fieldName,
     fieldDefinition,

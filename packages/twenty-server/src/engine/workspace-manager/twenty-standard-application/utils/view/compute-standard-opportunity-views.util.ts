@@ -38,5 +38,17 @@ export const computeStandardOpportunityViews = (
         kanbanAggregateOperationFieldName: 'amount',
       },
     }),
+    opportunityRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'opportunity',
+      context: {
+        viewName: 'opportunityRecordPageFields',
+        name: 'Opportunity Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };

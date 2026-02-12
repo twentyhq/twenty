@@ -19,7 +19,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartProps = {
   data: BarChartDatum[];

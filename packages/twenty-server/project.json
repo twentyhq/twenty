@@ -50,7 +50,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development nest start --watch"
+        "command": "rimraf dist && NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
@@ -73,7 +73,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development nest start --watch --debug"
+        "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
       }
     },
     "reset:env": {

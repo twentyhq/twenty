@@ -28,7 +28,7 @@ const StyledIconButton = styled.button<{ size: RoundedIconButtonSize }>`
   width: ${({ size }) => (size === 'small' ? '20px' : '24px')};
 `;
 
-type RoundedIconButtonProps = {
+export type RoundedIconButtonProps = {
   Icon: IconComponent;
   size?: RoundedIconButtonSize;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;

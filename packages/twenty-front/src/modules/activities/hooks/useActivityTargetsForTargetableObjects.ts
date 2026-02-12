@@ -12,7 +12,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useActivityTargetsForTargetableObjects = ({
   objectNameSingular,

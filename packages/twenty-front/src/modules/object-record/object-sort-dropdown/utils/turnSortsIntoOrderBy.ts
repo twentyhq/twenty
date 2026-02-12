@@ -14,7 +14,10 @@ import {
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType, ViewSortDirection } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  ViewSortDirection,
+} from '~/generated-metadata/graphql';
 
 export const turnSortsIntoOrderBy = (
   objectMetadataItem: ObjectMetadataItem,

@@ -3,7 +3,7 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import styled from '@emotion/styled';
 import { useRef } from 'react';
-import { type BarChartLayout } from '~/generated/graphql';
+import { type BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartHoverLayerProps = {
   hoveredSlice: BarChartSlice | null;

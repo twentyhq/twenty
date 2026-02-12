@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -9,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -57,7 +57,7 @@ export const SettingsAgentModelCapabilities = ({
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
   const theme = useTheme();
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
 
   const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
   const nativeCapabilities = selectedModel?.nativeCapabilities;

@@ -38,8 +38,9 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application-layer/utils/copy-yarn-engine-and-build-dependencies';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -322,6 +323,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier,
     payload,
     env,
+    timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build({
       flatLogicFunction,
@@ -355,7 +357,12 @@ export class LambdaDriver implements LogicFunctionDriver {
     const command = new InvokeCommand(params);
 
     try {
-      const result = await (await this.getLambdaClient()).send(command);
+      const lambdaClient = await this.getLambdaClient();
+
+      const result = await callWithTimeout({
+        callback: () => lambdaClient.send(command),
+        timeoutMs,
+      });
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())

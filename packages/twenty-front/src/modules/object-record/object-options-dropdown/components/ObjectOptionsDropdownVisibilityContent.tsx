@@ -26,8 +26,10 @@ import {
   IconCopy,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { ViewVisibility } from '~/generated-metadata/graphql';
-import { PermissionFlagType } from '~/generated/graphql';
+import {
+  ViewVisibility,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();

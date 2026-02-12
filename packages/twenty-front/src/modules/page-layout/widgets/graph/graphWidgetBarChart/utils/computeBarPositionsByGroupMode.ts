@@ -4,7 +4,7 @@ import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { computeBarPositionContext } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositionContext';
 import { computeGroupedBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeGroupedBarPositions';
 import { computeStackedBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeStackedBarPositions';
-import { type BarChartLayout } from '~/generated/graphql';
+import { type BarChartLayout } from '~/generated-metadata/graphql';
 
 type ComputeBarPositionsByGroupModeParams = {
   data: BarChartDatum[];

@@ -16,8 +16,10 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;

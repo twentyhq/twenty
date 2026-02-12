@@ -4,7 +4,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 describe('getManualSortOrderFromConfig', () => {
   describe('pie chart configuration', () => {

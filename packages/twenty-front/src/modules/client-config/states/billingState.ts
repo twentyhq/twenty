@@ -1,5 +1,5 @@
-import { type Billing } from '~/generated/graphql';
-import { createState } from 'twenty-ui/utilities';
+import { type Billing } from '~/generated-metadata/graphql';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const billingState = createState<Billing | null>({
   key: 'billingState',

@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import {
   FlatCreateSkillAction,
   UniversalCreateSkillAction,
@@ -42,15 +41,12 @@ export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateSkillAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const skillRepository =
-      queryRunner.manager.getRepository<SkillEntity>(SkillEntity);
-
-    await skillRepository.save({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 
