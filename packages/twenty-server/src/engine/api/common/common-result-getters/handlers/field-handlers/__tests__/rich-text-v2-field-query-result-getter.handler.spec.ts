@@ -170,7 +170,11 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
   });
 
   describe('should sign internal image URLs', () => {
-    it('when image block has an internal attachment URL', async () => {
+    it('when image block has an internal attachment URL (legacy path)', async () => {
+      jest
+        .spyOn(mockFeatureFlagService, 'isFeatureEnabled')
+        .mockResolvedValue(false);
+
       const imageBlock = {
         type: 'image',
         props: {
