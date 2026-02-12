@@ -1,8 +1,4 @@
 import {
-  type InputSchema,
-  type InputSchemaProperty,
-} from '@/workflow/types/InputSchema';
-import {
   type ArrayTypeNode,
   type ArrowFunction,
   createSourceFile,
@@ -18,9 +14,11 @@ import {
   type UnionTypeNode,
   type VariableStatement,
 } from 'typescript';
-import { isDefined } from 'twenty-shared/utils';
 
-const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
+import { type InputJsonSchema } from '@/logic-function';
+import { isDefined } from '@/utils/validation/isDefined';
+
+const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
   switch (typeNode.kind) {
     case SyntaxKind.NumberKeyword:
       return { type: 'number' };
@@ -36,7 +34,7 @@ const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
     case SyntaxKind.ObjectKeyword:
       return { type: 'object' };
     case SyntaxKind.TypeLiteral: {
-      const properties: InputSchemaProperty['properties'] = {};
+      const properties: InputJsonSchema['properties'] = {};
 
       (typeNode as any).members.forEach((member: PropertySignature) => {
         if (isDefined(member.name) && isDefined(member.type)) {
@@ -72,17 +70,17 @@ const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
         return { type: 'string', enum: enumValues };
       }
 
-      return { type: 'unknown' };
+      return {};
     }
     default:
-      return { type: 'unknown' };
+      return {};
   }
 };
 
 const computeFunctionParameters = (
   funcNode: FunctionDeclaration | FunctionLikeDeclaration | ArrowFunction,
-  schema: InputSchema,
-): InputSchema => {
+  schema: InputJsonSchema[],
+): InputJsonSchema[] => {
   const params = funcNode.parameters;
 
   return params.reduce((updatedSchema, param) => {
@@ -91,7 +89,7 @@ const computeFunctionParameters = (
     if (isDefined(typeNode)) {
       return [...updatedSchema, getTypeString(typeNode)];
     } else {
-      return [...updatedSchema, { type: 'unknown' }];
+      return [...updatedSchema, {}];
     }
   }, schema);
 };
@@ -103,6 +101,7 @@ const extractFunctions = (node: Node): FunctionLikeDeclaration[] => {
 
   if (node.kind === SyntaxKind.VariableStatement) {
     const varStatement = node as VariableStatement;
+
     return varStatement.declarationList.declarations
       .filter(
         (declaration) =>
@@ -115,14 +114,16 @@ const extractFunctions = (node: Node): FunctionLikeDeclaration[] => {
   return [];
 };
 
-export const getFunctionInputSchema = (fileContent: string): InputSchema => {
+export const getFunctionInputSchema = (
+  fileContent: string,
+): InputJsonSchema[] => {
   const sourceFile = createSourceFile(
     'temp.ts',
     fileContent,
     ScriptTarget.ESNext,
     true,
   );
-  let schema: InputSchema = [];
+  let schema: InputJsonSchema[] = [];
 
   sourceFile.forEachChild((node) => {
     if (
@@ -130,6 +131,7 @@ export const getFunctionInputSchema = (fileContent: string): InputSchema => {
       node.kind === SyntaxKind.VariableStatement
     ) {
       const functions = extractFunctions(node);
+
       functions.forEach((func) => {
         schema = computeFunctionParameters(func, schema);
       });

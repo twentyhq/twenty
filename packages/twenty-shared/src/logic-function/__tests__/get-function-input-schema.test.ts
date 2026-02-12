@@ -1,4 +1,4 @@
-import { getFunctionInputSchema } from '@/logic-functions/utils/getFunctionInputSchema';
+import { getFunctionInputSchema } from '@/logic-function/get-function-input-schema';
 
 describe('getFunctionInputSchema', () => {
   it('should analyze a simple function correctly', () => {

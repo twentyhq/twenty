@@ -13,7 +13,6 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { getFunctionInputFromSourceCode } from '@/logic-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -52,6 +51,7 @@ import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
+import { getToolInputSchemaFromSourceCode } from 'packages/twenty-shared/src/logic-function/get-tool-input-schema-from-source-code';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -179,7 +179,8 @@ export const WorkflowEditActionCode = ({
         return;
       }
 
-      const newFunctionInput = await getFunctionInputFromSourceCode(sourceCode);
+      const newFunctionInput =
+        await getToolInputSchemaFromSourceCode(sourceCode);
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
         oldInput: action.settings.input.logicFunctionInput,

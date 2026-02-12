@@ -54,11 +54,6 @@ const StyledFooterContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const DEFAULT_TOOL_INPUT_SCHEMA = {
-  type: 'object',
-  properties: {},
-};
-
 export const SettingsToolsTable = () => {
   const logicFunctions = useRecoilValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();

@@ -19,6 +19,7 @@ import {
   ASSETS_DIR,
   type FieldManifest,
   type FrontComponentManifest,
+  getToolInputSchemaFromSourceCode,
   type LogicFunctionManifest,
   type Manifest,
   type ObjectManifest,
@@ -138,8 +139,13 @@ export const buildManifest = async (
 
         const relativeFilePath = relative(appPath, filePath);
 
+        const toolInputSchema =
+          rest.toolInputSchema ??
+          (await getToolInputSchemaFromSourceCode(fileContent));
+
         const config: LogicFunctionManifest = {
           ...rest,
+          toolInputSchema,
           handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),

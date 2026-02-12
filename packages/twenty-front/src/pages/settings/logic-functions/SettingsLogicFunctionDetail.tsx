@@ -110,12 +110,7 @@ export const SettingsLogicFunctionDetail = () => {
       };
     });
 
-    // Parse and save schema if editing the handler file
-    let toolInputSchema: object | null | undefined;
-
-    if (filePath === logicFunction?.sourceHandlerPath) {
-      toolInputSchema = await getToolInputSchemaFromSourceCode(value);
-    }
+    const toolInputSchema = await getToolInputSchemaFromSourceCode(value);
 
     await handleSave(toolInputSchema);
   };
