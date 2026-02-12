@@ -5276,13 +5276,6 @@ export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', up
 
 export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, availablePackages: any, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
-export type GenerateApplicationTokenMutationVariables = Exact<{
-  applicationId: Scalars['UUID'];
-}>;
-
-
-export type GenerateApplicationTokenMutation = { __typename?: 'Mutation', generateApplicationToken: { __typename?: 'AuthToken', token: string, expiresAt: string } };
-
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -8460,40 +8453,6 @@ export function useUpdateOneApplicationVariableMutation(baseOptions?: Apollo.Mut
 export type UpdateOneApplicationVariableMutationHookResult = ReturnType<typeof useUpdateOneApplicationVariableMutation>;
 export type UpdateOneApplicationVariableMutationResult = Apollo.MutationResult<UpdateOneApplicationVariableMutation>;
 export type UpdateOneApplicationVariableMutationOptions = Apollo.BaseMutationOptions<UpdateOneApplicationVariableMutation, UpdateOneApplicationVariableMutationVariables>;
-export const GenerateApplicationTokenDocument = gql`
-    mutation GenerateApplicationToken($applicationId: UUID!) {
-  generateApplicationToken(applicationId: $applicationId) {
-    token
-    expiresAt
-  }
-}
-    `;
-export type GenerateApplicationTokenMutationFn = Apollo.MutationFunction<GenerateApplicationTokenMutation, GenerateApplicationTokenMutationVariables>;
-
-/**
- * __useGenerateApplicationTokenMutation__
- *
- * To run a mutation, you first call `useGenerateApplicationTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGenerateApplicationTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [generateApplicationTokenMutation, { data, loading, error }] = useGenerateApplicationTokenMutation({
- *   variables: {
- *      applicationId: // value for 'applicationId'
- *   },
- * });
- */
-export function useGenerateApplicationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateApplicationTokenMutation, GenerateApplicationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GenerateApplicationTokenMutation, GenerateApplicationTokenMutationVariables>(GenerateApplicationTokenDocument, options);
-      }
-export type GenerateApplicationTokenMutationHookResult = ReturnType<typeof useGenerateApplicationTokenMutation>;
-export type GenerateApplicationTokenMutationResult = Apollo.MutationResult<GenerateApplicationTokenMutation>;
-export type GenerateApplicationTokenMutationOptions = Apollo.BaseMutationOptions<GenerateApplicationTokenMutation, GenerateApplicationTokenMutationVariables>;
 export const FindManyApplicationsDocument = gql`
     query FindManyApplications {
   findManyApplications {
