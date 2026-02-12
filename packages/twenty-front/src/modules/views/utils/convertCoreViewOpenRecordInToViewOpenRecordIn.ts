@@ -1,5 +1,5 @@
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewOpenRecordIn as CoreViewOpenRecordIn } from '~/generated/graphql';
+import { ViewOpenRecordIn as CoreViewOpenRecordIn } from '~/generated-metadata/graphql';
 
 export const convertCoreViewOpenRecordInToViewOpenRecordIn = (
   openIn: CoreViewOpenRecordIn,

@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type AuthTokenPair } from '~/generated/graphql';
+import { type AuthTokenPair } from '~/generated-metadata/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isValidAuthTokenPair } from './isValidAuthTokenPair';
 

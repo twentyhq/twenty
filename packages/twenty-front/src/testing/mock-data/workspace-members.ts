@@ -3,7 +3,7 @@ import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const mockWorkspaceMembers: WorkspaceMember[] = [
   {

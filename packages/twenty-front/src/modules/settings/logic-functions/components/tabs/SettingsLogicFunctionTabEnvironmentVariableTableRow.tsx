@@ -18,7 +18,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import type { ApplicationVariable } from '~/generated/graphql';
+import type { ApplicationVariable } from '~/generated-metadata/graphql';
 
 const StyledEditModeTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 56px;

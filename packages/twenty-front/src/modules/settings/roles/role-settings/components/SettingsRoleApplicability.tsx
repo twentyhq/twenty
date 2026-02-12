@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;

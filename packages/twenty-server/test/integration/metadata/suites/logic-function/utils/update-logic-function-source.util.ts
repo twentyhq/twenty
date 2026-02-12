@@ -4,8 +4,8 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import {
-  type UpdateLogicFunctionSourceFactoryInput,
-  updateLogicFunctionSourceQueryFactory,
+  type UpdateLogicFunctionFromSourceFactoryInput,
+  updateLogicFunctionFromSourceQueryFactory,
 } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source-query-factory.util';
 
 import { type LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
@@ -15,10 +15,10 @@ export const updateLogicFunctionSource = async ({
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<UpdateLogicFunctionSourceFactoryInput>): CommonResponseBody<{
+}: PerformMetadataQueryParams<UpdateLogicFunctionFromSourceFactoryInput>): CommonResponseBody<{
   updateOneLogicFunction: LogicFunctionDTO;
 }> => {
-  const graphqlOperation = updateLogicFunctionSourceQueryFactory({
+  const graphqlOperation = updateLogicFunctionFromSourceQueryFactory({
     input,
     gqlFields,
   });

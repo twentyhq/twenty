@@ -17,7 +17,7 @@ import {
   type LineChartConfiguration,
   type LineChartDataPoint,
   type LineChartSeries,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
   objectMetadataItemId: string;

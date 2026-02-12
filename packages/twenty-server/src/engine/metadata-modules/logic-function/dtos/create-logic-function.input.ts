@@ -1,6 +1,16 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
-import { IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+} from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 import {
   CronTriggerSettings,
@@ -9,12 +19,54 @@ import {
 } from 'twenty-shared/application';
 
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-import { CreateDefaultLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-default-logic-function.input';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class CreateLogicFunctionInput extends CreateDefaultLogicFunctionInput {
-  @HideField()
-  checksum: string;
+export class CreateLogicFunction {
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  description?: string;
+
+  @IsNumber()
+  @Field({ nullable: true })
+  @Min(1)
+  @Max(900)
+  @IsOptional()
+  timeoutSeconds?: number;
+
+  @Field(() => graphqlTypeJson, { nullable: false })
+  @IsObject()
+  toolInputSchema: object;
+
+  @IsBoolean()
+  @Field({ nullable: true })
+  @IsOptional()
+  isTool?: boolean;
+
+  @IsBoolean()
+  @Field({ nullable: false })
+  isBuildUpToDate: boolean;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  checksum?: string;
 
   @IsString()
   @Field({ nullable: false })

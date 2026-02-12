@@ -18,7 +18,7 @@ import { createUploadLink } from 'apollo-upload-client';
 import { renewToken } from '@/auth/services/AuthService';
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { type AuthTokenPair } from '~/generated/graphql';
+import { type AuthTokenPair } from '~/generated-metadata/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';

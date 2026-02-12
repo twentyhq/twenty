@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { UniversalUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   ValidateAndBuildArgs,
@@ -27,7 +26,6 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
   public async validateAndBuild(
     args: ValidateAndBuildArgs<typeof ALL_METADATA_NAME.logicFunction>,
   ): ValidateAndBuildReturnType<typeof ALL_METADATA_NAME.logicFunction> {
-    const { to: toFlatEntityMaps } = args;
     const baseResult = await super.validateAndBuild(args);
 
     if (baseResult.status === 'fail') {
@@ -35,19 +33,7 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
     }
 
     const updatedActions = baseResult.actions.update.map((action) => {
-      if (action.type !== 'update') {
-        return action;
-      }
-
-      const toLogicFunction = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: action.universalIdentifier,
-        flatEntityMaps: toFlatEntityMaps,
-      });
-
-      return {
-        ...action,
-        code: toLogicFunction?.code,
-      };
+      return action;
     });
 
     return {

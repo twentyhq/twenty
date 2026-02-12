@@ -5,7 +5,7 @@ import { computeBarPositionsByGroupMode } from '@/page-layout/widgets/graph/grap
 import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
 import { getChartInnerDimensions } from '@/page-layout/widgets/graph/chart-core/utils/getChartInnerDimensions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { type BarChartLayout } from '~/generated/graphql';
+import { type BarChartLayout } from '~/generated-metadata/graphql';
 
 type ComputeBarPositionsParams = {
   data: BarChartDatum[];

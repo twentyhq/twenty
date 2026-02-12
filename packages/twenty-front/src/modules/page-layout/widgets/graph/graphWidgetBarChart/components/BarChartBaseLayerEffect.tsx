@@ -9,7 +9,7 @@ import { renderBars } from '@/page-layout/widgets/graph/graphWidgetBarChart/util
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import { useCallback, useEffect, useState, type RefObject } from 'react';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartBaseLayerEffectProps = {
   bars: BarPosition[];

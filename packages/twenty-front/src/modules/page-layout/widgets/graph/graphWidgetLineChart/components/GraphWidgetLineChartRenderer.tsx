@@ -18,7 +18,10 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { AxisNameDisplay, type LineChartDataPoint } from '~/generated/graphql';
+import {
+  AxisNameDisplay,
+  type LineChartDataPoint,
+} from '~/generated-metadata/graphql';
 
 const GraphWidgetLineChart = lazy(() =>
   import(

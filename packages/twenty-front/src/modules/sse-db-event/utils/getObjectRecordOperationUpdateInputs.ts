@@ -1,6 +1,6 @@
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectRecordEvent } from '~/generated/graphql';
+import { type ObjectRecordEvent } from '~/generated-metadata/graphql';
 
 export const getObjectRecordOperationUpdateInputs = (
   events: ObjectRecordEvent[],

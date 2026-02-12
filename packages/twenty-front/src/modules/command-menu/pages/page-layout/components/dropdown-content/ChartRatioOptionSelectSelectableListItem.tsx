@@ -10,7 +10,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { AggregateOperations } from '~/generated/graphql';
+import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const ChartRatioOptionSelectSelectableListItem = ({
   optionValue,

@@ -1,4 +1,4 @@
-import { CaptchaDriverType } from '~/generated/graphql';
+import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
 

@@ -1,4 +1,4 @@
-import { type PageLayoutTabLayoutMode } from '~/generated/graphql';
+import { type PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export type PageLayoutContentContextType = {

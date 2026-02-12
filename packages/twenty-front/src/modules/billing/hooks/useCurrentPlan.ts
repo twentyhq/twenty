@@ -1,4 +1,4 @@
-import { BillingPlanKey } from '~/generated/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
 import { usePlans } from './usePlans';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

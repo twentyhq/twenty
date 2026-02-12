@@ -12,4 +12,5 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'cronTriggerSettings',
   'databaseEventTriggerSettings',
   'httpRouteTriggerSettings',
-] as const satisfies (MetadataEntityPropertyName<'logicFunction'> | 'code')[];
+  'isBuildUpToDate',
+] as const satisfies MetadataEntityPropertyName<'logicFunction'>[];

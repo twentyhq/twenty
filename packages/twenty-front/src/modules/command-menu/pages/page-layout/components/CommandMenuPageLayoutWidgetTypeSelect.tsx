@@ -33,7 +33,7 @@ import {
   FeatureFlagKey,
   type FrontComponent,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
