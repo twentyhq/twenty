@@ -40,7 +40,7 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/call-with-timeout';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
