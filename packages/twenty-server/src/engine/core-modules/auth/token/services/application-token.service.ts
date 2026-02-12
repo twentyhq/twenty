@@ -185,7 +185,9 @@ export class ApplicationTokenService {
     const expiresIn = `${expiresInSeconds}s`;
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const jwtPayload: ApplicationAccessTokenJwtPayload | ApplicationRefreshTokenJwtPayload = {
+    const jwtPayload:
+      | ApplicationAccessTokenJwtPayload
+      | ApplicationRefreshTokenJwtPayload = {
       sub: applicationId,
       applicationId,
       workspaceId,
