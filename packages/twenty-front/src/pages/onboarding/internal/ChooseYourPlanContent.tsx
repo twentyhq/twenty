@@ -17,11 +17,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
