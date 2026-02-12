@@ -33,7 +33,7 @@ type MetadataEntityPropertyConfiguration<
       ? `universal${Capitalize<K>}`
       : K extends MetadataManyToOneJoinColumn<TMetadataName> & string
         ? ToUniversalForeignKey<K>
-        : undefined;
+        : undefined | string;
     toStringify: K extends ExtractJsonbProperties<MetadataEntity<TMetadataName>>
       ? true
       : K extends keyof MetadataEntity<TMetadataName>
@@ -67,7 +67,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     nameSingular: { toStringify: false, universalProperty: undefined },
     labelIdentifierFieldMetadataId: {
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     standardOverrides: { toStringify: true, universalProperty: undefined },
@@ -135,7 +134,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     indexWhereClause: { toStringify: false, universalProperty: undefined },
     flatIndexFieldMetadatas: {
       toStringify: true,
-      universalProperty: undefined,
+      universalProperty: 'universalFlatIndexFieldMetadatas',
     },
     isUnique: { toStringify: false, universalProperty: undefined },
     name: { toStringify: false, universalProperty: undefined },
