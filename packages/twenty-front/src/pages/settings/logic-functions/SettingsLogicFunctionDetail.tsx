@@ -9,6 +9,7 @@ import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/compone
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
 import {
   type LogicFunctionFormValues,
+  type LogicFunctionNewFormValues,
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -79,6 +80,7 @@ export const SettingsLogicFunctionDetail = () => {
           update: {
             name: formValues.name,
             description: formValues.description,
+            isTool: formValues.isTool,
             sourceHandlerCode: formValues.code,
             ...(toolInputSchema !== undefined && { toolInputSchema }),
           },
@@ -88,12 +90,15 @@ export const SettingsLogicFunctionDetail = () => {
     500,
   );
 
-  const onChange = (key: string) => {
-    return (value: string) => {
+  const onChange = <TKey extends keyof LogicFunctionNewFormValues>(
+    key: TKey,
+  ) => {
+    return async (value: LogicFunctionNewFormValues[TKey]) => {
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
         [key]: value,
       }));
+      await handleSave();
     };
   };
 

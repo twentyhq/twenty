@@ -1,10 +1,11 @@
 import { type LogicFunctionNewFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title, IconTool } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -18,7 +19,9 @@ export const SettingsLogicFunctionNewForm = ({
   readonly = false,
 }: {
   formValues: LogicFunctionNewFormValues;
-  onChange: (key: string) => (value: string) => void;
+  onChange: <TKey extends keyof LogicFunctionNewFormValues>(
+    key: TKey,
+  ) => (value: LogicFunctionNewFormValues[TKey]) => void;
   readonly?: boolean;
 }) => {
   const descriptionTextAreaId = `${formValues.name}-description`;
@@ -48,6 +51,16 @@ export const SettingsLogicFunctionNewForm = ({
           onChange={onChange('description')}
           readOnly={readonly}
         />
+        <Card rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconTool}
+            title={t`Available as tool`}
+            description={t`When enabled, AI agents and workflow automations can discover and call this function`}
+            checked={formValues.isTool}
+            onChange={onChange('isTool')}
+            disabled={readonly}
+          />
+        </Card>
       </StyledInputsContainer>
     </Section>
   );

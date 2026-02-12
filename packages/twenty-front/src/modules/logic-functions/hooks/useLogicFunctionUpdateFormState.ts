@@ -10,6 +10,7 @@ import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLog
 export type LogicFunctionNewFormValues = {
   name: string;
   description: string;
+  isTool: boolean;
 };
 
 export type LogicFunctionFormValues = LogicFunctionNewFormValues & {
@@ -33,6 +34,7 @@ export const useLogicFunctionUpdateFormState = ({
   const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
     name: '',
     description: '',
+    isTool: false,
     code: '',
   });
 
@@ -52,6 +54,7 @@ export const useLogicFunctionUpdateFormState = ({
             ...prevState,
             name: fn.name || '',
             description: fn.description || '',
+            isTool: fn.isTool ?? false,
           }));
         }
       },
