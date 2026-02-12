@@ -1,6 +1,6 @@
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
-import { type LineChartSeries } from '~/generated/graphql';
+import { type LineChartSeries } from '~/generated-metadata/graphql';
 
 describe('calculateValueRangeFromLineChartSeries', () => {
   describe('with valid data', () => {

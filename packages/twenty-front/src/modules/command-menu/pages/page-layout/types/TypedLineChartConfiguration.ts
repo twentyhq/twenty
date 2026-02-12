@@ -1,7 +1,7 @@
 import {
   type LineChartConfiguration,
   type WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type TypedLineChartConfiguration = LineChartConfiguration & {
   configurationType: WidgetConfigurationType.LINE_CHART;

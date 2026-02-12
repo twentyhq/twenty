@@ -4,7 +4,7 @@ import {
   BarChartLayout,
   GraphOrderBy,
   WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 
 describe('createDefaultGraphWidget', () => {

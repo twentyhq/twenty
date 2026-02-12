@@ -7016,14 +7016,14 @@ __metadata:
 
 "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 2.1.0
-  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=d6801e&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=aafdfe&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
     "@nestjs/graphql": ^12.0.0
     graphql: ^15.0.0 || ^16.0.0
     graphql-yoga: ^4.0.4
-  checksum: 10c0/929da1f7265003cb5f43291d6db96e752bd2ac5d81e21fb3af9b245e54e732f5862789d7e5941e893d85255919b4c6a5a37adb16ef6594fab606e8eec742891c
+  checksum: 10c0/7ebb5bd5bf630cbad7ef99ac4a04017c1294a6a40623b0142cf4990d790fb4252efa71abe3a7923f66845320fb9cba536426743eb5d93a1e9353700b730efb28
   languageName: node
   linkType: hard
 
@@ -11353,7 +11353,7 @@ __metadata:
 
 "@nestjs/graphql@patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 12.1.1
-  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A12.1.1#./patches/@nestjs+graphql+12.1.1.patch::version=12.1.1&hash=234fda&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A12.1.1#./patches/@nestjs+graphql+12.1.1.patch::version=12.1.1&hash=c6f13a&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   dependencies:
     "@graphql-tools/merge": "npm:9.0.1"
     "@graphql-tools/schema": "npm:10.0.2"
@@ -11387,7 +11387,7 @@ __metadata:
       optional: true
     ts-morph:
       optional: true
-  checksum: 10c0/f17193b0e2a324a1de74813d66eb3473d359f7779b30cf92b9ed5a3f9fb557612306a3ebbbe8f48481a3e95930785207a1b51bf0fdb698c8b83a608112380af9
+  checksum: 10c0/807541d7f7d8a3261787c04bd9456ad1a3198645b967ad68371406f5038ec5e5f3dd26912a914cce25465b828e7d1b037558c79461adb93efbc78382424444c2
   languageName: node
   linkType: hard
 
@@ -22793,9 +22793,9 @@ __metadata:
   linkType: hard
 
 "@types/bytes@npm:^3.1.1":
-  version: 3.1.4
-  resolution: "@types/bytes@npm:3.1.4"
-  checksum: 10c0/4649550082e279f32a76a1dda31c3f88370eadfcd0b25fb7cbd22b22ffcc2be45ebe5486c14025acba0718247edb55e376255dcca6d759c833ce4c962e22b683
+  version: 3.1.5
+  resolution: "@types/bytes@npm:3.1.5"
+  checksum: 10c0/5bed1b55a27d0c9c5160567d6df8f73830a95ffabbba735791c8888f83c5dcc9fc901f0b441ca50b07579c9c9ee4ef2b27a2259597182cee831b99b198846cc4
   languageName: node
   linkType: hard
 
@@ -46057,7 +46057,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mrmime@npm:^2.0.0":
+"mrmime@npm:^2.0.0, mrmime@npm:^2.0.1":
   version: 2.0.1
   resolution: "mrmime@npm:2.0.1"
   checksum: 10c0/af05afd95af202fdd620422f976ad67dc18e6ee29beb03dd1ce950ea6ef664de378e44197246df4c7cdd73d47f2e7143a6e26e473084b9e4aa2095c0ad1e1761
@@ -50976,11 +50976,11 @@ __metadata:
   linkType: hard
 
 "react-loading-skeleton@npm:^3.3.1":
-  version: 3.4.0
-  resolution: "react-loading-skeleton@npm:3.4.0"
+  version: 3.5.0
+  resolution: "react-loading-skeleton@npm:3.5.0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 10c0/dca2c60d38abd57e658ff5abb02cf62c08b51e09e4c83e107a1fec3ad58d6f0068846b4149ee452d472e35c831b31a00e8cdbdb066dd35c8b47b803fbad1f834
+  checksum: 10c0/a081f561c9700fead6ba98b91e3fe77a36a680e3fd69dbf4eecbaa5fabcb7173049c6d6fb7487355331a770bed432356edaa147702f3d46ddf0d6caa623e779f
   languageName: node
   linkType: hard
 
@@ -57161,6 +57161,7 @@ __metadata:
     lodash.upperfirst: "npm:4.3.1"
     mailparser: "npm:3.9.1"
     microdiff: "npm:1.4.0"
+    mrmime: "npm:^2.0.1"
     ms: "npm:2.1.3"
     nest-commander: "npm:^3.19.1"
     node-ical: "npm:^0.20.1"

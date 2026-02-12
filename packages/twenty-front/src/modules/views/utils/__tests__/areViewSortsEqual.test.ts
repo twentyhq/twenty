@@ -1,5 +1,8 @@
 import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
-import { type CoreViewSort, ViewSortDirection } from '~/generated/graphql';
+import {
+  type CoreViewSort,
+  ViewSortDirection,
+} from '~/generated-metadata/graphql';
 
 describe('areViewSortsEqual', () => {
   const baseSort: CoreViewSort = {

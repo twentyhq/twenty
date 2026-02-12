@@ -12,7 +12,7 @@ import {
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext');
 jest.mock(

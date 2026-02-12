@@ -13,7 +13,7 @@ import {
   isDefined,
   upsertIntoArrayOfObjectsComparingId,
 } from 'twenty-shared/utils';
-import { type CoreView } from '~/generated/graphql';
+import { type CoreView } from '~/generated-metadata/graphql';
 
 export const useUpdateViewAggregate = () => {
   const { canPersistChanges } = useCanPersistViewChanges();

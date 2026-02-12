@@ -2,7 +2,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetConfigurationType, WidgetType } from '~/generated/graphql';
+import {
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const getRelationFieldWidgetToInsert = (
   field: FieldMetadataItem,

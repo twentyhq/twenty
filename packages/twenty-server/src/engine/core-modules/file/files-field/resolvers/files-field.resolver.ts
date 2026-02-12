@@ -30,7 +30,7 @@ export class FilesFieldResolver {
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
+    { createReadStream, filename }: FileUpload,
     @Args({
       name: 'fieldMetadataId',
       type: () => String,
@@ -44,7 +44,6 @@ export class FilesFieldResolver {
     return await this.filesFieldService.uploadFile({
       file: buffer,
       filename,
-      declaredMimeType: mimetype,
       workspaceId,
       fieldMetadataId,
     });

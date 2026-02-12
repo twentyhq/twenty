@@ -3,6 +3,7 @@ export const ALL_METADATA_NAME = {
   objectMetadata: 'objectMetadata',
   view: 'view',
   viewField: 'viewField',
+  viewFieldGroup: 'viewFieldGroup',
   viewGroup: 'viewGroup',
   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup',

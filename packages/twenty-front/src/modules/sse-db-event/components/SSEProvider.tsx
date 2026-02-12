@@ -7,7 +7,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { createClient } from 'graphql-sse';
 import { type ReactNode } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SSEProviderProps = {
   children: ReactNode;

@@ -1,5 +1,5 @@
 import { type WidgetSizeConfig } from '@/page-layout/types/WidgetSizeConfig';
-import { WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 export const WIDGET_SIZES: Partial<Record<WidgetType, WidgetSizeConfig>> = {
   [WidgetType.IFRAME]: {

@@ -1,12 +1,13 @@
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { act, renderHook } from '@testing-library/react';
-import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
+  GraphOrderBy,
+  WidgetType,
   AggregateOperations,
   BarChartLayout,
   PageLayoutType,
   WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,

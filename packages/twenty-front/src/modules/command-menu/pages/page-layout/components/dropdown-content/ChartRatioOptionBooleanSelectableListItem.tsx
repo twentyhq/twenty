@@ -10,7 +10,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { IconCheck, IconX } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { AggregateOperations } from '~/generated/graphql';
+import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const ChartRatioOptionBooleanSelectableListItem = ({
   optionValue,

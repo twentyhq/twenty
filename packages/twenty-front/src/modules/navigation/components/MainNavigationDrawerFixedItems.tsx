@@ -12,7 +12,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings, IconSparkles } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const MainNavigationDrawerFixedItems = () => {
   const isMobile = useIsMobile();

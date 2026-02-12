@@ -1,6 +1,6 @@
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { type Temporal } from 'temporal-polyfill';
-import { WorkspaceMemberDateFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberDateFormatEnum } from '~/generated-metadata/graphql';
 
 export const formatZonedDateTimeDatePart = (
   zonedDateTime: Temporal.ZonedDateTime,

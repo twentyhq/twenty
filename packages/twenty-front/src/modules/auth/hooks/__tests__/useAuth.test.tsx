@@ -21,7 +21,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
-import { SupportDriver } from '~/generated/graphql';
+import { SupportDriver } from '~/generated-metadata/graphql';
 
 const redirectSpy = jest.fn();
 

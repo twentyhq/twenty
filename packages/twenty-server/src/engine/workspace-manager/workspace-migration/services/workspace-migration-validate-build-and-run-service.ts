@@ -24,7 +24,7 @@ import {
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
-  FromToAllFlatEntityMaps,
+  FromToAllUniversalFlatEntityMaps,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -135,7 +135,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     applicationUniversalIdentifier,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
-    fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
+    fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
     additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
@@ -151,7 +151,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       applicationUniversalIdentifier,
     });
 
-    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
+    const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =

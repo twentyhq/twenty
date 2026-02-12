@@ -43,6 +43,10 @@ export class NavigationMenuItemDTO {
   @Field(() => String, { nullable: true })
   name?: string | null;
 
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  link?: string | null;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

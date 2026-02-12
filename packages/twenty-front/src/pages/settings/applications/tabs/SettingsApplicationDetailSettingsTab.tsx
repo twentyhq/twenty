@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import type { Application } from '~/generated/graphql';
+import type { Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
 

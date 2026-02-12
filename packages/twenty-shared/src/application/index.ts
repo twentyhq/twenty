@@ -36,5 +36,9 @@ export type {
 export type { Manifest } from './manifestType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
-export type { RoleManifest } from './roleManifestType';
+export type {
+  ObjectPermissionManifest,
+  FieldPermissionManifest,
+  RoleManifest,
+} from './roleManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

@@ -6,7 +6,7 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';

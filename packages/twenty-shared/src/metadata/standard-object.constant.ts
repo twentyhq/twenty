@@ -1236,6 +1236,9 @@ export const STANDARD_OBJECTS = {
       avatarUrl: {
         universalIdentifier: '20202020-b8a6-40df-961c-373dc5d2ec21',
       },
+      avatarFile: {
+        universalIdentifier: '20202020-a7c9-4e3d-8f1b-2d5a6b7c8e9f',
+      },
       position: { universalIdentifier: '20202020-fcd5-4231-aff5-fff583eaa0b1' },
       createdBy: {
         universalIdentifier: '20202020-f6ab-4d98-af24-a3d5b664148a',
