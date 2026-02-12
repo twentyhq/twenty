@@ -1,10 +1,10 @@
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import {
   StyledActionTableCell,
   StyledNameTableCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -44,7 +44,7 @@ export const SettingsApplicationDataTableRow = ({
   const hasFields = isDefined(row.fields) && row.fields.length > 0;
 
   return (
-    <div>
+    <>
       <TableRow
         gridAutoColumns={MAIN_ROW_GRID_COLUMNS}
         onClick={hasFields ? onToggle : undefined}
@@ -112,6 +112,6 @@ export const SettingsApplicationDataTableRow = ({
             </TableSubRow>
           );
         })}
-    </div>
+    </>
   );
 };

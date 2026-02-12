@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { type MarketplaceApp } from '~/generated/graphql';
+import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import {
-  type ApplicationDataTableRow,
   type ApplicationDataTableFieldItem,
+  type ApplicationDataTableRow,
   SettingsApplicationDataTable,
 } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 import { SettingsApplicationNameDescriptionTable } from '~/pages/settings/applications/components/SettingsApplicationNameDescriptionTable';

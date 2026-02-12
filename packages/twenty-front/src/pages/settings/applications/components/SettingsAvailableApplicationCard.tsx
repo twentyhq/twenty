@@ -1,8 +1,8 @@
 import {
-  StyledSettingsCardContent,
-  StyledSettingsCardDescription,
-  StyledSettingsCardThirdLine,
-  StyledSettingsCardTitle,
+    StyledSettingsCardContent,
+    StyledSettingsCardDescription,
+    StyledSettingsCardThirdLine,
+    StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -11,7 +11,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { type MarketplaceApp } from '~/generated/graphql';
+import { type MarketplaceApp } from '~/generated-metadata/graphql';
 
 type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;

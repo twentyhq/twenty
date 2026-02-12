@@ -13,13 +13,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   FieldMetadataType,
-  type PermissionFlagType,
-} from '~/generated-metadata/graphql';
-import {
   type MarketplaceAppDefaultRole,
   type MarketplaceAppField,
   type MarketplaceAppObject,
-} from '~/generated/graphql';
+  type PermissionFlagType,
+} from '~/generated-metadata/graphql';
+
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 type SettingsApplicationPermissionsTabProps = {
