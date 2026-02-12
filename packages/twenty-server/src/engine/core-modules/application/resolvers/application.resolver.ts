@@ -130,6 +130,8 @@ export class ApplicationResolver {
     });
   }
 
+  // @RequireFeatureFlag cannot be used here because this is a public endpoint
+  // (no WorkspaceAuthGuard), so the feature flag is checked manually below.
   @Mutation(() => ApplicationTokenPairDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async renewApplicationToken(
