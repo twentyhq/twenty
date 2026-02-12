@@ -76,7 +76,6 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: targetRecord.targetObjectNameSingular,
-    objectRecordId: targetRecord.id,
   });
 
   const isRecordReadOnly = useIsRecordReadOnly({

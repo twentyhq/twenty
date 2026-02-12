@@ -80,6 +80,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       folderId: createNavigationMenuItemInput.folderId ?? null,
       folderUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
+      link: createNavigationMenuItemInput.link ?? null,
       position,
       workspaceId,
       applicationId: flatApplication.id,

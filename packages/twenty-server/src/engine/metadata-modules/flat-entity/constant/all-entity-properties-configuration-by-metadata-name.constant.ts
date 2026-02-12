@@ -112,6 +112,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     size: { toStringify: false, universalProperty: undefined },
     position: { toStringify: false, universalProperty: undefined },
     aggregateOperation: { toStringify: false, universalProperty: undefined },
+    viewFieldGroupId: {
+      toStringify: false,
+      universalProperty: 'viewFieldGroupUniversalIdentifier',
+    },
+    deletedAt: { toStringify: false, universalProperty: undefined },
+  },
+  viewFieldGroup: {
+    name: { toStringify: false, universalProperty: undefined },
+    position: { toStringify: false, universalProperty: undefined },
+    isVisible: { toStringify: false, universalProperty: undefined },
     deletedAt: { toStringify: false, universalProperty: undefined },
   },
   viewGroup: {
@@ -228,6 +238,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
+    defaultTabToFocusOnMobileAndSidePanelId: {
+      toStringify: false,
+      universalProperty:
+        'defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier',
+    },
     deletedAt: { toStringify: false, universalProperty: undefined },
   },
   pageLayoutWidget: {
@@ -275,6 +290,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'folderUniversalIdentifier',
     },
     name: { toStringify: false, universalProperty: undefined },
+    link: { toStringify: false, universalProperty: undefined },
   },
   rowLevelPermissionPredicate: {
     fieldMetadataId: {

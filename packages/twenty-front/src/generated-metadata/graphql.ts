@@ -215,6 +215,7 @@ export enum AllMetadataName {
   skill = 'skill',
   view = 'view',
   viewField = 'viewField',
+  viewFieldGroup = 'viewFieldGroup',
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
@@ -827,6 +828,7 @@ export type CoreView = {
   shouldHideEmptyGroups: Scalars['Boolean'];
   type: ViewType;
   updatedAt: Scalars['DateTime'];
+  viewFieldGroups: Array<CoreViewFieldGroup>;
   viewFields: Array<CoreViewField>;
   viewFilterGroups: Array<CoreViewFilterGroup>;
   viewFilters: Array<CoreViewFilter>;
@@ -847,6 +849,20 @@ export type CoreViewField = {
   position: Scalars['Float'];
   size: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewFieldGroup = {
+  __typename?: 'CoreViewFieldGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  name: Scalars['String'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewFields: Array<CoreViewField>;
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
 };
@@ -994,6 +1010,7 @@ export type CreateFrontComponentInput = {
 
 export type CreateNavigationMenuItemInput = {
   folderId?: InputMaybe<Scalars['UUID']>;
+  link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Int']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -1079,6 +1096,14 @@ export type CreateSkillInput = {
   name: Scalars['String'];
 };
 
+export type CreateViewFieldGroupInput = {
+  id?: InputMaybe<Scalars['UUID']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  position?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
 export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   fieldMetadataId: Scalars['UUID'];
@@ -1086,6 +1111,7 @@ export type CreateViewFieldInput = {
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
   viewId: Scalars['UUID'];
 };
 
@@ -1207,6 +1233,11 @@ export type DeleteTwoFactorAuthenticationMethodOutput = {
   success: Scalars['Boolean'];
 };
 
+export type DeleteViewFieldGroupInput = {
+  /** The id of the view field group to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeleteViewFieldInput = {
   /** The id of the view field to delete. */
   id: Scalars['UUID'];
@@ -1229,6 +1260,11 @@ export type DeletedWorkspaceMember = {
   name: FullName;
   userEmail: Scalars['String'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
+};
+
+export type DestroyViewFieldGroupInput = {
+  /** The id of the view field group to destroy. */
+  id: Scalars['UUID'];
 };
 
 export type DestroyViewFieldInput = {
@@ -1422,6 +1458,7 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_MARKETPLACE_ENABLED = 'IS_MARKETPLACE_ENABLED',
+  IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED = 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED',
   IS_NAVIGATION_MENU_ITEM_ENABLED = 'IS_NAVIGATION_MENU_ITEM_ENABLED',
   IS_NOTE_TARGET_MIGRATED = 'IS_NOTE_TARGET_MIGRATED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
@@ -1607,13 +1644,6 @@ export type FrontComponentConfiguration = {
   frontComponentId: Scalars['UUID'];
 };
 
-export type FrontComponentToken = {
-  __typename?: 'FrontComponentToken';
-  apiUrl: Scalars['String'];
-  applicationAccessToken: Scalars['String'];
-  expiresAt: Scalars['DateTime'];
-};
-
 export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
@@ -1631,10 +1661,6 @@ export type GaugeChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   timezone?: Maybe<Scalars['String']>;
-};
-
-export type GenerateFrontComponentTokenInput = {
-  frontComponentId: Scalars['UUID'];
 };
 
 export type GetApiKeyInput = {
@@ -2038,6 +2064,7 @@ export type Mutation = {
   createCommandMenuItem: CommandMenuItem;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
+  createCoreViewFieldGroup: CoreViewFieldGroup;
   createCoreViewFilter: CoreViewFilter;
   createCoreViewFilterGroup: CoreViewFilterGroup;
   createCoreViewGroup: CoreViewGroup;
@@ -2047,6 +2074,7 @@ export type Mutation = {
   createEmailingDomain: EmailingDomain;
   createFile: File;
   createFrontComponent: FrontComponent;
+  createManyCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
   createNavigationMenuItem: NavigationMenuItem;
@@ -2070,6 +2098,7 @@ export type Mutation = {
   deleteCommandMenuItem: CommandMenuItem;
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
+  deleteCoreViewFieldGroup: CoreViewFieldGroup;
   deleteCoreViewFilter: CoreViewFilter;
   deleteCoreViewFilterGroup: Scalars['Boolean'];
   deleteCoreViewGroup: CoreViewGroup;
@@ -2096,6 +2125,7 @@ export type Mutation = {
   deleteWorkspaceInvitation: Scalars['String'];
   destroyCoreView: Scalars['Boolean'];
   destroyCoreViewField: CoreViewField;
+  destroyCoreViewFieldGroup: CoreViewFieldGroup;
   destroyCoreViewFilter: CoreViewFilter;
   destroyCoreViewFilterGroup: Scalars['Boolean'];
   destroyCoreViewGroup: CoreViewGroup;
@@ -2112,7 +2142,7 @@ export type Mutation = {
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
-  generateFrontComponentToken: FrontComponentToken;
+  generateApplicationToken: AuthToken;
   generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
@@ -2150,6 +2180,7 @@ export type Mutation = {
   updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
+  updateCoreViewFieldGroup: CoreViewFieldGroup;
   updateCoreViewFilter: CoreViewFilter;
   updateCoreViewFilterGroup: CoreViewFilterGroup;
   updateCoreViewGroup: CoreViewGroup;
@@ -2267,6 +2298,11 @@ export type MutationCreateCoreViewFieldArgs = {
 };
 
 
+export type MutationCreateCoreViewFieldGroupArgs = {
+  input: CreateViewFieldGroupInput;
+};
+
+
 export type MutationCreateCoreViewFilterArgs = {
   input: CreateViewFilterInput;
 };
@@ -2311,6 +2347,11 @@ export type MutationCreateFileArgs = {
 
 export type MutationCreateFrontComponentArgs = {
   input: CreateFrontComponentInput;
+};
+
+
+export type MutationCreateManyCoreViewFieldGroupsArgs = {
+  inputs: Array<CreateViewFieldGroupInput>;
 };
 
 
@@ -2429,6 +2470,11 @@ export type MutationDeleteCoreViewArgs = {
 
 export type MutationDeleteCoreViewFieldArgs = {
   input: DeleteViewFieldInput;
+};
+
+
+export type MutationDeleteCoreViewFieldGroupArgs = {
+  input: DeleteViewFieldGroupInput;
 };
 
 
@@ -2553,6 +2599,11 @@ export type MutationDestroyCoreViewFieldArgs = {
 };
 
 
+export type MutationDestroyCoreViewFieldGroupArgs = {
+  input: DestroyViewFieldGroupInput;
+};
+
+
 export type MutationDestroyCoreViewFilterArgs = {
   input: DestroyViewFilterInput;
 };
@@ -2620,8 +2671,8 @@ export type MutationGenerateApiKeyTokenArgs = {
 };
 
 
-export type MutationGenerateFrontComponentTokenArgs = {
-  input: GenerateFrontComponentTokenInput;
+export type MutationGenerateApplicationTokenArgs = {
+  applicationId: Scalars['UUID'];
 };
 
 
@@ -2803,6 +2854,11 @@ export type MutationUpdateCoreViewArgs = {
 
 export type MutationUpdateCoreViewFieldArgs = {
   input: UpdateViewFieldInput;
+};
+
+
+export type MutationUpdateCoreViewFieldGroupArgs = {
+  input: UpdateViewFieldGroupInput;
 };
 
 
@@ -3047,6 +3103,7 @@ export type NavigationMenuItem = {
   createdAt: Scalars['DateTime'];
   folderId?: Maybe<Scalars['UUID']>;
   id: Scalars['UUID'];
+  link?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   position: Scalars['Float'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']>;
@@ -3495,6 +3552,8 @@ export type Query = {
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
   getCoreViewField?: Maybe<CoreViewField>;
+  getCoreViewFieldGroup?: Maybe<CoreViewFieldGroup>;
+  getCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   getCoreViewFields: Array<CoreViewField>;
   getCoreViewFilter?: Maybe<CoreViewFilter>;
   getCoreViewFilterGroup?: Maybe<CoreViewFilterGroup>;
@@ -3667,6 +3726,16 @@ export type QueryGetCoreViewArgs = {
 
 export type QueryGetCoreViewFieldArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldGroupsArgs = {
+  viewId: Scalars['String'];
 };
 
 
@@ -4410,6 +4479,7 @@ export type UpdateLogicFunctionSourceInput = {
 
 export type UpdateNavigationMenuItemInput = {
   folderId?: InputMaybe<Scalars['UUID']>;
+  link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Int']>;
 };
@@ -4524,6 +4594,20 @@ export type UpdateSkillInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateViewFieldGroupInput = {
+  /** The id of the view field group to update */
+  id: Scalars['UUID'];
+  /** The view field group to update */
+  update: UpdateViewFieldGroupInputUpdates;
+};
+
+export type UpdateViewFieldGroupInputUpdates = {
+  deletedAt?: InputMaybe<Scalars['String']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Float']>;
+};
+
 export type UpdateViewFieldInput = {
   /** The id of the view field to update */
   id: Scalars['UUID'];
@@ -4536,6 +4620,7 @@ export type UpdateViewFieldInputUpdates = {
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateViewFilterGroupInput = {
@@ -5607,18 +5692,6 @@ export type UploadFilesFieldFileMutationVariables = Exact<{
 
 export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
-export type GenerateFrontComponentTokenMutationVariables = Exact<{
-  input: GenerateFrontComponentTokenInput;
-}>;
-
-
-export type GenerateFrontComponentTokenMutation = { __typename?: 'Mutation', generateFrontComponentToken: { __typename?: 'FrontComponentToken', applicationAccessToken: string, apiUrl: string, expiresAt: string } };
-
-export type FindManyFrontComponentsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindManyFrontComponentsQuery = { __typename?: 'Query', frontComponents: Array<{ __typename?: 'FrontComponent', id: string, name: string, applicationId: string }> };
-
 export type ExecuteOneLogicFunctionMutationVariables = Exact<{
   input: ExecuteOneLogicFunctionInput;
 }>;
@@ -5645,42 +5718,42 @@ export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never
 
 export type FindManyMarketplaceAppsQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null }> };
 
-export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
 
-export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
+export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
 
 export type CreateNavigationMenuItemMutationVariables = Exact<{
   input: CreateNavigationMenuItemInput;
 }>;
 
 
-export type CreateNavigationMenuItemMutation = { __typename?: 'Mutation', createNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateNavigationMenuItemMutation = { __typename?: 'Mutation', createNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteNavigationMenuItemMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type DeleteNavigationMenuItemMutation = { __typename?: 'Mutation', deleteNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type DeleteNavigationMenuItemMutation = { __typename?: 'Mutation', deleteNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateNavigationMenuItemMutationVariables = Exact<{
   input: UpdateOneNavigationMenuItemInput;
 }>;
 
 
-export type UpdateNavigationMenuItemMutation = { __typename?: 'Mutation', updateNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateNavigationMenuItemMutation = { __typename?: 'Mutation', updateNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type FindManyNavigationMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyNavigationMenuItemsQuery = { __typename?: 'Query', navigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null }> };
+export type FindManyNavigationMenuItemsQuery = { __typename?: 'Query', navigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null }> };
 
 export type FindOneNavigationMenuItemQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type FindOneNavigationMenuItemQuery = { __typename?: 'Query', navigationMenuItem?: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null } | null };
+export type FindOneNavigationMenuItemQuery = { __typename?: 'Query', navigationMenuItem?: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null } | null };
 
 export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
 
@@ -7110,6 +7183,7 @@ export const NavigationMenuItemFieldsFragmentDoc = gql`
   viewId
   folderId
   name
+  link
   position
   applicationId
   createdAt
@@ -10194,77 +10268,6 @@ export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHoo
 export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
-export const GenerateFrontComponentTokenDocument = gql`
-    mutation GenerateFrontComponentToken($input: GenerateFrontComponentTokenInput!) {
-  generateFrontComponentToken(input: $input) {
-    applicationAccessToken
-    apiUrl
-    expiresAt
-  }
-}
-    `;
-export type GenerateFrontComponentTokenMutationFn = Apollo.MutationFunction<GenerateFrontComponentTokenMutation, GenerateFrontComponentTokenMutationVariables>;
-
-/**
- * __useGenerateFrontComponentTokenMutation__
- *
- * To run a mutation, you first call `useGenerateFrontComponentTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGenerateFrontComponentTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [generateFrontComponentTokenMutation, { data, loading, error }] = useGenerateFrontComponentTokenMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useGenerateFrontComponentTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateFrontComponentTokenMutation, GenerateFrontComponentTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GenerateFrontComponentTokenMutation, GenerateFrontComponentTokenMutationVariables>(GenerateFrontComponentTokenDocument, options);
-      }
-export type GenerateFrontComponentTokenMutationHookResult = ReturnType<typeof useGenerateFrontComponentTokenMutation>;
-export type GenerateFrontComponentTokenMutationResult = Apollo.MutationResult<GenerateFrontComponentTokenMutation>;
-export type GenerateFrontComponentTokenMutationOptions = Apollo.BaseMutationOptions<GenerateFrontComponentTokenMutation, GenerateFrontComponentTokenMutationVariables>;
-export const FindManyFrontComponentsDocument = gql`
-    query FindManyFrontComponents {
-  frontComponents {
-    id
-    name
-    applicationId
-  }
-}
-    `;
-
-/**
- * __useFindManyFrontComponentsQuery__
- *
- * To run a query within a React component, call `useFindManyFrontComponentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyFrontComponentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyFrontComponentsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useFindManyFrontComponentsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>(FindManyFrontComponentsDocument, options);
-      }
-export function useFindManyFrontComponentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>(FindManyFrontComponentsDocument, options);
-        }
-export type FindManyFrontComponentsQueryHookResult = ReturnType<typeof useFindManyFrontComponentsQuery>;
-export type FindManyFrontComponentsLazyQueryHookResult = ReturnType<typeof useFindManyFrontComponentsLazyQuery>;
-export type FindManyFrontComponentsQueryResult = Apollo.QueryResult<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>;
 export const ExecuteOneLogicFunctionDocument = gql`
     mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
   executeOneLogicFunction(input: $input) {

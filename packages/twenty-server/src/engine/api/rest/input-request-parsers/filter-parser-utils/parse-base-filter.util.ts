@@ -11,6 +11,7 @@ export enum FilterComparators {
   lt = 'lt',
   lte = 'lte',
   startsWith = 'startsWith',
+  endsWith = 'endsWith',
   like = 'like',
   ilike = 'ilike',
 

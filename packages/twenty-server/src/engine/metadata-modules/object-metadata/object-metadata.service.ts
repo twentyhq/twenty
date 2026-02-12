@@ -549,6 +549,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       visibility: ViewVisibility.WORKSPACE,
       createdByUserWorkspaceId: null,
       viewFieldUniversalIdentifiers: [],
+      viewFieldGroupUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       viewFilterGroupUniversalIdentifiers: [],
@@ -580,6 +581,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       .map<UniversalFlatViewField>((field, index) => ({
         fieldMetadataUniversalIdentifier: field.universalIdentifier,
         viewUniversalIdentifier,
+        viewFieldGroupUniversalIdentifier: null,
         createdAt,
         updatedAt: createdAt,
         deletedAt: null,
@@ -637,6 +639,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       folderUniversalIdentifier: null,
       name: null,
       position: nextPosition,
+      link: null,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
       applicationUniversalIdentifier:
