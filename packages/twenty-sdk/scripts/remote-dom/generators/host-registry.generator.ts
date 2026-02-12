@@ -1,9 +1,10 @@
 import type { Project, SourceFile } from 'ts-morph';
 
+import { EVENT_TO_REACT } from '@/sdk/front-component-common/EventToReact';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
-import { addFileHeader, addStatement, eventToReactProp } from './utils';
+import { addFileHeader, addStatement } from './utils';
 
 const generateRuntimeUtilities = (
   eventToReactMapping: Record<string, string>,
@@ -174,7 +175,7 @@ const generateUiWrapperComponent = (component: ComponentSchema): string => {
   const hasEvents = isNonEmptyArray(component.events);
 
   const filterCall = hasEvents
-    ? `filterUiProps(props, new Set([${component.events.map((event) => `'${eventToReactProp(event)}'`).join(', ')}]))`
+    ? `filterUiProps(props, new Set([${component.events.map((event) => `'${EVENT_TO_REACT[event]}'`).join(', ')}]))`
     : 'filterUiProps(props)';
 
   if (component.supportsRefForwarding) {
