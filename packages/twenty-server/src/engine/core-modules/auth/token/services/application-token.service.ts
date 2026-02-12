@@ -188,13 +188,17 @@ export class ApplicationTokenService {
   validateApplicationRefreshToken(
     refreshToken: string,
   ): ApplicationRefreshTokenJwtPayload {
-    const decoded = this.jwtWrapperService.verifyJwtToken(refreshToken);
+    this.jwtWrapperService.verifyJwtToken(refreshToken);
 
-    const payload = decoded as unknown as ApplicationRefreshTokenJwtPayload;
+    const payload =
+      this.jwtWrapperService.decode<ApplicationRefreshTokenJwtPayload>(
+        refreshToken,
+        { json: true },
+      );
 
     if (payload.type !== JwtTokenTypeEnum.APPLICATION_REFRESH) {
       throw new AuthException(
-        'Invalid token type',
+        'Expected an application refresh token',
         AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
       );
     }
