@@ -143,6 +143,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   objectMetadata: {
+    dataSourceId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     description: {
       toCompare: true,
       toStringify: false,
@@ -188,11 +193,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
-    },
-    objectMetadataId: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: 'objectMetadataUniversalIdentifier',
     },
     isCustom: {
       toCompare: false,
