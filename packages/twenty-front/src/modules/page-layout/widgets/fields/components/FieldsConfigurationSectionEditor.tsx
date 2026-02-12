@@ -10,32 +10,8 @@ import {
   type FieldsConfigurationSection,
 } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
-import { HOVER_BACKGROUND } from 'twenty-ui/theme';
-
-const StyledAddSectionButton = styled.div`
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(8)};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(1)};
-  ${HOVER_BACKGROUND};
-
-  &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
-`;
-
-const StyledAddSectionContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
+import { IconDotsVertical, IconNewSection } from 'twenty-ui/display';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;
@@ -171,14 +147,13 @@ export const FieldsConfigurationSectionEditor = ({
         )}
       </Droppable>
 
-      <StyledAddSectionButton
+      <MenuItem
+        LeftIcon={IconNewSection}
+        text={t`Add a Section`}
         onClick={() => {
           // TODO: Implement add section
         }}
-      >
-        <LightIconButton Icon={IconPlus} />
-        <StyledAddSectionContent>{t`Add a Section`}</StyledAddSectionContent>
-      </StyledAddSectionButton>
+      />
     </StyledSectionContainer>
   );
 };
