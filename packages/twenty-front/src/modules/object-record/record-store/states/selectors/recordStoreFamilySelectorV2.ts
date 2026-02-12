@@ -3,14 +3,11 @@ import { atom, type WritableAtom } from 'jotai';
 import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-// Cache for read-write field atoms keyed by (recordId, fieldName).
 const fieldAtomCache = new Map<
   string,
   WritableAtom<unknown, [unknown], void>
 >();
 
-// V2 (Jotai-backed) equivalent of `recordStoreFamilySelector`.
-// Returns a writable derived atom for a single field on a record.
 export const recordStoreFamilySelectorV2 = <T>({
   recordId,
   fieldName,
@@ -21,7 +18,7 @@ export const recordStoreFamilySelectorV2 = <T>({
   const cacheKey = `${recordId}__${fieldName}`;
   const existing = fieldAtomCache.get(cacheKey);
 
-  if (existing) {
+  if (existing !== undefined) {
     return existing as WritableAtom<T, [T], void>;
   }
 
@@ -38,7 +35,10 @@ export const recordStoreFamilySelectorV2 = <T>({
   );
 
   derivedAtom.debugLabel = `recordField__${cacheKey}`;
-  fieldAtomCache.set(cacheKey, derivedAtom as WritableAtom<unknown, [unknown], void>);
+  fieldAtomCache.set(
+    cacheKey,
+    derivedAtom as WritableAtom<unknown, [unknown], void>,
+  );
 
   return derivedAtom as unknown as WritableAtom<T, [T], void>;
 };

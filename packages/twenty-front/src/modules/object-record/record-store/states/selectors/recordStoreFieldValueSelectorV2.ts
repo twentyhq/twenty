@@ -7,8 +7,6 @@ import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/re
 import { RelationType, type ObjectRecord } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
-// Cache derived atoms by (recordId, fieldName) so the same component
-// always gets the same atom instance (stable subscription identity).
 const fieldValueAtomCache = new Map<string, Atom<unknown>>();
 
 const getSimpleFieldValueAtom = (
@@ -18,7 +16,7 @@ const getSimpleFieldValueAtom = (
   const cacheKey = `${recordId}__${fieldName}`;
   const existing = fieldValueAtomCache.get(cacheKey);
 
-  if (existing) {
+  if (existing !== undefined) {
     return existing;
   }
 
@@ -32,8 +30,6 @@ const getSimpleFieldValueAtom = (
   return derivedAtom;
 };
 
-// Morph relation atoms need a richer cache key because they depend on
-// the full set of morph relation metadata, not just a single field name.
 const morphAtomCache = new Map<string, Atom<unknown>>();
 
 const getMorphRelationFieldValueAtom = (
@@ -44,7 +40,7 @@ const getMorphRelationFieldValueAtom = (
   const cacheKey = `morph__${recordId}__${fieldName}`;
   const existing = morphAtomCache.get(cacheKey);
 
-  if (existing) {
+  if (existing !== undefined) {
     return existing;
   }
 
@@ -115,9 +111,6 @@ const getMorphRelationFieldValueAtom = (
   return derivedAtom;
 };
 
-// Returns a Jotai derived atom that reads a single field value from
-// `recordStoreFamilyStateV2`. Components subscribing to this atom will
-// only re-render when the specific field value changes (by reference).
 export const recordStoreFieldValueSelectorV2 = ({
   recordId,
   fieldName,
@@ -128,11 +121,7 @@ export const recordStoreFieldValueSelectorV2 = ({
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
 }): Atom<unknown> => {
   if (isFieldMorphRelation(fieldDefinition)) {
-    return getMorphRelationFieldValueAtom(
-      recordId,
-      fieldName,
-      fieldDefinition,
-    );
+    return getMorphRelationFieldValueAtom(recordId, fieldName, fieldDefinition);
   }
 
   return getSimpleFieldValueAtom(recordId, fieldName);

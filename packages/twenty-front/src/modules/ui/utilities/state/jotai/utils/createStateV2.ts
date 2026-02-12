@@ -2,9 +2,6 @@ import { atom } from 'jotai';
 
 import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
 
-// V2 (Jotai-backed) equivalent of `createState`.
-// Returns a `StateV2<T>` that can be used with V2 hooks
-// (`useRecoilValueV2`, `useSetRecoilStateV2`, `useRecoilStateV2`).
 export const createStateV2 = <ValueType>({
   key,
   defaultValue,
