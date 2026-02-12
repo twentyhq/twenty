@@ -6,7 +6,6 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
-import { flatEntityTranspilers } from 'src/engine/metadata-modules/flat-entity/transpiler/flat-entity-transpilers.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -20,6 +19,7 @@ import {
   WorkspaceMigrationActionRunnerContext,
   type WorkspaceMigrationActionRunnerArgs,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -113,7 +113,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     });
 
     const scalarFieldMetadatas = flatFieldMetadatas.map((flatFieldMetadata) =>
-      flatEntityTranspilers.toScalarFlatEntity({
+      flatEntityToScalarFlatEntity({
         metadataName: 'fieldMetadata',
         flatEntity: flatFieldMetadata,
       }),

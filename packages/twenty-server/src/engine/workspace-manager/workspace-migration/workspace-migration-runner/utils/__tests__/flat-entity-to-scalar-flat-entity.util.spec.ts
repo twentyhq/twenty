@@ -1,9 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { flatEntityTranspilers } from 'src/engine/metadata-modules/flat-entity/transpiler/flat-entity-transpilers.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
-describe('flatEntityTranspilers.toScalarFlatEntity', () => {
+describe('flatEntityToScalarFlatEntity', () => {
   it('should return only scalar and structural properties, excluding universal extras', () => {
     const flatEntity = getFlatFieldMetadataMock({
       id: 'field-metadata-id',
@@ -41,7 +41,7 @@ describe('flatEntityTranspilers.toScalarFlatEntity', () => {
       updatedAt: '2025-01-01T00:00:00.000Z',
     });
 
-    const result = flatEntityTranspilers.toScalarFlatEntity({
+    const result = flatEntityToScalarFlatEntity({
       metadataName: 'fieldMetadata',
       flatEntity,
     });

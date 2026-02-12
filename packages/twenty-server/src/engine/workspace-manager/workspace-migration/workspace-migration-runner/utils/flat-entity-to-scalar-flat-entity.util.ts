@@ -5,7 +5,7 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 
-export const toScalarFlatEntity = <T extends AllMetadataName>({
+export const flatEntityToScalarFlatEntity = <T extends AllMetadataName>({
   metadataName,
   flatEntity,
 }: {
