@@ -40,7 +40,7 @@ const DEFAULT_COLOR_LABELS: ColorLabels = {
   yellow: 'Yellow',
 };
 
-type MenuItemSelectColorProps = {
+export type MenuItemSelectColorProps = {
   selected: boolean;
   className?: string;
   onClick?: () => void;

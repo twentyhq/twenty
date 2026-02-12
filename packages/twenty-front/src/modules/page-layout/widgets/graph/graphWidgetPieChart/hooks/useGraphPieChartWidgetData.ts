@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { PIE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/pieChartData';
@@ -42,8 +41,6 @@ export const useGraphPieChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const apolloCoreClient = useApolloCoreClient();
-
   const dataConfiguration = useMemo(
     () => extractPieChartDataConfiguration(configuration),
     [configuration],
@@ -54,7 +51,6 @@ export const useGraphPieChartWidgetData = ({
     loading,
     error,
   } = useQuery(PIE_CHART_DATA, {
-    client: apolloCoreClient,
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,

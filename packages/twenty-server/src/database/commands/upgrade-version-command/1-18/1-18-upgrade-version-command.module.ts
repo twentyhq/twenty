@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -31,7 +32,15 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     FieldMetadataModule,
     ApplicationModule,
   ],
-  providers: [MigratePersonAvatarFilesCommand, MigrateAttachmentFilesCommand],
-  exports: [MigratePersonAvatarFilesCommand, MigrateAttachmentFilesCommand],
+  providers: [
+    MigratePersonAvatarFilesCommand,
+    MigrateAttachmentFilesCommand,
+    BackfillFileSizeAndMimeTypeCommand,
+  ],
+  exports: [
+    MigratePersonAvatarFilesCommand,
+    MigrateAttachmentFilesCommand,
+    BackfillFileSizeAndMimeTypeCommand,
+  ],
 })
 export class V1_18_UpgradeVersionCommandModule {}

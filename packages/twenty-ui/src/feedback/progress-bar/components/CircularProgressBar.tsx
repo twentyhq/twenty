@@ -1,7 +1,7 @@
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useMemo } from 'react';
 
-interface CircularProgressBarProps {
+export interface CircularProgressBarProps {
   size?: number;
   barWidth?: number;
   barColor?: string;

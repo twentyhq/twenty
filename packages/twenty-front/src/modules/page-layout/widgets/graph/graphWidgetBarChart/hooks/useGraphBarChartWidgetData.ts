@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
@@ -57,8 +56,6 @@ export const useGraphBarChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const apolloCoreClient = useApolloCoreClient();
-
   const dataConfiguration = useMemo(
     () => extractBarChartDataConfiguration(configuration),
     [configuration],
@@ -70,7 +67,6 @@ export const useGraphBarChartWidgetData = ({
     loading,
     error,
   } = useQuery(BAR_CHART_DATA, {
-    client: apolloCoreClient,
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,

@@ -2,26 +2,26 @@ import { type Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useApolloClient } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
+  FeatureFlagKey,
+  FieldMetadataType,
   FileFolder,
   useUploadFileMutation,
   useUploadFilesFieldFileMutation,
-  FeatureFlagKey,
-  FieldMetadataType,
 } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
-  const coreClient = useApolloCoreClient();
-  const [uploadFile] = useUploadFileMutation({ client: coreClient });
+  const apolloClient = useApolloClient();
+  const [uploadFile] = useUploadFileMutation({ client: apolloClient });
   const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation({
-    client: coreClient,
+    client: apolloClient,
   });
   const isAttachmentMigrated = useIsFeatureEnabled(
     FeatureFlagKey.IS_ATTACHMENT_MIGRATED,

@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as process from 'process';
 
+import { pascalToKebab } from 'twenty-shared/utils';
+
 import { INTROSPECTION_QUERY } from './introspection-query';
 import {
   type Field,
@@ -31,10 +33,6 @@ const fetchGraphQLSchema = async (): Promise<IntrospectionResponse> => {
   }
 
   return response.json();
-};
-
-const toKebabCase = (name: string): string => {
-  return name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 };
 
 const unwrapType = (typeInfo: TypeRef): any => {
@@ -124,7 +122,7 @@ const writeTestFile = (
 ): string => {
   if (!content) return 'skipped';
 
-  const fileName = `${toKebabCase(queryName)}.integration-spec.ts`;
+  const fileName = `${pascalToKebab(queryName)}.integration-spec.ts`;
   const filePath = path.join(TEST_OUTPUT_DIR, fileName);
 
   if (fs.existsSync(filePath) && !force) {
