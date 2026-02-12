@@ -24,9 +24,21 @@ const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
   [P in AllStandardObjectName]?: StandardViewFieldGroupBuilder<P>;
 };
 
-export const buildStandardFlatViewFieldGroupMetadataMaps = (
-  args: Omit<CreateStandardViewFieldGroupArgs, 'context' | 'objectName'>,
-): FlatEntityMaps<FlatViewFieldGroup> => {
+export type BuildStandardFlatViewFieldGroupMetadataMapsArgs = Omit<
+  CreateStandardViewFieldGroupArgs,
+  'context' | 'objectName'
+> & {
+  shouldIncludeRecordPageLayouts?: boolean;
+};
+
+export const buildStandardFlatViewFieldGroupMetadataMaps = ({
+  shouldIncludeRecordPageLayouts,
+  ...args
+}: BuildStandardFlatViewFieldGroupMetadataMapsArgs): FlatEntityMaps<FlatViewFieldGroup> => {
+  if (!shouldIncludeRecordPageLayouts) {
+    return createEmptyFlatEntityMaps();
+  }
+
   const allViewFieldGroupMetadatas: FlatViewFieldGroup[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME,

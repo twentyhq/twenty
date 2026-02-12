@@ -88,16 +88,17 @@ export const createStandardViewFieldFlatMetadata = <
 
     if (!isDefined(viewFieldGroupDefinition)) {
       throw new Error(
-        `Invalid view field group ${objectName} ${viewName.toString()} ${viewFieldGroupName.toString()}`,
+        `Invalid view field group ${objectName} ${viewName.toString()} ${String(viewFieldGroupName)}`,
       );
     }
 
     viewFieldGroupUniversalIdentifier =
       viewFieldGroupDefinition.universalIdentifier;
 
-    viewFieldGroupId =
+    viewFieldGroupId = (
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName]
-        .viewFieldGroups[viewFieldGroupName].id;
+        .viewFieldGroups as Record<string, { id: string }>
+    )[viewFieldGroupName as string].id;
   }
 
   return {

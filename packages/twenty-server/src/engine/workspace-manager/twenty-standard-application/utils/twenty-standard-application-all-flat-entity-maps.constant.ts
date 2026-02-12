@@ -83,6 +83,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatViewGroupMaps = buildStandardFlatViewGroupMetadataMaps({
@@ -106,6 +107,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
@@ -131,6 +133,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
