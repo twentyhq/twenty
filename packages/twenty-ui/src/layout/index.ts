@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export type { AnimatedExpandableContainerProps } from './animated-expandable-container/components/AnimatedExpandableContainer';
 export { AnimatedExpandableContainer } from './animated-expandable-container/components/AnimatedExpandableContainer';
 export type { AnimationDimension } from './animated-expandable-container/types/AnimationDimension';
 export type { AnimationDurationObject } from './animated-expandable-container/types/AnimationDurationObject';
@@ -16,7 +17,10 @@ export type { AnimationSize } from './animated-expandable-container/types/Animat
 export { getCommonStyles } from './animated-expandable-container/utils/getCommonStyles';
 export { getExpandableAnimationConfig } from './animated-expandable-container/utils/getExpandableAnimationConfig';
 export { getTransitionValues } from './animated-expandable-container/utils/getTransitionValues';
-export type { AnimatedPlaceholderType } from './animated-placeholder/components/AnimatedPlaceholder';
+export type {
+  AnimatedPlaceholderType,
+  AnimatedPlaceholderProps,
+} from './animated-placeholder/components/AnimatedPlaceholder';
 export { AnimatedPlaceholder } from './animated-placeholder/components/AnimatedPlaceholder';
 export {
   AnimatedPlaceholderEmptyContainer,
@@ -39,6 +43,7 @@ export { Card } from './card/components/Card';
 export { CardContent } from './card/components/CardContent';
 export { CardFooter } from './card/components/CardFooter';
 export { CardHeader } from './card/components/CardHeader';
+export type { SectionProps } from './section/components/Section';
 export {
   SectionAlignment,
   SectionFontColor,

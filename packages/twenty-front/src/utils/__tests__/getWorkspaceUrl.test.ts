@@ -1,4 +1,4 @@
-import { type WorkspaceUrls } from '~/generated/graphql';
+import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 describe('getWorkspaceUrl', () => {

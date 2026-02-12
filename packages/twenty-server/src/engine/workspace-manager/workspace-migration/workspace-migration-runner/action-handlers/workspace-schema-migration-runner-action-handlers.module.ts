@@ -54,6 +54,9 @@ import { UpdateSkillActionHandlerService } from 'src/engine/workspace-manager/wo
 import { CreateWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/create-webhook-action-handler.service';
 import { DeleteWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/delete-webhook-action-handler.service';
 import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/webhook/services/update-webhook-action-handler.service';
+import { CreateViewFieldGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field-group/services/create-view-field-group-action-handler.service';
+import { DeleteViewFieldGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field-group/services/delete-view-field-group-action-handler.service';
+import { UpdateViewFieldGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field-group/services/update-view-field-group-action-handler.service';
 import { CreateViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/create-view-field-action-handler.service';
 import { DeleteViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/delete-view-field-action-handler.service';
 import { UpdateViewFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/update-view-field-action-handler.service';
@@ -107,6 +110,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateViewGroupActionHandlerService,
     UpdateViewGroupActionHandlerService,
     DeleteViewGroupActionHandlerService,
+
+    CreateViewFieldGroupActionHandlerService,
+    UpdateViewFieldGroupActionHandlerService,
+    DeleteViewFieldGroupActionHandlerService,
 
     CreateLogicFunctionActionHandlerService,
     DeleteLogicFunctionActionHandlerService,

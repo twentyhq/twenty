@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Context, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { Context, Parent, ResolveField } from '@nestjs/graphql';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -8,6 +8,7 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
@@ -15,7 +16,7 @@ import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mo
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
-@Resolver(() => IndexMetadataDTO)
+@MetadataResolver(() => IndexMetadataDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,

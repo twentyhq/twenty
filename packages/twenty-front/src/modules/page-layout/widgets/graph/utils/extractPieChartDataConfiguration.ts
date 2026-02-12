@@ -1,4 +1,4 @@
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 type PieChartStyleFields =
   | 'displayDataLabel'

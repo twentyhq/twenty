@@ -4,7 +4,7 @@ import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { computeBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useMemo } from 'react';
-import { type BarChartLayout } from '~/generated/graphql';
+import { type BarChartLayout } from '~/generated-metadata/graphql';
 
 type UseBarPositionsParams = {
   data: BarChartDatum[];

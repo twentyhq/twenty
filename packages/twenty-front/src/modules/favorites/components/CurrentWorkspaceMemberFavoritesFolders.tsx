@@ -1,6 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberOrphanFavorites } from '@/favorites/components/CurrentWorkspaceMemberOrphanFavorites';
-import { FavoritesDragProvider } from '@/favorites/components/FavoritesDragProvider';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -69,10 +68,10 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (
-        <FavoritesDragProvider>
+        <>
           <FavoriteFolders isNavigationSectionOpen={isNavigationSectionOpen} />
           <CurrentWorkspaceMemberOrphanFavorites />
-        </FavoritesDragProvider>
+        </>
       )}
     </NavigationDrawerSection>
   );

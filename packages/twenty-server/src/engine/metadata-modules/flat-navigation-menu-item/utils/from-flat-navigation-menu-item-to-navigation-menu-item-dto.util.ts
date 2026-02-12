@@ -12,6 +12,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   viewId: flatNavigationMenuItem.viewId ?? undefined,
   folderId: flatNavigationMenuItem.folderId ?? undefined,
   name: flatNavigationMenuItem.name ?? undefined,
+  link: flatNavigationMenuItem.link ?? undefined,
   position: flatNavigationMenuItem.position,
   workspaceId: flatNavigationMenuItem.workspaceId,
   applicationId: flatNavigationMenuItem.applicationId ?? undefined,

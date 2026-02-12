@@ -6,7 +6,7 @@ import {
   BarChartGroupMode,
   GraphOrderBy,
   WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 describe('buildChartGroupByFieldConfigUpdate', () => {
   it('sets default orderBy and dateGranularity for primary axis', () => {

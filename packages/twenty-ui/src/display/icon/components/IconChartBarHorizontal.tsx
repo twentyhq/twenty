@@ -9,7 +9,7 @@ const StyledRotatedIconWrapper = styled.div`
   transform: rotate(90deg);
 `;
 
-type IconChartBarHorizontalProps = Pick<
+export type IconChartBarHorizontalProps = Pick<
   IconComponentProps,
   'size' | 'stroke' | 'color'
 >;

@@ -16,7 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { type Agent } from '~/generated/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';

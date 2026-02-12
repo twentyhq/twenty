@@ -1,10 +1,14 @@
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
+
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
+import { type WorkflowIfElseActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-action-settings.type';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
   type WorkflowAction,
   WorkflowActionType,
   type WorkflowCodeAction,
+  type WorkflowIfElseAction,
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -48,6 +52,30 @@ describe('getAllStepIdsInLoop', () => {
         retryOnFailure: { value: false },
       },
     },
+  });
+
+  const createIfElseMockStep = (
+    id: string,
+    branches: StepIfElseBranch[],
+    nextStepIds: string[] = [],
+  ): WorkflowIfElseAction => ({
+    id,
+    name: `Step ${id}`,
+    type: WorkflowActionType.IF_ELSE,
+    valid: true,
+    nextStepIds,
+    settings: {
+      input: {
+        stepFilterGroups: [],
+        stepFilters: [],
+        branches,
+      },
+      outputSchema: {},
+      errorHandlingOptions: {
+        continueOnFailure: { value: false },
+        retryOnFailure: { value: false },
+      },
+    } as WorkflowIfElseActionSettings,
   });
 
   describe('simple loop scenarios', () => {
@@ -174,6 +202,80 @@ describe('getAllStepIdsInLoop', () => {
         'step5',
         'step6',
       ]);
+    });
+  });
+
+  describe('if-else scenarios', () => {
+    it('should include steps in all if-else branches within a loop', () => {
+      const steps: WorkflowAction[] = [
+        createIteratorMockStep('iterator1', [], ['ifElse1']),
+        createIfElseMockStep('ifElse1', [
+          { id: 'branch-if', filterGroupId: 'fg1', nextStepIds: ['stepA'] },
+          { id: 'branch-else', nextStepIds: ['stepB'] },
+        ]),
+        createCodeMockStep('stepA', ['iterator1']),
+        createCodeMockStep('stepB', ['iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['ifElse1'],
+        steps,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining(['ifElse1', 'stepA', 'stepB']),
+      );
+      expect(result).toHaveLength(3);
+    });
+
+    it('should include deeply nested steps inside if-else branches', () => {
+      const steps: WorkflowAction[] = [
+        createIteratorMockStep('iterator1', [], ['ifElse1']),
+        createIfElseMockStep('ifElse1', [
+          { id: 'branch-if', filterGroupId: 'fg1', nextStepIds: ['stepA'] },
+          { id: 'branch-else', nextStepIds: ['stepB'] },
+        ]),
+        createCodeMockStep('stepA', ['stepC']),
+        createCodeMockStep('stepB', ['stepC']),
+        createCodeMockStep('stepC', ['iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['ifElse1'],
+        steps,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining(['ifElse1', 'stepA', 'stepB', 'stepC']),
+      );
+      expect(result).toHaveLength(4);
+    });
+
+    it('should handle if-else with steps before and after within a loop', () => {
+      const steps: WorkflowAction[] = [
+        createIteratorMockStep('iterator1', [], ['step1']),
+        createCodeMockStep('step1', ['ifElse1']),
+        createIfElseMockStep('ifElse1', [
+          { id: 'branch-if', filterGroupId: 'fg1', nextStepIds: ['stepA'] },
+          { id: 'branch-else', nextStepIds: ['stepB'] },
+        ]),
+        createCodeMockStep('stepA', ['step2']),
+        createCodeMockStep('stepB', ['step2']),
+        createCodeMockStep('step2', ['iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['step1'],
+        steps,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining(['step1', 'ifElse1', 'stepA', 'stepB', 'step2']),
+      );
+      expect(result).toHaveLength(5);
     });
   });
 

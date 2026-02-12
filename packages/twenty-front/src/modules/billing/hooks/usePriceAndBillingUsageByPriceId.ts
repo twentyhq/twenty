@@ -3,7 +3,7 @@ import {
   type BillingPriceLicensed,
   type BillingPriceMetered,
   BillingUsageType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useAllBillingPrices } from './useAllBillingPrices';
 
 export const usePriceAndBillingUsageByPriceId = () => {

@@ -5,7 +5,7 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-type ButtonSoonProps = {
+export type ButtonSoonProps = {
   label?: string;
 };
 

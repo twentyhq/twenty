@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const getChartDefaultOrderByForFieldType = (
   fieldType: FieldMetadataType,

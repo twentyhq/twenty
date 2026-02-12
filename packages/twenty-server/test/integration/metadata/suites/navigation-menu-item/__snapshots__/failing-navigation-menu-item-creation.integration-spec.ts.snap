@@ -105,8 +105,8 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
             },
             {
               "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-              "userFriendlyMessage": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
+              "message": "Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)",
+              "userFriendlyMessage": "Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)",
             },
           ],
           "flatEntityMinimalInformation": {

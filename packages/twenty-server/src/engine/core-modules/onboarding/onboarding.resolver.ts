@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation } from '@nestjs/graphql';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
@@ -16,7 +17,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
-@Resolver()
+@MetadataResolver()
 export class OnboardingResolver {
   constructor(private readonly onboardingService: OnboardingService) {}
 

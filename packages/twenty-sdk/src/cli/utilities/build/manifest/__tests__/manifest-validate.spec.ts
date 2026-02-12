@@ -32,7 +32,6 @@ const validManifest: Manifest = {
   logicFunctions: [],
   roles: [],
   publicAssets: [],
-  sources: {},
 };
 
 describe('manifestValidate', () => {

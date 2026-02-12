@@ -59,8 +59,6 @@ export type { FrontComponentExecutionContext } from './front-component-api';
 // Front Component Common exports
 export type { AllowedHtmlElement } from './front-component-common';
 export { ALLOWED_HTML_ELEMENTS } from './front-component-common';
-export type { AllowedUiComponent } from './front-component-common';
-export { ALLOWED_UI_COMPONENTS } from './front-component-common';
 export { COMMON_HTML_EVENTS } from './front-component-common';
 export { EVENT_TO_REACT } from './front-component-common';
 export { HTML_COMMON_PROPERTIES } from './front-component-common';

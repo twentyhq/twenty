@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { t } from '@lingui/core/macro';
-import { type ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';

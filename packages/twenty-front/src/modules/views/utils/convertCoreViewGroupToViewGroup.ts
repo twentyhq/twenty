@@ -1,5 +1,5 @@
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { type CoreViewGroup } from '~/generated/graphql';
+import { type CoreViewGroup } from '~/generated-metadata/graphql';
 
 export const convertCoreViewGroupToViewGroup = (
   coreViewGroup: Pick<

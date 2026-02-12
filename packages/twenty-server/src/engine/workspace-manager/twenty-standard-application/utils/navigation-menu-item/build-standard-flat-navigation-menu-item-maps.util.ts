@@ -7,6 +7,25 @@ import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metada
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
+import {
+  createStandardNavigationMenuItemFolderFlatMetadata,
+  createStandardNavigationMenuItemFolderItemFlatMetadata,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
+
+const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
+  'allCompanies',
+  'allDashboards',
+  'allNotes',
+  'allOpportunities',
+  'allPeople',
+  'allTasks',
+] as const;
+
+const WORKFLOWS_FOLDER_ITEM_NAMES = [
+  'workflowsFolderAllWorkflows',
+  'workflowsFolderAllWorkflowRuns',
+  'workflowsFolderAllWorkflowVersions',
+] as const;
 
 export const buildStandardFlatNavigationMenuItemMaps = ({
   now,
@@ -26,9 +45,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndFolderId: {},
   };
 
-  for (const navigationMenuItemName of Object.keys(
-    STANDARD_NAVIGATION_MENU_ITEMS,
-  ) as Array<keyof typeof STANDARD_NAVIGATION_MENU_ITEMS>) {
+  for (const navigationMenuItemName of FLAT_NAVIGATION_MENU_ITEM_NAMES) {
     const navigationMenuItemDefinition =
       STANDARD_NAVIGATION_MENU_ITEMS[navigationMenuItemName];
 
@@ -50,6 +67,48 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem,
+      flatNavigationMenuItemMaps,
+    });
+  }
+
+  const workflowsFolderDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.workflowsFolder;
+  const workflowsFolderId = v4();
+  const workflowsFolder = createStandardNavigationMenuItemFolderFlatMetadata({
+    universalIdentifier: workflowsFolderDefinition.universalIdentifier,
+    name: workflowsFolderDefinition.name,
+    position: workflowsFolderDefinition.position,
+    navigationMenuItemId: workflowsFolderId,
+    workspaceId,
+    twentyStandardApplicationId,
+    now,
+  });
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem: workflowsFolder,
+    flatNavigationMenuItemMaps,
+  });
+
+  for (const folderItemName of WORKFLOWS_FOLDER_ITEM_NAMES) {
+    const folderItemDefinition = STANDARD_NAVIGATION_MENU_ITEMS[folderItemName];
+
+    const folderItem = createStandardNavigationMenuItemFolderItemFlatMetadata({
+      universalIdentifier: folderItemDefinition.universalIdentifier,
+      viewUniversalIdentifier: folderItemDefinition.viewUniversalIdentifier,
+      folderId: workflowsFolderId,
+      folderUniversalIdentifier: folderItemDefinition.folderUniversalIdentifier,
+      position: folderItemDefinition.position,
+      navigationMenuItemId: v4(),
+      workspaceId,
+      twentyStandardApplicationId,
+      dependencyFlatEntityMaps: {
+        flatViewMaps,
+      },
+      now,
+    });
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem: folderItem,
       flatNavigationMenuItemMaps,
     });
   }

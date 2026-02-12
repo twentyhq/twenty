@@ -5,6 +5,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -32,6 +33,7 @@ export class WorkflowHandleStaledRunsCronJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(WorkflowHandleStaledRunsCronJob.name)
@@ -52,16 +54,24 @@ export class WorkflowHandleStaledRunsCronJob {
     let enqueuedCount = 0;
 
     for (const workspace of activeWorkspaces) {
-      const hasStaledRuns = await this.hasStaledRuns(workspace.id);
+      try {
+        const hasStaledRuns = await this.hasStaledRuns(workspace.id);
 
-      if (hasStaledRuns) {
-        await this.messageQueueService.add<WorkflowHandleStaledRunsJobData>(
-          WorkflowHandleStaledRunsJob.name,
-          {
-            workspaceId: workspace.id,
+        if (hasStaledRuns) {
+          await this.messageQueueService.add<WorkflowHandleStaledRunsJobData>(
+            WorkflowHandleStaledRunsJob.name,
+            {
+              workspaceId: workspace.id,
+            },
+          );
+          enqueuedCount++;
+        }
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: workspace.id,
           },
-        );
-        enqueuedCount++;
+        });
       }
     }
 

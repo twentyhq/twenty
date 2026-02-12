@@ -51,7 +51,6 @@ export const WidgetActionFieldEdit = () => {
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
-    objectRecordId: targetRecord.id,
   });
 
   const isRecordReadOnly = useIsRecordReadOnly({

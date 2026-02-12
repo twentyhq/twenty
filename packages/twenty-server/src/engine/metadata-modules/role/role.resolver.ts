@@ -4,14 +4,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -27,6 +20,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -73,7 +67,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-@Resolver(() => RoleDTO)
+@MetadataResolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
   WorkspaceAuthGuard,

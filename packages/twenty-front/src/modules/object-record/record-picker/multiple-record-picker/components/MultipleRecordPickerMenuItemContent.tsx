@@ -17,7 +17,7 @@ import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
-import { type SearchRecord } from '~/generated-metadata/graphql';
+import { type SearchRecord } from '~/generated/graphql';
 
 export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;

@@ -56,7 +56,6 @@ export const FieldWidgetDisplay = ({
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular: objectMetadataItem.nameSingular,
-    objectRecordId: recordId,
   });
 
   const isRecordReadOnly = useIsRecordReadOnly({

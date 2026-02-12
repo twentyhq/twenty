@@ -1,5 +1,5 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 export const extractFeatureFlagMapFromWorkspace = (

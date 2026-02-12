@@ -1,7 +1,7 @@
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 export const useResetSortDropdown = () => {
   const setIsRecordSortDirectionDropdownMenuUnfolded =
