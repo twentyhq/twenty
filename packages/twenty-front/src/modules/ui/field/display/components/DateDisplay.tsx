@@ -1,8 +1,8 @@
 import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -12,7 +12,7 @@ type DateDisplayProps = {
 };
 export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
   const { dateFormat } = useContext(UserContext);
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
 
   const formattedDate = formatDateString({
     value,

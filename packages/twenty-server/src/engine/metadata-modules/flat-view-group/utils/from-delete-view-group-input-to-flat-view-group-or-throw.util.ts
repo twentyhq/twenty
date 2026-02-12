@@ -6,12 +6,12 @@ import {
 
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 
 export const fromDeleteViewGroupInputToFlatViewGroupOrThrow = ({
   deleteViewGroupInput: rawDeleteViewGroupInput,
@@ -19,7 +19,7 @@ export const fromDeleteViewGroupInputToFlatViewGroupOrThrow = ({
 }: {
   deleteViewGroupInput: DeleteViewGroupInput;
   flatViewGroupMaps: FlatViewGroupMaps;
-}): FlatViewGroup => {
+}): UniversalFlatViewGroup => {
   const { id: viewGroupId } = extractAndSanitizeObjectStringFields(
     rawDeleteViewGroupInput,
     ['id'],

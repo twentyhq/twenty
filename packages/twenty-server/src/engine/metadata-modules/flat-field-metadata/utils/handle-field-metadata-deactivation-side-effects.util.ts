@@ -96,6 +96,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...flatView,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataId: null,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
   }));
 
   return {

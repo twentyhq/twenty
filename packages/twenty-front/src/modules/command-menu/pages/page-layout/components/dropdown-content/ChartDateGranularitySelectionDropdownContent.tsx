@@ -17,7 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type WidgetConfiguration } from '~/generated/graphql';
+import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 
 type ChartDateGranularitySelectionDropdownContentProps = {
   axis?: 'primary' | 'secondary';

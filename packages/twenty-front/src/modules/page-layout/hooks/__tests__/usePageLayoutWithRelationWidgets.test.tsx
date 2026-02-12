@@ -8,10 +8,11 @@ import {
   AggregateOperations,
   BarChartLayout,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext');
 jest.mock(
@@ -35,7 +36,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
         title: 'Fields',
         icon: 'IconList',
         position: 100,
-        layoutMode: 'vertical-list',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         pageLayoutId: 'test-layout',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

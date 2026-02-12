@@ -22,9 +22,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "fieldNamePersonForMorphRelationSecond",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -40,9 +39,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "toto",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -65,7 +63,6 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_4ff93dd3375abd83d29ed3d01b4",
             "universalIdentifier": Any<String>,
           },
@@ -103,9 +100,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "fieldNameCompanyForMorphRelationSecond",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -121,9 +117,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "toto",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -141,7 +136,6 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_59563a0476bb3b8760e33ae6d5b",
             "universalIdentifier": Any<String>,
           },

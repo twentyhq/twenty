@@ -1,10 +1,11 @@
 import { t } from '@lingui/core/macro';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { type RemoveSuffix } from 'twenty-shared/types';
 
 import {
   ALL_METADATA_RELATIONS,
-  type ManyToOneRelationValue,
+  type MetadataManyToOneRelationConfiguration,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 import {
   FlatEntityMapsException,
@@ -16,7 +17,6 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
 
 type ManyToOneConfig<T extends AllMetadataName> =
   (typeof ALL_METADATA_RELATIONS)[T]['manyToOne'];
@@ -76,7 +76,9 @@ export const resolveEntityRelationUniversalIdentifiers = <
   const relations = ALL_METADATA_RELATIONS[metadataName].manyToOne;
   const result: Record<string, string | null> = {};
 
-  for (const relation of Object.values(relations) as ManyToOneRelationValue<
+  for (const relation of Object.values(
+    relations,
+  ) as MetadataManyToOneRelationConfiguration<
     T,
     ExtractEntityManyToOneEntityRelationProperties<MetadataEntity<T>>
   >[]) {

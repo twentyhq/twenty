@@ -14,7 +14,10 @@ export const transformEventBatchToEventPayloads = ({
   logicFunctions,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-  logicFunctions: LogicFunctionEntity[];
+  logicFunctions: Pick<
+    LogicFunctionEntity,
+    'id' | 'workspaceId' | 'databaseEventTriggerSettings'
+  >[];
 }): LogicFunctionTriggerJobData[] => {
   const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;

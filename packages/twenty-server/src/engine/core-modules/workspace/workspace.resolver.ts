@@ -5,14 +5,7 @@ import {
   UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import assert from 'assert';
 
@@ -78,6 +71,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 const OriginHeader = createParamDecorator(
@@ -88,7 +82,7 @@ const OriginHeader = createParamDecorator(
   },
 );
 
-@Resolver(() => WorkspaceEntity)
+@MetadataResolver(() => WorkspaceEntity)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,

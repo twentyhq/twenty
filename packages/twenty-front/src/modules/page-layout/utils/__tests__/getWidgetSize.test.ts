@@ -1,5 +1,5 @@
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 describe('getWidgetSize', () => {
   describe('chart types with specific sizes', () => {

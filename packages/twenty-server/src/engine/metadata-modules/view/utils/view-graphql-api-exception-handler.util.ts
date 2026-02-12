@@ -8,6 +8,10 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
+  ViewFieldGroupException,
+  ViewFieldGroupExceptionCode,
+} from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
+import {
   ViewFieldException,
   ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
@@ -68,6 +72,22 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
       case ViewFieldExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      default: {
+        return assertUnreachable(error.code);
+      }
+    }
+  }
+
+  if (error instanceof ViewFieldGroupException) {
+    switch (error.code) {
+      case ViewFieldGroupExceptionCode.VIEW_FIELD_GROUP_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewFieldGroupExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewFieldGroupExceptionCode.INVALID_VIEW_FIELD_GROUP_DATA:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });

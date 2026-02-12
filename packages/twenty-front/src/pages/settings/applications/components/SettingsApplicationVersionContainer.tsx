@@ -3,7 +3,7 @@ import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/S
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
-import type { Application } from '~/generated/graphql';
+import type { Application } from '~/generated-metadata/graphql';
 
 export const SettingsApplicationVersionContainer = ({
   application,

@@ -8,6 +8,7 @@ describe('groupThreadsByDate', () => {
     totalInputTokens: 0,
     totalOutputTokens: 0,
     contextWindowTokens: null,
+    conversationSize: 0,
     totalInputCredits: 0,
     totalOutputCredits: 0,
   };

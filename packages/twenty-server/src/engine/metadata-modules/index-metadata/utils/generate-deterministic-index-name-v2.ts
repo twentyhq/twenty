@@ -1,10 +1,13 @@
 import { createHash } from 'crypto';
 
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 type GenerateDeterministicIndexNameArgs = {
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular' | 'isCustom'>;
+  flatObjectMetadata: Pick<
+    UniversalFlatObjectMetadata,
+    'nameSingular' | 'isCustom'
+  >;
   isUnique?: boolean;
   orderedIndexColumnNames: string[];
 };

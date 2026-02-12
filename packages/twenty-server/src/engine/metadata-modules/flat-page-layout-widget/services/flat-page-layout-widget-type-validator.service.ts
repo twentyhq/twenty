@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import {
   type FlatPageLayoutWidgetTypeValidatorForCreation,
   type FlatPageLayoutWidgetTypeValidatorForUpdate,
@@ -20,19 +19,20 @@ import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/e
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 export type GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs =
-  FlatEntityValidationArgs<'pageLayoutWidget'> & {
-    update?: FlatEntityUpdate<'pageLayoutWidget'>;
+  UniversalFlatEntityValidationArgs<'pageLayoutWidget'> & {
+    update?: UniversalFlatEntityUpdate<'pageLayoutWidget'>;
   };
 
 export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs =
-  FlatEntityValidationArgs<'pageLayoutWidget'>;
+  UniversalFlatEntityValidationArgs<'pageLayoutWidget'>;
 
 export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs =
-  FlatEntityValidationArgs<'pageLayoutWidget'> & {
-    update: FlatEntityUpdate<'pageLayoutWidget'>;
+  UniversalFlatEntityValidationArgs<'pageLayoutWidget'> & {
+    update: UniversalFlatEntityUpdate<'pageLayoutWidget'>;
   };
 
 @Injectable()

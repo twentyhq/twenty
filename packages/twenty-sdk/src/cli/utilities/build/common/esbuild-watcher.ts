@@ -10,7 +10,7 @@ import {
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import * as esbuild from 'esbuild';
 import path from 'path';
-import { OUTPUT_DIR } from 'twenty-shared/application';
+import { OUTPUT_DIR, NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
@@ -45,6 +45,7 @@ export type EsbuildWatcherConfig = {
   jsx?: 'automatic';
   extraPlugins?: esbuild.Plugin[];
   minify?: boolean;
+  banner?: esbuild.BuildOptions['banner'];
 };
 
 export type EsbuildWatcherOptions = RestartableWatcherOptions & {
@@ -170,6 +171,7 @@ export class EsbuildWatcher implements RestartableWatcher {
       metafile: true,
       logLevel: 'silent',
       minify: this.config.minify,
+      banner: this.config.banner,
       plugins,
     });
 
@@ -206,6 +208,7 @@ export const createLogicFunctionsWatcher = (
       fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
       extraPlugins: [externalPatternsPlugin],
+      banner: NODE_ESM_CJS_BANNER,
     },
   });
 

@@ -7,5 +7,6 @@ export type WorkerExports = {
     connection: RemoteConnection,
     context: HostToWorkerRenderContext,
   ) => Promise<void>;
+  initializeHostCommunicationApi: () => Promise<void>;
   updateContext: (context: FrontComponentExecutionContext) => Promise<void>;
 };

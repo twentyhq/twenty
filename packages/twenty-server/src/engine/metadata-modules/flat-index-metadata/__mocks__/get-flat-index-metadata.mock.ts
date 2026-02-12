@@ -19,6 +19,7 @@ export const getFlatIndexMetadataMock = (
   const createdAt = faker.date.anytime().toISOString();
 
   return {
+    universalFlatIndexFieldMetadatas: [],
     flatIndexFieldMetadatas: [],
     createdAt,
     id: faker.string.uuid(),

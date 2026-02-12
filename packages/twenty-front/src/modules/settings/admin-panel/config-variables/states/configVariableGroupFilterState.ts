@@ -1,8 +1,8 @@
 import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
-import { createState } from 'twenty-ui/utilities';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 export const configVariableGroupFilterState =
-  createState<ConfigVariableGroupFilter>({
+  createStateV2<ConfigVariableGroupFilter>({
     key: 'configVariableGroupFilterState',
     defaultValue: 'all',
   });

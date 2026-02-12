@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { FavoritesFolderContent } from '@/favorites/components/FavoritesFolderContent';
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';

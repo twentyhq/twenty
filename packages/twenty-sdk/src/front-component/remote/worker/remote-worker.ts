@@ -12,18 +12,31 @@ import {
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
+import * as TwentySharedTypes from 'twenty-shared/types';
+import * as TwentySharedUtils from 'twenty-shared/utils';
+
+import * as TwentySdk from '@/sdk';
+import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
+import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
+
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
+import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
-import { frontComponentExecutionContextStore } from '../context/FrontComponentExecutionContextStore';
 import * as RemoteComponents from '../generated/remote-components';
+import { exposeGlobals } from '../utils/exposeGlobals';
 
-(globalThis as Record<string, unknown>).React = React;
-(globalThis as Record<string, unknown>).RemoteComponents = RemoteComponents;
-(globalThis as Record<string, unknown>).jsx = jsx;
-(globalThis as Record<string, unknown>).jsxs = jsxs;
-(globalThis as Record<string, unknown>).frontComponentExecutionContextStore =
-  frontComponentExecutionContextStore;
+exposeGlobals({
+  React,
+  RemoteComponents,
+  jsx,
+  jsxs,
+  TwentySdk,
+  TwentyShared: {
+    utils: TwentySharedUtils,
+    types: TwentySharedTypes,
+  },
+});
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
@@ -34,17 +47,50 @@ const render: WorkerExports['render'] = async (
   root.connect(batchedConnection);
   document.body.append(root);
 
-  /* @vite-ignore */
-  const componentModule = await import(renderContext.componentUrl);
+  const response = await fetch(renderContext.componentUrl, {
+    headers: { Authorization: `Bearer ${renderContext.authToken}` },
+  });
 
-  const reactRoot = createRoot(root);
-  reactRoot.render(componentModule.default);
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch front component from ${renderContext.componentUrl}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const responseText = await response.text();
+
+  const blob = new Blob([responseText], {
+    type: 'application/javascript',
+  });
+
+  const importUrl = URL.createObjectURL(blob);
+
+  try {
+    /* @vite-ignore */
+    const componentModule = await import(importUrl);
+
+    const reactRoot = createRoot(root);
+    reactRoot.render(componentModule.default);
+  } finally {
+    URL.revokeObjectURL(importUrl);
+  }
 };
+
+const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
+  async () => {
+    const hostApi =
+      ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
+    setNavigate(hostApi.navigate);
+  };
 
 const updateContext: WorkerExports['updateContext'] = async (
   context: FrontComponentExecutionContext,
 ) => {
-  frontComponentExecutionContextStore.setContext(context);
+  setFrontComponentExecutionContext(context);
 };
 
-ThreadWebWorker.self.export({ render, updateContext });
+ThreadWebWorker.self.export({
+  render,
+  initializeHostCommunicationApi,
+  updateContext,
+});

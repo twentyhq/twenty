@@ -87,7 +87,6 @@ exports[`NavigationMenuItem update should fail when updating with negative posit
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",

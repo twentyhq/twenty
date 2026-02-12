@@ -20,7 +20,7 @@ const StyledIconButton = styled.div<{ isActive?: boolean }>`
   }
 `;
 
-type NavigationBarItemProps = {
+export type NavigationBarItemProps = {
   Icon: IconComponent;
   isActive: boolean;
   onClick: () => void;

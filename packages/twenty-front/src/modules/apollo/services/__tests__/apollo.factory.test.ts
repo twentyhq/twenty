@@ -5,7 +5,7 @@ import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
-import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
 enableFetchMocks();
 
@@ -27,6 +27,7 @@ jest.mock('@/auth/services/AuthService', () => {
 
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
+const mockOnPayloadTooLarge = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -81,6 +82,7 @@ const createMockOptions = (): Options<any> => ({
   isDebugMode: true,
   onError: mockOnError,
   onNetworkError: mockOnNetworkError,
+  onPayloadTooLarge: mockOnPayloadTooLarge,
   appVersion: '1.0.0',
 });
 
@@ -226,4 +228,21 @@ describe('ApolloFactory', () => {
     apolloFactory.updateWorkspaceMember(newWorkspaceMember);
     expect(apolloFactory['currentWorkspaceMember']).toEqual(newWorkspaceMember);
   });
+
+  it('should call onPayloadTooLarge when encountering a 413 error', async () => {
+    fetchMock.mockResponse(() =>
+      Promise.reject({
+        statusCode: 413,
+        message: 'Payload Too Large',
+      }),
+    );
+
+    try {
+      await makeRequest();
+    } catch {
+      expect(mockOnPayloadTooLarge).toHaveBeenCalledWith(
+        expect.stringContaining('Uploaded content is too large'),
+      );
+    }
+  }, 10000);
 });

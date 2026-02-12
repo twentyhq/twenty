@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Readable } from 'stream';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -44,26 +45,23 @@ export class FilesFieldService {
   async uploadFile({
     file,
     filename,
-    declaredMimeType,
     workspaceId,
     fieldMetadataId,
   }: {
     file: Buffer;
     filename: string;
-    declaredMimeType: string | undefined;
     workspaceId: string;
     fieldMetadataId: string;
   }): Promise<FileEntity> {
     const { mimeType, ext } = await extractFileInfo({
       file,
-      declaredMimeType,
       filename,
     });
 
     const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
-    const name = `${fileId}${ext ? `.${ext}` : ''}`;
+    const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
 
     const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
       select: ['applicationId', 'universalIdentifier'],
@@ -80,7 +78,7 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.writeFile_v2({
+    return await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
       mimeType,
@@ -153,7 +151,7 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.readFile_v2({
+    return await this.fileStorageService.readFile({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,

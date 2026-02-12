@@ -1,6 +1,7 @@
 import type { Project, SourceFile } from 'ts-morph';
 
-import { isDefined } from 'twenty-shared/utils';
+import { EVENT_TO_REACT } from '@/sdk/front-component-common/EventToReact';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
 import { addFileHeader, addStatement } from './utils';
@@ -40,13 +41,65 @@ const parseStyle = (styleString: string | undefined): React.CSSProperties | unde
   return style;
 };
 
-const wrapEventHandler = (handler: () => void) => {
-  return (_event: unknown) => {
-    handler();
+const serializeEvent = (event: unknown): SerializedEventData => {
+  if (!event || typeof event !== 'object') {
+    return { type: 'unknown' };
+  }
+
+  const domEvent = event as Record<string, unknown>;
+  const serialized: SerializedEventData = {
+    type: typeof domEvent.type === 'string' ? domEvent.type : 'unknown',
+  };
+
+  if ('altKey' in domEvent) serialized.altKey = domEvent.altKey as boolean;
+  if ('ctrlKey' in domEvent) serialized.ctrlKey = domEvent.ctrlKey as boolean;
+  if ('metaKey' in domEvent) serialized.metaKey = domEvent.metaKey as boolean;
+  if ('shiftKey' in domEvent) serialized.shiftKey = domEvent.shiftKey as boolean;
+
+  if ('clientX' in domEvent) serialized.clientX = domEvent.clientX as number;
+  if ('clientY' in domEvent) serialized.clientY = domEvent.clientY as number;
+  if ('pageX' in domEvent) serialized.pageX = domEvent.pageX as number;
+  if ('pageY' in domEvent) serialized.pageY = domEvent.pageY as number;
+  if ('screenX' in domEvent) serialized.screenX = domEvent.screenX as number;
+  if ('screenY' in domEvent) serialized.screenY = domEvent.screenY as number;
+  if ('button' in domEvent) serialized.button = domEvent.button as number;
+  if ('buttons' in domEvent) serialized.buttons = domEvent.buttons as number;
+
+  if ('key' in domEvent) serialized.key = domEvent.key as string;
+  if ('code' in domEvent) serialized.code = domEvent.code as string;
+  if ('repeat' in domEvent) serialized.repeat = domEvent.repeat as boolean;
+
+  if ('deltaX' in domEvent) serialized.deltaX = domEvent.deltaX as number;
+  if ('deltaY' in domEvent) serialized.deltaY = domEvent.deltaY as number;
+  if ('deltaZ' in domEvent) serialized.deltaZ = domEvent.deltaZ as number;
+  if ('deltaMode' in domEvent) serialized.deltaMode = domEvent.deltaMode as number;
+
+  const target = domEvent.target as Record<string, unknown> | undefined;
+  if (target && typeof target === 'object') {
+    if ('value' in target && typeof target.value === 'string') {
+      serialized.value = target.value;
+    }
+    if ('checked' in target && typeof target.checked === 'boolean') {
+      serialized.checked = target.checked;
+    }
+    if ('scrollTop' in target && typeof target.scrollTop === 'number') {
+      serialized.scrollTop = target.scrollTop;
+    }
+    if ('scrollLeft' in target && typeof target.scrollLeft === 'number') {
+      serialized.scrollLeft = target.scrollLeft;
+    }
+  }
+
+  return serialized;
+};
+
+const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
+  return (event: unknown) => {
+    handler(serializeEvent(event));
   };
 };
 
-const filterProps = (props: Record<string, unknown>) => {
+const filterHtmlProps = <T extends object>(props: T): T => {
   const filtered: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(props)) {
     if (INTERNAL_PROPS.has(key) || value === undefined) continue;
@@ -56,13 +109,29 @@ const filterProps = (props: Record<string, unknown>) => {
     } else {
       const normalizedKey = EVENT_NAME_MAP[key.toLowerCase()] || key;
       if (normalizedKey.startsWith('on') && typeof value === 'function') {
-        filtered[normalizedKey] = wrapEventHandler(value as () => void);
+        filtered[normalizedKey] = wrapEventHandler(value as (detail: SerializedEventData) => void);
       } else {
         filtered[normalizedKey] = value;
       }
     }
   }
-  return filtered;
+  return filtered as T;
+};
+
+const filterUiProps = <T extends object>(props: T, eventPropNames?: Set<string>): T => {
+  const filtered: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (INTERNAL_PROPS.has(key) || value === undefined) continue;
+
+    if (key === 'style') {
+      filtered.style = parseStyle(value as string | undefined);
+    } else if (eventPropNames?.has(key) && typeof value === 'function') {
+      filtered[key] = wrapEventHandler(value as (detail: SerializedEventData) => void);
+    } else {
+      filtered[key] = value;
+    }
+  }
+  return filtered as T;
 };`;
 };
 
@@ -88,19 +157,35 @@ const generateHtmlWrapperComponent = (component: ComponentSchema): string => {
   const isVoidElement = VOID_ELEMENTS.has(component.htmlTag ?? '');
 
   if (isVoidElement) {
-    return `const ${component.name}Wrapper = ({ children: _children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement('${component.htmlTag}', filterProps(props));
-};`;
+    return `const ${component.name}Wrapper = React.forwardRef<HTMLElement, { children?: React.ReactNode } & Record<string, unknown>>(({ children: _children, ...props }, ref) => {
+  return React.createElement('${component.htmlTag}', { ...filterHtmlProps(props), ref });
+});`;
   }
 
-  return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement('${component.htmlTag}', filterProps(props), children);
-};`;
+  return `const ${component.name}Wrapper = React.forwardRef<HTMLElement, { children?: React.ReactNode } & Record<string, unknown>>(({ children, ...props }, ref) => {
+  return React.createElement('${component.htmlTag}', { ...filterHtmlProps(props), ref }, children);
+});`;
 };
 
 const generateUiWrapperComponent = (component: ComponentSchema): string => {
-  return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement(${component.componentImport}, filterProps(props), children);
+  const propsType = isDefined(component.propsTypeName)
+    ? `${component.propsTypeName} & { children?: React.ReactNode }`
+    : '{ children?: React.ReactNode } & Record<string, unknown>';
+
+  const hasEvents = isNonEmptyArray(component.events);
+
+  const filterCall = hasEvents
+    ? `filterUiProps(props, new Set([${component.events.map((event) => `'${EVENT_TO_REACT[event]}'`).join(', ')}]))`
+    : 'filterUiProps(props)';
+
+  if (component.supportsRefForwarding) {
+    return `const ${component.name}Wrapper = React.forwardRef<unknown, ${propsType}>((props, ref) => {
+  return React.createElement(${component.componentImport} as React.ElementType, { ...${filterCall}, ref });
+});`;
+  }
+
+  return `const ${component.name}Wrapper = (props: ${propsType}) => {
+  return React.createElement(${component.componentImport}, ${filterCall});
 };`;
 };
 
@@ -129,10 +214,15 @@ ${entries}
 ]);`;
 };
 
+type ImportGroup = {
+  namedImports: string[];
+  typeImports: string[];
+};
+
 const groupImportsByPath = (
   components: ComponentSchema[],
-): Map<string, string[]> => {
-  const importsByPath = new Map<string, string[]>();
+): Map<string, ImportGroup> => {
+  const importsByPath = new Map<string, ImportGroup>();
 
   for (const component of components) {
     if (
@@ -140,10 +230,22 @@ const groupImportsByPath = (
       isDefined(component.componentPath) &&
       isDefined(component.componentImport)
     ) {
-      const existing = importsByPath.get(component.componentPath) ?? [];
-      if (!existing.includes(component.componentImport)) {
-        existing.push(component.componentImport);
+      const existing = importsByPath.get(component.componentPath) ?? {
+        namedImports: [],
+        typeImports: [],
+      };
+
+      if (!existing.namedImports.includes(component.componentImport)) {
+        existing.namedImports.push(component.componentImport);
       }
+
+      if (
+        isDefined(component.propsTypeName) &&
+        !existing.typeImports.includes(component.propsTypeName)
+      ) {
+        existing.typeImports.push(component.propsTypeName);
+      }
+
       importsByPath.set(component.componentPath, existing);
     }
   }
@@ -172,12 +274,25 @@ export const generateHostRegistry = (
     namedImports: ['RemoteFragmentRenderer', 'createRemoteComponentRenderer'],
   });
 
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../../sdk/front-component-common/SerializedEventData',
+    namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
+  });
+
   const uiImports = groupImportsByPath(components);
 
-  for (const [modulePath, namedImports] of uiImports) {
+  for (const [modulePath, importGroup] of uiImports) {
+    const allImports = [
+      ...importGroup.namedImports,
+      ...importGroup.typeImports.map((typeName) => ({
+        name: typeName,
+        isTypeOnly: true,
+      })),
+    ];
+
     sourceFile.addImportDeclaration({
       moduleSpecifier: modulePath,
-      namedImports,
+      namedImports: allImports,
     });
   }
 

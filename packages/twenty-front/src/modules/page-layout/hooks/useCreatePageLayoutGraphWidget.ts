@@ -23,7 +23,7 @@ import {
   BarChartLayout,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useCreatePageLayoutGraphWidget = (
   pageLayoutIdFromProps?: string,

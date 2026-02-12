@@ -27,7 +27,6 @@ exports[`View Filter Group creation should fail with circular dependency when ma
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "viewFilterGroup",

@@ -1,5 +1,5 @@
-import { type DomainValidRecords } from '~/generated/graphql';
-import { createState } from 'twenty-ui/utilities';
+import { type DomainValidRecords } from '~/generated-metadata/graphql';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const customDomainRecordsState = createState<{
   customDomainRecords: DomainValidRecords | null;

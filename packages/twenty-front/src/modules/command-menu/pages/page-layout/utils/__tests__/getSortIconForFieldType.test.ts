@@ -9,7 +9,7 @@ import {
 } from 'twenty-ui/display';
 
 import { getSortIconForFieldType } from '@/command-menu/pages/page-layout/utils/getSortIconForFieldType';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('getSortIconForFieldType', () => {
   describe('position sort', () => {

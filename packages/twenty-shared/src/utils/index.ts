@@ -145,8 +145,10 @@ export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeD
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
+export { camelToSnakeCase } from './strings/camelToSnakeCase';
 export { capitalize } from './strings/capitalize';
 export { pascalCase } from './strings/pascalCase';
+export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export type {

@@ -30,6 +30,7 @@ const StyledEditorContainer = styled.div<{
     color: ${({ theme, readonly }) =>
       readonly ? theme.font.color.light : theme.font.color.primary};
     font-family: ${({ theme }) => theme.font.family};
+    font-size: ${({ theme }) => theme.font.size.sm};
     font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
 
@@ -54,15 +55,15 @@ const StyledEditorContainer = styled.div<{
     }
 
     h1 {
-      font-size: 32px;
+      font-size: 1.5em;
     }
 
     h2 {
-      font-size: 24px;
+      font-size: 1.3em;
     }
 
     h3 {
-      font-size: 16px;
+      font-size: 1.1em;
     }
 
     li {

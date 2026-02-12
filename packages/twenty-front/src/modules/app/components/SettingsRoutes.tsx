@@ -5,7 +5,10 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
-import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -182,6 +185,12 @@ const SettingsAgentTurnDetail = lazy(() =>
 const SettingsSkillForm = lazy(() =>
   import('~/pages/settings/ai/SettingsSkillForm').then((module) => ({
     default: module.SettingsSkillForm,
+  })),
+);
+
+const SettingsAIPrompts = lazy(() =>
+  import('~/pages/settings/ai/SettingsAIPrompts').then((module) => ({
+    default: module.SettingsAIPrompts,
   })),
 );
 
@@ -442,6 +451,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApiWebhooks />}
         />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
+        <Route path={SettingsPath.AIPrompts} element={<SettingsAIPrompts />} />
         <Route
           path={SettingsPath.AINewAgent}
           element={<SettingsAgentForm mode="create" />}

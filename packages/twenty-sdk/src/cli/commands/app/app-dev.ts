@@ -31,6 +31,18 @@ export class AppDevCommand {
   private uiStateManager: DevUiStateManager | null = null;
   private unmountUI: (() => void) | null = null;
 
+  async close(): Promise<void> {
+    this.unmountUI?.();
+
+    await Promise.all([
+      this.manifestWatcher?.close(),
+      this.logicFunctionsWatcher?.close(),
+      this.frontComponentsWatcher?.close(),
+      this.assetWatcher?.close(),
+      this.dependencyWatcher?.close(),
+    ]);
+  }
+
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
@@ -152,7 +164,7 @@ export class AppDevCommand {
   private async startDependencyWatcher(): Promise<void> {
     this.dependencyWatcher = new FileUploadWatcher({
       appPath: this.appPath,
-      fileFolder: FileFolder.Source,
+      fileFolder: FileFolder.Dependencies,
       watchPaths: ['package.json', 'yarn.lock'],
       handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
         this.orchestrator,
@@ -163,21 +175,9 @@ export class AppDevCommand {
   }
 
   private setupGracefulShutdown(): void {
-    const shutdown = async () => {
-      this.unmountUI?.();
+    const shutdown = () => void this.close().then(() => process.exit(0));
 
-      await Promise.all([
-        this.manifestWatcher?.close(),
-        this.logicFunctionsWatcher?.close(),
-        this.frontComponentsWatcher?.close(),
-        this.assetWatcher?.close(),
-        this.dependencyWatcher?.close(),
-      ]);
-
-      process.exit(0);
-    };
-
-    process.on('SIGINT', () => void shutdown());
-    process.on('SIGTERM', () => void shutdown());
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
   }
 }

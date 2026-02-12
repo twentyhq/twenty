@@ -4,34 +4,33 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatLogicFunctionValidatorService {
   constructor() {}
 
   public validateFlatLogicFunctionUpdate({
-    flatEntityId,
+    universalIdentifier,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatLogicFunctionMaps: optimisticFlatLogicFunctionMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.logicFunction
   >): FailedFlatEntityValidation<'logicFunction', 'update'> {
-    const existingFlatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const existingFlatLogicFunction = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatLogicFunctionMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingFlatLogicFunction?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'logicFunction',
       type: 'update',
@@ -49,24 +48,23 @@ export class FlatLogicFunctionValidatorService {
   }
 
   public validateFlatLogicFunctionDeletion({
-    flatEntityToValidate: { id: logicFunctionIdToDelete, universalIdentifier },
+    flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatLogicFunctionMaps: optimisticFlatLogicFunctionMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.logicFunction
   >): FailedFlatEntityValidation<'logicFunction', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: logicFunctionIdToDelete,
         universalIdentifier,
       },
       metadataName: 'logicFunction',
       type: 'delete',
     });
 
-    const existingFlatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: logicFunctionIdToDelete,
+    const existingFlatLogicFunction = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatLogicFunctionMaps,
     });
 
@@ -86,12 +84,11 @@ export class FlatLogicFunctionValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatLogicFunctionMaps: optimisticFlatLogicFunctionMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.logicFunction
   >): FailedFlatEntityValidation<'logicFunction', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatLogicFunctionToValidate.id,
         universalIdentifier: flatLogicFunctionToValidate.universalIdentifier,
       },
       metadataName: 'logicFunction',
@@ -100,15 +97,15 @@ export class FlatLogicFunctionValidatorService {
 
     if (
       isDefined(
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatLogicFunctionToValidate.id,
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier: flatLogicFunctionToValidate.universalIdentifier,
           flatEntityMaps: optimisticFlatLogicFunctionMaps,
         }),
       )
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.LOGIC_FUNCTION_ALREADY_EXIST,
-        message: t`Logic function with same id already exists`,
+        message: t`Logic function with same universal identifier already exists`,
         userFriendlyMessage: msg`Logic function already exists`,
       });
     }

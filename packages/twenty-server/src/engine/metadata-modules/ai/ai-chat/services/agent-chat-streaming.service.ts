@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
+import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -84,21 +85,14 @@ export class AgentChatStreamingService {
               onCodeExecutionUpdate,
             });
 
-          writer.write({
-            type: 'data-routing-status' as const,
-            id: 'execution-status',
-            data: {
-              text: 'Processing your request...',
-              state: 'loading',
-            },
-          });
-
           let streamUsage = {
             inputTokens: 0,
             outputTokens: 0,
             inputCredits: 0,
             outputCredits: 0,
           };
+          let lastStepConversationSize = 0;
+          let totalCacheCreationTokens = 0;
 
           writer.merge(
             stream.toUIMessageStream({
@@ -109,9 +103,37 @@ export class AgentChatStreamingService {
               },
               sendStart: false,
               messageMetadata: ({ part }) => {
+                if (part.type === 'finish-step') {
+                  const stepInput = part.usage?.inputTokens ?? 0;
+                  const stepCached = part.usage?.cachedInputTokens ?? 0;
+
+                  // Anthropic excludes cached/created tokens from input_tokens,
+                  // reporting them separately as cache_creation_input_tokens
+                  const anthropicUsage = (
+                    part as {
+                      providerMetadata?: {
+                        anthropic?: {
+                          usage?: { cache_creation_input_tokens?: number };
+                        };
+                      };
+                    }
+                  ).providerMetadata?.anthropic?.usage;
+                  const stepCacheCreation =
+                    anthropicUsage?.cache_creation_input_tokens ?? 0;
+
+                  totalCacheCreationTokens += stepCacheCreation;
+                  lastStepConversationSize =
+                    stepInput + stepCached + stepCacheCreation;
+                }
+
                 if (part.type === 'finish') {
-                  const inputTokens = part.totalUsage?.inputTokens ?? 0;
+                  const inputTokens =
+                    (part.totalUsage?.inputTokens ?? 0) +
+                    (part.totalUsage?.cachedInputTokens ?? 0) +
+                    totalCacheCreationTokens;
                   const outputTokens = part.totalUsage?.outputTokens ?? 0;
+                  const cachedInputTokens =
+                    part.totalUsage?.cachedInputTokens ?? 0;
 
                   const inputCostInCents =
                     (inputTokens / 1000) *
@@ -139,8 +161,10 @@ export class AgentChatStreamingService {
                     usage: {
                       inputTokens,
                       outputTokens,
-                      inputCredits,
-                      outputCredits,
+                      cachedInputTokens,
+                      inputCredits: toDisplayCredits(inputCredits),
+                      outputCredits: toDisplayCredits(outputCredits),
+                      conversationSize: lastStepConversationSize,
                     },
                     model: {
                       contextWindowTokens: modelConfig.contextWindowTokens,
@@ -154,15 +178,6 @@ export class AgentChatStreamingService {
                 if (responseMessage.parts.length === 0) {
                   return;
                 }
-
-                writer.write({
-                  type: 'data-routing-status' as const,
-                  id: 'execution-status',
-                  data: {
-                    text: 'Completed',
-                    state: 'routed',
-                  },
-                });
 
                 const validThreadId = thread.id;
 
@@ -205,6 +220,7 @@ export class AgentChatStreamingService {
                     totalOutputCredits: () =>
                       `"totalOutputCredits" + ${streamUsage.outputCredits}`,
                     contextWindowTokens: modelConfig.contextWindowTokens,
+                    conversationSize: lastStepConversationSize,
                   });
                 } catch (saveError) {
                   this.logger.error(

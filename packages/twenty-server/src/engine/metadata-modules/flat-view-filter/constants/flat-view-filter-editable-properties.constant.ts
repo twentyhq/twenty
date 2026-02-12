@@ -1,4 +1,4 @@
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_VIEW_FILTER_EDITABLE_PROPERTIES = [
   'fieldMetadataId',
@@ -7,4 +7,4 @@ export const FLAT_VIEW_FILTER_EDITABLE_PROPERTIES = [
   'viewFilterGroupId',
   'positionInViewFilterGroup',
   'subFieldName',
-] as const satisfies (keyof FlatViewFilter)[];
+] as const satisfies MetadataEntityPropertyName<'viewFilter'>[];

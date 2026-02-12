@@ -13,9 +13,6 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  DEFAULT_HANDLER_NAME,
-  DEFAULT_SOURCE_HANDLER_PATH,
   LogicFunctionEntity,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -24,6 +21,11 @@ import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-obje
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  DEFAULT_BUILT_HANDLER_PATH,
+  DEFAULT_HANDLER_NAME,
+  DEFAULT_SOURCE_HANDLER_PATH,
+} from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 
 const OLD_BUILT_FOLDER = 'built-function';
 const OLD_SOURCE_FOLDER = 'serverless-function';
@@ -486,8 +488,12 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
     );
 
     try {
-      await this.fileStorageService.delete({ folderPath: OLD_BUILT_FOLDER });
-      await this.fileStorageService.delete({ folderPath: OLD_SOURCE_FOLDER });
+      await this.fileStorageService.deleteLegacy({
+        folderPath: OLD_BUILT_FOLDER,
+      });
+      await this.fileStorageService.deleteLegacy({
+        folderPath: OLD_SOURCE_FOLDER,
+      });
       this.logger.log(
         `Cleaned old file storage: ${OLD_BUILT_FOLDER}, ${OLD_SOURCE_FOLDER}`,
       );
@@ -516,7 +522,10 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       },
     };
 
-    await this.fileStorageService.writeFolder(builtSources, builtFolder);
-    await this.fileStorageService.writeFolder(sourceSources, sourceFolder);
+    await this.fileStorageService.writeFolderLegacy(builtSources, builtFolder);
+    await this.fileStorageService.writeFolderLegacy(
+      sourceSources,
+      sourceFolder,
+    );
   }
 }

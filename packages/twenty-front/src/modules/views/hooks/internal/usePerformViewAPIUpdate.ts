@@ -13,7 +13,7 @@ import {
   type CoreView,
   type UpdateCoreViewMutationVariables,
   useUpdateCoreViewMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIUpdate = () => {
   const [updateCoreViewMutation] = useUpdateCoreViewMutation();

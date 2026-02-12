@@ -2,8 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { FlatUpdatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import {
+  FlatUpdatePageLayoutWidgetAction,
+  UniversalUpdatePageLayoutWidgetAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
+import { fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -19,9 +25,40 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdatePageLayoutWidgetAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdatePageLayoutWidgetAction>,
   ): Promise<FlatUpdatePageLayoutWidgetAction> {
-    return context.action;
+    const { action, allFlatEntityMaps } = context;
+
+    const flatPageLayoutWidget = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatPageLayoutWidgetMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const { universalConfiguration, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'pageLayoutWidget',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const update =
+      universalConfiguration === undefined
+        ? updateWithResolvedForeignKeys
+        : {
+            ...updateWithResolvedForeignKeys,
+            configuration:
+              fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+                universalConfiguration,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+              }),
+          };
+
+    return {
+      type: 'update',
+      metadataName: 'pageLayoutWidget',
+      entityId: flatPageLayoutWidget.id,
+      update,
+    };
   }
 
   async executeForMetadata(

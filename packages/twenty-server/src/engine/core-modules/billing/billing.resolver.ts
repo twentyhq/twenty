@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -23,6 +23,10 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import {
+  INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+  toDisplayCredits,
+} from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -42,8 +46,9 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 
-@Resolver()
+@MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
@@ -298,7 +303,17 @@ export class BillingResolver {
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingMeteredProductUsageOutput[]> {
-    return await this.billingUsageService.getMeteredProductsUsage(workspace);
+    const usageData =
+      await this.billingUsageService.getMeteredProductsUsage(workspace);
+
+    return usageData.map((item) => ({
+      ...item,
+      usedCredits: toDisplayCredits(item.usedCredits),
+      grantedCredits: toDisplayCredits(item.grantedCredits),
+      rolloverCredits: toDisplayCredits(item.rolloverCredits),
+      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    }));
   }
 
   @Mutation(() => BillingUpdateOutput)

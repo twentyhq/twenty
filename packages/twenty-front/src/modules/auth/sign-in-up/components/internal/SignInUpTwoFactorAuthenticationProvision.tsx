@@ -10,10 +10,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import QRCode from 'react-qr-code';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -69,7 +70,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueSuccessSnackBar } = useSnackBar();
-  const qrCode = useRecoilValue(qrCodeState);
+  const qrCode = useRecoilValueV2(qrCodeState);
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const handleClick = () => {

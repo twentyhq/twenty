@@ -11,6 +11,10 @@ type FrontComponentSeed = {
   workspaceId: string;
   universalIdentifier: string;
   applicationId: string;
+  sourceComponentPath: string;
+  builtComponentPath: string;
+  componentName: string;
+  builtComponentChecksum: string;
 };
 
 type CommandMenuItemSeed = {
@@ -48,6 +52,10 @@ export const getFrontComponentAndCommandMenuItemDataSeeds = (
       workspaceId,
       universalIdentifier: frontComponentId,
       applicationId,
+      sourceComponentPath: 'src/front-components/demo-app.tsx',
+      builtComponentPath: 'src/front-components/demo-app.mjs',
+      componentName: 'DemoApp',
+      builtComponentChecksum: '1234567890',
     },
   ];
 

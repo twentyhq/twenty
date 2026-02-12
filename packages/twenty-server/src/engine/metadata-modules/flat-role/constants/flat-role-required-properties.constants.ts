@@ -1,4 +1,4 @@
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
 export const FLAT_ROLE_REQUIRED_PROPERTIES = [
   'label',
@@ -8,4 +8,4 @@ export const FLAT_ROLE_REQUIRED_PROPERTIES = [
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
   'canDestroyAllObjectRecords',
-] as const satisfies (keyof FlatRole)[];
+] as const satisfies (keyof UniversalFlatRole)[];

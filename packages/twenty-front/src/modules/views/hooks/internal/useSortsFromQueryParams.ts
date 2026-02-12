@@ -7,7 +7,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { sortUrlQueryParamsSchema } from '@/views/schemas/sortUrlQueryParamsSchema';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { type ViewSortDirection } from '~/generated/graphql';
+import { type ViewSortDirection } from '~/generated-metadata/graphql';
 
 export const useSortsFromQueryParams = () => {
   const [searchParams] = useSearchParams();

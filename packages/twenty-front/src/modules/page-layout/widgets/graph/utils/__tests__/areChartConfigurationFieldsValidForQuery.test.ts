@@ -1,10 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   AggregateOperations,
+  FieldMetadataType,
   WidgetConfigurationType,
   type AggregateChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 

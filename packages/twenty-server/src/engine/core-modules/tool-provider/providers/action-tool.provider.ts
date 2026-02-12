@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { type ZodObject, type ZodRawShape } from 'zod';
+import { z } from 'zod';
 
 import {
   type ToolProvider,
@@ -10,24 +9,24 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import {
+  type StaticToolHandler,
+  ToolExecutorService,
+} from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import {
-  type Tool,
-  type ToolExecutionContext,
-} from 'src/engine/core-modules/tool/types/tool.type';
-import {
-  stripLoadingMessage,
-  wrapSchemaForExecution,
-} from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class ActionToolProvider implements ToolProvider {
   readonly category = ToolCategory.ACTION;
+
+  private readonly toolMap: Map<string, Tool>;
 
   constructor(
     private readonly httpTool: HttpTool,
@@ -35,22 +34,39 @@ export class ActionToolProvider implements ToolProvider {
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly permissionsService: PermissionsService,
-  ) {}
+    private readonly toolExecutorService: ToolExecutorService,
+  ) {
+    this.toolMap = new Map<string, Tool>([
+      ['http_request', this.httpTool],
+      ['send_email', this.sendEmailTool],
+      ['search_help_center', this.searchHelpCenterTool],
+      ['code_interpreter', this.codeInterpreterTool],
+    ]);
+
+    // Register each action tool as a static handler in the executor
+    for (const [toolId, tool] of this.toolMap) {
+      const handler: StaticToolHandler = {
+        execute: async (args: ToolInput, context: ToolProviderContext) =>
+          tool.execute(args, {
+            workspaceId: context.workspaceId,
+            userId: context.userId,
+            userWorkspaceId: context.userWorkspaceId,
+            onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+          }),
+      };
+
+      this.toolExecutorService.registerStaticHandler(toolId, handler);
+    }
+  }
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
-    // Action tools are always available (individual tool permissions checked in generateTools)
     return true;
   }
 
-  async generateTools(context: ToolProviderContext): Promise<ToolSet> {
-    const tools: ToolSet = {};
-
-    const executionContext: ToolExecutionContext = {
-      workspaceId: context.workspaceId,
-      userId: context.userId,
-      userWorkspaceId: context.userWorkspaceId,
-      onCodeExecutionUpdate: context.onCodeExecutionUpdate,
-    };
+  async generateDescriptors(
+    context: ToolProviderContext,
+  ): Promise<ToolDescriptor[]> {
+    const descriptors: ToolDescriptor[] = [];
 
     const hasHttpPermission = await this.permissionsService.hasToolPermission(
       context.rolePermissionConfig,
@@ -59,10 +75,7 @@ export class ActionToolProvider implements ToolProvider {
     );
 
     if (hasHttpPermission) {
-      tools['http_request'] = this.createToolEntry(
-        this.httpTool,
-        executionContext,
-      );
+      descriptors.push(this.buildDescriptor('http_request', this.httpTool));
     }
 
     const hasEmailPermission = await this.permissionsService.hasToolPermission(
@@ -72,15 +85,11 @@ export class ActionToolProvider implements ToolProvider {
     );
 
     if (hasEmailPermission) {
-      tools['send_email'] = this.createToolEntry(
-        this.sendEmailTool,
-        executionContext,
-      );
+      descriptors.push(this.buildDescriptor('send_email', this.sendEmailTool));
     }
 
-    tools['search_help_center'] = this.createToolEntry(
-      this.searchHelpCenterTool,
-      executionContext,
+    descriptors.push(
+      this.buildDescriptor('search_help_center', this.searchHelpCenterTool),
     );
 
     const hasCodeInterpreterPermission =
@@ -91,23 +100,21 @@ export class ActionToolProvider implements ToolProvider {
       );
 
     if (hasCodeInterpreterPermission) {
-      tools['code_interpreter'] = this.createToolEntry(
-        this.codeInterpreterTool,
-        executionContext,
+      descriptors.push(
+        this.buildDescriptor('code_interpreter', this.codeInterpreterTool),
       );
     }
 
-    return tools;
+    return descriptors;
   }
 
-  private createToolEntry(tool: Tool, context: ToolExecutionContext) {
+  private buildDescriptor(toolId: string, tool: Tool): ToolDescriptor {
     return {
+      name: toolId,
       description: tool.description,
-      inputSchema: wrapSchemaForExecution(
-        tool.inputSchema as ZodObject<ZodRawShape>,
-      ),
-      execute: async (parameters: ToolInput) =>
-        tool.execute(stripLoadingMessage(parameters), context),
+      category: ToolCategory.ACTION,
+      inputSchema: z.toJSONSchema(tool.inputSchema as z.ZodType),
+      executionRef: { kind: 'static', toolId },
     };
   }
 }

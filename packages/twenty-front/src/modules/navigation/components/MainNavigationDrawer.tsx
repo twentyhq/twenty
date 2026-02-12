@@ -1,4 +1,5 @@
 import { useRecoilValue } from 'recoil';
+import styled from '@emotion/styled';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
@@ -12,7 +13,12 @@ import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-dr
 import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const StyledScrollableContent = styled.div`
+  height: 100%;
+  min-height: 0;
+`;
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -31,12 +37,14 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   );
 
   const openedNavigationMenuItemFolder = navigationMenuItemsByFolder.find(
-    (f) => f.folderId === currentNavigationMenuItemFolderId,
+    (f) => f.id === currentNavigationMenuItemFolderId,
   );
 
   const openedFolder = isNavigationMenuItemEnabled
     ? openedNavigationMenuItemFolder
     : openedFavoriteFolder;
+
+  const openedFolderId = openedNavigationMenuItemFolder?.id ?? '';
 
   return (
     <NavigationDrawer
@@ -48,10 +56,25 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        {openedFolder ? (
+        {isNavigationMenuItemEnabled ? (
+          <StyledScrollableContent>
+            {openedFolder ? (
+              <NavigationMenuItemFolderContentDispatcherEffect
+                folderName={openedFolder.folderName}
+                folderId={openedFolderId}
+                favorites={openedFavoriteFolder?.favorites}
+                navigationMenuItems={
+                  openedNavigationMenuItemFolder?.navigationMenuItems
+                }
+              />
+            ) : (
+              <MainNavigationDrawerScrollableItems />
+            )}
+          </StyledScrollableContent>
+        ) : openedFolder ? (
           <NavigationMenuItemFolderContentDispatcherEffect
             folderName={openedFolder.folderName}
-            folderId={openedFolder.folderId}
+            folderId={openedFolderId}
             favorites={openedFavoriteFolder?.favorites}
             navigationMenuItems={
               openedNavigationMenuItemFolder?.navigationMenuItems

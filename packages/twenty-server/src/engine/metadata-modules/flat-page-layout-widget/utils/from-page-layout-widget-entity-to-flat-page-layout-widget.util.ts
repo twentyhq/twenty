@@ -6,11 +6,12 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
-    fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+    fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   };
 
 export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
@@ -18,6 +19,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   applicationIdToUniversalIdentifierMap,
   pageLayoutTabIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
+  fieldMetadataUniversalIdentifierById,
 }: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
   const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
     pageLayoutWidgetEntity,
@@ -64,12 +66,11 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     }
   }
 
-  // TODO uncomment once page layout widget has been migrated
-  // const configurationWithUniversalIdentifiers =
-  //   fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-  //     configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
-  //     fieldMetadataIdToUniversalIdentifierMap,
-  //   });
+  const configurationWithUniversalIdentifiers =
+    fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+      configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
+      fieldMetadataUniversalIdentifierById,
+    });
 
   return {
     ...pageLayoutWidgetEntityWithoutRelations,
@@ -82,6 +83,6 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     applicationUniversalIdentifier,
     pageLayoutTabUniversalIdentifier,
     objectMetadataUniversalIdentifier,
-    // universalConfiguration: configurationWithUniversalIdentifiers,
+    universalConfiguration: configurationWithUniversalIdentifiers,
   };
 };

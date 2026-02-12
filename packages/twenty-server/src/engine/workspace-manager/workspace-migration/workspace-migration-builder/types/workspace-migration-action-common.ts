@@ -9,13 +9,14 @@ import {
 export type AllUniversalWorkspaceMigrationAction<
   TActionType extends
     WorkspaceMigrationActionType = WorkspaceMigrationActionType,
-> = MetadataUniversalWorkspaceMigrationAction<AllMetadataName, TActionType>;
+  TMetadataName extends AllMetadataName = AllMetadataName,
+> = MetadataUniversalWorkspaceMigrationAction<TMetadataName, TActionType>;
 
-export type AllFlatWorkspaceMigrationAction =
-  MetadataFlatWorkspaceMigrationAction<
-    AllMetadataName,
-    WorkspaceMigrationActionType
-  >;
+export type AllFlatWorkspaceMigrationAction<
+  TActionType extends
+    WorkspaceMigrationActionType = WorkspaceMigrationActionType,
+  TMetadataName extends AllMetadataName = AllMetadataName,
+> = MetadataFlatWorkspaceMigrationAction<TMetadataName, TActionType>;
 
 export { WorkspaceMigrationActionType };
 

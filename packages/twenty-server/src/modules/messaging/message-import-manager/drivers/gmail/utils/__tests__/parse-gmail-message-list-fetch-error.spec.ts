@@ -1,3 +1,5 @@
+import { GaxiosError } from 'gaxios';
+
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -114,6 +116,27 @@ describe('parseGmailApiError', () => {
 
   it('should handle 500 Backend Error', () => {
     const error = getGmailApiError({ code: 500, reason: 'backendError' });
+    const exception = parseGmailApiError(error);
+
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
+    expect(exception.code).toBe(
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('should handle 500 OAuth internal_failure error', () => {
+    const error = new GaxiosError(
+      'internal_failure',
+      { url: 'https://oauth2.googleapis.com/token' },
+      {
+        status: 500,
+        statusText: 'Internal Server Error',
+        data: { error: 'internal_failure' },
+        headers: {},
+        config: { url: 'https://oauth2.googleapis.com/token' },
+        request: { responseURL: 'https://oauth2.googleapis.com/token' },
+      },
+    );
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);

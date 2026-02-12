@@ -13,7 +13,7 @@ export const baseSchema = (
     openapi: '3.1.1',
     info: {
       title: 'Twenty Api',
-      description: `Use this page to explore and call the **REST API**. 
+      description: `Use this page to explore and call the **REST API**.
 
 ## Authentication
 
@@ -40,6 +40,7 @@ Use the \`filter\` query parameter to narrow results.
 - Multiple conditions: \`field1[eq]:1,field2[gte]:10\` (root conjunction is AND)
 - Composite fields: \`field.subField[COMPARATOR]:value\`
 - Common comparators: \`eq\`, \`neq\`, \`in\`, \`containsAny\`, \`is\`, \`gt\`, \`gte\`, \`lt\`, \`lte\`, \`startsWith\`, \`like\`, \`ilike\`
+- Wildcards: For \`like\`/\`ilike\`, use \`%\` as a wildcard (e.g. \`%value%\` for substring match)
 
 Examples:
 

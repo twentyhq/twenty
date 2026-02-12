@@ -8,7 +8,7 @@ import { type ThemeColor } from 'twenty-ui/theme';
 import {
   type DomainRecord,
   type DomainValidRecords,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const SettingsDomainRecords = ({
   records,

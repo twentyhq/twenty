@@ -8,6 +8,7 @@ export const GET_CHAT_THREADS = gql`
       totalInputTokens
       totalOutputTokens
       contextWindowTokens
+      conversationSize
       totalInputCredits
       totalOutputCredits
       createdAt

@@ -1,13 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import axios from 'axios';
-
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
@@ -15,6 +14,8 @@ const UserFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
 const TwentyConfigServiceGetAllMock = jest.fn();
 const TwentyConfigServiceGetVariableWithMetadataMock = jest.fn();
+const mockHttpClientGet = jest.fn();
+const mockGetHttpClient = jest.fn().mockReturnValue({ get: mockHttpClientGet });
 
 jest.mock(
   'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata',
@@ -86,6 +87,12 @@ describe('AdminPanelService', () => {
         {
           provide: FileService,
           useValue: {},
+        },
+        {
+          provide: SecureHttpClientService,
+          useValue: {
+            getHttpClient: mockGetHttpClient,
+          },
         },
       ],
     }).compile();
@@ -256,18 +263,16 @@ describe('AdminPanelService', () => {
 
   describe('getVersionInfo', () => {
     const mockEnvironmentGet = jest.fn();
-    const mockAxiosGet = jest.fn();
 
     beforeEach(() => {
       mockEnvironmentGet.mockReset();
-      mockAxiosGet.mockReset();
-      jest.spyOn(axios, 'get').mockImplementation(mockAxiosGet);
+      mockHttpClientGet.mockReset();
       service['twentyConfigService'].get = mockEnvironmentGet;
     });
 
     it('should return current and latest version when everything works', async () => {
       mockEnvironmentGet.mockReturnValue('1.0.0');
-      mockAxiosGet.mockResolvedValue({
+      mockHttpClientGet.mockResolvedValue({
         data: {
           results: [
             { name: '2.0.0' },
@@ -288,7 +293,7 @@ describe('AdminPanelService', () => {
 
     it('should handle undefined APP_VERSION', async () => {
       mockEnvironmentGet.mockReturnValue(undefined);
-      mockAxiosGet.mockResolvedValue({
+      mockHttpClientGet.mockResolvedValue({
         data: {
           results: [{ name: '2.0.0' }, { name: 'latest' }],
         },
@@ -304,7 +309,7 @@ describe('AdminPanelService', () => {
 
     it('should handle Docker Hub API error', async () => {
       mockEnvironmentGet.mockReturnValue('1.0.0');
-      mockAxiosGet.mockRejectedValue(new Error('API Error'));
+      mockHttpClientGet.mockRejectedValue(new Error('API Error'));
 
       const result = await service.getVersionInfo();
 
@@ -316,7 +321,7 @@ describe('AdminPanelService', () => {
 
     it('should handle empty Docker Hub tags', async () => {
       mockEnvironmentGet.mockReturnValue('1.0.0');
-      mockAxiosGet.mockResolvedValue({
+      mockHttpClientGet.mockResolvedValue({
         data: {
           results: [],
         },
@@ -332,7 +337,7 @@ describe('AdminPanelService', () => {
 
     it('should handle invalid semver tags', async () => {
       mockEnvironmentGet.mockReturnValue('1.0.0');
-      mockAxiosGet.mockResolvedValue({
+      mockHttpClientGet.mockResolvedValue({
         data: {
           results: [
             { name: '2.0.0' },

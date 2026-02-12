@@ -1,5 +1,5 @@
-import { createState } from 'twenty-ui/utilities';
-import { type User } from '~/generated/graphql';
+import { createState } from '@/ui/utilities/state/utils/createState';
+import { type User } from '~/generated-metadata/graphql';
 
 export type CurrentUser = Pick<
   User,

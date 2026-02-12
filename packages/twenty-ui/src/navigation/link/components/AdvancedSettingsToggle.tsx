@@ -34,7 +34,7 @@ const StyledToggleContainer = styled.label`
   width: 100%;
 `;
 
-type AdvancedSettingsToggleProps = {
+export type AdvancedSettingsToggleProps = {
   isAdvancedModeEnabled: boolean;
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
   label?: string;

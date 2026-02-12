@@ -1,6 +1,6 @@
 import { ACCOUNT_PROTOCOLS } from '@/settings/accounts/constants/AccountProtocols';
 import { z } from 'zod';
-import { type ConnectionParameters } from '~/generated/graphql';
+import { type ConnectionParameters } from '~/generated-metadata/graphql';
 
 const connectionParameters = z
   .object({

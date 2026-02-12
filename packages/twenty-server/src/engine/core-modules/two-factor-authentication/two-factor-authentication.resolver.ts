@@ -1,10 +1,11 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   AuthException,
   AuthExceptionCode,
@@ -34,7 +35,7 @@ import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-facto
 import { VerifyTwoFactorAuthenticationMethodOutput } from './dto/verify-two-factor-authentication-method.output';
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
-@Resolver()
+@MetadataResolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class TwoFactorAuthenticationResolver {
   constructor(

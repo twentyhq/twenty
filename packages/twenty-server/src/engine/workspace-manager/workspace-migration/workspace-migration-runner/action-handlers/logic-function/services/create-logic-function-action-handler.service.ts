@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { FileFolder } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
-  LogicFunctionException,
-  LogicFunctionExceptionCode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { FlatCreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+  FlatCreateLogicFunctionAction,
+  UniversalCreateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -21,54 +18,31 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'create',
   'logicFunction',
 ) {
-  constructor(private readonly fileStorageService: FileStorageService) {
-    super();
-  }
-
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateLogicFunctionAction>,
-  ): Promise<FlatCreateLogicFunctionAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateLogicFunctionAction>): Promise<FlatCreateLogicFunctionAction> {
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+      },
+    };
   }
 
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId, flatApplication } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity: logicFunction } = flatAction;
 
-    const applicationUniversalIdentifier = flatApplication.universalIdentifier;
-
-    const [sourceExists, builtExists] = await Promise.all([
-      this.fileStorageService.checkFileExists_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: logicFunction.sourceHandlerPath,
-      }),
-      this.fileStorageService.checkFileExists_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: logicFunction.builtHandlerPath,
-      }),
-    ]);
-
-    if (!sourceExists || !builtExists) {
-      throw new LogicFunctionException(
-        `Logic function source or built file missing before create (source: ${sourceExists}, built: ${builtExists})`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
-      );
-    }
-
-    const logicFunctionRepository =
-      queryRunner.manager.getRepository<LogicFunctionEntity>(
-        LogicFunctionEntity,
-      );
-
-    await logicFunctionRepository.insert({
-      ...logicFunction,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [logicFunction],
     });
   }
 

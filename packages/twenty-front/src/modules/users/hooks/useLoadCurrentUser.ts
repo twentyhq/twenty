@@ -11,7 +11,7 @@ import { useInitializeFormatPreferences } from '@/localization/hooks/useInitiali
 import { coreViewsState } from '@/views/states/coreViewState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,6 +22,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useLoadCurrentUser = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
@@ -41,7 +42,7 @@ export const useLoadCurrentUser = () => {
   const setWorkspaceAuthBypassProviders = useSetRecoilState(
     workspaceAuthBypassProvidersState,
   );
-  const authProviders = useRecoilValue(authProvidersState);
+  const authProviders = useRecoilValueV2(authProvidersState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 

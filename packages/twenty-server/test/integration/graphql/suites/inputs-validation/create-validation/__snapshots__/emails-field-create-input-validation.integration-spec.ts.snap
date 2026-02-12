@@ -2,4 +2,28 @@
 
 exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"Expected type "EmailsCreateInput" to be an object."`;
 
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":"not-an-email"}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.additionalEmails""`;
+
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":["not-an-email","additional@email.com"]}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.additionalEmails""`;
+
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":["not-an-email"]}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.additionalEmails""`;
+
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"primaryEmail":"email@email.com","additionalEmails":["not-an-email"]}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.additionalEmails""`;
+
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"primaryEmail":"not-an-email","additionalEmails":["additional@email.com"]}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.primaryEmail""`;
+
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"primaryEmail":"not-an-email"}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.primaryEmail""`;
+
 exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"["Invalid object value 'not-an-email' for field \\"emailsField\\""]"`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":"not-an-email"}} 1`] = `"["Invalid string value 'not-an-email' for email field \\"emailsField.additionalEmails\\""]"`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":["not-an-email","additional@email.com"]}} 1`] = `"["Invalid string value 'not-an-email' for email field \\"emailsField.additionalEmails\\""]"`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":["not-an-email"]}} 1`] = `"["Invalid string value 'not-an-email' for email field \\"emailsField.additionalEmails\\""]"`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":{"primaryEmail":"email@email.com","additionalEmails":["not-an-email"]}} 1`] = `"["Invalid string value 'not-an-email' for email field \\"emailsField.additionalEmails\\""]"`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":{"primaryEmail":"not-an-email","additionalEmails":["additional@email.com"]}} 1`] = `"["Invalid string value 'not-an-email' for email field \\"emailsField.primaryEmail\\""]"`;
+
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":{"primaryEmail":"not-an-email"}} 1`] = `"["Invalid string value 'not-an-email' for email field \\"emailsField.primaryEmail\\""]"`;

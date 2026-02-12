@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type AsyncIteratorLifecycleOptions = {
+type AsyncIteratorLifecycleOptions<T> = {
+  initialValue?: T;
   onHeartbeat?: () => Promise<boolean>;
   heartbeatIntervalMs?: number;
   onCleanup?: () => Promise<void>;
@@ -8,10 +9,11 @@ type AsyncIteratorLifecycleOptions = {
 
 export function wrapAsyncIteratorWithLifecycle<T>(
   iterator: AsyncIterableIterator<T>,
-  options: AsyncIteratorLifecycleOptions,
+  options: AsyncIteratorLifecycleOptions<T>,
 ): AsyncIterableIterator<T> {
-  const { onHeartbeat, heartbeatIntervalMs, onCleanup } = options;
+  const { initialValue, onHeartbeat, heartbeatIntervalMs, onCleanup } = options;
   let heartbeatInterval: NodeJS.Timeout | null = null;
+  let hasYieldedInitialValue = false;
 
   const startHeartbeat = () => {
     if (onHeartbeat && heartbeatIntervalMs) {
@@ -39,6 +41,12 @@ export function wrapAsyncIteratorWithLifecycle<T>(
     next: async () => {
       if (!isDefined(heartbeatInterval)) {
         startHeartbeat();
+      }
+
+      if (isDefined(initialValue) && !hasYieldedInitialValue) {
+        hasYieldedInitialValue = true;
+
+        return { done: false, value: initialValue };
       }
 
       let result: IteratorResult<T>;

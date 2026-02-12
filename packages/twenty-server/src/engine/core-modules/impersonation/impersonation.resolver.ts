@@ -1,5 +1,5 @@
 import { UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
 import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
@@ -14,9 +14,10 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@Resolver()
+@MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 export class ImpersonationResolver {
   constructor(private readonly impersonationService: ImpersonationService) {}

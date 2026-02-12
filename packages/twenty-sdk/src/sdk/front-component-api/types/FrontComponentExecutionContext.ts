@@ -1,3 +1,3 @@
 export type FrontComponentExecutionContext = {
-  userId: string;
+  userId: string | null;
 };

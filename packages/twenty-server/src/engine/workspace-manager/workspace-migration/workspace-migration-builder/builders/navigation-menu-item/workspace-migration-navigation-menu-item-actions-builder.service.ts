@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { FlatUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import { UniversalUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatNavigationMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service';
 
 @Injectable()
@@ -20,8 +20,10 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.navigationMenuItem>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.navigationMenuItem
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.navigationMenuItem,
     'create'
   > {
@@ -50,8 +52,10 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.navigationMenuItem>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.navigationMenuItem
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.navigationMenuItem,
     'delete'
   > {
@@ -84,7 +88,7 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.navigationMenuItem
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.navigationMenuItem,
     'update'
   > {
@@ -100,14 +104,15 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateNavigationMenuItemAction: FlatUpdateNavigationMenuItemAction = {
-      type: 'update',
-      metadataName: 'navigationMenuItem',
-      entityId: flatEntityId,
-      update: flatEntityUpdate,
-    };
+    const updateNavigationMenuItemAction: UniversalUpdateNavigationMenuItemAction =
+      {
+        type: 'update',
+        metadataName: 'navigationMenuItem',
+        universalIdentifier,
+        update: flatEntityUpdate,
+      };
 
     return {
       status: 'success',

@@ -1,7 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import axios from 'axios';
 import {
   ConnectedAccountProvider,
   FieldActorSource,
@@ -9,13 +8,12 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   type CompanyToCreate,
   CreateCompanyService,
 } from 'src/modules/contact-creation-manager/services/create-company.service';
-
-jest.mock('axios');
 
 describe('CreateCompanyService', () => {
   let service: CreateCompanyService;
@@ -109,11 +107,15 @@ describe('CreateCompanyService', () => {
       get: jest.fn(),
     };
 
-    (axios.create as jest.Mock).mockReturnValue(mockHttpService);
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateCompanyService,
+        {
+          provide: SecureHttpClientService,
+          useValue: {
+            getHttpClient: jest.fn().mockReturnValue(mockHttpService),
+          },
+        },
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: {

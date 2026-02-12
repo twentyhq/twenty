@@ -2,8 +2,10 @@ import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
 import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
 import { filesFieldUploadState } from '@/object-record/record-field/ui/states/filesFieldUploadState';
+import { filesFieldUploadStateV2 } from '@/object-record/record-field/ui/states/filesFieldUploadStateV2';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
@@ -99,6 +101,10 @@ export const useOpenFilesFieldInput = () => {
           filesFieldUploadState({ recordId, fieldName }),
           'UPLOAD_WINDOW_OPEN',
         );
+        jotaiStore.set(
+          filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+          'UPLOAD_WINDOW_OPEN',
+        );
 
         openFileUpload({
           multiple: true,
@@ -109,6 +115,10 @@ export const useOpenFilesFieldInput = () => {
               });
 
               set(filesFieldUploadState({ recordId, fieldName }), null);
+              jotaiStore.set(
+                filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+                null,
+              );
 
               if (isTableContext && isDefined(recordTableId)) {
                 set(
@@ -131,6 +141,10 @@ export const useOpenFilesFieldInput = () => {
               filesFieldUploadState({ recordId, fieldName }),
               'UPLOADING_FILE',
             );
+            jotaiStore.set(
+              filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+              'UPLOADING_FILE',
+            );
 
             try {
               const uploadedFiles = await uploadMultipleFiles(
@@ -146,6 +160,10 @@ export const useOpenFilesFieldInput = () => {
               }
             } finally {
               set(filesFieldUploadState({ recordId, fieldName }), null);
+              jotaiStore.set(
+                filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+                null,
+              );
 
               if (isTableContext && isDefined(recordTableId)) {
                 set(
@@ -165,6 +183,10 @@ export const useOpenFilesFieldInput = () => {
           },
           onCancel: () => {
             set(filesFieldUploadState({ recordId, fieldName }), null);
+            jotaiStore.set(
+              filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+              null,
+            );
 
             if (isTableContext && isDefined(recordTableId)) {
               set(

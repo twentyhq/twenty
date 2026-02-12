@@ -2,7 +2,13 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
 export type UniversalFlatObjectMetadata = UniversalFlatEntityFrom<
-  Omit<ObjectMetadataEntity, 'targetRelationFields' | 'dataSourceId'>,
+  Omit<
+    ObjectMetadataEntity,
+    | 'targetRelationFields'
+    | 'dataSourceId'
+    | 'labelIdentifierFieldMetadataId'
+    | 'imageIdentifierFieldMetadataId'
+  >,
   'objectMetadata'
 > & {
   // NOTE: below fields are not reflected on the final UniversalFlatEntity either they should we should define a common source

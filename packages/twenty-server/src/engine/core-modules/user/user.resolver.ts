@@ -1,12 +1,5 @@
 import { BadRequestException, UseFilters, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -20,6 +13,7 @@ import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   AuthException,
@@ -81,7 +75,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@Resolver(() => UserEntity)
+@MetadataResolver(() => UserEntity)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(

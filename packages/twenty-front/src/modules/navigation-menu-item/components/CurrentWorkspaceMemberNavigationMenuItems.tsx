@@ -1,18 +1,26 @@
+import { useTheme } from '@emotion/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
+
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { createPortal } from 'react-dom';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
+
+import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID } from '@/navigation-menu-item/constants/NavigationMenuItemFolderDeleteModalId';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItemFolder';
@@ -35,24 +43,32 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 type CurrentWorkspaceMemberNavigationMenuItemsProps = {
   folder: {
-    folderId: string;
+    id: string;
     folderName: string;
     navigationMenuItems: ProcessedNavigationMenuItem[];
   };
   isGroup: boolean;
+  isWorkspaceFolder?: boolean;
 };
 
 export const CurrentWorkspaceMemberNavigationMenuItems = ({
   folder,
   isGroup,
+  isWorkspaceFolder = false,
 }: CurrentWorkspaceMemberNavigationMenuItemsProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const iconColors = getNavigationMenuItemIconColors(theme);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const currentPath = useLocation().pathname;
-  const currentViewPath = useLocation().pathname + useLocation().search;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentPath = location.pathname;
+  const currentViewPath = location.pathname + location.search;
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const [
     isNavigationMenuItemFolderRenaming,
@@ -71,21 +87,30 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
     currentNavigationMenuItemFolderIdState,
   );
 
-  const isOpen = openNavigationMenuItemFolderIds.includes(folder.folderId);
+  const isOpen = openNavigationMenuItemFolderIds.includes(folder.id);
 
   const handleToggle = () => {
     if (isMobile) {
-      setCurrentFolderId((prev) =>
-        prev === folder.folderId ? null : folder.folderId,
-      );
+      setCurrentFolderId((prev) => (prev === folder.id ? null : folder.id));
     } else {
       setOpenNavigationMenuItemFolderIds((currentOpenFolders) => {
         if (isOpen) {
-          return currentOpenFolders.filter((id) => id !== folder.folderId);
+          return currentOpenFolders.filter((id) => id !== folder.id);
         } else {
-          return [...currentOpenFolders, folder.folderId];
+          return [...currentOpenFolders, folder.id];
         }
       });
+    }
+
+    if (!isOpen) {
+      const firstNonLinkItem = folder.navigationMenuItems.find(
+        (item) =>
+          item.itemType !== NavigationMenuItemType.LINK &&
+          isNonEmptyString(item.link),
+      );
+      if (isDefined(firstNonLinkItem?.link)) {
+        navigate(firstNonLinkItem.link);
+      }
     }
   };
 
@@ -94,7 +119,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const { deleteNavigationMenuItemFolder } =
     useDeleteNavigationMenuItemFolder();
 
-  const dropdownId = `navigation-menu-item-folder-edit-${folder.folderId}`;
+  const dropdownId = `navigation-menu-item-folder-edit-${folder.id}`;
 
   const isDropdownOpenComponent = useRecoilComponentValue(
     isDropdownOpenComponentState,
@@ -109,13 +134,15 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   );
 
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const folderContentDropDisabled =
+    useIsDropDisabledForSection(isWorkspaceFolder);
 
   const navigationMenuItemFolderContentLength =
     folder.navigationMenuItems.length;
 
   const handleSubmitRename = async (value: string) => {
     if (value === '') return;
-    await renameNavigationMenuItemFolder(folder.folderId, value);
+    await renameNavigationMenuItemFolder(folder.id, value);
     setIsNavigationMenuItemFolderRenaming(false);
     return true;
   };
@@ -134,29 +161,29 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
       return;
     }
 
-    await renameNavigationMenuItemFolder(folder.folderId, value);
+    await renameNavigationMenuItemFolder(folder.id, value);
     setIsNavigationMenuItemFolderRenaming(false);
   };
 
-  const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${folder.folderId}`;
+  const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${folder.id}`;
 
   const handleNavigationMenuItemFolderDelete = async () => {
     if (folder.navigationMenuItems.length > 0) {
       openModal(modalId);
       closeDropdown(dropdownId);
     } else {
-      await deleteNavigationMenuItemFolder(folder.folderId);
+      await deleteNavigationMenuItemFolder(folder.id);
       closeDropdown(dropdownId);
     }
   };
 
   const handleConfirmDelete = async () => {
-    await deleteNavigationMenuItemFolder(folder.folderId);
+    await deleteNavigationMenuItemFolder(folder.id);
   };
 
-  const rightOptions = (
+  const rightOptions = isWorkspaceFolder ? undefined : (
     <NavigationMenuItemFolderNavigationDrawerItemDropdown
-      folderId={folder.folderId}
+      folderId={folder.id}
       onRename={() => setIsNavigationMenuItemFolderRenaming(true)}
       onDelete={handleNavigationMenuItemFolderDelete}
       closeDropdown={() => {
@@ -175,7 +202,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   return (
     <>
       <NavigationDrawerItemsCollapsableContainer
-        key={folder.folderId}
+        key={folder.id}
         isGroup={isGroup}
       >
         {isNavigationMenuItemFolderRenaming ? (
@@ -189,18 +216,30 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
           />
         ) : (
           <NavigationMenuItemDroppable
-            droppableId={`folder-header-${folder.folderId}`}
+            droppableId={`folder-header-${folder.id}`}
+            isWorkspaceSection={isWorkspaceFolder}
           >
-            <NavigationDrawerItem
-              label={folder.folderName}
-              Icon={isOpen ? IconFolderOpen : IconFolder}
-              onClick={handleToggle}
-              rightOptions={rightOptions}
-              className="navigation-drawer-item"
-              isRightOptionsDropdownOpen={isDropdownOpenComponent}
-              triggerEvent="CLICK"
-              preventCollapseOnMobile={isMobile}
-            />
+            <NavigationItemDropTarget
+              folderId={folder.id}
+              index={0}
+              sectionId={
+                isWorkspaceFolder
+                  ? NavigationSections.WORKSPACE
+                  : NavigationSections.FAVORITES
+              }
+            >
+              <NavigationDrawerItem
+                label={folder.folderName}
+                Icon={isOpen ? IconFolderOpen : IconFolder}
+                iconBackgroundColor={iconColors.folder}
+                onClick={handleToggle}
+                rightOptions={rightOptions}
+                className="navigation-drawer-item"
+                isRightOptionsDropdownOpen={isDropdownOpenComponent}
+                triggerEvent="CLICK"
+                preventCollapseOnMobile={isMobile}
+              />
+            </NavigationItemDropTarget>
           </NavigationMenuItemDroppable>
         )}
 
@@ -210,7 +249,10 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
           mode="fit-content"
           containAnimation
         >
-          <Droppable droppableId={`folder-${folder.folderId}`}>
+          <Droppable
+            droppableId={`folder-${folder.id}`}
+            isDropDisabled={folderContentDropDisabled}
+          >
             {(provided) => (
               <div
                 ref={provided.innerRef}
@@ -244,13 +286,15 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
                           selectedIndex: selectedNavigationMenuItemIndex,
                         })}
                         rightOptions={
-                          <LightIconButton
-                            Icon={IconHeartOff}
-                            onClick={() =>
-                              deleteNavigationMenuItem(navigationMenuItem.id)
-                            }
-                            accent="tertiary"
-                          />
+                          isWorkspaceFolder ? undefined : (
+                            <LightIconButton
+                              Icon={IconHeartOff}
+                              onClick={() =>
+                                deleteNavigationMenuItem(navigationMenuItem.id)
+                              }
+                              accent="tertiary"
+                            />
+                          )
                         }
                         isDragging={isDragging}
                         triggerEvent="CLICK"

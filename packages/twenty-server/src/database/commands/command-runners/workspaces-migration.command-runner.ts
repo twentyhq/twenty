@@ -135,7 +135,7 @@ export abstract class WorkspacesMigrationCommandRunner<
 
     for (const [index, workspaceId] of workspaceIdsToProcess.entries()) {
       this.logger.log(
-        `Running command on workspace ${workspaceId} ${index + 1}/${workspaceIdsToProcess.length}`,
+        `Upgrading workspace ${workspaceId} ${index + 1}/${workspaceIdsToProcess.length}`,
       );
 
       try {
