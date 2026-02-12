@@ -173,7 +173,7 @@ index f63bf917164e05b6a363d40e871303863800c4f3..101c67ee876a8c9758a3ed35fdb8b656
  exports.OrphanedReferenceRegistry = OrphanedReferenceRegistry;
  exports.OrphanedReferenceRegistry = OrphanedReferenceRegistry = tslib_1.__decorate([
 diff --git a/dist/schema-builder/storages/type-definitions.storage.js b/dist/schema-builder/storages/type-definitions.storage.js
-index a19dee7a15b355a83124479f7e5e6cb91795070d..a3cfb3b8fcdb92de1ebfb6149389acca04984226 100644
+index a19dee7a15b355a83124479f7e5e6cb91795070d..d28bdc8f03b4e77db93396ff28fb47d8176f0c21 100644
 --- a/dist/schema-builder/storages/type-definitions.storage.js
 +++ b/dist/schema-builder/storages/type-definitions.storage.js
 @@ -81,6 +81,15 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
@@ -181,13 +181,13 @@ index a19dee7a15b355a83124479f7e5e6cb91795070d..a3cfb3b8fcdb92de1ebfb6149389acca
          return;
      }
 +    clear() {
++        // Only invalidate the lazy link caches, NOT the type Maps.
++        // The Maps accumulate types from all schema builds. This is
++        // needed because resolveType closures from earlier schemas
++        // look up types in objectTypeDefinitions at query time.
++        // The add* methods use Map.set() so duplicates are overwritten.
 +        this.inputTypeDefinitionsLinks = null;
 +        this.outputTypeDefinitionsLinks = null;
-+        this.interfaceTypeDefinitions = new Map();
-+        this.enumTypeDefinitions = new Map();
-+        this.unionTypeDefinitions = new Map();
-+        this.objectTypeDefinitions = new Map();
-+        this.inputTypeDefinitions = new Map();
 +    }
  };
  exports.TypeDefinitionsStorage = TypeDefinitionsStorage;
