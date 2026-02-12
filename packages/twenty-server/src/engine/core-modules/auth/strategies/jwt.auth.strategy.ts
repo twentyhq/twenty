@@ -359,6 +359,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
+    // TODO: Token carries userId/userWorkspaceId but they are unused.
+    // Compute the intersection of user and application permissions instead.
     return {
       application,
       workspace,
