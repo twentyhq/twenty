@@ -85,7 +85,7 @@
     "@types/node": "^24.0.0",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
-    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/browser-playwright": "^4.0.18",
     "playwright": "^1.56.1",
     "storybook": "^10.1.11",
     "ts-morph": "^25.0.0",
