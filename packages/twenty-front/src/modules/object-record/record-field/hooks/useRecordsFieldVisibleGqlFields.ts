@@ -37,10 +37,12 @@ export const useRecordsFieldVisibleGqlFields = ({
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
-    fields: visibleRecordFields.map(
-      (field) =>
-        fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
-    ),
+    fields: visibleRecordFields
+      .map(
+        (field) =>
+          fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
+      )
+      .filter(isDefined),
     depth: 1,
     isFilesFieldMigrated,
   });
