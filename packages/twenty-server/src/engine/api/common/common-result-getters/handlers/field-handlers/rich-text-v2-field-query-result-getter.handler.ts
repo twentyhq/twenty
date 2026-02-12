@@ -91,7 +91,7 @@ export class RichTextV2FieldQueryResultGetterHandler
     isFilesFieldMigrated: boolean,
   ): RichTextBlock[] => {
     return blocknoteBlocks.map((block: RichTextBlock) => {
-      if (isFilesFieldMigrated && isDefined(block.props.url)) {
+      if (isFilesFieldMigrated && isDefined(block.props?.url)) {
         const fileIdFromUrl = extractFileIdFromUrl(block.props.url);
 
         if (!isDefined(fileIdFromUrl)) {
