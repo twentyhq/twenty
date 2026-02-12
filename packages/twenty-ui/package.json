@@ -33,6 +33,7 @@
     "framer-motion": "^11.18.0",
     "glob": "^11.1.0",
     "hex-rgb": "^5.0.0",
+    "jotai": "^2.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-responsive": "^9.0.2",

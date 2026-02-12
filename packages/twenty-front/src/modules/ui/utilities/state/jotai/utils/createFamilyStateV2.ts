@@ -1,0 +1,44 @@
+import { atom } from 'jotai';
+
+import { type FamilyStateV2 } from '@/ui/utilities/state/jotai/types/FamilyStateV2';
+
+// V2 (Jotai-backed) equivalent of `createFamilyState`.
+// Uses a Map-based cache to return the same atom instance for the same key,
+// which is essential for subscription identity in Jotai.
+export const createFamilyStateV2 = <ValueType, FamilyKey>({
+  key,
+  defaultValue,
+}: {
+  key: string;
+  defaultValue: ValueType;
+}): FamilyStateV2<ValueType, FamilyKey> => {
+  const atomCache = new Map<
+    string,
+    ReturnType<FamilyStateV2<ValueType, FamilyKey>['atomFamily']>
+  >();
+
+  const familyFunction = (
+    familyKey: FamilyKey,
+  ): ReturnType<FamilyStateV2<ValueType, FamilyKey>['atomFamily']> => {
+    const cacheKey =
+      typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
+
+    const existing = atomCache.get(cacheKey);
+
+    if (existing) {
+      return existing;
+    }
+
+    const baseAtom = atom(defaultValue);
+    baseAtom.debugLabel = `${key}__${cacheKey}`;
+    atomCache.set(cacheKey, baseAtom);
+
+    return baseAtom;
+  };
+
+  return {
+    type: 'FamilyStateV2',
+    key,
+    atomFamily: familyFunction,
+  };
+};
