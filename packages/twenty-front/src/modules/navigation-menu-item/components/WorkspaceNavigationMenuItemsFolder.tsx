@@ -15,7 +15,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { WorkspaceNavigationMenuItemFolderDragClone } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderDragClone';
-import { NAVIGATION_MENU_ITEM_DROPPABLE_IDS } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
@@ -113,7 +114,9 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 
     if (!isOpen) {
       const firstNonLinkItem = navigationMenuItems.find(
-        (item) => item.itemType !== 'link' && isNonEmptyString(item.link),
+        (item) =>
+          item.itemType !== NavigationMenuItemType.LINK &&
+          isNonEmptyString(item.link),
       );
       if (isDefined(firstNonLinkItem?.link)) {
         navigate(firstNonLinkItem.link);
@@ -139,7 +142,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
     <StyledFolderContainer $isSelectedInEditMode={isSelectedInEditMode}>
       <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
         <NavigationMenuItemDroppable
-          droppableId={`${NAVIGATION_MENU_ITEM_DROPPABLE_IDS.WORKSPACE_FOLDER_HEADER_PREFIX}${folderId}`}
+          droppableId={`${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${folderId}`}
           isWorkspaceSection={true}
         >
           <NavigationDrawerItem
@@ -162,7 +165,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
             containAnimation
           >
             <Droppable
-              droppableId={`${NAVIGATION_MENU_ITEM_DROPPABLE_IDS.WORKSPACE_FOLDER_PREFIX}${folderId}`}
+              droppableId={`${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}${folderId}`}
               isDropDisabled={folderContentDropDisabled}
               ignoreContainerClipping
               renderClone={(provided, snapshot, rubric) => (
@@ -190,8 +193,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                 >
                   {navigationMenuItems.map((navigationMenuItem, index) => {
                     const objectMetadataItem =
-                      navigationMenuItem.itemType === 'view' ||
-                      navigationMenuItem.itemType === 'record'
+                      navigationMenuItem.itemType ===
+                        NavigationMenuItemType.VIEW ||
+                      navigationMenuItem.itemType ===
+                        NavigationMenuItemType.RECORD
                         ? getObjectMetadataForNavigationMenuItem(
                             navigationMenuItem,
                             objectMetadataItems,
@@ -201,7 +206,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                     const handleEditModeClick =
                       isEditMode &&
                       isDefined(onNavigationMenuItemClick) &&
-                      (navigationMenuItem.itemType === 'link' ||
+                      (navigationMenuItem.itemType ===
+                        NavigationMenuItemType.LINK ||
                         isDefined(objectMetadataItem))
                         ? () =>
                             onNavigationMenuItemClick({

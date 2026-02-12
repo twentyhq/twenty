@@ -20,7 +20,7 @@ export const CommandMenuEditFolderPickerSubView = ({
   const { t } = useLingui();
   const [searchValue, setSearchValue] = useState('');
   const { foldersToShow, includeNoFolderOption, handleSelectFolder } =
-    useFolderPickerSelectionData();
+    useFolderPickerSelectionData({ onCloseSubView: onBack });
 
   const filteredFolders = filterBySearchQuery({
     items: foldersToShow,

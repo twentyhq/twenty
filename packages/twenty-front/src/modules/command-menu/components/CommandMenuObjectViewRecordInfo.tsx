@@ -2,27 +2,35 @@ import { useLingui } from '@lingui/react/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
-import { useSelectedNavigationMenuItemEditData } from '@/command-menu/pages/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditData';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
+import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
+import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { ViewKey } from '@/views/types/ViewKey';
 
 export const CommandMenuObjectViewRecordInfo = () => {
   const { t } = useLingui();
-  const { processedItem, selectedItemLabel } =
-    useSelectedNavigationMenuItemEditData();
+  const { selectedItem } = useSelectedNavigationMenuItemEditItem();
+  const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();
+
+  const processedItem =
+    selectedItem && selectedItem.itemType !== NavigationMenuItemType.FOLDER
+      ? selectedItem
+      : undefined;
 
   if (!processedItem || !selectedItemLabel) {
     return null;
   }
 
   const isViewOrRecord =
-    processedItem.itemType === 'view' || processedItem.itemType === 'record';
+    processedItem.itemType === NavigationMenuItemType.VIEW ||
+    processedItem.itemType === NavigationMenuItemType.RECORD;
   if (!isViewOrRecord) {
     return null;
   }
 
   const label =
-    processedItem.itemType === 'record'
+    processedItem.itemType === NavigationMenuItemType.RECORD
       ? t`record`
       : processedItem.viewKey === ViewKey.Index
         ? t`object`

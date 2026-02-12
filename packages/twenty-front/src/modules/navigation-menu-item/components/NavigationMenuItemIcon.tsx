@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import { Avatar, useIcons } from 'twenty-ui/display';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
@@ -23,17 +24,19 @@ export const NavigationMenuItemIcon = ({
 
   const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
 
-  const isRecord = navigationMenuItem.itemType === 'record';
-  const isLink = navigationMenuItem.itemType === 'link';
+  const isRecord =
+    navigationMenuItem.itemType === NavigationMenuItemType.RECORD;
+  const isLink = navigationMenuItem.itemType === NavigationMenuItemType.LINK;
   const iconColors = getNavigationMenuItemIconColors(theme);
   const isObjectIndexView =
-    navigationMenuItem.itemType === 'view' &&
+    navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
     navigationMenuItem.viewKey === ViewKey.Index;
   const iconBackgroundColor = isRecord
     ? undefined
     : isLink
       ? iconColors.link
-      : navigationMenuItem.itemType === 'view' && !isObjectIndexView
+      : navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
+          !isObjectIndexView
         ? iconColors.view
         : iconColors.object;
 

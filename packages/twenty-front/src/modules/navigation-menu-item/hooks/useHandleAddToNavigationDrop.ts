@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddFolderToNavigationMenuDraft';
 import { useAddLinkToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddLinkToNavigationMenuDraft';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
@@ -77,7 +78,10 @@ export const useHandleAddToNavigationDrop = () => {
         );
         const index = destination.index;
 
-        if (payload.type === 'folder' && folderId !== null) {
+        if (
+          payload.type === NavigationMenuItemType.FOLDER &&
+          folderId !== null
+        ) {
           return;
         }
 
@@ -97,7 +101,7 @@ export const useHandleAddToNavigationDrop = () => {
         };
 
         switch (payload.type) {
-          case 'folder': {
+          case NavigationMenuItemType.FOLDER: {
             const newFolderId = addFolderToDraft(
               payload.name,
               currentDraft,
@@ -111,7 +115,7 @@ export const useHandleAddToNavigationDrop = () => {
             });
             return;
           }
-          case 'link': {
+          case NavigationMenuItemType.LINK: {
             const newLinkId = addLinkToDraft(
               payload.name || t`Link label`,
               payload.link,
@@ -126,7 +130,7 @@ export const useHandleAddToNavigationDrop = () => {
             });
             return;
           }
-          case 'object': {
+          case NavigationMenuItemType.OBJECT: {
             const newItemId = addObjectToDraft(
               payload.objectMetadataId,
               payload.defaultViewId,
@@ -145,7 +149,7 @@ export const useHandleAddToNavigationDrop = () => {
             });
             return;
           }
-          case 'view': {
+          case NavigationMenuItemType.VIEW: {
             const newItemId = addViewToDraft(
               payload.viewId,
               currentDraft,
@@ -160,7 +164,7 @@ export const useHandleAddToNavigationDrop = () => {
             });
             return;
           }
-          case 'record': {
+          case NavigationMenuItemType.RECORD: {
             const newItemId = addRecordToDraft(
               {
                 recordId: payload.recordId,

@@ -4,10 +4,8 @@ import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import {
-  computeInsertIndexAndPosition,
-  normalizeUrl,
-} from '@/navigation-menu-item/utils/add-to-navigation-draft.utils';
+import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
+import { normalizeUrl } from '@/navigation-menu-item/utils/normalizeUrl';
 
 export const useAddLinkToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetRecoilState(

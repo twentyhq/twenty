@@ -5,7 +5,7 @@ import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/add-to-navigation-draft.utils';
+import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 
 type SearchRecord = {
   recordId: string;

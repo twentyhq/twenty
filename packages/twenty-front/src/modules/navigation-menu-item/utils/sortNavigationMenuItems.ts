@@ -7,7 +7,7 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getObjectMetadataNamePluralFromViewId } from '@/favorites/utils/getObjectMetadataNamePluralFromViewId';
-import { NAVIGATION_MENU_ITEM_TYPE } from '@/navigation-menu-item/types/navigation-menu-item-type';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import {
   computeNavigationMenuItemDisplayFields,
@@ -15,8 +15,7 @@ import {
 } from './computeNavigationMenuItemDisplayFields';
 import { isNavigationMenuItemLink } from './isNavigationMenuItemLink';
 
-export { NAVIGATION_MENU_ITEM_TYPE } from '@/navigation-menu-item/types/navigation-menu-item-type';
-export type { NavigationMenuItemType } from '@/navigation-menu-item/types/navigation-menu-item-type';
+export { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 export type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 
 export const sortNavigationMenuItems = (
@@ -70,7 +69,7 @@ export const sortNavigationMenuItems = (
             ...navigationMenuItem,
             ...displayFields,
             viewKey: view.key,
-            itemType: NAVIGATION_MENU_ITEM_TYPE.VIEW,
+            itemType: NavigationMenuItemType.VIEW,
           };
         }
 
@@ -94,7 +93,7 @@ export const sortNavigationMenuItems = (
         return {
           ...navigationMenuItem,
           ...displayFields,
-          itemType: NAVIGATION_MENU_ITEM_TYPE.LINK,
+          itemType: NavigationMenuItemType.LINK,
         };
       }
 
@@ -131,7 +130,7 @@ export const sortNavigationMenuItems = (
         ...navigationMenuItem,
         ...displayFields,
         link: hasLinkToShowPage ? displayFields.link : '',
-        itemType: NAVIGATION_MENU_ITEM_TYPE.RECORD,
+        itemType: NavigationMenuItemType.RECORD,
       };
     })
     .filter(isDefined)

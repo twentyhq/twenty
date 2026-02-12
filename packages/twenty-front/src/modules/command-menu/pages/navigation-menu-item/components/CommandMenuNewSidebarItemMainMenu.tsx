@@ -13,24 +13,25 @@ import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandM
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { useAddFolderToNavigationMenu } from '@/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu';
+import { useAddLinkToNavigationMenu } from '@/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 
 type CommandMenuNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;
   onSelectView: () => void;
   onSelectRecord: () => void;
-  onAddFolder: () => void;
-  onAddLink: () => void;
 };
 
 export const CommandMenuNewSidebarItemMainMenu = ({
   onSelectObject,
   onSelectView,
   onSelectRecord,
-  onAddFolder,
-  onAddLink,
 }: CommandMenuNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
+  const { handleAddFolder } = useAddFolderToNavigationMenu();
+  const { handleAddLink } = useAddLinkToNavigationMenu();
 
   return (
     <CommandMenuAddToNavDroppable>
@@ -77,29 +78,29 @@ export const CommandMenuNewSidebarItemMainMenu = ({
               </CommandMenuAddToNavDraggablePlaceholder>
             </CommandGroup>
             <CommandGroup heading={t`Other`}>
-              <SelectableListItem itemId="folder" onEnter={onAddFolder}>
+              <SelectableListItem itemId="folder" onEnter={handleAddFolder}>
                 <CommandMenuItemWithAddToNavigationDrag
                   icon={IconFolder}
                   label={t`Folder`}
                   id="folder"
-                  onClick={onAddFolder}
+                  onClick={handleAddFolder}
                   dragIndex={3}
                   payload={{
-                    type: 'folder',
+                    type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
                     name: t`New folder`,
                   }}
                 />
               </SelectableListItem>
-              <SelectableListItem itemId="link" onEnter={onAddLink}>
+              <SelectableListItem itemId="link" onEnter={handleAddLink}>
                 <CommandMenuItemWithAddToNavigationDrag
                   icon={IconLink}
                   label={t`Link`}
                   id="link"
-                  onClick={onAddLink}
+                  onClick={handleAddLink}
                   dragIndex={4}
                   payload={{
-                    type: 'link',
+                    type: NavigationMenuItemType.LINK,
                     linkId: 'new',
                     name: t`Link label`,
                     link: 'https://www.example.com',

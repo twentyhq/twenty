@@ -1,16 +1,5 @@
-import {
-  computeInsertIndexAndPosition,
-  normalizeUrl,
-} from '@/navigation-menu-item/utils/add-to-navigation-draft.utils';
+import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
-describe('normalizeUrl', () => {
-  it('should leave url unchanged when it has protocol, otherwise prepend https', () => {
-    expect(normalizeUrl('https://example.com')).toBe('https://example.com');
-    expect(normalizeUrl('example.com')).toBe('https://example.com');
-    expect(normalizeUrl('  example.com  ')).toBe('https://example.com');
-  });
-});
 
 describe('computeInsertIndexAndPosition', () => {
   it('should compute flatIndex and position for insert in folder', () => {

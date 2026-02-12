@@ -1,13 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const normalizeUrl = (url: string) => {
-  const trimmed = url.trim();
-  return trimmed.startsWith('http://') || trimmed.startsWith('https://')
-    ? trimmed
-    : `https://${trimmed}`;
-};
-
 export const computeInsertIndexAndPosition = (
   currentDraft: NavigationMenuItem[],
   targetFolderId: string | null,

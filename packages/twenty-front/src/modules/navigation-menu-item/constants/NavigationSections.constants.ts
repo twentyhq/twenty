@@ -1,4 +1,4 @@
-export const NAVIGATION_SECTIONS = {
-  WORKSPACE: 'workspace',
-  FAVORITES: 'favorites',
-} as const;
+export enum NavigationSections {
+  WORKSPACE = 'workspace',
+  FAVORITES = 'favorites',
+}

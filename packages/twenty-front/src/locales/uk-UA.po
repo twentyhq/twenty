@@ -1358,7 +1358,7 @@ msgid "All set!"
 msgstr "Готово!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemObjectFlow.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -4598,7 +4598,7 @@ msgstr "Редагувати поля"
 #. js-lingui-id: uPHscS
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 msgid "Edit folder"
 msgstr ""
 
@@ -4620,7 +4620,7 @@ msgstr ""
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 msgid "Edit link"
 msgstr ""
 
@@ -6096,7 +6096,7 @@ msgid "Folder"
 msgstr ""
 
 #. js-lingui-id: cqQyPB
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "Folder name"
 msgstr ""
 
@@ -7535,7 +7535,7 @@ msgid "Line Chart"
 msgstr "Лінійна діаграма"
 
 #. js-lingui-id: LdyooL
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 msgid "link"
 msgstr ""
 
@@ -7557,10 +7557,10 @@ msgstr "Посилання скопійовано в буфер обміну"
 
 #. js-lingui-id: vH3ZQY
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 msgid "Link label"
 msgstr ""
 
@@ -8371,9 +8371,9 @@ msgid "New Field"
 msgstr "Нове поле"
 
 #. js-lingui-id: 96G6Re
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "New folder"
 msgstr ""
 
