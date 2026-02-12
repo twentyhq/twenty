@@ -6,7 +6,7 @@ import { Readable } from 'stream';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -133,10 +133,8 @@ export class FilesFieldService {
     const file = await this.fileRepository.findOneOrFail({
       where: {
         id: fileId,
+        path: Like(`${FileFolder.FilesField}/%`),
         workspaceId,
-        application: {
-          workspaceId,
-        },
       },
     });
 

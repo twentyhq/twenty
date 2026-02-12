@@ -6,6 +6,7 @@ import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/w
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -90,9 +91,15 @@ export class RichTextV2FieldQueryResultGetterHandler
     isFilesFieldMigrated: boolean,
   ): RichTextBlock[] => {
     return blocknoteBlocks.map((block: RichTextBlock) => {
-      if (isFilesFieldMigrated && isDefined(block.props.attachmentFileId)) {
+      if (isFilesFieldMigrated && isDefined(block.props.url)) {
+        const fileIdFromUrl = extractFileIdFromUrl(block.props.url);
+
+        if (!isDefined(fileIdFromUrl)) {
+          return block;
+        }
+
         const url = this.filesFieldService.signFileUrl({
-          fileId: block.props.attachmentFileId,
+          fileId: fileIdFromUrl,
           workspaceId,
         });
 

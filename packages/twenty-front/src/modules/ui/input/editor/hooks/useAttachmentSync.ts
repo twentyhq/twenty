@@ -9,7 +9,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useAttachmentSync = (attachments: Attachment[]) => {
   const isFilesFieldMigrated = useIsFeatureEnabled(
@@ -66,11 +66,11 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
       const softDeletedAttachments =
         (await findSoftDeletedAttachments()) as Attachment[];
 
-      const attachmentIdsToRestore = filterAttachmentsToRestore(
+      const attachmentIdsToRestore = filterAttachmentsToRestore({
         attachmentPathsToRestore,
-        softDeletedAttachments ?? [],
+        softDeletedAttachments: softDeletedAttachments ?? [],
         isFilesFieldMigrated,
-      );
+      });
 
       await restoreAttachments({
         idsToRestore: attachmentIdsToRestore,

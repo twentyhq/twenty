@@ -18,11 +18,14 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -45,6 +48,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly filesFieldService: FilesFieldService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -109,11 +113,11 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
 
     if (!isDefined(attachmentFileFieldMetadata)) {
       this.logger.error(
-        `Failed to create attachment file field metadata for workspace ${workspaceId}`,
+        `Failed to find attachment file field metadata for workspace ${workspaceId}`,
       );
 
       throw new Error(
-        `Failed to create attachment file field metadata for workspace ${workspaceId}`,
+        `Failed to find attachment file field metadata for workspace ${workspaceId}`,
       );
     }
 
@@ -140,29 +144,29 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
 
     const fileRepository = this.coreDataSource.getRepository(FileEntity);
 
-    await this.migrateActivityTable(
-      noteRepository,
+    await this.migrateActivityTable({
+      activityRepository: noteRepository,
       attachmentRepository,
       fileRepository,
-      'note',
-      'targetNoteId',
+      activityType: 'note',
+      targetColumnName: 'targetNoteId',
       workspaceId,
-      twentyStandardFlatApplication,
-      attachmentFileFieldMetadata,
+      twentyStandardApplication: twentyStandardFlatApplication,
+      fileFieldMetadata: attachmentFileFieldMetadata,
       isDryRun,
-    );
+    });
 
-    await this.migrateActivityTable(
-      taskRepository,
+    await this.migrateActivityTable({
+      activityRepository: taskRepository,
       attachmentRepository,
       fileRepository,
-      'task',
-      'targetTaskId',
+      activityType: 'task',
+      targetColumnName: 'targetTaskId',
       workspaceId,
-      twentyStandardFlatApplication,
-      attachmentFileFieldMetadata,
+      twentyStandardApplication: twentyStandardFlatApplication,
+      fileFieldMetadata: attachmentFileFieldMetadata,
       isDryRun,
-    );
+    });
 
     if (!isDryRun) {
       await this.featureFlagService.enableFeatureFlags(
@@ -176,28 +180,37 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
     );
   }
 
-  private async migrateActivityTable(
+  private async migrateActivityTable({
+    activityRepository,
+    attachmentRepository,
+    fileRepository,
+    activityType,
+    targetColumnName,
+    workspaceId,
+    twentyStandardApplication,
+    fileFieldMetadata,
+    isDryRun,
+  }: {
     activityRepository:
-      | Awaited<ReturnType<GlobalWorkspaceOrmManager['getRepository']>>
-      | Repository<NoteWorkspaceEntity>
-      | Repository<TaskWorkspaceEntity>,
+      | WorkspaceRepository<NoteWorkspaceEntity>
+      | WorkspaceRepository<TaskWorkspaceEntity>;
     attachmentRepository: Awaited<
       ReturnType<GlobalWorkspaceOrmManager['getRepository']>
-    >,
-    fileRepository: Repository<FileEntity>,
-    activityType: 'note' | 'task',
-    targetColumnName: 'targetNoteId' | 'targetTaskId',
-    workspaceId: string,
-    twentyStandardApplication: { id: string; universalIdentifier: string },
-    fileFieldMetadata: { universalIdentifier: string },
-    isDryRun: boolean,
-  ): Promise<void> {
+    >;
+    fileRepository: Repository<FileEntity>;
+    activityType: 'note' | 'task';
+    targetColumnName: 'targetNoteId' | 'targetTaskId';
+    workspaceId: string;
+    twentyStandardApplication: { id: string; universalIdentifier: string };
+    fileFieldMetadata: { universalIdentifier: string };
+    isDryRun: boolean;
+  }): Promise<void> {
     this.logger.log(
       `Migrating ${activityType} rich text for workspace ${workspaceId}`,
     );
 
     const activities = await activityRepository.find({
-      select: ['id', 'bodyV2Blocknote', 'bodyV2Markdown'],
+      select: ['id', 'bodyV2'],
     });
 
     this.logger.log(
@@ -223,11 +236,10 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       }
 
       const needsMigration = blocknote.some((block: RichTextBlock) => {
-        const props = block.props as Record<string, unknown>;
+        const props = (block.props as Record<string, unknown>) || {};
+        const url = props.url as string | undefined;
 
-        return (
-          isDefined(props?.url) && !isNonEmptyString(props?.attachmentFileId)
-        );
+        return isDefined(url) && isDefined(extractFileIdFromUrl(url));
       });
 
       if (!needsMigration) {
@@ -247,7 +259,11 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
         const props = (block.props as Record<string, unknown>) || {};
         const url = props.url as string | undefined;
 
-        if (!isDefined(url) || isNonEmptyString(props.attachmentFileId)) {
+        if (
+          !isDefined(url) ||
+          isDefined(extractFileIdFromUrl(url)) ||
+          !url.includes('/files/attachment/')
+        ) {
           enrichedBlocknote.push(block);
           continue;
         }
@@ -278,11 +294,16 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
           );
           hasChanges = true;
 
+          const signedUrl = this.filesFieldService.signFileUrl({
+            fileId,
+            workspaceId,
+          });
+
           enrichedBlocknote.push({
             ...block,
             props: {
               ...props,
-              attachmentFileId: fileId,
+              url: signedUrl,
             },
           });
         } else {
