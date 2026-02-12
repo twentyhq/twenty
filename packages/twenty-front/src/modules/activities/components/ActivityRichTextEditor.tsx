@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -41,7 +41,6 @@ import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -57,8 +56,6 @@ export const ActivityRichTextEditor = ({
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
-
-  const [urlToFileIdMap] = useState<Map<string, string>>(() => new Map());
 
   const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
@@ -137,54 +134,14 @@ export const ActivityRichTextEditor = ({
     });
   };
 
-  const enrichBlocknoteWithFileIds = useCallback(
-    (blocknoteString: string): string => {
-      try {
-        const blocks = JSON.parse(blocknoteString);
-        const enrichedBlocks = blocks.map((block: Record<string, unknown>) => {
-          const blockProps = block.props as Record<string, string>;
-          const url = blockProps?.url;
-
-          if (
-            isDefined(url) &&
-            !isNonEmptyString(blockProps?.attachmentFileId)
-          ) {
-            const fileId = urlToFileIdMap.get(url);
-            if (isDefined(fileId)) {
-              return {
-                ...block,
-                props: {
-                  ...blockProps,
-                  attachmentFileId: fileId,
-                },
-              };
-            }
-          }
-          return block;
-        });
-        return JSON.stringify(enrichedBlocks);
-      } catch {
-        return blocknoteString;
-      }
-    },
-    [urlToFileIdMap],
-  );
-
   const handlePersistBody = useCallback(
     (activityBody: string) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
-
-      const enrichedBody = enrichBlocknoteWithFileIds(activityBody);
-      persistBodyDebounced(prepareBodyWithSignedUrls(enrichedBody));
+      persistBodyDebounced(prepareBodyWithSignedUrls(activityBody));
     },
-    [
-      persistBodyDebounced,
-      setCanCreateActivity,
-      canCreateActivity,
-      enrichBlocknoteWithFileIds,
-    ],
+    [canCreateActivity, persistBodyDebounced, setCanCreateActivity],
   );
 
   const handleBodyChange = useRecoilCallback(
@@ -249,33 +206,14 @@ export const ActivityRichTextEditor = ({
       return undefined;
     }
 
-    const parsedBody = parseInitialBlocknote(
+    return parseInitialBlocknote(
       activity?.bodyV2?.blocknote,
       `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
     );
-
-    if (isDefined(parsedBody)) {
-      parsedBody.forEach((block) => {
-        const blockProps = block.props as Record<string, unknown>;
-        const url = blockProps?.url as string;
-        const fileId = blockProps?.attachmentFileId as string;
-
-        if (isDefined(url) && isDefined(fileId)) {
-          urlToFileIdMap.set(url, fileId);
-        }
-      });
-    }
-
-    return parsedBody;
-  }, [activity, activityId, urlToFileIdMap]);
+  }, [activity, activityId]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
-    const { attachmentAbsoluteURL, attachmentFileId } =
-      await handleUploadAttachment(file);
-
-    if (isDefined(attachmentFileId)) {
-      urlToFileIdMap.set(attachmentAbsoluteURL, attachmentFileId);
-    }
+    const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
 
     return attachmentAbsoluteURL;
   };
@@ -308,7 +246,7 @@ export const ActivityRichTextEditor = ({
       !keyboardEvent.ctrlKey &&
       !keyboardEvent.metaKey;
 
-    if (isWritingText === false) {
+    if (!isWritingText) {
       return;
     }
 

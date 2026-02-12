@@ -20,7 +20,7 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
       const foundActivity = oldActivityAttachments.find((attachment) =>
         compareUrls(
-          getAttachmentUrl(attachment, isFilesFieldMigrated),
+          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
           activity.path,
         ),
       );

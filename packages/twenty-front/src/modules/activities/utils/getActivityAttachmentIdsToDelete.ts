@@ -30,7 +30,7 @@ export const getActivityAttachmentIdsToDelete = (
     .filter((attachment) =>
       pathsToDelete.some((pathToDelete) =>
         compareUrls(
-          getAttachmentUrl(attachment, isFilesFieldMigrated),
+          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
           pathToDelete,
         ),
       ),

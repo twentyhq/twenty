@@ -17,7 +17,7 @@ export const getActivityAttachmentPathsToRestore = (
         !oldActivityAttachments.some((attachment) =>
           compareUrls(
             newActivity.path,
-            getAttachmentUrl(attachment, isFilesFieldMigrated),
+            getAttachmentUrl({ attachment, isFilesFieldMigrated }),
           ),
         ),
     )

@@ -47,9 +47,6 @@ export const FileBlock = createReactBlockSpec(
       name: {
         default: '' as string,
       },
-      attachmentFileId: {
-        default: '' as string,
-      },
       fileCategory: {
         default: 'OTHER' as AttachmentFileCategory,
       },
