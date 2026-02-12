@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { mkdir, readdir, readFile, stat } from 'fs/promises';
-import { join } from 'path';
+import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
@@ -300,7 +300,7 @@ export class FileStorageService {
     return driver.copy(params);
   }
 
-  copy({
+  async copy({
     from,
     to,
   }: {
@@ -309,9 +309,21 @@ export class FileStorageService {
   }): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
+    const fromPath = this.buildOnStoragePath(from);
+    const toPath = this.buildOnStoragePath(to);
+
+    const isFile = await driver.checkFileExists({ filePath: fromPath });
+
+    if (isFile) {
+      return driver.copy({
+        from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
+        to: { folderPath: dirname(toPath), filename: basename(toPath) },
+      });
+    }
+
     return driver.copy({
-      from: { folderPath: this.buildOnStoragePath(from) },
-      to: { folderPath: this.buildOnStoragePath(to) },
+      from: { folderPath: fromPath },
+      to: { folderPath: toPath },
     });
   }
 
