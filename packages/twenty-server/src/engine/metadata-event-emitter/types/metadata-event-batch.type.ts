@@ -1,6 +1,9 @@
 import type { AllMetadataName } from 'twenty-shared/metadata';
 
-import { AllMetadataEventType, type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import {
+  type AllMetadataEventType,
+  type MetadataEvent,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 export type MetadataEventBatch<
   TMetadataName extends AllMetadataName = AllMetadataName,
