@@ -1,38 +1,24 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
-import {
-  FrontComponentTokenEffect,
-  type FrontComponentTokenData,
-} from '@/front-components/components/FrontComponentTokenEffect';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
+import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
-};
-
-type FrontComponentTokenState = {
-  frontComponentId: string;
-  tokenData: FrontComponentTokenData;
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
 }: FrontComponentRendererProps) => {
   const theme = useTheme();
-  const [hasError, setHasError] = useState(false);
-  const [frontComponentTokenState, setFrontComponentTokenState] =
-    useState<FrontComponentTokenState | null>(null);
-  const [isTokenLoading, setIsTokenLoading] = useState(true);
-  const [tokenErrorFrontComponentId, setTokenErrorFrontComponentId] = useState<
-    string | null
-  >(null);
-
+  const apolloMetadataClient = useApolloCoreClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
@@ -40,70 +26,58 @@ export const FrontComponentRenderer = ({
   const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
   const authToken = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token;
 
-  const handleError = (error?: Error) => {
-    if (isDefined(error)) {
+  const handleLoadError = useCallback(
+    (error: Error) => {
       const errorMessage = error.message;
 
       enqueueErrorSnackBar({
         message: t`Failed to load front component: ${errorMessage}`,
       });
-    }
-    setHasError(true);
-  };
-
-  const handleTokenError = useCallback(() => {
-    setTokenErrorFrontComponentId(frontComponentId);
-  }, [frontComponentId]);
-
-  const handleTokenGenerated = useCallback(
-    (newTokenData: FrontComponentTokenData) => {
-      setFrontComponentTokenState({
-        frontComponentId,
-        tokenData: newTokenData,
-      });
     },
-    [frontComponentId],
+    [enqueueErrorSnackBar],
   );
 
-  const currentFrontComponentTokenData =
-    frontComponentTokenState?.frontComponentId === frontComponentId
-      ? frontComponentTokenState.tokenData
-      : null;
+  const handleRendererError = useCallback(
+    (componentError?: Error) => {
+      if (isDefined(componentError)) {
+        const message = componentError.message;
 
-  const isCurrentFrontComponentTokenReady =
-    !isTokenLoading && isDefined(currentFrontComponentTokenData);
+        enqueueErrorSnackBar({
+          message: t`Failed to load front component: ${message}`,
+        });
+      }
+    },
+    [enqueueErrorSnackBar],
+  );
 
-  const hasTokenError = tokenErrorFrontComponentId === frontComponentId;
+  const { data, loading } = useFindOneFrontComponentQuery({
+    client: apolloMetadataClient,
+    variables: { id: frontComponentId },
+    onError: handleLoadError,
+  });
 
-  if (hasError || hasTokenError || !isDefined(authToken)) {
-    // TODO: Add an error display component here
+  if (
+    loading === true ||
+    !isDefined(data?.frontComponent) ||
+    !isDefined(authToken)
+  ) {
     return null;
   }
 
+  const { applicationAccessToken, applicationRefreshToken, apiUrl } =
+    data.frontComponent;
+
   return (
-    <>
-      <FrontComponentTokenEffect
-        frontComponentId={frontComponentId}
-        onTokenGenerated={handleTokenGenerated}
-        onError={handleTokenError}
-        onLoadingChange={setIsTokenLoading}
-      />
-      {isCurrentFrontComponentTokenReady && (
-        <SharedFrontComponentRenderer
-          theme={theme}
-          componentUrl={componentUrl}
-          authToken={authToken}
-          applicationAccessToken={
-            currentFrontComponentTokenData.applicationAccessToken
-          }
-          apiUrl={currentFrontComponentTokenData.apiUrl}
-          executionContext={executionContext}
-          frontComponentHostCommunicationApi={
-            frontComponentHostCommunicationApi
-          }
-          onError={handleError}
-        />
-      )}
-    </>
+    <SharedFrontComponentRenderer
+      theme={theme}
+      componentUrl={componentUrl}
+      authToken={authToken}
+      applicationAccessToken={applicationAccessToken ?? undefined}
+      applicationRefreshToken={applicationRefreshToken ?? undefined}
+      apiUrl={apiUrl ?? undefined}
+      executionContext={executionContext}
+      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+      onError={handleRendererError}
+    />
   );
 };

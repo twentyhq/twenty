@@ -21,6 +21,7 @@ type FrontComponentContentProps = {
   componentUrl: string;
   authToken: string;
   applicationAccessToken?: string;
+  applicationRefreshToken?: string;
   apiUrl?: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -32,6 +33,7 @@ export const FrontComponentRenderer = ({
   componentUrl,
   authToken,
   applicationAccessToken,
+  applicationRefreshToken,
   apiUrl,
   executionContext,
   frontComponentHostCommunicationApi,
@@ -51,6 +53,7 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         authToken={authToken}
         applicationAccessToken={applicationAccessToken}
+        applicationRefreshToken={applicationRefreshToken}
         apiUrl={apiUrl}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
@@ -66,6 +69,7 @@ export const FrontComponentRenderer = ({
     setReceiver,
     setThread,
     applicationAccessToken,
+    applicationRefreshToken,
     apiUrl,
   ]);
 

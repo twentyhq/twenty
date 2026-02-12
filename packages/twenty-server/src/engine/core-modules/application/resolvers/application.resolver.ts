@@ -10,8 +10,6 @@ import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -21,6 +19,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
@@ -36,10 +35,11 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -47,10 +47,8 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-)
+const APPLICATION_TOKEN_EXPIRY_SECONDS = 1800;
+
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
@@ -61,12 +59,15 @@ export class ApplicationResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => [ApplicationDTO])
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findManyApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -75,6 +76,10 @@ export class ApplicationResolver {
   }
 
   @Query(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async checkApplicationExist(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -90,6 +95,10 @@ export class ApplicationResolver {
   }
 
   @Query(() => ApplicationDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -105,33 +114,54 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => AuthToken)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async generateApplicationToken(
     @Args() { applicationId }: GenerateApplicationTokenInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AuthToken> {
-    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
-
-    if (
-      nodeEnv !== NodeEnvironment.DEVELOPMENT &&
-      nodeEnv !== NodeEnvironment.TEST
-    ) {
-      throw new ApplicationException(
-        'This endpoint is only available in development mode',
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
-
-    const APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60;
-
-    return this.applicationTokenService.generateApplicationToken({
+    return this.applicationTokenService.generateApplicationAccessToken({
       workspaceId,
       applicationId,
       expiresInSeconds: APPLICATION_TOKEN_EXPIRY_SECONDS,
     });
   }
 
+  @Mutation(() => ApplicationTokenPairDTO)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async renewApplicationToken(
+    @Args('applicationRefreshToken') applicationRefreshToken: string,
+  ): Promise<ApplicationTokenPairDTO> {
+    const applicationRefreshTokenPayload =
+      this.applicationTokenService.validateApplicationRefreshToken(
+        applicationRefreshToken,
+      );
+
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      applicationRefreshTokenPayload.workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    if (featureFlagsMap[FeatureFlagKey.IS_APPLICATION_ENABLED] !== true) {
+      throw new ApplicationException(
+        'Applications are not enabled',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return this.applicationTokenService.renewApplicationTokens(
+      applicationRefreshToken,
+    );
+  }
+
   @Mutation(() => ApplicationDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async createOneApplication(
     @Args('input') input: CreateApplicationInput,
@@ -145,6 +175,10 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async syncApplication(
     @Args() { manifest }: ApplicationInput,
@@ -159,6 +193,10 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async installApplication(
     @Args() { workspaceMigration: { actions } }: InstallApplicationInput,
@@ -198,6 +236,10 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uninstallApplication(
     @Args() { universalIdentifier }: UninstallApplicationInput,
@@ -212,7 +254,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => FileDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

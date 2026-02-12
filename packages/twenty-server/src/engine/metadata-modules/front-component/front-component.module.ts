@@ -18,9 +18,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     ApplicationModule,
+    TokenModule,
     PermissionsModule,
     FlatFrontComponentModule,
-    TokenModule,
   ],
   controllers: [FrontComponentController],
   providers: [

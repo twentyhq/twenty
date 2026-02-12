@@ -55,8 +55,8 @@ describe('ApplicationTokenService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('generateApplicationToken', () => {
-    it('should generate an application token successfully', async () => {
+  describe('generateApplicationAccessToken', () => {
+    it('should generate an application access token successfully', async () => {
       const workspaceId = 'workspace-id';
       const applicationId = 'application-id';
       const mockWorkspace = { id: workspaceId };
@@ -71,7 +71,7 @@ describe('ApplicationTokenService', () => {
         .mockResolvedValue(mockApplication as ApplicationEntity);
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
-      const result = await service.generateApplicationToken({
+      const result = await service.generateApplicationAccessToken({
         workspaceId,
         applicationId,
         expiresInSeconds: 10,
@@ -90,9 +90,11 @@ describe('ApplicationTokenService', () => {
       );
     });
 
-    it('should handle missing userId successfully', async () => {
+    it('should include optional userWorkspaceId and userId in payload', async () => {
       const workspaceId = 'workspace-id';
       const applicationId = 'application-id';
+      const userWorkspaceId = 'user-workspace-id';
+      const userId = 'user-id';
       const mockWorkspace = { id: workspaceId };
       const mockApplication = { id: applicationId };
       const mockToken = 'mock-token';
@@ -105,9 +107,11 @@ describe('ApplicationTokenService', () => {
         .mockResolvedValue(mockApplication as ApplicationEntity);
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
-      const result = await service.generateApplicationToken({
+      const result = await service.generateApplicationAccessToken({
         workspaceId,
         applicationId,
+        userWorkspaceId,
+        userId,
         expiresInSeconds: 10,
       });
 
@@ -119,7 +123,9 @@ describe('ApplicationTokenService', () => {
         expect.objectContaining({
           sub: applicationId,
           applicationId,
-          workspaceId: workspaceId,
+          workspaceId,
+          userWorkspaceId,
+          userId,
         }),
         expect.any(Object),
       );
@@ -137,7 +143,7 @@ describe('ApplicationTokenService', () => {
       .mockResolvedValue(mockWorkspace as WorkspaceEntity);
 
     await expect(
-      service.generateApplicationToken({
+      service.generateApplicationAccessToken({
         applicationId: 'non-existent-application',
         workspaceId: 'workspace-id',
         expiresInSeconds: 10,
@@ -149,7 +155,7 @@ describe('ApplicationTokenService', () => {
     jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
 
     await expect(
-      service.generateApplicationToken({
+      service.generateApplicationAccessToken({
         applicationId: 'application-id',
         workspaceId: 'non-existent-workspace',
         expiresInSeconds: 10,

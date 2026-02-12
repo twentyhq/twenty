@@ -61,4 +61,13 @@ export class FrontComponentDTO {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @Field({ nullable: true })
+  applicationAccessToken?: string;
+
+  @Field({ nullable: true })
+  applicationRefreshToken?: string;
+
+  @Field({ nullable: true })
+  apiUrl?: string;
 }

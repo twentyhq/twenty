@@ -56,6 +56,9 @@ const render: WorkerExports['render'] = async (
     setWorkerEnv({
       TWENTY_API_KEY: renderContext.applicationAccessToken,
       TWENTY_API_URL: renderContext.apiUrl,
+      ...(isDefined(renderContext.applicationRefreshToken)
+        ? { TWENTY_REFRESH_TOKEN: renderContext.applicationRefreshToken }
+        : {}),
     });
   }
 
