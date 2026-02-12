@@ -14,9 +14,7 @@ export const createWritableFamilySelectorV2 = <ValueType, FamilyKey>({
   set,
 }: {
   key: string;
-  get: (
-    familyKey: FamilyKey,
-  ) => (callbacks: SelectorGetterV2) => ValueType;
+  get: (familyKey: FamilyKey) => (callbacks: SelectorGetterV2) => ValueType;
   set: (
     familyKey: FamilyKey,
   ) => (callbacks: SelectorSetterV2, newValue: ValueType) => void;
@@ -38,9 +36,7 @@ export const createWritableFamilySelectorV2 = <ValueType, FamilyKey>({
     void
   > => {
     const cacheKey =
-      typeof familyKey === 'string'
-        ? familyKey
-        : JSON.stringify(familyKey);
+      typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
 
     const existing = atomCache.get(cacheKey);
 

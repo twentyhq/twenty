@@ -9,17 +9,13 @@ export const createFamilySelectorV2 = <ValueType, FamilyKey>({
   get,
 }: {
   key: string;
-  get: (
-    familyKey: FamilyKey,
-  ) => (callbacks: SelectorGetterV2) => ValueType;
+  get: (familyKey: FamilyKey) => (callbacks: SelectorGetterV2) => ValueType;
 }): FamilySelectorV2<ValueType, FamilyKey> => {
   const atomCache = new Map<string, Atom<ValueType>>();
 
   const selectorFamily = (familyKey: FamilyKey): Atom<ValueType> => {
     const cacheKey =
-      typeof familyKey === 'string'
-        ? familyKey
-        : JSON.stringify(familyKey);
+      typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
 
     const existing = atomCache.get(cacheKey);
 

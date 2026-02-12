@@ -7,10 +7,7 @@ export const buildSetHelper =
   (jotaiSet: Setter) =>
   <ValueType, FamilyKey = never>(
     stateOrFamily: StateV2<ValueType> | FamilyStateV2<ValueType, FamilyKey>,
-    valueOrFamilyKey:
-      | ValueType
-      | ((prev: ValueType) => ValueType)
-      | FamilyKey,
+    valueOrFamilyKey: ValueType | ((prev: ValueType) => ValueType) | FamilyKey,
     familyValue?: ValueType | ((prev: ValueType) => ValueType),
   ): void => {
     if (stateOrFamily.type === 'FamilyStateV2') {
