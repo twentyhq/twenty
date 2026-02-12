@@ -119,6 +119,7 @@ export const WidgetCardHeader = ({
           {!isResizing &&
             !isEmpty &&
             isInEditMode &&
+            isReorderEnabled &&
             onRemove &&
             isWidgetCardHovered && (
               <StyledIconButtonContainer
