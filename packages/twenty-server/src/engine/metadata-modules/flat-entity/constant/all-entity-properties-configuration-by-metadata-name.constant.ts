@@ -347,6 +347,39 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  viewFieldGroup: {
+    name: { toStringify: false, universalProperty: undefined, toCompare: true },
+    position: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+    },
+    isVisible: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+    },
+    deletedAt: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+    },
+    createdAt: {
+      toCompare: false,
+      universalProperty: undefined,
+      toStringify: false,
+    },
+    updatedAt: {
+      toCompare: false,
+      universalProperty: undefined,
+      toStringify: false,
+    },
+    viewId: {
+      toCompare: false,
+      universalProperty: 'viewUniversalIdentifier',
+      toStringify: false,
+    },
+  },
   viewField: {
     isVisible: {
       toCompare: true,
@@ -363,6 +396,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+    },
+    viewFieldGroupId: {
+      toStringify: false,
+      universalProperty: 'viewFieldGroupUniversalIdentifier',
+      toCompare: true,
     },
     deletedAt: {
       toCompare: true,
@@ -498,6 +536,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isTool: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isBuildUpToDate: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -763,6 +806,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
+    defaultTabToFocusOnMobileAndSidePanelId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty:
+        'defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier',
+    },
     deletedAt: {
       toCompare: true,
       toStringify: false,
@@ -777,12 +826,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
-    },
-    defaultTabToFocusOnMobileAndSidePanelId: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty:
-        'defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier',
     },
   },
   pageLayoutWidget: {
@@ -974,6 +1017,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'folderUniversalIdentifier',
     },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    link: { toCompare: true, toStringify: false, universalProperty: undefined },
     createdAt: {
       toCompare: false,
       toStringify: false,

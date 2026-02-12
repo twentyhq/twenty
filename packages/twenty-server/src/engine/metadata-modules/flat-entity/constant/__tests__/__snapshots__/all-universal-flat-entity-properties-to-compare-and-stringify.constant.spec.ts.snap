@@ -66,9 +66,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "indexType",
       "indexWhereClause",
-      "universalFlatIndexFieldMetadatas",
       "isUnique",
       "name",
+      "universalFlatIndexFieldMetadatas",
     ],
     "propertiesToStringify": [
       "universalFlatIndexFieldMetadatas",
