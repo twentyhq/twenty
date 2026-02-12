@@ -7,7 +7,7 @@ describe('setWorkerEnv', () => {
 
   it('should set process.env on globalThis', () => {
     setWorkerEnv({
-      TWENTY_API_KEY: 'test-key',
+      TWENTY_APP_ACCESS_TOKEN: 'test-key',
       TWENTY_API_URL: 'https://api.example.com',
     });
 
@@ -16,7 +16,7 @@ describe('setWorkerEnv', () => {
     ] as Record<string, unknown>;
     const processEnvironment = processObject['env'] as Record<string, string>;
 
-    expect(processEnvironment['TWENTY_API_KEY']).toBe('test-key');
+    expect(processEnvironment['TWENTY_APP_ACCESS_TOKEN']).toBe('test-key');
     expect(processEnvironment['TWENTY_API_URL']).toBe(
       'https://api.example.com',
     );
@@ -31,7 +31,7 @@ describe('setWorkerEnv', () => {
     };
 
     setWorkerEnv({
-      TWENTY_API_KEY: 'test-key',
+      TWENTY_APP_ACCESS_TOKEN: 'test-key',
     });
 
     const processObject = (globalThis as Record<string, unknown>)[
@@ -41,6 +41,6 @@ describe('setWorkerEnv', () => {
 
     expect(processObject['version']).toBe('test-version');
     expect(processEnvironment['EXISTING_VALUE']).toBe('existing');
-    expect(processEnvironment['TWENTY_API_KEY']).toBe('test-key');
+    expect(processEnvironment['TWENTY_APP_ACCESS_TOKEN']).toBe('test-key');
   });
 });

@@ -1,5 +1,4 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
@@ -7,6 +6,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -22,7 +22,6 @@ export const FrontComponentRenderer = ({
     useFrontComponentExecutionContext();
 
   const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
-  const authToken = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token;
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -44,21 +43,22 @@ export const FrontComponentRenderer = ({
     onError: handleError,
   });
 
-  if (loading || !isDefined(data?.frontComponent) || !isDefined(authToken)) {
+  if (
+    loading ||
+    !isDefined(data?.frontComponent) ||
+    !isDefined(data.frontComponent.applicationTokenPair)
+  ) {
     return null;
   }
-
-  const { applicationAccessToken, applicationRefreshToken, apiUrl } =
-    data.frontComponent;
 
   return (
     <SharedFrontComponentRenderer
       theme={theme}
       componentUrl={componentUrl}
-      authToken={authToken}
-      applicationAccessToken={applicationAccessToken ?? undefined}
-      applicationRefreshToken={applicationRefreshToken ?? undefined}
-      apiUrl={apiUrl ?? undefined}
+      applicationAccessToken={
+        data.frontComponent.applicationTokenPair.applicationAccessToken.token
+      }
+      apiUrl={REACT_APP_SERVER_BASE_URL}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
       onError={handleError}

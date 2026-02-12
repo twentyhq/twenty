@@ -6,7 +6,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -23,7 +22,6 @@ import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-com
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(
@@ -37,8 +35,6 @@ export class FrontComponentResolver {
     private readonly frontComponentService: FrontComponentService,
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
-    @Inject(TwentyConfigService)
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Query(() => [FrontComponentDTO])
@@ -73,9 +69,7 @@ export class FrontComponentResolver {
 
     return {
       ...dto,
-      applicationAccessToken: tokenPair.applicationAccessToken.token,
-      applicationRefreshToken: tokenPair.applicationRefreshToken.token,
-      apiUrl: cleanServerUrl(this.twentyConfigService.get('SERVER_URL')),
+      applicationTokenPair: tokenPair,
     };
   }
 

@@ -54,16 +54,15 @@ const render: WorkerExports['render'] = async (
     isDefined(renderContext.apiUrl)
   ) {
     setWorkerEnv({
-      TWENTY_API_KEY: renderContext.applicationAccessToken,
+      TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
       TWENTY_API_URL: renderContext.apiUrl,
-      ...(isDefined(renderContext.applicationRefreshToken)
-        ? { TWENTY_REFRESH_TOKEN: renderContext.applicationRefreshToken }
-        : {}),
     });
   }
 
   const response = await fetch(renderContext.componentUrl, {
-    headers: { Authorization: `Bearer ${renderContext.authToken}` },
+    headers: {
+      Authorization: `Bearer ${renderContext.applicationAccessToken}`,
+    },
   });
 
   if (!response.ok) {

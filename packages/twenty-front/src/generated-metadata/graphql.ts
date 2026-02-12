@@ -1655,10 +1655,8 @@ export type FindAvailableSsoidpOutput = {
 
 export type FrontComponent = {
   __typename?: 'FrontComponent';
-  apiUrl?: Maybe<Scalars['String']>;
-  applicationAccessToken?: Maybe<Scalars['String']>;
   applicationId: Scalars['UUID'];
-  applicationRefreshToken?: Maybe<Scalars['String']>;
+  applicationTokenPair?: Maybe<ApplicationTokenPair>;
   builtComponentChecksum: Scalars['String'];
   builtComponentPath: Scalars['String'];
   componentName: Scalars['String'];
@@ -5641,7 +5639,7 @@ export type FindOneFrontComponentQueryVariables = Exact<{
 }>;
 
 
-export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, applicationAccessToken?: string | null, applicationRefreshToken?: string | null, apiUrl?: string | null } | null };
+export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -10260,9 +10258,16 @@ export const FindOneFrontComponentDocument = gql`
     id
     name
     applicationId
-    applicationAccessToken
-    applicationRefreshToken
-    apiUrl
+    applicationTokenPair {
+      applicationAccessToken {
+        token
+        expiresAt
+      }
+      applicationRefreshToken {
+        token
+        expiresAt
+      }
+    }
   }
 }
     `;

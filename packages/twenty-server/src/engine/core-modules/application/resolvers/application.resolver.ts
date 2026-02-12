@@ -39,7 +39,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -130,26 +129,21 @@ export class ApplicationResolver {
     });
   }
 
-  // @RequireFeatureFlag cannot be used here because this is a public endpoint
-  // (no WorkspaceAuthGuard), so the feature flag is checked manually below.
   @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async renewApplicationToken(
     @Args('applicationRefreshToken') applicationRefreshToken: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationTokenPairDTO> {
     const applicationRefreshTokenPayload =
       this.applicationTokenService.validateApplicationRefreshToken(
         applicationRefreshToken,
       );
 
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      applicationRefreshTokenPayload.workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    if (featureFlagsMap[FeatureFlagKey.IS_APPLICATION_ENABLED] !== true) {
+    if (applicationRefreshTokenPayload.workspaceId !== workspaceId) {
       throw new ApplicationException(
-        'Applications are not enabled',
+        'Refresh token workspace does not match authenticated workspace',
         ApplicationExceptionCode.FORBIDDEN,
       );
     }
