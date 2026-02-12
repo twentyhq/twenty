@@ -1,7 +1,8 @@
 import {
+  SETTINGS_OBJECT_TABLE_COLUMN_WIDTH,
   StyledActionTableCell,
   StyledNameTableCell,
-} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
+} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
@@ -47,7 +48,7 @@ export type ApplicationDataTableRow = {
   };
 };
 
-const MAIN_ROW_GRID_COLUMNS = '180px 1fr 98.7px 36px';
+const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 const FIELD_SUB_ROW_GRID_COLUMNS = '180px 1fr';
 
 const StyledFieldDivider = styled.div`
