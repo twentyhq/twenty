@@ -22,6 +22,7 @@ import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/wor
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
+  DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_HANDLER_NAME,
   DEFAULT_SOURCE_HANDLER_PATH,
 } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
@@ -432,6 +433,7 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       name,
       description: 'Temporary logic function for 1.17 migration testing',
       sourceHandlerPath: DEFAULT_SOURCE_HANDLER_PATH,
+      builtHandlerPath: DEFAULT_BUILT_HANDLER_PATH,
       handlerName: DEFAULT_HANDLER_NAME,
       runtime: LogicFunctionRuntime.NODE22,
       timeoutSeconds: 300,

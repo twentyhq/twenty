@@ -7,7 +7,7 @@ import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-
 
 // Default template function code that matches the expected behavior
 const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: string; b: number }): Promise<object> => {
-  return { message: \`Hello, input: \${params.a} and \${params.b}\` };
+  return { message: \`Toto: \${params.a} and \${params.b}\` };
 };`;
 
 // Test function using external packages from default layer (lodash.groupby)
@@ -91,7 +91,7 @@ describe('Logic Function Execution', () => {
 
     expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
     expect(result?.data).toMatchObject({
-      message: 'Hello, input: hello and 42',
+      message: 'Toto: hello and 42',
     });
     expect(result?.duration).toBeGreaterThan(0);
   });
@@ -162,6 +162,86 @@ describe('Logic Function Execution', () => {
     expect(data?.categories).toEqual(
       expect.arrayContaining(['fruit', 'vegetable']),
     );
+  });
+
+  it('should create logic function without source', async () => {
+    // Create the function with default template code
+    const { data: createData } = await createLogicFunction({
+      input: {
+        name: 'Test Default Function',
+      },
+      expectToFail: false,
+    });
+
+    const functionId = createData?.createLogicFunction?.id;
+
+    expect(functionId).toBeDefined();
+    createdFunctionIds.push(functionId);
+
+    // Execute with the default template's expected params: { a: string, b: number }
+    const { data: executeData } = await executeLogicFunction({
+      input: {
+        id: functionId,
+        payload: { a: 'hello', b: 42 },
+      },
+      expectToFail: false,
+    });
+
+    const result = executeData?.executeOneLogicFunction;
+
+    if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
+      throw new Error(JSON.stringify(result?.error, null, 2));
+    }
+
+    expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
+    expect(result?.data).toMatchObject({
+      message: 'Hello, input: hello and 42',
+    });
+    expect(result?.duration).toBeGreaterThan(0);
+  });
+
+  it('should create logic function with source', async () => {
+    // Create the function with default template code
+    const { data: createData } = await createLogicFunction({
+      input: {
+        name: 'Test Default Function',
+        source: {
+          sourceHandlerCode: DEFAULT_TEMPLATE_FUNCTION_CODE,
+          toolInputSchema: {
+            type: 'object',
+            properties: { message: { type: 'string' } },
+          },
+          handlerName: 'main',
+        },
+      },
+      expectToFail: false,
+    });
+
+    const functionId = createData?.createLogicFunction?.id;
+
+    expect(functionId).toBeDefined();
+    createdFunctionIds.push(functionId);
+
+    // Execute with the default template's expected params: { a: string, b: number }
+    const { data: executeData } = await executeLogicFunction({
+      input: {
+        id: functionId,
+        payload: { a: 'hello', b: 42 },
+      },
+      expectToFail: false,
+    });
+
+    const result = executeData?.executeOneLogicFunction;
+
+    if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
+      throw new Error(JSON.stringify(result?.error, null, 2));
+    }
+
+    expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
+    expect(result?.data).toMatchObject({
+      message: 'Toto: hello and 42',
+    });
+    expect(result?.duration).toBeGreaterThan(0);
   });
 
   it('should handle errors thrown by logic functions', async () => {
