@@ -5427,6 +5427,8 @@ export type FindOnePageLayoutQueryVariables = Exact<{
 
 export type FindOnePageLayoutQuery = { __typename?: 'Query', getPageLayout?: { __typename?: 'PageLayout', id: any, name: string, objectMetadataId?: any | null, type: PageLayoutType, defaultTabToFocusOnMobileAndSidePanelId?: any | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null } | null };
 
+export type MarketplaceAppFieldsFragment = { __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null };
+
 export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5957,6 +5959,82 @@ export const PageLayoutFragmentFragmentDoc = gql`
   }
 }
     ${PageLayoutTabFragmentFragmentDoc}`;
+export const MarketplaceAppFieldsFragmentDoc = gql`
+    fragment MarketplaceAppFields on MarketplaceApp {
+  id
+  name
+  description
+  icon
+  version
+  author
+  category
+  logo
+  screenshots
+  aboutDescription
+  providers
+  websiteUrl
+  termsUrl
+  objects {
+    universalIdentifier
+    nameSingular
+    namePlural
+    labelSingular
+    labelPlural
+    description
+    icon
+    fields {
+      universalIdentifier
+      name
+      type
+      label
+      description
+      icon
+    }
+  }
+  fields {
+    name
+    type
+    label
+    description
+    icon
+    objectUniversalIdentifier
+  }
+  logicFunctions {
+    name
+    description
+    timeoutSeconds
+  }
+  frontComponents {
+    name
+    description
+  }
+  defaultRole {
+    id
+    label
+    description
+    canReadAllObjectRecords
+    canUpdateAllObjectRecords
+    canSoftDeleteAllObjectRecords
+    canDestroyAllObjectRecords
+    canUpdateAllSettings
+    canAccessAllTools
+    objectPermissions {
+      objectUniversalIdentifier
+      canReadObjectRecords
+      canUpdateObjectRecords
+      canSoftDeleteObjectRecords
+      canDestroyObjectRecords
+    }
+    fieldPermissions {
+      objectUniversalIdentifier
+      fieldUniversalIdentifier
+      canReadFieldValue
+      canUpdateFieldValue
+    }
+    permissionFlags
+  }
+}
+    `;
 export const ViewFieldFragmentFragmentDoc = gql`
     fragment ViewFieldFragment on CoreViewField {
   id
@@ -6194,81 +6272,10 @@ export type FindOnePageLayoutQueryResult = Apollo.QueryResult<FindOnePageLayoutQ
 export const FindManyMarketplaceAppsDocument = gql`
     query FindManyMarketplaceApps {
   findManyMarketplaceApps {
-    id
-    name
-    description
-    icon
-    version
-    author
-    category
-    logo
-    screenshots
-    aboutDescription
-    providers
-    websiteUrl
-    termsUrl
-    objects {
-      universalIdentifier
-      nameSingular
-      namePlural
-      labelSingular
-      labelPlural
-      description
-      icon
-      fields {
-        universalIdentifier
-        name
-        type
-        label
-        description
-        icon
-      }
-    }
-    fields {
-      name
-      type
-      label
-      description
-      icon
-      objectUniversalIdentifier
-    }
-    logicFunctions {
-      name
-      description
-      timeoutSeconds
-    }
-    frontComponents {
-      name
-      description
-    }
-    defaultRole {
-      id
-      label
-      description
-      canReadAllObjectRecords
-      canUpdateAllObjectRecords
-      canSoftDeleteAllObjectRecords
-      canDestroyAllObjectRecords
-      canUpdateAllSettings
-      canAccessAllTools
-      objectPermissions {
-        objectUniversalIdentifier
-        canReadObjectRecords
-        canUpdateObjectRecords
-        canSoftDeleteObjectRecords
-        canDestroyObjectRecords
-      }
-      fieldPermissions {
-        objectUniversalIdentifier
-        fieldUniversalIdentifier
-        canReadFieldValue
-        canUpdateFieldValue
-      }
-      permissionFlags
-    }
+    ...MarketplaceAppFields
   }
 }
-    `;
+    ${MarketplaceAppFieldsFragmentDoc}`;
 
 /**
  * __useFindManyMarketplaceAppsQuery__

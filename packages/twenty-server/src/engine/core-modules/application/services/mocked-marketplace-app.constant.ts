@@ -9,8 +9,10 @@ const MOCK_ENRICHMENT_JOB_UNIVERSAL_ID = 'a1b2c3d4-0000-0000-0000-000000000100';
 const COMPANY_UNIVERSAL_ID = '20202020-b374-4779-a561-80086cb2e17f';
 const PERSON_UNIVERSAL_ID = '20202020-e674-48e5-a542-72570eee7213';
 
-// Field universalIdentifiers
-const COMPANY_NAME_FIELD_UNIVERSAL_ID = '20202020-4dc2-47c9-bb15-6e6f19ba9e46';
+// Standard field universalIdentifiers
+const COMPANY_NAME_FIELD_UNIVERSAL_ID = '20202020-4d99-4e2e-a84c-4a27837b1ece';
+
+// Enrichment job field universalIdentifiers
 const MOCK_ENRICHMENT_JOB_STATUS_FIELD_UNIVERSAL_ID =
   'a1b2c3d4-0000-0000-0000-000000000101';
 const MOCK_ENRICHMENT_JOB_PROVIDER_FIELD_UNIVERSAL_ID =
@@ -19,14 +21,16 @@ const MOCK_ENRICHMENT_JOB_ENRICHED_AT_FIELD_UNIVERSAL_ID =
   'a1b2c3d4-0000-0000-0000-000000000103';
 const MOCK_ENRICHMENT_JOB_RECORD_ID_FIELD_UNIVERSAL_ID =
   'a1b2c3d4-0000-0000-0000-000000000104';
+
+// App-provided field universalIdentifiers on standard objects
 const COMPANY_INDUSTRY_FIELD_UNIVERSAL_ID =
-  '20202020-4dc2-47c9-bb15-6e6f19ba9e46';
+  'a1b2c3d4-0000-0000-0000-000000000201';
 const COMPANY_EMPLOYEE_COUNT_FIELD_UNIVERSAL_ID =
-  '20202020-4dc2-47c9-bb15-6e6f19ba9e46';
+  'a1b2c3d4-0000-0000-0000-000000000202';
 const PERSON_LINKEDIN_URL_FIELD_UNIVERSAL_ID =
-  '20202020-4dc2-47c9-bb15-6e6f19ba9e46';
+  'a1b2c3d4-0000-0000-0000-000000000203';
 const PERSON_JOB_TITLE_FIELD_UNIVERSAL_ID =
-  '20202020-4dc2-47c9-bb15-6e6f19ba9e46';
+  'a1b2c3d4-0000-0000-0000-000000000204';
 
 const MOCK_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#1a2744"><ellipse cx="38" cy="20" rx="28" ry="10"/><rect x="10" y="20" width="56" height="50"/><ellipse cx="38" cy="70" rx="28" ry="10"/><ellipse cx="38" cy="35" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="38" cy="52" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><circle cx="72" cy="62" r="22" fill="#1a2744"/><circle cx="72" cy="62" r="18" fill="#fff"/><path d="M72 50 L72 74 M62 58 L72 48 L82 58" stroke="#1a2744" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
 
@@ -190,7 +194,7 @@ export const MOCKED_MARKETPLACE_APP: MarketplaceAppDTO = {
       },
       {
         objectUniversalIdentifier: MOCK_ENRICHMENT_JOB_UNIVERSAL_ID,
-        fieldUniversalIdentifier: 'jobTitle',
+        fieldUniversalIdentifier: PERSON_JOB_TITLE_FIELD_UNIVERSAL_ID,
         canReadFieldValue: true,
         canUpdateFieldValue: false,
       },
