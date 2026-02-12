@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { H2Title, IconUserPlus } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
+import { type CalendarChannelVisibility } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
   display: flex;

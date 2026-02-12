@@ -7,18 +7,20 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import type { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
-import type { UpdateLogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
-import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
+import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-flat-logic-function.util';
 import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
+import { CreateLogicFunction } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
+import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 
 @Injectable()
 export class LogicFunctionMetadataService {
@@ -28,12 +30,59 @@ export class LogicFunctionMetadataService {
     private readonly applicationService: ApplicationService,
   ) {}
 
+  async findOne({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<LogicFunctionDTO> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      id,
+      flatLogicFunctionMaps,
+    });
+
+    return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+  }
+
+  async findMany({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<LogicFunctionDTO[]> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    return Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
+      .filter(
+        (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
+          isDefined(flatLogicFunction) &&
+          !isDefined(flatLogicFunction.deletedAt),
+      )
+      .map((flatLogicFunction) =>
+        fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
+      );
+  }
+
   async createOne({
     input,
     workspaceId,
     ownerFlatApplication,
   }: {
-    input: Omit<CreateLogicFunctionInput, 'applicationId'>;
+    input: CreateLogicFunction;
     ownerFlatApplication: FlatApplication;
     workspaceId: string;
   }) {
@@ -86,7 +135,7 @@ export class LogicFunctionMetadataService {
     ownerFlatApplication,
   }: {
     id: string;
-    update: UpdateLogicFunctionSourceInput['update'];
+    update: Omit<UpdateLogicFunctionFromSourceInput['update'], 'source'>;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
   }) {
@@ -140,64 +189,6 @@ export class LogicFunctionMetadataService {
       optimisticallyUpdatedFlatLogicFunction.id,
       workspaceId,
     );
-  }
-
-  async updateChecksum({
-    id,
-    checksum,
-    workspaceId,
-  }: {
-    id: string;
-    checksum: string;
-    workspaceId: string;
-  }) {
-    const resolvedOwnerFlatApplication = (
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      )
-    ).workspaceCustomFlatApplication;
-
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-
-    const optimisticallyUpdatedFlatLogicFunction = {
-      ...flatLogicFunction,
-      checksum,
-    };
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            logicFunction: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatLogicFunction],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            resolvedOwnerFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while updating logic function checksum',
-      );
-    }
   }
 
   private async getFlatLogicFunctionAfterUpdate(
@@ -284,5 +275,41 @@ export class LogicFunctionMetadataService {
     }
 
     return existingFlatLogicFunction;
+  }
+
+  async getAvailablePackages({
+    logicFunctionId,
+    workspaceId,
+  }: {
+    logicFunctionId: string;
+    workspaceId: string;
+  }) {
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    const logicFunctionUniversalIdentifier =
+      flatLogicFunctionMaps.universalIdentifierById[logicFunctionId];
+
+    if (!logicFunctionUniversalIdentifier) {
+      return {};
+    }
+
+    const logicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        logicFunctionUniversalIdentifier
+      ];
+
+    if (!logicFunction) {
+      return {};
+    }
+
+    const application = flatApplicationMaps.byId[logicFunction.applicationId];
+
+    return application?.availablePackages ?? {};
   }
 }

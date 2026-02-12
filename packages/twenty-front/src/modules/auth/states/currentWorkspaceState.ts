@@ -3,7 +3,7 @@ import {
   type Application,
   type Role,
   type Workspace,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type CurrentWorkspace = Pick<
   Workspace,

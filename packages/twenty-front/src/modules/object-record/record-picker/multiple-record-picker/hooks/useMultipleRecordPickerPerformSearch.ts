@@ -16,8 +16,7 @@ import { type ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { type SearchRecord } from '~/generated-metadata/graphql';
-import { type SearchResultEdge } from '~/generated/graphql';
+import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 

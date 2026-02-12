@@ -1,6 +1,6 @@
 import { type ReasoningUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import { type AgentMessagePart } from '~/generated/graphql';
+import { type AgentMessagePart } from '~/generated-metadata/graphql';
 
 export const mapDBPartToUIMessagePart = (
   part: AgentMessagePart,

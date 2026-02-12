@@ -1,6 +1,6 @@
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { isDefined } from 'twenty-shared/utils';
-import { type WidgetConfiguration } from '~/generated/graphql';
+import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 
 export const getManualSortOrderFromConfig = (
   configuration: WidgetConfiguration,

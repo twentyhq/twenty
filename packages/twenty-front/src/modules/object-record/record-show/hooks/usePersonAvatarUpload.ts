@@ -9,8 +9,9 @@ import {
   FileFolder,
   useUploadFilesFieldFileMutation,
   useUploadImageMutation,
+  FeatureFlagKey,
+  FieldMetadataType,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey, FieldMetadataType } from '~/generated/graphql';
 
 export const usePersonAvatarUpload = (personRecordId: string) => {
   const coreClient = useApolloCoreClient();

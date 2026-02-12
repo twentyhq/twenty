@@ -13,9 +13,6 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  DEFAULT_HANDLER_NAME,
-  DEFAULT_SOURCE_HANDLER_PATH,
   LogicFunctionEntity,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -24,6 +21,11 @@ import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-obje
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  DEFAULT_BUILT_HANDLER_PATH,
+  DEFAULT_HANDLER_NAME,
+  DEFAULT_SOURCE_HANDLER_PATH,
+} from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 
 const OLD_BUILT_FOLDER = 'built-function';
 const OLD_SOURCE_FOLDER = 'serverless-function';

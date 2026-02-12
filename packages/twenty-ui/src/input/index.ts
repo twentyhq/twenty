@@ -22,6 +22,7 @@ export { Button } from './button/components/Button/Button';
 export { baseTransitionTiming } from './button/components/Button/constant';
 export type { ButtonGroupProps } from './button/components/ButtonGroup';
 export { ButtonGroup } from './button/components/ButtonGroup';
+export type { ColorPickerButtonProps } from './button/components/ColorPickerButton';
 export { ColorPickerButton } from './button/components/ColorPickerButton';
 export type {
   FloatingButtonSize,
@@ -64,9 +65,16 @@ export type {
 export { LightIconButton } from './button/components/LightIconButton';
 export type { LightIconButtonGroupProps } from './button/components/LightIconButtonGroup';
 export { LightIconButtonGroup } from './button/components/LightIconButtonGroup';
-export type { MainButtonVariant } from './button/components/MainButton';
+export type {
+  MainButtonVariant,
+  Props,
+  MainButtonProps,
+} from './button/components/MainButton';
 export { MainButton } from './button/components/MainButton';
-export type { RoundedIconButtonSize } from './button/components/RoundedIconButton';
+export type {
+  RoundedIconButtonSize,
+  RoundedIconButtonProps,
+} from './button/components/RoundedIconButton';
 export { RoundedIconButton } from './button/components/RoundedIconButton';
 export {
   StyledTabButton,
@@ -75,7 +83,9 @@ export {
 } from './button/components/TabButton/internals/components/StyledTabBase';
 export type { TabContentProps } from './button/components/TabButton/internals/components/TabContent';
 export { TabContent } from './button/components/TabButton/internals/components/TabContent';
+export type { TabButtonProps } from './button/components/TabButton/TabButton';
 export { TabButton } from './button/components/TabButton/TabButton';
+export type { CodeEditorProps } from './code-editor/components/CodeEditor';
 export { CodeEditor } from './code-editor/components/CodeEditor';
 export type { CoreEditorHeaderProps } from './code-editor/components/CodeEditorHeader';
 export { CoreEditorHeader } from './code-editor/components/CodeEditorHeader';
@@ -88,7 +98,9 @@ export type {
 export { ColorSchemeCard } from './color-scheme/components/ColorSchemeCard';
 export type { ColorSchemePickerProps } from './color-scheme/components/ColorSchemePicker';
 export { ColorSchemePicker } from './color-scheme/components/ColorSchemePicker';
+export type { CardPickerProps } from './components/CardPicker';
 export { CardPicker } from './components/CardPicker';
+export type { CheckboxProps, InputProps } from './components/Checkbox';
 export {
   CheckboxVariant,
   CheckboxShape,
@@ -96,9 +108,11 @@ export {
   CheckboxAccent,
   Checkbox,
 } from './components/Checkbox';
+export type { IconListViewGripProps } from './components/IconListViewGrip';
 export { IconListViewGrip } from './components/IconListViewGrip';
 export type { RadioProps } from './components/Radio';
 export { RadioSize, LabelPosition, Radio } from './components/Radio';
+export type { RadioGroupProps } from './components/RadioGroup';
 export { RadioGroup } from './components/RadioGroup';
 export type { SearchInputProps } from './components/SearchInput';
 export { SearchInput } from './components/SearchInput';

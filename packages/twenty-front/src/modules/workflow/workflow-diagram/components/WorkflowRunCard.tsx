@@ -13,7 +13,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Suspense, useId } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;

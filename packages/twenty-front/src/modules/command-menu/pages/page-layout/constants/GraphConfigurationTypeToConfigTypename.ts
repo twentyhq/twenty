@@ -1,4 +1,4 @@
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME: Partial<
   Record<WidgetConfigurationType, string>

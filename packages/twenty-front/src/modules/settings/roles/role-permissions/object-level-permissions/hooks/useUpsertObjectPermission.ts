@@ -3,7 +3,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export const useUpsertObjectPermission = ({ roleId }: { roleId: string }) => {
   const settingsDraftRole = useRecoilValue(

@@ -69,4 +69,26 @@ export default [
       'lingui/text-restrictions': 'off',
     },
   },
+
+  {
+    files: [
+      '**/src/input/**/*.tsx',
+      '**/src/components/**/*.tsx',
+      '**/src/display/**/*.tsx',
+      '**/src/feedback/**/*.tsx',
+      '**/src/layout/**/*.tsx',
+      '**/src/navigation/**/*.tsx',
+      '**/src/accessibility/**/*.tsx',
+    ],
+    ignores: [
+      '**/*.stories.tsx',
+      '**/__stories__/**/*.tsx',
+      '**/*.test.tsx',
+      '**/__tests__/**/*.tsx',
+      '**/testing/**/*.tsx',
+    ],
+    rules: {
+      'twenty/export-component-props': 'error',
+    },
+  },
 ];

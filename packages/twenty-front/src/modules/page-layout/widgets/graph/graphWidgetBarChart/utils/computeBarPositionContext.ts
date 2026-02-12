@@ -3,9 +3,9 @@ import { computeValueScale } from '@/page-layout/widgets/graph/chart-core/utils/
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import {
-  BarChartLayout as BarChartLayoutEnum,
   type BarChartLayout,
-} from '~/generated/graphql';
+  BarChartLayout as BarChartLayoutEnum,
+} from '~/generated-metadata/graphql';
 
 export type BarPositionContext = {
   isVertical: boolean;

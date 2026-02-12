@@ -1,5 +1,5 @@
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { type SearchRecord } from '~/generated-metadata/graphql';
+import { type SearchRecord } from '~/generated/graphql';
 import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
 
 const createMorphItem = (

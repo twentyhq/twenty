@@ -1,4 +1,4 @@
-import { type ApplicationVariable } from '~/generated/graphql';
+import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';

@@ -5,7 +5,7 @@ import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
-import { WorkspaceActivationStatus } from '~/generated/graphql';
+import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
 enableFetchMocks();
 

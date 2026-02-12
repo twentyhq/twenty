@@ -11,7 +11,7 @@ import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/u
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 const PERSISTED_OUTPUT_SCHEMA_TYPES = [
   'CODE',

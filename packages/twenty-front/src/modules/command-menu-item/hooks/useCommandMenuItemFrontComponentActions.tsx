@@ -16,9 +16,9 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import {
   type CommandMenuItemFieldsFragment,
   CommandMenuItemAvailabilityType,
+  FeatureFlagKey,
   useFindManyCommandMenuItemsQuery,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;

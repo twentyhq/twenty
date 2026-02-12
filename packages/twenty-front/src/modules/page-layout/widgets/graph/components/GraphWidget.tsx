@@ -9,7 +9,7 @@ import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 const GraphWidgetGaugeChart = lazy(() =>
   import(

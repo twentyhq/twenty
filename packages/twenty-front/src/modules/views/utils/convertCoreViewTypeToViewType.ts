@@ -1,5 +1,5 @@
 import { ViewType } from '@/views/types/ViewType';
-import { ViewType as CoreViewType } from '~/generated/graphql';
+import { ViewType as CoreViewType } from '~/generated-metadata/graphql';
 
 export const convertCoreViewTypeToViewType = (
   coreViewType: CoreViewType,
