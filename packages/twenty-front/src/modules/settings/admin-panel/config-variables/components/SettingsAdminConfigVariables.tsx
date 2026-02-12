@@ -9,7 +9,6 @@ import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-var
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
@@ -18,6 +17,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 
 const StyledControlsContainer = styled.div`
   display: flex;
@@ -37,11 +37,11 @@ export const SettingsAdminConfigVariables = () => {
 
   const [search, setSearch] = useState('');
   const [showHiddenGroupVariables, setShowHiddenGroupVariables] =
-    useRecoilState(showHiddenGroupVariablesState);
+    useRecoilStateV2(showHiddenGroupVariablesState);
   const [configVariableSourceFilter, setConfigVariableSourceFilter] =
-    useRecoilState(configVariableSourceFilterState);
+    useRecoilStateV2(configVariableSourceFilterState);
   const [configVariableGroupFilter, setConfigVariableGroupFilter] =
-    useRecoilState(configVariableGroupFilterState);
+    useRecoilStateV2(configVariableGroupFilterState);
 
   const allGroups = useMemo(
     () => configVariables?.getConfigVariablesGrouped.groups ?? [],

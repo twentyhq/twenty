@@ -52,8 +52,9 @@ export const deriveMetadataEventsFromDeleteAction = ({
 
       return [
         {
-          type: 'delete',
+          type: 'deleted',
           metadataName: flatAction.metadataName,
+          recordId: flatAction.entityId,
           properties: {
             before: flatEntityToDelete,
           },

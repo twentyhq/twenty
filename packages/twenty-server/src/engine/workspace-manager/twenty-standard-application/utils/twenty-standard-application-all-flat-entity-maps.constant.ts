@@ -17,6 +17,7 @@ import { buildStandardFlatPageLayoutMetadataMaps } from 'src/engine/workspace-ma
 import { buildStandardFlatRoleMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/build-standard-flat-role-metadata-maps.util';
 import { buildStandardFlatSkillMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/build-standard-flat-skill-metadata-maps.util';
 import { buildStandardFlatViewFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util';
+import { buildStandardFlatViewFieldGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/build-standard-flat-view-field-group-metadata-maps.util';
 import { buildStandardFlatViewFilterMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-filter/build-standard-flat-view-filter-metadata-maps.util';
 import { buildStandardFlatViewGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/build-standard-flat-view-group-metadata-maps.util';
 import { buildStandardFlatViewMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util';
@@ -82,6 +83,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatViewGroupMaps = buildStandardFlatViewGroupMetadataMaps({
@@ -97,7 +99,16 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
 
   const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
 
-  const flatViewFieldGroupMaps = createEmptyFlatEntityMaps();
+  const flatViewFieldGroupMaps = buildStandardFlatViewFieldGroupMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatViewMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    workspaceId,
+    shouldIncludeRecordPageLayouts,
+  });
 
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
     dependencyFlatEntityMaps: {
@@ -122,6 +133,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
