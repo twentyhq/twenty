@@ -43,14 +43,6 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              text={t`Remove rule`}
-              onClick={handleRemove}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuItemsContainer>
             <UndecoratedLink
               fullWidth
               to={objectPermissionDetailUrl}
@@ -58,6 +50,14 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
             >
               <MenuItem text={t`Edit`} LeftIcon={IconPencil} />
             </UndecoratedLink>
+          </DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text={t`Remove rule`}
+              onClick={handleRemove}
+              LeftIcon={IconTrash}
+              accent="danger"
+            />
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

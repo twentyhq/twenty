@@ -10,11 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui/display';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
@@ -95,12 +91,6 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           roleId={roleId}
           objectMetadataId={objectMetadataItem.id}
           objectPermissionDetailUrl={navigationUrl}
-        />
-      </TableCell>
-      <TableCell align="right">
-        <IconChevronRight
-          size={theme.icon.size.md}
-          color={theme.font.color.tertiary}
         />
       </TableCell>
     </TableRow>

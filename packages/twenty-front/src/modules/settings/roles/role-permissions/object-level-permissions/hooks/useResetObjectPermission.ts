@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type FieldPermission,
   type ObjectPermission,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const OBJECT_PERMISSION_KEYS: SettingsRoleObjectPermissionKey[] = [
   'canReadObjectRecords',
