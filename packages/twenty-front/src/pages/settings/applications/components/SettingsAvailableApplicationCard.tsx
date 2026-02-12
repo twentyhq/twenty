@@ -1,8 +1,8 @@
 import {
-    StyledSettingsCardContent,
-    StyledSettingsCardDescription,
-    StyledSettingsCardThirdLine,
-    StyledSettingsCardTitle,
+  StyledSettingsCardContent,
+  StyledSettingsCardDescription,
+  StyledSettingsCardThirdLine,
+  StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';

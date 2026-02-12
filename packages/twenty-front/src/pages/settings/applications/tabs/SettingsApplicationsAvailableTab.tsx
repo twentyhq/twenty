@@ -6,7 +6,6 @@ import { Section } from 'twenty-ui/layout';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
 
-
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
