@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolCallOptions, type ToolSet, jsonSchema } from 'ai';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import {
   type CodeExecutionStreamEmitter,
@@ -14,111 +13,52 @@ import {
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
+import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
+import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,
 } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  generateErrorSuggestion,
+  wrapWithErrorHandler,
+} from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 
-export type ToolContext = {
-  workspaceId: string;
-  roleId: string;
-  actorContext?: ActorMetadata;
-  userId?: string;
-  userWorkspaceId?: string;
-  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-};
-
-const RAM_TTL_MS = 5_000;
-const REDIS_TTL_MS = 300_000;
-const MAX_RAM_ENTRIES = 200;
-const MIN_EVICT_ENTRIES = 20;
+export { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
 @Injectable()
 export class ToolRegistryService {
   private readonly logger = new Logger(ToolRegistryService.name);
-
-  // Two-tier cache: RAM (5s) → Redis (5min) → generate from providers
-  // Stores lightweight ToolIndexEntry[] (no schemas) to minimize memory
-  private readonly ramCache = new Map<
-    string,
-    { entries: ToolIndexEntry[]; cachedAt: number }
-  >();
 
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
     private readonly nativeModelToolProvider: NativeModelToolProvider,
     private readonly toolExecutorService: ToolExecutorService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  // Core: returns cached ToolIndexEntry[] (lightweight, no schemas)
+  // Returns ToolIndexEntry[] (lightweight, no schemas).
+  // Underlying data (metadata, permissions) is already cached by WorkspaceCacheService.
+  // Providers run in parallel since they are independent.
   async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
-    this.evictExpiredEntries();
+    const results = await Promise.all(
+      this.providers.map(async (provider) => {
+        if (await provider.isAvailable(context)) {
+          return provider.generateDescriptors(context, {
+            includeSchemas: false,
+          });
+        }
 
-    const cacheKey = await this.buildCacheKey(context);
-
-    // 1. RAM hit?
-    const ramEntry = this.ramCache.get(cacheKey);
-
-    if (ramEntry && Date.now() - ramEntry.cachedAt < RAM_TTL_MS) {
-      return ramEntry.entries;
-    }
-
-    // 2. Redis hit?
-    const redisData =
-      await this.workspaceCacheStorageService.getToolCatalog(cacheKey);
-
-    if (redisData) {
-      const entries = redisData as ToolIndexEntry[];
-
-      this.ramCache.set(cacheKey, {
-        entries,
-        cachedAt: Date.now(),
-      });
-      this.evictLRUEntriesIfNeeded();
-
-      return entries;
-    }
-
-    // 3. Generate from providers (cache miss) -- no schemas
-    const entries: ToolIndexEntry[] = [];
-
-    for (const provider of this.providers) {
-      if (await provider.isAvailable(context)) {
-        const providerEntries = await provider.generateDescriptors(context, {
-          includeSchemas: false,
-        });
-
-        entries.push(...providerEntries);
-      }
-    }
-
-    this.logger.log(
-      `Generated ${entries.length} tool index entries for workspace ${context.workspaceId}`,
+        return [];
+      }),
     );
 
-    // Store in both caches
-    this.ramCache.set(cacheKey, {
-      entries,
-      cachedAt: Date.now(),
-    });
-    this.evictLRUEntriesIfNeeded();
-
-    await this.workspaceCacheStorageService.setToolCatalog(
-      cacheKey,
-      entries,
-      REDIS_TTL_MS,
-    );
-
-    return entries;
+    return results.flat();
   }
 
   // On-demand schema generation for specific tools
@@ -142,8 +82,6 @@ export class ToolRegistryService {
 
     const schemas = new Map<string, object>();
 
-    // For each category, call the provider with includeSchemas: true
-    // and extract only the matching tool schemas
     for (const [category, entries] of byCategory) {
       const provider = this.providers.find(
         (providerItem) => providerItem.category === category,
@@ -182,7 +120,6 @@ export class ToolRegistryService {
     const toolSet: ToolSet = {};
 
     for (const descriptor of descriptors) {
-      // Add loadingMessage to the clean stored schema
       const schemaWithLoading = wrapJsonSchemaForExecution(
         descriptor.inputSchema as Record<string, unknown>,
       );
@@ -196,7 +133,7 @@ export class ToolRegistryService {
         description: descriptor.description,
         inputSchema: jsonSchema(schemaWithLoading),
         execute: options?.wrapWithErrorContext
-          ? this.wrapWithErrorHandler(descriptor.name, executeFn)
+          ? wrapWithErrorHandler(descriptor.name, executeFn)
           : executeFn,
       };
     }
@@ -232,15 +169,12 @@ export class ToolRegistryService {
       context.userWorkspaceId,
     );
 
-    // Get lightweight index and filter to requested names
     const index = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    // Resolve schemas only for the requested tools
     const schemas = await this.resolveSchemas(names, fullContext);
 
-    // Combine into full ToolDescriptor[]
     const descriptors: ToolDescriptor[] = matchingEntries
       .filter((entry) => schemas.has(entry.name))
       .map((entry) => ({
@@ -266,12 +200,10 @@ export class ToolRegistryService {
       context.userWorkspaceId,
     );
 
-    // Get lightweight index for names/descriptions
     const index = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    // Only resolve schemas if requested
     let schemas: Map<string, object> | undefined;
 
     if (aspects.includes('schema')) {
@@ -312,7 +244,6 @@ export class ToolRegistryService {
         context.userWorkspaceId,
       );
 
-      // Get lightweight index (no schema needed for dispatch)
       const index = await this.getCatalog(fullContext);
       const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
@@ -347,41 +278,42 @@ export class ToolRegistryService {
         toolName,
         error: {
           message: errorMessage,
-          suggestion: this.generateErrorSuggestion(toolName, errorMessage),
+          suggestion: generateErrorSuggestion(toolName, errorMessage),
         },
       };
     }
   }
 
-  // Main method for eager loading tools by categories (MCP, workflow agent)
-  // These paths need full schemas, so generate with includeSchemas: true
+  // Eager loading tools by categories (MCP, workflow agent).
+  // These paths need full schemas, so generate with includeSchemas: true.
   async getToolsByCategories(
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
     const { categories, excludeTools, wrapWithErrorContext } = options;
+    const categorySet = categories ? new Set(categories) : undefined;
 
-    // Generate full descriptors with schemas (not cached in lightweight index)
-    const descriptors: ToolDescriptor[] = [];
+    const results = await Promise.all(
+      this.providers
+        .filter(
+          (provider) =>
+            !categorySet || categorySet.has(provider.category),
+        )
+        .map(async (provider) => {
+          if (await provider.isAvailable(context)) {
+            return provider.generateDescriptors(context, {
+              includeSchemas: true,
+            });
+          }
 
-    for (const provider of this.providers) {
-      if (categories && !categories.includes(provider.category)) {
-        continue;
-      }
+          return [];
+        }),
+    );
 
-      if (await provider.isAvailable(context)) {
-        const providerDescriptors = await provider.generateDescriptors(
-          context,
-          { includeSchemas: true },
-        );
-
-        descriptors.push(...(providerDescriptors as ToolDescriptor[]));
-      }
-    }
+    const descriptors = results.flat() as ToolDescriptor[];
 
     let filteredDescriptors = descriptors;
 
-    // Apply excludeTools filter
     if (excludeTools?.length) {
       const excludeSet = new Set(excludeTools);
 
@@ -394,7 +326,6 @@ export class ToolRegistryService {
       wrapWithErrorContext,
     });
 
-    // Handle NativeModelToolProvider separately (SDK-opaque tools)
     if (categories?.includes(ToolCategory.NATIVE_MODEL)) {
       if (await this.nativeModelToolProvider.isAvailable(context)) {
         const nativeTools = await (
@@ -410,16 +341,6 @@ export class ToolRegistryService {
     );
 
     return toolSet;
-  }
-
-  private async buildCacheKey(context: ToolProviderContext): Promise<string> {
-    const metadataVersion =
-      (await this.workspaceCacheStorageService.getMetadataVersion(
-        context.workspaceId,
-      )) ?? 0;
-
-    // userId removed -- descriptors do not vary by user
-    return `${context.workspaceId}:v${metadataVersion}:${context.roleId}`;
   }
 
   private buildContext(
@@ -441,93 +362,5 @@ export class ToolRegistryService {
       userWorkspaceId,
       onCodeExecutionUpdate,
     };
-  }
-
-  private evictExpiredEntries(): void {
-    const now = Date.now();
-
-    for (const [key, value] of this.ramCache) {
-      if (now - value.cachedAt >= RAM_TTL_MS) {
-        this.ramCache.delete(key);
-      }
-    }
-  }
-
-  private evictLRUEntriesIfNeeded(): void {
-    if (this.ramCache.size <= MAX_RAM_ENTRIES) {
-      return;
-    }
-
-    const sortedEntries = [...this.ramCache.entries()].sort(
-      ([, entryA], [, entryB]) => entryA.cachedAt - entryB.cachedAt,
-    );
-
-    const toEvict = sortedEntries.slice(0, MIN_EVICT_ENTRIES);
-
-    for (const [key] of toEvict) {
-      this.ramCache.delete(key);
-    }
-  }
-
-  private wrapWithErrorHandler(
-    toolName: string,
-    executeFn: (args: Record<string, unknown>) => Promise<unknown>,
-  ): (args: Record<string, unknown>) => Promise<unknown> {
-    return async (args: Record<string, unknown>) => {
-      try {
-        return await executeFn(args);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-
-        return {
-          success: false,
-          error: {
-            message: errorMessage,
-            tool: toolName,
-            suggestion: this.generateErrorSuggestion(toolName, errorMessage),
-          },
-        };
-      }
-    };
-  }
-
-  private generateErrorSuggestion(
-    _toolName: string,
-    errorMessage: string,
-  ): string {
-    const lowerError = errorMessage.toLowerCase();
-
-    if (
-      lowerError.includes('not found') ||
-      lowerError.includes('does not exist')
-    ) {
-      return 'Verify the ID or name exists with a search query first';
-    }
-
-    if (
-      lowerError.includes('permission') ||
-      lowerError.includes('forbidden') ||
-      lowerError.includes('unauthorized')
-    ) {
-      return 'This operation requires elevated permissions or a different role';
-    }
-
-    if (lowerError.includes('invalid') || lowerError.includes('validation')) {
-      return 'Check the tool schema for valid parameter formats and types';
-    }
-
-    if (
-      lowerError.includes('duplicate') ||
-      lowerError.includes('already exists')
-    ) {
-      return 'A record with this identifier already exists. Try updating instead of creating';
-    }
-
-    if (lowerError.includes('required') || lowerError.includes('missing')) {
-      return 'Required fields are missing. Check which fields are mandatory for this operation';
-    }
-
-    return 'Try adjusting the parameters or using a different approach';
   }
 }

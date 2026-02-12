@@ -13,8 +13,8 @@ import {
   getToolDisplayMessage,
   resolveToolInput,
 } from '@/ai/utils/getToolDisplayMessage';
-import { ToolOutputMessageSchema } from '@/ai/utils/toolOutputMessageSchema';
-import { ToolOutputResultSchema } from '@/ai/utils/toolOutputResultSchema';
+import { ToolOutputMessageSchema } from '@/ai/schemas/toolOutputMessageSchema';
+import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';

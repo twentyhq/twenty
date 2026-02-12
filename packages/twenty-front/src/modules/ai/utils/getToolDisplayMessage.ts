@@ -83,36 +83,40 @@ export const getToolDisplayMessage = (
 ): string => {
   const { resolvedInput, resolvedToolName } = resolveToolInput(input, toolName);
 
+  const byStatus = (finished: string, inProgress: string): string =>
+    isFinished ? finished : inProgress;
+
   if (resolvedToolName === 'web_search') {
     const query = extractSearchQuery(resolvedInput);
 
     if (isNonEmptyString(query)) {
-      return isFinished
-        ? t`Searched the web for '${query}'`
-        : t`Searching the web for '${query}'`;
+      return byStatus(
+        t`Searched the web for '${query}'`,
+        t`Searching the web for '${query}'`,
+      );
     }
 
-    return isFinished ? t`Searched the web` : t`Searching the web`;
+    return byStatus(t`Searched the web`, t`Searching the web`);
   }
 
   if (resolvedToolName === 'learn_tools') {
     const names = extractLearnToolNames(resolvedInput);
 
     if (isNonEmptyString(names)) {
-      return isFinished ? t`Learned ${names}` : t`Learning ${names}`;
+      return byStatus(t`Learned ${names}`, t`Learning ${names}`);
     }
 
-    return isFinished ? t`Learned tools` : t`Learning tools...`;
+    return byStatus(t`Learned tools`, t`Learning tools...`);
   }
 
   if (resolvedToolName === 'load_skills') {
     const names = extractSkillNames(resolvedInput);
 
     if (isNonEmptyString(names)) {
-      return isFinished ? t`Loaded ${names}` : t`Loading ${names}`;
+      return byStatus(t`Loaded ${names}`, t`Loading ${names}`);
     }
 
-    return isFinished ? t`Loaded skills` : t`Loading skills...`;
+    return byStatus(t`Loaded skills`, t`Loading skills...`);
   }
 
   const customMessage = extractCustomLoadingMessage(resolvedInput);
@@ -123,5 +127,5 @@ export const getToolDisplayMessage = (
 
   const formattedName = formatToolName(resolvedToolName);
 
-  return isFinished ? t`Ran ${formattedName}` : t`Running ${formattedName}`;
+  return byStatus(t`Ran ${formattedName}`, t`Running ${formattedName}`);
 };
