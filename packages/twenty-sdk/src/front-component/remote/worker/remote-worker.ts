@@ -60,9 +60,9 @@ const render: WorkerExports['render'] = async (
   }
 
   const response = await fetch(renderContext.componentUrl, {
-    headers: {
-      Authorization: `Bearer ${renderContext.applicationAccessToken}`,
-    },
+    headers: isDefined(renderContext.applicationAccessToken)
+      ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
+      : undefined,
   });
 
   if (!response.ok) {
