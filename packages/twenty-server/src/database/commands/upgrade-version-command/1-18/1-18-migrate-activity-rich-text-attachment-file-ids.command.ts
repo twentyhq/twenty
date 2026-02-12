@@ -209,9 +209,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       `Migrating ${activityType} rich text for workspace ${workspaceId}`,
     );
 
-    const activities = await activityRepository.find({
-      select: ['id', 'bodyV2'],
-    });
+    const activities = await activityRepository.find();
 
     this.logger.log(
       `Found ${activities.length} ${activityType}(s) to process in workspace ${workspaceId}`,
@@ -239,7 +237,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
         const props = (block.props as Record<string, unknown>) || {};
         const url = props.url as string | undefined;
 
-        return isDefined(url) && isDefined(extractFileIdFromUrl(url));
+        return isDefined(url) && !isDefined(extractFileIdFromUrl(url));
       });
 
       if (!needsMigration) {
@@ -350,11 +348,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
         const fileData = attachment.file[0];
 
         if (isDefined(attachment.fullPath) && isDefined(fileData.fileId)) {
-          const normalizedPath = this.getAttachmentLegacyRelativePath(
-            attachment.fullPath,
-          );
-
-          urlToFileIdMap.set(normalizedPath, fileData.fileId);
+          urlToFileIdMap.set(attachment.fullPath, fileData.fileId);
         }
       }
     }
