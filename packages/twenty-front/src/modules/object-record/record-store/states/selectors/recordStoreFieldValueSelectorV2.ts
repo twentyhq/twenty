@@ -4,31 +4,20 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 import { RelationType, type ObjectRecord } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
-const fieldValueAtomCache = new Map<string, Atom<unknown>>();
-
-const getSimpleFieldValueAtom = (
-  recordId: string,
-  fieldName: string,
-): Atom<unknown> => {
-  const cacheKey = `${recordId}__${fieldName}`;
-  const existing = fieldValueAtomCache.get(cacheKey);
-
-  if (existing !== undefined) {
-    return existing;
-  }
-
-  const derivedAtom = atom((get) => {
-    return get(recordStoreFamilyStateV2.atomFamily(recordId))?.[fieldName];
-  });
-
-  derivedAtom.debugLabel = `recordFieldValue__${cacheKey}`;
-  fieldValueAtomCache.set(cacheKey, derivedAtom);
-
-  return derivedAtom;
-};
+const simpleFieldValueSelector = createFamilySelectorV2<
+  unknown,
+  { recordId: string; fieldName: string }
+>({
+  key: 'recordStoreSimpleFieldValue',
+  get:
+    ({ recordId, fieldName }) =>
+    ({ get }) =>
+      get(recordStoreFamilyStateV2, recordId)?.[fieldName],
+});
 
 const morphAtomCache = new Map<string, Atom<unknown>>();
 
@@ -124,5 +113,5 @@ export const recordStoreFieldValueSelectorV2 = ({
     return getMorphRelationFieldValueAtom(recordId, fieldName, fieldDefinition);
   }
 
-  return getSimpleFieldValueAtom(recordId, fieldName);
+  return simpleFieldValueSelector.selectorFamily({ recordId, fieldName });
 };

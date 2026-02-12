@@ -1,4 +1,3 @@
-import { useAtom } from 'jotai';
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -7,6 +6,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUuidField = () => {
@@ -16,13 +16,14 @@ export const useUuidField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useAtom<FieldUUidValue>(
-    recordStoreFamilySelectorV2<FieldUUidValue>({
-      recordId,
-      fieldName,
-    }),
+  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+    recordStoreFamilySelectorV2,
+    { recordId, fieldName },
   );
-  const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';
+
+  const fieldTextValue = isFieldTextValue(fieldValue as FieldUUidValue)
+    ? (fieldValue as FieldUUidValue)
+    : '';
 
   return {
     fieldDefinition,
