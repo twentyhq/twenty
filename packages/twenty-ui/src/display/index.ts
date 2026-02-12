@@ -11,6 +11,7 @@ export type { AvatarProps } from './avatar/components/Avatar';
 export { Avatar } from './avatar/components/Avatar';
 export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
 export { AvatarGroup } from './avatar/components/AvatarGroup';
+export { invalidAvatarUrlsAtomV2 } from './avatar/components/states/invalidAvatarUrlsAtomV2';
 export { invalidAvatarUrlsState } from './avatar/components/states/isInvalidAvatarUrlState';
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
