@@ -94,7 +94,7 @@ export const FieldsConfigurationSectionEditor = ({
       <div {...draggableProvided.dragHandleProps}>
         <MenuItemDraggable
           text={section.title}
-          showGrip
+          gripMode="always"
           isIconDisplayedOnHoverOnly={false}
           iconButtons={[
             {

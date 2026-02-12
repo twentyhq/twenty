@@ -33,16 +33,37 @@ const StyledIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledIconSwapContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledDefaultIcon = styled.div`
+  display: flex;
+  transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+`;
+
+const StyledHoverIcon = styled.div`
+  position: absolute;
+  display: flex;
+  opacity: 0;
+  transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+`;
+
 const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
   margin-left: auto;
 `;
+
+export type GripMode = 'always' | 'onHover' | 'never';
 
 export type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
   withIconContainer?: boolean;
-  showGrip?: boolean;
+  gripMode?: GripMode;
   disabled?: boolean;
   text: ReactNode;
   contextualText?: ReactNode;
@@ -57,36 +78,71 @@ export const MenuItemLeftContent = ({
   text,
   contextualText,
   contextualTextPosition = 'left',
-  showGrip = false,
+  gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
   const theme = useTheme();
 
+  const gripIconColor = withIconContainer
+    ? theme.font.color.tertiary
+    : disabled
+      ? theme.font.color.extraLight
+      : theme.font.color.light;
+
+  const renderGripIcon = () => (
+    <IconGripVertical
+      size={theme.icon.size.md}
+      stroke={theme.icon.stroke.sm}
+      color={gripIconColor}
+    />
+  );
+
+  const renderLeftIcon = () =>
+    LeftIcon ? (
+      <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+    ) : null;
+
+  const renderIconWithSwap = () => {
+    if (!LeftIcon) {
+      return null;
+    }
+
+    const iconContent = (
+      <StyledIconSwapContainer>
+        <StyledDefaultIcon className="grip-swap-default-icon">
+          {renderLeftIcon()}
+        </StyledDefaultIcon>
+        <StyledHoverIcon className="grip-swap-hover-icon">
+          {renderGripIcon()}
+        </StyledHoverIcon>
+      </StyledIconSwapContainer>
+    );
+
+    return withIconContainer ? (
+      <StyledIconContainer>{iconContent}</StyledIconContainer>
+    ) : (
+      iconContent
+    );
+  };
+
+  const renderRegularIcon = () => {
+    if (!LeftIcon) {
+      return null;
+    }
+
+    return withIconContainer ? (
+      <StyledIconContainer>{renderLeftIcon()}</StyledIconContainer>
+    ) : (
+      renderLeftIcon()
+    );
+  };
+
   return (
     <StyledMenuItemLeftContent className={className}>
-      {showGrip && (
-        <StyledDraggableItem>
-          <IconGripVertical
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={
-              withIconContainer
-                ? theme.font.color.tertiary
-                : disabled
-                  ? theme.font.color.extraLight
-                  : theme.font.color.light
-            }
-          />
-        </StyledDraggableItem>
+      {gripMode === 'always' && (
+        <StyledDraggableItem>{renderGripIcon()}</StyledDraggableItem>
       )}
-      {LeftIcon &&
-        (withIconContainer ? (
-          <StyledIconContainer>
-            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-          </StyledIconContainer>
-        ) : (
-          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        ))}
+      {gripMode === 'onHover' ? renderIconWithSwap() : renderRegularIcon()}
       {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (

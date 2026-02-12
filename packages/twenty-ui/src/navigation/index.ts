@@ -65,7 +65,10 @@ export type { MenuItemSuggestionProps } from './menu/menu-item/components/MenuIt
 export { MenuItemSuggestion } from './menu/menu-item/components/MenuItemSuggestion';
 export type { MenuItemToggleProps } from './menu/menu-item/components/MenuItemToggle';
 export { MenuItemToggle } from './menu/menu-item/components/MenuItemToggle';
-export type { MenuItemLeftContentProps } from './menu/menu-item/internals/components/MenuItemLeftContent';
+export type {
+  GripMode,
+  MenuItemLeftContentProps,
+} from './menu/menu-item/internals/components/MenuItemLeftContent';
 export { MenuItemLeftContent } from './menu/menu-item/internals/components/MenuItemLeftContent';
 export type { MenuItemBaseProps } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export {

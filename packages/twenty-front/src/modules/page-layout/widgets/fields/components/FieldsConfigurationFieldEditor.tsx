@@ -22,7 +22,8 @@ export const FieldsConfigurationFieldEditor = ({
     <MenuItemDraggable
       LeftIcon={FieldIcon}
       text={fieldMetadata.label}
-      showGrip
+      gripMode="onHover"
+      withIconContainer
       isIconDisplayedOnHoverOnly={false}
       iconButtons={[
         {

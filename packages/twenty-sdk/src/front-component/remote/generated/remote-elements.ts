@@ -6679,7 +6679,7 @@ export type TwentyUiMenuItemDraggableProperties = {
   onClick?: (...args: unknown[]) => unknown;
   className?: string;
   isIconDisplayedOnHoverOnly?: boolean;
-  showGrip?: boolean;
+  gripMode?: string;
   isDragDisabled?: boolean;
   isHoverDisabled?: boolean;
 };
@@ -6687,10 +6687,10 @@ export type TwentyUiMenuItemDraggableProperties = {
 export const TwentyUiMenuItemDraggableElement = createRemoteElement<
   TwentyUiMenuItemDraggableProperties,
   Record<string, never>,
-  { LeftIcon: true; text: true },
+  { LeftIcon: true; LeftComponent: true; text: true },
   Record<string, never>
 >({
-  slots: ['LeftIcon', 'text'],
+  slots: ['LeftIcon', 'LeftComponent', 'text'],
   properties: {
     withIconContainer: { type: Boolean },
     accent: { type: String },
@@ -6699,7 +6699,7 @@ export const TwentyUiMenuItemDraggableElement = createRemoteElement<
     onClick: { type: Function },
     className: { type: String },
     isIconDisplayedOnHoverOnly: { type: Boolean },
-    showGrip: { type: Boolean },
+    gripMode: { type: String },
     isDragDisabled: { type: Boolean },
     isHoverDisabled: { type: Boolean },
   },
@@ -7003,7 +7003,7 @@ export const TwentyUiMenuItemToggleElement = createRemoteElement<
 export type TwentyUiMenuItemLeftContentProperties = {
   className?: string;
   withIconContainer?: boolean;
-  showGrip?: boolean;
+  gripMode?: string;
   disabled?: boolean;
   contextualTextPosition?: string;
 };
@@ -7018,7 +7018,7 @@ export const TwentyUiMenuItemLeftContentElement = createRemoteElement<
   properties: {
     className: { type: String },
     withIconContainer: { type: Boolean },
-    showGrip: { type: Boolean },
+    gripMode: { type: String },
     disabled: { type: Boolean },
     contextualTextPosition: { type: String },
   },
