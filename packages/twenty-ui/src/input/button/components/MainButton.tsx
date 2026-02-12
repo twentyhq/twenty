@@ -5,7 +5,7 @@ import React, { type FunctionComponent } from 'react';
 
 export type MainButtonVariant = 'primary' | 'secondary';
 
-type Props = {
+export type Props = {
   title: string;
   fullWidth?: boolean;
   width?: number;
@@ -102,7 +102,7 @@ const StyledButton = styled.button<
   }};
 `;
 
-type MainButtonProps = Props & {
+export type MainButtonProps = Props & {
   Icon?: IconComponent | FunctionComponent<{ size: number }>;
 };
 

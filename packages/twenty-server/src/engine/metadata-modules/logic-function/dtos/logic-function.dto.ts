@@ -64,10 +64,6 @@ export class LogicFunctionDTO {
 
   @IsString()
   @Field()
-  builtHandlerPath: string;
-
-  @IsString()
-  @Field()
   handlerName: string;
 
   @IsObject()

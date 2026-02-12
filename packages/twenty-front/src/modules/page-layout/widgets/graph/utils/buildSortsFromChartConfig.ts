@@ -7,7 +7,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type ChartSort = {
   fieldName: string;

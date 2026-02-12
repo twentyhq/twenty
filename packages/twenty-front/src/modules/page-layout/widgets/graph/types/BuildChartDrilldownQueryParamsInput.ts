@@ -5,7 +5,7 @@ import {
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type BuildChartDrilldownQueryParamsInput = {
   objectMetadataItem: ObjectMetadataItem;

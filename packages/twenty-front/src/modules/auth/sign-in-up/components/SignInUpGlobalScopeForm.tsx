@@ -27,7 +27,7 @@ import {
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui/display';
-import { type AvailableWorkspace } from '~/generated/graphql';
+import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const StyledContentContainer = styled(motion.div)`

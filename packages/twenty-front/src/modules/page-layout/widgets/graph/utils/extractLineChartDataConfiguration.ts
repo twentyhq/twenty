@@ -1,4 +1,4 @@
-import { type LineChartConfiguration } from '~/generated/graphql';
+import { type LineChartConfiguration } from '~/generated-metadata/graphql';
 
 type LineChartStyleFields =
   | 'displayDataLabel'

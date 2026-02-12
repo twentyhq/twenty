@@ -56,4 +56,11 @@ export class FileEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: true, type: 'jsonb' })
   settings: FileSettings | null;
+
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    default: 'application/octet-stream',
+  })
+  mimeType: string;
 }

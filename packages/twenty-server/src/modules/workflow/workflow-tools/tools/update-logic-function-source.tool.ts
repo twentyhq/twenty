@@ -13,24 +13,14 @@ const updateLogicFunctionSourceSchema = z.object({
       'The ID of the logic function to update (from the code step settings.input.logicFunctionId)',
     ),
   code: z
-    .object({
-      src: z
-        .object({
-          'index.ts': z
-            .string()
-            .describe(
-              'The TypeScript source code for the logic function. Must export a main function.',
-            ),
-        })
-        .describe('Source folder containing the index.ts file'),
-    })
+    .string()
     .describe(
-      'The source code structure. Use { src: { "index.ts": "your code here" } }',
+      'The TypeScript source code for the logic function. Must export a main function.',
     ),
 });
 
 export const createUpdateLogicFunctionSourceTool = (
-  deps: Pick<WorkflowToolDependencies, 'logicFunctionService'>,
+  deps: Pick<WorkflowToolDependencies, 'logicFunctionFromSourceService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_logic_function_source' as const,
@@ -55,17 +45,16 @@ export const main = async (params: { url: string }) => {
 
 To find the logicFunctionId, look at the code step's settings.input.logicFunctionId field.`,
   inputSchema: updateLogicFunctionSourceSchema,
-  execute: async (parameters: {
-    logicFunctionId: string;
-    code: { src: { 'index.ts': string } };
-  }) => {
+  execute: async (parameters: { logicFunctionId: string; code: string }) => {
     try {
       const { logicFunctionId, code } = parameters;
       const { workspaceId } = context;
 
-      await deps.logicFunctionService.updateLogicFunctionSource({
+      await deps.logicFunctionFromSourceService.updateOne({
         id: logicFunctionId,
-        code,
+        update: {
+          sourceHandlerCode: code,
+        },
         workspaceId,
       });
 

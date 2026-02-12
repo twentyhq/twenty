@@ -7,7 +7,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { type Application } from '~/generated/graphql';
+import { type Application } from '~/generated-metadata/graphql';
 import { SettingsAIAgentsTable } from '~/pages/settings/ai/components/SettingsAIAgentsTable';
 import {
   SettingsApplicationDataTable,

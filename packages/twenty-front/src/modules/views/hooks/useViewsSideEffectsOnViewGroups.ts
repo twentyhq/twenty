@@ -4,7 +4,7 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type CoreViewGroup } from '~/generated/graphql';
+import { type CoreViewGroup } from '~/generated-metadata/graphql';
 
 const useViewsSideEffectsOnViewGroups = () => {
   const { triggerViewGroupOptimisticEffect } =

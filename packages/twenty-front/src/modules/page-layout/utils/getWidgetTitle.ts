@@ -4,7 +4,7 @@ import {
   BarChartLayout,
   WidgetConfigurationType,
   type WidgetConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const getWidgetTitle = (
   configuration: Pick<WidgetConfiguration, 'configurationType'> & {

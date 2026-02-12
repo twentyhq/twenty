@@ -7,6 +7,7 @@ import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroying
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
+import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -15,7 +16,7 @@ import { print, type ExecutionResult } from 'graphql';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type EventSubscription } from '~/generated/graphql';
+import { type EventSubscription } from '~/generated-metadata/graphql';
 
 export const useTriggerEventStreamCreation = () => {
   const setIsCreatingSseEventStream = useSetRecoilState(
@@ -60,6 +61,9 @@ export const useTriggerEventStreamCreation = () => {
         const newSseEventStreamId = v4();
 
         set(sseEventStreamIdState, newSseEventStreamId);
+        set(sseEventStreamReadyState, false);
+
+        let hasReceivedFirstEvent = false;
 
         const dispose = sseClient.subscribe(
           {
@@ -74,6 +78,11 @@ export const useTriggerEventStreamCreation = () => {
                 onEventSubscription: EventSubscription;
               }>,
             ) => {
+              if (!hasReceivedFirstEvent) {
+                hasReceivedFirstEvent = true;
+                set(sseEventStreamReadyState, true);
+              }
+
               const objectRecordEventsWithQueryIds =
                 value?.data?.onEventSubscription?.eventWithQueryIdsList ?? [];
 

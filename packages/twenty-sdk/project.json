@@ -6,7 +6,7 @@
   "tags": ["scope:sdk", "scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "generate-remote-dom-elements"],
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
@@ -85,25 +85,34 @@
         }
       ]
     },
-    "generateRemoteDomElements": {
+    "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/scripts/remote-dom/**/*",
-        "{projectRoot}/src/front-component-constants/**/*"
+        "{projectRoot}/src/sdk/front-component-common/**/*",
+        "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
+        "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
       ],
       "outputs": [
         "{projectRoot}/src/front-component/host/generated/*",
         "{projectRoot}/src/front-component/remote/generated/*"
       ],
       "options": {
-        "command": "tsx {projectRoot}/scripts/remote-dom/generateRemoteDomElements.ts"
+        "cwd": "packages/twenty-sdk",
+        "command": "tsx -r tsconfig-paths/register scripts/remote-dom/generate-remote-dom-elements.ts"
+      },
+      "configurations": {
+        "verbose": {
+          "command": "tsx -r tsconfig-paths/register scripts/remote-dom/generate-remote-dom-elements.ts --verbose"
+        }
       }
     },
     "storybook:prebuild": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["generateRemoteDomElements"],
+      "dependsOn": ["generate-remote-dom-elements"],
       "inputs": [
         "{projectRoot}/src/front-component/__stories__/mocks/**/*",
         "{projectRoot}/src/front-component/__stories__/utils/**/*",

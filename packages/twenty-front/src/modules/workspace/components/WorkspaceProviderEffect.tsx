@@ -10,7 +10,7 @@ import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryPara
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkspaceUrls } from '~/generated/graphql';
+import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const WorkspaceProviderEffect = () => {

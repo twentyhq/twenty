@@ -1,11 +1,12 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
@@ -32,7 +33,7 @@ import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphq
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AgentGraphqlApiExceptionInterceptor,
 )
-@Resolver()
+@MetadataResolver()
 export class AgentResolver {
   constructor(private readonly agentService: AgentService) {}
 

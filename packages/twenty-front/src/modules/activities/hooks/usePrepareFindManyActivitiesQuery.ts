@@ -15,7 +15,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 export const usePrepareFindManyActivitiesQuery = ({

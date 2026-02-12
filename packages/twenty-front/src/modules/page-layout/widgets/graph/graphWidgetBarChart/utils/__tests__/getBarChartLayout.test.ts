@@ -3,7 +3,7 @@ import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarCha
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 describe('getBarChartLayout', () => {
   const defaultAxisTheme: ChartAxisTheme = {

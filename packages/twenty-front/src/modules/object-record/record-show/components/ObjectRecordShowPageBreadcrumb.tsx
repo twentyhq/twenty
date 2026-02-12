@@ -64,7 +64,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
-    objectRecordId,
   });
 
   const isLabelIdentifierReadOnly = useIsRecordFieldReadOnly({

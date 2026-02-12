@@ -4,7 +4,7 @@ import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecord
 import {
   type CreateDraftFromWorkflowVersionInput,
   useCreateDraftFromWorkflowVersionMutation,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useCreateDraftFromWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();

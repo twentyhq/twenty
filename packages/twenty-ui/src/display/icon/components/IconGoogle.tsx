@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconGoogleRaw from '@assets/icons/google.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconGoogleProps = Pick<IconComponentProps, 'size'>;
+export type IconGoogleProps = Pick<IconComponentProps, 'size'>;
 
 export const IconGoogle = (props: IconGoogleProps) => {
   const theme = useTheme();

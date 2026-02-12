@@ -7,7 +7,7 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilterGroup } from '~/generated/graphql';
+import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
 
 export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();

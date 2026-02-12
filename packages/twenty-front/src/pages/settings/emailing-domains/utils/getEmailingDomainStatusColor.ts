@@ -1,4 +1,4 @@
-import { EmailingDomainStatus } from '~/generated/graphql';
+import { EmailingDomainStatus } from '~/generated-metadata/graphql';
 
 export const getColorByEmailingDomainStatus = (
   status: EmailingDomainStatus,

@@ -1,4 +1,4 @@
-import { type AggregateOperations } from '~/generated/graphql';
+import { type AggregateOperations } from '~/generated-metadata/graphql';
 
 export type RecordField = {
   id: string;

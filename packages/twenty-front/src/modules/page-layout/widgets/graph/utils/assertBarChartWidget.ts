@@ -1,7 +1,7 @@
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { type BarChartConfiguration } from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 
 type AssertBarChartWidgetOrThrow = (
   widget: PageLayoutWidget,

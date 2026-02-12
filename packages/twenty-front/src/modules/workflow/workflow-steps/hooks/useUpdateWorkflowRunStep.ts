@@ -13,7 +13,7 @@ import {
   type UpdateWorkflowRunStepInput,
   type UpdateWorkflowRunStepMutation,
   type UpdateWorkflowRunStepMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useUpdateWorkflowRunStep = () => {
   const apolloCoreClient = useApolloCoreClient();

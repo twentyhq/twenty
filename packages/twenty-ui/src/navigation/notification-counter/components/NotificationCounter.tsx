@@ -19,7 +19,7 @@ const StyledNotificationCounter = styled.div<{
     variant === 'primary' ? 'white' : theme.font.color.secondary};
 `;
 
-type NotificationCounterProps = {
+export type NotificationCounterProps = {
   count: number;
   variant?: 'primary' | 'secondary';
   className?: string;

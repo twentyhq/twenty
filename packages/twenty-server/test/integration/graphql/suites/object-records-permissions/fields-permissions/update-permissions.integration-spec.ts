@@ -92,7 +92,7 @@ describe('Field update permissions restrictions', () => {
       `,
     };
     const rolesResponse = await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(getRolesQuery);
 
@@ -183,7 +183,7 @@ describe('Field update permissions restrictions', () => {
     };
 
     await client
-      .post('/graphql')
+      .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(restoreMemberRoleQuery);
   });

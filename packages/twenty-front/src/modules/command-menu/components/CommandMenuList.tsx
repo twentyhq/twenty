@@ -20,6 +20,7 @@ export type CommandMenuListProps = {
   children?: React.ReactNode;
   loading?: boolean;
   noResults?: boolean;
+  noResultsText?: string;
 };
 
 const StyledInnerList = styled.div`
@@ -60,6 +61,7 @@ export const CommandMenuList = ({
   children,
   loading = false,
   noResults = false,
+  noResultsText,
 }: CommandMenuListProps) => {
   const setHasUserSelectedCommand = useSetRecoilState(
     hasUserSelectedCommandState,
@@ -91,7 +93,7 @@ export const CommandMenuList = ({
               ) : null,
             )}
             {noResults && !loading && (
-              <StyledEmpty>{t`No results found`}</StyledEmpty>
+              <StyledEmpty>{noResultsText ?? t`No results found`}</StyledEmpty>
             )}
           </SelectableList>
         </StyledInnerList>

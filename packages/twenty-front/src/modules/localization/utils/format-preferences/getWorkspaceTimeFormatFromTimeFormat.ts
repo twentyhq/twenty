@@ -1,5 +1,5 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberTimeFormatEnum } from '~/generated-metadata/graphql';
 
 export const getWorkspaceTimeFormatFromTimeFormat = (
   timeFormat: TimeFormat,

@@ -1,6 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useRecoilValue } from 'recoil';
-import { WorkspaceMemberDateFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberDateFormatEnum } from '~/generated-metadata/graphql';
 
 export const useUserDateFormat = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

@@ -26,7 +26,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { PermissionFlagType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { SettingsAvailableApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab';

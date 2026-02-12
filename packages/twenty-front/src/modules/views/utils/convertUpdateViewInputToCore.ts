@@ -3,7 +3,7 @@ import { convertViewKeyToCore } from '@/views/utils/convertViewKeyToCore';
 import { convertViewOpenRecordInToCore } from '@/views/utils/convertViewOpenRecordInToCore';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { isDefined } from 'twenty-shared/utils';
-import { type UpdateViewInput } from '~/generated/graphql';
+import { type UpdateViewInput } from '~/generated-metadata/graphql';
 
 export const convertUpdateViewInputToCore = (
   view: Partial<GraphQLView & { __typename?: string }>,
