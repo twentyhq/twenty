@@ -25,7 +25,7 @@ type MetadataEntityPropertyConfiguration<
       ? `universal${Capitalize<K>}`
       : K extends MetadataManyToOneJoinColumn<TMetadataName> & string
         ? ToUniversalForeignKey<K>
-        : undefined | string;
+        : undefined;
     toStringify: K extends ExtractJsonbProperties<MetadataEntity<TMetadataName>>
       ? true
       : K extends keyof MetadataEntity<TMetadataName>
@@ -187,6 +187,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     labelIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     standardOverrides: {
@@ -553,7 +554,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     cronTriggerSettings: {
       toCompare: true,
       toStringify: true,
-      universalProperty: 'universalFlatIndexFieldMetadatas',
+      universalProperty: undefined,
     },
     databaseEventTriggerSettings: {
       toCompare: true,
