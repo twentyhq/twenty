@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateRoleTargetAction,
@@ -47,15 +46,12 @@ export class CreateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateRoleTargetAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
-    const { flatEntity: roleTarget } = flatAction;
+    const { flatAction, queryRunner } = context;
+    const { flatEntity } = flatAction;
 
-    const roleTargetRepository =
-      queryRunner.manager.getRepository<RoleTargetEntity>(RoleTargetEntity);
-
-    await roleTargetRepository.insert({
-      ...roleTarget,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

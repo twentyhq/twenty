@@ -5,8 +5,12 @@ import { type ReactNode } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import {
+  StyledActionTableCell,
+  StyledNameTableCell,
+  StyledObjectTableRow,
+} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons } from 'twenty-ui/display';
 
 export type SettingsObjectMetadataItemTableRowProps = {
@@ -15,15 +19,6 @@ export type SettingsObjectMetadataItemTableRowProps = {
   link?: string;
   totalObjectCount: number;
 };
-
-export const StyledObjectTableRow = styled(TableRow)`
-  grid-template-columns: 180px 98.7px 98.7px 98.7px 36px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
 
 const StyledNameContainer = styled.div`
   display: flex;
@@ -52,11 +47,6 @@ const StyledInactiveLabel = styled.span`
     content: '·';
     margin-right: ${({ theme }) => theme.spacing(1)};
   }
-`;
-
-const StyledActionTableCell = styled(TableCell)`
-  justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsObjectMetadataItemTableRow = ({
