@@ -8,12 +8,9 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
-import {
-  CallWebhookJob,
-  type CallWebhookJobData,
-} from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { type CallMetadataWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -64,7 +61,7 @@ export class CallWebhookJobsForMetadataJob {
     const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
 
     for (const webhookEventsChunk of webhookEventsChunks) {
-      await this.messageQueueService.add<CallWebhookJobData[]>(
+      await this.messageQueueService.add<CallMetadataWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
         { retryLimit: 3 },
@@ -78,50 +75,25 @@ export class CallWebhookJobsForMetadataJob {
   }: {
     metadataEventBatch: MetadataEventBatch;
     webhooks: FlatWebhook[];
-  }): CallWebhookJobData[] {
-    const result: CallWebhookJobData[] = [];
+  }): CallMetadataWebhookJobData[] {
+    const result: CallMetadataWebhookJobData[] = [];
 
     for (const webhook of webhooks) {
-      const targetUrl = webhook.targetUrl;
-      const eventName = metadataEventBatch.name;
-      const workspaceId = metadataEventBatch.workspaceId;
-      const webhookId = webhook.id;
-      const eventDate = new Date();
-      const secret = webhook.secret;
-
-      for (const eventData of metadataEventBatch.events) {
+      for (const event of metadataEventBatch.events) {
         result.push({
-          targetUrl,
-          eventName,
-          objectMetadata: {
-            id: eventData.recordId,
-            nameSingular: metadataEventBatch.metadataName,
-          },
-          workspaceId,
-          webhookId,
-          eventDate,
-          record: this.getRecordFromEvent(eventData),
-          ...(eventData.type === 'updated' && {
-            updatedFields: eventData.properties.updatedFields,
-          }),
-          secret,
+          targetUrl: webhook.targetUrl,
+          eventName: metadataEventBatch.name,
+          workspaceId: metadataEventBatch.workspaceId,
+          webhookId: webhook.id,
+          eventDate: new Date(),
           userId: metadataEventBatch.userId,
           apiKeyId: metadataEventBatch.apiKeyId,
+          secret: webhook.secret,
+          event,
         });
       }
     }
 
     return result;
-  }
-
-  private getRecordFromEvent(event: MetadataEvent) {
-    switch (event.type) {
-      case 'created':
-        return event.properties.after;
-      case 'updated':
-        return event.properties.after;
-      case 'deleted':
-        return event.properties.before;
-    }
   }
 }
