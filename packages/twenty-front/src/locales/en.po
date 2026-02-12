@@ -1330,10 +1330,16 @@ msgstr "All lines"
 msgid "All Members"
 msgstr "All Members"
 
+#. js-lingui-id: ypSiuQ
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "All Metadata"
+msgstr "All Metadata"
+
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "All Objects"
 msgstr "All Objects"
 
@@ -3202,6 +3208,11 @@ msgstr "Copy view link"
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
 msgstr "Core"
+
+#. js-lingui-id: u9zl2y
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "Core Objects"
+msgstr "Core Objects"
 
 #. js-lingui-id: cfa2VJ
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
@@ -5865,6 +5876,7 @@ msgstr "field"
 
 #. js-lingui-id: AXjA78
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
 msgid "Field"
 msgstr "Field"
@@ -6823,6 +6835,11 @@ msgstr "Inbox"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "index"
 msgstr "index"
+
+#. js-lingui-id: EIrE3l
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "Index"
+msgstr "Index"
 
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -7973,6 +7990,7 @@ msgstr "Messages"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -9075,7 +9093,7 @@ msgstr "object"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
-#: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -10976,6 +10994,11 @@ msgstr "Search records"
 msgid "Search records..."
 msgstr "Search records..."
 
+#. js-lingui-id: YIix5Y
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "Search..."
+msgstr "Search..."
+
 #. js-lingui-id: 8sgZS9
 #: src/modules/billing/components/SubscriptionPrice.tsx
 msgid "seat / month"
@@ -11203,6 +11226,11 @@ msgstr "Select column..."
 #: src/pages/settings/security/event-logs/components/EventLogDatePickerInput.tsx
 msgid "Select date & time"
 msgstr "Select date & time"
+
+#. js-lingui-id: hR/4+8
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "Select entity"
+msgstr "Select entity"
 
 #. js-lingui-id: PSqlgu
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -13463,6 +13491,7 @@ msgid "view"
 msgstr "view"
 
 #. js-lingui-id: jpctdh
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 msgid "View"
@@ -13507,6 +13536,11 @@ msgstr "View existing record"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view field"
 msgstr "view field"
+
+#. js-lingui-id: cZPDyy
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "View Field"
+msgstr "View Field"
 
 #. js-lingui-id: MvRxYh
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -13698,6 +13732,11 @@ msgstr "Web Search"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "webhook"
 msgstr "webhook"
+
+#. js-lingui-id: TRDppN
+#: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+msgid "Webhook"
+msgstr "Webhook"
 
 #. js-lingui-id: Tvdycs
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
