@@ -64,15 +64,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       IndexFieldMetadataEntity,
     );
 
-    const indexFieldMetadataToInsert =
-      flatIndexMetadata.flatIndexFieldMetadatas.map(
-        (flatIndexFieldMetadata) => ({
-          ...flatIndexFieldMetadata,
-          indexMetadataId: flatIndexMetadata.id,
-        }),
-      );
-
-    await indexFieldMetadataRepository.insert(indexFieldMetadataToInsert);
+    await indexFieldMetadataRepository.insert(flatIndexMetadata.flatIndexFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(
