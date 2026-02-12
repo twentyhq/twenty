@@ -1,4 +1,4 @@
-import { createLogicFunctionQueryFactory } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function-query-factory.util';
+import { createOneLogicFunctionQueryFactory } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
@@ -8,15 +8,15 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 import { type LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { type CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 
-export const createLogicFunction = async ({
+export const createOneLogicFunction = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<CreateLogicFunctionFromSourceInput>): CommonResponseBody<{
-  createLogicFunction: LogicFunctionDTO;
+  createOneLogicFunction: LogicFunctionDTO;
 }> => {
-  const graphqlOperation = createLogicFunctionQueryFactory({
+  const graphqlOperation = createOneLogicFunctionQueryFactory({
     input,
     gqlFields,
   });

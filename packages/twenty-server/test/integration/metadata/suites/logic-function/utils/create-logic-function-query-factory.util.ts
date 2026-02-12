@@ -15,7 +15,7 @@ const LOGIC_FUNCTION_GQL_FIELDS = `
   updatedAt
 `;
 
-export const createLogicFunctionQueryFactory = ({
+export const createOneLogicFunctionQueryFactory = ({
   input,
   gqlFields = LOGIC_FUNCTION_GQL_FIELDS,
 }: PerformMetadataQueryParams<CreateLogicFunctionFactoryInput>) => ({

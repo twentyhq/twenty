@@ -1,4 +1,4 @@
-import { createLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
+import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
@@ -48,21 +48,21 @@ describe('Logic Function Execution', () => {
 
   it('should execute the default logic function template', async () => {
     // Create the function with default template code
-    const { data: createData } = await createLogicFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createLogicFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
     await updateLogicFunctionSource({
       input: {
-        id: createData.createLogicFunction.id,
+        id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: DEFAULT_TEMPLATE_FUNCTION_CODE,
           toolInputSchema: {
@@ -98,21 +98,21 @@ describe('Logic Function Execution', () => {
 
   it('should execute a function with external packages (lodash.groupby)', async () => {
     // Create the function with the external packages code
-    const { data: createData } = await createLogicFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'External Packages Test',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createLogicFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
     await updateLogicFunctionSource({
       input: {
-        id: createData.createLogicFunction.id,
+        id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: EXTERNAL_PACKAGES_FUNCTION_CODE,
           toolInputSchema: {
@@ -166,14 +166,14 @@ describe('Logic Function Execution', () => {
 
   it('should create logic function without source', async () => {
     // Create the function with default template code
-    const { data: createData } = await createLogicFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createLogicFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
@@ -202,7 +202,7 @@ describe('Logic Function Execution', () => {
 
   it('should create logic function with source', async () => {
     // Create the function with default template code
-    const { data: createData } = await createLogicFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
         source: {
@@ -217,7 +217,7 @@ describe('Logic Function Execution', () => {
       expectToFail: false,
     });
 
-    const functionId = createData?.createLogicFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
@@ -246,21 +246,21 @@ describe('Logic Function Execution', () => {
 
   it('should handle errors thrown by logic functions', async () => {
     // Create the function with error-throwing code
-    const { data: createData } = await createLogicFunction({
+    const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Error Test Function',
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createLogicFunction?.id;
+    const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
     await updateLogicFunctionSource({
       input: {
-        id: createData.createLogicFunction.id,
+        id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: ERROR_FUNCTION_CODE,
           toolInputSchema: {
