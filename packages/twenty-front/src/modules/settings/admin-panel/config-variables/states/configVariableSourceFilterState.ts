@@ -1,5 +1,5 @@
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const configVariableSourceFilterState =
   createState<ConfigVariableSourceFilter>({

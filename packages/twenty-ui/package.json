@@ -39,7 +39,6 @@
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "react-tooltip": "^5.13.1",
-    "recoil": "^0.7.7",
     "twenty-shared": "workspace:*",
     "zod": "^4.1.11"
   },
