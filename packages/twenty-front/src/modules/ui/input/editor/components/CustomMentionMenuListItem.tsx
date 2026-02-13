@@ -31,7 +31,6 @@ export const CustomMentionMenuListItem = ({
     recordId,
   );
 
-  // Get the search record from the store (same pattern as SingleRecordPickerMenuItem)
   const searchRecord = useRecoilValue(searchRecordStoreFamilyState(recordId));
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });

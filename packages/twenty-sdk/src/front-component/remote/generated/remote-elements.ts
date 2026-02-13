@@ -6950,6 +6950,8 @@ export const TwentyUiMenuItemSelectTagElement = createRemoteElement<
 export type TwentyUiMenuItemSuggestionProperties = {
   withIconContainer?: boolean;
   text: string;
+  contextualText?: string;
+  contextualTextPosition?: string;
   selected?: boolean;
   className?: string;
 };
@@ -6964,6 +6966,8 @@ export const TwentyUiMenuItemSuggestionElement = createRemoteElement<
   properties: {
     withIconContainer: { type: Boolean },
     text: { type: String },
+    contextualText: { type: String },
+    contextualTextPosition: { type: String },
     selected: { type: Boolean },
     className: { type: String },
   },

@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
-import { useEffect, type MouseEvent as ReactMouseEvent } from 'react';
+import { type MouseEvent as ReactMouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { MENTION_MENU_LIST_ID } from '@/ui/input/constants/MentionMenuListId';
 import { CustomMentionMenuListItem } from '@/ui/input/editor/components/CustomMentionMenuListItem';
+import { CustomMentionMenuSelectedIndexSyncEffect } from '@/ui/input/editor/components/CustomMentionMenuSelectedIndexSyncEffect';
 import {
   type CustomMentionMenuProps,
   type MentionItem,
@@ -15,7 +16,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isDefined } from 'twenty-shared/utils';
 
 export type { MentionItem };
@@ -30,23 +30,12 @@ const StyledContainer = styled.div`
 export const CustomMentionMenu = ({
   items,
   selectedIndex,
+  onItemClick,
 }: CustomMentionMenuProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
   });
-
-  const { setSelectedItemId } = useSelectableList(MENTION_MENU_LIST_ID);
-
-  useEffect(() => {
-    if (!isDefined(selectedIndex) || !isDefined(items)) return;
-
-    const selectedItem = items[selectedIndex];
-
-    if (isDefined(selectedItem) && isDefined(selectedItem.recordId)) {
-      setSelectedItemId(selectedItem.recordId);
-    }
-  }, [items, selectedIndex, setSelectedItemId]);
 
   const handleContainerClick = (e: ReactMouseEvent) => {
     e.stopPropagation();
@@ -57,11 +46,18 @@ export const CustomMentionMenu = ({
   }
 
   const filteredItems = items.filter(
-    (item) => isDefined(item.recordId) && isDefined(item.objectNameSingular),
+    (item) =>
+      isDefined(item.recordId) &&
+      isDefined(item.objectNameSingular) &&
+      isDefined(item.objectMetadataId),
   );
 
   return (
     <StyledContainer ref={refs.setReference}>
+      <CustomMentionMenuSelectedIndexSyncEffect
+        items={filteredItems}
+        selectedIndex={selectedIndex}
+      />
       <>
         {createPortal(
           <motion.div
@@ -88,7 +84,7 @@ export const CustomMentionMenu = ({
                       <CustomMentionMenuListItem
                         key={item.recordId!}
                         recordId={item.recordId!}
-                        onClick={() => item.onItemClick()}
+                        onClick={() => onItemClick?.(item)}
                         objectNameSingular={item.objectNameSingular!}
                       />
                     ))}

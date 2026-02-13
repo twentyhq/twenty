@@ -21,20 +21,23 @@ export const useMentionMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const objectsToSearch = useMemo(
+  const searchableObjectMetadataItems = useMemo(
     () =>
-      activeObjectMetadataItems
-        .filter(
-          (item) =>
-            !item.isSystem &&
-            item.isSearchable &&
-            getObjectPermissionsFromMapByObjectMetadataId({
-              objectPermissionsByObjectMetadataId,
-              objectMetadataId: item.id,
-            }).canReadObjectRecords === true,
-        )
-        .map(({ nameSingular }) => nameSingular),
+      activeObjectMetadataItems.filter(
+        (item) =>
+          !item.isSystem &&
+          item.isSearchable &&
+          getObjectPermissionsFromMapByObjectMetadataId({
+            objectPermissionsByObjectMetadataId,
+            objectMetadataId: item.id,
+          }).canReadObjectRecords === true,
+      ),
     [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
+  );
+
+  const objectsToSearch = useMemo(
+    () => searchableObjectMetadataItems.map(({ nameSingular }) => nameSingular),
+    [searchableObjectMetadataItems],
   );
 
   const getMentionItems = useRecoilCallback(
@@ -61,25 +64,32 @@ export const useMentionMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
           });
         });
 
-        return searchRecords.map((searchRecord) => ({
-          title: searchRecord.label,
-          recordId: searchRecord.recordId,
-          objectNameSingular: searchRecord.objectNameSingular,
-          onItemClick: () => {
-            editor.insertInlineContent([
-              {
-                type: 'mention',
-                props: {
-                  recordId: searchRecord.recordId,
-                  objectNameSingular: searchRecord.objectNameSingular,
+        return searchRecords.map((searchRecord) => {
+          const objectMetadataItem = searchableObjectMetadataItems.find(
+            (item) => item.nameSingular === searchRecord.objectNameSingular,
+          );
+
+          return {
+            title: searchRecord.label,
+            recordId: searchRecord.recordId,
+            objectNameSingular: searchRecord.objectNameSingular,
+            objectMetadataId: objectMetadataItem?.id,
+            onItemClick: () => {
+              editor.insertInlineContent([
+                {
+                  type: 'mention',
+                  props: {
+                    recordId: searchRecord.recordId,
+                    objectMetadataId: objectMetadataItem?.id ?? '',
+                  },
                 },
-              },
-              ' ',
-            ]);
-          },
-        }));
+                ' ',
+              ]);
+            },
+          };
+        });
       },
-    [apolloCoreClient, editor, objectsToSearch],
+    [apolloCoreClient, editor, objectsToSearch, searchableObjectMetadataItems],
   );
 
   return getMentionItems;

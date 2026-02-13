@@ -14,6 +14,7 @@ export type CustomSlashMenuProps = SuggestionMenuProps<SuggestionItem>;
 export type MentionItem = DefaultReactSuggestionItem & {
   recordId?: string;
   objectNameSingular?: string;
+  objectMetadataId?: string;
 };
 
 export type CustomMentionMenuProps = SuggestionMenuProps<MentionItem>;

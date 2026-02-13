@@ -1,7 +1,11 @@
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { createReactInlineContentSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
+import { Chip, ChipVariant } from 'twenty-ui/components';
 
 const StyledRecordChip = styled(RecordChip)`
   height: auto;
@@ -11,19 +15,47 @@ const StyledRecordChip = styled(RecordChip)`
 
 const MentionInlineContentRenderer = ({
   recordId,
-  objectNameSingular,
+  objectMetadataId,
 }: {
   recordId: string;
-  objectNameSingular: string;
+  objectMetadataId: string;
 }) => {
-  const { record } = useFindOneRecord({
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === objectMetadataId,
+  );
+
+  const objectNameSingular = objectMetadataItem?.nameSingular ?? '';
+
+  const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId: recordId,
     skip: !objectNameSingular || !recordId,
   });
 
-  if (!record || !objectNameSingular) {
-    return <span>@mention</span>;
+  if (loading) {
+    return null;
+  }
+
+  if (!record) {
+    return (
+      <Chip
+        label={t`Deleted record`}
+        variant={ChipVariant.Transparent}
+        disabled
+      />
+    );
+  }
+
+  if (!objectNameSingular) {
+    return (
+      <Chip
+        label={t`Unknown object`}
+        variant={ChipVariant.Transparent}
+        disabled
+      />
+    );
   }
 
   return (
@@ -42,7 +74,7 @@ export const MentionInlineContent = createReactInlineContentSpec(
       recordId: {
         default: '' as const,
       },
-      objectNameSingular: {
+      objectMetadataId: {
         default: '' as const,
       },
     },
@@ -50,12 +82,12 @@ export const MentionInlineContent = createReactInlineContentSpec(
   },
   {
     render: (props) => {
-      const { recordId, objectNameSingular } = props.inlineContent.props;
+      const { recordId, objectMetadataId } = props.inlineContent.props;
 
       return (
         <MentionInlineContentRenderer
           recordId={recordId}
-          objectNameSingular={objectNameSingular}
+          objectMetadataId={objectMetadataId}
         />
       );
     },
