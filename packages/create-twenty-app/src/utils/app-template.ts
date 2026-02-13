@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
+import { getTwentySdkPackageJsonVersion } from '@/utils/get-twenty-sdk-package-json-version';
 
 const SRC_FOLDER = 'src';
 
@@ -277,7 +278,7 @@ const createPackageJson = async ({
       'lint:fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.5.2',
+      'twenty-sdk': `${getTwentySdkPackageJsonVersion()}`,
     },
     devDependencies: {
       typescript: '^5.9.3',

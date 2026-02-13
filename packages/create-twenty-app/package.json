@@ -46,6 +46,7 @@
     "@types/lodash.startcase": "^4",
     "@types/node": "^20.0.0",
     "twenty-shared": "workspace:*",
+    "twenty-sdk": "workspace:*",
     "typescript": "^5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",

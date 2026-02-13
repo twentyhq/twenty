@@ -10,6 +10,7 @@ const main = () => {
   }
 
   const content = readFileSync(distPath, 'utf8');
+
   const filePath = resolve('package.json');
 
   const pkg = JSON.parse(readFileSync(filePath, 'utf8'));
