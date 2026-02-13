@@ -132,6 +132,8 @@ import {
   TwentyUiMenuItemSelectTagElement,
   TwentyUiMenuItemSuggestionElement,
   TwentyUiMenuItemToggleElement,
+  TwentyUiMenuItemIconElement,
+  TwentyUiMenuItemIconWithGripSwapElement,
   TwentyUiMenuItemLeftContentElement,
   TwentyUiNavigationBarElement,
   TwentyUiNavigationBarItemElement,
@@ -1634,6 +1636,14 @@ export const TwentyUiMenuItemSuggestion = createRemoteComponent(
 export const TwentyUiMenuItemToggle = createRemoteComponent(
   'twenty-ui-menu-item-toggle',
   TwentyUiMenuItemToggleElement,
+);
+export const TwentyUiMenuItemIcon = createRemoteComponent(
+  'twenty-ui-menu-item-icon',
+  TwentyUiMenuItemIconElement,
+);
+export const TwentyUiMenuItemIconWithGripSwap = createRemoteComponent(
+  'twenty-ui-menu-item-icon-with-grip-swap',
+  TwentyUiMenuItemIconWithGripSwapElement,
 );
 export const TwentyUiMenuItemLeftContent = createRemoteComponent(
   'twenty-ui-menu-item-left-content',

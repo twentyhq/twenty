@@ -1,16 +1,10 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { WebhookEntitySelect } from '@/settings/developers/components/WebhookEntitySelect';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconBox,
-  IconNorthStar,
-  IconPlus,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/display';
+import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/display';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 
 const OBJECT_DROPDOWN_WIDTH = 240;
@@ -51,19 +45,6 @@ export const SettingsDatabaseEventsForm = ({
 }) => {
   const isMobile = useIsMobile();
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const { getIcon } = useIcons();
-
-  const objectOptions: SelectOption<string>[] = [
-    { label: t`All Objects`, value: '*', Icon: IconNorthStar },
-    ...objectMetadataItems.map((item) => ({
-      label: item.labelPlural,
-      value: item.nameSingular,
-      Icon: getIcon(item.icon),
-    })),
-  ];
-
   const getActionOptions = (
     updatedFields?: string[],
   ): SelectOption<string>[] => {
@@ -86,15 +67,12 @@ export const SettingsDatabaseEventsForm = ({
     <>
       {events.map((operation, index) => (
         <StyledFilterRow key={index} isMobile={isMobile}>
-          <Select
+          <WebhookEntitySelect
             dropdownId={`object-webhook-type-select-${index}`}
             value={operation.object}
-            options={objectOptions}
             onChange={(newValue) =>
               updateOperation?.(index, 'object', newValue)
             }
-            fullWidth
-            emptyOption={{ label: t`Object`, value: null }}
             disabled={disabled}
           />
           <Select

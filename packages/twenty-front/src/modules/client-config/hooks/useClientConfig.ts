@@ -33,6 +33,7 @@ import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAtta
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -43,10 +44,10 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
-  const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
+  const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
-  const setAuthProviders = useSetRecoilState(authProvidersState);
-  const setAiModels = useSetRecoilState(aiModelsState);
+  const setAuthProviders = useSetRecoilStateV2(authProvidersState);
+  const setAiModels = useSetRecoilStateV2(aiModelsState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
@@ -68,7 +69,7 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCaptcha = useSetRecoilState(captchaState);
 
-  const setChromeExtensionId = useSetRecoilState(chromeExtensionIdState);
+  const setChromeExtensionId = useSetRecoilStateV2(chromeExtensionIdState);
 
   const setApiConfig = useSetRecoilState(apiConfigState);
 
@@ -127,7 +128,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     isClickHouseConfiguredState,
   );
 
-  const setAppVersion = useSetRecoilState(appVersionState);
+  const setAppVersion = useSetRecoilStateV2(appVersionState);
 
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({

@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreatePageLayoutTabAction,
@@ -52,17 +51,12 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreatePageLayoutTabAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const pageLayoutTabRepository =
-      queryRunner.manager.getRepository<PageLayoutTabEntity>(
-        PageLayoutTabEntity,
-      );
-
-    await pageLayoutTabRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

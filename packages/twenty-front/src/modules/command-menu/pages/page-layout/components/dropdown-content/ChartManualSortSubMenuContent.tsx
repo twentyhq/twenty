@@ -101,7 +101,7 @@ export const ChartManualSortSubMenuContent = ({
                   isDragDisabled={sortedOptions.length === 1}
                   itemComponent={
                     <MenuItemDraggable
-                      showGrip
+                      gripMode="always"
                       isDragDisabled={sortedOptions.length === 1}
                       text={
                         <Tag

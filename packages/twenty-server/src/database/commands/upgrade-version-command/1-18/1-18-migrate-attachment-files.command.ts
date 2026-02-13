@@ -176,10 +176,15 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
           );
           throw error;
         }
+
+        this.logger.log(
+          `Created file field metadata for attachments in workspace ${workspaceId}`,
+        );
+      } else {
+        this.logger.log(
+          `[DRY RUN] Would create file field metadata for attachments in workspace ${workspaceId}`,
+        );
       }
-      this.logger.log(
-        `Created file field metadata for attachments in workspace ${workspaceId}`,
-      );
     }
 
     if (!isDefined(attachmentFileflatFieldMetadata)) {
@@ -282,13 +287,6 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
         );
         throw error;
       }
-    }
-
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
-        workspaceId,
-      );
     }
 
     this.logger.log(

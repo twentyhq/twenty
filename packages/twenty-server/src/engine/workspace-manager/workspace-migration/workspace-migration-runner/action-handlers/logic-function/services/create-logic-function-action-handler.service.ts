@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   FlatCreateLogicFunctionAction,
   UniversalCreateLogicFunctionAction,
@@ -38,17 +37,12 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity: logicFunction } = flatAction;
 
-    const logicFunctionRepository =
-      queryRunner.manager.getRepository<LogicFunctionEntity>(
-        LogicFunctionEntity,
-      );
-
-    await logicFunctionRepository.insert({
-      ...logicFunction,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [logicFunction],
     });
   }
 
