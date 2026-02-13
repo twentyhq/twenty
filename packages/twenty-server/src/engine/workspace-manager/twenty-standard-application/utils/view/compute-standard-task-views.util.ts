@@ -48,5 +48,17 @@ export const computeStandardTaskViews = (
         mainGroupByFieldName: 'status',
       },
     }),
+    taskRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        name: 'Task Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };

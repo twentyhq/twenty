@@ -3,7 +3,7 @@ import {
   type FieldPermission,
   type ObjectPermission,
   type Role,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 export const MOCK_ROLE_ID_GRANTS_ALL = 'role-id-1';

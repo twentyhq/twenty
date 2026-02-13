@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { mkdir, readdir, readFile, stat } from 'fs/promises';
-import { join } from 'path';
+import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
@@ -114,6 +114,7 @@ export class FileStorageService {
         workspaceId,
         applicationId: application.id,
         id: fileId,
+        mimeType,
         size:
           typeof sourceFile === 'string'
             ? Buffer.byteLength(sourceFile)
@@ -194,45 +195,6 @@ export class FileStorageService {
     }
 
     return sources;
-  }
-
-  async readFolder(params: ResourceIdentifier): Promise<Sources> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
-    const tempDir = `/tmp/twenty-read-folder-${Date.now()}`;
-
-    await mkdir(tempDir, { recursive: true });
-
-    await driver.downloadFolder({
-      onStoragePath,
-      localPath: tempDir,
-    });
-
-    return this.readLocalFolderToSources(tempDir);
-  }
-
-  uploadFolder(
-    params: ResourceIdentifier & { localPath: string },
-  ): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
-
-    return driver.uploadFolder({
-      localPath: params.localPath,
-      onStoragePath,
-    });
-  }
-
-  downloadFolder(
-    params: ResourceIdentifier & { localPath: string },
-  ): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
-
-    return driver.downloadFolder({
-      onStoragePath,
-      localPath: params.localPath,
-    });
   }
 
   downloadFile(
@@ -338,7 +300,7 @@ export class FileStorageService {
     return driver.copy(params);
   }
 
-  copy({
+  async copy({
     from,
     to,
   }: {
@@ -346,69 +308,22 @@ export class FileStorageService {
     to: ResourceIdentifier;
   }): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const fromPath = this.buildOnStoragePath(from);
+    const toPath = this.buildOnStoragePath(to);
+
+    const isFile = await driver.checkFileExists({ filePath: fromPath });
+
+    if (isFile) {
+      return driver.copy({
+        from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
+        to: { folderPath: dirname(toPath), filename: basename(toPath) },
+      });
+    }
 
     return driver.copy({
-      from: { folderPath: this.buildOnStoragePath(from) },
-      to: { folderPath: this.buildOnStoragePath(to) },
-    });
-  }
-
-  async moveFile({
-    from,
-    to,
-    workspaceId,
-  }: {
-    from: {
-      applicationId: string;
-      fileFolder: FileFolder;
-      destinationPath: string;
-    };
-    to: {
-      applicationId: string;
-      fileFolder: FileFolder;
-      destinationPath: string;
-    };
-    workspaceId: string;
-  }): Promise<void> {
-    const file = await this.fileRepository.findOneOrFail({
-      where: {
-        workspaceId,
-        applicationId: from.applicationId,
-        path: `${from.fileFolder}/${from.destinationPath}`,
-      },
-    });
-
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    await driver.move({
-      from: {
-        folderPath: `${file.workspaceId}/${from.applicationId}/${from.fileFolder}`,
-        filename: from.destinationPath,
-      },
-      to: {
-        folderPath: `${file.workspaceId}/${to.applicationId}/${to.fileFolder}`,
-        filename: to.destinationPath,
-      },
-    });
-
-    await this.fileRepository.update(file.id, {
-      applicationId: to.applicationId,
-      path: `${to.fileFolder}/${to.destinationPath}`,
-    });
-  }
-
-  move({
-    from,
-    to,
-  }: {
-    from: ResourceIdentifier;
-    to: ResourceIdentifier;
-  }): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.move({
-      from: { folderPath: this.buildOnStoragePath(from) },
-      to: { folderPath: this.buildOnStoragePath(to) },
+      from: { folderPath: fromPath },
+      to: { folderPath: toPath },
     });
   }
 
@@ -423,12 +338,5 @@ export class FileStorageService {
     const onStoragePath = this.buildOnStoragePath(params);
 
     return driver.checkFileExists({ filePath: onStoragePath });
-  }
-
-  checkFolderExists(params: ResourceIdentifier): Promise<boolean> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
-
-    return driver.checkFolderExists({ folderPath: onStoragePath });
   }
 }

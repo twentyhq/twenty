@@ -1,12 +1,11 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
+import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
-import { type UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
 type HasObjectInUnion<T> = T extends unknown
   ? T extends object
@@ -18,16 +17,9 @@ type MetadataEntityPropertyConfiguration<
   TMetadataName extends AllMetadataName,
 > = {
   [K in keyof Omit<
-    MetadataFlatEntity<TMetadataName>,
-    | Extract<
-        keyof MetadataFlatEntity<TMetadataName>,
-        keyof UniversalFlatEntityExtraProperties<
-          MetadataEntity<TMetadataName>,
-          TMetadataName
-        >
-      >
-    | '__universal'
-  >]?: {
+    ScalarFlatEntity<MetadataEntity<TMetadataName>>,
+    'id' | 'workspaceId' | 'applicationId' | 'universalIdentifier'
+  >]: {
     universalProperty: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
       string
       ? `universal${Capitalize<K>}`
@@ -37,316 +29,1244 @@ type MetadataEntityPropertyConfiguration<
     toStringify: K extends ExtractJsonbProperties<MetadataEntity<TMetadataName>>
       ? true
       : K extends keyof MetadataEntity<TMetadataName>
-        ? HasObjectInUnion<MetadataEntity<TMetadataName>[K]>
+        ? NonNullable<MetadataEntity<TMetadataName>[K]> extends Date
+          ? false
+          : HasObjectInUnion<MetadataEntity<TMetadataName>[K]>
         : boolean;
+    toCompare: boolean;
   };
 };
 
 export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   fieldMetadata: {
-    defaultValue: { toStringify: true, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    isActive: { toStringify: false, universalProperty: undefined },
-    isLabelSyncedWithName: { toStringify: false, universalProperty: undefined },
-    isUnique: { toStringify: false, universalProperty: undefined },
-    label: { toStringify: false, universalProperty: undefined },
-    name: { toStringify: false, universalProperty: undefined },
-    options: { toStringify: true, universalProperty: undefined },
-    standardOverrides: { toStringify: true, universalProperty: undefined },
-    settings: { toStringify: true, universalProperty: 'universalSettings' },
+    defaultValue: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isLabelSyncedWithName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isUnique: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    options: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    standardOverrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    settings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalSettings',
+    },
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    type: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isCustom: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isSystem: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isUIReadOnly: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isNullable: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    relationTargetFieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
+    },
+    relationTargetObjectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'relationTargetObjectMetadataUniversalIdentifier',
+    },
+    morphId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   objectMetadata: {
-    description: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    isActive: { toStringify: false, universalProperty: undefined },
-    isLabelSyncedWithName: { toStringify: false, universalProperty: undefined },
-    labelPlural: { toStringify: false, universalProperty: undefined },
-    labelSingular: { toStringify: false, universalProperty: undefined },
-    namePlural: { toStringify: false, universalProperty: undefined },
-    nameSingular: { toStringify: false, universalProperty: undefined },
+    dataSourceId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isLabelSyncedWithName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    labelPlural: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    labelSingular: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    namePlural: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    nameSingular: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     labelIdentifierFieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
-    standardOverrides: { toStringify: true, universalProperty: undefined },
-  },
-  view: {
-    key: { toStringify: false, universalProperty: undefined },
-    deletedAt: { toStringify: false, universalProperty: undefined },
-    createdByUserWorkspaceId: {
+    standardOverrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    isCustom: {
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
-    name: { toStringify: false, universalProperty: undefined },
-    type: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    position: { toStringify: false, universalProperty: undefined },
-    isCompact: { toStringify: false, universalProperty: undefined },
-    openRecordIn: { toStringify: false, universalProperty: undefined },
+    isRemote: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isSystem: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isUIReadOnly: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isAuditLogged: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isSearchable: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    duplicateCriteria: {
+      toCompare: false,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    shortcut: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    imageIdentifierFieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    targetTableName: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  view: {
+    key: { toCompare: true, toStringify: false, universalProperty: undefined },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdByUserWorkspaceId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    type: { toCompare: true, toStringify: false, universalProperty: undefined },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isCompact: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    openRecordIn: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     kanbanAggregateOperation: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     kanbanAggregateOperationFieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty:
         'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
     },
-    anyFieldFilterValue: { toStringify: false, universalProperty: undefined },
-    calendarLayout: { toStringify: false, universalProperty: undefined },
+    anyFieldFilterValue: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    calendarLayout: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     calendarFieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'calendarFieldMetadataUniversalIdentifier',
     },
-    visibility: { toStringify: false, universalProperty: undefined },
+    visibility: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     mainGroupByFieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'mainGroupByFieldMetadataUniversalIdentifier',
     },
-    shouldHideEmptyGroups: { toStringify: false, universalProperty: undefined },
+    shouldHideEmptyGroups: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    isCustom: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  viewFieldGroup: {
+    name: { toStringify: false, universalProperty: undefined, toCompare: true },
+    position: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+    },
+    isVisible: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+    },
+    deletedAt: {
+      toStringify: false,
+      universalProperty: undefined,
+      toCompare: true,
+    },
+    createdAt: {
+      toCompare: false,
+      universalProperty: undefined,
+      toStringify: false,
+    },
+    updatedAt: {
+      toCompare: false,
+      universalProperty: undefined,
+      toStringify: false,
+    },
+    viewId: {
+      toCompare: false,
+      universalProperty: 'viewUniversalIdentifier',
+      toStringify: false,
+    },
   },
   viewField: {
-    isVisible: { toStringify: false, universalProperty: undefined },
-    size: { toStringify: false, universalProperty: undefined },
-    position: { toStringify: false, universalProperty: undefined },
-    aggregateOperation: { toStringify: false, universalProperty: undefined },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    isVisible: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    size: { toCompare: true, toStringify: false, universalProperty: undefined },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    aggregateOperation: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewFieldGroupId: {
+      toStringify: false,
+      universalProperty: 'viewFieldGroupUniversalIdentifier',
+      toCompare: true,
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    fieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
+    viewId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
   },
   viewGroup: {
-    isVisible: { toStringify: false, universalProperty: undefined },
-    fieldValue: { toStringify: false, universalProperty: undefined },
-    position: { toStringify: false, universalProperty: undefined },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    isVisible: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    fieldValue: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
   },
   index: {
-    indexType: { toStringify: false, universalProperty: undefined },
-    indexWhereClause: { toStringify: false, universalProperty: undefined },
-    flatIndexFieldMetadatas: {
+    indexType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    indexWhereClause: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isUnique: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    isCustom: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  logicFunction: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    timeoutSeconds: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    checksum: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    sourceHandlerPath: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    handlerName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    toolInputSchema: {
+      toCompare: true,
       toStringify: true,
       universalProperty: undefined,
     },
-    isUnique: { toStringify: false, universalProperty: undefined },
-    name: { toStringify: false, universalProperty: undefined },
-  },
-  logicFunction: {
-    name: { toStringify: false, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    timeoutSeconds: { toStringify: false, universalProperty: undefined },
-    checksum: { toStringify: false, universalProperty: undefined },
-    sourceHandlerPath: { toStringify: false, universalProperty: undefined },
-    handlerName: { toStringify: false, universalProperty: undefined },
-    toolInputSchema: { toStringify: true, universalProperty: undefined },
-    isTool: { toStringify: false, universalProperty: undefined },
-    deletedAt: { toStringify: false, universalProperty: undefined },
-    cronTriggerSettings: { toStringify: true, universalProperty: undefined },
+    isTool: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isBuildUpToDate: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    cronTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     databaseEventTriggerSettings: {
+      toCompare: true,
       toStringify: true,
       universalProperty: undefined,
     },
     httpRouteTriggerSettings: {
+      toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    builtHandlerPath: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    runtime: {
+      toCompare: false,
+      toStringify: false,
       universalProperty: undefined,
     },
   },
   viewFilter: {
     viewId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
     },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     fieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'fieldMetadataUniversalIdentifier',
     },
-    operand: { toStringify: false, universalProperty: undefined },
-    value: { toStringify: true, universalProperty: undefined },
+    operand: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    value: { toCompare: true, toStringify: true, universalProperty: undefined },
     viewFilterGroupId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'viewFilterGroupUniversalIdentifier',
     },
     positionInViewFilterGroup: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    subFieldName: { toStringify: false, universalProperty: undefined },
+    subFieldName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   role: {
-    label: { toStringify: false, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    canUpdateAllSettings: { toStringify: false, universalProperty: undefined },
-    canAccessAllTools: { toStringify: false, universalProperty: undefined },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    canUpdateAllSettings: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canAccessAllTools: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     canReadAllObjectRecords: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     canUpdateAllObjectRecords: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     canSoftDeleteAllObjectRecords: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     canDestroyAllObjectRecords: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    canBeAssignedToUsers: { toStringify: false, universalProperty: undefined },
-    canBeAssignedToAgents: { toStringify: false, universalProperty: undefined },
+    canBeAssignedToUsers: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canBeAssignedToAgents: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     canBeAssignedToApiKeys: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isEditable: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
   },
   roleTarget: {
     roleId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
     },
-    userWorkspaceId: { toStringify: false, universalProperty: undefined },
-    apiKeyId: { toStringify: false, universalProperty: undefined },
-    agentId: { toStringify: false, universalProperty: undefined },
+    userWorkspaceId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    apiKeyId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    agentId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   agent: {
-    name: { toStringify: false, universalProperty: undefined },
-    label: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    prompt: { toStringify: false, universalProperty: undefined },
-    modelId: { toStringify: false, universalProperty: undefined },
-    responseFormat: { toStringify: true, universalProperty: undefined },
-    modelConfiguration: { toStringify: true, universalProperty: undefined },
-    evaluationInputs: { toStringify: true, universalProperty: undefined },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    prompt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    modelId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    responseFormat: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    modelConfiguration: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    evaluationInputs: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    isCustom: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   pageLayout: {
-    name: { toStringify: false, universalProperty: undefined },
-    type: { toStringify: false, universalProperty: undefined },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    type: { toCompare: true, toStringify: false, universalProperty: undefined },
     objectMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    defaultTabToFocusOnMobileAndSidePanelId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty:
+        'defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier',
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   pageLayoutWidget: {
-    title: { toStringify: false, universalProperty: undefined },
-    type: { toStringify: false, universalProperty: undefined },
+    title: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    type: { toCompare: true, toStringify: false, universalProperty: undefined },
     objectMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
-    gridPosition: { toStringify: true, universalProperty: undefined },
-    position: { toStringify: true, universalProperty: undefined },
+    gridPosition: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     configuration: {
+      toCompare: true,
       toStringify: true,
       universalProperty: 'universalConfiguration',
     },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    pageLayoutTabId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'pageLayoutTabUniversalIdentifier',
+    },
+    conditionalDisplay: {
+      toCompare: false,
+      toStringify: true,
+      universalProperty: undefined,
+    },
   },
   pageLayoutTab: {
-    title: { toStringify: false, universalProperty: undefined },
-    position: { toStringify: false, universalProperty: undefined },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    title: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    pageLayoutId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'pageLayoutUniversalIdentifier',
+    },
+    layoutMode: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   skill: {
-    name: { toStringify: false, universalProperty: undefined },
-    label: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    content: { toStringify: false, universalProperty: undefined },
-    isActive: { toStringify: false, universalProperty: undefined },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    content: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isCustom: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   commandMenuItem: {
-    label: { toStringify: false, universalProperty: undefined },
-    icon: { toStringify: false, universalProperty: undefined },
-    isPinned: { toStringify: false, universalProperty: undefined },
-    availabilityType: { toStringify: false, universalProperty: undefined },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    isPinned: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    availabilityType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     availabilityObjectMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
     },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    frontComponentId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'frontComponentUniversalIdentifier',
+    },
+    workflowVersionId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   navigationMenuItem: {
-    position: { toStringify: false, universalProperty: undefined },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     folderId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'folderUniversalIdentifier',
     },
-    name: { toStringify: false, universalProperty: undefined },
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    link: { toCompare: true, toStringify: false, universalProperty: undefined },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
+    userWorkspaceId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    targetRecordId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    targetObjectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'targetObjectMetadataUniversalIdentifier',
+    },
   },
   rowLevelPermissionPredicate: {
     fieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'fieldMetadataUniversalIdentifier',
     },
-    operand: { toStringify: false, universalProperty: undefined },
-    value: { toStringify: true, universalProperty: undefined },
+    operand: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    value: { toCompare: true, toStringify: true, universalProperty: undefined },
     rowLevelPermissionPredicateGroupId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
     positionInRowLevelPermissionPredicateGroup: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    subFieldName: { toStringify: false, universalProperty: undefined },
+    subFieldName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     workspaceMemberFieldMetadataId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'workspaceMemberFieldMetadataUniversalIdentifier',
     },
     workspaceMemberSubFieldName: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    roleId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'roleUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   rowLevelPermissionPredicateGroup: {
-    logicalOperator: { toStringify: false, universalProperty: undefined },
+    logicalOperator: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     positionInRowLevelPermissionPredicateGroup: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
     parentRowLevelPermissionPredicateGroupId: {
+      toCompare: true,
       toStringify: false,
       universalProperty:
         'parentRowLevelPermissionPredicateGroupUniversalIdentifier',
     },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    roleId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'roleUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   viewFilterGroup: {
     viewId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
     },
-    deletedAt: { toStringify: false, universalProperty: undefined },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     parentViewFilterGroupId: {
+      toCompare: true,
       toStringify: false,
       universalProperty: 'parentViewFilterGroupUniversalIdentifier',
     },
-    logicalOperator: { toStringify: false, universalProperty: undefined },
+    logicalOperator: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     positionInViewFilterGroup: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
   },
   frontComponent: {
-    name: { toStringify: false, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    builtComponentChecksum: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    description: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    sourceComponentPath: { toStringify: false, universalProperty: undefined },
-    builtComponentPath: { toStringify: false, universalProperty: undefined },
-    componentName: { toStringify: false, universalProperty: undefined },
+    builtComponentChecksum: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    sourceComponentPath: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    builtComponentPath: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    componentName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   webhook: {
-    targetUrl: { toStringify: false, universalProperty: undefined },
-    operations: { toStringify: true, universalProperty: undefined },
-    description: { toStringify: false, universalProperty: undefined },
-    secret: { toStringify: false, universalProperty: undefined },
+    targetUrl: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    operations: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    secret: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
 } as const satisfies {
   [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
@@ -354,3 +1274,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
 
 export type MetadataEntityPropertyName<T extends AllMetadataName> =
   keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T];
+
+type FilterComparableKeys<TConfig> = {
+  [P in keyof TConfig]: TConfig[P] extends { toCompare: true } ? P : never;
+}[keyof TConfig];
+
+export type MetadataEntityComparablePropertyName<T extends AllMetadataName> =
+  FilterComparableKeys<
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
+  >;

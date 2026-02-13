@@ -18,7 +18,7 @@ import {
   type PageLayoutWidget,
   type RichTextV2Body,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useCreatePageLayoutStandaloneRichTextWidget = (
   pageLayoutIdFromProps?: string,

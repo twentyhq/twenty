@@ -5,7 +5,15 @@ import { lowerCase, upperFirst } from 'lodash';
 import { type Manifest } from 'twenty-shared/application';
 import { PackageJson } from 'type-fest';
 
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
+import {
+  MarketplaceAppDTO,
+  MarketplaceAppDefaultRoleDTO,
+  MarketplaceAppFieldDTO,
+  MarketplaceAppFrontComponentDTO,
+  MarketplaceAppLogicFunctionDTO,
+  MarketplaceAppObjectDTO,
+} from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
+import { MOCKED_MARKETPLACE_APP } from 'src/engine/core-modules/application/services/mocked-marketplace-app.constant';
 
 type GitHubContent = {
   name: string;
@@ -52,7 +60,7 @@ export class MarketplaceService {
   private async fetchAllMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
     const apps: MarketplaceAppDTO[] = [];
 
-    apps.push(this.loadMockApp());
+    apps.push(MOCKED_MARKETPLACE_APP); // To remove once we have apps on marketplace
 
     try {
       const appDirs = await this.getAppDirectoriesFromGitHub();
@@ -82,6 +90,10 @@ export class MarketplaceService {
               providers: [],
               websiteUrl: '',
               termsUrl: '',
+              objects: [],
+              fields: [],
+              logicFunctions: [],
+              frontComponents: [],
             });
           }
         } catch (error) {
@@ -99,44 +111,12 @@ export class MarketplaceService {
     return apps;
   }
 
-  private loadMockApp(): MarketplaceAppDTO {
-    // SVG logo as data URL
-    const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#1a2744"><ellipse cx="38" cy="20" rx="28" ry="10"/><rect x="10" y="20" width="56" height="50"/><ellipse cx="38" cy="70" rx="28" ry="10"/><ellipse cx="38" cy="35" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="38" cy="52" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><circle cx="72" cy="62" r="22" fill="#1a2744"/><circle cx="72" cy="62" r="18" fill="#fff"/><path d="M72 50 L72 74 M62 58 L72 48 L82 58" stroke="#1a2744" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
-    const logoDataUrl = `data:image/svg+xml,${encodeURIComponent(logoSvg)}`;
-
-    return {
-      id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-      name: 'Data Enrichment',
-      description: 'Enrich your data easily. Choose your provider.',
-      icon: 'IconSparkles',
-      version: '1.0.0',
-      author: 'Cosmos Labs',
-      category: 'Data',
-      logo: logoDataUrl,
-      screenshots: [
-        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+1',
-        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+2',
-        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+3',
-      ],
-      aboutDescription:
-        'Enhance your workspace with automated data intelligence. This app monitors your new records and automatically populates missing details such as job titles, company size, social profiles, and industry insights.',
-      providers: ['Clearbit', 'Apollo', 'Hunter.io'],
-      websiteUrl: 'https://google.com',
-      termsUrl: 'https://google.com',
-    };
-  }
-
   private async getAppDirectoriesFromGitHub(): Promise<string[]> {
     const directories: string[] = [];
 
     const rootContents = await this.fetchGitHubDirectory('');
 
     for (const entry of rootContents) {
-      // if (entry.type !== 'dir') continue;
-      // if (entry.name.startsWith('.')) continue;
-      // if (entry.name === 'node_modules') continue;
-      // if (entry.name === 'internal') continue;
-
       if (entry.name === 'community') {
         const communityContents = await this.fetchGitHubDirectory('community');
 
@@ -217,6 +197,61 @@ export class MarketplaceService {
       return null;
     }
 
+    const objects: MarketplaceAppObjectDTO[] = (manifest.objects ?? []).map(
+      (manifestObject) => ({
+        universalIdentifier: manifestObject.universalIdentifier,
+        nameSingular: manifestObject.nameSingular,
+        namePlural: manifestObject.namePlural,
+        labelSingular: manifestObject.labelSingular,
+        labelPlural: manifestObject.labelPlural,
+        description: manifestObject.description,
+        icon: manifestObject.icon,
+        fields: (manifestObject.fields ?? []).map((field) => ({
+          name: field.name ?? '',
+          type: field.type,
+          label: field.label ?? '',
+          description: field.description,
+          icon: field.icon,
+          universalIdentifier: field.universalIdentifier,
+          objectUniversalIdentifier: manifestObject.universalIdentifier,
+        })),
+      }),
+    );
+
+    const fields: MarketplaceAppFieldDTO[] = (manifest.fields ?? []).map(
+      (manifestField) => {
+        return {
+          name: manifestField.name,
+          type: manifestField.type,
+          label: manifestField.label,
+          description: manifestField.description,
+          icon: manifestField.icon,
+          objectUniversalIdentifier: manifestField.objectUniversalIdentifier,
+          universalIdentifier: manifestField.universalIdentifier,
+        };
+      },
+    );
+
+    const logicFunctions: MarketplaceAppLogicFunctionDTO[] = (
+      manifest.logicFunctions ?? []
+    ).map((manifestLogicFunction) => ({
+      name: manifestLogicFunction.name ?? '',
+      description: manifestLogicFunction.description,
+      timeoutSeconds: manifestLogicFunction.timeoutSeconds,
+    }));
+
+    const frontComponents: MarketplaceAppFrontComponentDTO[] = (
+      manifest.frontComponents ?? []
+    ).map((manifestFrontComponent) => ({
+      name: manifestFrontComponent.name ?? '',
+      description: manifestFrontComponent.description,
+    }));
+
+    const defaultRole = this.resolveDefaultRole(
+      manifest,
+      application.defaultRoleUniversalIdentifier,
+    );
+
     return {
       id: application.universalIdentifier,
       name: application.displayName,
@@ -231,6 +266,59 @@ export class MarketplaceService {
       providers: marketplaceData.providers ?? [],
       websiteUrl: marketplaceData.websiteUrl,
       termsUrl: marketplaceData.termsUrl,
+      objects,
+      fields,
+      logicFunctions,
+      frontComponents,
+      defaultRole,
+    };
+  }
+
+  private resolveDefaultRole(
+    manifest: Manifest,
+    defaultRoleUniversalIdentifier: string,
+  ): MarketplaceAppDefaultRoleDTO | undefined {
+    const roleManifest = manifest.roles?.find(
+      (role) => role.universalIdentifier === defaultRoleUniversalIdentifier,
+    );
+
+    if (!roleManifest) {
+      return undefined;
+    }
+
+    return {
+      id: roleManifest.universalIdentifier,
+      label: roleManifest.label,
+      description: roleManifest.description,
+      canReadAllObjectRecords: roleManifest.canReadAllObjectRecords ?? false,
+      canUpdateAllObjectRecords:
+        roleManifest.canUpdateAllObjectRecords ?? false,
+      canSoftDeleteAllObjectRecords:
+        roleManifest.canSoftDeleteAllObjectRecords ?? false,
+      canDestroyAllObjectRecords:
+        roleManifest.canDestroyAllObjectRecords ?? false,
+      canUpdateAllSettings: roleManifest.canUpdateAllSettings ?? false,
+      canAccessAllTools: roleManifest.canAccessAllTools ?? false,
+      objectPermissions: (roleManifest.objectPermissions ?? []).map(
+        (permission) => ({
+          objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          canReadObjectRecords: permission.canReadObjectRecords,
+          canUpdateObjectRecords: permission.canUpdateObjectRecords,
+          canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
+          canDestroyObjectRecords: permission.canDestroyObjectRecords,
+        }),
+      ),
+      fieldPermissions: (roleManifest.fieldPermissions ?? []).map(
+        (permission) => ({
+          objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+          canReadFieldValue: permission.canReadFieldValue,
+          canUpdateFieldValue: permission.canUpdateFieldValue,
+        }),
+      ),
+      permissionFlags: (roleManifest.permissionFlags ?? []).map((flag) =>
+        flag.toString(),
+      ),
     };
   }
 

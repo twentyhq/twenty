@@ -134,6 +134,7 @@ export const CommandMenuSidePanelForDesktop = () => {
         isOpen={isCommandMenuOpened}
         isResizing={isResizing}
         onTransitionEnd={handleTransitionEnd}
+        data-command-menu-panel=""
       >
         <StyledSidePanel>
           <StyledModalContainer ref={handleModalContainerRef} />

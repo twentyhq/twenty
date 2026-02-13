@@ -80,6 +80,8 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         deletedAt: null,
         universalIdentifier: viewFieldId,
         aggregateOperation: null,
+        viewFieldGroupId: null,
+        viewFieldGroupUniversalIdentifier: null,
         applicationId: existingFlatObjectMetadata.applicationId,
         applicationUniversalIdentifier:
           existingFlatObjectMetadata.applicationUniversalIdentifier,

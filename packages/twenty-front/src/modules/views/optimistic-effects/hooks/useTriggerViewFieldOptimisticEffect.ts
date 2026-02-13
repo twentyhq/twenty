@@ -4,7 +4,7 @@ import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations'
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewField } from '~/generated/graphql';
+import { type CoreViewField } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useTriggerViewFieldOptimisticEffect = () => {

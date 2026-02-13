@@ -3,8 +3,10 @@ import { isString } from '@sniptt/guards';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { type RatioAggregateConfig } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  type RatioAggregateConfig,
+} from '~/generated-metadata/graphql';
 
 const fieldExists = (
   fieldId: string | undefined | null,

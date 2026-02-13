@@ -3,7 +3,10 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IllustrationIconCalendarTimeProps = Pick<IconComponentProps, 'size'>;
+export type IllustrationIconCalendarTimeProps = Pick<
+  IconComponentProps,
+  'size'
+>;
 
 export const IllustrationIconCalendarTime = (
   props: IllustrationIconCalendarTimeProps,

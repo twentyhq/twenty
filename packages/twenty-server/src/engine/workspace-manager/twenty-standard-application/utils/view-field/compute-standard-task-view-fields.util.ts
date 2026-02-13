@@ -253,5 +253,85 @@ export const computeStandardTaskViewFields = (
         size: 150,
       },
     }),
+
+    // taskRecordPageFields view fields
+    taskRecordPageFieldsTitle: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'title',
+        fieldName: 'title',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    taskRecordPageFieldsDueAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'dueAt',
+        fieldName: 'dueAt',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    taskRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'status',
+        fieldName: 'status',
+        position: 2,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    taskRecordPageFieldsAssignee: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'assignee',
+        fieldName: 'assignee',
+        position: 3,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    taskRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    taskRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'task',
+      context: {
+        viewName: 'taskRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
   };
 };

@@ -2,6 +2,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
+import { type PackageJson } from 'type-fest';
 
 const entries = [
   'src/index.ts',
@@ -73,19 +74,35 @@ export default defineConfig(() => {
           }
           warn(warning);
         },
-        external: [
-          ...Object.keys((packageJson as any).dependencies || {}),
-          'path',
-          'fs',
-          'fs/promises',
-          'url',
-          'crypto',
-          'stream',
-          'util',
-          'os',
-          'module',
-          /^node:/,
-        ],
+        external: (id: string) => {
+          if (/^node:/.test(id)) {
+            return true;
+          }
+
+          const builtins = [
+            'path',
+            'fs',
+            'fs/promises',
+            'url',
+            'crypto',
+            'stream',
+            'util',
+            'os',
+            'module',
+          ];
+
+          if (builtins.includes(id)) {
+            return true;
+          }
+
+          const deps = Object.entries(
+            (packageJson as PackageJson).dependencies || {},
+          ).filter(([_, version]) => !version?.startsWith('workspace:'));
+
+          return deps.some(
+            ([dep, _]) => id === dep || id.startsWith(dep + '/'),
+          );
+        },
         output: [
           {
             format: 'es',

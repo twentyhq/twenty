@@ -1,8 +1,10 @@
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { usePersonAvatarUpload } from '@/object-record/record-show/hooks/usePersonAvatarUpload';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -11,10 +13,13 @@ import { RecordTitleCell } from '@/object-record/record-title-cell/components/Re
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import {
+  FieldMetadataType,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -41,12 +46,15 @@ export const SummaryCard = ({
   const allowRequestsToTwentyIcons = useRecoilValue(
     allowRequestsToTwentyIconsState,
   );
+  const isFilesFieldMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+  );
 
-  const { onUploadPicture, useUpdateOneObjectRecordMutation } =
-    useRecordShowContainerActions({
-      objectNameSingular,
-      objectRecordId,
-    });
+  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
+    objectNameSingular,
+  });
+
+  const { onUploadPicture } = usePersonAvatarUpload(objectRecordId);
 
   const isMobile = useIsMobile() || isInRightDrawer;
 
@@ -54,6 +62,7 @@ export const SummaryCard = ({
     recordStoreIdentifierFamilySelector({
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,
+      isFilesFieldMigrated,
     }),
   );
 

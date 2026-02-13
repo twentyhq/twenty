@@ -1,10 +1,11 @@
 import { Inject, SetMetadata } from '@nestjs/common';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { QueryRunner } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
@@ -33,6 +34,7 @@ import {
 import { deriveMetadataEventsFromCreateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/derive-metadata-events-from-create-action.util';
 import { deriveMetadataEventsFromDeleteAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/derive-metadata-events-from-delete-action.util';
 import { deriveMetadataEventsFromUpdateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/derive-metadata-events-from-update-action.util';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
@@ -58,9 +60,15 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
   TUniversalAction extends // TODO create abstracted type utils
-    AllUniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
+    AllUniversalWorkspaceMigrationAction = AllUniversalWorkspaceMigrationAction<
+    TActionType,
+    TMetadataName
+  >,
   TFlatAction extends
-    AllFlatWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions'][TActionType],
+    AllFlatWorkspaceMigrationAction = AllFlatWorkspaceMigrationAction<
+    TActionType,
+    TMetadataName
+  >,
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;
@@ -71,6 +79,26 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   public abstract transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
   ): Promise<TFlatAction>;
+
+  protected async insertFlatEntitiesInRepository({
+    flatEntities,
+    queryRunner,
+  }: {
+    queryRunner: QueryRunner;
+    flatEntities: MetadataFlatEntity<TMetadataName>[];
+  }) {
+    const metadataEntity =
+      ALL_METADATA_ENTITY_BY_METADATA_NAME[this.metadataName];
+    const repository = queryRunner.manager.getRepository(metadataEntity);
+    const scalarFlatEntities = flatEntities.map((flatEntity) =>
+      flatEntityToScalarFlatEntity({
+        flatEntity,
+        metadataName: this.metadataName,
+      }),
+    );
+
+    await repository.insert(scalarFlatEntities);
+  }
 
   protected transpileUniversalDeleteActionToFlatDeleteAction(
     context: 'delete' extends TActionType

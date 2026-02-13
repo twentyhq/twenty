@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -18,7 +18,7 @@ export const useCurrencyFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldCurrencyValue | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldCurrencyValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

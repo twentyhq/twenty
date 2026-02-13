@@ -6,7 +6,6 @@ import { LightIconButton } from 'twenty-ui/input';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberOrphanNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberOrphanNavigationMenuItems';
-import { NavigationMenuItemDragProvider } from '@/navigation-menu-item/components/NavigationMenuItemDragProvider';
 import { NavigationMenuItemFolders } from '@/navigation-menu-item/components/NavigationMenuItemFolders';
 import { NavigationMenuItemSkeletonLoader } from '@/navigation-menu-item/components/NavigationMenuItemSkeletonLoader';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
@@ -21,7 +20,7 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
-  const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
+  const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
 
   const [
     isNavigationMenuItemFolderCreating,
@@ -51,7 +50,8 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   if (
     (!navigationMenuItemsSorted || navigationMenuItemsSorted.length === 0) &&
     !isNavigationMenuItemFolderCreating &&
-    (!navigationMenuItemsByFolder || navigationMenuItemsByFolder.length === 0)
+    (!userNavigationMenuItemsByFolder ||
+      userNavigationMenuItemsByFolder.length === 0)
   ) {
     return null;
   }
@@ -72,12 +72,12 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (
-        <NavigationMenuItemDragProvider>
+        <>
           <NavigationMenuItemFolders
             isNavigationSectionOpen={isNavigationSectionOpen}
           />
           <CurrentWorkspaceMemberOrphanNavigationMenuItems />
-        </NavigationMenuItemDragProvider>
+        </>
       )}
     </NavigationDrawerSection>
   );

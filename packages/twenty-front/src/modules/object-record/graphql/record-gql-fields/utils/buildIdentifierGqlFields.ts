@@ -12,11 +12,14 @@ export const buildIdentifierGqlFields = (
     | 'imageIdentifierFieldMetadataId'
     | 'nameSingular'
   >,
+  isFilesFieldMigrated?: boolean,
 ): RecordGqlFields => {
   const labelIdentifierField =
     getLabelIdentifierFieldMetadataItem(objectMetadata);
-  const imageIdentifierField =
-    getImageIdentifierFieldMetadataItem(objectMetadata);
+  const imageIdentifierField = getImageIdentifierFieldMetadataItem(
+    objectMetadata,
+    isFilesFieldMigrated,
+  );
 
   return {
     id: true,

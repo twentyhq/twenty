@@ -7,6 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -23,7 +24,7 @@ import {
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
-  FromToAllFlatEntityMaps,
+  FromToAllUniversalFlatEntityMaps,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -53,6 +54,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMigrationBuildOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metadataEventEmitter: MetadataEventEmitter,
     twentyConfigService: TwentyConfigService,
   ) {
     const logLevels = twentyConfigService.get('LOG_LEVELS');
@@ -133,7 +135,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     applicationUniversalIdentifier,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
-    fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
+    fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
     additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
@@ -149,7 +151,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       applicationUniversalIdentifier,
     });
 
-    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
+    const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =
@@ -248,7 +250,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         })
       : validateAndBuildResult.workspaceMigration;
 
-    await this.workspaceMigrationRunnerService.run(workspaceMigration);
+    const { metadataEvents } =
+      await this.workspaceMigrationRunnerService.run(workspaceMigration);
+
+    this.metadataEventEmitter.emitMetadataEvents({
+      metadataEvents,
+      workspaceId: args.workspaceId,
+    });
   }
 
   public async validateBuildAndRunWorkspaceMigration({

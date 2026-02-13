@@ -14,13 +14,17 @@ import { sleep } from '~/utils/sleep';
 const SOURCE_CODE_FULL_PATH =
   'logic-function/20202020-1c25-4d02-bf25-6aeccf7ea419/adb4bd21-7670-4c81-9f74-1fc196fe87ea/source.ts';
 
+const APPLICATION_ID = '20202020-64aa-4b6f-b003-9c74b97cee20';
+
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/LogicFunctions/SettingsLogicFunctionDetail',
   component: SettingsLogicFunctionDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/function/',
+    routePath:
+      '/settings/applications/:applicationId/logicFunctions/:logicFunctionId',
     routeParams: {
+      ':applicationId': APPLICATION_ID,
       ':logicFunctionId': 'adb4bd21-7670-4c81-9f74-1fc196fe87ea',
     },
   },
@@ -34,6 +38,7 @@ const meta: Meta<PageDecoratorArgs> = {
               logicFunction: {
                 __typename: 'LogicFunction',
                 id: 'adb4bd21-7670-4c81-9f74-1fc196fe87ea',
+                applicationId: APPLICATION_ID,
                 name: 'Logic Function Name',
                 description: '',
                 runtime: 'nodejs22.x',

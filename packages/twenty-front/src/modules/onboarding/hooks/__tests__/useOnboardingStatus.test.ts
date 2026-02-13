@@ -8,7 +8,7 @@ import {
 } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 const tokenPair = {
   accessOrWorkspaceAgnosticToken: {

@@ -8,7 +8,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   type FeatureFlagKey,
   type PermissionFlagType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;

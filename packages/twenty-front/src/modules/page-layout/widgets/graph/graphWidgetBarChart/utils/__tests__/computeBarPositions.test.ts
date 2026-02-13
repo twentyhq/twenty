@@ -1,6 +1,6 @@
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { computeBarPositions } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarPositions';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 describe('computeBarPositions', () => {
   const defaultMargins = { top: 20, right: 20, bottom: 40, left: 60 };

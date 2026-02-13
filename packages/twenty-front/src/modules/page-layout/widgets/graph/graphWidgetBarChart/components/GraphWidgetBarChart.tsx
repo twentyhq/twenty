@@ -27,7 +27,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type GraphWidgetBarChartProps = {
   colorMode: GraphColorMode;

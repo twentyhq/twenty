@@ -24,6 +24,7 @@ import {
   useVerifyEmailAndGetLoginTokenMutation,
   useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
   type AuthTokenPair,
+  type AuthToken,
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -66,8 +67,6 @@ import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { iconsState } from 'twenty-ui/display';
-import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -132,7 +131,6 @@ export const useAuth = () => {
 
         const emptySnapshot = snapshot_UNSTABLE();
 
-        const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
           .getLoadable(workspaceAuthProvidersState)
           .getValue();
@@ -164,7 +162,6 @@ export const useAuth = () => {
           .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState, iconsValue);
           set(workspaceAuthProvidersState, authProvidersValue);
           set(billingState, billing);
           set(

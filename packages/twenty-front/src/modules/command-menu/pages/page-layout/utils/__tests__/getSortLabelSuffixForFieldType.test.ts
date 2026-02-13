@@ -1,6 +1,6 @@
 import { getSortLabelSuffixForFieldType } from '@/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('getSortLabelSuffixForFieldType', () => {
   it('returns alphabetical for TEXT field with FIELD_ASC', () => {

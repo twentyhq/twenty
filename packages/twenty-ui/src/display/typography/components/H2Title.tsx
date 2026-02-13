@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
-type H2TitleProps = {
+export type H2TitleProps = {
   title: string;
   description?: string;
   adornment?: React.ReactNode;

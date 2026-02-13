@@ -22,6 +22,7 @@ export const deriveMetadataEventsFromDeleteAction = ({
     case 'view':
     case 'viewField':
     case 'viewGroup':
+    case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
@@ -51,8 +52,9 @@ export const deriveMetadataEventsFromDeleteAction = ({
 
       return [
         {
-          type: 'delete',
+          type: 'deleted',
           metadataName: flatAction.metadataName,
+          recordId: flatAction.entityId,
           properties: {
             before: flatEntityToDelete,
           },

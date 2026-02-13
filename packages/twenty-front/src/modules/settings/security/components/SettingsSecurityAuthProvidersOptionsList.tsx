@@ -22,6 +22,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -34,7 +35,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
-  const authProviders = useRecoilValue(authProvidersState);
+  const authProviders = useRecoilValueV2(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,

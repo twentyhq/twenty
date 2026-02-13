@@ -30,6 +30,11 @@ export class UpdateNavigationMenuItemInput {
   @IsString()
   @Field(() => String, { nullable: true })
   name?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  link?: string | null;
 }
 
 @InputType()

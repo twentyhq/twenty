@@ -1,4 +1,4 @@
-import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
+import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFilesField } from '@/object-record/record-field/ui/meta-types/hooks/useFilesField';
@@ -11,11 +11,12 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesSchema } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -27,9 +28,9 @@ export const FilesFieldInput = () => {
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const setFilePreview = useSetRecoilState(filePreviewState);
-  const isAttachmentPreviewEnabled = useRecoilValue(
-    isAttachmentPreviewEnabledState,
+  const setFilePreview = useSetRecoilStateV2(filePreviewStateV2);
+  const isAttachmentPreviewEnabled = useRecoilValueV2(
+    isAttachmentPreviewEnabledStateV2,
   );
 
   const { onEscape, onClickOutside, onEnter } = useContext(

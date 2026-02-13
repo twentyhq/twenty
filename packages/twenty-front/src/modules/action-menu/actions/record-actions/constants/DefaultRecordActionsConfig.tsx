@@ -66,8 +66,10 @@ import {
 } from 'twenty-ui/display';
 
 import { isDefined } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import {
+  PermissionFlagType,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys

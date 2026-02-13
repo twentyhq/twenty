@@ -29,12 +29,14 @@ const StyledNameLabel = styled.div`
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
+  isEditable?: boolean;
   fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
+  isEditable = true,
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
@@ -43,7 +45,6 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   const Icon = getIcon(objectMetadataItem.icon);
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
-
   const navigationPath = getSettingsPath(SettingsPath.RoleObjectLevel, {
     roleId: roleId,
     objectMetadataId: objectMetadataItem.id,
@@ -55,7 +56,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
 
   return (
     <TableRow
-      to={navigationUrl}
+      to={isEditable ? navigationUrl : undefined}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
       <StyledNameTableCell>
@@ -80,21 +81,23 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
       <TableCell>
         <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
           roleId={roleId}
-          objectMetadataItemId={objectMetadataItem.id}
+          objectMetadataItem={objectMetadataItem}
         />
       </TableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
           roleId={roleId}
-          objectMetadataItemId={objectMetadataItem.id}
+          objectMetadataItem={objectMetadataItem}
         />
       </TableCell>
-      <TableCell align="right">
-        <IconChevronRight
-          size={theme.icon.size.md}
-          color={theme.font.color.tertiary}
-        />
-      </TableCell>
+      {isEditable && (
+        <TableCell align="right">
+          <IconChevronRight
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
+        </TableCell>
+      )}
     </TableRow>
   );
 };

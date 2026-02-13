@@ -1,7 +1,7 @@
 import { SignInUpMode } from '@/auth/types/signInUpMode';
-import { createState } from 'twenty-ui/utilities';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const signInUpModeState = createState<SignInUpMode>({
+export const signInUpModeState = createStateV2<SignInUpMode>({
   key: 'signInUpModeState',
   defaultValue: SignInUpMode.SignIn,
 });

@@ -9,8 +9,6 @@
 
 export type { AllowedHtmlElement } from './AllowedHtmlElements';
 export { ALLOWED_HTML_ELEMENTS } from './AllowedHtmlElements';
-export type { AllowedUiComponent } from './AllowedUiComponents';
-export { ALLOWED_UI_COMPONENTS } from './AllowedUiComponents';
 export { COMMON_HTML_EVENTS } from './CommonHtmlEvents';
 export { EVENT_TO_REACT } from './EventToReact';
 export { HTML_COMMON_PROPERTIES } from './HtmlCommonProperties';

@@ -11,31 +11,48 @@ import { type UniversalFlatViewField } from 'src/engine/workspace-manager/worksp
 export type FromCreateViewFieldInputToFlatViewFieldToCreateArgs = {
   createViewFieldInput: CreateViewFieldInput;
   flatApplication: FlatApplication;
-} & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps' | 'flatViewMaps'>;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps' | 'flatViewMaps' | 'flatViewFieldGroupMaps'
+>;
 
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   createViewFieldInput: rawCreateViewFieldInput,
   flatApplication,
   flatFieldMetadataMaps,
   flatViewMaps,
+  flatViewFieldGroupMaps,
 }: FromCreateViewFieldInputToFlatViewFieldToCreateArgs): UniversalFlatViewField & {
   id: string;
 } => {
-  const { fieldMetadataId, viewId, ...createViewFieldInput } =
+  const { fieldMetadataId, viewId, viewFieldGroupId, ...createViewFieldInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateViewFieldInput,
-      ['aggregateOperation', 'fieldMetadataId', 'id', 'viewId'],
+      [
+        'aggregateOperation',
+        'fieldMetadataId',
+        'id',
+        'viewId',
+        'viewFieldGroupId',
+      ],
     );
 
   const createdAt = new Date().toISOString();
   const viewFieldId = createViewFieldInput.id ?? v4();
 
-  const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
-    resolveEntityRelationUniversalIdentifiers({
-      metadataName: 'viewField',
-      foreignKeyValues: { fieldMetadataId, viewId },
-      flatEntityMaps: { flatFieldMetadataMaps, flatViewMaps },
-    });
+  const {
+    fieldMetadataUniversalIdentifier,
+    viewUniversalIdentifier,
+    viewFieldGroupUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'viewField',
+    foreignKeyValues: { fieldMetadataId, viewId, viewFieldGroupId },
+    flatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFieldGroupMaps,
+    },
+  });
 
   return {
     id: viewFieldId,
@@ -49,6 +66,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
+    viewFieldGroupUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

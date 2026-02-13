@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { type JSX } from 'react';
 import { Label } from '@ui/display';
 
-type HorizontalSeparatorProps = {
+export type HorizontalSeparatorProps = {
   visible?: boolean;
   text?: string;
   noMargin?: boolean;

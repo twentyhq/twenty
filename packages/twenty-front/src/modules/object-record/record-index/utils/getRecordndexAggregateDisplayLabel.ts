@@ -3,7 +3,7 @@ import { getAggregateLabelWithFieldName } from '@/object-record/record-aggregate
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { isDefined } from 'twenty-shared/utils';
-import { AggregateOperations } from '~/generated/graphql';
+import { AggregateOperations } from '~/generated-metadata/graphql';
 
 type GetRecordIndexAggregateDisplayLabelParams = {
   aggregateOperation: ExtendedAggregateOperations;

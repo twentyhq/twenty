@@ -12,7 +12,7 @@ import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, type IconComponent, IconKey } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { IdentityProviderType } from '~/generated/graphql';
+import { IdentityProviderType } from '~/generated-metadata/graphql';
 
 const StyledInputsContainer = styled.div`
   display: grid;

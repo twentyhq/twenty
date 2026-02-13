@@ -7,6 +7,7 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { type AllStandardObjectViewFieldGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field-group-name.type';
 import { type AllStandardObjectViewFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -22,6 +23,7 @@ export type CreateStandardViewFieldOptions<
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
+  viewFieldGroupName?: AllStandardObjectViewFieldGroupName<O, V> | null;
 };
 
 export type CreateStandardViewFieldArgs<
@@ -46,6 +48,7 @@ export const createStandardViewFieldFlatMetadata = <
     isVisible,
     size,
     aggregateOperation = null,
+    viewFieldGroupName = null,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -61,6 +64,7 @@ export const createStandardViewFieldFlatMetadata = <
       {
         universalIdentifier: string;
         viewFields: Record<string, { universalIdentifier: string }>;
+        viewFieldGroups?: Record<string, { universalIdentifier: string }>;
       }
     >;
   };
@@ -73,6 +77,28 @@ export const createStandardViewFieldFlatMetadata = <
     throw new Error(
       `Invalid configuration ${objectName} ${viewName.toString()} ${viewFieldName}`,
     );
+  }
+
+  let viewFieldGroupId: string | null = null;
+  let viewFieldGroupUniversalIdentifier: string | null = null;
+
+  if (isDefined(viewFieldGroupName)) {
+    const viewFieldGroupDefinition =
+      viewDefinition.viewFieldGroups?.[viewFieldGroupName as string];
+
+    if (!isDefined(viewFieldGroupDefinition)) {
+      throw new Error(
+        `Invalid view field group ${objectName} ${viewName.toString()} ${String(viewFieldGroupName)}`,
+      );
+    }
+
+    viewFieldGroupUniversalIdentifier =
+      viewFieldGroupDefinition.universalIdentifier;
+
+    viewFieldGroupId = (
+      standardObjectMetadataRelatedEntityIds[objectName].views[viewName]
+        .viewFieldGroups as Record<string, { id: string }>
+    )[viewFieldGroupName as string].id;
   }
 
   return {
@@ -88,6 +114,8 @@ export const createStandardViewFieldFlatMetadata = <
     fieldMetadataId:
       standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
     fieldMetadataUniversalIdentifier: fieldDefinition.universalIdentifier,
+    viewFieldGroupId,
+    viewFieldGroupUniversalIdentifier,
     position,
     isVisible,
     size,

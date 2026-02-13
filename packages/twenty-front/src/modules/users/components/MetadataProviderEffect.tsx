@@ -15,6 +15,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
@@ -29,9 +30,10 @@ import {
   useFindAllCoreViewsQuery,
   useFindAllRecordPageLayoutsQuery,
   useGetCurrentUserQuery,
-  useGetManyLogicFunctionsQuery,
+  useFindManyLogicFunctionsQuery,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -61,10 +63,12 @@ export const MetadataProviderEffect = () => {
         const localeValue = snapshot.getLoadable(dateLocaleState).getValue();
         if (localeValue.locale !== newLocale) {
           getDateFnsLocale(newLocale).then((localeCatalog) => {
-            set(dateLocaleState, {
+            const newValue = {
               locale: newLocale,
               localeCatalog: localeCatalog || enUS,
-            });
+            };
+            set(dateLocaleState, newValue);
+            jotaiStore.set(dateLocaleStateV2.atom, newValue);
           });
         }
       },
@@ -131,7 +135,7 @@ export const MetadataProviderEffect = () => {
     },
   );
 
-  const { data: logicFunctionsData } = useGetManyLogicFunctionsQuery({
+  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
     skip: !isLoggedIn,
   });
 

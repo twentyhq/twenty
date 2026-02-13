@@ -1,6 +1,6 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import { PermissionFlagType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 export const usePermissionFlagMap = (): Record<PermissionFlagType, boolean> => {
