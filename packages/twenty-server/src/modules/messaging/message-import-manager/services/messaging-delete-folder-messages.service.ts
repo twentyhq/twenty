@@ -91,10 +91,6 @@ export class MessagingDeleteFolderMessagesService {
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${messageFolder.id} - Deleting ${messageExternalIds.length} messages`,
         );
 
-        await messageFolderAssociationRepository.delete({
-          id: In(folderAssociationIds),
-        });
-
         if (messageExternalIds.length > 0) {
           await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
             {
@@ -106,6 +102,10 @@ export class MessagingDeleteFolderMessagesService {
 
           totalDeletedCount += messageExternalIds.length;
         }
+
+        await messageFolderAssociationRepository.delete({
+          id: In(folderAssociationIds),
+        });
       }
     }, authContext);
 
