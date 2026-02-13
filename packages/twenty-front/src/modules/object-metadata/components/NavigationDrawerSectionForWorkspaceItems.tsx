@@ -1,6 +1,6 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -153,6 +153,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
         : undefined,
     };
   };
+
+  const isAddMenuItemButtonVisible =
+    isEditMode && isDefined(onAddMenuItem) && !isDragging;
 
   if (flatItems.length === 0 && !isAddToNavDropTargetVisible) {
     return null;
@@ -323,9 +326,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                 folderId={null}
                 index={filteredItems.length}
                 sectionId={NavigationSections.WORKSPACE}
-                compact={!!(isEditMode && onAddMenuItem)}
+                compact={!isAddMenuItemButtonVisible}
               >
-                {isEditMode && onAddMenuItem && (
+                {isAddMenuItemButtonVisible && (
                   <NavigationDrawerItem
                     Icon={IconPlus}
                     label={t`Add menu item`}
