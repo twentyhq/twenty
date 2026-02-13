@@ -5,7 +5,11 @@ import {
   ObjectRecordGroupByDateGranularity,
   OrderByWithGroupBy,
 } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataArrayKind,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 
 import { ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -51,6 +55,7 @@ type ExecuteGroupByQueryParams = {
   secondaryDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisOrderBy?: GraphOrderBy;
   secondaryAxisOrderBy?: GraphOrderBy;
+  splitMultiValueFields?: boolean;
 };
 
 @Injectable()
@@ -79,6 +84,7 @@ export class ChartDataQueryService {
     secondaryGroupBySubFieldName,
     secondaryDateGranularity,
     secondaryAxisOrderBy,
+    splitMultiValueFields,
   }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
@@ -111,6 +117,10 @@ export class ChartDataQueryService {
     const shouldApplyPrimaryDateGranularity =
       isPrimaryFieldDate || isPrimaryNestedDate;
 
+    const shouldUnnestPrimary =
+      (splitMultiValueFields ?? true) &&
+      isFieldMetadataArrayKind(primaryGroupByField.type);
+
     const groupBy: GroupByFieldObject[] = [];
 
     groupBy.push(
@@ -123,6 +133,7 @@ export class ChartDataQueryService {
         firstDayOfTheWeek,
         isNestedDateField: isPrimaryNestedDate,
         timeZone: userTimezone,
+        shouldUnnest: shouldUnnestPrimary,
       }),
     );
 
@@ -162,6 +173,10 @@ export class ChartDataQueryService {
       const shouldApplySecondaryDateGranularity =
         isSecondaryFieldDate || isSecondaryNestedDate;
 
+      const shouldUnnestSecondary =
+        (splitMultiValueFields ?? true) &&
+        isFieldMetadataArrayKind(secondaryGroupByField.type);
+
       groupBy.push(
         buildGroupByFieldObject({
           fieldMetadata: secondaryGroupByField,
@@ -172,6 +187,7 @@ export class ChartDataQueryService {
           firstDayOfTheWeek,
           isNestedDateField: isSecondaryNestedDate,
           timeZone: userTimezone,
+          shouldUnnest: shouldUnnestSecondary,
         }),
       );
 

@@ -6,7 +6,11 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataArrayKind,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 
 const shouldHideDateGranularityBasedOnFieldType = (
   fieldMetadataId: string | undefined | null,
@@ -100,6 +104,49 @@ export const shouldHideChartSetting = (
           objectMetadataItems ?? [],
         );
       }
+    }
+
+    if (item.id === CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS) {
+      const groupByFieldMetadataIds: string[] = [];
+
+      if (isBarOrLineChart) {
+        if (isDefined(configuration.primaryAxisGroupByFieldMetadataId)) {
+          groupByFieldMetadataIds.push(
+            configuration.primaryAxisGroupByFieldMetadataId,
+          );
+        }
+
+        if (isDefined(configuration.secondaryAxisGroupByFieldMetadataId)) {
+          groupByFieldMetadataIds.push(
+            configuration.secondaryAxisGroupByFieldMetadataId,
+          );
+        }
+      } else if (
+        isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')
+      ) {
+        if (isDefined(configuration.groupByFieldMetadataId)) {
+          groupByFieldMetadataIds.push(configuration.groupByFieldMetadataId);
+        }
+      }
+
+      if (groupByFieldMetadataIds.length === 0) {
+        return true;
+      }
+
+      const hasArrayGroupByField = groupByFieldMetadataIds.some(
+        (groupByFieldMetadataId) => {
+          const groupByField = objectMetadataItem.fields.find(
+            (field) => field.id === groupByFieldMetadataId,
+          );
+
+          return (
+            isDefined(groupByField) &&
+            isFieldMetadataArrayKind(groupByField.type)
+          );
+        },
+      );
+
+      return !hasArrayGroupByField;
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {

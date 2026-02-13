@@ -485,4 +485,96 @@ describe('shouldHideChartSetting', () => {
       });
     });
   });
+
+  describe('split multi-value fields visibility based on grouped field types', () => {
+    const splitMultiValueFieldsItem: ChartSettingsItem = {
+      id: CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS,
+      label: msg`Split multiple values`,
+      Icon: IconChartBar,
+      isBoolean: true,
+      isNumberInput: false,
+    };
+
+    const mockObjectMetadataItem: ObjectMetadataItem = {
+      id: 'object-id',
+      nameSingular: 'opportunity',
+      namePlural: 'opportunities',
+      labelSingular: 'Opportunity',
+      labelPlural: 'Opportunities',
+      description: 'An opportunity',
+      icon: 'IconTargetArrow',
+      isActive: true,
+      isSystem: false,
+      isRemote: false,
+      isAuditLogged: false,
+      isLabelSyncedWithName: true,
+      fields: [
+        {
+          id: 'text-field-id',
+          name: 'name',
+          label: 'Name',
+          type: FieldMetadataType.TEXT,
+        },
+        {
+          id: 'array-field-id',
+          name: 'tags',
+          label: 'Tags',
+          type: FieldMetadataType.MULTI_SELECT,
+        },
+      ],
+    } as any;
+
+    it('should show when bar chart primary group by field is an array field', () => {
+      const barChartConfig: ChartConfiguration = {
+        __typename: 'BarChartConfiguration',
+        primaryAxisGroupByFieldMetadataId: 'array-field-id',
+      } as any;
+
+      const result = shouldHideChartSetting(
+        splitMultiValueFieldsItem,
+        'object-id',
+        true,
+        barChartConfig,
+        mockObjectMetadataItem,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should show when bar chart secondary group by field is an array field', () => {
+      const barChartConfig: ChartConfiguration = {
+        __typename: 'BarChartConfiguration',
+        primaryAxisGroupByFieldMetadataId: 'text-field-id',
+        secondaryAxisGroupByFieldMetadataId: 'array-field-id',
+      } as any;
+
+      const result = shouldHideChartSetting(
+        splitMultiValueFieldsItem,
+        'object-id',
+        true,
+        barChartConfig,
+        mockObjectMetadataItem,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should hide when bar chart grouped fields are not array fields', () => {
+      const barChartConfig: ChartConfiguration = {
+        __typename: 'BarChartConfiguration',
+        primaryAxisGroupByFieldMetadataId: 'text-field-id',
+        secondaryAxisGroupByFieldMetadataId: 'text-field-id',
+      } as any;
+
+      const result = shouldHideChartSetting(
+        splitMultiValueFieldsItem,
+        'object-id',
+        true,
+        barChartConfig,
+        mockObjectMetadataItem,
+      );
+
+      expect(result).toBe(true);
+    });
+  });
 });

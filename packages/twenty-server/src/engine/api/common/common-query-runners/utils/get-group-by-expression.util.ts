@@ -30,6 +30,10 @@ export const getGroupByExpression = ({
   if (
     !(isGroupByDateField(groupByField) || isGroupByRelationField(groupByField))
   ) {
+    if ('shouldUnnest' in groupByField && groupByField.shouldUnnest) {
+      return `UNNEST(${columnNameWithQuotes})`;
+    }
+
     return columnNameWithQuotes;
   }
 
