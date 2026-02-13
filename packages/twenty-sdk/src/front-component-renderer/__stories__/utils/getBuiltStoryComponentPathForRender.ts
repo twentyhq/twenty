@@ -3,8 +3,7 @@
 export const getBuiltStoryComponentPathForRender = (
   componentName: string,
 ): string => {
-  const origin =
-    typeof window !== 'undefined' ? window.location.origin : '';
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
 
   return `${origin}/built/${componentName}.mjs`;
 };
