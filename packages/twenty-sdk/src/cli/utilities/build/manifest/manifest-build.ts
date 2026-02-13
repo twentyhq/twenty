@@ -19,13 +19,13 @@ import {
   ASSETS_DIR,
   type FieldManifest,
   type FrontComponentManifest,
-  getToolInputSchemaFromSourceCode,
   type LogicFunctionManifest,
   type Manifest,
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { getToolInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {

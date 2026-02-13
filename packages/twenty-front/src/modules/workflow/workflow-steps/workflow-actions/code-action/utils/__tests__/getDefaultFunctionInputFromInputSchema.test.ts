@@ -1,5 +1,5 @@
 import { type InputSchema } from '@/workflow/types/InputSchema';
-import { getDefaultFunctionInputFromInputSchema } from '@/logic-functions/utils/getDefaultFunctionInputFromInputSchema';
+import { getDefaultFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getDefaultFunctionInputFromInputSchema';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {
   it('should init function input properly', () => {

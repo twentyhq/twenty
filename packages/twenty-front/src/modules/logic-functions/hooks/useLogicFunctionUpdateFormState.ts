@@ -7,14 +7,13 @@ import {
 } from '~/generated-metadata/graphql';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 
-export type LogicFunctionNewFormValues = {
+export type LogicFunctionFormValues = {
   name: string;
   description: string;
   isTool: boolean;
-};
-
-export type LogicFunctionFormValues = LogicFunctionNewFormValues & {
+  timeoutSeconds: number;
   code: string;
+  toolInputSchema?: object;
 };
 
 type SetLogicFunctionFormValues = Dispatch<
@@ -36,6 +35,7 @@ export const useLogicFunctionUpdateFormState = ({
     description: '',
     isTool: false,
     code: '',
+    timeoutSeconds: 10,
   });
 
   const { code: codeFromApi, loading: logicFunctionSourceCodeLoading } =
@@ -55,6 +55,7 @@ export const useLogicFunctionUpdateFormState = ({
             name: fn.name || '',
             description: fn.description || '',
             isTool: fn.isTool ?? false,
+            timeoutSeconds: fn.timeoutSeconds ?? 10,
           }));
         }
       },

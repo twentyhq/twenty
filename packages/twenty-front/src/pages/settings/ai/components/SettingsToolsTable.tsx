@@ -121,7 +121,6 @@ export const SettingsToolsTable = () => {
         input: {
           name: 'new-tool',
           isTool: true,
-          toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
         },
       });
 

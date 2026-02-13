@@ -1,4 +1,3 @@
-import { getToolInputSchemaFromSourceCode } from '@/logic-functions/utils/getToolInputSchemaFromSourceCode';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
@@ -9,7 +8,6 @@ import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/compone
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
 import {
   type LogicFunctionFormValues,
-  type LogicFunctionNewFormValues,
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -31,6 +29,7 @@ import { useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
+import { getToolInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
@@ -72,47 +71,41 @@ export const SettingsLogicFunctionDetail = () => {
     await executeLogicFunction();
   };
 
-  const handleSave = useDebouncedCallback(
-    async (toolInputSchema?: object | null) => {
-      await updateLogicFunction({
-        input: {
-          id: logicFunctionId,
-          update: {
-            name: formValues.name,
-            description: formValues.description,
-            isTool: formValues.isTool,
-            sourceHandlerCode: formValues.code,
-            ...(toolInputSchema !== undefined && { toolInputSchema }),
-          },
+  const handleSave = useDebouncedCallback(async () => {
+    await updateLogicFunction({
+      input: {
+        id: logicFunctionId,
+        update: {
+          name: formValues.name,
+          description: formValues.description,
+          isTool: formValues.isTool,
+          timeoutSeconds: formValues.timeoutSeconds,
+          sourceHandlerCode: formValues.code,
+          ...(formValues.toolInputSchema !== undefined && {
+            toolInputSchema: formValues.toolInputSchema,
+          }),
         },
-      });
-    },
-    500,
-  );
+      },
+    });
+  }, 500);
 
-  const onChange = <TKey extends keyof LogicFunctionNewFormValues>(
-    key: TKey,
-  ) => {
-    return async (value: LogicFunctionNewFormValues[TKey]) => {
+  const onChange = <TKey extends keyof LogicFunctionFormValues>(key: TKey) => {
+    return async (value: LogicFunctionFormValues[TKey]) => {
+      const newValues: Partial<LogicFunctionFormValues> = { [key]: value };
+
+      if (key === 'code') {
+        newValues.toolInputSchema = await getToolInputSchemaFromSourceCode(
+          value as LogicFunctionFormValues['code'],
+        );
+      }
+
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
-        [key]: value,
+        ...newValues,
       }));
+
       await handleSave();
     };
-  };
-
-  const onCodeChange = async (filePath: string, value: string) => {
-    setFormValues((prevState: LogicFunctionFormValues) => {
-      return {
-        ...prevState,
-        code: value,
-      };
-    });
-
-    const toolInputSchema = await getToolInputSchemaFromSourceCode(value);
-
-    await handleSave(toolInputSchema);
   };
 
   const handleTestFunction = async () => {
@@ -200,7 +193,7 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionCodeEditorTab
               files={files}
               handleExecute={handleTestFunction}
-              onChange={onCodeChange}
+              onChange={onChange('code')}
               isTesting={isExecuting}
             />
           )}

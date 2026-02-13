@@ -1,4 +1,4 @@
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 
 describe('mergeDefaultFunctionInputAndFunctionInput', () => {
   it('should merge properly', () => {

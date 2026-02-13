@@ -13,7 +13,7 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -51,7 +51,7 @@ import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
-import { getToolInputSchemaFromSourceCode } from 'packages/twenty-shared/src/logic-function/get-tool-input-schema-from-source-code';
+import { getToolInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
