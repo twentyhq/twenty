@@ -13,14 +13,14 @@ import {
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
-import { isDefined } from 'twenty-shared/utils';
 import * as TwentySharedTypes from 'twenty-shared/types';
 import * as TwentySharedUtils from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { installStyleBridge } from '@/front-component-renderer/polyfills/installStyleBridge';
 import * as TwentySdk from '@/sdk';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
-import { installStyleBridge } from '@/front-component/remote/polyfills/installStyleBridge';
 
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';

@@ -1,4 +1,4 @@
-import { HTML_TAG_TO_REMOTE_COMPONENT } from '@/sdk/front-component-common/HtmlTagToRemoteComponent';
+import { HTML_TAG_TO_REMOTE_COMPONENT } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 
 type ElementFactory = (type: unknown, ...rest: unknown[]) => unknown;
 

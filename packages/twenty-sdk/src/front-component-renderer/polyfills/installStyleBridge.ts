@@ -1,6 +1,6 @@
 import { type RemoteRootElement } from '@remote-dom/core/elements';
 
-import { type RemoteStyleProperties } from '@/front-component/remote/generated/remote-elements';
+import { type RemoteStyleProperties } from '@/front-component-renderer/remote/generated/remote-elements';
 import { MockCSSStyleSheet } from './MockCSSStyleSheet';
 
 export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
