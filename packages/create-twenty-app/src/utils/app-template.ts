@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
-import { getTwentySdkPackageJsonVersion } from '@/utils/get-twenty-sdk-package-json-version';
 
 const SRC_FOLDER = 'src';
 
@@ -262,23 +261,12 @@ const createPackageJson = async ({
     },
     packageManager: 'yarn@4.9.2',
     scripts: {
-      'auth:login': 'twenty auth:login',
-      'auth:logout': 'twenty auth:logout',
-      'auth:status': 'twenty auth:status',
-      'auth:switch': 'twenty auth:switch',
-      'auth:list': 'twenty auth:list',
-      'app:dev': 'twenty app:dev',
-      'entity:add': 'twenty entity:add',
-      'app:generate': 'twenty app:generate',
-      'function:logs': 'twenty function:logs',
-      'function:execute': 'twenty function:execute',
-      'app:uninstall': 'twenty app:uninstall',
-      help: 'twenty help',
+      twenty: 'twenty',
       lint: 'eslint',
       'lint:fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': `${getTwentySdkPackageJsonVersion()}`,
+      'twenty-sdk': 'latest',
     },
     devDependencies: {
       typescript: '^5.9.3',

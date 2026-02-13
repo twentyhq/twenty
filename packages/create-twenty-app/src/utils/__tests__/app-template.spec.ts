@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { copyBaseApplicationProject } from '@/utils/app-template';
-import { getTwentySdkPackageJsonVersion } from '@/utils/get-twenty-sdk-package-json-version';
 
 // Mock fs-extra's copy function to skip copying base template (not available during tests)
 jest.mock('fs-extra', () => {
@@ -71,9 +70,7 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.dependencies['twenty-sdk']).toBe(
-      getTwentySdkPackageJsonVersion(),
-    );
+    expect(packageJson.dependencies['twenty-sdk']).toBe('latest');
     expect(packageJson.scripts['app:dev']).toBe('twenty app:dev');
   });
 
