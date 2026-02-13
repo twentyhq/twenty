@@ -1,32 +1,96 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 
+import { GET_CHAT_THREAD } from '@/ai/graphql/queries/getChatThread';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useChat } from '@ai-sdk/react';
+import { useApolloClient } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { DefaultChatTransport } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 
+type GetChatThreadResult = {
+  chatThread: {
+    id: string;
+    title: string | null;
+  };
+};
+
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
 
   const { getBrowsingContext } = useGetBrowsingContext();
+  const apolloClient = useApolloClient();
+
+  const syncAskAIPageTitle = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (title: string) => {
+        set(currentAIChatThreadTitleState, title);
+
+        const currentPage = snapshot
+          .getLoadable(commandMenuPageState)
+          .getValue();
+
+        if (currentPage === CommandMenuPages.AskAI) {
+          const pageInfo = snapshot
+            .getLoadable(commandMenuPageInfoState)
+            .getValue();
+
+          set(commandMenuPageInfoState, { ...pageInfo, title });
+        }
+
+        const stack = snapshot
+          .getLoadable(commandMenuNavigationStackState)
+          .getValue();
+
+        const askAIIndex = stack.findLastIndex(
+          (item) => item.page === CommandMenuPages.AskAI,
+        );
+
+        if (askAIIndex === -1) {
+          return;
+        }
+
+        const updatedStack = [...stack];
+
+        updatedStack[askAIIndex] = {
+          ...updatedStack[askAIIndex],
+          pageTitle: title,
+        };
+
+        set(commandMenuNavigationStackState, updatedStack);
+      },
+    [],
+  );
 
   const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
 
   const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
+  const currentAIChatThreadTitle = useRecoilValue(
+    currentAIChatThreadTitleState,
+  );
 
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
     agentChatUploadedFilesState,
@@ -115,7 +179,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     messages: uiMessages,
     id: `${currentAIChatThread}-${uiMessages.length}`,
     experimental_throttle: 100,
-    onFinish: ({ message }) => {
+    onFinish: async ({ message }) => {
       type UsageMetadata = {
         inputTokens: number;
         outputTokens: number;
@@ -149,6 +213,25 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
           inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
           outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));
+      }
+
+      if (
+        isDefined(currentAIChatThread) &&
+        !isNonEmptyString(currentAIChatThreadTitle)
+      ) {
+        const result = await apolloClient
+          .query<GetChatThreadResult>({
+            query: GET_CHAT_THREAD,
+            variables: { id: currentAIChatThread },
+            fetchPolicy: 'network-only',
+          })
+          .catch(() => null);
+
+        const title = result?.data?.chatThread?.title;
+
+        if (isNonEmptyString(title)) {
+          syncAskAIPageTitle(title);
+        }
       }
     },
   });
