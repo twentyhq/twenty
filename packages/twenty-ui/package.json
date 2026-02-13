@@ -1,5 +1,6 @@
 {
   "name": "twenty-ui",
+  "private": true,
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "style": "./dist/style.css",

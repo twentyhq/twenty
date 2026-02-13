@@ -13,6 +13,8 @@ import {
   getToolDisplayMessage,
   resolveToolInput,
 } from '@/ai/utils/getToolDisplayMessage';
+import { ToolOutputMessageSchema } from '@/ai/schemas/toolOutputMessageSchema';
+import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,12 +24,6 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -142,6 +138,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
 
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
+  const ToolIcon = getToolIcon(toolName);
 
   if (toolName === 'code_interpreter') {
     const codeInput = toolInput as { code?: string } | undefined;
@@ -173,13 +170,14 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
       <StyledContainer>
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
-            <StyledLoadingContainer>
+            <StyledIconTextContainer>
+              <ToolIcon size={theme.icon.size.sm} />
               <ShimmeringText>
                 <StyledDisplayMessage>
                   {getToolDisplayMessage(input, rawToolName, false)}
                 </StyledDisplayMessage>
               </ShimmeringText>
-            </StyledLoadingContainer>
+            </StyledIconTextContainer>
           </StyledLeftContent>
           <StyledRightContent>
             <StyledToolName>{toolName}</StyledToolName>
@@ -190,33 +188,28 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   }
 
   // For execute_tool, the actual result is nested inside output.result
+  const outputResult = ToolOutputResultSchema.safeParse(output);
   const unwrappedOutput =
-    rawToolName === 'execute_tool' &&
-    isDefined(output) &&
-    typeof output === 'object' &&
-    'result' in output
-      ? (output as { result: unknown }).result
+    rawToolName === 'execute_tool' && outputResult.success
+      ? outputResult.data.result
       : output;
+
+  const unwrappedResult = ToolOutputResultSchema.safeParse(unwrappedOutput);
+  const unwrappedMessage = ToolOutputMessageSchema.safeParse(unwrappedOutput);
 
   const displayMessage = hasError
     ? t`Tool execution failed`
-    : rawToolName === 'learn_tools' || rawToolName === 'execute_tool'
+    : rawToolName === 'learn_tools' ||
+        rawToolName === 'execute_tool' ||
+        rawToolName === 'load_skills'
       ? getToolDisplayMessage(input, rawToolName, true)
-      : unwrappedOutput &&
-          typeof unwrappedOutput === 'object' &&
-          'message' in unwrappedOutput &&
-          typeof unwrappedOutput.message === 'string'
-        ? unwrappedOutput.message
+      : unwrappedMessage.success
+        ? unwrappedMessage.data.message
         : getToolDisplayMessage(input, rawToolName, true);
 
-  const result =
-    unwrappedOutput &&
-    typeof unwrappedOutput === 'object' &&
-    'result' in unwrappedOutput
-      ? (unwrappedOutput as { result: string }).result
-      : unwrappedOutput;
-
-  const ToolIcon = getToolIcon(toolName);
+  const result = unwrappedResult.success
+    ? unwrappedResult.data.result
+    : unwrappedOutput;
 
   return (
     <StyledContainer>

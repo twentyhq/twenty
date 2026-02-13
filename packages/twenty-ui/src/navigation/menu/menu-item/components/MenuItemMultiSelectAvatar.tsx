@@ -28,7 +28,7 @@ const StyledTextContainer = styled.div`
   overflow: hidden;
 `;
 
-export type MenuItemMultiSelectAvatarProps = {
+type MenuItemMultiSelectAvatarProps = {
   avatar?: ReactNode;
   selected: boolean;
   isKeySelected?: boolean;

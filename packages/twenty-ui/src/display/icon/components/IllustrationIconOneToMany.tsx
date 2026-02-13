@@ -4,7 +4,7 @@ import { IllustrationIconWrapper } from '@ui/display/icon/components/Illustratio
 import IllustrationIconOneToManyRaw from '@assets/icons/illustration-one-to-many.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export type IllustrationIconOneToManyProps = Pick<IconComponentProps, 'size'>;
+type IllustrationIconOneToManyProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconOneToMany = (
   props: IllustrationIconOneToManyProps,

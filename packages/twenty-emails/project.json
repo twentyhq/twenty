@@ -5,9 +5,17 @@
   "tags": ["scope:backend"],
   "targets": {
     "build": {
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/dist"],
       "options": {
-        "outputPath": "{projectRoot}/dist"
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx vite build",
+          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --outDir dist --rootDir src --composite false && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+        ],
+        "parallel": false
       },
       "dependsOn": ["^build"]
     },

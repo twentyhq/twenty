@@ -28,11 +28,14 @@ jobs:
         packages/twenty-ui/**
         packages/twenty-shared/**
         packages/twenty-sdk/**
+        !packages/twenty-sdk/package.json
   changed-files-check-e2e:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
         packages/**
+        !packages/create-twenty-app/package.json
+        !packages/twenty-sdk/package.json
         playwright.config.ts
         .github/workflows/ci-front.yaml
   front-sb-build:

@@ -1,3 +1,7 @@
+import {
+  ErrorCode,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 describe('getDomainNameByEmail', () => {
@@ -5,24 +9,67 @@ describe('getDomainNameByEmail', () => {
     expect(getDomainNameByEmail('user@example.com')).toBe('example.com');
   });
 
-  it('should throw an error if email is empty', () => {
-    expect(() => getDomainNameByEmail('')).toThrow('Email is required');
+  it('should throw a UserInputError if email is empty', () => {
+    expect(() => getDomainNameByEmail('')).toThrow(UserInputError);
+    expect(() => getDomainNameByEmail('')).toThrow(
+      'Email is required. Please provide a valid email address.',
+    );
+
+    try {
+      getDomainNameByEmail('');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UserInputError);
+      expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+      expect(error.extensions.userFriendlyMessage.message).toContain(
+        'Email is required. Please provide a valid email address.',
+      );
+    }
   });
 
-  it('should throw an error if email does not contain "@"', () => {
+  it('should throw a UserInputError if email does not contain "@"', () => {
     expect(() => getDomainNameByEmail('userexample.com')).toThrow(
-      'Invalid email format',
+      UserInputError,
     );
+
+    try {
+      getDomainNameByEmail('userexample.com');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UserInputError);
+      expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+      expect(error.extensions.userFriendlyMessage.message).toContain(
+        'The provided email address is not valid. Please use a standard email format (e.g., user@example.com).',
+      );
+    }
   });
 
-  it('should throw an error if email has more than one "@"', () => {
+  it('should throw a UserInputError if email has more than one "@"', () => {
     expect(() => getDomainNameByEmail('user@example@com')).toThrow(
-      'Invalid email format',
+      UserInputError,
     );
+
+    try {
+      getDomainNameByEmail('user@example@com');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UserInputError);
+      expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+      expect(error.extensions.userFriendlyMessage.message).toContain(
+        'The provided email address is not valid. Please use a standard email format (e.g., user@example.com).',
+      );
+    }
   });
 
-  it('should throw an error if domain part is empty', () => {
-    expect(() => getDomainNameByEmail('user@')).toThrow('Invalid email format');
+  it('should throw a UserInputError if domain part is empty', () => {
+    expect(() => getDomainNameByEmail('user@')).toThrow(UserInputError);
+
+    try {
+      getDomainNameByEmail('user@');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UserInputError);
+      expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+      expect(error.extensions.userFriendlyMessage.message).toContain(
+        'The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com).',
+      );
+    }
   });
 
   // Edge cases with weird but potentially valid email formats

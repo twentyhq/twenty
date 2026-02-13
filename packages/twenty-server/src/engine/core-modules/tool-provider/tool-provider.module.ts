@@ -25,7 +25,6 @@ import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
@@ -47,7 +46,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     PermissionsModule,
     ViewModule,
     WorkspaceCacheModule,
-    WorkspaceCacheStorageModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
     UserRoleModule,

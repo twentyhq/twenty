@@ -2,12 +2,12 @@ import { useBlockNoteEditor } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { CustomSlashMenuListItem } from '@/ui/input/editor/components/CustomSlashMenuListItem';
+import { CustomSlashMenuSelectedIndexSyncEffect } from '@/ui/input/editor/components/CustomSlashMenuSelectedIndexSyncEffect';
 import type {
   CustomSlashMenuProps,
   SuggestionItem,
@@ -16,8 +16,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { isDefined } from 'twenty-shared/utils';
 
 export type { SuggestionItem };
 
@@ -58,20 +56,12 @@ export const CustomSlashMenu = ({
     middleware: [flip(), offset(({ placement }) => getOffsetValue(placement))],
   });
 
-  const { setSelectedItemId } = useSelectableList(SLASH_MENU_LIST_ID);
-
-  useEffect(() => {
-    if (!isDefined(selectedIndex)) return;
-
-    const selectedItem = items[selectedIndex];
-
-    if (isDefined(selectedItem)) {
-      setSelectedItemId(selectedItem.title);
-    }
-  }, [items, selectedIndex, setSelectedItemId]);
-
   return (
     <StyledContainer ref={refs.setReference}>
+      <CustomSlashMenuSelectedIndexSyncEffect
+        items={items}
+        selectedIndex={selectedIndex}
+      />
       <>
         {createPortal(
           <motion.div

@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import IconMicrosoftRaw from '@assets/icons/microsoft.svg?react';
 
-export interface IconMicrosoftProps {
+interface IconMicrosoftProps {
   size?: number | string;
 }
 

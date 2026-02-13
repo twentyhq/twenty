@@ -82,13 +82,11 @@ export default defineConfig(() => {
             return true;
           }
 
-          const deps = Object.entries(
+          const deps = Object.keys(
             (packageJson as PackageJson).dependencies || {},
-          ).filter(([_, version]) => !version?.startsWith('workspace:'));
-
-          return deps.some(
-            ([dep, _]) => id === dep || id.startsWith(dep + '/'),
           );
+
+          return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
         },
         output: [
           {
