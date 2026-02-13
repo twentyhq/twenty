@@ -203,6 +203,87 @@ describe('reactGlobalsPlugin', () => {
     });
   });
 
+  describe('namespace (star) imports', () => {
+    it('should handle import * as React from react', async () => {
+      const code = `
+        import * as React from 'react';
+        export const Component = () => {
+          const ctx = React.createContext(null);
+          return React.createElement('div');
+        };
+      `;
+
+      const result = await buildWithPlugin(code);
+
+      expect(result).toContain('globalThis.React.createContext');
+      expect(result).toContain('globalThis.React.createElement');
+      expect(result).not.toContain('from "react"');
+      expect(result).not.toContain('(void 0)');
+    });
+
+    it('should only include properties actually accessed on the namespace', async () => {
+      const code = `
+        import * as React from 'react';
+        export const Component = () => {
+          const ref = React.useRef(null);
+          return React.createElement('div');
+        };
+      `;
+
+      const result = await buildWithPlugin(code);
+
+      expect(result).toContain('globalThis.React.useRef');
+      expect(result).toContain('globalThis.React.createElement');
+      expect(result).not.toContain('globalThis.React.useState');
+      expect(result).not.toContain('globalThis.React.createContext');
+    });
+
+    it('should handle namespace import alongside named imports from another file', async () => {
+      const libFile = path.join(tempDir, 'lib.ts');
+      const mainFile = path.join(tempDir, 'main.tsx');
+
+      fs.writeFileSync(
+        libFile,
+        `
+        import * as React from 'react';
+        export const ctx = React.createContext(null);
+        export const el = React.createElement('span');
+      `,
+        'utf-8',
+      );
+
+      fs.writeFileSync(
+        mainFile,
+        `
+        import { useState } from 'react';
+        import { ctx, el } from './lib';
+        export const Component = () => {
+          const [state] = useState(0);
+          return { state, ctx, el };
+        };
+      `,
+        'utf-8',
+      );
+
+      const result = await esbuild.build({
+        entryPoints: [mainFile],
+        bundle: true,
+        write: false,
+        format: 'esm',
+        jsx: 'automatic',
+        plugins: [reactGlobalsPlugin],
+      });
+
+      const output = result.outputFiles[0].text;
+
+      expect(output).toContain('globalThis.React.useState');
+      expect(output).toContain('globalThis.React.createContext');
+      expect(output).toContain('globalThis.React.createElement');
+      expect(output).not.toContain('(void 0)');
+      expect(output).not.toContain('from "react"');
+    });
+  });
+
   describe('multiple entry points', () => {
     it('should handle multiple files with different React imports', async () => {
       const fileA = path.join(tempDir, 'component-a.tsx');
