@@ -42,8 +42,9 @@ export const aggregateRelationFieldPairs = ({
       continue;
     }
 
-    const targetAction =
-      actionByFieldUniversalIdentifier.get(targetUniversalIdentifier);
+    const targetAction = actionByFieldUniversalIdentifier.get(
+      targetUniversalIdentifier,
+    );
 
     if (
       !isDefined(targetAction) ||

@@ -26,7 +26,8 @@ describe('aggregateRelationFieldPairs', () => {
               objectMetadataUniversalIdentifier: attachmentObjectId,
               type: FieldMetadataType.RELATION,
               name: 'targetTask',
-              relationTargetFieldMetadataUniversalIdentifier: attachmentsFieldId,
+              relationTargetFieldMetadataUniversalIdentifier:
+                attachmentsFieldId,
               relationTargetObjectMetadataUniversalIdentifier: taskObjectId,
             }),
             id: 'target-task-generated-id',
@@ -41,7 +42,8 @@ describe('aggregateRelationFieldPairs', () => {
               type: FieldMetadataType.RELATION,
               name: 'attachments',
               relationTargetFieldMetadataUniversalIdentifier: targetTaskFieldId,
-              relationTargetObjectMetadataUniversalIdentifier: attachmentObjectId,
+              relationTargetObjectMetadataUniversalIdentifier:
+                attachmentObjectId,
             }),
             id: 'attachments-generated-id',
           } satisfies UniversalCreateFieldAction,

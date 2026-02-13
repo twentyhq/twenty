@@ -19,6 +19,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
         flatAction.flatEntity,
         flatAction.relatedFlatFieldMetadata,
       ].filter(isDefined);
+
       flatFieldMetadatas.forEach((flatEntity) =>
         addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
           flatEntity,

@@ -16,6 +16,7 @@ export const deriveMetadataEventsFromCreateAction = (
         flatAction.flatEntity,
         flatAction.relatedFlatFieldMetadata,
       ].filter(isDefined);
+
       return flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
           type: 'created',

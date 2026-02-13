@@ -111,10 +111,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     } = context;
     const { flatEntity, relatedFlatFieldMetadata } = flatAction;
 
-    const fieldsByObjectMetadataId = new Map<
-      string,
-      FlatFieldMetadata[]
-    >();
+    const fieldsByObjectMetadataId = new Map<string, FlatFieldMetadata[]>();
 
     for (const flatFieldMetadata of [
       flatEntity,
