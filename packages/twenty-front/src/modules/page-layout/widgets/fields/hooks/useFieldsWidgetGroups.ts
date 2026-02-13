@@ -23,6 +23,11 @@ export const useFieldsWidgetGroups = ({
     objectNameSingular,
   });
 
+  console.log('in useFieldsWidgetGroups', {
+    viewId,
+    view,
+  });
+
   const groups = useMemo<FieldsWidgetGroup[]>(() => {
     if (!isDefined(objectMetadataItem)) {
       return [];

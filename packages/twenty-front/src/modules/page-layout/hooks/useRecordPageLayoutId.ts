@@ -1,24 +1,27 @@
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getRecordPageLayoutId } from '@/page-layout/utils/getRecordPageLayoutId';
+import { useRecoilValue } from 'recoil';
+
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
+import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordPageLayoutId = ({
-  id,
   targetObjectNameSingular,
-}: TargetRecordIdentifier) => {
-  const { record } = useFindOneRecord<ObjectRecord & { pageLayoutId?: string }>(
-    {
-      objectNameSingular: targetObjectNameSingular,
-      objectRecordId: id,
-      withSoftDeleted: true,
-    },
+}: Omit<TargetRecordIdentifier, 'id'>) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetObjectNameSingular,
+  });
+
+  const recordPageLayout = useRecoilValue(
+    recordPageLayoutByObjectMetadataIdFamilySelector({
+      objectMetadataId: objectMetadataItem.id,
+    }),
   );
 
-  const pageLayoutId = getRecordPageLayoutId({
-    record,
-    targetObjectNameSingular,
-  });
+  const pageLayoutId = isDefined(recordPageLayout)
+    ? recordPageLayout.id
+    : getDefaultRecordPageLayoutId({ targetObjectNameSingular });
 
   return {
     pageLayoutId,
