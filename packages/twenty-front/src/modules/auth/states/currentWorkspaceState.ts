@@ -1,9 +1,9 @@
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 import {
   type Application,
   type Role,
   type Workspace,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type CurrentWorkspace = Pick<
   Workspace,

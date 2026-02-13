@@ -33,7 +33,7 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { type PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;

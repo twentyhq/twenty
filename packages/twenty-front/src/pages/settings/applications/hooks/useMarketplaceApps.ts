@@ -1,30 +1,38 @@
-import { useFindManyMarketplaceAppsQuery } from '~/generated-metadata/graphql';
-import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
+import {
+  useFindManyMarketplaceAppsQuery,
+  type MarketplaceApp,
+} from '~/generated-metadata/graphql';
+
+export type MarketplaceAppWithContentCounts = MarketplaceApp & {
+  content: {
+    objects: number;
+    fields: number;
+    functions: number;
+    frontComponents: number;
+  };
+};
 
 export const useMarketplaceApps = () => {
   const { data, loading, error } = useFindManyMarketplaceAppsQuery();
 
-  const marketplaceApps: AvailableApplication[] =
-    data?.findManyMarketplaceApps.map((app) => ({
-      id: app.id,
-      name: app.name,
-      description: app.description,
-      author: app.author,
-      logoPath: app.logo ?? '',
-      category: app.category,
-      aboutDescription: app.aboutDescription,
-      providers: app.providers,
-      screenshots: app.screenshots,
-      content: {
-        objects: 0,
-        fields: 0,
-        functions: 0,
-        frontComponents: 0,
-      },
-      version: app.version,
-      websiteUrl: app.websiteUrl ?? '',
-      termsUrl: app.termsUrl ?? '',
-    })) ?? [];
+  const marketplaceApps: MarketplaceAppWithContentCounts[] =
+    data?.findManyMarketplaceApps.map((app) => {
+      const totalFieldsCount =
+        (app.objects ?? []).reduce(
+          (count, appObject) => count + appObject.fields.length,
+          0,
+        ) + (app.fields ?? []).length;
+
+      return {
+        ...app,
+        content: {
+          objects: (app.objects ?? []).length,
+          fields: totalFieldsCount,
+          functions: (app.logicFunctions ?? []).length,
+          frontComponents: (app.frontComponents ?? []).length,
+        },
+      };
+    }) ?? [];
 
   return {
     data: marketplaceApps,

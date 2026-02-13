@@ -10,7 +10,7 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { isDefined } from 'twenty-shared/utils';
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,

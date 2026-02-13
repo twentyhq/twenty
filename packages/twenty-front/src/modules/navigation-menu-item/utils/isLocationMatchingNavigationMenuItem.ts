@@ -1,4 +1,4 @@
-import { NAVIGATION_MENU_ITEM_TYPE } from '@/navigation-menu-item/types/navigation-menu-item-type';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 
 export const isLocationMatchingNavigationMenuItem = (
@@ -7,7 +7,7 @@ export const isLocationMatchingNavigationMenuItem = (
   navigationMenuItem: Pick<ProcessedNavigationMenuItem, 'itemType' | 'link'>,
 ) => {
   const isViewItem =
-    navigationMenuItem.itemType === NAVIGATION_MENU_ITEM_TYPE.VIEW;
+    navigationMenuItem.itemType === NavigationMenuItemType.VIEW;
   return isViewItem
     ? navigationMenuItem.link === currentViewPath
     : navigationMenuItem.link === currentPath;

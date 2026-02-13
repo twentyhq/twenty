@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type View } from '@/views/types/View';
@@ -29,7 +30,7 @@ const mockViews: View[] = [
 describe('getObjectMetadataForNavigationMenuItem', () => {
   it('should return null for link item type', () => {
     const result = getObjectMetadataForNavigationMenuItem(
-      { itemType: 'link' },
+      { itemType: NavigationMenuItemType.LINK },
       mockObjectMetadataItems,
       mockViews,
     );
@@ -38,7 +39,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
 
   it('should return object metadata for view item when view and metadata exist', () => {
     const result = getObjectMetadataForNavigationMenuItem(
-      { itemType: 'view', viewId: 'view-1' },
+      { itemType: NavigationMenuItemType.VIEW, viewId: 'view-1' },
       mockObjectMetadataItems,
       mockViews,
     );
@@ -48,7 +49,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
 
   it('should return null for view item when view is not found', () => {
     const result = getObjectMetadataForNavigationMenuItem(
-      { itemType: 'view', viewId: 'non-existent-view' },
+      { itemType: NavigationMenuItemType.VIEW, viewId: 'non-existent-view' },
       mockObjectMetadataItems,
       mockViews,
     );
@@ -60,7 +61,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
       { id: 'orphan-view', objectMetadataId: 'non-existent-metadata' } as View,
     ];
     const result = getObjectMetadataForNavigationMenuItem(
-      { itemType: 'view', viewId: 'orphan-view' },
+      { itemType: NavigationMenuItemType.VIEW, viewId: 'orphan-view' },
       mockObjectMetadataItems,
       viewsWithOrphanView,
     );
@@ -70,7 +71,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
   it('should return object metadata for record item when metadata exists', () => {
     const result = getObjectMetadataForNavigationMenuItem(
       {
-        itemType: 'record',
+        itemType: NavigationMenuItemType.RECORD,
         targetObjectMetadataId: 'metadata-2',
       },
       mockObjectMetadataItems,
@@ -82,7 +83,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
 
   it('should return null for record item when targetObjectMetadataId is undefined', () => {
     const result = getObjectMetadataForNavigationMenuItem(
-      { itemType: 'record' },
+      { itemType: NavigationMenuItemType.RECORD },
       mockObjectMetadataItems,
       mockViews,
     );
@@ -92,7 +93,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
   it('should return null for record item when metadata is not found', () => {
     const result = getObjectMetadataForNavigationMenuItem(
       {
-        itemType: 'record',
+        itemType: NavigationMenuItemType.RECORD,
         targetObjectMetadataId: 'non-existent-metadata',
       },
       mockObjectMetadataItems,
@@ -103,7 +104,7 @@ describe('getObjectMetadataForNavigationMenuItem', () => {
 
   it('should return null for view item when viewId is undefined', () => {
     const result = getObjectMetadataForNavigationMenuItem(
-      { itemType: 'view' },
+      { itemType: NavigationMenuItemType.VIEW },
       mockObjectMetadataItems,
       mockViews,
     );

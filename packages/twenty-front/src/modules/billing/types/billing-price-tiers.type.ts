@@ -1,4 +1,4 @@
-import type { BillingPriceMetered } from '~/generated/graphql';
+import type { BillingPriceMetered } from '~/generated-metadata/graphql';
 
 export type BillingPriceTiers = [
   {

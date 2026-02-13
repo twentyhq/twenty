@@ -1,5 +1,5 @@
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 describe('shouldEnableTabEditingFeatures', () => {
   it('should return true for DASHBOARD layout type', () => {

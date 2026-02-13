@@ -2,7 +2,7 @@
 
 import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { v4 } from 'uuid';
-import { type IdentityProviderType } from '~/generated/graphql';
+import { type IdentityProviderType } from '~/generated-metadata/graphql';
 
 export const sSOIdentityProviderDefaultValues: Record<
   IdentityProviderType,

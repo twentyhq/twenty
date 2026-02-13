@@ -1,6 +1,6 @@
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { CustomError } from 'twenty-shared/utils';
-import { WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { WidgetActionFieldEdit } from './WidgetActionFieldEdit';
 import { WidgetActionFieldSeeAll } from './WidgetActionFieldSeeAll';

@@ -6,6 +6,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
@@ -17,7 +18,6 @@ import {
   createIndexInWorkspaceSchema,
   deleteIndexMetadata,
   dropIndexFromWorkspaceSchema,
-  insertIndexMetadata,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import {
   type WorkspaceMigrationActionRunnerArgs,
@@ -66,19 +66,32 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateIndexAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
+    const { updatedFlatIndex } = flatAction;
 
-    // Delete old index metadata
     await deleteIndexMetadata({
       entityId: flatAction.entityId,
       queryRunner,
       workspaceId,
     });
 
-    // Create new index metadata
-    await insertIndexMetadata({
-      flatIndexMetadata: flatAction.updatedFlatIndex,
+    await this.insertFlatEntitiesInRepository({
       queryRunner,
+      flatEntities: [updatedFlatIndex],
     });
+
+    const indexFieldMetadataRepository = queryRunner.manager.getRepository(
+      IndexFieldMetadataEntity,
+    );
+
+    const indexFieldMetadataToInsert =
+      updatedFlatIndex.flatIndexFieldMetadatas.map(
+        (flatIndexFieldMetadata) => ({
+          ...flatIndexFieldMetadata,
+          indexMetadataId: updatedFlatIndex.id,
+        }),
+      );
+
+    await indexFieldMetadataRepository.insert(indexFieldMetadataToInsert);
   }
 
   async executeForWorkspaceSchema(

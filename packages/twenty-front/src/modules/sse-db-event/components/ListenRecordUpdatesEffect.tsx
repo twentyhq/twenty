@@ -10,11 +10,13 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useOnDbEvent } from '@/sse-db-event/hooks/useOnDbEvent';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 type ListenRecordUpdatesEffectProps = {
   objectNameSingular: string;
@@ -48,6 +50,7 @@ export const ListenRecordUpdatesEffect = ({
     ({ set }) =>
       (record: ObjectRecord) => {
         set(recordStoreFamilyState(record.id), record);
+        jotaiStore.set(recordStoreFamilyStateV2.atomFamily(record.id), record);
       },
     [],
   );

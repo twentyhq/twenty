@@ -2,12 +2,12 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useNavigationMenuItemEditFolderData } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditFolderData';
-import { useNavigationMenuItemEditSubView } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditSubView';
-import { useSelectedNavigationMenuItemEditData } from '@/command-menu/pages/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditData';
+import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsAllFolders';
+import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
+import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
-import { NAVIGATION_MENU_ITEM_TYPE } from '@/navigation-menu-item/types/navigation-menu-item-type';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 
 type FolderOption = {
   id: string;
@@ -38,42 +38,47 @@ const excludeCurrentFolder = <T extends { id: string }>(
     ? folders
     : folders.filter((folder) => folder.id !== currentFolderId);
 
-export const useFolderPickerSelectionData = () => {
+type UseFolderPickerSelectionDataParams = {
+  onCloseSubView: () => void;
+};
+
+export const useFolderPickerSelectionData = ({
+  onCloseSubView,
+}: UseFolderPickerSelectionDataParams) => {
   const { closeCommandMenu } = useCommandMenu();
-  const { clearSubView } = useNavigationMenuItemEditSubView();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
   const selectedNavigationMenuItemInEditMode = useRecoilValue(
     selectedNavigationMenuItemInEditModeState,
   );
-  const { selectedItem, selectedItemType } =
-    useSelectedNavigationMenuItemEditData();
-  const { allFolders, workspaceFolders } =
-    useNavigationMenuItemEditFolderData();
+  const { selectedItem } = useSelectedNavigationMenuItemEditItem();
+  const selectedItemType = selectedItem?.itemType ?? null;
+  const { allFolders } = useDraftNavigationMenuItemsAllFolders();
+  const { workspaceFolders } = useDraftNavigationMenuItemsWorkspaceFolders();
 
   const selectedFolderId =
-    selectedItemType === NAVIGATION_MENU_ITEM_TYPE.FOLDER
+    selectedItemType === NavigationMenuItemType.FOLDER
       ? selectedNavigationMenuItemInEditMode
       : null;
   const currentFolderId =
-    selectedItemType === NAVIGATION_MENU_ITEM_TYPE.FOLDER
+    selectedItemType === NavigationMenuItemType.FOLDER
       ? (selectedItem?.id ?? null)
       : (selectedItem?.folderId ?? null);
 
   const descendantFolderIds =
-    selectedItemType === NAVIGATION_MENU_ITEM_TYPE.FOLDER &&
+    selectedItemType === NavigationMenuItemType.FOLDER &&
     isDefined(selectedFolderId)
       ? getDescendantFolderIds(selectedFolderId, allFolders)
       : new Set<string>();
 
   const includeNoFolderOption =
-    (selectedItemType === NAVIGATION_MENU_ITEM_TYPE.FOLDER &&
+    (selectedItemType === NavigationMenuItemType.FOLDER &&
       isDefined(selectedFolderId)) ||
-    (selectedItemType === NAVIGATION_MENU_ITEM_TYPE.LINK &&
+    (selectedItemType === NavigationMenuItemType.LINK &&
       isDefined(currentFolderId));
 
   const folders =
     includeNoFolderOption &&
-    selectedItemType === NAVIGATION_MENU_ITEM_TYPE.FOLDER &&
+    selectedItemType === NavigationMenuItemType.FOLDER &&
     isDefined(selectedFolderId)
       ? allFolders.filter(
           (folder) =>
@@ -89,7 +94,7 @@ export const useFolderPickerSelectionData = () => {
   const handleSelectFolder = (folderId: string | null) => {
     if (isDefined(selectedNavigationMenuItemInEditMode)) {
       moveToFolder(selectedNavigationMenuItemInEditMode, folderId);
-      clearSubView();
+      onCloseSubView();
       closeCommandMenu();
     }
   };

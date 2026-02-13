@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const useGraphGroupBySortOptionLabels = ({
   objectMetadataId,

@@ -9,7 +9,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { CommandMenuNewSidebarItemRecordItem } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordItem';
-import { useNavigationMenuItemEditFolderData } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditFolderData';
+import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -31,7 +31,7 @@ export const CommandMenuNewSidebarItemRecordSubView = ({
   onBack,
 }: CommandMenuNewSidebarItemRecordSubViewProps) => {
   const { t } = useLingui();
-  const { currentDraft } = useNavigationMenuItemEditFolderData();
+  const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);

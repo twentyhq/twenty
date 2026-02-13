@@ -2,7 +2,7 @@ import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NAVIGATION_MENU_ITEM_DROPPABLE_IDS } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
@@ -87,7 +87,7 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     );
 
     const isDropOnFolderHeader = destination.droppableId.startsWith(
-      NAVIGATION_MENU_ITEM_DROPPABLE_IDS.WORKSPACE_FOLDER_HEADER_PREFIX,
+      NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX,
     );
 
     if (isDropOnFolderHeader && isDefined(destinationFolderId)) {

@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import type { Application } from '~/generated/graphql';
 import { SettingsApplicationVersionContainer } from '~/pages/settings/applications/components/SettingsApplicationVersionContainer';
 import { Button } from 'twenty-ui/input';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -11,7 +10,10 @@ import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useState } from 'react';
-import { useUninstallApplicationMutation } from '~/generated-metadata/graphql';
+import {
+  type Application,
+  useUninstallApplicationMutation,
+} from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

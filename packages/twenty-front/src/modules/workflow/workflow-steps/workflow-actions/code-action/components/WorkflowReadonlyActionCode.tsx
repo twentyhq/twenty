@@ -1,9 +1,7 @@
-import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
+import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 
-import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
-import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
@@ -52,13 +50,6 @@ export const WorkflowReadonlyActionCode = ({
     return null;
   }
 
-  const indexFileContent =
-    code != null &&
-    typeof code?.[SOURCE_FOLDER_NAME] !== 'string' &&
-    typeof code[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME] === 'string'
-      ? code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
-      : '';
-
   return (
     <>
       <WorkflowStepBody>
@@ -69,7 +60,7 @@ export const WorkflowReadonlyActionCode = ({
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={indexFileContent}
+            value={code ?? undefined}
             language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}

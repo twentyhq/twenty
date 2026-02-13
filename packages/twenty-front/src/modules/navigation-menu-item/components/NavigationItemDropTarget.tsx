@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { type ReactNode, useContext } from 'react';
 
+import { type NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import type { NavigationSectionId } from '@/navigation-menu-item/types/NavigationSectionId';
 
 const StyledDropTarget = styled.div<{
   $isDragOver: boolean;
@@ -49,12 +49,10 @@ const StyledDropTarget = styled.div<{
   `}
 `;
 
-export type NavigationItemDropTargetSectionId = NavigationSectionId;
-
 type NavigationItemDropTargetProps = {
   folderId: string | null;
   index: number;
-  sectionId: NavigationItemDropTargetSectionId;
+  sectionId: NavigationSections;
   children?: ReactNode;
   compact?: boolean;
 };

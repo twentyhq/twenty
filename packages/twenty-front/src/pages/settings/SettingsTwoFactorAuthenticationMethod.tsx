@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import QRCode from 'react-qr-code';
-import { useRecoilValue } from 'recoil';
 
 import { qrCodeState } from '@/auth/states/qrCode';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -21,6 +20,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledQRCodeContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(4)} 0;
@@ -81,7 +81,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { enqueueSuccessSnackBar } = useSnackBar();
-  const qrCode = useRecoilValue(qrCodeState);
+  const qrCode = useRecoilValueV2(qrCodeState);
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();

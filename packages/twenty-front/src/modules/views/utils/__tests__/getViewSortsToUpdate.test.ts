@@ -1,5 +1,5 @@
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getViewSortsToUpdate } from '@/views/utils/getViewSortsToUpdate';
 
 describe('getViewSortsToUpdate', () => {

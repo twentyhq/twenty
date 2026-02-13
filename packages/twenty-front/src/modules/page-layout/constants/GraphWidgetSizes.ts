@@ -1,5 +1,5 @@
 import { type WidgetSizeConfig } from '@/page-layout/types/WidgetSizeConfig';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const GRAPH_WIDGET_SIZES: Partial<
   Record<WidgetConfigurationType, WidgetSizeConfig>

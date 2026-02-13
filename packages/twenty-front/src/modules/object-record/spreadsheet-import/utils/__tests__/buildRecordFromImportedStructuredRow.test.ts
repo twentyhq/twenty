@@ -5,8 +5,7 @@ import {
   type ImportedStructuredRow,
   type SpreadsheetImportField,
 } from '@/spreadsheet-import/types';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { RelationType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 describe('buildRecordFromImportedStructuredRow', () => {
   const fields: FieldMetadataItem[] = [

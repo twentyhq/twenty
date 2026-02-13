@@ -5,16 +5,14 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   type FlatCreateIndexAction,
   type UniversalCreateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import { fromUniversalFlatIndexToFlatIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/from-universal-flat-index-to-flat-index.util';
-import {
-  createIndexInWorkspaceSchema,
-  insertIndexMetadata,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
+import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
@@ -55,11 +53,20 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
   ): Promise<void> {
     const { flatAction, queryRunner } = context;
+    const { flatEntity: flatIndexMetadata } = flatAction;
 
-    await insertIndexMetadata({
-      flatIndexMetadata: flatAction.flatEntity,
+    await this.insertFlatEntitiesInRepository({
       queryRunner,
+      flatEntities: [flatIndexMetadata],
     });
+
+    const indexFieldMetadataRepository = queryRunner.manager.getRepository(
+      IndexFieldMetadataEntity,
+    );
+
+    await indexFieldMetadataRepository.insert(
+      flatIndexMetadata.flatIndexFieldMetadatas,
+    );
   }
 
   async executeForWorkspaceSchema(

@@ -63,10 +63,10 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
+import { MetadataEventEmitterModule } from 'src/engine/metadata-event-emitter/metadata-event-emitter.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
-import { ApplicationLayerModule } from 'src/engine/core-modules/application-layer/application-layer.module';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 import { AuditModule } from './audit/audit.module';
@@ -89,7 +89,6 @@ import { FileModule } from './file/file.module';
     RowLevelPermissionModule,
     OpenApiModule,
     ApplicationModule,
-    ApplicationLayerModule,
     ApplicationSyncModule,
     AppTokenModule,
     TimelineMessagingModule,
@@ -106,6 +105,7 @@ import { FileModule } from './file/file.module';
     PostgresCredentialsModule,
     WorkflowApiModule,
     WorkspaceEventEmitterModule,
+    MetadataEventEmitterModule,
     ActorModule,
     TelemetryModule,
     AdminPanelModule,

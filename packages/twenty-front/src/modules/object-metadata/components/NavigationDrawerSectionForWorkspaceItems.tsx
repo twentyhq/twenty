@@ -6,12 +6,12 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPlus } from 'twenty-ui/display';
 
-import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
-import { NAVIGATION_SECTIONS } from '@/navigation-menu-item/constants/NavigationSections.constants';
-
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
-import { NAVIGATION_MENU_ITEM_DROPPABLE_IDS } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import {
   type FlatWorkspaceItem,
@@ -85,15 +85,21 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   }, new Map());
 
   const folderCount = flatItems.filter(
-    (item) => item.itemType === 'folder',
+    (item) => item.itemType === NavigationMenuItemType.FOLDER,
   ).length;
 
   const filteredItems = flatItems.filter((item) => {
     const type = item.itemType;
-    if (type === 'folder' || type === 'link') {
+    if (
+      type === NavigationMenuItemType.FOLDER ||
+      type === NavigationMenuItemType.LINK
+    ) {
       return true;
     }
-    if (type === 'view' || type === 'record') {
+    if (
+      type === NavigationMenuItemType.VIEW ||
+      type === NavigationMenuItemType.RECORD
+    ) {
       const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
         item as ProcessedNavigationMenuItem,
         objectMetadataItems,
@@ -151,7 +157,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
       {isNavigationSectionOpen && (
         <Droppable
           droppableId={
-            NAVIGATION_MENU_ITEM_DROPPABLE_IDS.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+            NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
           }
           isDropDisabled={workspaceDropDisabled}
         >
@@ -171,7 +177,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                       key={item.id}
                       folderId={null}
                       index={index}
-                      sectionId={NAVIGATION_SECTIONS.WORKSPACE}
+                      sectionId={NavigationSections.WORKSPACE}
                     >
                       <DraggableItem
                         draggableId={item.id}
@@ -214,7 +220,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                       key={item.id}
                       folderId={null}
                       index={index}
-                      sectionId={NAVIGATION_SECTIONS.WORKSPACE}
+                      sectionId={NavigationSections.WORKSPACE}
                     >
                       <DraggableItem
                         draggableId={item.id}
@@ -263,7 +269,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                     key={item.id}
                     folderId={null}
                     index={index}
-                    sectionId={NAVIGATION_SECTIONS.WORKSPACE}
+                    sectionId={NavigationSections.WORKSPACE}
                   >
                     <DraggableItem
                       draggableId={item.id}
@@ -301,7 +307,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
               <NavigationItemDropTarget
                 folderId={null}
                 index={filteredItems.length}
-                sectionId={NAVIGATION_SECTIONS.WORKSPACE}
+                sectionId={NavigationSections.WORKSPACE}
                 compact={!!(isEditMode && onAddMenuItem)}
               >
                 {isEditMode && onAddMenuItem && (

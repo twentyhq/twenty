@@ -131,24 +131,24 @@ export const SettingsToolsTable = () => {
       });
 
       if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newFunction = result.response.data.createDefaultLogicFunction;
+        const newLogicFunction = result.response.data.createOneLogicFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 
         // Navigate to the logic function detail page
         // The applicationId might be null for workspace-level functions
-        const applicationId = (newFunction as { applicationId?: string })
+        const applicationId = (newLogicFunction as { applicationId?: string })
           .applicationId;
         if (isDefined(applicationId)) {
           navigate(
             getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
               applicationId,
-              logicFunctionId: newFunction.id,
+              logicFunctionId: newLogicFunction.id,
             }),
           );
         } else {
           navigate(
             getSettingsPath(SettingsPath.LogicFunctionDetail, {
-              logicFunctionId: newFunction.id,
+              logicFunctionId: newLogicFunction.id,
             }),
           );
         }

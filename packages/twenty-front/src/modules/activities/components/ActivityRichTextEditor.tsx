@@ -42,7 +42,7 @@ import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type ActivityRichTextEditorProps = {
   activityId: string;

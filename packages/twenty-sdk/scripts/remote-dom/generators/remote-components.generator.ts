@@ -1,7 +1,8 @@
 import type { Project, SourceFile } from 'ts-morph';
 
+import { EVENT_TO_REACT } from '@/sdk/front-component-common/EventToReact';
 import { type ComponentSchema } from './schemas';
-import { addExportedConst, addFileHeader, eventToReactProp } from './utils';
+import { addExportedConst, addFileHeader } from './utils';
 
 const generateComponentDefinition = (
   sourceFile: SourceFile,
@@ -15,7 +16,7 @@ const generateComponentDefinition = (
   if (hasEvents) {
     const eventProps = component.events
       .map((event) => {
-        const propName = eventToReactProp(event);
+        const propName = EVENT_TO_REACT[event];
         return `    ${propName}: { event: '${event}' },`;
       })
       .join('\n');

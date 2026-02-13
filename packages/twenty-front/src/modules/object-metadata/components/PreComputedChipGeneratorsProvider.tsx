@@ -6,7 +6,7 @@ import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/Pre
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordChipGenerators } from '@/object-record/utils/getRecordChipGenerators';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const PreComputedChipGeneratorsProvider = ({
   children,

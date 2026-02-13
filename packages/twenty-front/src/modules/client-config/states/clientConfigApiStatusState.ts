@@ -1,5 +1,5 @@
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 type ClientConfigApiStatus = {
   isLoadedOnce: boolean;

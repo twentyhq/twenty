@@ -1,7 +1,7 @@
 import {
   type GaugeChartConfiguration,
   type WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export type TypedGaugeChartConfiguration = GaugeChartConfiguration & {
   configurationType: WidgetConfigurationType.GAUGE_CHART;

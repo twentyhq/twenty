@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type View } from '@/views/types/View';
@@ -14,12 +15,12 @@ export const getObjectMetadataForNavigationMenuItem = (
   objectMetadataItems: ObjectMetadataItem[],
   views: View[],
 ): ObjectMetadataItem | null => {
-  if (navigationMenuItem.itemType === 'link') {
+  if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
     return null;
   }
 
   if (
-    navigationMenuItem.itemType === 'view' &&
+    navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
     isDefined(navigationMenuItem.viewId)
   ) {
     const view = views.find((view) => view.id === navigationMenuItem.viewId);
@@ -33,7 +34,7 @@ export const getObjectMetadataForNavigationMenuItem = (
   }
 
   if (
-    navigationMenuItem.itemType === 'record' &&
+    navigationMenuItem.itemType === NavigationMenuItemType.RECORD &&
     isDefined(navigationMenuItem.targetObjectMetadataId)
   ) {
     const objectMetadataItem = objectMetadataItems.find(

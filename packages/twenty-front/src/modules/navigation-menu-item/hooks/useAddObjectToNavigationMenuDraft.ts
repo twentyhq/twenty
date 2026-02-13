@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/add-to-navigation-draft.utils';
+import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 
 export const useAddObjectToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetRecoilState(

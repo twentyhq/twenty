@@ -1,7 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type Equal, type Expect } from 'twenty-shared/testing';
 
-import { type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import {
+  type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
+  type MetadataEntityComparablePropertyName,
+} from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 
 type ExtractPropertyToCompare<
@@ -14,9 +17,12 @@ type ExtractPropertyToCompare<
 export type MetadataUniversalFlatEntityPropertiesToCompare<
   T extends AllMetadataName,
   MetadataConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
+  TComparedKeys extends
+    keyof MetadataConfig = MetadataEntityComparablePropertyName<T> &
+    keyof MetadataConfig,
 > = {
-  [P in keyof MetadataConfig]: ExtractPropertyToCompare<MetadataConfig, P>;
-}[keyof MetadataConfig] &
+  [P in TComparedKeys]: ExtractPropertyToCompare<MetadataConfig, P>;
+}[TComparedKeys] &
   keyof MetadataUniversalFlatEntity<T>;
 
 // eslint-disable-next-line unused-imports/no-unused-vars

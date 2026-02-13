@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
@@ -45,8 +46,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
 
-  const isRecord = navigationMenuItem?.itemType === 'record';
-  const isView = navigationMenuItem?.itemType === 'view';
+  const isRecord =
+    navigationMenuItem?.itemType === NavigationMenuItemType.RECORD;
+  const isView = navigationMenuItem?.itemType === NavigationMenuItemType.VIEW;
   const hasCustomLink = isRecord || isView;
 
   const navigationPath = hasCustomLink

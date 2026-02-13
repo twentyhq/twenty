@@ -10,6 +10,7 @@ import {
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CommandMenuNavigationItemActions } from '@/command-menu/pages/navigation-menu-item/command-menu-navigation-item-actions';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 export type OrganizeActionsProps = {
@@ -45,65 +46,77 @@ export const CommandMenuEditOrganizeActions = ({
   return (
     <CommandGroup heading={t`Organize`}>
       <SelectableListItem
-        itemId="move-up"
+        itemId={CommandMenuNavigationItemActions.MOVE_UP}
         onEnter={canMoveUp ? onMoveUp : undefined}
       >
         <CommandMenuItem
           Icon={IconChevronUp}
           label={t`Move up`}
-          id="move-up"
+          id={CommandMenuNavigationItemActions.MOVE_UP}
           onClick={onMoveUp}
           disabled={!canMoveUp}
         />
       </SelectableListItem>
       <SelectableListItem
-        itemId="move-down"
+        itemId={CommandMenuNavigationItemActions.MOVE_DOWN}
         onEnter={canMoveDown ? onMoveDown : undefined}
       >
         <CommandMenuItem
           Icon={IconChevronDown}
           label={t`Move down`}
-          id="move-down"
+          id={CommandMenuNavigationItemActions.MOVE_DOWN}
           onClick={onMoveDown}
           disabled={!canMoveDown}
         />
       </SelectableListItem>
       {showMoveToFolder && onMoveToFolder && (
-        <SelectableListItem itemId="move-to-folder" onEnter={onMoveToFolder}>
+        <SelectableListItem
+          itemId={CommandMenuNavigationItemActions.MOVE_TO_FOLDER}
+          onEnter={onMoveToFolder}
+        >
           <CommandMenuItem
             Icon={IconFolderSymlink}
             label={t`Move to folder`}
-            id="move-to-folder"
+            id={CommandMenuNavigationItemActions.MOVE_TO_FOLDER}
             hasSubMenu={moveToFolderHasSubMenu}
             onClick={onMoveToFolder}
           />
         </SelectableListItem>
       )}
       {onAddBefore && (
-        <SelectableListItem itemId="add-before" onEnter={onAddBefore}>
+        <SelectableListItem
+          itemId={CommandMenuNavigationItemActions.ADD_BEFORE}
+          onEnter={onAddBefore}
+        >
           <CommandMenuItem
             Icon={IconRowInsertTop}
             label={t`Add menu item before`}
-            id="add-before"
+            id={CommandMenuNavigationItemActions.ADD_BEFORE}
             onClick={onAddBefore}
           />
         </SelectableListItem>
       )}
       {onAddAfter && (
-        <SelectableListItem itemId="add-after" onEnter={onAddAfter}>
+        <SelectableListItem
+          itemId={CommandMenuNavigationItemActions.ADD_AFTER}
+          onEnter={onAddAfter}
+        >
           <CommandMenuItem
             Icon={IconRowInsertBottom}
             label={t`Add menu item after`}
-            id="add-after"
+            id={CommandMenuNavigationItemActions.ADD_AFTER}
             onClick={onAddAfter}
           />
         </SelectableListItem>
       )}
-      <SelectableListItem itemId="remove" onEnter={onRemove}>
+      <SelectableListItem
+        itemId={CommandMenuNavigationItemActions.REMOVE}
+        onEnter={onRemove}
+      >
         <CommandMenuItem
           Icon={IconTrash}
           label={t`Remove from sidebar`}
-          id="remove"
+          id={CommandMenuNavigationItemActions.REMOVE}
           onClick={onRemove}
         />
       </SelectableListItem>

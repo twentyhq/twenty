@@ -1,4 +1,4 @@
-import { type CoreViewSort } from '~/generated/graphql';
+import { type CoreViewSort } from '~/generated-metadata/graphql';
 
 export type CoreViewSortEssential = Pick<
   CoreViewSort,

@@ -1358,7 +1358,7 @@ msgid "All set!"
 msgstr "הכול מוכן!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemObjectFlow.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -4598,7 +4598,7 @@ msgstr "עריכת שדות"
 #. js-lingui-id: uPHscS
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 msgid "Edit folder"
 msgstr ""
 
@@ -4620,7 +4620,7 @@ msgstr ""
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 msgid "Edit link"
 msgstr ""
 
@@ -4662,6 +4662,11 @@ msgstr "ערוך את שם התת-דומיין שלך או הגדר תחום מ�
 #. js-lingui-id: xMkLkW
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Editable Profile Fields"
+msgstr ""
+
+#. js-lingui-id: uBAxNB
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+msgid "Editor"
 msgstr ""
 
 #. js-lingui-id: hpAStM
@@ -5823,6 +5828,7 @@ msgstr "שיעור כשל"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -6096,7 +6102,7 @@ msgid "Folder"
 msgstr ""
 
 #. js-lingui-id: cqQyPB
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "Folder name"
 msgstr ""
 
@@ -7535,7 +7541,7 @@ msgid "Line Chart"
 msgstr "תרשים קו"
 
 #. js-lingui-id: LdyooL
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 msgid "link"
 msgstr ""
 
@@ -7557,10 +7563,10 @@ msgstr "הקישור הועתק ללוח הגזירים"
 
 #. js-lingui-id: vH3ZQY
 #: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 msgid "Link label"
 msgstr ""
 
@@ -7813,11 +7819,6 @@ msgstr "נהל את היישום שלך"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
 msgstr "נהל את חשבונות האינטרנט שלך."
-
-#. js-lingui-id: D1bqKd
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
-msgid "Managed logic functions are not editable"
-msgstr ""
 
 #. js-lingui-id: BWTzAb
 #: src/modules/command-menu/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -8371,9 +8372,9 @@ msgid "New Field"
 msgstr "שדה חדש"
 
 #. js-lingui-id: 96G6Re
-#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
-#: src/modules/command-menu/components/CommandMenuFolderLinkInfo.tsx
+#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "New folder"
 msgstr ""
 
@@ -12846,6 +12847,7 @@ msgstr "מפעיל את הפונקציה עם בקשת Http"
 
 #. js-lingui-id: c+xCSz
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx

@@ -36,7 +36,10 @@ import {
   IconUsers,
   IconWorld,
 } from 'twenty-ui/display';
-import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
   label: string;

@@ -7,7 +7,7 @@ import {
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {

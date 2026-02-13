@@ -4,7 +4,7 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useAttachments = (targetableObject: ActivityTargetableObject) => {
   const isAttachmentMigrated = useIsFeatureEnabled(
