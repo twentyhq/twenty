@@ -216,15 +216,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
     }
 
-    if (payload.logo === null && isDefined(workspace.logoFileId)) {
-      await this.fileCorePictureService.deleteCorePicture({
-        fileId: workspace.logoFileId,
-        workspaceId: workspace.id,
-      });
-    }
+    let updatedWorkspace: WorkspaceEntity;
 
     try {
-      return await this.workspaceRepository.save({
+      updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
       });
@@ -239,6 +234,15 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       }
       throw error;
     }
+
+    if (payload.logo === null && isDefined(workspace.logoFileId)) {
+      await this.fileCorePictureService.deleteCorePicture({
+        fileId: workspace.logoFileId,
+        workspaceId: workspace.id,
+      });
+    }
+
+    return updatedWorkspace;
   }
 
   async activateWorkspace(

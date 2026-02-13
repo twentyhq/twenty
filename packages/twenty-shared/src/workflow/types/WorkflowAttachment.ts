@@ -1,4 +1,4 @@
-export type WorkflowAttachmentType = {
+export type WorkflowAttachment = {
   id: string;
   name: string;
   size: number;
