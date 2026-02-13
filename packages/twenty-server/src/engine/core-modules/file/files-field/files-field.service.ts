@@ -1,21 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Readable } from 'stream';
-
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
-import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -32,8 +28,6 @@ export class FilesFieldService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
   ) {}
 
@@ -119,45 +113,5 @@ export class FilesFieldService {
         },
       );
     }
-  }
-
-  async getFileStream({
-    fileId,
-    workspaceId,
-  }: {
-    fileId: string;
-    workspaceId: string;
-  }): Promise<Readable> {
-    const file = await this.fileRepository.findOneOrFail({
-      where: {
-        id: fileId,
-        path: Like(`${FileFolder.FilesField}/%`),
-        workspaceId,
-      },
-    });
-
-    if (file.settings?.isTemporaryFile === true) {
-      throw new FilesFieldException(
-        `File ${fileId} is not associated with a permanent files field`,
-        FilesFieldExceptionCode.TEMPORARY_FILE_NOT_ALLOWED,
-        {
-          userFriendlyMessage: msg`File ${fileId} is not associated with a files field. It can't be downloaded.`,
-        },
-      );
-    }
-
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: file.applicationId,
-        workspaceId,
-      },
-    });
-
-    return await this.fileStorageService.readFile({
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-      fileFolder: FileFolder.FilesField,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-    });
   }
 }

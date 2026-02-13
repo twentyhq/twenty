@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
 import { FilesFieldDeletionJob } from 'src/engine/core-modules/file/files-field/jobs/files-field-deletion.job';
@@ -19,7 +18,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   imports: [
     JwtModule,
     TypeOrmModule.forFeature([
-      FileEntity,
       WorkspaceEntity,
       ApplicationEntity,
       FieldMetadataEntity,
