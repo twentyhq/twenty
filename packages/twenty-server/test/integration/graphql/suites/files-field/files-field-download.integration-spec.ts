@@ -57,7 +57,7 @@ const deleteFile = async (fileId: string): Promise<void> => {
   });
 };
 
-describe('files-field.controller - GET /files-field/:id', () => {
+describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
   let createdObjectMetadataId = '';
   let createdFieldMetadataId = '';
   let uploadedFiles: UploadedFile[] = [];

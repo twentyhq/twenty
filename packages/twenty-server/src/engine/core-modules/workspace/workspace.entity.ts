@@ -72,9 +72,14 @@ export class WorkspaceEntity {
   @Column({ nullable: true })
   displayName?: string;
 
+  //deprecated
   @Field({ nullable: true })
   @Column({ nullable: true })
   logo?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  logoFileId?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

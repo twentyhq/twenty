@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('FilesFieldFile')
-export class FilesFieldFileDTO {
+@ObjectType('FileWithSignedUrl')
+export class FileWithSignedUrlDto {
   @Field(() => UUIDScalarType)
   id: string;
 

@@ -3,6 +3,7 @@ export enum FileFolder {
   WorkspaceLogo = 'workspace-logo',
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
+  CorePicture = 'core-picture',
   File = 'file',
   AgentChat = 'agent-chat',
   BuiltLogicFunction = 'built-logic-function',
