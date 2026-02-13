@@ -1,7 +1,7 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
 import type {
   SpreadsheetImportDialogOptions,
-  SpreadsheetImportFields
+  SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import type { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -162,7 +162,7 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
     await sleep(4000, (resolve) => resolve(data));
     return data;
   },
-  availableFieldMetadataItems: []
+  availableFieldMetadataItems: [],
 });
 
 export const editableTableInitialData = [
