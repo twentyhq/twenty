@@ -1,5 +1,5 @@
-import { useTheme } from '@emotion/react';
 import isPropValid from '@emotion/is-prop-valid';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
@@ -28,24 +28,24 @@ const StyledChevronIcon = styled(IconChevronDown, {
     `transform ${theme.animation.duration.normal}s ease`};
 `;
 
-type FieldsWidgetSectionContainerProps = {
+type FieldsWidgetGroupContainerProps = {
   children: React.ReactNode;
   title: string;
 };
 
-export const FieldsWidgetSectionContainer = ({
+export const FieldsWidgetGroupContainer = ({
   children,
   title,
-}: FieldsWidgetSectionContainerProps) => {
+}: FieldsWidgetGroupContainerProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const theme = useTheme();
 
-  const handleToggleSection = () =>
+  const handleToggleGroup = () =>
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
 
   return (
     <Section>
-      <StyledHeader onClick={handleToggleSection}>
+      <StyledHeader onClick={handleToggleGroup}>
         <StyledTitleLabel>{title}</StyledTitleLabel>
         <StyledChevronIcon
           isExpanded={isExpanded}

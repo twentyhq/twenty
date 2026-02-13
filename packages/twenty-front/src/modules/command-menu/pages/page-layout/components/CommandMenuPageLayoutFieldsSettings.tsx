@@ -6,12 +6,13 @@ import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layo
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
+import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLayoutSidebarRight } from 'twenty-ui/display';
+import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -33,15 +34,22 @@ export const CommandMenuPageLayoutFieldsSettings = () => {
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const fieldsConfiguration =
-    useTemporaryFieldsConfiguration(objectNameSingular);
+
+  const fieldsConfiguration = widgetInEditMode?.configuration as
+    | FieldsConfiguration
+    | undefined;
+
+  const { groups } = useFieldsWidgetGroups({
+    viewId: fieldsConfiguration?.viewId ?? null,
+    objectNameSingular,
+  });
 
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
 
-  const totalFieldsCount = fieldsConfiguration.sections.reduce(
-    (count, section) => count + section.fields.length,
+  const totalFieldsCount = groups.reduce(
+    (count, group) => count + group.fields.length,
     0,
   );
 

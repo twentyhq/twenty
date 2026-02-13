@@ -3,12 +3,12 @@ import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/co
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
-import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledOuterContainer = styled.div`
   display: flex;
@@ -28,12 +28,11 @@ const StyledContainer = styled.div`
 export const CommandMenuPageLayoutFieldsLayout = () => {
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
-  const { pageLayoutId, objectNameSingular } =
+  const { pageLayoutId } =
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const defaultFieldsConfiguration =
-    useTemporaryFieldsConfiguration(objectNameSingular);
+  const defaultFieldsConfiguration = useTemporaryFieldsConfiguration();
   const [fieldsConfiguration, setFieldsConfiguration] =
     useState<FieldsConfiguration>(defaultFieldsConfiguration);
 

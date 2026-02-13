@@ -1,0 +1,16 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+
+export type FieldsWidgetGroupField = {
+  fieldMetadataItem: FieldMetadataItem;
+  position: number;
+  isVisible: boolean;
+  globalIndex: number;
+};
+
+export type FieldsWidgetGroup = {
+  id: string;
+  name: string;
+  position: number;
+  isVisible: boolean;
+  fields: FieldsWidgetGroupField[];
+};

@@ -7,14 +7,14 @@ import {
 } from '@hello-pangea/dnd';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import {
-  type FieldsConfiguration,
-  type FieldsConfigurationFieldItem,
-  type FieldsConfigurationSection,
-} from '@/page-layout/types/FieldsConfiguration';
-import { FieldsConfigurationSectionEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationSectionEditor';
+import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
+import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
+import { useFieldsWidgetEditorGroupsData } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData';
+import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
+import { useLingui } from '@lingui/react/macro';
+import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
-const StyledSectionsDroppable = styled.div`
+const StyledGroupsDroppable = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -27,23 +27,21 @@ type FieldsConfigurationEditorProps = {
 
 export const FieldsConfigurationEditor = ({
   configuration,
-  onChange,
 }: FieldsConfigurationEditorProps) => {
+  const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const handleSectionChange = (
-    sectionId: string,
-    updatedSection: FieldsConfigurationSection,
-  ) => {
-    const updatedSections = configuration.sections.map((section) =>
-      section.id === sectionId ? updatedSection : section,
-    );
+  const { groups } = useFieldsWidgetEditorGroupsData({
+    viewId: configuration.viewId ?? null,
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
 
-    onChange({
-      ...configuration,
-      sections: updatedSections,
-    });
-  };
+  const { createGroup } = useCreateFieldsWidgetEditorGroup({
+    viewId: configuration.viewId ?? null,
+    groups,
+  });
+
+  const { reorderGroups } = useReorderFieldsWidgetEditorGroups();
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, type } = result;
@@ -59,8 +57,8 @@ export const FieldsConfigurationEditor = ({
       return;
     }
 
-    if (type === 'SECTION') {
-      handleSectionReorder(source.index, destination.index);
+    if (type === 'GROUP') {
+      handleGroupReorder(source.index, destination.index);
     } else if (type === 'FIELD') {
       handleFieldMove(
         source.droppableId,
@@ -71,144 +69,72 @@ export const FieldsConfigurationEditor = ({
     }
   };
 
-  const handleSectionReorder = (
+  const handleGroupReorder = (
     sourceIndex: number,
     destinationIndex: number,
   ) => {
-    const sortedSections = [...configuration.sections].sort(
-      (a, b) => a.position - b.position,
-    );
+    const sortedGroups = [...groups].sort((a, b) => a.position - b.position);
 
-    const [movedSection] = sortedSections.splice(sourceIndex, 1);
-    sortedSections.splice(destinationIndex, 0, movedSection);
+    const reorderedGroupIds = sortedGroups.map((g) => g.id);
+    const [movedGroupId] = reorderedGroupIds.splice(sourceIndex, 1);
+    reorderedGroupIds.splice(destinationIndex, 0, movedGroupId);
 
-    const updatedSections = sortedSections.map((section, index) => ({
-      ...section,
-      position: index,
-    }));
-
-    onChange({
-      ...configuration,
-      sections: updatedSections,
-    });
+    reorderGroups(reorderedGroupIds);
   };
 
   const handleFieldMove = (
-    sourceSectionId: string,
-    destinationSectionId: string,
-    sourceIndex: number,
-    destinationIndex: number,
+    sourceGroupId: string,
+    destinationGroupId: string,
+    _sourceIndex: number,
+    _destinationIndex: number,
   ) => {
-    const sourceSection = configuration.sections.find(
-      (s) => `section-${s.id}` === sourceSectionId,
-    );
-    const destinationSection = configuration.sections.find(
-      (s) => `section-${s.id}` === destinationSectionId,
-    );
-
-    if (!sourceSection || !destinationSection) {
-      return;
-    }
-
-    const sourceSortedFields = [...sourceSection.fields].sort(
-      (a, b) => a.position - b.position,
-    );
-
-    if (sourceSectionId === destinationSectionId) {
-      // Reorder within the same section
-      const [movedField] = sourceSortedFields.splice(sourceIndex, 1);
-      sourceSortedFields.splice(destinationIndex, 0, movedField);
-
-      const updatedFields = sourceSortedFields.map((field, index) => ({
-        ...field,
-        position: index,
-      }));
-
-      handleSectionChange(sourceSection.id, {
-        ...sourceSection,
-        fields: updatedFields,
-      });
-    } else {
-      // Move field between sections
-      const [movedField] = sourceSortedFields.splice(sourceIndex, 1);
-
-      const destinationSortedFields = [...destinationSection.fields].sort(
-        (a, b) => a.position - b.position,
-      );
-      destinationSortedFields.splice(destinationIndex, 0, movedField);
-
-      const updatedSourceFields = sourceSortedFields.map(
-        (field, index) =>
-          ({
-            ...field,
-            position: index,
-          }) satisfies FieldsConfigurationFieldItem,
-      );
-
-      const updatedDestinationFields = destinationSortedFields.map(
-        (field, index) =>
-          ({
-            ...field,
-            position: index,
-          }) satisfies FieldsConfigurationFieldItem,
-      );
-
-      const updatedSections = configuration.sections.map((section) => {
-        if (section.id === sourceSection.id) {
-          return { ...section, fields: updatedSourceFields };
-        }
-        if (section.id === destinationSection.id) {
-          return { ...section, fields: updatedDestinationFields };
-        }
-        return section;
-      });
-
-      onChange({
-        ...configuration,
-        sections: updatedSections,
-      });
-    }
+    // TODO: Implement field move via ViewField mutations
+    console.log('Field move not yet implemented', {
+      sourceGroupId,
+      destinationGroupId,
+    });
   };
 
-  const sortedSections = [...configuration.sections].sort(
-    (a, b) => a.position - b.position,
-  );
+  const handleAddGroup = async () => {
+    const newGroupName = t`New Group`;
+    await createGroup(newGroupName);
+  };
 
-  if (sortedSections.length === 0) {
+  const sortedGroups = [...groups].sort((a, b) => a.position - b.position);
+
+  if (sortedGroups.length === 0) {
     return null;
   }
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId="sections" type="SECTION">
+      <Droppable droppableId="groups" type="GROUP">
         {(provided) => (
-          <StyledSectionsDroppable
+          <StyledGroupsDroppable
             ref={provided.innerRef}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
-            {sortedSections.map((section, index) => (
+            {sortedGroups.map((group, index) => (
               <Draggable
-                key={section.id}
-                draggableId={`section-draggable-${section.id}`}
+                key={group.id}
+                draggableId={`group-draggable-${group.id}`}
                 index={index}
               >
                 {(draggableProvided, snapshot) => (
-                  <FieldsConfigurationSectionEditor
-                    section={section}
+                  <FieldsConfigurationGroupEditor
+                    group={group}
                     index={index}
                     objectMetadataItem={objectMetadataItem}
-                    onSectionChange={(updatedSection) =>
-                      handleSectionChange(section.id, updatedSection)
-                    }
                     draggableProvided={draggableProvided}
                     isDragging={snapshot.isDragging}
+                    onAddGroup={handleAddGroup}
                   />
                 )}
               </Draggable>
             ))}
             {provided.placeholder}
-          </StyledSectionsDroppable>
+          </StyledGroupsDroppable>
         )}
       </Droppable>
     </DragDropContext>

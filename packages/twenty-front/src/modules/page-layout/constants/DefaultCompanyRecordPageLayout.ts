@@ -46,7 +46,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -83,7 +83,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -120,7 +120,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -157,7 +157,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -194,7 +194,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -231,7 +231,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -268,7 +268,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
-            sections: [],
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
