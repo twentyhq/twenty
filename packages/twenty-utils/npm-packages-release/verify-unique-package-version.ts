@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 const packages = ['twenty-sdk', 'create-twenty-app'];
 
-const main = () => {
+const verifyUniquePackageVersion = () => {
   const packageVersions = packages.map((pkg) => {
     const packageJsonPath = resolve('packages', pkg, 'package.json');
 
@@ -24,4 +24,4 @@ const main = () => {
   );
 };
 
-main();
+verifyUniquePackageVersion();

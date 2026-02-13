@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 
-const main = () => {
+const verifyBuildPackagesBundleTwentyDependencies = () => {
   const distPath = resolve('dist/cli.cjs');
 
   if (!existsSync(distPath)) {
@@ -25,4 +25,4 @@ const main = () => {
   }
 };
 
-main();
+verifyBuildPackagesBundleTwentyDependencies();
