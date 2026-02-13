@@ -1,7 +1,9 @@
+import { useLazyQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
+import { GET_TOOL_INPUT_SCHEMAS } from '@/ai/graphql/queries/getToolInputSchemas';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -23,12 +25,20 @@ import { type JsonValue } from 'type-fest';
 
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
+type ToolInputSchemaEntry = {
+  name: string;
+  inputSchema?: object;
+};
+
+type GetToolInputSchemasQuery = {
+  getToolIndex: ToolInputSchemaEntry[];
+};
+
 export type SystemTool = {
   name: string;
   description: string;
   category: string;
   objectName?: string;
-  inputSchema?: object;
 };
 
 export type SettingsSystemToolTableRowProps = {
@@ -105,14 +115,24 @@ export const SettingsSystemToolTableRow = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const { copyToClipboard } = useCopyToClipboard();
 
-  const Icon = getCategoryIcon(tool.category);
+  // Lazy-load input schemas on first expand (Apollo caches across all rows)
+  const [fetchSchemas, { data: schemasData, loading: schemasLoading }] =
+    useLazyQuery<GetToolInputSchemasQuery>(GET_TOOL_INPUT_SCHEMAS);
+
+  const inputSchema = schemasData?.getToolIndex.find(
+    (entry) => entry.name === tool.name,
+  )?.inputSchema;
+
   const hasInputSchema =
-    isDefined(tool.inputSchema) && Object.keys(tool.inputSchema).length > 0;
+    isDefined(inputSchema) && Object.keys(inputSchema).length > 0;
+
+  const Icon = getCategoryIcon(tool.category);
 
   const handleRowClick = () => {
-    if (hasInputSchema) {
-      setIsExpanded(!isExpanded);
+    if (!schemasData && !schemasLoading) {
+      fetchSchemas();
     }
+    setIsExpanded(!isExpanded);
   };
 
   return (
@@ -120,7 +140,7 @@ export const SettingsSystemToolTableRow = ({
       <StyledSystemToolTableRow
         key={tool.name}
         onClick={handleRowClick}
-        isExpandable={hasInputSchema}
+        isExpandable
       >
         <StyledNameTableCell>
           <StyledIconContainer>
@@ -132,35 +152,42 @@ export const SettingsSystemToolTableRow = ({
           <SettingsItemTypeTag item={{ isCustom: false }} />
         </TableCell>
         <StyledActionTableCell>
-          {hasInputSchema &&
-            (isExpanded ? (
-              <IconChevronDown size={16} />
-            ) : (
-              <IconChevronRight size={16} />
-            ))}
+          {isExpanded ? (
+            <IconChevronDown size={16} />
+          ) : (
+            <IconChevronRight size={16} />
+          )}
         </StyledActionTableCell>
       </StyledSystemToolTableRow>
 
-      {hasInputSchema && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-          <StyledExpandableContent>
-            {tool.description && (
-              <StyledDescription>{tool.description}</StyledDescription>
-            )}
-            <StyledSectionTitle>{t`Input Schema`}</StyledSectionTitle>
-            <JsonTree
-              value={tool.inputSchema as JsonValue}
-              shouldExpandNodeInitially={() => true}
-              emptyArrayLabel={t`Empty Array`}
-              emptyObjectLabel={t`No parameters`}
-              emptyStringLabel={t`[empty string]`}
-              arrowButtonCollapsedLabel={t`Expand`}
-              arrowButtonExpandedLabel={t`Collapse`}
-              onNodeValueClick={copyToClipboard}
-            />
-          </StyledExpandableContent>
-        </AnimatedExpandableContainer>
-      )}
+      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+        <StyledExpandableContent>
+          {tool.description && (
+            <StyledDescription>{tool.description}</StyledDescription>
+          )}
+          {schemasLoading && (
+            <StyledSectionTitle>{t`Loading schema...`}</StyledSectionTitle>
+          )}
+          {hasInputSchema && (
+            <>
+              <StyledSectionTitle>{t`Input Schema`}</StyledSectionTitle>
+              <JsonTree
+                value={inputSchema as JsonValue}
+                shouldExpandNodeInitially={() => true}
+                emptyArrayLabel={t`Empty Array`}
+                emptyObjectLabel={t`No parameters`}
+                emptyStringLabel={t`[empty string]`}
+                arrowButtonCollapsedLabel={t`Expand`}
+                arrowButtonExpandedLabel={t`Collapse`}
+                onNodeValueClick={copyToClipboard}
+              />
+            </>
+          )}
+          {!schemasLoading && !hasInputSchema && (
+            <StyledSectionTitle>{t`No parameters`}</StyledSectionTitle>
+          )}
+        </StyledExpandableContent>
+      </AnimatedExpandableContainer>
     </>
   );
 };
