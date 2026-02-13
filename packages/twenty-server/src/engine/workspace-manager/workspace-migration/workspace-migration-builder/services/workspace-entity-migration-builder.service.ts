@@ -21,6 +21,7 @@ import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughM
 import { deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/replace-universal-flat-entity-in-universal-flat-entity-maps-through-mutation-or-throw.util';
+import { resetUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/universal-flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
@@ -111,23 +112,31 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       'creation validation',
     );
     for (const flatEntityToCreateUniversalIdentifier in createdFlatEntityMaps.byUniversalIdentifier) {
-      const flatEntityToCreate = findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier: flatEntityToCreateUniversalIdentifier,
-        flatEntityMaps: createdFlatEntityMaps,
-      });
+      const rawUniversalflatEntityToCreate =
+        findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: flatEntityToCreateUniversalIdentifier,
+          flatEntityMaps: createdFlatEntityMaps,
+        });
 
-      const flatEntityToCreateId = flatEntityToCreate.universalIdentifier;
+      const universalFlatEntityToCreate =
+        resetUniversalFlatEntityForeignKeyAggregators({
+          metadataName: this.metadataName,
+          universalFlatEntity: rawUniversalflatEntityToCreate,
+        });
+
+      const universalIdentifierToDelete =
+        universalFlatEntityToCreate.universalIdentifier;
 
       deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow(
         {
-          universalIdentifierToDelete: flatEntityToCreateId,
+          universalIdentifierToDelete,
           universalFlatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
         },
       );
 
       const validationResult = await this.validateFlatEntityCreation({
         additionalCacheDataMaps,
-        flatEntityToValidate: flatEntityToCreate,
+        flatEntityToValidate: universalFlatEntityToCreate,
         workspaceId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToCreate,
@@ -141,7 +150,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
 
       addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
         {
-          universalFlatEntity: flatEntityToCreate,
+          universalFlatEntity: universalFlatEntityToCreate,
           universalFlatEntityAndRelatedMapsToMutate:
             optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
           metadataName: this.metadataName,

@@ -22,9 +22,7 @@ export const resetUniversalFlatEntityForeignKeyAggregators = <
   const overrides: Record<string, string[]> = {};
 
   for (const aggregatorProperty of aggregatorProperties) {
-    if (aggregatorProperty in universalFlatEntity) {
-      overrides[aggregatorProperty] = [];
-    }
+    overrides[aggregatorProperty] = [];
   }
 
   return {
