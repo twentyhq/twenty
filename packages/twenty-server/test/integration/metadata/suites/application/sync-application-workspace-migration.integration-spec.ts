@@ -5,6 +5,7 @@ import { createOneApplication } from 'test/integration/metadata/suites/applicati
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -81,45 +82,13 @@ describe('syncApplication', () => {
       publicAssets: [],
     };
 
-    const { data, errors } = await syncApplication({
+    const { data } = await syncApplication({
       manifest,
       expectToFail: false,
     });
 
-    expect(data).toMatchInlineSnapshot(`
-{
-  "syncApplication": {
-    "actions": [
-      {
-        "flatEntity": {
-          "applicationUniversalIdentifier": "809aca3b-0567-4c61-9937-bc49f8082d4b",
-          "canAccessAllTools": false,
-          "canBeAssignedToAgents": true,
-          "canBeAssignedToApiKeys": true,
-          "canBeAssignedToUsers": true,
-          "canDestroyAllObjectRecords": false,
-          "canReadAllObjectRecords": false,
-          "canSoftDeleteAllObjectRecords": false,
-          "canUpdateAllObjectRecords": false,
-          "canUpdateAllSettings": false,
-          "createdAt": "2026-02-13T13:02:17.820Z",
-          "description": "A test role",
-          "icon": null,
-          "isEditable": true,
-          "label": "Test Role",
-          "roleTargetUniversalIdentifiers": [],
-          "rowLevelPermissionPredicateGroupUniversalIdentifiers": [],
-          "rowLevelPermissionPredicateUniversalIdentifiers": [],
-          "universalIdentifier": "a3932200-c9f1-49e0-b303-093f585f7818",
-          "updatedAt": "2026-02-13T13:02:17.820Z",
-        },
-        "metadataName": "role",
-        "type": "create",
-      },
-    ],
-    "applicationUniversalIdentifier": "809aca3b-0567-4c61-9937-bc49f8082d4b",
-  },
-}
-`);
+    expect(data).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(data),
+    );
   }, 60000);
 });

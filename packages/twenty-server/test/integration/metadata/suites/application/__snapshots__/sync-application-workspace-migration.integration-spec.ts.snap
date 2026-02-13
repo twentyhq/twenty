@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`syncApplication should return workspace migration with actions when syncing a manifest with a role 1`] = `
+{
+  "syncApplication": {
+    "actions": [
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllTools": false,
+          "canBeAssignedToAgents": true,
+          "canBeAssignedToApiKeys": true,
+          "canBeAssignedToUsers": true,
+          "canDestroyAllObjectRecords": false,
+          "canReadAllObjectRecords": false,
+          "canSoftDeleteAllObjectRecords": false,
+          "canUpdateAllObjectRecords": false,
+          "canUpdateAllSettings": false,
+          "createdAt": Any<String>,
+          "description": "A test role",
+          "icon": null,
+          "isEditable": true,
+          "label": "Test Role",
+          "roleTargetUniversalIdentifiers": [],
+          "rowLevelPermissionPredicateGroupUniversalIdentifiers": [],
+          "rowLevelPermissionPredicateUniversalIdentifiers": [],
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "role",
+        "type": "create",
+      },
+    ],
+    "applicationUniversalIdentifier": Any<String>,
+  },
+}
+`;
