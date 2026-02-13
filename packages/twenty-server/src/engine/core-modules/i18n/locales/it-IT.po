@@ -1048,6 +1048,11 @@ msgstr "Email obbligatoria"
 msgid "Email is required."
 msgstr "Email obbligatoria."
 
+#. js-lingui-id: 3wAyvl
+#: src/utils/get-domain-name-by-email.ts
+msgid "Email is required. Please provide a valid email address."
+msgstr ""
+
 #. js-lingui-id: y+BSWq
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email is unchanged."
@@ -3661,6 +3666,16 @@ msgstr "La versione iniziale di un flusso di lavoro non può essere eliminata"
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "L'oggetto per il quale si tenta di impostare i permessi non è stato trovato. Potrebbe essere stato eliminato."
+
+#. js-lingui-id: tl8xOZ
+#: src/utils/get-domain-name-by-email.ts
+msgid "The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com)."
+msgstr ""
+
+#. js-lingui-id: h8R4RO
+#: src/utils/get-domain-name-by-email.ts
+msgid "The provided email address is not valid. Please use a standard email format (e.g., user@example.com)."
+msgstr ""
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts

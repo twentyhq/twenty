@@ -1665,6 +1665,7 @@ msgstr ""
 #. js-lingui-id: LMUw1U
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
 msgstr ""
@@ -3044,11 +3045,6 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#. js-lingui-id: 9+fW4I
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Content tab"
-msgstr ""
-
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3720,6 +3716,7 @@ msgid "Dashboards"
 msgstr ""
 
 #. js-lingui-id: HKH+W+
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 #: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -4259,6 +4256,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -4558,6 +4556,7 @@ msgstr ""
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -5910,6 +5909,8 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
@@ -5991,7 +5992,6 @@ msgid "File upload failed"
 msgstr ""
 
 #. js-lingui-id: H/+55l
-#: src/modules/activities/files/components/AttachmentRow.tsx
 #: src/modules/activities/files/components/AttachmentList.tsx
 msgid "File URL is not defined"
 msgstr ""
@@ -6184,6 +6184,12 @@ msgstr ""
 msgid "front components"
 msgstr ""
 
+#. js-lingui-id: IvIKDS
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Front components"
+msgstr ""
+
 #. js-lingui-id: xf0TNb
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "Front Components"
@@ -6206,6 +6212,7 @@ msgid "functions"
 msgstr ""
 
 #. js-lingui-id: xANKBj
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
 msgstr ""
@@ -7478,6 +7485,26 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
+#. js-lingui-id: Xq275E
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Learned {names}"
+msgstr ""
+
+#. js-lingui-id: kbL7ds
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Learned tools"
+msgstr ""
+
+#. js-lingui-id: VcDd9S
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Learning {names}"
+msgstr ""
+
+#. js-lingui-id: 1XzvEM
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Learning tools..."
+msgstr ""
+
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need calendar sync."
@@ -7623,6 +7650,21 @@ msgstr ""
 msgid "Load more"
 msgstr ""
 
+#. js-lingui-id: RAILHC
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Loaded {names}"
+msgstr ""
+
+#. js-lingui-id: fMTdkD
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Loaded skills"
+msgstr ""
+
+#. js-lingui-id: Z1zZjD
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Loading {names}"
+msgstr ""
+
 #. js-lingui-id: fS/QXs
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Loading applications..."
@@ -7665,6 +7707,16 @@ msgstr ""
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Loading retention configuration..."
+msgstr ""
+
+#. js-lingui-id: +yoeVU
+#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
+msgid "Loading schema..."
+msgstr ""
+
+#. js-lingui-id: dJl485
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Loading skills..."
 msgstr ""
 
 #. js-lingui-id: 7YK6ap
@@ -7713,9 +7765,19 @@ msgstr ""
 msgid "logic function"
 msgstr ""
 
+#. js-lingui-id: QTVVDd
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Logic functions"
+msgstr ""
+
 #. js-lingui-id: RXhDe7
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Logic functions powering this app"
+msgstr ""
+
+#. js-lingui-id: Fr4G59
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Logic functions provided by this app"
 msgstr ""
 
 #. js-lingui-id: VLuNNu
@@ -8202,6 +8264,9 @@ msgstr ""
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationDataTableRow.tsx
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -8804,6 +8869,11 @@ msgstr ""
 msgid "No notes"
 msgstr ""
 
+#. js-lingui-id: 14uqQk
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+msgid "No object found"
+msgstr ""
+
 #. js-lingui-id: YFHO2u
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
@@ -8826,12 +8896,18 @@ msgstr ""
 
 #. js-lingui-id: 20ONq7
 #: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
+#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 msgid "No parameters"
 msgstr ""
 
 #. js-lingui-id: 5pSj4j
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
+msgstr ""
+
+#. js-lingui-id: Od1X93
+#: src/pages/settings/applications/tabs/SettingsApplicationPermissionsTab.tsx
+msgid "No permissions configured for this application."
 msgstr ""
 
 #. js-lingui-id: kSCxfd
@@ -9119,6 +9195,11 @@ msgstr ""
 msgid "Object ID"
 msgstr ""
 
+#. js-lingui-id: ecLxgy
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
+msgid "Object permission options"
+msgstr ""
+
 #. js-lingui-id: UGhVPl
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 msgid "Object Type"
@@ -9148,7 +9229,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
@@ -9156,14 +9237,14 @@ msgstr ""
 msgid "Objects"
 msgstr ""
 
+#. js-lingui-id: tmyEbd
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+msgid "Objects and fields managed by this app"
+msgstr ""
+
 #. js-lingui-id: /8Yh6y
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects and fields permissions settings"
-msgstr ""
-
-#. js-lingui-id: YFI9hD
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Objects managed by this app"
 msgstr ""
 
 #. js-lingui-id: BwJKBw
@@ -9673,6 +9754,7 @@ msgstr ""
 #. js-lingui-id: 9cDpsw
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
@@ -9682,11 +9764,6 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
-msgstr ""
-
-#. js-lingui-id: 89ldLL
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Permissions tab"
 msgstr ""
 
 #. js-lingui-id: zmwvG2
@@ -10097,6 +10174,11 @@ msgstr ""
 msgid "Quick model for routing decisions"
 msgstr ""
 
+#. js-lingui-id: opSifa
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Ran {formattedName}"
+msgstr ""
+
 #. js-lingui-id: z1U/Fh
 #: src/modules/ui/field/input/components/RatingInput.tsx
 msgid "Rating"
@@ -10386,6 +10468,7 @@ msgid "Remove option"
 msgstr ""
 
 #. js-lingui-id: SjxzXf
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr ""
@@ -10716,6 +10799,11 @@ msgstr ""
 msgid "Run Function"
 msgstr ""
 
+#. js-lingui-id: NnAHs0
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Running {formattedName}"
+msgstr ""
+
 #. js-lingui-id: iXw832
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "Running function"
@@ -10901,6 +10989,7 @@ msgid "Search an object"
 msgstr ""
 
 #. js-lingui-id: BoNHR0
+#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Search an object..."
@@ -10997,6 +11086,26 @@ msgstr ""
 #. js-lingui-id: YIix5Y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
+msgstr ""
+
+#. js-lingui-id: iOkPjn
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Searched the web"
+msgstr ""
+
+#. js-lingui-id: KLJPmq
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Searched the web for '{query}'"
+msgstr ""
+
+#. js-lingui-id: AyoeWR
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Searching the web"
+msgstr ""
+
+#. js-lingui-id: dW40bt
+#: src/modules/ai/utils/getToolDisplayMessage.ts
+msgid "Searching the web for '{query}'"
 msgstr ""
 
 #. js-lingui-id: 8sgZS9
@@ -12973,6 +13082,7 @@ msgstr ""
 
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationDataTableRow.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -12993,6 +13103,11 @@ msgstr ""
 #. js-lingui-id: UhqKcC
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Type to search records"
+msgstr ""
+
+#. js-lingui-id: 4KcBEY
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "UI components provided by this app"
 msgstr ""
 
 #. js-lingui-id: V9+2pH
