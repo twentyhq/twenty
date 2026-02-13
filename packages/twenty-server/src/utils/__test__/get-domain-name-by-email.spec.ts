@@ -20,7 +20,7 @@ describe('getDomainNameByEmail', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(UserInputError);
       expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(error.extensions.userFriendlyMessage).toBe(
+      expect(error.extensions.userFriendlyMessage.message).toContain(
         'Email is required. Please provide a valid email address.',
       );
     }
@@ -36,7 +36,7 @@ describe('getDomainNameByEmail', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(UserInputError);
       expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(error.extensions.userFriendlyMessage).toBe(
+      expect(error.extensions.userFriendlyMessage.message).toContain(
         'The provided email address is not valid. Please use a standard email format (e.g., user@example.com).',
       );
     }
@@ -52,7 +52,7 @@ describe('getDomainNameByEmail', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(UserInputError);
       expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(error.extensions.userFriendlyMessage).toBe(
+      expect(error.extensions.userFriendlyMessage.message).toContain(
         'The provided email address is not valid. Please use a standard email format (e.g., user@example.com).',
       );
     }
@@ -66,7 +66,7 @@ describe('getDomainNameByEmail', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(UserInputError);
       expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(error.extensions.userFriendlyMessage).toBe(
+      expect(error.extensions.userFriendlyMessage.message).toContain(
         'The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com).',
       );
     }
