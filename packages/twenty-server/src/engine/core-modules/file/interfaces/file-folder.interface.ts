@@ -25,7 +25,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
   [FileFolder.CorePicture]: {
-    ignoreExpirationToken: false,
+    ignoreExpirationToken: true,
   },
   [FileFolder.File]: {
     ignoreExpirationToken: false,
