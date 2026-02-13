@@ -23,6 +23,11 @@ import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enu
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
+import {
+  ChartDataException,
+  ChartDataExceptionCode,
+  generateChartDataExceptionMessage,
+} from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
 import {
@@ -117,8 +122,10 @@ export class ChartDataQueryService {
     const shouldApplyPrimaryDateGranularity =
       isPrimaryFieldDate || isPrimaryNestedDate;
 
+    const shouldSplitMultiValueFields = splitMultiValueFields ?? true;
+
     const shouldUnnestPrimary =
-      (splitMultiValueFields ?? true) &&
+      shouldSplitMultiValueFields &&
       isFieldMetadataArrayKind(primaryGroupByField.type);
 
     const groupBy: GroupByFieldObject[] = [];
@@ -174,8 +181,18 @@ export class ChartDataQueryService {
         isSecondaryFieldDate || isSecondaryNestedDate;
 
       const shouldUnnestSecondary =
-        (splitMultiValueFields ?? true) &&
+        shouldSplitMultiValueFields &&
         isFieldMetadataArrayKind(secondaryGroupByField.type);
+
+      if (shouldUnnestPrimary && shouldUnnestSecondary) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+            'Split multiple values can only be enabled when one grouped field is multi-value.',
+          ),
+          ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+        );
+      }
 
       groupBy.push(
         buildGroupByFieldObject({

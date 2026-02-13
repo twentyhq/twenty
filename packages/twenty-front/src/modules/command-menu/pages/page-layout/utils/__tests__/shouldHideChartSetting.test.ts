@@ -521,6 +521,12 @@ describe('shouldHideChartSetting', () => {
           label: 'Tags',
           type: FieldMetadataType.MULTI_SELECT,
         },
+        {
+          id: 'array-field-id-2',
+          name: 'skills',
+          label: 'Skills',
+          type: FieldMetadataType.ARRAY,
+        },
       ],
     } as any;
 
@@ -564,6 +570,24 @@ describe('shouldHideChartSetting', () => {
         __typename: 'BarChartConfiguration',
         primaryAxisGroupByFieldMetadataId: 'text-field-id',
         secondaryAxisGroupByFieldMetadataId: 'text-field-id',
+      } as any;
+
+      const result = shouldHideChartSetting(
+        splitMultiValueFieldsItem,
+        'object-id',
+        true,
+        barChartConfig,
+        mockObjectMetadataItem,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it('should hide when both bar chart grouped fields are array fields', () => {
+      const barChartConfig: ChartConfiguration = {
+        __typename: 'BarChartConfiguration',
+        primaryAxisGroupByFieldMetadataId: 'array-field-id',
+        secondaryAxisGroupByFieldMetadataId: 'array-field-id-2',
       } as any;
 
       const result = shouldHideChartSetting(

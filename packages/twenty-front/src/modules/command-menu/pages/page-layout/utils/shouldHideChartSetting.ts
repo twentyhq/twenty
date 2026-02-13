@@ -133,7 +133,7 @@ export const shouldHideChartSetting = (
         return true;
       }
 
-      const hasArrayGroupByField = groupByFieldMetadataIds.some(
+      const arrayGroupByFieldCount = groupByFieldMetadataIds.filter(
         (groupByFieldMetadataId) => {
           const groupByField = objectMetadataItem.fields.find(
             (field) => field.id === groupByFieldMetadataId,
@@ -144,9 +144,13 @@ export const shouldHideChartSetting = (
             isFieldMetadataArrayKind(groupByField.type)
           );
         },
-      );
+      ).length;
 
-      return !hasArrayGroupByField;
+      if (isBarOrLineChart && arrayGroupByFieldCount > 1) {
+        return true;
+      }
+
+      return arrayGroupByFieldCount === 0;
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {
