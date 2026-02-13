@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFrontComponentModule } from 'src/engine/metadata-modules/flat-front-component/flat-front-component.module';
 import { FrontComponentController } from 'src/engine/metadata-modules/front-component/controllers/front-component.controller';
@@ -17,6 +18,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     ApplicationModule,
+    TokenModule,
     PermissionsModule,
     FlatFrontComponentModule,
   ],

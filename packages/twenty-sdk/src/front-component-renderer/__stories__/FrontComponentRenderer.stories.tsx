@@ -15,7 +15,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   },
   args: {
     onError: errorHandler,
-    authToken: 'fake-token',
+    applicationAccessToken: 'fake-token',
   },
   beforeEach: () => {
     errorHandler.mockClear();

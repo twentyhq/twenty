@@ -14,6 +14,7 @@ import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import * as TwentySharedTypes from 'twenty-shared/types';
 import * as TwentySharedUtils from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import * as TwentySdk from '@/sdk';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
@@ -25,6 +26,7 @@ import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderCo
 import { type WorkerExports } from '../../types/WorkerExports';
 import * as RemoteComponents from '../generated/remote-components';
 import { exposeGlobals } from '../utils/exposeGlobals';
+import { setWorkerEnv } from './utils/setWorkerEnv';
 
 exposeGlobals({
   React,
@@ -47,8 +49,20 @@ const render: WorkerExports['render'] = async (
   root.connect(batchedConnection);
   document.body.append(root);
 
+  if (
+    isDefined(renderContext.applicationAccessToken) &&
+    isDefined(renderContext.apiUrl)
+  ) {
+    setWorkerEnv({
+      TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
+      TWENTY_API_URL: renderContext.apiUrl,
+    });
+  }
+
   const response = await fetch(renderContext.componentUrl, {
-    headers: { Authorization: `Bearer ${renderContext.authToken}` },
+    headers: isDefined(renderContext.applicationAccessToken)
+      ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
+      : undefined,
   });
 
   if (!response.ok) {
