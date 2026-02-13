@@ -8,24 +8,22 @@ import {
 } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   createCommandMenuItemInput,
-  workspaceId,
   flatApplication,
   flatObjectMetadataMaps,
   flatFrontComponentMaps,
 }: {
   createCommandMenuItemInput: CreateCommandMenuItemInput;
-  workspaceId: string;
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFrontComponentMaps'
->): FlatCommandMenuItem => {
+>): UniversalFlatCommandMenuItem => {
   const hasWorkflowVersionId = isDefined(
     createCommandMenuItemInput.workflowVersionId,
   );
@@ -40,7 +38,6 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     );
   }
 
-  const id = uuidv4();
   const now = new Date().toISOString();
 
   const {
@@ -57,10 +54,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   });
 
   return {
-    id,
-    universalIdentifier: id,
+    universalIdentifier: uuidv4(),
     workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
-    frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
     frontComponentUniversalIdentifier,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
@@ -68,11 +63,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     availabilityType:
       createCommandMenuItemInput.availabilityType ??
       CommandMenuItemAvailabilityType.GLOBAL,
-    availabilityObjectMetadataId:
-      createCommandMenuItemInput.availabilityObjectMetadataId ?? null,
     availabilityObjectMetadataUniversalIdentifier,
-    workspaceId,
-    applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     createdAt: now,
     updatedAt: now,

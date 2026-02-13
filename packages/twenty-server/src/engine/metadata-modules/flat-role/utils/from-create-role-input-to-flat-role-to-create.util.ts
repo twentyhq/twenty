@@ -2,33 +2,25 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'tw
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
 export const fromCreateRoleInputToFlatRoleToCreate = ({
   createRoleInput,
-  workspaceId,
   flatApplication,
 }: {
   createRoleInput: CreateRoleInput;
-  workspaceId: string;
   flatApplication: FlatApplication;
-}): FlatRole => {
+}): UniversalFlatRole => {
   const now = new Date().toISOString();
 
-  const {
-    label,
-    description,
-    icon,
-    id: inputId,
-  } = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-    createRoleInput,
-    ['description', 'icon', 'id', 'label'],
-  );
-  const id = inputId ?? v4();
+  const { label, description, icon } =
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+      createRoleInput,
+      ['description', 'icon', 'id', 'label'],
+    );
 
   return {
-    id,
     label,
     description: description ?? null,
     icon: icon ?? null,
@@ -45,20 +37,12 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     canBeAssignedToAgents: createRoleInput.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: createRoleInput.canBeAssignedToApiKeys ?? true,
     isEditable: true,
-    workspaceId,
     createdAt: now,
     updatedAt: now,
     universalIdentifier: createRoleInput.universalIdentifier ?? v4(),
-    applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    roleTargetIds: [],
     roleTargetUniversalIdentifiers: [],
-    objectPermissionIds: [],
-    permissionFlagIds: [],
-    fieldPermissionIds: [],
-    rowLevelPermissionPredicateIds: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
-    rowLevelPermissionPredicateGroupIds: [],
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
   };
 };

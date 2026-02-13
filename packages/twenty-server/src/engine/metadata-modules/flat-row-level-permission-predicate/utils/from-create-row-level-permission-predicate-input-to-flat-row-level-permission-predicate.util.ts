@@ -6,14 +6,11 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type RowLevelPermissionPredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 
 export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate =
   ({
     input,
-    roleId,
-    objectMetadataId,
-    workspaceId,
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     flatApplication,
@@ -21,16 +18,12 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
     input: RowLevelPermissionPredicateInput;
-    roleId: string;
-    objectMetadataId: string;
-    workspaceId: string;
     roleUniversalIdentifier: string;
     objectMetadataUniversalIdentifier: string;
     flatApplication: FlatApplication;
   } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'> & {
       flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
-    }): FlatRowLevelPermissionPredicate => {
-    const predicateId = input.id ?? v4();
+    }): UniversalFlatRowLevelPermissionPredicate => {
     const createdAt = new Date().toISOString();
 
     const {
@@ -52,31 +45,21 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     });
 
     return {
-      id: predicateId,
-      workspaceId,
-      roleId,
       roleUniversalIdentifier,
-      objectMetadataId,
       objectMetadataUniversalIdentifier,
-      fieldMetadataId: input.fieldMetadataId,
       fieldMetadataUniversalIdentifier,
       operand: input.operand,
       value: input.value ?? null,
       subFieldName: input.subFieldName ?? null,
-      workspaceMemberFieldMetadataId:
-        input.workspaceMemberFieldMetadataId ?? null,
       workspaceMemberFieldMetadataUniversalIdentifier,
       workspaceMemberSubFieldName: input.workspaceMemberSubFieldName ?? null,
-      rowLevelPermissionPredicateGroupId:
-        input.rowLevelPermissionPredicateGroupId ?? null,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       positionInRowLevelPermissionPredicateGroup:
         input.positionInRowLevelPermissionPredicateGroup ?? null,
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
-      universalIdentifier: predicateId,
-      applicationId: flatApplication.id,
+      universalIdentifier: v4(),
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
   };
