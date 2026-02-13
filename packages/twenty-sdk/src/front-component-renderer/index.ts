@@ -47,8 +47,7 @@ export {
   HtmlTh,
   HtmlThead,
   HtmlTr,
-  HtmlUl,
-  TwentyUiButton,
+  HtmlUl
 } from './remote/generated/remote-components';
 export {
   HtmlAElement,
@@ -95,8 +94,7 @@ export {
   HtmlTrElement,
   HtmlUlElement,
   RemoteFragmentElement,
-  RemoteRootElement,
-  TwentyUiButtonElement,
+  RemoteRootElement
 } from './remote/generated/remote-elements';
 export type {
   HtmlAProperties,
@@ -111,8 +109,7 @@ export type {
   HtmlSelectProperties,
   HtmlTdProperties,
   HtmlTextareaProperties,
-  HtmlThProperties,
-  TwentyUiButtonProperties,
+  HtmlThProperties
 } from './remote/generated/remote-elements';
 export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
@@ -120,3 +117,4 @@ export type { FrontComponentHostCommunicationApi } from './types/FrontComponentH
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { PropertySchema } from './types/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';
+

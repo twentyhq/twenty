@@ -15,18 +15,6 @@ export const HtmlElementConfigZ = z.object({
 
 export const HtmlElementConfigArrayZ = z.array(HtmlElementConfigZ);
 
-export const UiComponentConfigZ = z.object({
-  tag: z
-    .string()
-    .regex(/^twenty-ui-[a-z0-9-]+$/, 'Tag must start with "twenty-ui-"'),
-  name: z.string().min(1),
-  properties: z.record(z.string(), PropertySchemaZ),
-  componentImport: z.string().min(1),
-  componentPath: z.string().min(1),
-});
-
-export const UiComponentConfigArrayZ = z.array(UiComponentConfigZ);
-
 export const ComponentSchemaZ = z.object({
   name: z.string().min(1),
   tagName: z.string().min(1),
@@ -41,5 +29,4 @@ export const ComponentSchemaZ = z.object({
 
 export type PropertySchema = z.infer<typeof PropertySchemaZ>;
 export type HtmlElementConfig = z.infer<typeof HtmlElementConfigZ>;
-export type UiComponentConfig = z.infer<typeof UiComponentConfigZ>;
 export type ComponentSchema = z.infer<typeof ComponentSchemaZ>;
