@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
+import { deleteUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-foreign-key-aggregators.util';
 import { UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -44,7 +45,12 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
-        universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
+        universalFlatFieldMetadatas: [
+          deleteUniversalFlatEntityForeignKeyAggregators({
+            metadataName: 'fieldMetadata',
+            universalFlatEntity: flatFieldMetadataToValidate,
+          }),
+        ],
       },
     };
   }
