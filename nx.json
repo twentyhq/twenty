@@ -44,11 +44,7 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "npx oxlint -c .oxlintrc.json src --max-warnings=0",
-          "prettier {args.files} --check --cache {args.cache} --cache-location {args.cacheLocation} --cache-strategy {args.cacheStrategy}"
-        ],
-        "parallel": false,
+        "command": "npx oxlint -c .oxlintrc.json src --max-warnings=0 && prettier {args.files} --check --cache {args.cache} --cache-location {args.cacheLocation} --cache-strategy {args.cacheStrategy}",
         "files": "src",
         "cache": true,
         "cacheLocation": "../../.cache/prettier/{projectRoot}",
@@ -59,10 +55,7 @@
           "cacheStrategy": "content"
         },
         "fix": {
-          "commands": [
-            "npx oxlint -c .oxlintrc.json src --fix",
-            "prettier {args.files} --write --cache {args.cache} --cache-location {args.cacheLocation} --cache-strategy {args.cacheStrategy}"
-          ]
+          "command": "npx oxlint -c .oxlintrc.json src --fix && prettier {args.files} --write --cache {args.cache} --cache-location {args.cacheLocation} --cache-strategy {args.cacheStrategy}"
         }
       },
       "dependsOn": ["^build"]
