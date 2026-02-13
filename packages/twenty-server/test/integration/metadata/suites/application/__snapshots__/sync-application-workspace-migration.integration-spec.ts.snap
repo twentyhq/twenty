@@ -20,7 +20,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "isSearchable": false,
           "isSystem": false,
           "isUIReadOnly": false,
-          "labelIdentifierFieldMetadataUniversalIdentifier": null,
+          "labelIdentifierFieldMetadataUniversalIdentifier": Any<String>,
           "labelPlural": "Tickets",
           "labelSingular": "Ticket",
           "namePlural": "tickets",
@@ -79,6 +79,50 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "icon": null,
           "isEditable": true,
           "label": "Test Role",
+          "rowLevelPermissionPredicateGroupUniversalIdentifiers": [],
+          "rowLevelPermissionPredicateUniversalIdentifiers": [],
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "role",
+        "type": "create",
+      },
+    ],
+    "applicationUniversalIdentifier": Any<String>,
+  },
+}
+`;
+
+exports[`syncApplication should return workspace migration actions on initial sync then on second sync with field rename and new role 2`] = `
+{
+  "syncApplication": {
+    "actions": [
+      {
+        "metadataName": "fieldMetadata",
+        "type": "update",
+        "universalIdentifier": Any<String>,
+        "update": {
+          "label": "Body",
+          "name": "body",
+        },
+      },
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllTools": false,
+          "canBeAssignedToAgents": true,
+          "canBeAssignedToApiKeys": true,
+          "canBeAssignedToUsers": true,
+          "canDestroyAllObjectRecords": false,
+          "canReadAllObjectRecords": false,
+          "canSoftDeleteAllObjectRecords": false,
+          "canUpdateAllObjectRecords": false,
+          "canUpdateAllSettings": false,
+          "createdAt": Any<String>,
+          "description": "A read-only role",
+          "icon": null,
+          "isEditable": true,
+          "label": "Viewer Role",
           "rowLevelPermissionPredicateGroupUniversalIdentifiers": [],
           "rowLevelPermissionPredicateUniversalIdentifiers": [],
           "universalIdentifier": Any<String>,
