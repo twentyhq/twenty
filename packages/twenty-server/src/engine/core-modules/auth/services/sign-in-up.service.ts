@@ -380,17 +380,21 @@ export class SignInUpService {
   }
 
   private async setDefaultImpersonateAndAccessFullAdminPanel() {
-    const workspacesCount = await this.workspaceRepository.count();
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const workspacesCount = await this.workspaceRepository.count();
 
-    // let the creation of the first workspace
-    if (workspacesCount > 0) {
-      throw new AuthException(
-        'New workspace setup is disabled',
-        AuthExceptionCode.SIGNUP_DISABLED,
-      );
+      // let the creation of the first workspace
+      if (workspacesCount > 0) {
+        throw new AuthException(
+          'New workspace setup is disabled',
+          AuthExceptionCode.SIGNUP_DISABLED,
+        );
+      }
+
+      return { canImpersonate: true, canAccessFullAdminPanel: true };
     }
 
-    return { canImpersonate: true, canAccessFullAdminPanel: true };
+    return { canImpersonate: false, canAccessFullAdminPanel: false };
   }
 
   private isWorkspaceCreationLimitedToServerAdmins(): boolean {
@@ -461,8 +465,17 @@ export class SignInUpService {
       }
     }
 
-    const { canImpersonate, canAccessFullAdminPanel } =
+    let { canImpersonate, canAccessFullAdminPanel } =
       await this.setDefaultImpersonateAndAccessFullAdminPanel();
+    
+    if (
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      this.isWorkspaceCreationLimitedToServerAdmins() &&
+      (await this.isFirstWorkspaceInSystem())
+    ) {
+      canAccessFullAdminPanel = true;
+      canImpersonate = true;
+    }
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
