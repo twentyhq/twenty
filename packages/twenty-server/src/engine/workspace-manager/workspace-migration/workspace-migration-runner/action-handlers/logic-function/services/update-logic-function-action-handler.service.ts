@@ -54,6 +54,9 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         LogicFunctionEntity,
       );
 
-    await logicFunctionRepository.update({ id: entityId, workspaceId }, update);
+    await logicFunctionRepository.update(
+      { id: entityId, workspaceId },
+      update as Parameters<typeof logicFunctionRepository.update>[1],
+    );
   }
 }
