@@ -23,6 +23,11 @@ const StyledNameLabel = styled.div`
   overflow: hidden;
 `;
 
+const StyledOptionsTableCell = styled(TableCell)`
+  justify-content: flex-end;
+  padding-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
@@ -87,14 +92,15 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectMetadataItem={objectMetadataItem}
         />
       </TableCell>
-      <TableCell>
+      <TableCell></TableCell>
+      <StyledOptionsTableCell>
         <SettingsRolePermissionsObjectLevelTableRowOptionsDropdown
           roleId={roleId}
           objectMetadataId={objectMetadataItem.id}
           objectPermissionDetailUrl={navigationUrl}
           isEditable={isEditable}
         />
-      </TableCell>
+      </StyledOptionsTableCell>
     </TableRow>
   );
 };
