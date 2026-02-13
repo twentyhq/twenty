@@ -4,7 +4,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';

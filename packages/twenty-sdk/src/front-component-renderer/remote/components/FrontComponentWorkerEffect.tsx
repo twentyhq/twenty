@@ -3,7 +3,7 @@ import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
-import { createRemoteWorker } from '../worker/createRemoteWorker';
+import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;

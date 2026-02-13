@@ -102,6 +102,30 @@ export const ChakraExample: Story = {
   },
 };
 
+export const TailwindExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'tailwind-example.front-component',
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const container = await canvas.findByTestId(
+      'tailwind-component',
+      {},
+      { timeout: 30000 },
+    );
+    expect(container).toBeVisible();
+
+    expect(await canvas.findByText('Count: 0')).toBeVisible();
+
+    const button = await canvas.findByTestId('tailwind-button');
+    await userEvent.click(button);
+    expect(await canvas.findByText('Count: 1')).toBeVisible();
+  },
+};
+
 export const ErrorHandling: Story = {
   args: {
     componentUrl: getBuiltStoryComponentPathForRender('nonexistent.front-component'),

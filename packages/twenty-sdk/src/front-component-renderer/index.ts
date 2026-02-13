@@ -114,7 +114,7 @@ export type {
   HtmlThProperties,
   TwentyUiButtonProperties,
 } from './remote/generated/remote-elements';
-export { createRemoteWorker } from './remote/worker/createRemoteWorker';
+export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
