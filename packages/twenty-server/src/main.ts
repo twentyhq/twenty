@@ -20,6 +20,12 @@ import { AppModule } from './app.module';
 import './instrument';
 
 import { settings } from './engine/constants/settings';
+
+// In production, prevent Node's default SIGUSR1 handler from enabling the inspector
+// (which can spam logs with "Debugger listening/attached" lines).
+if (process.env.NODE_ENV === 'production') {
+  process.on('SIGUSR1', () => {});
+}
 import { generateFrontConfig } from './utils/generate-front-config';
 
 const bootstrap = async () => {

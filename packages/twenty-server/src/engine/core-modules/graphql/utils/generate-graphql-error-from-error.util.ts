@@ -1,4 +1,4 @@
-import { type I18n } from '@lingui/core';
+import { type I18n, type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
 import {
@@ -18,12 +18,24 @@ export const generateGraphQLErrorFromError = (
 
   const defaultErrorMessage = msg`An error occurred.`;
 
+  const translateUserMessage = (message: MessageDescriptor) => {
+    // In some deployments the server build may not compile Lingui macros.
+    // Calling i18n._(MessageDescriptor) in that case logs extremely loudly
+    // (Railway can rate-limit logs). In production, fall back to the
+    // default message/id instead of translating.
+    if (process.env.NODE_ENV === 'production') {
+      return message.message ?? message.id;
+    }
+
+    return i18n._(message);
+  };
+
   if (error instanceof CustomException) {
-    graphqlError.extensions.userFriendlyMessage = i18n._(
+    graphqlError.extensions.userFriendlyMessage = translateUserMessage(
       error.userFriendlyMessage ?? defaultErrorMessage,
     );
   } else {
-    graphqlError.extensions.userFriendlyMessage = i18n._(defaultErrorMessage);
+    graphqlError.extensions.userFriendlyMessage = translateUserMessage(defaultErrorMessage);
   }
 
   return graphqlError;

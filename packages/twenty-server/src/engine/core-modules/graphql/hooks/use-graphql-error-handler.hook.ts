@@ -5,6 +5,7 @@ import {
   type Plugin,
 } from '@envelop/core';
 import { msg } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import {
   GraphQLError,
   Kind,
@@ -210,6 +211,14 @@ export const useGraphQLErrorHandlerHook = <
             const i18n = options.i18nService.getI18nInstance(userLocale);
             const defaultErrorMessage = msg`An error occurred.`;
 
+            const translateUserMessage = (message: MessageDescriptor) => {
+              if (process.env.NODE_ENV === 'production') {
+                return message.message ?? message.id;
+              }
+
+              return i18n._(message);
+            };
+
             const transformedErrors = processedErrors.map((error) => {
               const graphqlError =
                 error instanceof BaseGraphQLError
@@ -217,9 +226,9 @@ export const useGraphQLErrorHandlerHook = <
                       ...error,
                       extensions: {
                         ...error.extensions,
-                        userFriendlyMessage: i18n._(
-                          error.extensions.userFriendlyMessage ??
-                            defaultErrorMessage,
+                        userFriendlyMessage: translateUserMessage(
+                          (error.extensions.userFriendlyMessage ??
+                            defaultErrorMessage) as MessageDescriptor,
                         ),
                       },
                     }
@@ -275,7 +284,7 @@ export const useGraphQLErrorHandlerHook = <
 
           throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
             extensions: {
-              userFriendlyMessage: i18n._(
+              userFriendlyMessage: translateUserMessage(
                 msg`Your workspace has been updated with a new data model. Please refresh the page.`,
               ),
             },
@@ -305,7 +314,7 @@ export const useGraphQLErrorHandlerHook = <
           throw new GraphQLError(APP_VERSION_MISMATCH_ERROR, {
             extensions: {
               code: APP_VERSION_MISMATCH_CODE,
-              userFriendlyMessage: i18n._(
+              userFriendlyMessage: translateUserMessage(
                 msg`Your app version is out of date. Please refresh the page to continue.`,
               ),
             },
