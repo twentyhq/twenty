@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { AxisNameDisplay } from '~/generated/graphql';
+import { AxisNameDisplay } from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
   import(

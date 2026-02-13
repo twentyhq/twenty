@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import * as recoil from 'recoil';
+import * as jotai from 'jotai';
 
 import {
   Icon123,
@@ -15,10 +15,10 @@ describe('useIcons', () => {
     IconBuildingSkyscraper,
   };
   jest
-    .spyOn(recoil, 'useRecoilValue')
+    .spyOn(jotai, 'useAtomValue')
     .mockImplementationOnce(() => mockedStateIcons);
   const { result } = renderHook(() => useIcons(), {
-    wrapper: recoil.RecoilRoot,
+    wrapper: jotai.Provider,
   });
 
   it('returns default icon when no icon key is provided', () => {

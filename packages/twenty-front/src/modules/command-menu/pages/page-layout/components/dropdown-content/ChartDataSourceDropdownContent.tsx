@@ -91,17 +91,17 @@ export const ChartDataSourceDropdownContent = () => {
       updateCurrentWidgetConfig({
         objectMetadataId: newObjectMetadataItemId,
         configToUpdate: {
-          aggregateFieldMetadataId: null,
-          primaryAxisGroupByFieldMetadataId: null,
-          primaryAxisGroupBySubFieldName: null,
-          secondaryAxisGroupByFieldMetadataId: null,
-          secondaryAxisGroupBySubFieldName: null,
-          primaryAxisOrderBy: null,
-          secondaryAxisOrderBy: null,
-          groupByFieldMetadataId: null,
-          groupBySubFieldName: null,
+          aggregateFieldMetadataId: undefined,
+          primaryAxisGroupByFieldMetadataId: undefined,
+          primaryAxisGroupBySubFieldName: undefined,
+          secondaryAxisGroupByFieldMetadataId: undefined,
+          secondaryAxisGroupBySubFieldName: undefined,
+          primaryAxisOrderBy: undefined,
+          secondaryAxisOrderBy: undefined,
+          groupByFieldMetadataId: undefined,
+          groupBySubFieldName: undefined,
           filter: {},
-          ratioAggregateConfig: null,
+          ratioAggregateConfig: undefined,
         },
       });
 

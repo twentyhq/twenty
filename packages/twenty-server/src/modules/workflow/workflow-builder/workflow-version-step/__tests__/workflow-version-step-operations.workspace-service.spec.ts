@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -10,7 +10,6 @@ import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -28,9 +27,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
   let logicFunctionMetadataService: jest.Mocked<LogicFunctionMetadataService>;
   let codeStepBuildService: jest.Mocked<CodeStepBuildService>;
-  let agentRepository: jest.Mocked<any>;
+  let agentService: jest.Mocked<AgentService>;
   let roleTargetRepository: jest.Mocked<any>;
-  let roleRepository: jest.Mocked<any>;
   let objectMetadataRepository: jest.Mocked<any>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
@@ -96,19 +94,15 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       destroyOne: jest.fn(),
     } as unknown as jest.Mocked<LogicFunctionMetadataService>;
 
-    agentRepository = {
-      findOne: jest.fn(),
-      delete: jest.fn(),
-    };
+    agentService = {
+      deleteManyAgents: jest.fn().mockResolvedValue([]),
+      findOneAgentById: jest.fn(),
+      createOneAgent: jest.fn(),
+    } as unknown as jest.Mocked<AgentService>;
 
     roleTargetRepository = {
       findOne: jest.fn(),
       count: jest.fn(),
-    };
-
-    roleRepository = {
-      findOne: jest.fn(),
-      delete: jest.fn(),
     };
 
     objectMetadataRepository = {
@@ -146,16 +140,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: codeStepBuildService,
         },
         {
-          provide: getRepositoryToken(AgentEntity),
-          useValue: agentRepository,
+          provide: AgentService,
+          useValue: agentService,
         },
         {
           provide: getRepositoryToken(RoleTargetEntity),
           useValue: roleTargetRepository,
-        },
-        {
-          provide: getRepositoryToken(RoleEntity),
-          useValue: roleRepository,
         },
         {
           provide: getRepositoryToken(ObjectMetadataEntity),
@@ -239,15 +229,13 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
       } as unknown as WorkflowAction;
 
-      agentRepository.findOne.mockResolvedValue({ id: 'agent-id' });
-
       await service.runWorkflowVersionStepDeletionSideEffects({
         step,
         workspaceId: mockWorkspaceId,
       });
 
-      expect(agentRepository.delete).toHaveBeenCalledWith({
-        id: 'agent-id',
+      expect(agentService.deleteManyAgents).toHaveBeenCalledWith({
+        ids: ['agent-id'],
         workspaceId: mockWorkspaceId,
       });
     });
@@ -272,7 +260,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
       } as unknown as WorkflowAction;
 
-      agentRepository.findOne.mockResolvedValue({ id: 'agent-id' });
       roleTargetRepository.findOne.mockResolvedValue({
         id: 'role-target-id',
         roleId: 'role-id',
@@ -283,8 +270,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(agentRepository.delete).toHaveBeenCalledWith({
-        id: 'agent-id',
+      expect(agentService.deleteManyAgents).toHaveBeenCalledWith({
+        ids: ['agent-id'],
         workspaceId: mockWorkspaceId,
       });
       expect(
@@ -310,7 +297,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         runtime: LogicFunctionRuntime.NODE22,
         timeoutSeconds: 30,
         sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
+        builtHandlerPath: 'src/index.mjs',
         handlerName: 'main',
         checksum: null,
         toolInputSchema: null,
@@ -321,6 +308,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
+        isBuildUpToDate: false,
       };
 
       logicFunctionMetadataService.createOne.mockResolvedValue(
@@ -394,6 +382,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
+        isBuildUpToDate: true,
       };
 
       const mockNewFlatLogicFunction: FlatLogicFunction = {
@@ -407,7 +396,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         runtime: LogicFunctionRuntime.NODE22,
         timeoutSeconds: 30,
         sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
+        builtHandlerPath: 'src/index.mjs',
         handlerName: 'main',
         checksum: null,
         toolInputSchema: null,
@@ -418,6 +407,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
+        isBuildUpToDate: false,
       };
 
       const emptyMaps = createEmptyAllFlatEntityMaps();

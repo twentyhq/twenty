@@ -4,6 +4,7 @@ import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryList
 import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
+import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ApolloError, useMutation } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -21,6 +22,7 @@ import {
 
 export const SSEQuerySubscribeEffect = () => {
   const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
+  const sseEventStreamReady = useRecoilValue(sseEventStreamReadyState);
 
   const [addQueryToEventStream] = useMutation<
     boolean,
@@ -122,7 +124,7 @@ export const SSEQuerySubscribeEffect = () => {
   );
 
   useEffect(() => {
-    if (!isNonEmptyString(sseEventStreamId)) {
+    if (!isNonEmptyString(sseEventStreamId) || !sseEventStreamReady) {
       return;
     }
 
@@ -138,6 +140,7 @@ export const SSEQuerySubscribeEffect = () => {
     }
   }, [
     sseEventStreamId,
+    sseEventStreamReady,
     requiredQueryListeners,
     activeQueryListeners,
     debouncedUpdateQueryListeners,

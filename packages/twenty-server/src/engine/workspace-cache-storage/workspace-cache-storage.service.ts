@@ -17,7 +17,6 @@ export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   MetadataObjectMetadataMaps: 'metadata:object-metadata-maps',
   GraphQLUsedScalarNames: 'graphql:used-scalar-names',
   ORMEntitySchemas: 'orm:entity-schemas',
-  ToolCatalog: 'tool-catalog',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
   GraphQLOperations: 'graphql:operations',
@@ -91,9 +90,12 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     typeDefs: string,
+    applicationId?: string,
   ): Promise<void> {
+    const applicationSuffix = applicationId ? `:${applicationId}` : '';
+
     return this.cacheStorageService.set<string>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}${applicationSuffix}`,
       typeDefs,
       TTL_ONE_WEEK,
     );
@@ -102,9 +104,12 @@ export class WorkspaceCacheStorageService {
   getGraphQLTypeDefs(
     workspaceId: string,
     metadataVersion: number,
+    applicationId?: string,
   ): Promise<string | undefined> {
+    const applicationSuffix = applicationId ? `:${applicationId}` : '';
+
     return this.cacheStorageService.get<string>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}${applicationSuffix}`,
     );
   }
 
@@ -112,9 +117,12 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     usedScalarNames: string[],
+    applicationId?: string,
   ): Promise<void> {
+    const applicationSuffix = applicationId ? `:${applicationId}` : '';
+
     return this.cacheStorageService.set<string[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}${applicationSuffix}`,
       usedScalarNames,
       TTL_ONE_WEEK,
     );
@@ -123,9 +131,12 @@ export class WorkspaceCacheStorageService {
   getGraphQLUsedScalarNames(
     workspaceId: string,
     metadataVersion: number,
+    applicationId?: string,
   ): Promise<string[] | undefined> {
+    const applicationSuffix = applicationId ? `:${applicationId}` : '';
+
     return this.cacheStorageService.get<string[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}${applicationSuffix}`,
     );
   }
 
@@ -200,24 +211,6 @@ export class WorkspaceCacheStorageService {
             `${key}:${workspaceId}:${metadataVersionSuffix}`,
           ),
       ),
-    );
-  }
-
-  setToolCatalog(
-    cacheKey: string,
-    descriptors: unknown[],
-    ttl: number,
-  ): Promise<void> {
-    return this.cacheStorageService.set<unknown[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ToolCatalog}:${cacheKey}`,
-      descriptors,
-      ttl,
-    );
-  }
-
-  getToolCatalog(cacheKey: string): Promise<unknown[] | undefined> {
-    return this.cacheStorageService.get<unknown[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ToolCatalog}:${cacheKey}`,
     );
   }
 

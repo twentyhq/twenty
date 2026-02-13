@@ -2,7 +2,14 @@ import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+
+export type ToolSetToDescriptorsOptions = {
+  includeSchemas?: boolean;
+};
 
 // Converts a ToolSet (with Zod schemas and closures) into an array of
 // serializable ToolDescriptor objects. Used by providers that delegate to
@@ -10,8 +17,22 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 export const toolSetToDescriptors = (
   toolSet: ToolSet,
   category: ToolCategory,
-): ToolDescriptor[] => {
+  options?: ToolSetToDescriptorsOptions,
+): (ToolIndexEntry | ToolDescriptor)[] => {
+  const includeSchemas = options?.includeSchemas ?? true;
+
   return Object.entries(toolSet).map(([name, tool]) => {
+    const base: ToolIndexEntry = {
+      name,
+      description: tool.description ?? '',
+      category,
+      executionRef: { kind: 'static' as const, toolId: name },
+    };
+
+    if (!includeSchemas) {
+      return base;
+    }
+
     let inputSchema: object;
 
     try {
@@ -22,11 +43,8 @@ export const toolSetToDescriptors = (
     }
 
     return {
-      name,
-      description: tool.description ?? '',
-      category,
+      ...base,
       inputSchema,
-      executionRef: { kind: 'static' as const, toolId: name },
     };
   });
 };

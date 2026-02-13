@@ -10,7 +10,7 @@ import { type IconComponent } from '@ui/display';
 import { type ThemeColor } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
-type MenuItemSelectTagProps = {
+export type MenuItemSelectTagProps = {
   selected?: boolean;
   focused?: boolean;
   isKeySelected?: boolean;

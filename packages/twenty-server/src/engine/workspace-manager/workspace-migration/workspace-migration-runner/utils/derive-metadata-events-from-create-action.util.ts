@@ -5,6 +5,7 @@ import {
   type CreateMetadataEvent,
   type MetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 export const deriveMetadataEventsFromCreateAction = (
   flatAction: AllFlatWorkspaceMigrationAction<'create'>,
@@ -13,29 +14,41 @@ export const deriveMetadataEventsFromCreateAction = (
     case 'fieldMetadata': {
       return flatAction.flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
-          type: 'create',
+          type: 'created',
+          recordId: flatFieldMetadata.id,
           metadataName: 'fieldMetadata',
           properties: {
-            after: flatFieldMetadata,
+            after: flatEntityToScalarFlatEntity({
+              flatEntity: flatFieldMetadata,
+              metadataName: 'fieldMetadata',
+            }),
           },
         }),
       );
     }
     case 'objectMetadata': {
       const objectEvent: CreateMetadataEvent<'objectMetadata'> = {
-        type: 'create',
+        type: 'created',
         metadataName: 'objectMetadata',
+        recordId: flatAction.flatEntity.id,
         properties: {
-          after: flatAction.flatEntity,
+          after: flatEntityToScalarFlatEntity({
+            flatEntity: flatAction.flatEntity,
+            metadataName: 'objectMetadata',
+          }),
         },
       };
 
       const fieldEvents: MetadataEvent[] = flatAction.flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
-          type: 'create',
+          type: 'created',
+          recordId: flatFieldMetadata.id,
           metadataName: 'fieldMetadata',
           properties: {
-            after: flatFieldMetadata,
+            after: flatEntityToScalarFlatEntity({
+              flatEntity: flatFieldMetadata,
+              metadataName: 'fieldMetadata',
+            }),
           },
         }),
       );
@@ -45,6 +58,7 @@ export const deriveMetadataEventsFromCreateAction = (
     case 'view':
     case 'viewField':
     case 'viewGroup':
+    case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
@@ -64,10 +78,14 @@ export const deriveMetadataEventsFromCreateAction = (
     case 'webhook': {
       return [
         {
-          type: 'create',
+          type: 'created',
+          recordId: flatAction.flatEntity.id,
           metadataName: flatAction.metadataName,
           properties: {
-            after: flatAction.flatEntity,
+            after: flatEntityToScalarFlatEntity({
+              flatEntity: flatAction.flatEntity,
+              metadataName: flatAction.metadataName,
+            }),
           },
         },
       ];

@@ -4,6 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type AllStandardObjectViewFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field-name.type';
+import { type AllStandardObjectViewFieldGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-field-group-name.type';
 import { type AllStandardObjectViewGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-group-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 
@@ -12,6 +13,10 @@ type StandardObjectViewIds<O extends AllStandardObjectName> = {
     id: string;
     viewGroups: Record<AllStandardObjectViewGroupName<O, V>, { id: string }>;
     viewFields: Record<AllStandardObjectViewFieldName<O, V>, { id: string }>;
+    viewFieldGroups: Record<
+      AllStandardObjectViewFieldGroupName<O, V>,
+      { id: string }
+    >;
   };
 };
 
@@ -79,10 +84,36 @@ const computeStandardViewObjectIds = <O extends AllStandardObjectName>({
       }
     }
 
+    const viewFieldGroupIds = {} as Record<
+      AllStandardObjectViewFieldGroupName<O, typeof viewName>,
+      { id: string }
+    >;
+
+    if (
+      Object.prototype.hasOwnProperty.call(viewDefinition, 'viewFieldGroups')
+    ) {
+      const viewFieldGroupNames = Object.keys(
+        (viewDefinition as { viewFieldGroups: Record<string, unknown> })
+          .viewFieldGroups,
+      );
+
+      for (const viewFieldGroupName of viewFieldGroupNames) {
+        viewFieldGroupIds[
+          viewFieldGroupName as AllStandardObjectViewFieldGroupName<
+            O,
+            typeof viewName
+          >
+        ] = {
+          id: v4(),
+        };
+      }
+    }
+
     viewIds[viewName] = {
       id: v4(),
       viewFields: viewFieldIds,
       viewGroups: viewGroupIds,
+      viewFieldGroups: viewFieldGroupIds,
     };
   }
 

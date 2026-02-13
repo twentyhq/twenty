@@ -7,7 +7,7 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-type MenuItemMultiSelectTagProps = {
+export type MenuItemMultiSelectTagProps = {
   selected: boolean;
   className?: string;
   isKeySelected?: boolean;

@@ -1,5 +1,5 @@
 import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 import {
   TEST_BAR_CHART_CONFIGURATION,
   TEST_PIE_CHART_CONFIGURATION,

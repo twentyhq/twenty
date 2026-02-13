@@ -6,7 +6,7 @@ import {
   IconTrendingDown,
   IconTrendingUp,
 } from 'twenty-ui/display';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 type XSortByOption = {
   value: GraphOrderBy;

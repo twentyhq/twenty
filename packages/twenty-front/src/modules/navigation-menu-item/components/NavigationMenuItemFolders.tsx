@@ -18,7 +18,7 @@ export const NavigationMenuItemFolders = ({
 }: NavigationMenuItemFoldersProps) => {
   const [newFolderName, setNewFolderName] = useState('');
 
-  const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
+  const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const { createNewNavigationMenuItemFolder } =
     useCreateNavigationMenuItemFolder();
 
@@ -79,11 +79,11 @@ export const NavigationMenuItemFolders = ({
           />
         </NavigationDrawerAnimatedCollapseWrapper>
       )}
-      {navigationMenuItemsByFolder.map((folder) => (
+      {userNavigationMenuItemsByFolder.map((folder) => (
         <CurrentWorkspaceMemberNavigationMenuItems
-          key={folder.folderId}
+          key={folder.id}
           folder={folder}
-          isGroup={navigationMenuItemsByFolder.length > 1}
+          isGroup={userNavigationMenuItemsByFolder.length > 1}
         />
       ))}
     </>

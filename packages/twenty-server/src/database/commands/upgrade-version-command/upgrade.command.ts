@@ -19,6 +19,10 @@ import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/comma
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
+import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
+import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
+import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
+import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -49,6 +53,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
     protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
+
+    // 1.18 Commands
+    protected readonly migratePersonAvatarFilesCommand: MigratePersonAvatarFilesCommand,
+    protected readonly backfillFileSizeAndMimeTypeCommand: BackfillFileSizeAndMimeTypeCommand,
+    protected readonly migrateAttachmentFilesCommand: MigrateAttachmentFilesCommand,
+    protected readonly migrateActivityRichTextAttachmentFileIdsCommand: MigrateActivityRichTextAttachmentFileIdsCommand,
   ) {
     super(
       workspaceRepository,
@@ -74,9 +84,17 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.fixMorphRelationFieldNamesCommand,
     ];
 
+    const commands_1180: VersionCommands = [
+      this.migratePersonAvatarFilesCommand,
+      this.migrateAttachmentFilesCommand,
+      this.migrateActivityRichTextAttachmentFileIdsCommand,
+      this.backfillFileSizeAndMimeTypeCommand,
+    ];
+
     this.allCommands = {
       '1.16.0': commands_1160,
       '1.17.0': commands_1170,
+      '1.18.0': commands_1180,
     };
   }
 

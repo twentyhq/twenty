@@ -1,7 +1,10 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { isMinMaxRangeValid } from '@/command-menu/pages/page-layout/utils/isMinMaxRangeValid';
-import { BarChartLayout, WidgetConfigurationType } from '~/generated/graphql';
+import {
+  BarChartLayout,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 describe('isMinMaxRangeValid', () => {
   const mockConfiguration = {

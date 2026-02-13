@@ -1,4 +1,4 @@
-import { type CoreViewSort } from '~/generated/graphql';
+import { type CoreViewSort } from '~/generated-metadata/graphql';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const areViewSortsEqual = (

@@ -13,6 +13,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -25,6 +26,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutTabLayoutMode,
@@ -256,6 +258,16 @@ const mockCompanyRecord: ObjectRecord = {
   },
 };
 
+// Sets a record in both Recoil and Jotai stores so field display hooks can read it
+const setRecordInStores = (
+  snapshot: MutableSnapshot,
+  recordId: string,
+  record: ObjectRecord,
+) => {
+  snapshot.set(recordStoreFamilyState(recordId), record);
+  jotaiStore.set(recordStoreFamilyStateV2.atomFamily(recordId), record);
+};
+
 const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
@@ -369,7 +381,7 @@ export const TextFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -461,7 +473,7 @@ export const AddressFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -556,7 +568,7 @@ export const NumberFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -648,7 +660,7 @@ export const LinkFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -740,14 +752,15 @@ export const ManyToOneRelationFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
       // Set the related WorkspaceMember record for relation field display
       if (
         mockCompanyRecord.accountOwner !== null &&
         mockCompanyRecord.accountOwner !== undefined
       ) {
-        snapshot.set(
-          recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
+        setRecordInStores(
+          snapshot,
+          mockCompanyRecord.accountOwner.id,
           mockCompanyRecord.accountOwner,
         );
       }
@@ -842,12 +855,9 @@ export const OneToManyRelationFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
       // Set the related Person record for ONE_TO_MANY relation display
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -939,7 +949,7 @@ export const BooleanFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -1030,7 +1040,7 @@ export const CurrencyFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -1121,10 +1131,7 @@ export const EmailsFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -1216,10 +1223,7 @@ export const PhonesFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -1311,8 +1315,9 @@ export const SelectFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_OPPORTUNITY_RECORD_ID),
+      setRecordInStores(
+        snapshot,
+        TEST_OPPORTUNITY_RECORD_ID,
         mockOpportunityRecord,
       );
     };
@@ -1407,7 +1412,7 @@ export const MultiSelectFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -1503,13 +1508,15 @@ export const TimelineActivityRelationFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_TIMELINE_ACTIVITY_RECORD_ID),
+      setRecordInStores(
+        snapshot,
+        TEST_TIMELINE_ACTIVITY_RECORD_ID,
         mockTimelineActivityRecord,
       );
       // Set the related WorkspaceMember record for TimelineActivity relation display
-      snapshot.set(
-        recordStoreFamilyState('test-workspace-member-xyz'),
+      setRecordInStores(
+        snapshot,
+        'test-workspace-member-xyz',
         mockWorkspaceMemberRecord,
       );
     };
@@ -1603,13 +1610,14 @@ export const ManyToOneRelationCardWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
       if (
         mockCompanyRecord.accountOwner !== null &&
         mockCompanyRecord.accountOwner !== undefined
       ) {
-        snapshot.set(
-          recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
+        setRecordInStores(
+          snapshot,
+          mockCompanyRecord.accountOwner.id,
           mockCompanyRecord.accountOwner,
         );
       }
@@ -1713,11 +1721,8 @@ export const OneToManyRelationCardWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -1809,12 +1814,14 @@ export const TimelineActivityRelationCardWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_TIMELINE_ACTIVITY_RECORD_ID),
+      setRecordInStores(
+        snapshot,
+        TEST_TIMELINE_ACTIVITY_RECORD_ID,
         mockTimelineActivityRecord,
       );
-      snapshot.set(
-        recordStoreFamilyState('test-workspace-member-xyz'),
+      setRecordInStores(
+        snapshot,
+        'test-workspace-member-xyz',
         mockWorkspaceMemberRecord,
       );
     };
@@ -1971,13 +1978,10 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_RECORD_ID),
-        companyWithManyPeople,
-      );
+      setRecordInStores(snapshot, TEST_RECORD_ID, companyWithManyPeople);
       // Set each person record in the store
       mockPeople.forEach((person) => {
-        snapshot.set(recordStoreFamilyState(person.id), person);
+        setRecordInStores(snapshot, person.id, person);
       });
     };
 

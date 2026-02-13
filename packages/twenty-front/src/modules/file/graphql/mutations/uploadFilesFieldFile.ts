@@ -7,6 +7,7 @@ export const UPLOAD_FILES_FIELD_FILE = gql`
       path
       size
       createdAt
+      url
     }
   }
 `;

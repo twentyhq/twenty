@@ -1,6 +1,6 @@
 import { GraphType } from '@/command-menu/pages/page-layout/types/GraphType';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const getConfigurationTypeFromGraphType = (
   graphType: GraphType,

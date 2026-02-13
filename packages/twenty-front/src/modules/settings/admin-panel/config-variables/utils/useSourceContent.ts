@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { CustomError } from 'twenty-shared/utils';
 
-import { ConfigSource } from '~/generated/graphql';
+import { ConfigSource } from '~/generated-metadata/graphql';
 
 export const useSourceContent = (source: ConfigSource) => {
   const { t } = useLingui();

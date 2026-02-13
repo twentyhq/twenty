@@ -2,7 +2,7 @@ import { AppPath } from 'twenty-shared/types';
 import {
   type AvailableWorkspace,
   type AvailableWorkspaces,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import {
   countAvailableWorkspaces,
   getAvailableWorkspacePathAndSearchParams,

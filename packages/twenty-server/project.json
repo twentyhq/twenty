@@ -47,10 +47,10 @@
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development nest start --watch"
+        "command": "rimraf dist && NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
@@ -70,10 +70,10 @@
     },
     "start:debug": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "nx start --debug"
+        "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
       }
     },
     "reset:env": {
@@ -125,11 +125,11 @@
         "cwd": "packages/twenty-server",
         "command": "ts-node --transpile-only -P tsconfig.json ../../node_modules/typeorm/cli.js"
       },
-      "dependsOn": ["build"]
+      "dependsOn": ["^build"]
     },
     "ts-node": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "ts-node"
@@ -181,7 +181,7 @@
     },
     "database:migrate": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
@@ -198,7 +198,7 @@
     },
     "database:migrate:revert": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [

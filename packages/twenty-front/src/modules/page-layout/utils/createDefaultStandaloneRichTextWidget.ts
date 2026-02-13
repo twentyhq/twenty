@@ -4,7 +4,7 @@ import {
   type RichTextV2Body,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const createDefaultStandaloneRichTextWidget = (
   id: string,

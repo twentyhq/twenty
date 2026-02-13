@@ -1,11 +1,14 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
+
 type NavigationMenuItemDroppableProps = {
   droppableId: string;
   children: React.ReactNode;
   isDragIndicatorVisible?: boolean;
   showDropLine?: boolean;
+  isWorkspaceSection?: boolean;
 };
 
 const StyledDroppableWrapper = styled.div<{
@@ -46,9 +49,12 @@ export const NavigationMenuItemDroppable = ({
   children,
   isDragIndicatorVisible = true,
   showDropLine = true,
+  isWorkspaceSection = false,
 }: NavigationMenuItemDroppableProps) => {
+  const isDropDisabled = useIsDropDisabledForSection(isWorkspaceSection);
+
   return (
-    <Droppable droppableId={droppableId}>
+    <Droppable droppableId={droppableId} isDropDisabled={isDropDisabled}>
       {(provided, snapshot) => (
         <StyledDroppableWrapper
           isDraggingOver={snapshot.isDraggingOver}

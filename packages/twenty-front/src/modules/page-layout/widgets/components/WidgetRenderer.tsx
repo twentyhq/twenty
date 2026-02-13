@@ -33,7 +33,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;

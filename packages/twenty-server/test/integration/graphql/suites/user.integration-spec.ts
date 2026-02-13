@@ -104,7 +104,6 @@ describe('deleteUser', () => {
           workspaceMember(filter: $workspaceMemberFilter) {
           id
             userId
-            userWorkspaceId
           }
         }
       `,

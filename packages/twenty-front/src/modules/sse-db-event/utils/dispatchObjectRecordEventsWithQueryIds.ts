@@ -1,7 +1,7 @@
 import { type ObjectRecordEventsByQueryId } from '@/sse-db-event/types/ObjectRecordEventsByQueryId';
 import { getObjectRecordEventsForQueryEventName } from '@/sse-db-event/utils/getObjectRecordEventsForQueryEventName';
 import { isDefined } from 'twenty-shared/utils';
-import { type EventWithQueryIds } from '~/generated/graphql';
+import { type EventWithQueryIds } from '~/generated-metadata/graphql';
 
 export const dispatchObjectRecordEventsWithQueryIds = (
   objectRecordEventsWithQueryIds: EventWithQueryIds[],

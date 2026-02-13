@@ -9,6 +9,7 @@ const mutationOIDCCallSpy = jest.fn();
 const mutationSAMLCallSpy = jest.fn();
 
 jest.mock('~/generated-metadata/graphql', () => ({
+  ...jest.requireActual('~/generated-metadata/graphql'),
   useCreateOidcIdentityProviderMutation: () => [mutationOIDCCallSpy],
   useCreateSamlIdentityProviderMutation: () => [mutationSAMLCallSpy],
 }));

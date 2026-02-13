@@ -1,5 +1,5 @@
 diff --git a/dist/interfaces/gql-module-options.interface.d.ts b/dist/interfaces/gql-module-options.interface.d.ts
-index 1234567..abcdefg 100644
+index 72bab49dcc2b411408c75adf64c3f250cdeaa195..068dc04966e3f7ac7c7093f9ed8f29f24337cebc 100644
 --- a/dist/interfaces/gql-module-options.interface.d.ts
 +++ b/dist/interfaces/gql-module-options.interface.d.ts
 @@ -97,6 +97,10 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
@@ -14,26 +14,178 @@ index 1234567..abcdefg 100644
  export interface GqlOptionsFactory<T extends Record<string, any> = GqlModuleOptions> {
      createGqlOptions(): Promise<Omit<T, 'driver'>> | Omit<T, 'driver'>;
 diff --git a/dist/schema-builder/graphql-schema.factory.js b/dist/schema-builder/graphql-schema.factory.js
-index f349a6e..425815c 100644
+index f349a6e8ea629f8784143b2596e9e95b3255d348..790b062233936dcb336bc615887870d5e7a24de8 100644
 --- a/dist/schema-builder/graphql-schema.factory.js
 +++ b/dist/schema-builder/graphql-schema.factory.js
-@@ -32,6 +32,7 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+@@ -16,6 +16,7 @@ const subscription_type_factory_1 = require("./factories/subscription-type.facto
+ const lazy_metadata_storage_1 = require("./storages/lazy-metadata.storage");
+ const type_metadata_storage_1 = require("./storages/type-metadata.storage");
+ const type_definitions_generator_1 = require("./type-definitions.generator");
++const get_interfaces_array_util_1 = require("./utils/get-interfaces-array.util");
+ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+     constructor(queryTypeFactory, mutationTypeFactory, subscriptionTypeFactory, orphanedTypesFactory, typeDefinitionsGenerator) {
+         this.queryTypeFactory = queryTypeFactory;
+@@ -32,9 +33,14 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
          else {
              options = scalarsOrOptions;
          }
 +        this.typeDefinitionsGenerator.clearTypeDefinitionStorage();
++        this.orphanedTypesFactory.orphanedReferenceRegistry.clear();
          lazy_metadata_storage_1.LazyMetadataStorage.load(resolvers);
          type_metadata_storage_1.TypeMetadataStorage.compile(options.orphanedTypes);
-         this.typeDefinitionsGenerator.generate(options);
+-        this.typeDefinitionsGenerator.generate(options);
++        const reachableTypes = Array.isArray(resolvers)
++            ? this.computeReachableTypes(resolvers, options.orphanedTypes)
++            : undefined;
++        this.typeDefinitionsGenerator.generate(options, reachableTypes);
+         const schema = new graphql_1.GraphQLSchema({
+             mutation: this.mutationTypeFactory.create(resolvers, options),
+             query: this.queryTypeFactory.create(resolvers, options),
+@@ -68,6 +74,116 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+             .forEach((classRef) => this.addScalarTypeByClassRef(classRef, scalarsMap));
+         options.scalarsMap = scalarsMap;
+     }
++    computeReachableTypes(resolverClasses, orphanedTypes) {
++        const SCALAR_TYPES = [String, Number, Boolean, Date];
++        const reachableTypes = new Set();
++        const pendingTypes = [];
++        const resolveTypeFn = (typeFn) => {
++            try { return typeFn === null || typeFn === void 0 ? void 0 : typeFn(); } catch (_) { return undefined; }
++        };
++        const markTypeForVisit = (typeReference) => {
++            if (!typeReference || reachableTypes.has(typeReference)) {
++                return;
++            }
++            if (typeof typeReference === 'function' && !SCALAR_TYPES.includes(typeReference)) {
++                pendingTypes.push(typeReference);
++                return;
++            }
++            // Symbols are union type identifiers from createUnionType()
++            if (typeof typeReference === 'symbol') {
++                reachableTypes.add(typeReference);
++                for (const unionMetadata of type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata()) {
++                    if (unionMetadata.id === typeReference) {
++                        for (const memberType of resolveTypeFn(unionMetadata.typesFn) || []) {
++                            markTypeForVisit(memberType);
++                        }
++                    }
++                }
++            }
++        };
++        const getTypeMetadataByTarget = (target) => [
++            type_metadata_storage_1.TypeMetadataStorage.getObjectTypeMetadataByTarget(target),
++            type_metadata_storage_1.TypeMetadataStorage.getInputTypeMetadataByTarget(target),
++            type_metadata_storage_1.TypeMetadataStorage.getInterfaceMetadataByTarget(target),
++            type_metadata_storage_1.TypeMetadataStorage.getArgumentsMetadataByTarget(target),
++        ].filter(Boolean);
++        // Seed from resolver query/mutation/subscription handlers
++        const resolverHandlers = [
++            ...type_metadata_storage_1.TypeMetadataStorage.getQueriesMetadata(),
++            ...type_metadata_storage_1.TypeMetadataStorage.getMutationsMetadata(),
++            ...type_metadata_storage_1.TypeMetadataStorage.getSubscriptionsMetadata(),
++        ].filter((handler) => resolverClasses.includes(handler.target));
++        for (const handler of resolverHandlers) {
++            markTypeForVisit(resolveTypeFn(handler.typeFn));
++            for (const argument of handler.methodArgs || []) {
++                markTypeForVisit(resolveTypeFn(argument.typeFn));
++            }
++        }
++        for (const orphanedType of orphanedTypes || []) {
++            markTypeForVisit(orphanedType);
++        }
++        // Walk all fields, arguments, and interfaces from each pending type
++        const visitAllPendingTypes = () => {
++            while (pendingTypes.length > 0) {
++                const currentType = pendingTypes.shift();
++                if (reachableTypes.has(currentType)) {
++                    continue;
++                }
++                reachableTypes.add(currentType);
++                // Walk prototype chain to catch inherited metadata
++                // (e.g. PartialType / OmitType dynamic parents)
++                let ancestor = currentType;
++                while (ancestor && ancestor !== Function.prototype && ancestor !== Object) {
++                    for (const typeMetadata of getTypeMetadataByTarget(ancestor)) {
++                        for (const property of typeMetadata.properties || []) {
++                            markTypeForVisit(resolveTypeFn(property.typeFn));
++                            for (const argument of property.methodArgs || []) {
++                                markTypeForVisit(resolveTypeFn(argument.typeFn));
++                            }
++                        }
++                        for (const interfaceType of (0, get_interfaces_array_util_1.getInterfacesArray)(typeMetadata.interfaces)) {
++                            markTypeForVisit(interfaceType);
++                        }
++                    }
++                    ancestor = Object.getPrototypeOf(ancestor);
++                    // Ancestors with registered metadata must also be in the
++                    // reachable set for field resolution to work
++                    if (ancestor && ancestor !== Function.prototype && ancestor !== Object
++                        && typeof ancestor === 'function' && !SCALAR_TYPES.includes(ancestor)
++                        && !reachableTypes.has(ancestor) && getTypeMetadataByTarget(ancestor).length > 0) {
++                        reachableTypes.add(ancestor);
++                    }
++                }
++            }
++        };
++        // Pass 1: follow field references from resolver return types and arguments
++        visitAllPendingTypes();
++        // Pass 2: include types that implement a reachable interface
++        // (interfaces don't have back-pointers to their implementors)
++        for (const objectTypeMetadata of type_metadata_storage_1.TypeMetadataStorage.getObjectTypesMetadata()) {
++            if ((0, get_interfaces_array_util_1.getInterfacesArray)(objectTypeMetadata.interfaces)
++                .some((interfaceType) => reachableTypes.has(interfaceType))) {
++                markTypeForVisit(objectTypeMetadata.target);
++            }
++        }
++        visitAllPendingTypes();
++        // Pass 3: include entire unions when any member is reachable
++        // (union membership is stored on the union, not on the member types)
++        for (const unionMetadata of type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata()) {
++            if (reachableTypes.has(unionMetadata.id)) {
++                continue;
++            }
++            const memberTypes = resolveTypeFn(unionMetadata.typesFn) || [];
++            if (memberTypes.some((memberType) => reachableTypes.has(memberType))) {
++                reachableTypes.add(unionMetadata.id);
++                for (const memberType of memberTypes) {
++                    markTypeForVisit(memberType);
++                }
++            }
++        }
++        visitAllPendingTypes();
++        return reachableTypes;
++    }
+     addScalarTypeByClassRef(classRef, scalarsMap) {
+         try {
+             const scalarNameMetadata = Reflect.getMetadata(graphql_constants_1.SCALAR_NAME_METADATA, classRef);
+diff --git a/dist/schema-builder/services/orphaned-reference.registry.js b/dist/schema-builder/services/orphaned-reference.registry.js
+index f63bf917164e05b6a363d40e871303863800c4f3..101c67ee876a8c9758a3ed35fdb8b656a7a873ba 100644
+--- a/dist/schema-builder/services/orphaned-reference.registry.js
++++ b/dist/schema-builder/services/orphaned-reference.registry.js
+@@ -21,6 +21,9 @@ let OrphanedReferenceRegistry = class OrphanedReferenceRegistry {
+     getAll() {
+         return [...this.registry.values()];
+     }
++    clear() {
++        this.registry.clear();
++    }
+ };
+ exports.OrphanedReferenceRegistry = OrphanedReferenceRegistry;
+ exports.OrphanedReferenceRegistry = OrphanedReferenceRegistry = tslib_1.__decorate([
 diff --git a/dist/schema-builder/storages/type-definitions.storage.js b/dist/schema-builder/storages/type-definitions.storage.js
-index a19dee7..466ee86 100644
+index a19dee7a15b355a83124479f7e5e6cb91795070d..d28bdc8f03b4e77db93396ff28fb47d8176f0c21 100644
 --- a/dist/schema-builder/storages/type-definitions.storage.js
 +++ b/dist/schema-builder/storages/type-definitions.storage.js
-@@ -81,6 +81,10 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
+@@ -81,6 +81,15 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
          }
          return;
      }
 +    clear() {
++        // Only invalidate the lazy link caches, NOT the type Maps.
++        // The Maps accumulate types from all schema builds. This is
++        // needed because resolveType closures from earlier schemas
++        // look up types in objectTypeDefinitions at query time.
++        // The add* methods use Map.set() so duplicates are overwritten.
 +        this.inputTypeDefinitionsLinks = null;
 +        this.outputTypeDefinitionsLinks = null;
 +    }
@@ -41,26 +193,96 @@ index a19dee7..466ee86 100644
  exports.TypeDefinitionsStorage = TypeDefinitionsStorage;
  exports.TypeDefinitionsStorage = TypeDefinitionsStorage = tslib_1.__decorate([
 diff --git a/dist/schema-builder/type-definitions.generator.js b/dist/schema-builder/type-definitions.generator.js
-index d5423f1..701a3b2 100644
+index d5423f1603ea2dbe32f70778cb715de648960cf3..47c80de38dc9045b1ee043dd6f74bb22a66d3b4a 100644
 --- a/dist/schema-builder/type-definitions.generator.js
 +++ b/dist/schema-builder/type-definitions.generator.js
-@@ -26,6 +26,9 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
-         this.generateObjectTypeDefs(options);
-         this.generateInputTypeDefs(options);
+@@ -19,25 +19,37 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
+         this.interfaceDefinitionFactory = interfaceDefinitionFactory;
+         this.unionDefinitionFactory = unionDefinitionFactory;
      }
+-    generate(options) {
+-        this.generateUnionDefs();
++    generate(options, reachableTypes) {
++        this.generateUnionDefs(reachableTypes);
+         this.generateEnumDefs();
+-        this.generateInterfaceDefs(options);
+-        this.generateObjectTypeDefs(options);
+-        this.generateInputTypeDefs(options);
++        this.generateInterfaceDefs(options, reachableTypes);
++        this.generateObjectTypeDefs(options, reachableTypes);
++        this.generateInputTypeDefs(options, reachableTypes);
+     }
+-    generateInputTypeDefs(options) {
+-        const metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
 +    clearTypeDefinitionStorage() {
 +        this.typeDefinitionsStorage.clear();
 +    }
-     generateInputTypeDefs(options) {
-         const metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
++    generateInputTypeDefs(options, reachableTypes) {
++        let metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
++        if (reachableTypes) {
++            metadata = metadata.filter((inputMetadata) => reachableTypes.has(inputMetadata.target));
++        }
          const inputTypeDefs = metadata.map((metadata) => this.inputTypeDefinitionFactory.create(metadata, options));
+         this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
+     }
+-    generateObjectTypeDefs(options) {
+-        const metadata = type_metadata_storage_1.TypeMetadataStorage.getObjectTypesMetadata();
++    generateObjectTypeDefs(options, reachableTypes) {
++        let metadata = type_metadata_storage_1.TypeMetadataStorage.getObjectTypesMetadata();
++        if (reachableTypes) {
++            metadata = metadata.filter((objectMetadata) => reachableTypes.has(objectMetadata.target));
++        }
+         const objectTypeDefs = metadata.map((metadata) => this.objectTypeDefinitionFactory.create(metadata, options));
+         this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
+     }
+-    generateInterfaceDefs(options) {
+-        const metadata = type_metadata_storage_1.TypeMetadataStorage.getInterfacesMetadata();
++    generateInterfaceDefs(options, reachableTypes) {
++        let metadata = type_metadata_storage_1.TypeMetadataStorage.getInterfacesMetadata();
++        if (reachableTypes) {
++            metadata = metadata.filter((interfaceMetadata) => reachableTypes.has(interfaceMetadata.target));
++        }
+         const interfaceDefs = metadata.map((metadata) => this.interfaceDefinitionFactory.create(metadata, options));
+         this.typeDefinitionsStorage.addInterfaces(interfaceDefs);
+     }
+@@ -46,8 +58,22 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
+         const enumDefs = metadata.map((metadata) => this.enumDefinitionFactory.create(metadata));
+         this.typeDefinitionsStorage.addEnums(enumDefs);
+     }
+-    generateUnionDefs() {
+-        const metadata = type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata();
++    generateUnionDefs(reachableTypes) {
++        let metadata = type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata();
++        if (reachableTypes) {
++            metadata = metadata.filter((unionMetadata) => {
++                if (reachableTypes.has(unionMetadata.id)) {
++                    return true;
++                }
++                try {
++                    const memberTypes = unionMetadata.typesFn();
++                    return memberTypes.some((memberType) => reachableTypes.has(memberType));
++                }
++                catch (_) {
++                    return true;
++                }
++            });
++        }
+         const unionDefs = metadata.map((metadata) => this.unionDefinitionFactory.create(metadata));
+         this.typeDefinitionsStorage.addUnions(unionDefs);
+     }
 diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolvers-explorer.service.js
-index 1234567..abcdefg 100644
+index 1cc43269cd0c4fbe446789b38970118f0c1856c7..3eeb77fcd3c78a134896faa3424209abc47b971a 100644
 --- a/dist/services/resolvers-explorer.service.js
 +++ b/dist/services/resolvers-explorer.service.js
-@@ -43,6 +43,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
-     filterResolvers(gqlAdapter, wrapper, moduleRef) {
-         const { instance } = wrapper;
+@@ -21,6 +21,7 @@ const graphql_constants_1 = require("../graphql.constants");
+ const decorate_field_resolver_util_1 = require("../utils/decorate-field-resolver.util");
+ const extract_metadata_util_1 = require("../utils/extract-metadata.util");
+ const base_explorer_service_1 = require("./base-explorer.service");
++const RESOLVER_SCHEMA_SCOPE_KEY = 'RESOLVER_SCHEMA_SCOPE';
+ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplorerService extends base_explorer_service_1.BaseExplorerService {
+     constructor(modulesContainer, metadataScanner, externalContextCreator, gqlOptions, moduleRef, serializedGraph) {
+         super();
+@@ -45,6 +46,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
          if (!instance) {
              return undefined;
          }
@@ -68,25 +290,27 @@ index 1234567..abcdefg 100644
 +        if (resolverSchemaScope && wrapper.metatype) {
 +            // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
 +            // TODO: remove this fallback once nestjs-query is deprecated
-+            const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', wrapper.metatype) || 'metadata';
-+            if (scope !== resolverSchemaScope) {
++            const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, wrapper.metatype) || 'metadata';
++            if (resolverScope !== resolverSchemaScope) {
 +                return undefined;
 +            }
 +        }
          const prototype = Object.getPrototypeOf(instance);
-@@ -147,5 +154,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+         const predicate = (resolverType, isReferenceResolver, isPropertyResolver) => (0, shared_utils_1.isUndefined)(resolverType) ||
+             (!isReferenceResolver &&
+@@ -147,6 +157,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
      getAllCtors() {
          const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
          const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
--        return resolvers;
 +        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
 +        if (resolverSchemaScope) {
-+            return resolvers.filter((ctor) => {
++            return resolvers.filter((resolverConstructor) => {
 +                // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
 +                // TODO: remove this fallback once nestjs-query is deprecated
-+                const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', ctor) || 'metadata';
-+                return scope === resolverSchemaScope;
++                const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, resolverConstructor) || 'metadata';
++                return resolverScope === resolverSchemaScope;
 +            });
 +        }
-+        return resolvers;
+         return resolvers;
      }
+     mapToCtor(wrapper) {

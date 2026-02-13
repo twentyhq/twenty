@@ -20,6 +20,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.d.ts",
+    "scripts/**/*.ts",
     ".storybook/*.ts",
     ".storybook/*.tsx",
     "**/__mocks__/**/*",

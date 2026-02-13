@@ -18,7 +18,7 @@ import { createUploadLink } from 'apollo-upload-client';
 import { renewToken } from '@/auth/services/AuthService';
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { type AuthTokenPair } from '~/generated/graphql';
+import { type AuthTokenPair } from '~/generated-metadata/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
@@ -53,6 +53,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
   onAppVersionMismatch?: (message: string) => void;
+  onPayloadTooLarge?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
@@ -74,6 +75,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onTokenPairChange,
       onUnauthenticatedError,
       onAppVersionMismatch,
+      onPayloadTooLarge,
       currentWorkspaceMember,
       currentWorkspace,
       extraLinks,
@@ -140,6 +142,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             // eslint-disable-next-line no-console
             console.log('retryIf error from retryLink', error);
             if (this.isAuthenticationError(error)) {
+              return false;
+            }
+            if (this.isPayloadTooLargeError(error)) {
               return false;
             }
             return Boolean(error);
@@ -296,6 +301,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               return handleTokenRenewal(operation, forward);
             }
 
+            if (this.isPayloadTooLargeError(networkError as ServerError)) {
+              onPayloadTooLarge?.(t`Uploaded content is too large.`);
+              return;
+            }
+
             if (isDebugMode === true) {
               logDebug(`[Network error]: ${networkError}`);
             }
@@ -342,6 +352,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
   private isAuthenticationError(error: ServerError): boolean {
     return error.statusCode === 401;
+  }
+
+  private isPayloadTooLargeError(error: ServerError): boolean {
+    return error.statusCode === 413;
   }
 
   updateWorkspaceMember(workspaceMember: CurrentWorkspaceMember | null) {

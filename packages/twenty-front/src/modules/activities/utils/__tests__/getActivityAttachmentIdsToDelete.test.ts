@@ -37,6 +37,7 @@ describe('getActivityAttachmentIdsToDelete', () => {
       newActivityBody,
       attachments,
       oldActivityBody,
+      false,
     );
     expect(attachmentIdsToDelete).toEqual([]);
   });
@@ -72,6 +73,7 @@ describe('getActivityAttachmentIdsToDelete', () => {
       newActivityBody,
       attachments,
       oldActivityBody,
+      false,
     );
     expect(attachmentIdsToDelete).toEqual(['2']);
   });

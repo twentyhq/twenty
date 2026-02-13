@@ -5,9 +5,11 @@ import { useRecoilValue } from 'recoil';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
+import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
-import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
@@ -39,51 +41,65 @@ export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
 
   return (
     <NavigationMenuItemDroppable
-      droppableId={ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID}
+      droppableId={NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS}
+      isWorkspaceSection={false}
     >
       {orphanNavigationMenuItems.length > 0 ? (
-        orphanNavigationMenuItems.map((navigationMenuItem, index) => (
-          <DraggableItem
-            key={navigationMenuItem.id}
-            draggableId={navigationMenuItem.id}
-            index={index}
-            isInsideScrollableContainer={true}
-            itemComponent={
-              <StyledOrphanNavigationMenuItemsContainer>
-                <NavigationDrawerItem
-                  secondaryLabel={getNavigationMenuItemSecondaryLabel({
-                    objectMetadataItems,
-                    navigationMenuItemObjectNameSingular:
-                      navigationMenuItem.objectNameSingular,
-                  })}
-                  label={navigationMenuItem.labelIdentifier}
-                  Icon={() => (
-                    <NavigationMenuItemIcon
-                      navigationMenuItem={navigationMenuItem}
-                    />
-                  )}
-                  active={isLocationMatchingNavigationMenuItem(
-                    currentPath,
-                    currentViewPath,
-                    navigationMenuItem,
-                  )}
-                  to={isDragging ? undefined : navigationMenuItem.link}
-                  rightOptions={
-                    <LightIconButton
-                      Icon={IconHeartOff}
-                      onClick={() =>
-                        deleteNavigationMenuItem(navigationMenuItem.id)
+        <>
+          {orphanNavigationMenuItems.map((navigationMenuItem, index) => (
+            <NavigationItemDropTarget
+              key={navigationMenuItem.id}
+              folderId={null}
+              index={index}
+              sectionId={NavigationSections.FAVORITES}
+            >
+              <DraggableItem
+                draggableId={navigationMenuItem.id}
+                index={index}
+                isInsideScrollableContainer={true}
+                itemComponent={
+                  <StyledOrphanNavigationMenuItemsContainer>
+                    <NavigationDrawerItem
+                      secondaryLabel={getNavigationMenuItemSecondaryLabel({
+                        objectMetadataItems,
+                        navigationMenuItemObjectNameSingular:
+                          navigationMenuItem.objectNameSingular,
+                      })}
+                      label={navigationMenuItem.labelIdentifier}
+                      Icon={() => (
+                        <NavigationMenuItemIcon
+                          navigationMenuItem={navigationMenuItem}
+                        />
+                      )}
+                      active={isLocationMatchingNavigationMenuItem(
+                        currentPath,
+                        currentViewPath,
+                        navigationMenuItem,
+                      )}
+                      to={isDragging ? undefined : navigationMenuItem.link}
+                      rightOptions={
+                        <LightIconButton
+                          Icon={IconHeartOff}
+                          onClick={() =>
+                            deleteNavigationMenuItem(navigationMenuItem.id)
+                          }
+                          accent="tertiary"
+                        />
                       }
-                      accent="tertiary"
+                      isDragging={isDragging}
+                      triggerEvent="CLICK"
                     />
-                  }
-                  isDragging={isDragging}
-                  triggerEvent="CLICK"
-                />
-              </StyledOrphanNavigationMenuItemsContainer>
-            }
+                  </StyledOrphanNavigationMenuItemsContainer>
+                }
+              />
+            </NavigationItemDropTarget>
+          ))}
+          <NavigationItemDropTarget
+            folderId={null}
+            index={orphanNavigationMenuItems.length}
+            sectionId={NavigationSections.FAVORITES}
           />
-        ))
+        </>
       ) : (
         <StyledEmptyContainer style={{ height: isDragging ? '24px' : '1px' }} />
       )}
