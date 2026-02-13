@@ -123,6 +123,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       ],
       icon: 'IconNote',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000002',
       labelPlural: 'Root notes',
       labelSingular: 'Root note',
       namePlural: 'rootNotes',
@@ -199,6 +201,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       ],
       icon: 'IconMail',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        '58a0a314-d7ea-4865-9850-7fb84e72f30b',
       labelPlural: 'Post cards',
       labelSingular: 'Post card',
       namePlural: 'postCards',
