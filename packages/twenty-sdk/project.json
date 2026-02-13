@@ -9,13 +9,19 @@
   ],
   "targets": {
     "build": {
-      "dependsOn": [
-        "^build",
-        "generate-remote-dom-elements"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "dependsOn": ["^build", "generate-remote-dom-elements"],
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts",
+          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+        ],
+        "parallel": false
+      }
     },
     "dev": {
       "executor": "nx:run-commands",

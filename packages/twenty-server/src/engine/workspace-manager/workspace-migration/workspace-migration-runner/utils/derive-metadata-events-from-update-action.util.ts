@@ -14,6 +14,7 @@ import {
   type UpdateMetadataEvent,
   type UpdateMetadataEventDiff,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 export type DeriveMetadataEventsFromUpdateActionArgs = {
   flatAction: AllFlatWorkspaceMigrationAction<'update'>;
@@ -48,8 +49,11 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
     properties: {
       updatedFields,
       diff,
-      before,
-      after,
+      before: flatEntityToScalarFlatEntity({
+        flatEntity: before,
+        metadataName,
+      }),
+      after: flatEntityToScalarFlatEntity({ flatEntity: after, metadataName }),
     },
   };
 };
@@ -71,7 +75,10 @@ export const deriveMetadataEventsFromUpdateAction = ({
         metadataName: 'index',
         recordId: fromFlatEntity.id,
         properties: {
-          before: fromFlatEntity,
+          before: flatEntityToScalarFlatEntity({
+            flatEntity: fromFlatEntity,
+            metadataName: 'index',
+          }),
         },
         type: 'deleted',
       };
@@ -80,7 +87,10 @@ export const deriveMetadataEventsFromUpdateAction = ({
         metadataName: 'index',
         recordId: toFlatEntity.id,
         properties: {
-          after: toFlatEntity,
+          after: flatEntityToScalarFlatEntity({
+            flatEntity: toFlatEntity,
+            metadataName: 'index',
+          }),
         },
         type: 'created',
       };

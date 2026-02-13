@@ -1,14 +1,11 @@
 import path from 'path';
 import { type PackageJson } from 'type-fest';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import packageJson from './package.json';
 
 export default defineConfig(() => {
-  const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-sdk-node',
@@ -18,8 +15,9 @@ export default defineConfig(() => {
       },
     },
     plugins: [
-      tsconfigPaths({ root: __dirname }),
-      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
+      tsconfigPaths({
+        root: __dirname,
+      }),
     ],
     build: {
       emptyOutDir: false,

@@ -6,6 +6,8 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -15,8 +17,6 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -47,7 +47,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
     try {
       const renewedTokens = await renewToken(
-        `${REACT_APP_SERVER_BASE_URL}/graphql`,
+        `${REACT_APP_SERVER_BASE_URL}/metadata`,
         tokenPair,
       );
 

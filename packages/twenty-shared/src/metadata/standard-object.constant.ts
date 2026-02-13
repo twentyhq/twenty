@@ -2226,6 +2226,7 @@ export const STANDARD_OBJECTS = {
       {
         universalIdentifier: string;
         viewFields: Record<string, { universalIdentifier: string }>;
+        viewFieldGroups?: Record<string, { universalIdentifier: string }>;
         viewFilters?: Record<string, { universalIdentifier: string }>;
         viewGroups?: Record<string, { universalIdentifier: string }>;
       }
