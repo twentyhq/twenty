@@ -79,6 +79,9 @@ jobs:
         run: |
           echo "Attempting to merge main into current branch..."
 
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
           git fetch origin main
 
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)

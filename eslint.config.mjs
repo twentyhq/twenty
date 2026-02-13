@@ -5,7 +5,7 @@ import typescriptParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
 import linguiPlugin from 'eslint-plugin-lingui';
 import * as mdxPlugin from 'eslint-plugin-mdx';
-import preferArrowPlugin from 'eslint-plugin-prefer-arrow';
+import preferArrowFunctions from 'eslint-plugin-prefer-arrow-functions';
 import prettierPlugin from 'eslint-plugin-prettier';
 import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
@@ -41,7 +41,7 @@ export default [
       prettier: prettierPlugin,
       lingui: linguiPlugin,
       '@nx': nxPlugin,
-      'prefer-arrow': preferArrowPlugin,
+      'prefer-arrow-functions': preferArrowFunctions,
       import: importPlugin,
       'unused-imports': unusedImportsPlugin,
       unicorn: unicornPlugin,
@@ -100,7 +100,7 @@ export default [
       'import/no-duplicates': ['error', { considerQueryString: true }],
 
       // Prefer arrow functions
-      'prefer-arrow/prefer-arrow-functions': [
+      'prefer-arrow-functions/prefer-arrow-functions': [
         'error',
         {
           disallowPrototype: true,
