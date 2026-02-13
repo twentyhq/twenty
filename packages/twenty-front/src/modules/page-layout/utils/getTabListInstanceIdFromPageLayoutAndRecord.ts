@@ -1,7 +1,7 @@
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { type LayoutRenderingContextType } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { getTabListInstanceIdFromPageLayoutId } from './getTabListInstanceIdFromPageLayoutId';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutType } from '~/generated/graphql';
 
 export const getTabListInstanceIdFromPageLayoutAndRecord = ({
   pageLayoutId,
@@ -9,7 +9,7 @@ export const getTabListInstanceIdFromPageLayoutAndRecord = ({
   targetRecordIdentifier,
 }: {
   pageLayoutId: string;
-  layoutType: PageLayoutType;
+  layoutType: LayoutRenderingContextType['layoutType'];
   targetRecordIdentifier?: TargetRecordIdentifier;
 }) => {
   // Include record ID in tab instance ID to prevent tab synchronization between different records
