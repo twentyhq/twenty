@@ -39,7 +39,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     isEditable: true,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: createRoleInput.universalIdentifier ?? v4(),
+    universalIdentifier: v4(),
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     roleTargetUniversalIdentifiers: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],

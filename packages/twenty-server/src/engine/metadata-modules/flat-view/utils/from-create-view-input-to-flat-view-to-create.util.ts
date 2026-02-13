@@ -81,7 +81,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
-    universalIdentifier: createViewInput.universalIdentifier ?? v4(),
+    universalIdentifier: v4(),
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     viewFieldUniversalIdentifiers: [],

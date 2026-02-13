@@ -58,12 +58,6 @@ export class CreateObjectInput {
   @HideField()
   dataSourceId: string;
 
-  @HideField()
-  applicationId?: string;
-
-  @HideField()
-  universalIdentifier?: string;
-
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })

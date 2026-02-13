@@ -29,7 +29,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     handlerName: rawCreateLogicFunctionInput.handlerName,
     builtHandlerPath: rawCreateLogicFunctionInput.builtHandlerPath,
     universalIdentifier:
-      rawCreateLogicFunctionInput.universalIdentifier ?? v4(),
+      v4(),
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,

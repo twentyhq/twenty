@@ -1,4 +1,4 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
@@ -81,7 +81,4 @@ export class CreateAgentInput {
   @IsOptional()
   @Field(() => [String], { nullable: true })
   evaluationInputs?: string[];
-
-  @HideField()
-  applicationId?: string;
 }

@@ -28,7 +28,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: createFrontComponentInput.universalIdentifier ?? v4(),
+    universalIdentifier: v4(),
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

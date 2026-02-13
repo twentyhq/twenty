@@ -29,11 +29,6 @@ export class CreateLogicFunctionFromSourceInput {
   @Field(() => UUIDScalarType, { nullable: true })
   id?: string;
 
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  universalIdentifier?: string;
-
   @IsString()
   @IsNotEmpty()
   @Field()
