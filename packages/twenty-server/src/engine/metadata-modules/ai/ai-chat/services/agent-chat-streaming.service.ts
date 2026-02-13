@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { createUIMessageStream, pipeUIMessageStreamToResponse } from 'ai';
@@ -34,8 +34,6 @@ export type StreamAgentChatOptions = {
 
 @Injectable()
 export class AgentChatStreamingService {
-  private readonly logger = new Logger(AgentChatStreamingService.name);
-
   constructor(
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
@@ -64,6 +62,25 @@ export class AgentChatStreamingService {
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
+
+    // Fire user-message save without awaiting to avoid delaying time-to-first-letter.
+    // The promise is awaited inside onFinish where we need the turnId.
+    const lastUserText =
+      messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
+        ?.text ?? '';
+
+    const userMessagePromise = this.agentChatService.addMessage({
+      threadId: thread.id,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text', text: lastUserText }],
+      },
+    });
+
+    // Prevent unhandled rejection if onFinish never runs (e.g. stream
+    // setup error or empty response early-return). The real error still
+    // surfaces when awaited in onFinish.
+    userMessagePromise.catch(() => {});
 
     try {
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
@@ -97,8 +114,6 @@ export class AgentChatStreamingService {
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
-                this.logger.error('Stream error:', error);
-
                 return error instanceof Error ? error.message : String(error);
               },
               sendStart: false,
@@ -179,57 +194,26 @@ export class AgentChatStreamingService {
                   return;
                 }
 
-                const validThreadId = thread.id;
+                const userMessage = await userMessagePromise;
 
-                if (!validThreadId) {
-                  this.logger.error('Thread ID is unexpectedly null/undefined');
+                await this.agentChatService.addMessage({
+                  threadId: thread.id,
+                  uiMessage: responseMessage,
+                  turnId: userMessage.turnId,
+                });
 
-                  return;
-                }
-
-                try {
-                  const userMessage = await this.agentChatService.addMessage({
-                    threadId: validThreadId,
-                    uiMessage: {
-                      role: AgentMessageRole.USER,
-                      parts: [
-                        {
-                          type: 'text',
-                          text:
-                            messages[messages.length - 1].parts.find(
-                              (part) => part.type === 'text',
-                            )?.text ?? '',
-                        },
-                      ],
-                    },
-                  });
-
-                  await this.agentChatService.addMessage({
-                    threadId: validThreadId,
-                    uiMessage: responseMessage,
-                    turnId: userMessage.turnId,
-                  });
-
-                  await this.threadRepository.update(validThreadId, {
-                    totalInputTokens: () =>
-                      `"totalInputTokens" + ${streamUsage.inputTokens}`,
-                    totalOutputTokens: () =>
-                      `"totalOutputTokens" + ${streamUsage.outputTokens}`,
-                    totalInputCredits: () =>
-                      `"totalInputCredits" + ${streamUsage.inputCredits}`,
-                    totalOutputCredits: () =>
-                      `"totalOutputCredits" + ${streamUsage.outputCredits}`,
-                    contextWindowTokens: modelConfig.contextWindowTokens,
-                    conversationSize: lastStepConversationSize,
-                  });
-                } catch (saveError) {
-                  this.logger.error(
-                    'Failed to save messages:',
-                    saveError instanceof Error
-                      ? saveError.message
-                      : String(saveError),
-                  );
-                }
+                await this.threadRepository.update(thread.id, {
+                  totalInputTokens: () =>
+                    `"totalInputTokens" + ${streamUsage.inputTokens}`,
+                  totalOutputTokens: () =>
+                    `"totalOutputTokens" + ${streamUsage.outputTokens}`,
+                  totalInputCredits: () =>
+                    `"totalInputCredits" + ${streamUsage.inputCredits}`,
+                  totalOutputCredits: () =>
+                    `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+                  contextWindowTokens: modelConfig.contextWindowTokens,
+                  conversationSize: lastStepConversationSize,
+                });
               },
               sendReasoning: true,
             }),
@@ -237,13 +221,18 @@ export class AgentChatStreamingService {
         },
       });
 
-      pipeUIMessageStreamToResponse({ stream: uiStream, response });
+      pipeUIMessageStreamToResponse({
+        stream: uiStream,
+        response,
+        // Consume the stream independently so onFinish fires even if
+        // the client disconnects (e.g., page refresh mid-stream)
+        consumeSseStream: ({ stream }) => {
+          stream.pipeTo(new WritableStream()).catch(() => {});
+        },
+      });
     } catch (error) {
-      this.logger.error(
-        'Failed to stream chat:',
-        error instanceof Error ? error.message : String(error),
-      );
       response.end();
+      throw error;
     }
   }
 }
