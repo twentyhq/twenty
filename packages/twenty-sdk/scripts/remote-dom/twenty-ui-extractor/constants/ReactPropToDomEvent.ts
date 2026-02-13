@@ -1,4 +1,4 @@
-import { EVENT_TO_REACT } from '@/sdk/front-component-common/EventToReact';
+import { EVENT_TO_REACT } from '@/sdk/front-component-api/constants/EventToReact';
 
 export const REACT_PROP_TO_DOM_EVENT: Record<string, string> =
   Object.fromEntries(

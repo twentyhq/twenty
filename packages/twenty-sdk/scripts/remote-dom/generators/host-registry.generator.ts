@@ -1,6 +1,6 @@
 import type { Project, SourceFile } from 'ts-morph';
 
-import { EVENT_TO_REACT } from '@/sdk/front-component-common/EventToReact';
+import { EVENT_TO_REACT } from '@/sdk/front-component-api/constants/EventToReact';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
@@ -275,7 +275,7 @@ export const generateHostRegistry = (
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../../../sdk/front-component-common/SerializedEventData',
+    moduleSpecifier: '../../../sdk/front-component-api/constants/SerializedEventData',
     namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
   });
 

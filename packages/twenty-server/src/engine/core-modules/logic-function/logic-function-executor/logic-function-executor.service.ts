@@ -179,7 +179,7 @@ export class LogicFunctionExecutorService {
     flatApplicationVariables: FlatApplicationVariable[];
   }) {
     const applicationAccessToken =
-      await this.applicationTokenService.generateApplicationToken({
+      await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId,
         applicationId: flatApplication.id,
         expiresInSeconds: Math.max(

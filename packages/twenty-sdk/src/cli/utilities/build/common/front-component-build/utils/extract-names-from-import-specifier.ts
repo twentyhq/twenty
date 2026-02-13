@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ParsedImportSpecifier } from '../types/ParsedImportSpecifier';
 
-const ALIASED_IMPORT_PATTERN = /^(\w+)\s+as\s+(\w+)$/;
+const ALIASED_IMPORT_PATTERN = /^([\w$]+)\s+as\s+([\w$]+)$/;
 
 export const extractNamesFromImportSpecifier = (
   importSpecifier: string,

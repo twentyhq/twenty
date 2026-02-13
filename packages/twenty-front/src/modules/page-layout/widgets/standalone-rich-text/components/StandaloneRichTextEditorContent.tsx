@@ -18,6 +18,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { t } from '@lingui/core/macro';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
@@ -95,6 +96,9 @@ export const StandaloneRichTextEditorContent = ({
     schema: BLOCK_SCHEMA,
     uploadFile: handleEditorBuiltInUploadFile,
     sideMenuDetection: 'editor',
+    placeholders: {
+      default: t`Type '/' for commands, '@' for mentions`,
+    },
   });
 
   const handlePersistBody = useDebouncedCallback((blocknote: string) => {

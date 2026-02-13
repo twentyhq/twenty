@@ -2,7 +2,7 @@ import * as path from 'path';
 import { type ExportSpecifier, Project } from 'ts-morph';
 import { isDefined, pascalToKebab } from 'twenty-shared/utils';
 
-import { type PropertySchema } from '@/front-component/types/PropertySchema';
+import { type PropertySchema } from '@/front-component-renderer/types/PropertySchema';
 
 import {
   logCategory,

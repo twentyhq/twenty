@@ -57,9 +57,9 @@ export { useUserId } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
 
 // Front Component Common exports
-export type { AllowedHtmlElement } from './front-component-common';
-export { ALLOWED_HTML_ELEMENTS } from './front-component-common';
-export { COMMON_HTML_EVENTS } from './front-component-common';
-export { EVENT_TO_REACT } from './front-component-common';
-export { HTML_COMMON_PROPERTIES } from './front-component-common';
-export { HTML_TAG_TO_REMOTE_COMPONENT } from './front-component-common';
+export type { AllowedHtmlElement } from './front-component-api';
+export { ALLOWED_HTML_ELEMENTS } from './front-component-api';
+export { COMMON_HTML_EVENTS } from './front-component-api';
+export { EVENT_TO_REACT } from './front-component-api';
+export { HTML_COMMON_PROPERTIES } from './front-component-api';
+export { HTML_TAG_TO_REMOTE_COMPONENT } from './front-component-api';
