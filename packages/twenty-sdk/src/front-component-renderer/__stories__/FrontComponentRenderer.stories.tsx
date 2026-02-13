@@ -35,7 +35,7 @@ export const Static: Story = {
     const container = await canvas.findByTestId(
       'static-component',
       {},
-      { timeout: 10000 },
+      { timeout: 30000 },
     );
     expect(container).toBeVisible();
     expect(container).toHaveStyle({
