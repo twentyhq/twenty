@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -60,11 +59,9 @@ export const CommandMenuContainer = ({
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <AgentChatProvider>
-            <StyledCommandMenuContainer isMobile={isMobile}>
-              {children}
-            </StyledCommandMenuContainer>
-          </AgentChatProvider>
+          <StyledCommandMenuContainer isMobile={isMobile}>
+            {children}
+          </StyledCommandMenuContainer>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>

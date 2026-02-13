@@ -71,11 +71,9 @@ export const FileBlock = createReactBlockSpec(
         editor.updateBlock(block.id, {
           props: {
             ...block.props,
-            ...{
-              url: fileUrl,
-              fileCategory: getFileType(file.name),
-              name: file.name,
-            },
+            url: fileUrl,
+            fileCategory: getFileType(file.name),
+            name: file.name,
           },
         });
       };

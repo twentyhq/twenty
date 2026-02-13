@@ -17,7 +17,6 @@ export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   MetadataObjectMetadataMaps: 'metadata:object-metadata-maps',
   GraphQLUsedScalarNames: 'graphql:used-scalar-names',
   ORMEntitySchemas: 'orm:entity-schemas',
-  ToolCatalog: 'tool-catalog',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
   GraphQLOperations: 'graphql:operations',
@@ -212,24 +211,6 @@ export class WorkspaceCacheStorageService {
             `${key}:${workspaceId}:${metadataVersionSuffix}`,
           ),
       ),
-    );
-  }
-
-  setToolCatalog(
-    cacheKey: string,
-    descriptors: unknown[],
-    ttl: number,
-  ): Promise<void> {
-    return this.cacheStorageService.set<unknown[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ToolCatalog}:${cacheKey}`,
-      descriptors,
-      ttl,
-    );
-  }
-
-  getToolCatalog(cacheKey: string): Promise<unknown[] | undefined> {
-    return this.cacheStorageService.get<unknown[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ToolCatalog}:${cacheKey}`,
     );
   }
 

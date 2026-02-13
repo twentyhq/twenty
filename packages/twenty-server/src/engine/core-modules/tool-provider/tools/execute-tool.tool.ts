@@ -1,10 +1,8 @@
 import { type ToolCallOptions, type ToolSet } from 'ai';
 import { z } from 'zod';
 
-import {
-  type ToolContext,
-  type ToolRegistryService,
-} from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 

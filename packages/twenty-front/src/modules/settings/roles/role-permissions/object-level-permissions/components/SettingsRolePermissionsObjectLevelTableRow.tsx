@@ -1,6 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
+import { SettingsRolePermissionsObjectLevelTableRowOptionsDropdown } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown';
 import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject';
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -9,11 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui/display';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
@@ -24,6 +21,11 @@ const StyledNameLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+`;
+
+const StyledOptionsTableCell = styled(TableCell)`
+  justify-content: flex-end;
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 type SettingsRolePermissionsObjectLevelTableRowProps = {
@@ -90,14 +92,15 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectMetadataItem={objectMetadataItem}
         />
       </TableCell>
-      {isEditable && (
-        <TableCell align="right">
-          <IconChevronRight
-            size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
-          />
-        </TableCell>
-      )}
+      <TableCell></TableCell>
+      <StyledOptionsTableCell>
+        <SettingsRolePermissionsObjectLevelTableRowOptionsDropdown
+          roleId={roleId}
+          objectMetadataId={objectMetadataItem.id}
+          objectPermissionDetailUrl={navigationUrl}
+          isEditable={isEditable}
+        />
+      </StyledOptionsTableCell>
     </TableRow>
   );
 };

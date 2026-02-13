@@ -1637,6 +1637,15 @@ export type FilesConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type FilesFieldFile = {
+  __typename?: 'FilesFieldFile';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  path: Scalars['String'];
+  size: Scalars['Float'];
+  url: Scalars['String'];
+};
+
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['UUID'];
@@ -2287,7 +2296,7 @@ export type Mutation = {
   uploadApplicationFile: File;
   /** @deprecated Use uploadFilesFieldFile instead */
   uploadFile: SignedFile;
-  uploadFilesFieldFile: File;
+  uploadFilesFieldFile: FilesFieldFile;
   uploadImage: SignedFile;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
@@ -3661,6 +3670,7 @@ export type Query = {
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getSystemHealthStatus: SystemHealth;
   getToolIndex: Array<ToolIndexEntry>;
+  getToolInputSchema?: Maybe<Scalars['JSON']>;
   index: Index;
   indexMetadatas: IndexConnection;
   lineChartData: LineChartDataOutput;
@@ -3929,6 +3939,11 @@ export type QueryGetQueueJobsArgs = {
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
+};
+
+
+export type QueryGetToolInputSchemaArgs = {
+  toolName: Scalars['String'];
 };
 
 
@@ -5314,7 +5329,14 @@ export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ _
 export type GetToolIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetToolIndexQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, description: string, category: string, objectName?: string | null, inputSchema?: any | null }> };
+export type GetToolIndexQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, description: string, category: string, objectName?: string | null }> };
+
+export type GetToolInputSchemaQueryVariables = Exact<{
+  toolName: Scalars['String'];
+}>;
+
+
+export type GetToolInputSchemaQuery = { __typename?: 'Query', getToolInputSchema?: any | null };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
@@ -5688,7 +5710,7 @@ export type UploadFilesFieldFileMutationVariables = Exact<{
 }>;
 
 
-export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
+export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'FilesFieldFile', id: string, path: string, size: number, createdAt: string, url: string } };
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -8477,7 +8499,6 @@ export const GetToolIndexDocument = gql`
     description
     category
     objectName
-    inputSchema
   }
 }
     `;
@@ -8508,6 +8529,39 @@ export function useGetToolIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetToolIndexQueryHookResult = ReturnType<typeof useGetToolIndexQuery>;
 export type GetToolIndexLazyQueryHookResult = ReturnType<typeof useGetToolIndexLazyQuery>;
 export type GetToolIndexQueryResult = Apollo.QueryResult<GetToolIndexQuery, GetToolIndexQueryVariables>;
+export const GetToolInputSchemaDocument = gql`
+    query GetToolInputSchema($toolName: String!) {
+  getToolInputSchema(toolName: $toolName)
+}
+    `;
+
+/**
+ * __useGetToolInputSchemaQuery__
+ *
+ * To run a query within a React component, call `useGetToolInputSchemaQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetToolInputSchemaQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetToolInputSchemaQuery({
+ *   variables: {
+ *      toolName: // value for 'toolName'
+ *   },
+ * });
+ */
+export function useGetToolInputSchemaQuery(baseOptions: Apollo.QueryHookOptions<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>(GetToolInputSchemaDocument, options);
+      }
+export function useGetToolInputSchemaLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>(GetToolInputSchemaDocument, options);
+        }
+export type GetToolInputSchemaQueryHookResult = ReturnType<typeof useGetToolInputSchemaQuery>;
+export type GetToolInputSchemaLazyQueryHookResult = ReturnType<typeof useGetToolInputSchemaLazyQuery>;
+export type GetToolInputSchemaQueryResult = Apollo.QueryResult<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>;
 export const TrackAnalyticsDocument = gql`
     mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
   trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {
@@ -10314,6 +10368,7 @@ export const UploadFilesFieldFileDocument = gql`
     path
     size
     createdAt
+    url
   }
 }
     `;
