@@ -6,7 +6,6 @@ import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 type WorkspaceMigration = {
-  workspaceId: string;
   applicationUniversalIdentifier: string;
   actions: unknown[];
 };
