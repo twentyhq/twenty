@@ -3,7 +3,10 @@ import { type TypedLineChartConfiguration } from '@/command-menu/pages/page-layo
 import { type TypedPieChartConfiguration } from '@/command-menu/pages/page-layout/types/TypedPieChartConfiguration';
 import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadataType, ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import {
   BarChartGroupMode,
   GraphOrderBy,
