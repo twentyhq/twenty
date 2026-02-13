@@ -5318,10 +5318,12 @@ export type GetToolIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetToolIndexQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, description: string, category: string, objectName?: string | null }> };
 
-export type GetToolInputSchemasQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetToolInputSchemaQueryVariables = Exact<{
+  toolName: Scalars['String'];
+}>;
 
 
-export type GetToolInputSchemasQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, inputSchema?: any | null }> };
+export type GetToolInputSchemaQuery = { __typename?: 'Query', getToolInputSchema?: any | null };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
@@ -8436,41 +8438,39 @@ export function useGetToolIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetToolIndexQueryHookResult = ReturnType<typeof useGetToolIndexQuery>;
 export type GetToolIndexLazyQueryHookResult = ReturnType<typeof useGetToolIndexLazyQuery>;
 export type GetToolIndexQueryResult = Apollo.QueryResult<GetToolIndexQuery, GetToolIndexQueryVariables>;
-export const GetToolInputSchemasDocument = gql`
-    query GetToolInputSchemas {
-  getToolIndex {
-    name
-    inputSchema
-  }
+export const GetToolInputSchemaDocument = gql`
+    query GetToolInputSchema($toolName: String!) {
+  getToolInputSchema(toolName: $toolName)
 }
     `;
 
 /**
- * __useGetToolInputSchemasQuery__
+ * __useGetToolInputSchemaQuery__
  *
- * To run a query within a React component, call `useGetToolInputSchemasQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetToolInputSchemasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetToolInputSchemaQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetToolInputSchemaQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetToolInputSchemasQuery({
+ * const { data, loading, error } = useGetToolInputSchemaQuery({
  *   variables: {
+ *      toolName: // value for 'toolName'
  *   },
  * });
  */
-export function useGetToolInputSchemasQuery(baseOptions?: Apollo.QueryHookOptions<GetToolInputSchemasQuery, GetToolInputSchemasQueryVariables>) {
+export function useGetToolInputSchemaQuery(baseOptions: Apollo.QueryHookOptions<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetToolInputSchemasQuery, GetToolInputSchemasQueryVariables>(GetToolInputSchemasDocument, options);
+        return Apollo.useQuery<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>(GetToolInputSchemaDocument, options);
       }
-export function useGetToolInputSchemasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetToolInputSchemasQuery, GetToolInputSchemasQueryVariables>) {
+export function useGetToolInputSchemaLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetToolInputSchemasQuery, GetToolInputSchemasQueryVariables>(GetToolInputSchemasDocument, options);
+          return Apollo.useLazyQuery<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>(GetToolInputSchemaDocument, options);
         }
-export type GetToolInputSchemasQueryHookResult = ReturnType<typeof useGetToolInputSchemasQuery>;
-export type GetToolInputSchemasLazyQueryHookResult = ReturnType<typeof useGetToolInputSchemasLazyQuery>;
-export type GetToolInputSchemasQueryResult = Apollo.QueryResult<GetToolInputSchemasQuery, GetToolInputSchemasQueryVariables>;
+export type GetToolInputSchemaQueryHookResult = ReturnType<typeof useGetToolInputSchemaQuery>;
+export type GetToolInputSchemaLazyQueryHookResult = ReturnType<typeof useGetToolInputSchemaLazyQuery>;
+export type GetToolInputSchemaQueryResult = Apollo.QueryResult<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>;
 export const TrackAnalyticsDocument = gql`
     mutation TrackAnalytics($type: AnalyticsType!, $event: String, $name: String, $properties: JSON) {
   trackAnalytics(type: $type, event: $event, name: $name, properties: $properties) {

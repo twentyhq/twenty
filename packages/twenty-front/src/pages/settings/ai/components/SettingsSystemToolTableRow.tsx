@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
-import { GET_TOOL_INPUT_SCHEMAS } from '@/ai/graphql/queries/getToolInputSchemas';
+import { GET_TOOL_INPUT_SCHEMA } from '@/ai/graphql/queries/getToolInputSchemas';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -25,13 +25,8 @@ import { type JsonValue } from 'type-fest';
 
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-type ToolInputSchemaEntry = {
-  name: string;
-  inputSchema?: object;
-};
-
-type GetToolInputSchemasQuery = {
-  getToolIndex: ToolInputSchemaEntry[];
+type GetToolInputSchemaQuery = {
+  getToolInputSchema: object | null;
 };
 
 export type SystemTool = {
@@ -115,13 +110,13 @@ export const SettingsSystemToolTableRow = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const { copyToClipboard } = useCopyToClipboard();
 
-  // Lazy-load input schemas on first expand (Apollo caches across all rows)
-  const [fetchSchemas, { data: schemasData, loading: schemasLoading }] =
-    useLazyQuery<GetToolInputSchemasQuery>(GET_TOOL_INPUT_SCHEMAS);
+  // Fetch inputSchema for this specific tool on first expand
+  const [fetchSchema, { data: schemaData, loading: schemaLoading }] =
+    useLazyQuery<GetToolInputSchemaQuery>(GET_TOOL_INPUT_SCHEMA, {
+      variables: { toolName: tool.name },
+    });
 
-  const inputSchema = schemasData?.getToolIndex.find(
-    (entry) => entry.name === tool.name,
-  )?.inputSchema;
+  const inputSchema = schemaData?.getToolInputSchema;
 
   const hasInputSchema =
     isDefined(inputSchema) && Object.keys(inputSchema).length > 0;
@@ -129,8 +124,8 @@ export const SettingsSystemToolTableRow = ({
   const Icon = getCategoryIcon(tool.category);
 
   const handleRowClick = () => {
-    if (!schemasData && !schemasLoading) {
-      fetchSchemas();
+    if (!schemaData && !schemaLoading) {
+      fetchSchema();
     }
     setIsExpanded(!isExpanded);
   };
@@ -165,7 +160,7 @@ export const SettingsSystemToolTableRow = ({
           {tool.description && (
             <StyledDescription>{tool.description}</StyledDescription>
           )}
-          {schemasLoading && (
+          {schemaLoading && (
             <StyledSectionTitle>{t`Loading schema...`}</StyledSectionTitle>
           )}
           {hasInputSchema && (
@@ -183,7 +178,7 @@ export const SettingsSystemToolTableRow = ({
               />
             </>
           )}
-          {!schemasLoading && !hasInputSchema && (
+          {!schemaLoading && !hasInputSchema && (
             <StyledSectionTitle>{t`No parameters`}</StyledSectionTitle>
           )}
         </StyledExpandableContent>
