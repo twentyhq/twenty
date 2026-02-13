@@ -32179,6 +32179,7 @@ __metadata:
     lodash.camelcase: "npm:^4.3.0"
     lodash.kebabcase: "npm:^4.1.1"
     lodash.startcase: "npm:^4.4.0"
+    twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
