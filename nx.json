@@ -272,9 +272,6 @@
       "inputs": ["default", "^default"]
     }
   },
-  "installation": {
-    "version": "22.3.3"
-  },
   "generators": {
     "@nx/react": {
       "application": {
