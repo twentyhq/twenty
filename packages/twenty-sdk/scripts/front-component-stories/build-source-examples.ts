@@ -16,6 +16,11 @@ const STORY_COMPONENTS = [
   'lifecycle.front-component',
   'chakra-example.front-component',
   'tailwind-example.front-component',
+  'emotion-example.front-component',
+  'styled-components-example.front-component',
+  'shadcn-example.front-component',
+  'mui-example.front-component',
+  'twenty-ui-example.front-component',
 ];
 
 export const buildSourceExamples = async (): Promise<void> => {

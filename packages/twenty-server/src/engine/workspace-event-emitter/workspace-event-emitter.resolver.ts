@@ -3,8 +3,8 @@ import { Args, Mutation, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';

@@ -60,6 +60,8 @@ Commands:
   help [command]       display help for command
 ```
 
+In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty app:dev`, etc.
+
 ## Global Options
 
 - `--workspace <name>`: Use a specific workspace configuration profile. Defaults to `default`. See Configuration for details.

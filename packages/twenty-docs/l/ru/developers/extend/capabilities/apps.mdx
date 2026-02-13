@@ -36,32 +36,32 @@ corepack enable
 yarn install
 
 # Authenticate using your API key (you'll be prompted)
-yarn auth:login
+yarn twenty auth:login
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn app:dev
+yarn twenty app:dev
 ```
 
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Добавить новую сущность в ваше приложение (с мастером)
-yarn entity:add
+# Add a new entity to your application (guided)
+yarn twenty entity:add
 
-# Сгенерировать типизированный клиент Twenty и типы сущностей рабочего пространства
-yarn app:generate
+# Generate a typed Twenty client and workspace entity types
+yarn twenty app:generate
 
-# Просматривать логи функций вашего приложения
-yarn function:logs
+# Watch your application's function logs
+yarn twenty function:logs
 
-# Выполнить функцию по имени
-yarn function:execute -n my-function -p '{"name": "test"}'
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Удалить приложение из текущего рабочего пространства
-yarn app:uninstall
+# Uninstall the application from the current workspace
+yarn twenty app:uninstall
 
-# Показать справку по командам
-yarn help
+# Display commands' help
+yarn twenty help
 ```
 
 Смотрите также: страницы справки CLI для [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) и [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -102,7 +102,7 @@ my-twenty-app/
 
 В общих чертах:
 
-* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` и команды аутентификации, которые делегируют выполнение локальному CLI `twenty`.
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
 * **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
@@ -142,12 +142,12 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn app:generate` создаст папку `generated/` (типизированный клиент Twenty + типы рабочего пространства).
-* `yarn entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов или ролей.
+* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
+* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## Аутентификация
 
-При первом запуске `yarn auth:login` вам будет предложено указать:
+The first time you run `yarn twenty auth:login`, you'll be prompted for:
 
 * URL API (по умолчанию http://localhost:3000 или текущий профиль рабочего пространства)
 * Ключ API
@@ -157,26 +157,26 @@ export default defineObject({
 ### Управление рабочими пространствами
 
 ```bash filename="Terminal"
-# Войти в интерактивном режиме (рекомендуется)
-yarn auth:login
+# Login interactively (recommended)
+yarn twenty auth:login
 
-# Войти в профиль конкретного рабочего пространства
-yarn auth:login --workspace my-custom-workspace
+# Login to a specific workspace profile
+yarn twenty auth:login --workspace my-custom-workspace
 
-# Показать список всех настроенных рабочих пространств
-yarn auth:list
+# List all configured workspaces
+yarn twenty auth:list
 
-# Переключить рабочее пространство по умолчанию (в интерактивном режиме)
-yarn auth:switch
+# Switch the default workspace (interactive)
+yarn twenty auth:switch
 
-# Переключиться на определённое рабочее пространство
-yarn auth:switch production
+# Switch to a specific workspace
+yarn twenty auth:switch production
 
-# Проверить текущий статус аутентификации
-yarn auth:status
+# Check current authentication status
+yarn twenty auth:status
 ```
 
-После переключения рабочего пространства с помощью `auth:switch` все последующие команды по умолчанию будут использовать это рабочее пространство. Вы по-прежнему можете временно переопределить это с помощью `--workspace <name>`.
+Once you've switched workspaces with `yarn twenty auth:switch`, all subsequent commands will use that workspace by default. Вы по-прежнему можете временно переопределить это с помощью `--workspace <name>`.
 
 ## Используйте ресурсы SDK (типы и конфигурация)
 
@@ -276,7 +276,7 @@ export default defineObject({
 * `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
 * Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
 * Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
-* Вы можете сгенерировать новые объекты с помощью `yarn entity:add`, который проведёт вас через выбор именования, полей и связей.
+* You can scaffold new objects using `yarn twenty entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
   **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля, такие как `name`, `createdAt`, `updatedAt`, `createdBy`, `position` и `deletedAt`. Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 Вы можете создать новые функции двумя способами:
 
-* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления новой логической функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new logic function. Это создаёт стартовый файл с обработчиком и конфигурацией.
 * **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
 
 ### Фронт-компоненты
@@ -584,16 +584,16 @@ export default defineFrontComponent({
 * Фронт-компоненты — это компоненты React, которые рендерятся в изолированных контекстах внутри Twenty.
 * Используйте суффикс файла `*.front-component.tsx` для автоматического обнаружения.
 * Поле `component` ссылается на ваш компонент React.
-* Компоненты автоматически собираются и синхронизируются во время `yarn app:dev`.
+* Components are built and synced automatically during `yarn twenty app:dev`.
 
 Вы можете создать новые фронт-компоненты двумя способами:
 
-* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления нового фронт-компонента.
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
 * **Вручную**: Создайте новый файл `*.front-component.tsx` и используйте `defineFrontComponent()`.
 
 ### Сгенерированный типизированный клиент
 
-Запустите yarn app:generate, чтобы создать локальный типизированный клиент в generated/ на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
+Run `yarn twenty app:generate` to create a local typed client in `generated/` based on your workspace schema. Используйте его в своих функциях:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Клиент повторно генерируется командой `yarn app:generate`. Запускайте повторно после изменения ваших объектов или при подключении к новому рабочему пространству.
+The client is re-generated by `yarn twenty app:generate`. Запускайте повторно после изменения ваших объектов или при подключении к новому рабочему пространству.
 
 #### Учётные данные времени выполнения в логических функциях
 
@@ -623,40 +623,29 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 ## Ручная настройка (без генератора)
 
-Хотя мы рекомендуем использовать `create-twenty-app` для наилучшего старта, вы также можете настроить проект вручную. Не устанавливайте CLI глобально. Вместо этого добавьте `twenty-sdk` как локальную зависимость и настройте скрипты в вашем package.json:
+Хотя мы рекомендуем использовать `create-twenty-app` для наилучшего старта, вы также можете настроить проект вручную. Не устанавливайте CLI глобально. Instead, add `twenty-sdk` as a local dependency and wire a single script in your package.json:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Затем добавьте скрипты, подобные этим:
+Then add a `twenty` script:
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth:login": "twenty auth:login",
-    "auth:logout": "twenty auth:logout",
-    "auth:status": "twenty auth:status",
-    "auth:switch": "twenty auth:switch",
-    "auth:list": "twenty auth:list",
-    "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
-    "app:uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
-    "function:logs": "twenty function:logs",
-    "function:execute": "twenty function:execute",
-    "help": "twenty help"
+    "twenty": "twenty"
   }
 }
 ```
 
-Теперь вы можете запускать те же команды через Yarn, например, `yarn app:dev`, `yarn app:generate` и т. д.
+Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
 
 ## Устранение неполадок
 
-* Ошибки аутентификации: выполните `yarn auth:login` и убедитесь, что у вашего ключа API есть необходимые права.
+* Authentication errors: run `yarn twenty auth:login` and ensure your API key has the required permissions.
 * Не удаётся подключиться к серверу: проверьте URL API и доступность сервера Twenty.
-* Типы или клиент отсутствуют/устарели: выполните `yarn app:generate`.
-* Режим разработки не синхронизируется: убедитесь, что запущен `yarn app:dev`, и что ваша среда не игнорирует изменения.
+* Types or client missing/outdated: run `yarn twenty app:generate`.
+* Dev mode not syncing: ensure `yarn twenty app:dev` is running and that changes are not ignored by your environment.
 
 Канал помощи в Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

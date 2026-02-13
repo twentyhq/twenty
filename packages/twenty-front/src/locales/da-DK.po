@@ -4232,6 +4232,11 @@ msgstr "Slet hele dit arbejdsområde"
 msgid "Deleted"
 msgstr "Slettet"
 
+#. js-lingui-id: oAhMKF
+#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+msgid "Deleted record"
+msgstr ""
+
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
@@ -13106,6 +13111,12 @@ msgstr "Opsætning af to-faktor godkendelse blev gennemført med succes!"
 msgid "Type"
 msgstr "Type"
 
+#. js-lingui-id: SKD2e4
+#: src/modules/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextEditorContent.tsx
+#: src/modules/activities/components/ActivityRichTextEditor.tsx
+msgid "Type '/' for commands, '@' for mentions"
+msgstr ""
+
 #. js-lingui-id: qzD6hf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
@@ -13229,6 +13240,11 @@ msgstr "Ukendt felt"
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Ukendt fil"
+
+#. js-lingui-id: num3KD
+#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+msgid "Unknown object"
+msgstr ""
 
 #. js-lingui-id: GQCXQS
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
