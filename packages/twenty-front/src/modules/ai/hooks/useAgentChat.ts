@@ -227,18 +227,26 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         isDefined(currentAIChatThread) &&
         !isNonEmptyString(currentAIChatThreadTitle)
       ) {
-        const result = await apolloClient
-          .query<GetChatThreadResult>({
-            query: GET_CHAT_THREAD,
-            variables: { id: currentAIChatThread },
-            fetchPolicy: 'network-only',
-          })
-          .catch(() => null);
+        const maxAttempts = 3;
+        const delayMs = 2000;
 
-        const title = result?.data?.chatThread?.title;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
 
-        if (isNonEmptyString(title)) {
-          syncAskAIPageTitle(currentAIChatThread, title);
+          const result = await apolloClient
+            .query<GetChatThreadResult>({
+              query: GET_CHAT_THREAD,
+              variables: { id: currentAIChatThread },
+              fetchPolicy: 'network-only',
+            })
+            .catch(() => null);
+
+          const title = result?.data?.chatThread?.title;
+
+          if (isNonEmptyString(title)) {
+            syncAskAIPageTitle(currentAIChatThread, title);
+            break;
+          }
         }
       }
     },
