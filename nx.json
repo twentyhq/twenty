@@ -43,12 +43,26 @@
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
-        "command": "npx oxlint -c {projectRoot}/.oxlintrc.json {projectRoot}/src --max-warnings=0"
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx oxlint -c .oxlintrc.json src --max-warnings=0",
+          "prettier {args.files} --check --cache {args.cache} --cache-location {args.cacheLocation} --cache-strategy {args.cacheStrategy}"
+        ],
+        "parallel": false,
+        "files": "src",
+        "cache": true,
+        "cacheLocation": "../../.cache/prettier/{projectRoot}",
+        "cacheStrategy": "metadata"
       },
       "configurations": {
-        "ci": {},
+        "ci": {
+          "cacheStrategy": "content"
+        },
         "fix": {
-          "command": "npx oxlint -c {projectRoot}/.oxlintrc.json {projectRoot}/src --fix --max-warnings=0"
+          "commands": [
+            "npx oxlint -c .oxlintrc.json src --fix",
+            "prettier {args.files} --write --cache {args.cache} --cache-location {args.cacheLocation} --cache-strategy {args.cacheStrategy}"
+          ]
         }
       },
       "dependsOn": ["^build"]

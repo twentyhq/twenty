@@ -174,7 +174,7 @@ jobs:
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:
-        task: [lint, fmt, typecheck, test]
+        task: [lint, typecheck, test]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0

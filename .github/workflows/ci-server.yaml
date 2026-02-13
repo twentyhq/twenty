@@ -65,11 +65,11 @@ jobs:
           key: ${{ env.SERVER_SETUP_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run lint, format & typecheck
+      - name: Server / Run lint & typecheck
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: lint,fmt,typecheck
+          tasks: lint,typecheck
       - name: Server / Write .env
         run: npx nx reset:env twenty-server
       - name: Server / Build
