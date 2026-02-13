@@ -1,9 +1,67 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`syncApplication should return workspace migration with actions when syncing a manifest with a role 1`] = `
+exports[`syncApplication should return workspace migration with actions when syncing a manifest with a role, an object and fields 1`] = `
 {
   "syncApplication": {
     "actions": [
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "createdAt": Any<String>,
+          "description": "A support ticket",
+          "duplicateCriteria": null,
+          "icon": "IconTicket",
+          "imageIdentifierFieldMetadataUniversalIdentifier": null,
+          "isActive": true,
+          "isAuditLogged": true,
+          "isCustom": true,
+          "isLabelSyncedWithName": true,
+          "isRemote": false,
+          "isSearchable": false,
+          "isSystem": false,
+          "isUIReadOnly": false,
+          "labelIdentifierFieldMetadataUniversalIdentifier": null,
+          "labelPlural": "Tickets",
+          "labelSingular": "Ticket",
+          "namePlural": "tickets",
+          "nameSingular": "ticket",
+          "shortcut": null,
+          "standardOverrides": null,
+          "targetTableName": "DEPRECATED",
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "objectMetadata",
+        "type": "create",
+        "universalFlatFieldMetadatas": [
+          {
+            "applicationUniversalIdentifier": Any<String>,
+            "createdAt": Any<String>,
+            "defaultValue": null,
+            "description": "Ticket description",
+            "icon": "IconFileDescription",
+            "isActive": true,
+            "isCustom": true,
+            "isLabelSyncedWithName": false,
+            "isNullable": true,
+            "isSystem": false,
+            "isUIReadOnly": false,
+            "isUnique": false,
+            "label": "Description",
+            "morphId": null,
+            "name": "description",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "options": null,
+            "relationTargetFieldMetadataUniversalIdentifier": null,
+            "relationTargetObjectMetadataUniversalIdentifier": null,
+            "standardOverrides": null,
+            "type": "TEXT",
+            "universalIdentifier": Any<String>,
+            "universalSettings": null,
+            "updatedAt": Any<String>,
+          },
+        ],
+      },
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
@@ -21,7 +79,6 @@ exports[`syncApplication should return workspace migration with actions when syn
           "icon": null,
           "isEditable": true,
           "label": "Test Role",
-          "roleTargetUniversalIdentifiers": [],
           "rowLevelPermissionPredicateGroupUniversalIdentifiers": [],
           "rowLevelPermissionPredicateUniversalIdentifiers": [],
           "universalIdentifier": Any<String>,

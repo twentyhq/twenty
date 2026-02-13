@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { createOneApplication } from 'test/integration/metadata/suites/application/utils/create-one-application.util';
@@ -9,6 +10,8 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
+const TEST_OBJECT_ID = uuidv4();
+const TEST_FIELD_ID = uuidv4();
 
 describe('syncApplication', () => {
   let appCreated = false;
@@ -56,7 +59,7 @@ describe('syncApplication', () => {
     });
   });
 
-  it('should return workspace migration with actions when syncing a manifest with a role', async () => {
+  it('should return workspace migration with actions when syncing a manifest with a role, an object and fields', async () => {
     const manifest: Manifest = {
       application: {
         universalIdentifier: TEST_APP_ID,
@@ -75,8 +78,29 @@ describe('syncApplication', () => {
           description: 'A test role',
         },
       ],
-      objects: [],
-      fields: [],
+      objects: [
+        {
+          universalIdentifier: TEST_OBJECT_ID,
+          nameSingular: 'ticket',
+          namePlural: 'tickets',
+          labelSingular: 'Ticket',
+          labelPlural: 'Tickets',
+          description: 'A support ticket',
+          icon: 'IconTicket',
+          fields: [],
+        },
+      ],
+      fields: [
+        {
+          universalIdentifier: TEST_FIELD_ID,
+          type: FieldMetadataType.TEXT,
+          name: 'description',
+          label: 'Description',
+          description: 'Ticket description',
+          icon: 'IconFileDescription',
+          objectUniversalIdentifier: TEST_OBJECT_ID,
+        },
+      ],
       logicFunctions: [],
       frontComponents: [],
       publicAssets: [],
