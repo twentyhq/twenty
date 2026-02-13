@@ -11,9 +11,16 @@
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["production", "^production"],
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/dist"],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [

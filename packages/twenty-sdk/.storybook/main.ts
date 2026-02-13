@@ -31,7 +31,7 @@ const config: StorybookConfig = {
         ...viteConfig.resolve,
         alias: {
           ...viteConfig.resolve?.alias,
-          '@': path.resolve(sdkRoot, 'src'),
+          '@': path.resolve(dirname, '../src'),
         },
       },
       plugins: [
@@ -42,9 +42,6 @@ const config: StorybookConfig = {
         ...viteConfig.optimizeDeps,
         include: [
           ...(viteConfig.optimizeDeps?.include ?? []),
-          '@remote-dom/core/elements',
-          '@remote-dom/react',
-          '@remote-dom/react/host',
           'transliteration',
         ],
       },
