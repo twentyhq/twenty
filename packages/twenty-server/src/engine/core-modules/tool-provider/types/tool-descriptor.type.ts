@@ -18,13 +18,17 @@ export type ToolExecutionRef =
   | { kind: 'static'; toolId: string }
   | { kind: 'logic_function'; logicFunctionId: string };
 
-// Fully JSON-serializable tool definition, stored in Redis
-export type ToolDescriptor = {
+// Lightweight entry for catalog/index (no schema)
+export type ToolIndexEntry = {
   name: string;
   description: string;
   category: ToolCategory;
-  inputSchema: object;
   executionRef: ToolExecutionRef;
   objectName?: string;
   operation?: string;
+};
+
+// Full descriptor with schema (on-demand)
+export type ToolDescriptor = ToolIndexEntry & {
+  inputSchema: object;
 };

@@ -1,6 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 
 type BaseMetadataEvent<T extends AllMetadataName, TPayload extends object> = {
@@ -11,7 +13,7 @@ type BaseMetadataEvent<T extends AllMetadataName, TPayload extends object> = {
 
 export type DeleteMetadataEvent<T extends AllMetadataName> = BaseMetadataEvent<
   T,
-  { before: MetadataFlatEntity<T> }
+  { before: ScalarFlatEntity<MetadataEntity<T>> }
 > & {
   type: 'deleted';
 };
@@ -35,15 +37,15 @@ export type UpdateMetadataEvent<
   {
     updatedFields: TProperties[];
     diff: UpdateMetadataEventDiff<T, TProperties>;
-    before: MetadataFlatEntity<T>;
-    after: MetadataFlatEntity<T>;
+    before: ScalarFlatEntity<MetadataEntity<T>>;
+    after: ScalarFlatEntity<MetadataEntity<T>>;
   }
 > & { type: 'updated' };
 
 export type CreateMetadataEvent<T extends AllMetadataName> = BaseMetadataEvent<
   T,
   {
-    after: MetadataFlatEntity<T>;
+    after: ScalarFlatEntity<MetadataEntity<T>>;
   }
 > & { type: 'created' };
 
