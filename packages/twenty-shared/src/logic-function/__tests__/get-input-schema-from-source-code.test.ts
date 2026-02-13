@@ -11,15 +11,12 @@ describe('getInputSchemaFromSourceCode', () => {
     const fileContent =
       'function testFunction(params1: {}, params2: {}) { return }';
     const result = await getInputSchemaFromSourceCode(fileContent);
-    expect(result).toEqual({
-      properties: {},
-      type: 'object',
-    });
+    expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
   it('should return empty input if wrong parameter', async () => {
     const fileContent = 'function testFunction(params: string) { return }';
     const result = await getInputSchemaFromSourceCode(fileContent);
-    expect(result).toEqual({ type: 'object', properties: {} });
+    expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
   it('should return input from source code', async () => {
     const fileContent = `

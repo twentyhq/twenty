@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { jsonSchema } from 'ai';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
 import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
@@ -264,7 +265,7 @@ describe('McpProtocolService', () => {
 
       const mockTool = {
         description: 'Test tool',
-        inputSchema: jsonSchema({ type: 'object', properties: {} }),
+        inputSchema: jsonSchema(DEFAULT_TOOL_INPUT_SCHEMA),
         execute: jest.fn().mockResolvedValue({ result: 'success' }),
       };
 
@@ -319,7 +320,7 @@ describe('McpProtocolService', () => {
 
       const mockTool = {
         description: 'Test tool',
-        inputSchema: jsonSchema({ type: 'object', properties: {} }),
+        inputSchema: jsonSchema(DEFAULT_TOOL_INPUT_SCHEMA),
         execute: jest.fn().mockResolvedValue({ result: 'success' }),
       };
 
@@ -375,7 +376,7 @@ describe('McpProtocolService', () => {
       const mockToolsMap = {
         testTool: {
           description: 'Test tool',
-          inputSchema: jsonSchema({ type: 'object', properties: {} }),
+          inputSchema: jsonSchema(DEFAULT_TOOL_INPUT_SCHEMA),
         },
       };
 
@@ -393,7 +394,7 @@ describe('McpProtocolService', () => {
             {
               name: 'testTool',
               description: 'Test tool',
-              inputSchema: { type: 'object', properties: {} },
+              inputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
             },
           ],
         }),

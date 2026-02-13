@@ -6,6 +6,7 @@ import {
   type LogicFunction,
 } from '~/generated-metadata/graphql';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
 export type LogicFunctionFormValues = {
   name: string;
@@ -35,7 +36,8 @@ export const useLogicFunctionUpdateFormState = ({
     description: '',
     isTool: false,
     sourceHandlerCode: '',
-    timeoutSeconds: 10,
+    timeoutSeconds: 300,
+    toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
   });
 
   const { sourceHandlerCode, loading: logicFunctionSourceCodeLoading } =
@@ -55,7 +57,8 @@ export const useLogicFunctionUpdateFormState = ({
             name: fn.name || '',
             description: fn.description || '',
             isTool: fn.isTool ?? false,
-            timeoutSeconds: fn.timeoutSeconds ?? 10,
+            timeoutSeconds: fn.timeoutSeconds ?? 300,
+            toolInputSchema: fn.toolInputSchema || DEFAULT_TOOL_INPUT_SCHEMA,
           }));
         }
       },
