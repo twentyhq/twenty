@@ -150,6 +150,7 @@ export const FieldsConfigurationSectionEditor = ({
 
       <MenuItem
         LeftIcon={IconNewSection}
+        withIconContainer
         text={t`Add a Section`}
         onClick={() => {
           // TODO: Implement add section
