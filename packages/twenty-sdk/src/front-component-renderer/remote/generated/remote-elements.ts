@@ -394,11 +394,8 @@ export type HtmlInputProperties = HtmlCommonProperties & {
   value?: string;
   placeholder?: string;
   disabled?: boolean;
-  readOnly?: boolean;
   checked?: boolean;
-  min?: string;
-  max?: string;
-  step?: string;
+  readOnly?: boolean;
 };
 
 export const HtmlInputElement = createRemoteElement<
@@ -414,11 +411,8 @@ export const HtmlInputElement = createRemoteElement<
     value: { type: String },
     placeholder: { type: String },
     disabled: { type: Boolean },
-    readOnly: { type: Boolean },
     checked: { type: Boolean },
-    min: { type: String },
-    max: { type: String },
-    step: { type: String },
+    readOnly: { type: Boolean },
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
@@ -660,7 +654,6 @@ customElements.define('html-br', HtmlBrElement);
 customElements.define('html-hr', HtmlHrElement);
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
-
 export { RemoteRootElement, RemoteFragmentElement };
 declare global {
   interface HTMLElementTagNameMap {
