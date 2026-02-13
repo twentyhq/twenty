@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldDateTimeMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useDateTimeFieldDisplay = () => {
@@ -10,7 +10,7 @@ export const useDateTimeFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<string | undefined>(
+  const fieldValue = useRecordFieldValueV2<string | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

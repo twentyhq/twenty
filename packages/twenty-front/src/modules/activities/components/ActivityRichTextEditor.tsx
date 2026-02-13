@@ -139,10 +139,9 @@ export const ActivityRichTextEditor = ({
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
-
       persistBodyDebounced(prepareBodyWithSignedUrls(activityBody));
     },
-    [persistBodyDebounced, setCanCreateActivity, canCreateActivity],
+    [canCreateActivity, persistBodyDebounced, setCanCreateActivity],
   );
 
   const handleBodyChange = useRecoilCallback(

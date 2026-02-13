@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isLoadingTokensFromExtensionState } from '@/chrome-extension-sidecar/states/isLoadingTokensFromExtensionState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { isInFrame } from '~/utils/isInIframe';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const ChromeExtensionSidecarEffect = () => {
   const navigate = useNavigate();
   const setTokenPair = useSetRecoilState(tokenPairState);
-  const chromeExtensionId = useRecoilValue(chromeExtensionIdState);
+  const chromeExtensionId = useRecoilValueV2(chromeExtensionIdState);
   const setIsLoadingTokensFromExtension = useSetRecoilState(
     isLoadingTokensFromExtensionState,
   );

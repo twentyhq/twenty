@@ -10,6 +10,7 @@ import { type Task } from '@/activities/types/Task';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 
 export const useUpsertActivity = ({
   activityObjectNameSingular,
@@ -18,7 +19,9 @@ export const useUpsertActivity = ({
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
 }) => {
-  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
+  const [isActivityInCreateMode] = useRecoilStateV2(
+    isActivityInCreateModeState,
+  );
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord();
 

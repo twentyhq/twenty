@@ -1,4 +1,4 @@
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 export enum SignInUpStep {
   Init = 'init',
   Email = 'email',

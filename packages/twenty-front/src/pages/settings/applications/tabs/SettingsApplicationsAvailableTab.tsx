@@ -5,7 +5,6 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
-import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
@@ -37,7 +36,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
   const filteredApplications = useMemo(() => {
     return applications.filter(
-      (application: AvailableApplication) =>
+      (application) =>
         application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         application.description
           .toLowerCase()
@@ -68,7 +67,7 @@ export const SettingsApplicationsAvailableTab = () => {
         <StyledEmptyState>{t`No applications available`}</StyledEmptyState>
       ) : (
         <StyledCardsGrid>
-          {filteredApplications.map((application: AvailableApplication) => (
+          {filteredApplications.map((application) => (
             <SettingsAvailableApplicationCard
               key={application.id}
               application={application}

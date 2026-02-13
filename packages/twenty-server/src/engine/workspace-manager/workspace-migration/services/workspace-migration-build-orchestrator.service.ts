@@ -311,6 +311,41 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatViewFieldGroupMaps)) {
+      const { from: fromFlatViewFieldGroupMaps, to: toFlatViewFieldGroupMaps } =
+        flatViewFieldGroupMaps;
+
+      const viewFieldGroupResult =
+        await this.workspaceMigrationViewFieldGroupActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatViewFieldGroupMaps,
+            to: toFlatViewFieldGroupMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewFieldGroupResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (viewFieldGroupResult.status === 'fail') {
+        orchestratorFailureReport.viewFieldGroup.push(
+          ...viewFieldGroupResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.viewFieldGroup = viewFieldGroupResult.actions;
+      }
+    }
+
     if (isDefined(flatViewFieldMaps)) {
       const { from: fromFlatViewFieldMaps, to: toFlatViewFieldMaps } =
         flatViewFieldMaps;
@@ -454,41 +489,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.viewGroup.push(...viewGroupResult.errors);
       } else {
         orchestratorActionsReport.viewGroup = viewGroupResult.actions;
-      }
-    }
-
-    if (isDefined(flatViewFieldGroupMaps)) {
-      const { from: fromFlatViewFieldGroupMaps, to: toFlatViewFieldGroupMaps } =
-        flatViewFieldGroupMaps;
-
-      const viewFieldGroupResult =
-        await this.workspaceMigrationViewFieldGroupActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatViewFieldGroupMaps,
-            to: toFlatViewFieldGroupMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: {
-              flatViewMaps: optimisticAllFlatEntityMaps.flatViewMaps,
-            },
-            workspaceId,
-          },
-        );
-
-      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
-        {
-          allFlatEntityMaps: optimisticAllFlatEntityMaps,
-          flatEntityMapsAndRelatedFlatEntityMaps:
-            viewFieldGroupResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        },
-      );
-
-      if (viewFieldGroupResult.status === 'fail') {
-        orchestratorFailureReport.viewFieldGroup.push(
-          ...viewFieldGroupResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.viewFieldGroup = viewFieldGroupResult.actions;
       }
     }
 
@@ -1032,6 +1032,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.view.create,
           ...aggregatedOrchestratorActionsReport.view.update,
           ...aggregatedOrchestratorActionsReport.viewField.delete,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.delete,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.create,
+          ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
           ...aggregatedOrchestratorActionsReport.viewField.create,
           ...aggregatedOrchestratorActionsReport.viewField.update,
           ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
@@ -1043,9 +1046,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.delete,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.create,
-          ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
           ///
 
           // Logic functions

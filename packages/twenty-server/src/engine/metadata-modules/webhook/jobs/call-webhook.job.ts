@@ -10,21 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-
-export type CallWebhookJobData = {
-  targetUrl: string;
-  eventName: string;
-  objectMetadata: { id: string; nameSingular: string };
-  workspaceId: string;
-  webhookId: string;
-  eventDate: Date;
-  userId?: string;
-  workspaceMemberId?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  record: any;
-  updatedFields?: string[];
-  secret?: string;
-};
+import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
@@ -35,7 +21,7 @@ export class CallWebhookJob {
   ) {}
 
   private generateSignature(
-    payload: CallWebhookJobData,
+    payload: Record<string, unknown>,
     secret: string,
     timestamp: string,
   ): string {
@@ -46,7 +32,7 @@ export class CallWebhookJob {
   }
 
   @Process(CallWebhookJob.name)
-  async handle(webhookJobEvents: CallWebhookJobData[]): Promise<void> {
+  async handle(webhookJobEvents: WebhookJobData[]): Promise<void> {
     await Promise.all(
       webhookJobEvents.map(
         async (webhookJobEvent) => await this.callWebhook(webhookJobEvent),
@@ -54,7 +40,7 @@ export class CallWebhookJob {
     );
   }
 
-  private async callWebhook(data: CallWebhookJobData): Promise<void> {
+  private async callWebhook(data: WebhookJobData): Promise<void> {
     const commonPayload = {
       url: data.targetUrl,
       webhookId: data.webhookId,

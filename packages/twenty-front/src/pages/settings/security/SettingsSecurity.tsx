@@ -34,6 +34,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -63,7 +64,7 @@ export const SettingsSecurity = () => {
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const isClickHouseConfigured = useRecoilValue(isClickHouseConfiguredState);
-  const authProviders = useRecoilValue(authProvidersState);
+  const authProviders = useRecoilValueV2(authProvidersState);
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,

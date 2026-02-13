@@ -14,6 +14,7 @@ export const APPLICATION_FRAGMENT = gql`
     version
     universalIdentifier
     canBeUninstalled
+    defaultRoleId
     availablePackages
     applicationVariables {
       id

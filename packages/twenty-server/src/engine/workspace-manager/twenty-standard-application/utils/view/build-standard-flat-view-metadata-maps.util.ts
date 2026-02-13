@@ -2,6 +2,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
@@ -38,9 +39,17 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   [P in AllStandardObjectName]?: StandardViewBuilder<P>;
 };
 
-export const buildStandardFlatViewMetadataMaps = (
-  args: Omit<CreateStandardViewArgs, 'context' | 'objectName'>,
-): FlatEntityMaps<FlatView> => {
+export type BuildStandardFlatViewMetadataMapsArgs = Omit<
+  CreateStandardViewArgs,
+  'context' | 'objectName'
+> & {
+  shouldIncludeRecordPageLayouts?: boolean;
+};
+
+export const buildStandardFlatViewMetadataMaps = ({
+  shouldIncludeRecordPageLayouts,
+  ...args
+}: BuildStandardFlatViewMetadataMapsArgs): FlatEntityMaps<FlatView> => {
   const allViewMetadatas: FlatView[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME,
@@ -54,7 +63,10 @@ export const buildStandardFlatViewMetadataMaps = (
       objectName,
     });
 
-    return Object.values(result);
+    return Object.values(result).filter(
+      (view) =>
+        shouldIncludeRecordPageLayouts || view.type !== ViewType.FIELDS_WIDGET,
+    );
   });
 
   let flatViewMaps = createEmptyFlatEntityMaps();

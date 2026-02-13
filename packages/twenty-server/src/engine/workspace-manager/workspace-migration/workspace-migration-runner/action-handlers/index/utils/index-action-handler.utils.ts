@@ -15,14 +15,9 @@ import {
   type FlatIndexFieldMetadata,
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
-import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import {
-  WorkspaceMigrationActionExecutionException,
-  WorkspaceMigrationActionExecutionExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 export const computeFlatIndexFieldColumnNames = ({
@@ -79,45 +74,6 @@ export const computeFlatIndexFieldColumnNames = ({
 
     return flatFieldMetadata.name;
   });
-};
-
-export const insertIndexMetadata = async ({
-  flatIndexMetadata,
-  queryRunner,
-}: {
-  flatIndexMetadata: FlatIndexMetadata;
-  queryRunner: QueryRunner;
-}): Promise<void> => {
-  const indexMetadataRepository =
-    queryRunner.manager.getRepository<IndexMetadataEntity>(IndexMetadataEntity);
-  const indexFieldMetadataRepository =
-    queryRunner.manager.getRepository<IndexFieldMetadataEntity>(
-      IndexFieldMetadataEntity,
-    );
-
-  const { flatIndexFieldMetadatas, ...indexMetadataToInsert } =
-    flatIndexMetadata;
-
-  const indexInsertResult = await indexMetadataRepository.insert(
-    indexMetadataToInsert,
-  );
-
-  if (indexInsertResult.identifiers.length !== 1) {
-    throw new WorkspaceMigrationActionExecutionException({
-      message: 'Failed to create index metadata',
-      code: WorkspaceMigrationActionExecutionExceptionCode.INTERNAL_SERVER_ERROR,
-    });
-  }
-  const indexMetadataId = indexInsertResult.identifiers[0].id;
-
-  const indexFieldMetadataToInsert = flatIndexFieldMetadatas.map(
-    (flatIndexFieldMetadata) => ({
-      ...flatIndexFieldMetadata,
-      indexMetadataId,
-    }),
-  );
-
-  await indexFieldMetadataRepository.insert(indexFieldMetadataToInsert);
 };
 
 export const deleteIndexMetadata = async ({

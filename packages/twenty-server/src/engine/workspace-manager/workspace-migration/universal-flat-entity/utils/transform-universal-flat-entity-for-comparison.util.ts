@@ -22,7 +22,7 @@ export function transformUniversalFlatEntityForComparison<
 
       if (
         propertiesToStringify.includes(
-          propertyToCompare as MetadataUniversalFlatEntityPropertiesToStringify<T>,
+          propertyToCompare as string as MetadataUniversalFlatEntityPropertiesToStringify<T>,
         )
       ) {
         const orderedValue = orderObjectProperties(currentValue);

@@ -3,12 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  type GenerateDescriptorOptions,
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
@@ -26,7 +30,10 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   async generateDescriptors(
     context: ToolProviderContext,
-  ): Promise<ToolDescriptor[]> {
+    options?: GenerateDescriptorOptions,
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
+    const includeSchemas = options?.includeSchemas ?? true;
+
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -42,29 +49,34 @@ export class LogicFunctionToolProvider implements ToolProvider {
         isDefined(fn) && fn.isTool === true && fn.deletedAt === null,
     );
 
-    const descriptors: ToolDescriptor[] = [];
+    const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = this.buildLogicFunctionToolName(logicFunction.name);
 
-      // Logic functions already store JSON Schema -- use it directly
-      const inputSchema = (logicFunction.toolInputSchema as object) ?? {
-        type: 'object',
-        properties: {},
-      };
-
-      descriptors.push({
+      const base: ToolIndexEntry = {
         name: toolName,
         description:
           logicFunction.description ||
           `Execute the ${logicFunction.name} logic function`,
         category: ToolCategory.LOGIC_FUNCTION,
-        inputSchema,
         executionRef: {
           kind: 'logic_function',
           logicFunctionId: logicFunction.id,
         },
-      });
+      };
+
+      if (includeSchemas) {
+        // Logic functions already store JSON Schema -- use it directly
+        const inputSchema = (logicFunction.toolInputSchema as object) ?? {
+          type: 'object',
+          properties: {},
+        };
+
+        descriptors.push({ ...base, inputSchema });
+      } else {
+        descriptors.push(base);
+      }
     }
 
     return descriptors;

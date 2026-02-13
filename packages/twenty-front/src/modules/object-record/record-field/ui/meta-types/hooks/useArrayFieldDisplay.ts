@@ -4,7 +4,7 @@ import {
   type FieldArrayMetadata,
   type FieldArrayValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 
 import { useContext } from 'react';
 
@@ -13,7 +13,7 @@ export const useArrayFieldDisplay = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue<FieldArrayValue | undefined>(
+  const fieldValue = useRecordFieldValueV2<FieldArrayValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
