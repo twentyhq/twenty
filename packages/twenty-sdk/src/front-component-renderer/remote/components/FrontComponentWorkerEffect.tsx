@@ -39,7 +39,12 @@ export const FrontComponentWorkerEffect = ({
     const worker = createRemoteWorker();
 
     worker.onerror = (event: ErrorEvent) => {
-      setError(event.error);
+      const workerError =
+        event.error ??
+        new Error(event.message || 'Unknown worker error');
+
+      console.error('[FrontComponentRenderer] Worker error:', workerError);
+      setError(workerError);
     };
 
     // Expose host functions to the worker via stable refs to avoid recreating threads
@@ -59,8 +64,12 @@ export const FrontComponentWorkerEffect = ({
 
     thread.imports
       .render(newReceiver.connection, { componentUrl, authToken })
-      .catch((error: Error) => {
-        setError(error);
+      .catch((renderError: Error) => {
+        console.error(
+          '[FrontComponentRenderer] Render error:',
+          renderError,
+        );
+        setError(renderError);
       });
 
     setReceiver(newReceiver);

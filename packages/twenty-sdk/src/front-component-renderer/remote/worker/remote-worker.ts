@@ -71,6 +71,12 @@ const render: WorkerExports['render'] = async (
 
     const reactRoot = createRoot(root);
     reactRoot.render(componentModule.default);
+  } catch (importError) {
+    console.error(
+      '[FrontComponentWorker] Failed to load or render component:',
+      importError,
+    );
+    throw importError;
   } finally {
     URL.revokeObjectURL(importUrl);
   }
