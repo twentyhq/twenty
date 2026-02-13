@@ -162,16 +162,13 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       const formattedNewCreateAction: AllUniversalWorkspaceMigrationAction<
         'create',
         typeof this.metadataName
-      > =
-        validationResult.action.metadataName !== 'fieldMetadata'
-          ? {
-              ...validationResult.action,
-              flatEntity: deleteUniversalFlatEntityForeignKeyAggregators({
-                metadataName: this.metadataName,
-                universalFlatEntity: validationResult.action.flatEntity,
-              }),
-            }
-          : validationResult.action;
+      > = {
+        ...validationResult.action,
+        flatEntity: deleteUniversalFlatEntityForeignKeyAggregators({
+          metadataName: this.metadataName,
+          universalFlatEntity: validationResult.action.flatEntity,
+        }),
+      };
 
       actionsResult.create.push(formattedNewCreateAction);
     }

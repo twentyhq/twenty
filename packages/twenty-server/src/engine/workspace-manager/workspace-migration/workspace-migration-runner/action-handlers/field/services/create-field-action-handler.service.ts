@@ -47,40 +47,44 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
   ): Promise<FlatCreateFieldAction> {
     const { action, allFlatEntityMaps } = context;
-    const { universalFlatFieldMetadatas, fieldIdByUniversalIdentifier } =
-      action;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
       string,
       string
     >();
 
-    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
-      const providedId =
-        fieldIdByUniversalIdentifier?.[
-          universalFlatFieldMetadata.universalIdentifier
-        ];
+    allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+      action.flatEntity.universalIdentifier,
+      action.id ?? v4(),
+    );
 
+    if (isDefined(action.relatedUniversalFlatFieldMetadata)) {
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
-        universalFlatFieldMetadata.universalIdentifier,
-        providedId ?? v4(),
+        action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+        action.relatedFieldId ?? v4(),
       );
     }
+    const universalFlatFieldMetadatas = isDefined(
+      action.relatedUniversalFlatFieldMetadata,
+    )
+      ? [action.flatEntity, action.relatedUniversalFlatFieldMetadata]
+      : [action.flatEntity];
 
-    const flatFieldMetadatas = universalFlatFieldMetadatas.map(
-      (universalFlatFieldMetadata) =>
+    const [flatFieldMetadata, relatedFlatFieldMetadata] =
+      universalFlatFieldMetadatas.map((universalFlatFieldMetadata) =>
         fromUniversalFlatFieldMetadataToFlatFieldMetadata({
           universalFlatFieldMetadata,
           allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
           allFlatEntityMaps,
           context,
         }),
-    );
+      );
 
     return {
       type: action.type,
       metadataName: action.metadataName,
-      flatFieldMetadatas,
+      flatEntity: flatFieldMetadata,
+      relatedFlatFieldMetadata,
     };
   }
 
@@ -88,7 +92,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ): Promise<void> {
     const { queryRunner, flatAction } = context;
-    const { flatFieldMetadatas } = flatAction;
+    const { flatEntity, relatedFlatFieldMetadata } = flatAction;
 
     await this.insertFlatEntitiesInRepository({
       queryRunner,
