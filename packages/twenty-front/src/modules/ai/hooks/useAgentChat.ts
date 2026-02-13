@@ -46,7 +46,15 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const syncAskAIPageTitle = useRecoilCallback(
     ({ snapshot, set }) =>
-      (title: string) => {
+      (threadId: string, title: string) => {
+        const activeThread = snapshot
+          .getLoadable(currentAIChatThreadState)
+          .getValue();
+
+        if (activeThread !== threadId) {
+          return;
+        }
+
         set(currentAIChatThreadTitleState, title);
 
         const currentPage = snapshot
@@ -230,7 +238,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         const title = result?.data?.chatThread?.title;
 
         if (isNonEmptyString(title)) {
-          syncAskAIPageTitle(title);
+          syncAskAIPageTitle(currentAIChatThread, title);
         }
       }
     },
