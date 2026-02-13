@@ -43,6 +43,23 @@ export default defineConfig(() => {
         root: __dirname,
       }),
     ],
+    worker: {
+      format: 'iife',
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true,
+        },
+      },
+      plugins: () => [
+        {
+          name: 'define-process-env',
+          transform: (code: string) =>
+            code
+              .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
+              .replace(/process\.env/g, '{}'),
+        },
+      ],
+    },
     build: {
       emptyOutDir: false,
       outDir: 'dist',
