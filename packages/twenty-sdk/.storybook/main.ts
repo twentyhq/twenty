@@ -1,11 +1,14 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url));
+
+const sdkRoot = path.resolve(dirname, '..');
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -28,41 +31,21 @@ const config: StorybookConfig = {
         ...viteConfig.resolve,
         alias: {
           ...viteConfig.resolve?.alias,
-          '@': path.resolve(dirname, '../src'),
+          '@': path.resolve(sdkRoot, 'src'),
         },
       },
-      worker: {
-        format: 'iife',
-        rollupOptions: {
-          output: {
-            inlineDynamicImports: true,
-          },
-        },
-        plugins: () => [
-          {
-            name: 'define-process-env',
-            transform: (code: string) =>
-              code
-                .replace(
-                  /process\.env\.NODE_ENV/g,
-                  JSON.stringify('production'),
-                )
-                .replace(/process\.env/g, '{}'),
-          },
-        ],
-      },
+      plugins: [
+        ...(viteConfig.plugins ?? []),
+        tsconfigPaths({ root: sdkRoot }),
+      ],
       optimizeDeps: {
         ...viteConfig.optimizeDeps,
         include: [
           ...(viteConfig.optimizeDeps?.include ?? []),
-          'transliteration',
-          '@remote-dom/core/polyfill',
-          '@remote-dom/react/polyfill',
           '@remote-dom/core/elements',
           '@remote-dom/react',
           '@remote-dom/react/host',
-          'react-dom/client',
-          'react/jsx-runtime',
+          'transliteration',
         ],
       },
     };

@@ -43,23 +43,6 @@ export default defineConfig(() => {
         root: __dirname,
       }),
     ],
-    worker: {
-      format: 'iife',
-      rollupOptions: {
-        output: {
-          inlineDynamicImports: true,
-        },
-      },
-      plugins: () => [
-        {
-          name: 'define-process-env',
-          transform: (code: string) =>
-            code
-              .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
-              .replace(/process\.env/g, '{}'),
-        },
-      ],
-    },
     build: {
       emptyOutDir: false,
       outDir: 'dist',
@@ -99,16 +82,5 @@ export default defineConfig(() => {
       },
     },
     logLevel: 'warn',
-    optimizeDeps: {
-      include: [
-        '@remote-dom/core/polyfill',
-        '@remote-dom/react/polyfill',
-        '@remote-dom/core/elements',
-        '@remote-dom/react',
-        '@remote-dom/react/host',
-        'react-dom/client',
-        'react/jsx-runtime',
-      ],
-    },
   };
 });

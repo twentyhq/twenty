@@ -25,6 +25,7 @@
     ".storybook/*.tsx",
     "**/__mocks__/**/*",
     "**/__tests__/**/*",
+    "vite.config.ts",
     "vite.config.node.ts",
     "vite.config.browser.ts",
     "jest.config.mjs"
