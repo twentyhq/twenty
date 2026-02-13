@@ -1,11 +1,13 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { compareUrls } from '@/activities/utils/compareUrls';
 import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
+import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 
 export const getActivityAttachmentIdsToDelete = (
   newActivityBody: string,
   oldActivityAttachments: Attachment[] = [],
   oldActivityBody: string,
+  isFilesFieldMigrated: boolean,
 ) => {
   if (oldActivityAttachments.length === 0) return [];
 
@@ -27,7 +29,10 @@ export const getActivityAttachmentIdsToDelete = (
   return oldActivityAttachments
     .filter((attachment) =>
       pathsToDelete.some((pathToDelete) =>
-        compareUrls(attachment.fullPath, pathToDelete),
+        compareUrls(
+          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
+          pathToDelete,
+        ),
       ),
     )
     .map((attachment) => attachment.id);
