@@ -156,7 +156,10 @@
       }
     },
     "storybook:serve:dev": {
-      "executor": "nx:noop"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'storybook:serve:dev is disabled for twenty-sdk, use storybook:serve:static instead'"
+      }
     },
     "storybook:serve:static": {
       "options": {
