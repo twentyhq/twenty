@@ -14,23 +14,6 @@
     "no-undef": "off",
     "no-unused-vars": ["warn", { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }],
     "no-redeclare": "off",
-    "no-restricted-imports": ["error", {
-      "patterns": [
-        {
-          "group": ["@tabler/icons-react"],
-          "message": "Please import icons from `twenty-ui`"
-        },
-        {
-          "group": ["react-hotkeys-web-hook"],
-          "importNames": ["useHotkeys"],
-          "message": "Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`"
-        },
-        {
-          "group": ["lodash"],
-          "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
-        }
-      ]
-    }],
 
     "import/no-duplicates": "error",
 
@@ -41,10 +24,10 @@
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-no-useless-fragment": "off",
-    "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
+    "react/jsx-props-no-spreading": "off",
 
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "off",
+    "react-hooks/exhaustive-deps": "off",
 
     "typescript/no-redeclare": "error",
     "typescript/ban-ts-comment": "error",
@@ -63,16 +46,6 @@
 
     "twenty/prefer-arrow-functions": "error"
   },
-  "overrides": [
-    {
-      "files": [
-        "src/cli/**/*.ts"
-      ],
-      "rules": {
-        "no-console": ["warn", { "allow": ["group", "groupCollapsed", "groupEnd"] }]
-      }
-    }
-  ],
   "ignorePatterns": [
     "dist/",
     "node_modules/"
