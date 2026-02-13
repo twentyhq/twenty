@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
 
-export type PillProps = {
+type PillProps = {
   className?: string;
   label?: string;
   Icon?: IconComponent;

@@ -1,14 +1,14 @@
-import { useSetAtom } from 'jotai';
 import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 import { iconsState } from '@ui/display/icon/states/iconsState';
 
-export type IconsProviderProps = {
+type IconsProviderProps = {
   children: JSX.Element;
 };
 
 export const IconsProvider = ({ children }: IconsProviderProps) => {
-  const setIcons = useSetAtom(iconsState);
+  const setIcons = useSetRecoilState(iconsState);
 
   useEffect(() => {
     import('./internal/AllIcons').then(({ ALL_ICONS }) => {

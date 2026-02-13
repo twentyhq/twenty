@@ -18,24 +18,6 @@ import {
   HtmlElementConfigArrayZ,
   OUTPUT_FILES,
 } from './generators';
-import { extractAllComponentsFromTwentyUi } from './twenty-ui-extractor';
-import {
-  logCount,
-  logDetail,
-  logEmpty,
-  logError,
-  logFileWritten,
-  logGroupLabel,
-  logSectionHeader,
-  logSeparator,
-  logSuccess,
-  logTitle,
-  setVerbose,
-} from './utils/logger';
-
-const parseVerboseFlag = (): boolean => {
-  return process.argv.includes('--verbose');
-};
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_PATH = path.resolve(SCRIPT_DIR, '../..');
@@ -77,25 +59,6 @@ const getHtmlElementSchemas = (): ComponentSchema[] => {
   }));
 };
 
-const getUiComponentSchemas = (): ComponentSchema[] => {
-  const discoveredComponents = extractAllComponentsFromTwentyUi();
-
-  return discoveredComponents.map((component) => ({
-    name: component.name,
-    tagName: component.name,
-    customElementName: component.tag,
-    properties: component.properties,
-    slots: component.slots,
-    events: component.events,
-    isHtmlElement: false,
-    htmlTag: undefined,
-    componentImport: component.componentImport,
-    componentPath: component.componentPath,
-    propsTypeName: component.propsTypeName,
-    supportsRefForwarding: component.supportsRefForwarding,
-  }));
-};
-
 const createProject = (): Project => {
   return new Project({
     manipulationSettings: {
@@ -120,7 +83,7 @@ const writeGeneratedFile = (
     endOfLine: 'lf',
   });
   fs.writeFileSync(filePath, formattedContent, 'utf-8');
-  logFileWritten(filePath);
+  console.log(`✓ Generated ${filePath}`);
 };
 
 const ensureDirectoriesExist = (): void => {
@@ -133,48 +96,33 @@ const ensureDirectoriesExist = (): void => {
 };
 
 const main = (): void => {
-  const verbose = parseVerboseFlag();
-  setVerbose(verbose);
-
-  logTitle('Remote DOM Elements Generator');
+  console.log('📖 Generating remote DOM elements...\n');
 
   let htmlElements: ComponentSchema[];
-  let uiComponents: ComponentSchema[];
 
   try {
     htmlElements = getHtmlElementSchemas();
-    uiComponents = getUiComponentSchemas();
   } catch (error) {
-    logError('Validation failed:', error);
+    console.error('❌ Validation failed:', error);
     process.exit(1);
   }
 
-  logSeparator();
-  logSectionHeader('Summary');
-
-  logCount('HTML Elements', htmlElements.length, 'element', 'elements');
-  logDetail(
-    `Tags: ${htmlElements.map((element) => element.htmlTag).join(', ')}`,
+  console.log(`HTML Elements: ${htmlElements.length} elements`);
+  console.log(
+    `  Tags: ${htmlElements.map((element) => element.htmlTag).join(', ')}`,
   );
-  logDetail(`Events: ${COMMON_HTML_EVENTS.length} common events per element`);
-
-  logEmpty();
-  logCount('UI Components', uiComponents.length, 'component', 'components');
-  logDetail(
-    `Tags: ${uiComponents.map((component) => component.customElementName).join(', ')}`,
+  console.log(
+    `  Events: ${COMMON_HTML_EVENTS.length} common events per element`,
   );
+  console.log('');
 
-  const allComponents = [...htmlElements, ...uiComponents];
+  const allComponents = [...htmlElements];
 
   ensureDirectoriesExist();
 
   const project = createProject();
 
-  logSeparator();
-  logSectionHeader('Writing Files');
-
-  logGroupLabel('Host');
-
+  console.log('Host files:');
   const hostRegistry = generateHostRegistry(
     project,
     allComponents,
@@ -186,9 +134,7 @@ const main = (): void => {
     hostRegistry.getFullText(),
   );
 
-  logEmpty();
-  logGroupLabel('Remote');
-
+  console.log('\nRemote files:');
   const remoteElements = generateRemoteElements(
     project,
     allComponents,
@@ -208,11 +154,9 @@ const main = (): void => {
     remoteComponents.getFullText(),
   );
 
-  logSeparator();
-  logSuccess('Done!', 'All generated files created.');
-  logDetail(`Host:   ${HOST_GENERATED_DIR}`);
-  logDetail(`Remote: ${REMOTE_GENERATED_DIR}`);
-  logEmpty();
+  console.log('\n✅ All generated files created');
+  console.log(`   Host: ${HOST_GENERATED_DIR}`);
+  console.log(`   Remote: ${REMOTE_GENERATED_DIR}`);
 };
 
 main();

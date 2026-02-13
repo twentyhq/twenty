@@ -1,7 +1,6 @@
 import type { Project, SourceFile } from 'ts-morph';
 
-import { EVENT_TO_REACT } from '@/sdk/front-component-api/constants/EventToReact';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
 import { addFileHeader, addStatement } from './utils';
@@ -99,7 +98,7 @@ const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
   };
 };
 
-const filterHtmlProps = <T extends object>(props: T): T => {
+const filterProps = <T extends object>(props: T): T => {
   const filtered: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(props)) {
     if (INTERNAL_PROPS.has(key) || value === undefined) continue;
@@ -113,22 +112,6 @@ const filterHtmlProps = <T extends object>(props: T): T => {
       } else {
         filtered[normalizedKey] = value;
       }
-    }
-  }
-  return filtered as T;
-};
-
-const filterUiProps = <T extends object>(props: T, eventPropNames?: Set<string>): T => {
-  const filtered: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(props)) {
-    if (INTERNAL_PROPS.has(key) || value === undefined) continue;
-
-    if (key === 'style') {
-      filtered.style = parseStyle(value as string | undefined);
-    } else if (eventPropNames?.has(key) && typeof value === 'function') {
-      filtered[key] = wrapEventHandler(value as (detail: SerializedEventData) => void);
-    } else {
-      filtered[key] = value;
     }
   }
   return filtered as T;
@@ -153,47 +136,24 @@ const VOID_ELEMENTS = new Set([
   'wbr',
 ]);
 
-const generateHtmlWrapperComponent = (component: ComponentSchema): string => {
+const generateWrapperComponent = (component: ComponentSchema): string => {
   const isVoidElement = VOID_ELEMENTS.has(component.htmlTag ?? '');
 
   if (isVoidElement) {
-    return `const ${component.name}Wrapper = React.forwardRef<HTMLElement, { children?: React.ReactNode } & Record<string, unknown>>(({ children: _children, ...props }, ref) => {
-  return React.createElement('${component.htmlTag}', { ...filterHtmlProps(props), ref });
-});`;
-  }
-
-  return `const ${component.name}Wrapper = React.forwardRef<HTMLElement, { children?: React.ReactNode } & Record<string, unknown>>(({ children, ...props }, ref) => {
-  return React.createElement('${component.htmlTag}', { ...filterHtmlProps(props), ref }, children);
-});`;
-};
-
-const generateUiWrapperComponent = (component: ComponentSchema): string => {
-  const propsType = isDefined(component.propsTypeName)
-    ? `${component.propsTypeName} & { children?: React.ReactNode }`
-    : '{ children?: React.ReactNode } & Record<string, unknown>';
-
-  const hasEvents = isNonEmptyArray(component.events);
-
-  const filterCall = hasEvents
-    ? `filterUiProps(props, new Set([${component.events.map((event) => `'${EVENT_TO_REACT[event]}'`).join(', ')}]))`
-    : 'filterUiProps(props)';
-
-  if (component.supportsRefForwarding) {
-    return `const ${component.name}Wrapper = React.forwardRef<unknown, ${propsType}>((props, ref) => {
-  return React.createElement(${component.componentImport} as React.ElementType, { ...${filterCall}, ref });
-});`;
-  }
-
-  return `const ${component.name}Wrapper = (props: ${propsType}) => {
-  return React.createElement(${component.componentImport}, ${filterCall});
+    return `const ${component.name}Wrapper = ({ children: _children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement('${component.htmlTag}', filterProps(props));
 };`;
-};
-
-const generateWrapperComponent = (component: ComponentSchema): string => {
-  if (component.isHtmlElement) {
-    return generateHtmlWrapperComponent(component);
   }
-  return generateUiWrapperComponent(component);
+
+  if (component.isHtmlElement) {
+    return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement('${component.htmlTag}', filterProps(props), children);
+};`;
+  }
+
+  return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement(${component.componentImport}, filterProps(props), children);
+};`;
 };
 
 const generateRegistryMap = (components: ComponentSchema[]): string => {
@@ -212,45 +172,6 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
 ${entries}
   ['${CUSTOM_ELEMENT_NAMES.FRAGMENT}', RemoteFragmentRenderer],
 ]);`;
-};
-
-type ImportGroup = {
-  namedImports: string[];
-  typeImports: string[];
-};
-
-const groupImportsByPath = (
-  components: ComponentSchema[],
-): Map<string, ImportGroup> => {
-  const importsByPath = new Map<string, ImportGroup>();
-
-  for (const component of components) {
-    if (
-      !component.isHtmlElement &&
-      isDefined(component.componentPath) &&
-      isDefined(component.componentImport)
-    ) {
-      const existing = importsByPath.get(component.componentPath) ?? {
-        namedImports: [],
-        typeImports: [],
-      };
-
-      if (!existing.namedImports.includes(component.componentImport)) {
-        existing.namedImports.push(component.componentImport);
-      }
-
-      if (
-        isDefined(component.propsTypeName) &&
-        !existing.typeImports.includes(component.propsTypeName)
-      ) {
-        existing.typeImports.push(component.propsTypeName);
-      }
-
-      importsByPath.set(component.componentPath, existing);
-    }
-  }
-
-  return importsByPath;
 };
 
 export const generateHostRegistry = (
@@ -279,21 +200,17 @@ export const generateHostRegistry = (
     namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
   });
 
-  const uiImports = groupImportsByPath(components);
-
-  for (const [modulePath, importGroup] of uiImports) {
-    const allImports = [
-      ...importGroup.namedImports,
-      ...importGroup.typeImports.map((typeName) => ({
-        name: typeName,
-        isTypeOnly: true,
-      })),
-    ];
-
-    sourceFile.addImportDeclaration({
-      moduleSpecifier: modulePath,
-      namedImports: allImports,
-    });
+  for (const component of components) {
+    if (
+      !component.isHtmlElement &&
+      isDefined(component.componentPath) &&
+      isDefined(component.componentImport)
+    ) {
+      sourceFile.addImportDeclaration({
+        moduleSpecifier: component.componentPath,
+        namedImports: [component.componentImport],
+      });
+    }
   }
 
   addStatement(sourceFile, generateRuntimeUtilities(eventToReactMapping));

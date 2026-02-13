@@ -180,7 +180,6 @@ const generateElementDefinition = (
   const hasEvents = component.events.length > 0;
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
   const hasProps = Object.keys(component.properties).length > 0;
-  const hasSlots = (component.slots ?? []).length > 0;
 
   const propsType = hasSpecificProps
     ? `${component.name}Properties`
@@ -188,9 +187,7 @@ const generateElementDefinition = (
       ? TYPE_NAMES.COMMON_PROPERTIES
       : TYPE_NAMES.EMPTY_RECORD;
 
-  const slotsType = hasSlots
-    ? `{ ${(component.slots ?? []).map((slot) => `'${slot}': true`).join('; ')} }`
-    : TYPE_NAMES.EMPTY_RECORD;
+  const slotsType = TYPE_NAMES.EMPTY_RECORD;
 
   const eventsType = hasEvents
     ? useSharedEvents
@@ -216,7 +213,7 @@ const generateElementDefinition = (
           writer.newLine();
           writer.write('>');
 
-          const hasConfig = hasProps || hasEvents || hasSlots;
+          const hasConfig = hasProps || hasEvents;
           if (!hasConfig) {
             writer.write('({})');
             return;
@@ -224,12 +221,6 @@ const generateElementDefinition = (
 
           writer.write('(');
           writer.block(() => {
-            if (hasSlots) {
-              writer.write(
-                `slots: [${(component.slots ?? []).map((slot) => `'${slot}'`).join(', ')}],`,
-              );
-              writer.newLine();
-            }
             if (hasProps) {
               if (hasSpecificProps && component.isHtmlElement) {
                 writer.write('properties: ');

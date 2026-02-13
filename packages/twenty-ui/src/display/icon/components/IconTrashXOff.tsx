@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconTrashXOffRaw from '@assets/icons/trash-x-off.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export type IconTrashXOffProps = Pick<IconComponentProps, 'size' | 'stroke'>;
+type IconTrashXOffProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 
 export const IconTrashXOff = (props: IconTrashXOffProps) => {
   const theme = useTheme();

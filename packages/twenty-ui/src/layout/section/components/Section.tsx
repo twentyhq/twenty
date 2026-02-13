@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-export type SectionProps = {
+type SectionProps = {
   children: ReactNode;
   className?: string;
   alignment?: SectionAlignment;

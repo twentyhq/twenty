@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconTwentyStarRaw from '@assets/icons/twenty-star.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export type IconTwentyStarProps = Pick<IconComponentProps, 'size' | 'stroke'>;
+type IconTwentyStarProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 
 export const IconTwentyStar = (props: IconTwentyStarProps) => {
   const theme = useTheme();
