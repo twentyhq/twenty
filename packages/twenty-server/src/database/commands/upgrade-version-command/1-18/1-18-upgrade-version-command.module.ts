@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
+import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-message-association-message-folder.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
@@ -15,6 +16,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -33,6 +35,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     WorkspaceCacheModule,
     FieldMetadataModule,
     ApplicationModule,
+    WorkspaceMigrationModule,
     FilesFieldModule,
   ],
   providers: [
@@ -40,12 +43,14 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     MigrateAttachmentFilesCommand,
     BackfillFileSizeAndMimeTypeCommand,
     MigrateActivityRichTextAttachmentFileIdsCommand,
+    BackfillMessageChannelMessageAssociationMessageFolderCommand,
   ],
   exports: [
     MigratePersonAvatarFilesCommand,
     MigrateAttachmentFilesCommand,
     BackfillFileSizeAndMimeTypeCommand,
     MigrateActivityRichTextAttachmentFileIdsCommand,
+    BackfillMessageChannelMessageAssociationMessageFolderCommand,
   ],
 })
 export class V1_18_UpgradeVersionCommandModule {}
