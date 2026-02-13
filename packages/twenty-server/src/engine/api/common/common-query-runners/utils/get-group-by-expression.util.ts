@@ -31,7 +31,7 @@ export const getGroupByExpression = ({
     !(isGroupByDateField(groupByField) || isGroupByRelationField(groupByField))
   ) {
     if ('shouldUnnest' in groupByField && groupByField.shouldUnnest) {
-      return `UNNEST(${columnNameWithQuotes})`;
+      return `UNNEST(CASE WHEN CARDINALITY(${columnNameWithQuotes}) > 0 THEN ${columnNameWithQuotes} ELSE ARRAY[${columnNameWithQuotes}[1]] END)`;
     }
 
     return columnNameWithQuotes;
