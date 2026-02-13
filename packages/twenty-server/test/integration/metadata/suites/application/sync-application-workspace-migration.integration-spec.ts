@@ -10,6 +10,7 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
+const TEST_SECOND_ROLE_ID = uuidv4();
 const TEST_OBJECT_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
 
@@ -59,8 +60,8 @@ describe('syncApplication', () => {
     });
   });
 
-  it('should return workspace migration with actions when syncing a manifest with a role, an object and fields', async () => {
-    const manifest: Manifest = {
+  it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {
+    const initialManifest: Manifest = {
       application: {
         universalIdentifier: TEST_APP_ID,
         defaultRoleUniversalIdentifier: TEST_ROLE_ID,
@@ -106,13 +107,49 @@ describe('syncApplication', () => {
       publicAssets: [],
     };
 
-    const { data } = await syncApplication({
-      manifest,
+    const { data: firstSyncData } = await syncApplication({
+      manifest: initialManifest,
       expectToFail: false,
     });
 
-    expect(data).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(data),
+    expect(firstSyncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstSyncData),
+    );
+
+    const updatedManifest: Manifest = {
+      ...initialManifest,
+      roles: [
+        {
+          universalIdentifier: TEST_ROLE_ID,
+          label: 'Test Role',
+          description: 'A test role',
+        },
+        {
+          universalIdentifier: TEST_SECOND_ROLE_ID,
+          label: 'Viewer Role',
+          description: 'A read-only role',
+        },
+      ],
+      fields: [
+        {
+          universalIdentifier: TEST_FIELD_ID,
+          type: FieldMetadataType.TEXT,
+          name: 'description',
+          label: 'Body',
+          description: 'Ticket description',
+          icon: 'IconFileDescription',
+          objectUniversalIdentifier: TEST_OBJECT_ID,
+        },
+      ],
+    };
+
+    const { data: secondSyncData } = await syncApplication({
+      manifest: updatedManifest,
+      expectToFail: false,
+    });
+
+    expect(secondSyncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(secondSyncData),
     );
   }, 60000);
 });

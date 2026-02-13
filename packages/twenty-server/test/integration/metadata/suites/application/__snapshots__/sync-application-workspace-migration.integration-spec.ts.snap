@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`syncApplication should return workspace migration with actions when syncing a manifest with a role, an object and fields 1`] = `
+exports[`syncApplication should return workspace migration actions on initial sync then on second sync with field rename and new role 1`] = `
 {
   "syncApplication": {
     "actions": [
