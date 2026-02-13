@@ -13,7 +13,8 @@ export const deriveMetadataEventsFromCreateAction = (
     case 'fieldMetadata': {
       return flatAction.flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
-          type: 'create',
+          type: 'created',
+          recordId: flatFieldMetadata.id,
           metadataName: 'fieldMetadata',
           properties: {
             after: flatFieldMetadata,
@@ -23,8 +24,9 @@ export const deriveMetadataEventsFromCreateAction = (
     }
     case 'objectMetadata': {
       const objectEvent: CreateMetadataEvent<'objectMetadata'> = {
-        type: 'create',
+        type: 'created',
         metadataName: 'objectMetadata',
+        recordId: flatAction.flatEntity.id,
         properties: {
           after: flatAction.flatEntity,
         },
@@ -32,7 +34,8 @@ export const deriveMetadataEventsFromCreateAction = (
 
       const fieldEvents: MetadataEvent[] = flatAction.flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
-          type: 'create',
+          type: 'created',
+          recordId: flatFieldMetadata.id,
           metadataName: 'fieldMetadata',
           properties: {
             after: flatFieldMetadata,
@@ -65,7 +68,8 @@ export const deriveMetadataEventsFromCreateAction = (
     case 'webhook': {
       return [
         {
-          type: 'create',
+          type: 'created',
+          recordId: flatAction.flatEntity.id,
           metadataName: flatAction.metadataName,
           properties: {
             after: flatAction.flatEntity,

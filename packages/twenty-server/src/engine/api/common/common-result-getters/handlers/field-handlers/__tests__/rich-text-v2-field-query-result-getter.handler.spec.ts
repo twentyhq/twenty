@@ -1,6 +1,8 @@
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { RichTextV2FieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-v2-field-query-result-getter.handler';
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
 import { type FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -22,12 +24,24 @@ const mockFileService = {
   signFileUrl: jest.fn().mockReturnValue('signed-path'),
 } as unknown as FileService;
 
+const mockFilesFieldService = {
+  signFileUrl: jest.fn().mockReturnValue('signed-path'),
+} as unknown as FilesFieldService;
+
+const mockFeatureFlagService = {
+  isFeatureEnabled: jest.fn().mockReturnValue(true),
+} as unknown as FeatureFlagService;
+
 describe('RichTextV2FieldQueryResultGetterHandler', () => {
   let handler: RichTextV2FieldQueryResultGetterHandler;
 
   beforeEach(() => {
     process.env.SERVER_URL = 'https://my-domain.twenty.com';
-    handler = new RichTextV2FieldQueryResultGetterHandler(mockFileService);
+    handler = new RichTextV2FieldQueryResultGetterHandler(
+      mockFileService,
+      mockFilesFieldService,
+      mockFeatureFlagService,
+    );
   });
 
   afterEach(() => {
@@ -113,7 +127,11 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
         bodyV2: {
           markdown: null,
           blocknote: JSON.stringify([
-            { type: 'paragraph', text: 'Hello, world!' },
+            {
+              type: 'paragraph',
+              props: {},
+              children: [{ text: 'Hello, world!' }],
+            },
           ]),
         },
       };
@@ -152,7 +170,11 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
   });
 
   describe('should sign internal image URLs', () => {
-    it('when image block has an internal attachment URL', async () => {
+    it('when image block has an internal attachment URL (legacy path)', async () => {
+      jest
+        .spyOn(mockFeatureFlagService, 'isFeatureEnabled')
+        .mockResolvedValue(false);
+
       const imageBlock = {
         type: 'image',
         props: {
@@ -206,7 +228,9 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
         ...baseRecord,
         bodyV2: {
           markdown: null,
-          blocknote: JSON.stringify([{ type: 'paragraph', text: 'Hello' }]),
+          blocknote: JSON.stringify([
+            { type: 'paragraph', props: {}, children: [{ text: 'Hello' }] },
+          ]),
         },
         description: {
           markdown: null,

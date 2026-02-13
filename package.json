@@ -22,6 +22,7 @@
     "googleapis": "105",
     "hex-rgb": "^5.0.0",
     "immer": "^10.1.1",
+    "jotai": "^2.17.1",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "lodash.chunk": "^4.2.0",

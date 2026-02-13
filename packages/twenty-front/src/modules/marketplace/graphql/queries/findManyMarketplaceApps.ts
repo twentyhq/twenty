@@ -1,21 +1,12 @@
 import gql from 'graphql-tag';
 
+import { MARKETPLACE_APP_FRAGMENT } from '@/marketplace/graphql/fragments/marketplaceAppFragment';
+
 export const FIND_MANY_MARKETPLACE_APPS = gql`
+  ${MARKETPLACE_APP_FRAGMENT}
   query FindManyMarketplaceApps {
     findManyMarketplaceApps {
-      id
-      name
-      description
-      icon
-      version
-      author
-      category
-      logo
-      screenshots
-      aboutDescription
-      providers
-      websiteUrl
-      termsUrl
+      ...MarketplaceAppFields
     }
   }
 `;

@@ -1,5 +1,5 @@
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const focusStackState = createState<FocusStackItem[]>({
   key: 'focusStackState',

@@ -1,7 +1,7 @@
 import { type AuthProviders } from '~/generated-metadata/graphql';
-import { createState } from 'twenty-ui/utilities';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const authProvidersState = createState<AuthProviders>({
+export const authProvidersState = createStateV2<AuthProviders>({
   key: 'authProvidersState',
   defaultValue: {
     google: true,

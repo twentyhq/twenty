@@ -8,11 +8,11 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
-  type UpdateMetadataEventDiff,
   type CreateMetadataEvent,
   type DeleteMetadataEvent,
   type MetadataEvent,
   type UpdateMetadataEvent,
+  type UpdateMetadataEventDiff,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 export type DeriveMetadataEventsFromUpdateActionArgs = {
@@ -42,8 +42,9 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
   ) as UpdateMetadataEventDiff<TMetadataName, (typeof updatedFields)[number]>;
 
   return {
-    type: 'update',
+    type: 'updated',
     metadataName,
+    recordId: before.id,
     properties: {
       updatedFields,
       diff,
@@ -68,18 +69,20 @@ export const deriveMetadataEventsFromUpdateAction = ({
 
       const deleteIndexMetadataEvent: DeleteMetadataEvent<'index'> = {
         metadataName: 'index',
+        recordId: fromFlatEntity.id,
         properties: {
           before: fromFlatEntity,
         },
-        type: 'delete',
+        type: 'deleted',
       };
 
       const createIndexMetadataEvent: CreateMetadataEvent<'index'> = {
         metadataName: 'index',
+        recordId: toFlatEntity.id,
         properties: {
           after: toFlatEntity,
         },
-        type: 'create',
+        type: 'created',
       };
 
       return [deleteIndexMetadataEvent, createIndexMetadataEvent];

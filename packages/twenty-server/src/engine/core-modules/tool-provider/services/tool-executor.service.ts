@@ -21,7 +21,10 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -77,7 +80,7 @@ export class ToolExecutorService {
   }
 
   async dispatch(
-    descriptor: ToolDescriptor,
+    descriptor: ToolIndexEntry | ToolDescriptor,
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<unknown> {
@@ -194,7 +197,7 @@ export class ToolExecutorService {
   }
 
   private async dispatchStaticTool(
-    descriptor: ToolDescriptor,
+    descriptor: ToolIndexEntry | ToolDescriptor,
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<unknown> {

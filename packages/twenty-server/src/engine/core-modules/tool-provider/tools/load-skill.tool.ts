@@ -47,7 +47,7 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
         label: skill.label,
         content: skill.content,
       })),
-      message: `Loaded ${skills.length} skill(s). Follow the instructions in the skill content.`,
+      message: `Loaded ${skills.map((skill) => skill.label).join(', ')}`,
     };
   },
 });

@@ -29,6 +29,7 @@ import {
 } from 'twenty-ui/display';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -124,7 +125,7 @@ const StyledActionLinkContainer = styled.div`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
-  const authProviders = useRecoilValue(authProvidersState);
+  const authProviders = useRecoilValueV2(authProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();

@@ -1,18 +1,10 @@
 {
-  "install": "curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && sudo apt-get install -y nodejs && node --version && yarn install && echo 'Installing dependencies complete'",
-  "start": "sudo service docker start && echo 'Docker service started' && sleep 3 && echo 'Starting PostgreSQL and Redis containers...' && make postgres-on-docker && make redis-on-docker && echo 'Waiting for containers to initialize...' && sleep 20 && echo 'Checking container status...' && docker ps --filter name=twenty_ && echo 'Waiting for PostgreSQL to be ready...' && until docker exec twenty_pg pg_isready -U postgres -h localhost; do echo 'PostgreSQL not ready yet, waiting...'; sleep 3; done && echo 'PostgreSQL is ready!' && echo 'Setting up database...' && cd packages/twenty-server && npx nx database:reset twenty-server || echo 'Database already initialized' && echo 'Environment setup complete!'",
+  "install": "yarn install",
+  "start": "sudo service docker start && sleep 2 && (docker start twenty_pg 2>/dev/null || make -C packages/twenty-docker postgres-on-docker) && (docker start twenty_redis 2>/dev/null || make -C packages/twenty-docker redis-on-docker) && until docker exec twenty_pg pg_isready -U postgres -h localhost 2>/dev/null; do sleep 1; done && echo 'PostgreSQL ready' && until docker exec twenty_redis redis-cli ping 2>/dev/null | grep -q PONG; do sleep 1; done && echo 'Redis ready' && bash packages/twenty-utils/setup-dev-env.sh && npx nx database:reset twenty-server",
   "terminals": [
     {
       "name": "Development Server",
-      "command": "echo 'Waiting for database to be fully ready...' && sleep 30 && until docker exec twenty_pg pg_isready -U postgres -h localhost; do echo 'Waiting for PostgreSQL...'; sleep 2; done && echo 'Starting Twenty development server...' && export SERVER_URL=http://localhost:3000 && export PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres && yarn start"
-    },
-    {
-      "name": "Database Management",
-      "command": "sleep 25 && echo 'Database management terminal ready' && echo 'Waiting for PostgreSQL to be available...' && until docker exec twenty_pg pg_isready -U postgres -h localhost; do echo 'Waiting for PostgreSQL...'; sleep 2; done && echo 'PostgreSQL is ready for database operations!' && echo 'You can now run database commands like:' && echo '  npx nx database:reset twenty-server' && echo '  npx nx database:migrate twenty-server' && bash"
-    },
-    {
-      "name": "Container Logs & Status",
-      "command": "sleep 10 && echo '=== Container Status Monitor ===' && while true; do echo '\\n=== Container Status at $(date) ===' && docker ps --filter name=twenty_ --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}' && echo '\\n=== PostgreSQL Status ===' && (docker exec twenty_pg pg_isready -U postgres -h localhost && echo 'PostgreSQL: ✅ Ready') || echo 'PostgreSQL: ❌ Not Ready' && echo '\\n=== Redis Status ===' && (docker exec twenty_redis redis-cli ping && echo 'Redis: ✅ Ready') || echo 'Redis: ❌ Not Ready' && sleep 30; done"
+      "command": "yarn start"
     }
   ]
-} 
+}
