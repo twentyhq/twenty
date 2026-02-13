@@ -37,7 +37,10 @@ export const rule = {
         }
 
         if (node.loc.end.line === tokenAfter.loc.start.line) {
-          if (tokenAfter.type as string === 'JSXClosingElement') {
+          const nextNode = (sourceCode as any).getNodeByRangeIndex?.(
+            tokenAfter.range[0],
+          );
+          if (nextNode?.type === 'JSXClosingElement') {
             return;
           }
 
@@ -66,7 +69,10 @@ export const rule = {
         }
 
         if (node.loc.start.line === tokenBefore.loc.end.line) {
-          if (tokenBefore.type as string === 'JSXOpeningElement') {
+          const prevNode = (sourceCode as any).getNodeByRangeIndex?.(
+            tokenBefore.range[0],
+          );
+          if (prevNode?.type === 'JSXOpeningElement') {
             return;
           }
 
