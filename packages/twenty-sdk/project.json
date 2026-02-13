@@ -156,12 +156,7 @@
       }
     },
     "storybook:serve:dev": {
-      "dependsOn": [
-        "storybook:prebuild"
-      ],
-      "options": {
-        "port": 6008
-      }
+      "executor": "nx:noop"
     },
     "storybook:serve:static": {
       "options": {
