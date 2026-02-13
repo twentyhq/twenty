@@ -8,7 +8,7 @@ export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
     Element,
     Element & RemoteStyleProperties
   >();
-  const styleObserverMap = new WeakMap<Element, MutationObserver>();
+  const styleObserverMap = new WeakMap<Element, { disconnect: () => void }>();
 
   const trackStyleElement = (styleElement: Element): void => {
     if (styleElementMap.has(styleElement)) {
@@ -89,15 +89,24 @@ export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
       void 0;
     }
 
-    const styleObserver = new MutationObserver(() => {
-      syncCssFromStyleElement();
-    });
-    styleObserver.observe(styleElement, {
-      subtree: true,
-      childList: true,
-      characterData: true,
-    });
-    styleObserverMap.set(styleElement, styleObserver);
+    if (typeof MutationObserver === 'function') {
+      try {
+        const styleObserver = new MutationObserver(() => {
+          syncCssFromStyleElement();
+        });
+
+        if (typeof styleObserver.observe === 'function') {
+          styleObserver.observe(styleElement, {
+            subtree: true,
+            childList: true,
+            characterData: true,
+          });
+          styleObserverMap.set(styleElement, styleObserver);
+        }
+      } catch {
+        void 0;
+      }
+    }
 
     const existingContent = styleElement.textContent;
     if (existingContent) {
