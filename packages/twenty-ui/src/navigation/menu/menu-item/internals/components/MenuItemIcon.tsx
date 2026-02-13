@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
 import { type IconComponent } from '@ui/display';
-import { StyledIconContainer } from './StyledIconContainer';
+import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 export type MenuItemIconProps = {
   Icon: IconComponent | null | undefined;
@@ -23,7 +23,7 @@ export const MenuItemIcon = ({
   );
 
   if (withContainer) {
-    return <StyledIconContainer>{iconElement}</StyledIconContainer>;
+    return <MenuItemIconBoxContainer>{iconElement}</MenuItemIconBoxContainer>;
   }
 
   return iconElement;

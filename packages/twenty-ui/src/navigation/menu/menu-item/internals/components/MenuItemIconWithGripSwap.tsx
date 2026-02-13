@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
 import { type IconComponent, IconGripVertical } from '@ui/display';
-import { StyledIconContainer } from './StyledIconContainer';
+import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 const StyledIconSwapContainer = styled.div`
   position: relative;
@@ -56,7 +56,7 @@ export const MenuItemIconWithGripSwap = ({
   );
 
   if (withIconContainer) {
-    return <StyledIconContainer>{iconContent}</StyledIconContainer>;
+    return <MenuItemIconBoxContainer>{iconContent}</MenuItemIconBoxContainer>;
   }
 
   return iconContent;

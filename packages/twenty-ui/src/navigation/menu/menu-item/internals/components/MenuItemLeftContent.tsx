@@ -10,8 +10,8 @@ import {
 } from '@ui/display';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
+import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 import { MenuItemIconWithGripSwap } from './MenuItemIconWithGripSwap';
-import { StyledIconContainer } from './StyledIconContainer';
 import {
   StyledDraggableItem,
   StyledMenuItemContextualText,
@@ -67,7 +67,7 @@ export const MenuItemLeftContent = ({
     <StyledMenuItemLeftContent className={className}>
       {gripMode === 'always' &&
         (withIconContainer ? (
-          <StyledIconContainer>
+          <MenuItemIconBoxContainer>
             <StyledDraggableItem>
               <IconGripVertical
                 size={theme.icon.size.md}
@@ -75,7 +75,7 @@ export const MenuItemLeftContent = ({
                 color={gripIconColor}
               />
             </StyledDraggableItem>
-          </StyledIconContainer>
+          </MenuItemIconBoxContainer>
         ) : (
           <StyledDraggableItem>
             <IconGripVertical

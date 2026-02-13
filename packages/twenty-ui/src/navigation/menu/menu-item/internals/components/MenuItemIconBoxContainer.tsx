@@ -8,3 +8,5 @@ export const StyledIconContainer = styled.div`
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(1)};
 `;
+
+export { StyledIconContainer as MenuItemIconBoxContainer };
