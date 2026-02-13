@@ -9,7 +9,6 @@ export const syncApplicationQueryFactory = ({
   query: gql`
     mutation SyncApplication($manifest: JSON!) {
       syncApplication(manifest: $manifest) {
-        workspaceId
         applicationUniversalIdentifier
         actions
       }
