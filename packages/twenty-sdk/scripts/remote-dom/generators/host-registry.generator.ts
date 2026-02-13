@@ -189,7 +189,12 @@ const generateUiWrapperComponent = (component: ComponentSchema): string => {
 };`;
 };
 
-const generateWrapperComponent = (component: ComponentSchema): string => {
+const generateWrapperComponent = (
+  component: ComponentSchema,
+): string | null => {
+  if (isDefined(component.customHostRenderer)) {
+    return null;
+  }
   if (component.isHtmlElement) {
     return generateHtmlWrapperComponent(component);
   }
@@ -198,10 +203,13 @@ const generateWrapperComponent = (component: ComponentSchema): string => {
 
 const generateRegistryMap = (components: ComponentSchema[]): string => {
   const entries = components
-    .map(
-      (component) =>
-        `  ['${component.customElementName}', createRemoteComponentRenderer(${component.name}Wrapper)],`,
-    )
+    .map((component) => {
+      const rendererName = isDefined(component.customHostRenderer)
+        ? component.customHostRenderer
+        : `${component.name}Wrapper`;
+
+      return `  ['${component.customElementName}', createRemoteComponentRenderer(${rendererName})],`;
+    })
     .join('\n');
 
   return `type ComponentRegistryValue =
@@ -217,6 +225,30 @@ ${entries}
 type ImportGroup = {
   namedImports: string[];
   typeImports: string[];
+};
+
+const groupCustomRendererImportsByPath = (
+  components: ComponentSchema[],
+): Map<string, string[]> => {
+  const importsByPath = new Map<string, string[]>();
+
+  for (const component of components) {
+    if (
+      isDefined(component.customHostRenderer) &&
+      isDefined(component.customHostRendererPath)
+    ) {
+      const existing =
+        importsByPath.get(component.customHostRendererPath) ?? [];
+
+      if (!existing.includes(component.customHostRenderer)) {
+        existing.push(component.customHostRenderer);
+      }
+
+      importsByPath.set(component.customHostRendererPath, existing);
+    }
+  }
+
+  return importsByPath;
 };
 
 const groupImportsByPath = (
@@ -296,10 +328,23 @@ export const generateHostRegistry = (
     });
   }
 
+  const customRendererImports = groupCustomRendererImportsByPath(components);
+
+  for (const [modulePath, namedImports] of customRendererImports) {
+    sourceFile.addImportDeclaration({
+      moduleSpecifier: modulePath,
+      namedImports,
+    });
+  }
+
   addStatement(sourceFile, generateRuntimeUtilities(eventToReactMapping));
 
   for (const component of components) {
-    addStatement(sourceFile, generateWrapperComponent(component));
+    const wrapper = generateWrapperComponent(component);
+
+    if (isDefined(wrapper)) {
+      addStatement(sourceFile, wrapper);
+    }
   }
 
   addStatement(sourceFile, generateRegistryMap(components));

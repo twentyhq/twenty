@@ -1,8 +1,8 @@
 import * as prettier from '@prettier/sync';
 import * as fs from 'fs';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
+import { fileURLToPath } from 'url';
 
 import { ALLOWED_HTML_ELEMENTS } from '../../src/sdk/front-component-common/AllowedHtmlElements';
 import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-common/CommonHtmlEvents';
@@ -77,6 +77,25 @@ const getHtmlElementSchemas = (): ComponentSchema[] => {
   }));
 };
 
+const getUtilityComponentSchemas = (): ComponentSchema[] => {
+  return [
+    {
+      name: 'RemoteStyle',
+      tagName: 'RemoteStyle',
+      customElementName: 'remote-style',
+      properties: {
+        cssText: { type: 'string', optional: true },
+        styleKey: { type: 'string', optional: true },
+      },
+      events: [],
+      isHtmlElement: false,
+      htmlTag: undefined,
+      customHostRenderer: 'RemoteStyleRenderer',
+      customHostRendererPath: '../components/RemoteStyleRenderer',
+    },
+  ];
+};
+
 const getUiComponentSchemas = (): ComponentSchema[] => {
   const discoveredComponents = extractAllComponentsFromTwentyUi();
 
@@ -140,10 +159,12 @@ const main = (): void => {
 
   let htmlElements: ComponentSchema[];
   let uiComponents: ComponentSchema[];
+  let utilityComponents: ComponentSchema[];
 
   try {
     htmlElements = getHtmlElementSchemas();
     uiComponents = getUiComponentSchemas();
+    utilityComponents = getUtilityComponentSchemas();
   } catch (error) {
     logError('Validation failed:', error);
     process.exit(1);
@@ -164,7 +185,22 @@ const main = (): void => {
     `Tags: ${uiComponents.map((component) => component.customElementName).join(', ')}`,
   );
 
-  const allComponents = [...htmlElements, ...uiComponents];
+  logEmpty();
+  logCount(
+    'Utility Components',
+    utilityComponents.length,
+    'component',
+    'components',
+  );
+  logDetail(
+    `Tags: ${utilityComponents.map((component) => component.customElementName).join(', ')}`,
+  );
+
+  const allComponents = [
+    ...htmlElements,
+    ...uiComponents,
+    ...utilityComponents,
+  ];
 
   ensureDirectoriesExist();
 

@@ -197,6 +197,7 @@ import {
   type NavigationBarItemProps,
   type NotificationCounterProps,
 } from 'twenty-ui/navigation';
+import { RemoteStyleRenderer } from '../components/RemoteStyleRenderer';
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
 const EVENT_NAME_MAP: Record<string, string> = {
@@ -1584,5 +1585,6 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
     'twenty-ui-notification-counter',
     createRemoteComponentRenderer(TwentyUiNotificationCounterWrapper),
   ],
+  ['remote-style', createRemoteComponentRenderer(RemoteStyleRenderer)],
   ['remote-fragment', RemoteFragmentRenderer],
 ]);

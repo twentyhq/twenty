@@ -138,6 +138,7 @@ import {
   TwentyUiNavigationBarElement,
   TwentyUiNavigationBarItemElement,
   TwentyUiNotificationCounterElement,
+  RemoteStyleElement,
 } from './remote-elements';
 
 export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
@@ -1660,4 +1661,8 @@ export const TwentyUiNavigationBarItem = createRemoteComponent(
 export const TwentyUiNotificationCounter = createRemoteComponent(
   'twenty-ui-notification-counter',
   TwentyUiNotificationCounterElement,
+);
+export const RemoteStyle = createRemoteComponent(
+  'remote-style',
+  RemoteStyleElement,
 );

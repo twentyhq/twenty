@@ -7115,6 +7115,23 @@ export const TwentyUiNotificationCounterElement = createRemoteElement<
     className: { type: String },
   },
 });
+
+export type RemoteStyleProperties = {
+  cssText?: string;
+  styleKey?: string;
+};
+
+export const RemoteStyleElement = createRemoteElement<
+  RemoteStyleProperties,
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>
+>({
+  properties: {
+    cssText: { type: String },
+    styleKey: { type: String },
+  },
+});
 customElements.define('html-div', HtmlDivElement);
 customElements.define('html-span', HtmlSpanElement);
 customElements.define('html-section', HtmlSectionElement);
@@ -7370,6 +7387,7 @@ customElements.define(
   'twenty-ui-notification-counter',
   TwentyUiNotificationCounterElement,
 );
+customElements.define('remote-style', RemoteStyleElement);
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
 export { RemoteRootElement, RemoteFragmentElement };
@@ -7592,6 +7610,7 @@ declare global {
     'twenty-ui-notification-counter': InstanceType<
       typeof TwentyUiNotificationCounterElement
     >;
+    'remote-style': InstanceType<typeof RemoteStyleElement>;
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;
   }

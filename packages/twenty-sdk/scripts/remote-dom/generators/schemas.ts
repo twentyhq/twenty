@@ -28,6 +28,8 @@ export const ComponentSchemaZ = z.object({
   componentPath: z.string().optional(),
   propsTypeName: z.string().optional(),
   supportsRefForwarding: z.boolean().optional(),
+  customHostRenderer: z.string().optional(),
+  customHostRendererPath: z.string().optional(),
 });
 
 export type PropertySchema = z.infer<typeof PropertySchemaZ>;

@@ -48,6 +48,7 @@ export {
   HtmlThead,
   HtmlTr,
   HtmlUl,
+  RemoteStyle,
   TwentyUiButton,
 } from './remote/generated/remote-components';
 export {
@@ -96,6 +97,7 @@ export {
   HtmlUlElement,
   RemoteFragmentElement,
   RemoteRootElement,
+  RemoteStyleElement,
   TwentyUiButtonElement,
 } from './remote/generated/remote-elements';
 export type {
@@ -112,6 +114,7 @@ export type {
   HtmlTdProperties,
   HtmlTextareaProperties,
   HtmlThProperties,
+  RemoteStyleProperties,
   TwentyUiButtonProperties,
 } from './remote/generated/remote-elements';
 export { createRemoteWorker } from './remote/worker/createRemoteWorker';
