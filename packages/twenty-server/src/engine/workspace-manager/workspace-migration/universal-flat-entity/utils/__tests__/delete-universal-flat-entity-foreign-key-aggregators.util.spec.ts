@@ -17,9 +17,7 @@ describe('deleteUniversalFlatEntityForeignKeyAggregators', () => {
 
     expect(result).not.toHaveProperty('fieldUniversalIdentifiers');
     expect(result).not.toHaveProperty('viewUniversalIdentifiers');
-    expect(result).not.toHaveProperty(
-      'indexMetadataUniversalIdentifiers',
-    );
+    expect(result).not.toHaveProperty('indexMetadataUniversalIdentifiers');
     expect(result.universalIdentifier).toBe('object-1');
   });
 

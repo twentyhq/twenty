@@ -50,16 +50,14 @@ export const uploadApplicationFile = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage:
-        'Upload application file should have failed but did not',
+      errorMessage: 'Upload application file should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage:
-        'Upload application file has failed but should not',
+      errorMessage: 'Upload application file has failed but should not',
     });
   }
 
