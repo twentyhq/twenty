@@ -39,8 +39,6 @@ export class FileCorePictureResolver {
   ): Promise<FileWithSignedUrlDto> {
     const buffer = await streamToBuffer(createReadStream());
 
-    console.log('workspace', workspace);
-
     return await this.fileCorePictureService.uploadWorkspacePicture({
       file: buffer,
       filename,

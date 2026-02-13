@@ -73,7 +73,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
       `${isDryRun ? '[DRY RUN] ' : ''}Starting workspace pictures migration for workspace ${workspaceId}`,
     );
 
-    const { twentyStandardFlatApplication } =
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -85,14 +85,14 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
     await this.migrateWorkspaceLogo({
       workspaceId,
       isDryRun,
-      twentyStandardFlatApplication,
+      workspaceCustomFlatApplication,
       fileRepository,
     });
 
     await this.migrateWorkspaceMemberAvatars({
       workspaceId,
       isDryRun,
-      twentyStandardFlatApplication,
+      workspaceCustomFlatApplication,
       fileRepository,
     });
 
@@ -111,12 +111,12 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
   private async migrateWorkspaceLogo({
     workspaceId,
     isDryRun,
-    twentyStandardFlatApplication,
+    workspaceCustomFlatApplication,
     fileRepository,
   }: {
     workspaceId: string;
     isDryRun: boolean;
-    twentyStandardFlatApplication: FlatApplication;
+    workspaceCustomFlatApplication: FlatApplication;
     fileRepository: Repository<FileEntity>;
   }): Promise<void> {
     const workspace = await this.workspaceRepository.findOne({
@@ -155,7 +155,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
             filename: workspace.logo,
           },
           to: {
-            folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
+            folderPath: `${workspaceId}/${workspaceCustomFlatApplication.universalIdentifier}`,
             filename: newResourcePath,
           },
         });
@@ -164,7 +164,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
           id: fileId,
           path: newResourcePath,
           workspaceId,
-          applicationId: twentyStandardFlatApplication.id,
+          applicationId: workspaceCustomFlatApplication.id,
           size: -1,
           settings: {
             isTemporaryFile: false,
@@ -194,12 +194,12 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
   private async migrateWorkspaceMemberAvatars({
     workspaceId,
     isDryRun,
-    twentyStandardFlatApplication,
+    workspaceCustomFlatApplication,
     fileRepository,
   }: {
     workspaceId: string;
     isDryRun: boolean;
-    twentyStandardFlatApplication: FlatApplication;
+    workspaceCustomFlatApplication: FlatApplication;
     fileRepository: Repository<FileEntity>;
   }): Promise<void> {
     const { flatObjectMetadataMaps } =
@@ -273,7 +273,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
               filename: workspaceMember.avatarUrl,
             },
             to: {
-              folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
+              folderPath: `${workspaceId}/${workspaceCustomFlatApplication.universalIdentifier}`,
               filename: newResourcePath,
             },
           });
@@ -282,7 +282,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
             id: fileId,
             path: newResourcePath,
             workspaceId,
-            applicationId: twentyStandardFlatApplication.id,
+            applicationId: workspaceCustomFlatApplication.id,
             size: -1,
             settings: {
               isTemporaryFile: false,

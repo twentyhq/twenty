@@ -8,7 +8,7 @@ import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/w
 
 import { isFileOutputArray } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.guard';
 import type { SignedFileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export class FilesFieldQueryResultGetterHandler

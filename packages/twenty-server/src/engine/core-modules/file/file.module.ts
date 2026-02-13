@@ -19,7 +19,6 @@ import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
 import { FileUploadService } from './file-upload/services/file-upload.service';
 import { FileUrlModule } from './file-url/file-url.module';
-import { FileWorkflowModule } from './file-workflow/file-workflow.module';
 import { FilesFieldModule } from './files-field/files-field.module';
 import { FileByIdGuard } from './guards/file-by-id.guard';
 import { FileResolver } from './resolvers/file.resolver';
@@ -35,7 +34,6 @@ import { FileService } from './services/file.service';
     FileUrlModule,
     FilesFieldModule,
     FileCorePictureModule,
-    FileWorkflowModule,
     SecureHttpClientModule,
   ],
   providers: [
@@ -56,7 +54,6 @@ import { FileService } from './services/file.service';
     FileUrlModule,
     FilesFieldModule,
     FileCorePictureModule,
-    FileWorkflowModule,
   ],
   controllers: [FileController, FileByIdController],
 })

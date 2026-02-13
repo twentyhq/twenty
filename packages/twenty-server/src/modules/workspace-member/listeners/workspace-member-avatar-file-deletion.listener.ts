@@ -55,10 +55,13 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     const fileIdsToDelete =
       this.getFileIdsToDeleteFromDestroyOrDeleteEvent(payload);
 
-    this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
+    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
   }
 
-  private deleteCorePictures(fileIds: string[], workspaceId: string): void {
+  private async deleteCorePictures(
+    fileIds: string[],
+    workspaceId: string,
+  ): Promise<void> {
     for (const fileId of fileIds) {
       this.fileCorePictureService.deleteCorePicture({
         workspaceId,
