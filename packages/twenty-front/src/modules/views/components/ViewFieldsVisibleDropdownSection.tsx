@@ -89,7 +89,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
             LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
             text={fieldMetadataItemLabelIdentifier.label}
             accent="placeholder"
-            showGrip={true}
+            gripMode="always"
             isDragDisabled
           />
         )}
@@ -131,7 +131,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                             },
                           ]}
                           text={fieldMetadataItem.label}
-                          showGrip
+                          gripMode="always"
                         />
                       }
                     />

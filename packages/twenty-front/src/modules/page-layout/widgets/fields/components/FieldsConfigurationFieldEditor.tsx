@@ -6,7 +6,6 @@ import { MenuItemDraggable } from 'twenty-ui/navigation';
 type FieldsConfigurationFieldEditorProps = {
   field: FieldsConfigurationFieldItem;
   fieldMetadata: FieldMetadataItem;
-  index: number;
   onToggleVisibility: () => void;
 };
 
@@ -16,14 +15,15 @@ export const FieldsConfigurationFieldEditor = ({
   onToggleVisibility,
 }: FieldsConfigurationFieldEditorProps) => {
   const { getIcon } = useIcons();
-  const isVisible = field.isVisible !== false;
+  const isVisible = field.conditionalDisplay !== false;
   const FieldIcon = getIcon(fieldMetadata.icon);
 
   return (
     <MenuItemDraggable
       LeftIcon={FieldIcon}
       text={fieldMetadata.label}
-      showGrip
+      gripMode="onHover"
+      withIconContainer
       isIconDisplayedOnHoverOnly={false}
       iconButtons={[
         {

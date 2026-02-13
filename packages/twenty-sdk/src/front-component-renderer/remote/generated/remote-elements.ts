@@ -6679,7 +6679,7 @@ export type TwentyUiMenuItemDraggableProperties = {
   onClick?: (...args: unknown[]) => unknown;
   className?: string;
   isIconDisplayedOnHoverOnly?: boolean;
-  showGrip?: boolean;
+  gripMode?: string;
   isDragDisabled?: boolean;
   isHoverDisabled?: boolean;
 };
@@ -6699,7 +6699,7 @@ export const TwentyUiMenuItemDraggableElement = createRemoteElement<
     onClick: { type: Function },
     className: { type: String },
     isIconDisplayedOnHoverOnly: { type: Boolean },
-    showGrip: { type: Boolean },
+    gripMode: { type: String },
     isDragDisabled: { type: Boolean },
     isHoverDisabled: { type: Boolean },
   },
@@ -7000,10 +7000,44 @@ export const TwentyUiMenuItemToggleElement = createRemoteElement<
   },
 });
 
+export type TwentyUiMenuItemIconProperties = {
+  withContainer?: boolean;
+};
+
+export const TwentyUiMenuItemIconElement = createRemoteElement<
+  TwentyUiMenuItemIconProperties,
+  Record<string, never>,
+  { Icon: true },
+  Record<string, never>
+>({
+  slots: ['Icon'],
+  properties: {
+    withContainer: { type: Boolean },
+  },
+});
+
+export type TwentyUiMenuItemIconWithGripSwapProperties = {
+  withIconContainer?: boolean;
+  gripIconColor: string;
+};
+
+export const TwentyUiMenuItemIconWithGripSwapElement = createRemoteElement<
+  TwentyUiMenuItemIconWithGripSwapProperties,
+  Record<string, never>,
+  { LeftIcon: true },
+  Record<string, never>
+>({
+  slots: ['LeftIcon'],
+  properties: {
+    withIconContainer: { type: Boolean },
+    gripIconColor: { type: String },
+  },
+});
+
 export type TwentyUiMenuItemLeftContentProperties = {
   className?: string;
   withIconContainer?: boolean;
-  showGrip?: boolean;
+  gripMode?: string;
   disabled?: boolean;
   contextualTextPosition?: string;
 };
@@ -7018,7 +7052,7 @@ export const TwentyUiMenuItemLeftContentElement = createRemoteElement<
   properties: {
     className: { type: String },
     withIconContainer: { type: Boolean },
-    showGrip: { type: Boolean },
+    gripMode: { type: String },
     disabled: { type: Boolean },
     contextualTextPosition: { type: String },
   },
@@ -7314,6 +7348,11 @@ customElements.define(
   'twenty-ui-menu-item-toggle',
   TwentyUiMenuItemToggleElement,
 );
+customElements.define('twenty-ui-menu-item-icon', TwentyUiMenuItemIconElement);
+customElements.define(
+  'twenty-ui-menu-item-icon-with-grip-swap',
+  TwentyUiMenuItemIconWithGripSwapElement,
+);
 customElements.define(
   'twenty-ui-menu-item-left-content',
   TwentyUiMenuItemLeftContentElement,
@@ -7530,6 +7569,12 @@ declare global {
     >;
     'twenty-ui-menu-item-toggle': InstanceType<
       typeof TwentyUiMenuItemToggleElement
+    >;
+    'twenty-ui-menu-item-icon': InstanceType<
+      typeof TwentyUiMenuItemIconElement
+    >;
+    'twenty-ui-menu-item-icon-with-grip-swap': InstanceType<
+      typeof TwentyUiMenuItemIconWithGripSwapElement
     >;
     'twenty-ui-menu-item-left-content': InstanceType<
       typeof TwentyUiMenuItemLeftContentElement
