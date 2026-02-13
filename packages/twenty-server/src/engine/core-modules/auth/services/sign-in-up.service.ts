@@ -380,21 +380,17 @@ export class SignInUpService {
   }
 
   private async setDefaultImpersonateAndAccessFullAdminPanel() {
-    if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const workspacesCount = await this.workspaceRepository.count();
+    const workspacesCount = await this.workspaceRepository.count();
 
-      // let the creation of the first workspace
-      if (workspacesCount > 0) {
-        throw new AuthException(
-          'New workspace setup is disabled',
-          AuthExceptionCode.SIGNUP_DISABLED,
-        );
-      }
-
-      return { canImpersonate: true, canAccessFullAdminPanel: true };
+    // let the creation of the first workspace
+    if (workspacesCount > 0) {
+      throw new AuthException(
+        'New workspace setup is disabled',
+        AuthExceptionCode.SIGNUP_DISABLED,
+      );
     }
 
-    return { canImpersonate: false, canAccessFullAdminPanel: false };
+    return { canImpersonate: true, canAccessFullAdminPanel: true };
   }
 
   private isWorkspaceCreationLimitedToServerAdmins(): boolean {
