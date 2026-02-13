@@ -17,8 +17,11 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
 import { InstallApplicationInput } from 'src/engine/core-modules/application/dtos/install-application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
+import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/dtos/workspace-migration.dto';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -111,6 +114,39 @@ export class ApplicationResolver {
     return this.applicationTokenService.renewApplicationTokens(
       applicationRefreshTokenPayload,
     );
+  }
+
+  @Mutation(() => ApplicationDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async createOneApplication(
+    @Args('input') input: CreateApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return await this.applicationService.create({
+      ...input,
+      sourceType: 'local',
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => WorkspaceMigrationDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async syncApplication(
+    @Args() { manifest }: ApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<WorkspaceMigrationDTO> {
+    const workspaceMigration =
+      await this.applicationSyncService.synchronizeFromManifest({
+        workspaceId,
+        manifest,
+      });
+
+    return {
+      workspaceId: workspaceMigration.workspaceId,
+      applicationUniversalIdentifier:
+        workspaceMigration.applicationUniversalIdentifier,
+      actions: workspaceMigration.actions,
+    };
   }
 
   @Mutation(() => Boolean)
