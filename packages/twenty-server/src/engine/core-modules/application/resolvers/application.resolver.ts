@@ -142,7 +142,6 @@ export class ApplicationResolver {
       });
 
     return {
-      workspaceId: workspaceMigration.workspaceId,
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
@@ -180,10 +179,12 @@ export class ApplicationResolver {
       );
 
     await this.workspaceMigrationRunnerService.run({
-      actions,
+      workspaceMigration: {
+        actions,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      },
       workspaceId,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     return true;
