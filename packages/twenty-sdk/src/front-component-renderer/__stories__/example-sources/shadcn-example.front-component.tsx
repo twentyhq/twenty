@@ -122,10 +122,7 @@ const ShadcnComponent = () => {
             >
               Increment
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setCount(0)}
-            >
+            <Button variant="outline" onClick={() => setCount(0)}>
               Reset
             </Button>
           </div>

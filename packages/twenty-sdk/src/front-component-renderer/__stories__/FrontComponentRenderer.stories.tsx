@@ -55,7 +55,9 @@ export const Static: Story = {
 
 export const Interactive: Story = {
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('interactive.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'interactive.front-component',
+    ),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -75,7 +77,9 @@ export const Interactive: Story = {
 
 export const Lifecycle: Story = {
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('lifecycle.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'lifecycle.front-component',
+    ),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -152,7 +156,9 @@ export const TwentyUiExample: Story = {
 
 export const ErrorHandling: Story = {
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('nonexistent.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'nonexistent.front-component',
+    ),
   },
   play: async () => {
     await waitFor(
