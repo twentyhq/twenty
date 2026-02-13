@@ -76,10 +76,11 @@ export class ApplicationDevelopmentResolver {
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
-    const workspaceMigration = await this.applicationSyncService.synchronizeFromManifest({
-      workspaceId,
-      manifest,
-    });
+    const workspaceMigration =
+      await this.applicationSyncService.synchronizeFromManifest({
+        workspaceId,
+        manifest,
+      });
 
     return {
       applicationUniversalIdentifier:
