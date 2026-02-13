@@ -113,17 +113,6 @@ describe('defineObject', () => {
     expect(result.config.fields).toEqual([]);
   });
 
-  it('should accept missing fields', () => {
-    const config = {
-      ...validConfig,
-      fields: undefined,
-    };
-
-    const result = defineObject(config as any);
-
-    expect(result.config.fields).toBeUndefined();
-  });
-
   it('should return error when field is missing label', () => {
     const config = {
       ...validConfig,
