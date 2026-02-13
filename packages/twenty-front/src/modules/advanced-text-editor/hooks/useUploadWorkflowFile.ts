@@ -1,7 +1,7 @@
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/MaxAttachmentSize';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useApolloClient } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import {
   extractFolderPathFilenameAndTypeOrThrow,
@@ -19,8 +19,8 @@ type WorkflowFile = {
 };
 
 export const useUploadWorkflowFile = () => {
-  const coreClient = useApolloCoreClient();
-  const [createFile] = useCreateFileMutation({ client: coreClient });
+  const apolloClient = useApolloClient();
+  const [createFile] = useCreateFileMutation({ client: apolloClient });
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const uploadWorkflowFile = async (
