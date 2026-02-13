@@ -52,65 +52,21 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         'Widget type FIELD is not supported yet.',
         msg`Widget type FIELD is not supported yet.`,
       ),
-      FIELDS: rejectWidgetType(
-        WidgetType.FIELDS,
-        'Widget type FIELDS is not supported yet.',
-        msg`Widget type FIELDS is not supported yet.`,
-      ),
+      FIELDS: () => [],
       GRAPH: validateGraphFlatPageLayoutWidgetForCreation,
       STANDALONE_RICH_TEXT:
         validateStandaloneRichTextFlatPageLayoutWidgetForCreation,
       FRONT_COMPONENT: validateFrontComponentFlatPageLayoutWidgetForCreation,
-      TIMELINE: rejectWidgetType(
-        WidgetType.TIMELINE,
-        'Widget type TIMELINE is not supported yet.',
-        msg`Widget type TIMELINE is not supported yet.`,
-      ),
-      TASKS: rejectWidgetType(
-        WidgetType.TASKS,
-        'Widget type TASKS is not supported yet.',
-        msg`Widget type TASKS is not supported yet.`,
-      ),
-      NOTES: rejectWidgetType(
-        WidgetType.NOTES,
-        'Widget type NOTES is not supported yet.',
-        msg`Widget type NOTES is not supported yet.`,
-      ),
-      FILES: rejectWidgetType(
-        WidgetType.FILES,
-        'Widget type FILES is not supported yet.',
-        msg`Widget type FILES is not supported yet.`,
-      ),
-      EMAILS: rejectWidgetType(
-        WidgetType.EMAILS,
-        'Widget type EMAILS is not supported yet.',
-        msg`Widget type EMAILS is not supported yet.`,
-      ),
-      CALENDAR: rejectWidgetType(
-        WidgetType.CALENDAR,
-        'Widget type CALENDAR is not supported yet.',
-        msg`Widget type CALENDAR is not supported yet.`,
-      ),
-      FIELD_RICH_TEXT: rejectWidgetType(
-        WidgetType.FIELD_RICH_TEXT,
-        'Widget type FIELD_RICH_TEXT is not supported yet.',
-        msg`Widget type FIELD_RICH_TEXT is not supported yet.`,
-      ),
-      WORKFLOW: rejectWidgetType(
-        WidgetType.WORKFLOW,
-        'Widget type WORKFLOW is not supported yet.',
-        msg`Widget type WORKFLOW is not supported yet.`,
-      ),
-      WORKFLOW_VERSION: rejectWidgetType(
-        WidgetType.WORKFLOW_VERSION,
-        'Widget type WORKFLOW_VERSION is not supported yet.',
-        msg`Widget type WORKFLOW_VERSION is not supported yet.`,
-      ),
-      WORKFLOW_RUN: rejectWidgetType(
-        WidgetType.WORKFLOW_RUN,
-        'Widget type WORKFLOW_RUN is not supported yet.',
-        msg`Widget type WORKFLOW_RUN is not supported yet.`,
-      ),
+      TIMELINE: () => [],
+      TASKS: () => [],
+      NOTES: () => [],
+      FILES: () => [],
+      EMAILS: () => [],
+      CALENDAR: () => [],
+      FIELD_RICH_TEXT: () => [],
+      WORKFLOW: () => [],
+      WORKFLOW_VERSION: () => [],
+      WORKFLOW_RUN: () => [],
     };
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
@@ -126,11 +82,7 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         'Widget type FIELD is not supported yet.',
         msg`Widget type FIELD is not supported yet.`,
       ),
-      FIELDS: rejectWidgetType(
-        WidgetType.FIELDS,
-        'Widget type FIELDS is not supported yet.',
-        msg`Widget type FIELDS is not supported yet.`,
-      ),
+      FIELDS: () => [],
       GRAPH: validateGraphFlatPageLayoutWidgetForUpdate,
       STANDALONE_RICH_TEXT:
         validateStandaloneRichTextFlatPageLayoutWidgetForUpdate,
