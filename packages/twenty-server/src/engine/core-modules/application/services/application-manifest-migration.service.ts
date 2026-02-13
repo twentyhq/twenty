@@ -88,7 +88,7 @@ export class ApplicationManifestMigrationService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Validation errors occurred while syncing application manifest metadata',
