@@ -12,7 +12,7 @@ export type LogicFunctionFormValues = {
   description: string;
   isTool: boolean;
   timeoutSeconds: number;
-  code: string;
+  sourceHandlerCode: string;
   toolInputSchema?: object;
 };
 
@@ -34,11 +34,11 @@ export const useLogicFunctionUpdateFormState = ({
     name: '',
     description: '',
     isTool: false,
-    code: '',
+    sourceHandlerCode: '',
     timeoutSeconds: 10,
   });
 
-  const { code: codeFromApi, loading: logicFunctionSourceCodeLoading } =
+  const { sourceHandlerCode, loading: logicFunctionSourceCodeLoading } =
     useGetLogicFunctionSourceCode({
       logicFunctionId,
     });
@@ -62,10 +62,13 @@ export const useLogicFunctionUpdateFormState = ({
     });
 
   useEffect(() => {
-    if (isDefined(codeFromApi)) {
-      setFormValues((prev) => ({ ...prev, code: codeFromApi }));
+    if (isDefined(sourceHandlerCode)) {
+      setFormValues((prev) => ({
+        ...prev,
+        sourceHandlerCode,
+      }));
     }
-  }, [codeFromApi]);
+  }, [sourceHandlerCode]);
 
   return {
     formValues,

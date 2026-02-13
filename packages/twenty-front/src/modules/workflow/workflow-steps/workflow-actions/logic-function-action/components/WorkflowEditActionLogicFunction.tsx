@@ -1,4 +1,4 @@
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getDefaultFunctionInputFromInputSchema';
+import { getFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getFunctionInputFromInputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
@@ -56,7 +56,7 @@ export const WorkflowEditActionLogicFunction = ({
       ? toolInputSchema
       : [toolInputSchema];
 
-    const defaultInput = getDefaultFunctionInputFromInputSchema(schemaArray)[0];
+    const defaultInput = getFunctionInputFromInputSchema(schemaArray)[0];
 
     if (!isObject(defaultInput)) {
       return action.settings.input.logicFunctionInput ?? {};

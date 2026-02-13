@@ -25,7 +25,7 @@ import {
   type RoleManifest,
 } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { getToolInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
+import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -141,7 +141,7 @@ export const buildManifest = async (
 
         const toolInputSchema =
           rest.toolInputSchema ??
-          (await getToolInputSchemaFromSourceCode(fileContent));
+          (await getInputSchemaFromSourceCode(fileContent));
 
         const config: LogicFunctionManifest = {
           ...rest,

@@ -1,16 +1,16 @@
-import { getToolInputSchemaFromSourceCode } from '@/logic-function/get-tool-input-schema-from-source-code';
+import { getInputSchemaFromSourceCode } from '@/logic-function/get-input-schema-from-source-code';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from '@/logic-function/constants/default-tool-input-schema';
 
-describe('getToolInputSchemaFromSourceCode', () => {
+describe('getInputSchemaFromSourceCode', () => {
   it('should return empty input if not parameter', async () => {
     const fileContent = 'function testFunction() { return }';
-    const result = await getToolInputSchemaFromSourceCode(fileContent);
+    const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
   it('should return first input if multiple parameters', async () => {
     const fileContent =
       'function testFunction(params1: {}, params2: {}) { return }';
-    const result = await getToolInputSchemaFromSourceCode(fileContent);
+    const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual({
       properties: {},
       type: 'object',
@@ -18,7 +18,7 @@ describe('getToolInputSchemaFromSourceCode', () => {
   });
   it('should return empty input if wrong parameter', async () => {
     const fileContent = 'function testFunction(params: string) { return }';
-    const result = await getToolInputSchemaFromSourceCode(fileContent);
+    const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual({ type: 'object', properties: {} });
   });
   it('should return input from source code', async () => {
@@ -38,7 +38,7 @@ describe('getToolInputSchemaFromSourceCode', () => {
         }
       `;
 
-    const result = await getToolInputSchemaFromSourceCode(fileContent);
+    const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual({
       properties: {
         param1: {

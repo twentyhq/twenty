@@ -24,7 +24,7 @@ const getValueType = (value: any): LeafType => {
   return 'unknown';
 };
 
-export const buildOutputSchemaFromValue = (
+export const getOutputSchemaFromValue = (
   testResult: object,
 ): BaseOutputSchemaV2 => {
   return testResult
@@ -35,7 +35,7 @@ export const buildOutputSchemaFromValue = (
               isLeaf: false,
               type: 'object',
               label: key,
-              value: buildOutputSchemaFromValue(value),
+              value: getOutputSchemaFromValue(value),
             };
           } else {
             acc[key] = {

@@ -1,5 +1,5 @@
 import { type InputSchema } from '@/workflow/types/InputSchema';
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getDefaultFunctionInputFromInputSchema';
+import { getFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getFunctionInputFromInputSchema';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {
   it('should init function input properly', () => {
@@ -37,7 +37,7 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
         e: {},
       },
     ];
-    expect(getDefaultFunctionInputFromInputSchema(inputSchema)).toEqual(
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual(
       expectedResult,
     );
   });

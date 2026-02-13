@@ -1,6 +1,6 @@
-import { buildOutputSchemaFromValue } from '../buildOutputSchemaFromValue';
+import { getOutputSchemaFromValue } from '@/logic-function/get-output-schema-from-value';
 
-describe('buildOutputSchemaFromValue', () => {
+describe('getOutputSchemaFromValue', () => {
   it('should compute outputSchema properly for mixed types', () => {
     const testResult = {
       a: null,
@@ -48,9 +48,7 @@ describe('buildOutputSchemaFromValue', () => {
         label: 'e',
       },
     };
-    expect(buildOutputSchemaFromValue(testResult)).toEqual(
-      expectedOutputSchema,
-    );
+    expect(getOutputSchemaFromValue(testResult)).toEqual(expectedOutputSchema);
   });
 
   it('should handle nested objects', () => {
@@ -64,7 +62,7 @@ describe('buildOutputSchemaFromValue', () => {
       },
     };
 
-    const result = buildOutputSchemaFromValue(testResult);
+    const result = getOutputSchemaFromValue(testResult);
 
     expect(result.user).toEqual({
       isLeaf: false,
@@ -101,6 +99,6 @@ describe('buildOutputSchemaFromValue', () => {
   });
 
   it('should return empty object for empty input', () => {
-    expect(buildOutputSchemaFromValue({})).toEqual({});
+    expect(getOutputSchemaFromValue({})).toEqual({});
   });
 });

@@ -9,5 +9,6 @@
 
 export { DEFAULT_TOOL_INPUT_SCHEMA } from './constants/default-tool-input-schema';
 export { getFunctionInputSchema } from './get-function-input-schema';
-export { getToolInputSchemaFromSourceCode } from './get-tool-input-schema-from-source-code';
+export { getInputSchemaFromSourceCode } from './get-input-schema-from-source-code';
+export { getOutputSchemaFromValue } from './get-output-schema-from-value';
 export type { InputJsonSchema } from './input-json-schema.type';

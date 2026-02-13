@@ -4,7 +4,7 @@ import {
   type InputJsonSchema,
 } from '@/logic-function';
 
-export const getToolInputSchemaFromSourceCode = async (
+export const getInputSchemaFromSourceCode = async (
   sourceCode: string,
 ): Promise<InputJsonSchema> => {
   const { getFunctionInputSchema } = await import(

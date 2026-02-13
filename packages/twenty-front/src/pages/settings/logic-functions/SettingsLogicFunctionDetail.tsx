@@ -1,15 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
+import { useLogicFunctionEditor } from '@/logic-functions/hooks/useLogicFunctionEditor';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
-import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
-} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -26,10 +22,7 @@ import {
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';
-import { useDebouncedCallback } from 'use-debounce';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
-import { getToolInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
@@ -58,55 +51,14 @@ export const SettingsLogicFunctionDetail = () => {
     instanceId,
   );
 
-  const { formValues, setFormValues, logicFunction, loading } =
-    useLogicFunctionUpdateFormState({ logicFunctionId });
-
-  const { updateLogicFunction } = usePersistLogicFunction();
-
-  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
-    logicFunctionId,
-  });
-
-  const handleExecute = async () => {
-    await executeLogicFunction();
-  };
-
-  const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunction({
-      input: {
-        id: logicFunctionId,
-        update: {
-          name: formValues.name,
-          description: formValues.description,
-          isTool: formValues.isTool,
-          timeoutSeconds: formValues.timeoutSeconds,
-          sourceHandlerCode: formValues.code,
-          ...(formValues.toolInputSchema !== undefined && {
-            toolInputSchema: formValues.toolInputSchema,
-          }),
-        },
-      },
-    });
-  }, 500);
-
-  const onChange = <TKey extends keyof LogicFunctionFormValues>(key: TKey) => {
-    return async (value: LogicFunctionFormValues[TKey]) => {
-      const newValues: Partial<LogicFunctionFormValues> = { [key]: value };
-
-      if (key === 'code') {
-        newValues.toolInputSchema = await getToolInputSchemaFromSourceCode(
-          value as LogicFunctionFormValues['code'],
-        );
-      }
-
-      setFormValues((prevState: LogicFunctionFormValues) => ({
-        ...prevState,
-        ...newValues,
-      }));
-
-      await handleSave();
-    };
-  };
+  const {
+    formValues,
+    logicFunction,
+    loading,
+    onChange,
+    executeLogicFunction,
+    isExecuting,
+  } = useLogicFunctionEditor({ logicFunctionId });
 
   const handleTestFunction = async () => {
     navigate('#test');
@@ -170,7 +122,7 @@ export const SettingsLogicFunctionDetail = () => {
   const files = [
     {
       path: 'index.ts',
-      content: formValues.code,
+      content: formValues.sourceHandlerCode,
       language: 'typescript',
     },
   ];
@@ -193,7 +145,7 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionCodeEditorTab
               files={files}
               handleExecute={handleTestFunction}
-              onChange={onChange('code')}
+              onChange={onChange('sourceHandlerCode')}
               isTesting={isExecuting}
             />
           )}
@@ -208,7 +160,7 @@ export const SettingsLogicFunctionDetail = () => {
           )}
           {isTestTab && (
             <SettingsLogicFunctionTestTab
-              handleExecute={handleExecute}
+              handleExecute={executeLogicFunction}
               logicFunctionId={logicFunctionId}
               isTesting={isExecuting}
             />
