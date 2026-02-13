@@ -37,6 +37,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { t } from '@lingui/core/macro';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
@@ -223,6 +224,9 @@ export const ActivityRichTextEditor = ({
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
     uploadFile: handleEditorBuiltInUploadFile,
+    placeholders: {
+      default: t`Type '/' for commands, '@' for mentions`,
+    },
   });
 
   useHotkeysOnFocusedElement({

@@ -3,7 +3,7 @@
   "version": "0.5.2",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/sdk/index.d.ts",
   "bin": {
     "twenty": "dist/cli.cjs"
   },
@@ -13,7 +13,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build",
+    "build": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts",
     "prepublishOnly": "tsx ../twenty-utils/pack-scripts/pre-publish-only.ts",
     "postpublish": "tsx ../twenty-utils/pack-scripts/post-publish.ts"
   },
@@ -27,7 +27,7 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/sdk/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
@@ -36,14 +36,16 @@
       "import": "./dist/ui/index.mjs",
       "require": "./dist/ui/index.cjs"
     },
-    "./front-component": {
-      "types": "./dist/front-component/index.d.ts",
-      "import": "./dist/front-component/index.mjs",
-      "require": "./dist/front-component/index.cjs"
+    "./front-component-renderer": {
+      "types": "./dist/front-component-renderer/index.d.ts",
+      "import": "./dist/front-component-renderer/index.mjs",
+      "require": "./dist/front-component-renderer/index.cjs"
     }
   },
   "license": "AGPL-3.0",
   "dependencies": {
+    "@chakra-ui/react": "^3.33.0",
+    "@emotion/react": "^11.14.0",
     "@genql/cli": "^3.0.3",
     "@quilted/threads": "^4.0.1",
     "@remote-dom/core": "^1.10.1",
@@ -102,8 +104,8 @@
       "ui": [
         "dist/ui/index.d.ts"
       ],
-      "front-component": [
-        "dist/front-component/index.d.ts"
+      "front-component-renderer": [
+        "dist/front-component-renderer/index.d.ts"
       ]
     }
   }

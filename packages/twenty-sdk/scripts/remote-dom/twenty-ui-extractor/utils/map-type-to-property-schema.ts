@@ -1,6 +1,6 @@
 import { type Type } from 'ts-morph';
 
-import { type PropertySchema } from '@/front-component/types/PropertySchema';
+import { type PropertySchema } from '@/front-component-renderer/types/PropertySchema';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 type PropertyType = PropertySchema['type'];

@@ -18,7 +18,7 @@ import {
 import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
-  ApplicationTokenJwtPayload,
+  ApplicationAccessTokenJwtPayload,
   type AuthContext,
   type FileTokenJwtPayload,
   type JwtPayload,
@@ -333,7 +333,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   private async validateApplicationToken(
-    payload: ApplicationTokenJwtPayload,
+    payload: ApplicationAccessTokenJwtPayload,
   ): Promise<AuthContext> {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.workspaceId,
@@ -359,6 +359,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
+    // TODO: Token carries userId/userWorkspaceId but they are unused.
+    // Compute the intersection of user and application permissions instead.
     return {
       application,
       workspace,
@@ -388,7 +390,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       return await this.validateAccessToken(payload);
     }
 
-    if (payload.type === JwtTokenTypeEnum.APPLICATION) {
+    if (payload.type === JwtTokenTypeEnum.APPLICATION_ACCESS) {
       return await this.validateApplicationToken(payload);
     }
 

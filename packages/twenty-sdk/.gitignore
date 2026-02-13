@@ -1,4 +1,4 @@
 node_modules
 .twenty
 storybook-static
-src/front-component/__stories__/built
+src/front-component-renderer/__stories__/example-sources-built

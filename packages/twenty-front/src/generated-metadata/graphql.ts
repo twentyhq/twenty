@@ -292,6 +292,12 @@ export type Application = {
   yarnLockFileId?: Maybe<Scalars['UUID']>;
 };
 
+export type ApplicationTokenPair = {
+  __typename?: 'ApplicationTokenPair';
+  applicationAccessToken: AuthToken;
+  applicationRefreshToken: AuthToken;
+};
+
 export type ApplicationVariable = {
   __typename?: 'ApplicationVariable';
   description: Scalars['String'];
@@ -1659,6 +1665,7 @@ export type FindAvailableSsoidpOutput = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationId: Scalars['UUID'];
+  applicationTokenPair?: Maybe<ApplicationTokenPair>;
   builtComponentChecksum: Scalars['String'];
   builtComponentPath: Scalars['String'];
   componentName: Scalars['String'];
@@ -2242,6 +2249,7 @@ export type Mutation = {
   installMarketplaceApp: Scalars['Boolean'];
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
+  renewApplicationToken: ApplicationTokenPair;
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -2816,6 +2824,11 @@ export type MutationRemoveQueryFromEventStreamArgs = {
 
 export type MutationRemoveRoleFromAgentArgs = {
   agentId: Scalars['UUID'];
+};
+
+
+export type MutationRenewApplicationTokenArgs = {
+  applicationRefreshToken: Scalars['String'];
 };
 
 
@@ -5711,6 +5724,18 @@ export type UploadFilesFieldFileMutationVariables = Exact<{
 
 
 export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'FilesFieldFile', id: string, path: string, size: number, createdAt: string, url: string } };
+
+export type FindManyFrontComponentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindManyFrontComponentsQuery = { __typename?: 'Query', frontComponents: Array<{ __typename?: 'FrontComponent', id: string, name: string, applicationId: string }> };
+
+export type FindOneFrontComponentQueryVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -10399,6 +10424,89 @@ export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHoo
 export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
+export const FindManyFrontComponentsDocument = gql`
+    query FindManyFrontComponents {
+  frontComponents {
+    id
+    name
+    applicationId
+  }
+}
+    `;
+
+/**
+ * __useFindManyFrontComponentsQuery__
+ *
+ * To run a query within a React component, call `useFindManyFrontComponentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManyFrontComponentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManyFrontComponentsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindManyFrontComponentsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>(FindManyFrontComponentsDocument, options);
+      }
+export function useFindManyFrontComponentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>(FindManyFrontComponentsDocument, options);
+        }
+export type FindManyFrontComponentsQueryHookResult = ReturnType<typeof useFindManyFrontComponentsQuery>;
+export type FindManyFrontComponentsLazyQueryHookResult = ReturnType<typeof useFindManyFrontComponentsLazyQuery>;
+export type FindManyFrontComponentsQueryResult = Apollo.QueryResult<FindManyFrontComponentsQuery, FindManyFrontComponentsQueryVariables>;
+export const FindOneFrontComponentDocument = gql`
+    query FindOneFrontComponent($id: UUID!) {
+  frontComponent(id: $id) {
+    id
+    name
+    applicationId
+    applicationTokenPair {
+      applicationAccessToken {
+        token
+        expiresAt
+      }
+      applicationRefreshToken {
+        token
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useFindOneFrontComponentQuery__
+ *
+ * To run a query within a React component, call `useFindOneFrontComponentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneFrontComponentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneFrontComponentQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFindOneFrontComponentQuery(baseOptions: Apollo.QueryHookOptions<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>(FindOneFrontComponentDocument, options);
+      }
+export function useFindOneFrontComponentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>(FindOneFrontComponentDocument, options);
+        }
+export type FindOneFrontComponentQueryHookResult = ReturnType<typeof useFindOneFrontComponentQuery>;
+export type FindOneFrontComponentLazyQueryHookResult = ReturnType<typeof useFindOneFrontComponentLazyQuery>;
+export type FindOneFrontComponentQueryResult = Apollo.QueryResult<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>;
 export const CreateOneLogicFunctionDocument = gql`
     mutation CreateOneLogicFunction($input: CreateLogicFunctionFromSourceInput!) {
   createOneLogicFunction(input: $input) {

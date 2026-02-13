@@ -103,6 +103,12 @@ export class WorkspaceSchemaFactory {
         applicationIds,
       );
 
+      flatObjectMetadataMaps =
+        this.reconcileObjectFieldIdsWithFilteredFieldMaps(
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
+
       if (isDefined(allFlatIndexMaps)) {
         flatIndexMaps = this.filterFlatEntityMapsByApplicationIds(
           allFlatIndexMaps,
@@ -186,6 +192,35 @@ export class WorkspaceSchemaFactory {
     });
 
     return executableSchema;
+  }
+
+  private reconcileObjectFieldIdsWithFilteredFieldMaps(
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): FlatEntityMaps<FlatObjectMetadata> {
+    const filteredFieldIds = new Set(
+      Object.keys(flatFieldMetadataMaps.universalIdentifierById),
+    );
+
+    const reconciledByUniversalIdentifier: Partial<
+      Record<string, FlatObjectMetadata>
+    > = {};
+
+    for (const [universalId, object] of Object.entries(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(object)) continue;
+
+      reconciledByUniversalIdentifier[universalId] = {
+        ...object,
+        fieldIds: object.fieldIds.filter((id) => filteredFieldIds.has(id)),
+      };
+    }
+
+    return {
+      ...flatObjectMetadataMaps,
+      byUniversalIdentifier: reconciledByUniversalIdentifier,
+    };
   }
 
   private filterFlatEntityMapsByApplicationIds<

@@ -1,6 +1,6 @@
 import { type Type } from 'ts-morph';
 
-import { type PropertySchema } from '@/front-component/types/PropertySchema';
+import { type PropertySchema } from '@/front-component-renderer/types/PropertySchema';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { REACT_PROP_TO_DOM_EVENT } from '../constants/ReactPropToDomEvent';
 import { mapTypeToPropertySchema } from './map-type-to-property-schema';
