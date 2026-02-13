@@ -1,8 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
+import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 
 type BaseMetadataEvent<T extends AllMetadataName, TPayload extends object> = {
