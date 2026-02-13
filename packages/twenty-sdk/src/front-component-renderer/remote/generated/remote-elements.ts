@@ -609,6 +609,23 @@ export const HtmlHrElement = createRemoteElement<
   properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type RemoteStyleProperties = {
+  cssText?: string;
+  styleKey?: string;
+};
+
+export const RemoteStyleElement = createRemoteElement<
+  RemoteStyleProperties,
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>
+>({
+  properties: {
+    cssText: { type: String },
+    styleKey: { type: String },
+  },
+});
 customElements.define('html-div', HtmlDivElement);
 customElements.define('html-span', HtmlSpanElement);
 customElements.define('html-section', HtmlSectionElement);
@@ -652,6 +669,7 @@ customElements.define('html-th', HtmlThElement);
 customElements.define('html-td', HtmlTdElement);
 customElements.define('html-br', HtmlBrElement);
 customElements.define('html-hr', HtmlHrElement);
+customElements.define('remote-style', RemoteStyleElement);
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
 export { RemoteRootElement, RemoteFragmentElement };
@@ -700,6 +718,7 @@ declare global {
     'html-td': InstanceType<typeof HtmlTdElement>;
     'html-br': InstanceType<typeof HtmlBrElement>;
     'html-hr': InstanceType<typeof HtmlHrElement>;
+    'remote-style': InstanceType<typeof RemoteStyleElement>;
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;
   }

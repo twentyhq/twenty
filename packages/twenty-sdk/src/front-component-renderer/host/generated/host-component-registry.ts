@@ -13,6 +13,7 @@ import {
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
 import { type SerializedEventData } from '../../../sdk/front-component-api/constants/SerializedEventData';
+import { RemoteStyleRenderer } from '../components/RemoteStyleRenderer';
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
 const EVENT_NAME_MAP: Record<string, string> = {
@@ -450,5 +451,6 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
   ['html-td', createRemoteComponentRenderer(HtmlTdWrapper)],
   ['html-br', createRemoteComponentRenderer(HtmlBrWrapper)],
   ['html-hr', createRemoteComponentRenderer(HtmlHrWrapper)],
+  ['remote-style', createRemoteComponentRenderer(RemoteStyleRenderer)],
   ['remote-fragment', RemoteFragmentRenderer],
 ]);
