@@ -48,7 +48,7 @@ describe('getBarChartSettings', () => {
       );
 
       expect(yAxisGroup).toBeDefined();
-      expect(yAxisGroup?.items).toHaveLength(7);
+      expect(yAxisGroup?.items).toHaveLength(8);
       expect(yAxisGroup?.items[0].id).toBe(DATA_DISPLAY_Y_SETTING.id);
       expect(yAxisGroup?.items[0].label).toBe(DATA_DISPLAY_Y_SETTING.label);
       expect(yAxisGroup?.items[0].Icon).toBe(IconAxisY);
@@ -80,7 +80,7 @@ describe('getBarChartSettings', () => {
       );
 
       expect(xAxisGroup).toBeDefined();
-      expect(xAxisGroup?.items).toHaveLength(7);
+      expect(xAxisGroup?.items).toHaveLength(8);
       expect(xAxisGroup?.items[0].id).toBe(DATA_DISPLAY_Y_SETTING.id);
       expect(xAxisGroup?.items[0].label).toBe(DATA_DISPLAY_Y_SETTING.label);
       expect(xAxisGroup?.items[0].Icon).toBe(IconAxisX);

@@ -257,7 +257,8 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
-      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS:
+      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_X:
+      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_Y:
         return isBarOrLineChart || isPieChart
           ? (configuration.splitMultiValueFields ?? true)
           : true;

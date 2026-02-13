@@ -106,51 +106,58 @@ export const shouldHideChartSetting = (
       }
     }
 
-    if (item.id === CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS) {
-      const groupByFieldMetadataIds: string[] = [];
+    if (
+      item.id === CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_X ||
+      item.id === CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_Y
+    ) {
+      const isXAxis =
+        item.id === CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_X;
+
+      let fieldMetadataId: string | null | undefined;
 
       if (isBarOrLineChart) {
-        if (isDefined(configuration.primaryAxisGroupByFieldMetadataId)) {
-          groupByFieldMetadataIds.push(
-            configuration.primaryAxisGroupByFieldMetadataId,
-          );
-        }
-
-        if (isDefined(configuration.secondaryAxisGroupByFieldMetadataId)) {
-          groupByFieldMetadataIds.push(
-            configuration.secondaryAxisGroupByFieldMetadataId,
-          );
-        }
+        fieldMetadataId = isXAxis
+          ? configuration.primaryAxisGroupByFieldMetadataId
+          : configuration.secondaryAxisGroupByFieldMetadataId;
       } else if (
         isWidgetConfigurationOfType(configuration, 'PieChartConfiguration')
       ) {
-        if (isDefined(configuration.groupByFieldMetadataId)) {
-          groupByFieldMetadataIds.push(configuration.groupByFieldMetadataId);
+        fieldMetadataId = isXAxis
+          ? configuration.groupByFieldMetadataId
+          : undefined;
+      }
+
+      if (!isDefined(fieldMetadataId)) {
+        return true;
+      }
+
+      if (isBarOrLineChart) {
+        const primaryField = objectMetadataItem.fields.find(
+          (field) =>
+            field.id === configuration.primaryAxisGroupByFieldMetadataId,
+        );
+        const secondaryField = objectMetadataItem.fields.find(
+          (field) =>
+            field.id === configuration.secondaryAxisGroupByFieldMetadataId,
+        );
+        const bothAxesAreArrayFields =
+          isDefined(primaryField) &&
+          isFieldMetadataArrayKind(primaryField.type) &&
+          isDefined(secondaryField) &&
+          isFieldMetadataArrayKind(secondaryField.type);
+
+        if (bothAxesAreArrayFields === true) {
+          return true;
         }
       }
 
-      if (groupByFieldMetadataIds.length === 0) {
-        return true;
-      }
+      const groupByField = objectMetadataItem.fields.find(
+        (field) => field.id === fieldMetadataId,
+      );
 
-      const arrayGroupByFieldCount = groupByFieldMetadataIds.filter(
-        (groupByFieldMetadataId) => {
-          const groupByField = objectMetadataItem.fields.find(
-            (field) => field.id === groupByFieldMetadataId,
-          );
-
-          return (
-            isDefined(groupByField) &&
-            isFieldMetadataArrayKind(groupByField.type)
-          );
-        },
-      ).length;
-
-      if (isBarOrLineChart && arrayGroupByFieldCount > 1) {
-        return true;
-      }
-
-      return arrayGroupByFieldCount === 0;
+      return (
+        !isDefined(groupByField) || !isFieldMetadataArrayKind(groupByField.type)
+      );
     }
 
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {

@@ -3,9 +3,9 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconArrowsSplit2 } from 'twenty-ui/display';
 
-export const SPLIT_MULTI_VALUE_FIELDS_SETTING: ChartSettingsItem = {
+export const SPLIT_MULTI_VALUE_FIELDS_X_SETTING: ChartSettingsItem = {
   isBoolean: true,
   Icon: IconArrowsSplit2,
-  label: CHART_CONFIGURATION_SETTING_LABELS.SPLIT_MULTI_VALUE_FIELDS,
-  id: CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS,
+  label: CHART_CONFIGURATION_SETTING_LABELS.SPLIT_MULTI_VALUE_FIELDS_X,
+  id: CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_X,
 };
