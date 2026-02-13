@@ -1,15 +1,30 @@
-import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
+import {
+  type CountryCode,
+  getCountries,
+  getCountryCallingCode,
+} from 'libphonenumber-js';
 
-const ALL_COUNTRIES_CODE = getCountries();
+// Precompute a map from calling code to country codes for O(1) lookups
+const CALLING_CODE_TO_COUNTRIES = new Map<string, CountryCode[]>();
 
-export const getCountryCodesForCallingCode = (callingCode: string) => {
+for (const country of getCountries()) {
+  const callingCode = getCountryCallingCode(country);
+
+  const existing = CALLING_CODE_TO_COUNTRIES.get(callingCode);
+
+  if (existing) {
+    existing.push(country);
+  } else {
+    CALLING_CODE_TO_COUNTRIES.set(callingCode, [country]);
+  }
+}
+
+export const getCountryCodesForCallingCode = (
+  callingCode: string,
+): CountryCode[] => {
   const cleanCallingCode = callingCode.startsWith('+')
     ? callingCode.slice(1)
     : callingCode;
 
-  return ALL_COUNTRIES_CODE.filter((country) => {
-    const countryCallingCode = getCountryCallingCode(country);
-
-    return countryCallingCode === cleanCallingCode;
-  });
+  return CALLING_CODE_TO_COUNTRIES.get(cleanCallingCode) ?? [];
 };

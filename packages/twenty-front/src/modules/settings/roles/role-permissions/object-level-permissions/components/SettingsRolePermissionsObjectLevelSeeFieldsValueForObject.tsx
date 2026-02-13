@@ -1,4 +1,4 @@
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useLingui } from '@lingui/react/macro';
@@ -6,12 +6,12 @@ import { useRecoilValue } from 'recoil';
 
 type SettingsRolePermissionsObjectLevelSeeFieldsValueForObjectProps = {
   roleId: string;
-  objectMetadataItemId: string;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 export const SettingsRolePermissionsObjectLevelSeeFieldsValueForObject = ({
   roleId,
-  objectMetadataItemId,
+  objectMetadataItem,
 }: SettingsRolePermissionsObjectLevelSeeFieldsValueForObjectProps) => {
   const { t } = useLingui();
 
@@ -19,9 +19,7 @@ export const SettingsRolePermissionsObjectLevelSeeFieldsValueForObject = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId,
-  });
+  const objectMetadataItemId = objectMetadataItem.id;
 
   const restrictableFieldMetadataItems = objectMetadataItem.fields.filter(
     (fieldMetadataItem) => !fieldMetadataItem.isSystem,

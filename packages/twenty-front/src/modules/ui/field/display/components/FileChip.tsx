@@ -1,10 +1,17 @@
+import styled from '@emotion/styled';
+
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant, LinkChip } from 'twenty-ui/components';
+import { Chip, ChipVariant } from 'twenty-ui/components';
 
 const MAX_WIDTH = 120;
+
+const StyledClickableContainer = styled.div<{ clickable: boolean }>`
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'inherit')};
+  display: inline-flex;
+  min-width: 0;
+`;
 
 type FileChipProps = {
   file: FieldFilesValue;
@@ -17,8 +24,10 @@ export const FileChip = ({
   onClick,
   forceDisableClick,
 }: FileChipProps) => {
-  const handleClick = (event: React.MouseEvent): void => {
-    if (isDefined(forceDisableClick)) {
+  const isClickable = forceDisableClick !== true;
+
+  const handleMouseDown = (event: React.MouseEvent): void => {
+    if (!isClickable) {
       return;
     }
     event.preventDefault();
@@ -36,14 +45,17 @@ export const FileChip = ({
   );
 
   return (
-    <LinkChip
-      to="#"
-      label={file.label}
-      maxWidth={MAX_WIDTH}
-      leftComponent={fileIcon}
-      variant={ChipVariant.Highlighted}
-      onClick={forceDisableClick ? undefined : handleClick}
-      triggerEvent="CLICK"
-    />
+    <StyledClickableContainer
+      clickable={isClickable}
+      onMouseDown={handleMouseDown}
+    >
+      <Chip
+        label={file.label ?? ''}
+        maxWidth={MAX_WIDTH}
+        leftComponent={fileIcon}
+        variant={ChipVariant.Highlighted}
+        clickable={isClickable}
+      />
+    </StyledClickableContainer>
   );
 };

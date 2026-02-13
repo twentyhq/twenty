@@ -34,6 +34,7 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
+  IconArrowDown,
   IconArrowUp,
   IconCalendarEvent,
   IconCalendarRepeat,
@@ -54,8 +55,8 @@ import {
   useCancelSwitchMeteredPriceMutation,
   useSwitchBillingPlanMutation,
   useSwitchSubscriptionIntervalMutation,
+  SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import { SubscriptionStatus } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
@@ -473,7 +474,7 @@ export const SettingsBillingSubscriptionInfo = ({
         {isEnterprisePlan &&
           (!nextPlan || currentPlan.planKey === nextPlan.planKey) && (
             <Button
-              Icon={IconArrowUp}
+              Icon={IconArrowDown}
               title={t`Switch to Pro`}
               variant="secondary"
               onClick={() => openModal(SWITCH_BILLING_PLAN_TO_PRO_MODAL_ID)}

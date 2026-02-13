@@ -1,0 +1,310 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should match snapshot 1`] = `
+{
+  "agent": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "icon",
+      "description",
+      "prompt",
+      "modelId",
+      "responseFormat",
+      "modelConfiguration",
+      "evaluationInputs",
+    ],
+    "propertiesToStringify": [
+      "responseFormat",
+      "modelConfiguration",
+      "evaluationInputs",
+    ],
+  },
+  "commandMenuItem": {
+    "propertiesToCompare": [
+      "label",
+      "icon",
+      "isPinned",
+      "availabilityType",
+      "availabilityObjectMetadataUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
+  "fieldMetadata": {
+    "propertiesToCompare": [
+      "defaultValue",
+      "description",
+      "icon",
+      "isActive",
+      "isLabelSyncedWithName",
+      "isUnique",
+      "label",
+      "name",
+      "options",
+      "standardOverrides",
+      "universalSettings",
+    ],
+    "propertiesToStringify": [
+      "defaultValue",
+      "options",
+      "standardOverrides",
+      "universalSettings",
+    ],
+  },
+  "frontComponent": {
+    "propertiesToCompare": [
+      "name",
+      "description",
+      "builtComponentChecksum",
+      "sourceComponentPath",
+      "builtComponentPath",
+      "componentName",
+    ],
+    "propertiesToStringify": [],
+  },
+  "index": {
+    "propertiesToCompare": [
+      "indexType",
+      "indexWhereClause",
+      "isUnique",
+      "name",
+      "universalFlatIndexFieldMetadatas",
+    ],
+    "propertiesToStringify": [
+      "universalFlatIndexFieldMetadatas",
+    ],
+  },
+  "logicFunction": {
+    "propertiesToCompare": [
+      "name",
+      "description",
+      "timeoutSeconds",
+      "checksum",
+      "sourceHandlerPath",
+      "handlerName",
+      "toolInputSchema",
+      "isTool",
+      "isBuildUpToDate",
+      "deletedAt",
+      "cronTriggerSettings",
+      "databaseEventTriggerSettings",
+      "httpRouteTriggerSettings",
+    ],
+    "propertiesToStringify": [
+      "toolInputSchema",
+      "cronTriggerSettings",
+      "databaseEventTriggerSettings",
+      "httpRouteTriggerSettings",
+    ],
+  },
+  "navigationMenuItem": {
+    "propertiesToCompare": [
+      "position",
+      "folderUniversalIdentifier",
+      "name",
+      "link",
+    ],
+    "propertiesToStringify": [],
+  },
+  "objectMetadata": {
+    "propertiesToCompare": [
+      "description",
+      "icon",
+      "isActive",
+      "isLabelSyncedWithName",
+      "labelPlural",
+      "labelSingular",
+      "namePlural",
+      "nameSingular",
+      "labelIdentifierFieldMetadataUniversalIdentifier",
+      "standardOverrides",
+    ],
+    "propertiesToStringify": [
+      "standardOverrides",
+    ],
+  },
+  "pageLayout": {
+    "propertiesToCompare": [
+      "name",
+      "type",
+      "objectMetadataUniversalIdentifier",
+      "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "pageLayoutTab": {
+    "propertiesToCompare": [
+      "title",
+      "position",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "pageLayoutWidget": {
+    "propertiesToCompare": [
+      "title",
+      "type",
+      "objectMetadataUniversalIdentifier",
+      "gridPosition",
+      "position",
+      "universalConfiguration",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [
+      "gridPosition",
+      "position",
+      "universalConfiguration",
+    ],
+  },
+  "role": {
+    "propertiesToCompare": [
+      "label",
+      "description",
+      "icon",
+      "canUpdateAllSettings",
+      "canAccessAllTools",
+      "canReadAllObjectRecords",
+      "canUpdateAllObjectRecords",
+      "canSoftDeleteAllObjectRecords",
+      "canDestroyAllObjectRecords",
+      "canBeAssignedToUsers",
+      "canBeAssignedToAgents",
+      "canBeAssignedToApiKeys",
+    ],
+    "propertiesToStringify": [],
+  },
+  "roleTarget": {
+    "propertiesToCompare": [
+      "roleUniversalIdentifier",
+      "userWorkspaceId",
+      "apiKeyId",
+      "agentId",
+    ],
+    "propertiesToStringify": [],
+  },
+  "rowLevelPermissionPredicate": {
+    "propertiesToCompare": [
+      "fieldMetadataUniversalIdentifier",
+      "operand",
+      "value",
+      "rowLevelPermissionPredicateGroupUniversalIdentifier",
+      "positionInRowLevelPermissionPredicateGroup",
+      "subFieldName",
+      "workspaceMemberFieldMetadataUniversalIdentifier",
+      "workspaceMemberSubFieldName",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [
+      "value",
+    ],
+  },
+  "rowLevelPermissionPredicateGroup": {
+    "propertiesToCompare": [
+      "logicalOperator",
+      "positionInRowLevelPermissionPredicateGroup",
+      "parentRowLevelPermissionPredicateGroupUniversalIdentifier",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "skill": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "icon",
+      "description",
+      "content",
+      "isActive",
+    ],
+    "propertiesToStringify": [],
+  },
+  "view": {
+    "propertiesToCompare": [
+      "key",
+      "deletedAt",
+      "createdByUserWorkspaceId",
+      "name",
+      "type",
+      "icon",
+      "position",
+      "isCompact",
+      "openRecordIn",
+      "kanbanAggregateOperation",
+      "kanbanAggregateOperationFieldMetadataUniversalIdentifier",
+      "anyFieldFilterValue",
+      "calendarLayout",
+      "calendarFieldMetadataUniversalIdentifier",
+      "visibility",
+      "mainGroupByFieldMetadataUniversalIdentifier",
+      "shouldHideEmptyGroups",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewField": {
+    "propertiesToCompare": [
+      "isVisible",
+      "size",
+      "position",
+      "aggregateOperation",
+      "viewFieldGroupUniversalIdentifier",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewFieldGroup": {
+    "propertiesToCompare": [
+      "name",
+      "position",
+      "isVisible",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewFilter": {
+    "propertiesToCompare": [
+      "viewUniversalIdentifier",
+      "deletedAt",
+      "fieldMetadataUniversalIdentifier",
+      "operand",
+      "value",
+      "viewFilterGroupUniversalIdentifier",
+      "positionInViewFilterGroup",
+      "subFieldName",
+    ],
+    "propertiesToStringify": [
+      "value",
+    ],
+  },
+  "viewFilterGroup": {
+    "propertiesToCompare": [
+      "viewUniversalIdentifier",
+      "deletedAt",
+      "parentViewFilterGroupUniversalIdentifier",
+      "logicalOperator",
+      "positionInViewFilterGroup",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewGroup": {
+    "propertiesToCompare": [
+      "isVisible",
+      "fieldValue",
+      "position",
+      "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "webhook": {
+    "propertiesToCompare": [
+      "targetUrl",
+      "operations",
+      "description",
+      "secret",
+    ],
+    "propertiesToStringify": [
+      "operations",
+    ],
+  },
+}
+`;

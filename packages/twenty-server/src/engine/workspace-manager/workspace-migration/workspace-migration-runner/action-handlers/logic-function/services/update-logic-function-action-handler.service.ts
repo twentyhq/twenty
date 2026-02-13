@@ -1,30 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { promises as fs } from 'fs';
-import { dirname, join } from 'path';
-
-import { isObject } from '@sniptt/guards';
-import { FileFolder, Sources } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
-  LogicFunctionException,
-  LogicFunctionExceptionCode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+  FlatUpdateLogicFunctionAction,
+  UniversalUpdateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -35,27 +19,35 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'update',
   'logicFunction',
 ) {
-  constructor(
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly functionBuildService: LogicFunctionBuildService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly fileStorageService: FileStorageService,
-  ) {
-    super();
-  }
-
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateLogicFunctionAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateLogicFunctionAction>,
   ): Promise<FlatUpdateLogicFunctionAction> {
-    return context.action;
+    const { action, allFlatEntityMaps } = context;
+
+    const flatLogicFunction = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const update = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'logicFunction',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    return {
+      type: 'update',
+      metadataName: 'logicFunction',
+      entityId: flatLogicFunction.id,
+      update,
+    };
   }
 
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
-    const { entityId, code, update } = flatAction;
+    const { entityId, update } = flatAction;
 
     const logicFunctionRepository =
       queryRunner.manager.getRepository<LogicFunctionEntity>(
@@ -63,118 +55,5 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       );
 
     await logicFunctionRepository.update({ id: entityId, workspaceId }, update);
-
-    const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: entityId,
-      flatEntityMaps: context.allFlatEntityMaps.flatLogicFunctionMaps,
-    });
-
-    if (isDefined(update.checksum) && isDefined(code)) {
-      await this.handleChecksumUpdate({
-        flatLogicFunction,
-        code,
-      });
-    }
-    if (update.deletedAt !== undefined) {
-      await this.handleDeletedAtUpdate({
-        flatLogicFunction,
-      });
-    }
-  }
-
-  async handleDeletedAtUpdate({
-    flatLogicFunction,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-  }) {
-    await this.logicFunctionExecutorService.delete(flatLogicFunction);
-  }
-
-  private async getApplicationUniversalIdentifier(
-    applicationId: string,
-  ): Promise<string> {
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId },
-      select: ['universalIdentifier'],
-    });
-
-    if (!isDefined(application)) {
-      throw new LogicFunctionException(
-        `Application with id ${applicationId} not found`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    return application.universalIdentifier;
-  }
-
-  private async writeSourcesToLocalFolder(
-    sources: Sources,
-    localPath: string,
-  ): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      const filePath = join(localPath, key);
-      const value = sources[key];
-
-      if (isObject(value)) {
-        await this.writeSourcesToLocalFolder(value as Sources, filePath);
-        continue;
-      }
-      await fs.mkdir(dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, value);
-    }
-  }
-
-  async handleChecksumUpdate({
-    flatLogicFunction,
-    code,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    code: Sources;
-  }) {
-    const applicationUniversalIdentifier =
-      await this.getApplicationUniversalIdentifier(
-        flatLogicFunction.applicationId,
-      );
-
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
-
-    try {
-      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
-
-      await this.writeSourcesToLocalFolder(code, sourceTemporaryDir);
-
-      const baseFolderPath = getLogicFunctionBaseFolderPath(
-        flatLogicFunction.sourceHandlerPath,
-      );
-
-      await this.fileStorageService.uploadFolder_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
-      });
-    } catch (error) {
-      this.logger.log(
-        'workspace-migration-runner',
-        `Error updating logic function ${flatLogicFunction.id}: ${error.message}`,
-      );
-    } finally {
-      await lambdaBuildDirectoryManager.clean();
-    }
-
-    try {
-      await this.functionBuildService.buildAndUpload({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      });
-    } catch (error) {
-      // TODO: logic should be improved
-      this.logger.log(
-        'workspace-migration-runner',
-        `Error building and uploading logic function ${flatLogicFunction.id}: ${error.message}`,
-      );
-    }
   }
 }

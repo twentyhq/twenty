@@ -1,7 +1,7 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ViewField } from '@/views/types/ViewField';
-import { type CoreViewField } from '~/generated/graphql';
+import { type CoreViewField } from '~/generated-metadata/graphql';
 
 export const convertCoreViewFieldToViewField = (
   coreViewField: Pick<

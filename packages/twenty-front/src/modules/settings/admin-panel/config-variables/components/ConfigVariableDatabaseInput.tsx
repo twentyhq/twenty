@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { ConfigVariableType } from '~/generated/graphql';
+import { ConfigVariableType } from '~/generated-metadata/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
 type ConfigVariableDatabaseInputProps = {

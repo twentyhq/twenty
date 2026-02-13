@@ -1,17 +1,15 @@
-import * as fs from 'fs-extra';
 import path from 'path';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
+import { type PackageJson } from 'type-fest';
 
-const moduleEntries = Object.keys((packageJson as any).exports || {})
-  .filter((key) => key !== '.' && !key.startsWith('./src/'))
-  .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
-
-const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
-
-export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
+const entries = [
+  'src/index.ts',
+  'src/cli/cli.ts',
+  'src/ui/index.ts',
+  'src/front-component/index.ts',
+];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -20,37 +18,18 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
     );
   }
 
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
+  // Find which entry this chunk corresponds to
+  const entry = entries.find((e) => chunk.facadeModuleId?.endsWith(e));
+  if (!entry || entry === 'src/index.ts' || entry === 'src/cli/cli.ts') {
     return `${chunk.name}.${extension}`;
   }
-  return `${moduleDirectory}/index.${extension}`;
-};
 
-const copyTwentyPackagesInVendor = (packages: string[]) => {
-  return packages.map((packageName) => ({
-    name: `copy-${packageName}-dist`,
-    closeBundle: async () => {
-      const sharedDist = path.resolve(__dirname, `../${packageName}/dist`);
-      const vendorDist = path.resolve(__dirname, `dist/vendor/${packageName}`);
-
-      await fs.remove(vendorDist);
-      await fs.ensureDir(path.dirname(vendorDist));
-      await fs.copy(sharedDist, vendorDist);
-    },
-  }));
+  // Remove 'src/' prefix and '/index.ts' suffix to get the module path
+  const modulePath = entry.replace('src/', '').replace('/index.ts', '');
+  return `${modulePath}/index.${extension}`;
 };
 
 export default defineConfig(() => {
-  const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-sdk',
@@ -62,36 +41,6 @@ export default defineConfig(() => {
     plugins: [
       tsconfigPaths({
         root: __dirname,
-      }),
-      ...copyTwentyPackagesInVendor(PACKAGES_TO_VENDOR),
-      dts({
-        entryRoot: './src',
-        tsconfigPath: tsConfigPath,
-        exclude: ['vite.config.ts'],
-        beforeWriteFile: (filePath, content) => {
-          const fromDir = path.dirname(filePath);
-          const vendorDir = path.resolve(process.cwd(), 'dist/vendor');
-
-          let rel = path
-            .relative(fromDir, vendorDir)
-            .split(path.sep)
-            .join(path.posix.sep);
-          if (!rel.startsWith('.')) rel = `./${rel}`;
-
-          const formattedContent = PACKAGES_TO_VENDOR.reduce((acc, pkg) => {
-            const regex = new RegExp(
-              `(from\\s+["'])${pkg}(\\/[^"']*)?(["'])`,
-              'g',
-            );
-
-            return acc.replace(regex, `$1${rel}/${pkg}$2$3`);
-          }, content);
-
-          return {
-            filePath,
-            content: formattedContent,
-          };
-        },
       }),
     ],
     worker: {
@@ -125,21 +74,35 @@ export default defineConfig(() => {
           }
           warn(warning);
         },
-        external: [
-          ...Object.keys((packageJson as any).dependencies || {}).filter(
-            (dep) => !PACKAGES_TO_VENDOR.includes(dep),
-          ),
-          'path',
-          'fs',
-          'fs/promises',
-          'url',
-          'crypto',
-          'stream',
-          'util',
-          'os',
-          'module',
-          /^node:/,
-        ],
+        external: (id: string) => {
+          if (/^node:/.test(id)) {
+            return true;
+          }
+
+          const builtins = [
+            'path',
+            'fs',
+            'fs/promises',
+            'url',
+            'crypto',
+            'stream',
+            'util',
+            'os',
+            'module',
+          ];
+
+          if (builtins.includes(id)) {
+            return true;
+          }
+
+          const deps = Object.entries(
+            (packageJson as PackageJson).dependencies || {},
+          ).filter(([_, version]) => !version?.startsWith('workspace:'));
+
+          return deps.some(
+            ([dep, _]) => id === dep || id.startsWith(dep + '/'),
+          );
+        },
         output: [
           {
             format: 'es',

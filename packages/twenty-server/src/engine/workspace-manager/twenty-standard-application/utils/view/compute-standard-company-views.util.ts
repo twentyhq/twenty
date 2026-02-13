@@ -22,5 +22,17 @@ export const computeStandardCompanyViews = (
         icon: 'IconList',
       },
     }),
+    companyRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'company',
+      context: {
+        viewName: 'companyRecordPageFields',
+        name: 'Company Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };

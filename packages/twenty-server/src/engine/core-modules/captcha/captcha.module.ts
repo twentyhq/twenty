@@ -8,14 +8,19 @@ import {
   CaptchaDriverType,
   type CaptchaModuleAsyncOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 @Global()
 export class CaptchaModule {
   static forRoot(options: CaptchaModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: CAPTCHA_DRIVER,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      useFactory: async (...args: any[]) => {
+      useFactory: async (
+        secureHttpClientService: SecureHttpClientService,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...args: any[]
+      ) => {
         const config = await options.useFactory(...args);
 
         if (!config) {
@@ -24,18 +29,30 @@ export class CaptchaModule {
 
         switch (config.type) {
           case CaptchaDriverType.GOOGLE_RECAPTCHA:
-            return new GoogleRecaptchaDriver(config.options);
+            return new GoogleRecaptchaDriver(
+              config.options,
+              secureHttpClientService.getHttpClient({
+                baseURL: 'https://www.google.com/recaptcha/api/siteverify',
+              }),
+            );
           case CaptchaDriverType.TURNSTILE:
-            return new TurnstileDriver(config.options);
+            return new TurnstileDriver(
+              config.options,
+              secureHttpClientService.getHttpClient({
+                baseURL:
+                  'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+              }),
+            );
           default:
             return;
         }
       },
-      inject: options.inject || [],
+      inject: [SecureHttpClientService, ...(options.inject || [])],
     };
 
     return {
       module: CaptchaModule,
+      imports: [SecureHttpClientModule],
       providers: [CaptchaService, provider],
       exports: [CaptchaService],
     };

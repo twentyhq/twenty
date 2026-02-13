@@ -1,7 +1,7 @@
-import { type FlatEntityFromV2 } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from-v2.type';
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-type BaseFlatObjectMetadata = FlatEntityFromV2<
+type BaseFlatObjectMetadata = FlatEntityFrom<
   Omit<ObjectMetadataEntity, 'targetRelationFields' | 'dataSourceId'>
 >;
 export type FlatObjectMetadata = BaseFlatObjectMetadata & {

@@ -84,11 +84,10 @@ const PERSON_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_PERSON_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'personRecordPage',
   name: 'Default Person Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
   universalIdentifier: '20202020-a102-4002-8002-ae0a1ea11002',
-  defaultTabUniversalIdentifier: PERSON_PAGE_TABS.home.universalIdentifier,
+  defaultTabUniversalIdentifier: null,
   tabs: PERSON_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

@@ -25,8 +25,8 @@ import { ClickToActionLink } from 'twenty-ui/navigation';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  useSkipSyncEmailOnboardingStepMutation,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
+import { useSkipSyncEmailOnboardingStepMutation } from '~/generated-metadata/graphql';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 

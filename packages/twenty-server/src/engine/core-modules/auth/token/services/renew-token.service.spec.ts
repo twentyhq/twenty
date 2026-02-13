@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -110,7 +110,7 @@ describe('RenewTokenService', () => {
         mockRefreshToken,
       );
       expect(appTokenRepository.update).toHaveBeenCalledWith(
-        { id: mockTokenId },
+        { id: mockTokenId, revokedAt: IsNull() },
         { revokedAt: expect.any(Date) },
       );
       expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(

@@ -3,7 +3,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
-import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationEditSSOIDPCallSpy = jest.fn();

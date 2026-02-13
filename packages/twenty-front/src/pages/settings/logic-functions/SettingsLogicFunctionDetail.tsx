@@ -1,25 +1,35 @@
-import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
+import { getToolInputSchemaFromSourceCode } from '@/logic-functions/utils/getToolInputSchemaFromSourceCode';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import {
   type LogicFunctionFormValues,
   useLogicFunctionUpdateFormState,
-} from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconSettings, IconTestPipe } from 'twenty-ui/display';
-import { useDebouncedCallback } from 'use-debounce';
+import {
+  IconBolt,
+  IconCode,
+  IconPlayerPlay,
+  IconSettings,
+} from 'twenty-ui/display';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValue } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
@@ -27,6 +37,7 @@ export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId = '' } = useParams();
 
   const navigate = useNavigate();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -35,20 +46,30 @@ export const SettingsLogicFunctionDetail = () => {
 
   const applicationName = data?.findOneApplication?.name;
 
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+
+  const isManaged = applicationId !== workspaceCustomApplicationId;
+
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     instanceId,
   );
-  const { updateLogicFunction } = usePersistLogicFunction();
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
 
-  const { testLogicFunction, isTesting } = useTestLogicFunction({
+  const { updateLogicFunction } = usePersistLogicFunction();
+
+  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
     logicFunctionId,
   });
+
+  const handleExecute = async () => {
+    await executeLogicFunction();
+  };
 
   const handleSave = useDebouncedCallback(
     async (toolInputSchema?: object | null) => {
@@ -58,7 +79,7 @@ export const SettingsLogicFunctionDetail = () => {
           update: {
             name: formValues.name,
             description: formValues.description,
-            code: formValues.code,
+            sourceHandlerCode: formValues.code,
             ...(toolInputSchema !== undefined && { toolInputSchema }),
           },
         },
@@ -68,29 +89,54 @@ export const SettingsLogicFunctionDetail = () => {
   );
 
   const onChange = (key: string) => {
-    return async (value: string) => {
+    return (value: string) => {
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
         [key]: value,
       }));
-      await handleSave();
     };
+  };
+
+  const onCodeChange = async (filePath: string, value: string) => {
+    setFormValues((prevState: LogicFunctionFormValues) => {
+      return {
+        ...prevState,
+        code: value,
+      };
+    });
+
+    // Parse and save schema if editing the handler file
+    let toolInputSchema: object | null | undefined;
+
+    if (filePath === logicFunction?.sourceHandlerPath) {
+      toolInputSchema = await getToolInputSchemaFromSourceCode(value);
+    }
+
+    await handleSave(toolInputSchema);
   };
 
   const handleTestFunction = async () => {
     navigate('#test');
-    await testLogicFunction();
+    await executeLogicFunction();
   };
 
   const tabs = [
+    {
+      id: 'editor',
+      title: t`Editor`,
+      Icon: IconCode,
+      disabled: isManaged,
+      hide: isManaged,
+    },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
+    { id: 'test', title: t`Test`, Icon: IconPlayerPlay },
     { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
-    { id: 'test', title: t`Test`, Icon: IconTestPipe },
   ];
 
+  const isEditorTab = activeTabId === 'editor';
   const isTriggersTab = activeTabId === 'triggers';
-  const isTestTab = activeTabId === 'test';
   const isSettingsTab = activeTabId === 'settings';
+  const isTestTab = activeTabId === 'test';
 
   const breadcrumbLinks =
     isDefined(applicationId) && applicationId !== ''
@@ -128,6 +174,14 @@ export const SettingsLogicFunctionDetail = () => {
           { children: `${logicFunction?.name}` },
         ];
 
+  const files = [
+    {
+      path: 'index.ts',
+      content: formValues.code,
+      language: 'typescript',
+    },
+  ];
+
   return (
     !loading &&
     !applicationLoading && (
@@ -142,20 +196,28 @@ export const SettingsLogicFunctionDetail = () => {
       >
         <SettingsPageContainer>
           <TabList tabs={tabs} componentInstanceId={instanceId} />
+          {isEditorTab && (
+            <SettingsLogicFunctionCodeEditorTab
+              files={files}
+              handleExecute={handleTestFunction}
+              onChange={onCodeChange}
+              isTesting={isExecuting}
+            />
+          )}
           {isTriggersTab && logicFunction && (
             <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
-          )}
-          {isTestTab && (
-            <SettingsLogicFunctionTestTab
-              logicFunctionId={logicFunctionId}
-              handleExecute={handleTestFunction}
-              isTesting={isTesting}
-            />
           )}
           {isSettingsTab && (
             <SettingsLogicFunctionSettingsTab
               formValues={formValues}
               onChange={onChange}
+            />
+          )}
+          {isTestTab && (
+            <SettingsLogicFunctionTestTab
+              handleExecute={handleExecute}
+              logicFunctionId={logicFunctionId}
+              isTesting={isExecuting}
             />
           )}
         </SettingsPageContainer>

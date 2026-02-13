@@ -22,8 +22,7 @@ import {
   ClickToActionLink,
   TWENTY_PRICING_LINK,
 } from 'twenty-ui/navigation';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
-import { type Billing } from '~/generated/graphql';
+import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;

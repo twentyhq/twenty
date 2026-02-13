@@ -19,24 +19,18 @@ import {
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-  type LogicFunctionExecutorDriver,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
+  type LogicFunctionDriver,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import {
-  LambdaBuildDirectoryManager,
-  NODE_LAYER_SUBFOLDER,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -44,7 +38,9 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
+import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -57,22 +53,22 @@ type LambdaDriverExecutorPayload = {
 };
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
-  fileStorageService: FileStorageService;
+  logicFunctionResourceService: LogicFunctionResourceService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
 }
 
-export class LambdaDriver implements LogicFunctionExecutorDriver {
+export class LambdaDriver implements LogicFunctionDriver {
   private lambdaClient: Lambda | undefined;
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
-  private readonly fileStorageService: FileStorageService;
+  private readonly logicFunctionResourceService: LogicFunctionResourceService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
-    this.fileStorageService = options.fileStorageService;
+    this.logicFunctionResourceService = options.logicFunctionResourceService;
   }
 
   private async getLambdaClient() {
@@ -142,33 +138,6 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     return flatApplication.yarnLockChecksum ?? 'default';
   }
 
-  private async copyDependenciesInMemory({
-    applicationUniversalIdentifier,
-    workspaceId,
-    inMemoryLayerFolderPath,
-  }: {
-    applicationUniversalIdentifier: string;
-    workspaceId: string;
-    inMemoryLayerFolderPath: string;
-  }) {
-    await Promise.all([
-      this.fileStorageService.downloadFile_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'package.json',
-        localPath: join(inMemoryLayerFolderPath, 'package.json'),
-      }),
-      this.fileStorageService.downloadFile_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'yarn.lock',
-        localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
-      }),
-    ]);
-  }
-
   private async createLayerIfNotExists({
     flatApplication,
     applicationUniversalIdentifier,
@@ -193,19 +162,16 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       return listLayerResult.LayerVersions[0].LayerVersionArn;
     }
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
-      await lambdaBuildDirectoryManager.init();
+      await temporaryDirManager.init();
 
-    const nodeDependenciesFolder = join(
-      sourceTemporaryDir,
-      NODE_LAYER_SUBFOLDER,
-    );
+    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
 
-    await this.copyDependenciesInMemory({
+    await this.logicFunctionResourceService.copyDependenciesInMemory({
       applicationUniversalIdentifier,
       workspaceId: flatApplication.workspaceId,
-      inMemoryLayerFolderPath: nodeDependenciesFolder,
+      inMemoryFolderPath: nodeDependenciesFolder,
     });
     await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
 
@@ -226,7 +192,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const result = await (await this.getLambdaClient()).send(command);
 
-    await lambdaBuildDirectoryManager.clean();
+    await temporaryDirManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
       throw new Error('new layer version arn if undefined');
@@ -308,10 +274,10 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       applicationUniversalIdentifier,
     });
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const temporaryDirManager = new TemporaryDirManager();
 
     const { sourceTemporaryDir, lambdaZipPath } =
-      await lambdaBuildDirectoryManager.init();
+      await temporaryDirManager.init();
 
     await copyExecutor(sourceTemporaryDir);
 
@@ -333,7 +299,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     await (await this.getLambdaClient()).send(command);
 
-    await lambdaBuildDirectoryManager.clean();
+    await temporaryDirManager.clean();
   }
 
   private extractLogs(logString: string): string {
@@ -357,6 +323,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     applicationUniversalIdentifier,
     payload,
     env,
+    timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build({
       flatLogicFunction,
@@ -368,16 +335,11 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const startTime = Date.now();
 
-    const compiledCode = (
-      await streamToBuffer(
-        await this.fileStorageService.readFile_v2({
-          workspaceId: flatLogicFunction.workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.BuiltLogicFunction,
-          resourcePath: flatLogicFunction.builtHandlerPath,
-        }),
-      )
-    ).toString('utf-8');
+    const compiledCode = await this.logicFunctionResourceService.getBuiltCode({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
+    });
 
     const executorPayload: LambdaDriverExecutorPayload = {
       params: payload,
@@ -395,7 +357,12 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     const command = new InvokeCommand(params);
 
     try {
-      const result = await (await this.getLambdaClient()).send(command);
+      const lambdaClient = await this.getLambdaClient();
+
+      const result = await callWithTimeout({
+        callback: () => lambdaClient.send(command),
+        timeoutMs,
+      });
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())

@@ -1,22 +1,13 @@
 import gql from 'graphql-tag';
-import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-const uploadWorkspaceFieldFileMutation = gql`
-  mutation UploadFilesFieldFile($file: Upload!) {
-    uploadFilesFieldFile(file: $file) {
-      id
-      path
-      size
-      createdAt
-    }
-  }
-`;
 
 const deleteFileMutation = gql`
   mutation DeleteFile($fileId: UUID!) {
@@ -75,34 +66,8 @@ type UploadedFile = {
   contentType: string;
 };
 
-const uploadFile = async (
-  filename: string,
-  content: string,
-  contentType: string,
-): Promise<UploadedFile> => {
-  const response = await makeGraphqlAPIRequestWithFileUpload(
-    {
-      query: uploadWorkspaceFieldFileMutation,
-      variables: { file: null },
-    },
-    {
-      field: 'file',
-      buffer: Buffer.from(content),
-      filename,
-      contentType,
-    },
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return {
-    id: response.body.data.uploadFilesFieldFile.id,
-    contentType,
-  };
-};
-
 const deleteFile = async (fileId: string): Promise<void> => {
-  await makeGraphqlAPIRequest({
+  await makeMetadataAPIRequest({
     query: deleteFileMutation,
     variables: { fileId },
   });
@@ -110,7 +75,34 @@ const deleteFile = async (fileId: string): Promise<void> => {
 
 describe('fileFieldSync - FILES field <> files sync', () => {
   let createdObjectMetadataId = '';
+  let createdFieldMetadataId = '';
   let uploadedFiles: UploadedFile[] = [];
+
+  const uploadFile = async (
+    filename: string,
+    content: string,
+    contentType: string,
+  ): Promise<UploadedFile> => {
+    const response = await makeMetadataAPIRequestWithFileUpload(
+      {
+        query: uploadFilesFieldFileMutation,
+        variables: { file: null, fieldMetadataId: createdFieldMetadataId },
+      },
+      {
+        field: 'file',
+        buffer: Buffer.from(content),
+        filename,
+        contentType,
+      },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return {
+      id: response.body.data.uploadFilesFieldFile.id,
+      contentType,
+    };
+  };
 
   const checkFileExistsInDB = async (fileId: string): Promise<boolean> => {
     const result = await global.testDataSource.query(
@@ -168,7 +160,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
     createdObjectMetadataId = objectMetadataId;
 
-    await createOneFieldMetadata({
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
       input: {
         name: 'filesField',
         label: 'Files Field',
@@ -183,6 +179,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         type
       `,
     });
+
+    createdFieldMetadataId = fieldMetadataId;
   });
 
   afterEach(async () => {
@@ -210,23 +208,23 @@ describe('fileFieldSync - FILES field <> files sync', () => {
   });
 
   it('createMany without upsert - files sync successfully', async () => {
-    const imageFile = await uploadFile(
-      'test-image.png',
-      'fake image content',
-      'image/png',
+    const file1 = await uploadFile(
+      'test-file1.txt',
+      'fake text content',
+      'text/plain',
     );
-    const textFile = await uploadFile(
+    const file2 = await uploadFile(
       'test-text.txt',
       'fake text content',
       'text/plain',
     );
 
-    uploadedFiles.push(imageFile, textFile);
+    uploadedFiles.push(file1, file2);
 
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(true);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileIsTemporary(file1.id)).toBe(true);
+    expect(await checkFileIsTemporary(file2.id)).toBe(true);
 
     const response = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -236,12 +234,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
             name: 'Record with image',
             filesField: [
               {
-                fileId: imageFile.id,
-                label: 'test-image.png',
+                fileId: file1.id,
+                label: 'test-file1.txt',
               },
               {
-                fileId: textFile.id,
-                label: 'test-text.txt',
+                fileId: file2.id,
+                label: 'test-file2.txt',
               },
             ],
           },
@@ -256,17 +254,17 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     const createdRecord = response.body.data.createFileSyncTestObjects[0];
 
     expect(createdRecord.filesField).toHaveLength(2);
-    expect(createdRecord.filesField[0].fileId).toBe(imageFile.id);
-    expect(createdRecord.filesField[0].extension).toBe('.png');
-    expect(createdRecord.filesField[1].fileId).toBe(textFile.id);
+    expect(createdRecord.filesField[0].fileId).toBe(file1.id);
+    expect(createdRecord.filesField[0].extension).toBe('.txt');
+    expect(createdRecord.filesField[1].fileId).toBe(file2.id);
     expect(createdRecord.filesField[1].extension).toBe('.txt');
     expect(createdRecord.filesField[0].url).toBeDefined();
     expect(createdRecord.filesField[1].url).toBeDefined();
 
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(true);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file1.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file2.id)).toBe(true);
 
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
@@ -277,30 +275,30 @@ describe('fileFieldSync - FILES field <> files sync', () => {
   });
 
   it('createMany with upsert - files sync successfully', async () => {
-    const imageFile = await uploadFile(
-      'test-image.png',
-      'fake image content',
-      'image/png',
-    );
-    const textFile = await uploadFile(
-      'test-text.txt',
+    const file1 = await uploadFile(
+      'test-file1.txt',
       'fake text content',
       'text/plain',
     );
-    const anotherImageFile = await uploadFile(
-      'test-another-image.png',
-      'fake another image content',
-      'image/png',
+    const file2 = await uploadFile(
+      'test-file2.txt',
+      'fake text content',
+      'text/plain',
+    );
+    const file3 = await uploadFile(
+      'test-file3.txt',
+      'fake text content',
+      'text/plain',
     );
 
-    uploadedFiles.push(imageFile, textFile, anotherImageFile);
+    uploadedFiles.push(file1, file2, file3);
 
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(anotherImageFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(anotherImageFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(true);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileExistsInDB(file3.id)).toBe(true);
+    expect(await checkFileIsTemporary(file1.id)).toBe(true);
+    expect(await checkFileIsTemporary(file2.id)).toBe(true);
+    expect(await checkFileIsTemporary(file3.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -310,12 +308,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
             name: 'Record to upsert',
             filesField: [
               {
-                fileId: imageFile.id,
-                label: 'imageFile-label.png',
+                fileId: file1.id,
+                label: 'test-file1.txt',
               },
               {
-                fileId: anotherImageFile.id,
-                label: 'anotherImageFile-label.png',
+                fileId: file2.id,
+                label: 'test-file2.txt',
               },
             ],
           },
@@ -327,7 +325,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     const createdRecord = createResponse.body.data.createFileSyncTestObjects[0];
     const recordId = createdRecord.id;
 
-    expect(createdRecord.filesField[0].extension).toBe('.png');
+    expect(createdRecord.filesField[0].extension).toBe('.txt');
 
     const upsertResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -338,16 +336,16 @@ describe('fileFieldSync - FILES field <> files sync', () => {
             name: 'Record updated via upsert',
             filesField: [
               {
-                fileId: textFile.id,
-                label: 'new-added-text-file.txt',
+                fileId: file1.id,
+                label: 'updated-label-test-file1.txt',
               },
               {
-                fileId: imageFile.id,
-                label: 'imageFile-label.png',
+                fileId: file2.id,
+                label: 'test-file2.txt',
               },
               {
-                fileId: anotherImageFile.id,
-                label: 'updated-anotherImageFile-label.png',
+                fileId: file3.id,
+                label: 'new-test-file3.txt',
               },
             ],
           },
@@ -363,24 +361,24 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.id).toBe(recordId);
     expect(updatedRecord.name).toBe('Record updated via upsert');
     expect(updatedRecord.filesField).toHaveLength(3);
-    expect(updatedRecord.filesField[1].fileId).toBe(imageFile.id);
-    expect(updatedRecord.filesField[1].label).toBe('imageFile-label.png');
-    expect(updatedRecord.filesField[1].extension).toBe('.png');
+    expect(updatedRecord.filesField[1].fileId).toBe(file2.id);
+    expect(updatedRecord.filesField[1].label).toBe('test-file2.txt');
+    expect(updatedRecord.filesField[1].extension).toBe('.txt');
     expect(updatedRecord.filesField[1].url).toBeDefined();
-    expect(updatedRecord.filesField[2].fileId).toBe(anotherImageFile.id);
-    expect(updatedRecord.filesField[2].label).toBe(
-      'updated-anotherImageFile-label.png',
-    );
-    expect(updatedRecord.filesField[2].extension).toBe('.png');
+    expect(updatedRecord.filesField[2].fileId).toBe(file3.id);
+    expect(updatedRecord.filesField[2].label).toBe('new-test-file3.txt');
+    expect(updatedRecord.filesField[2].extension).toBe('.txt');
     expect(updatedRecord.filesField[2].url).toBeDefined();
-    expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
-    expect(updatedRecord.filesField[0].label).toBe('new-added-text-file.txt');
+    expect(updatedRecord.filesField[0].fileId).toBe(file1.id);
+    expect(updatedRecord.filesField[0].label).toBe(
+      'updated-label-test-file1.txt',
+    );
     expect(updatedRecord.filesField[0].extension).toBe('.txt');
     expect(updatedRecord.filesField[0].url).toBeDefined();
 
-    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(anotherImageFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file1.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file2.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file3.id)).toBe(true);
 
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
@@ -391,23 +389,23 @@ describe('fileFieldSync - FILES field <> files sync', () => {
   });
 
   it('updateOne - files sync successfully', async () => {
-    const imageFile = await uploadFile(
-      'test-image.png',
-      'fake image content',
-      'image/png',
+    const file1 = await uploadFile(
+      'test-file1.txt',
+      'fake text content',
+      'text/plain',
     );
-    const textFile = await uploadFile(
-      'test-text.txt',
+    const file2 = await uploadFile(
+      'test-file2.txt',
       'fake text content',
       'text/plain',
     );
 
-    uploadedFiles.push(imageFile, textFile);
+    uploadedFiles.push(file1, file2);
 
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(true);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileIsTemporary(file1.id)).toBe(true);
+    expect(await checkFileIsTemporary(file2.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -417,8 +415,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
             name: 'Record for updateOne test',
             filesField: [
               {
-                fileId: imageFile.id,
-                label: 'original-image.png',
+                fileId: file1.id,
+                label: 'test-file1.txt',
               },
             ],
           },
@@ -427,12 +425,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       },
     });
 
-    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file1.id)).toBe(true);
 
     const createdRecord = createResponse.body.data.createFileSyncTestObjects[0];
     const recordId = createdRecord.id;
 
-    expect(createdRecord.filesField[0].extension).toBe('.png');
+    expect(createdRecord.filesField[0].extension).toBe('.txt');
 
     const updateResponse = await makeGraphqlAPIRequest({
       query: updateRecordQuery,
@@ -442,12 +440,12 @@ describe('fileFieldSync - FILES field <> files sync', () => {
           name: 'Record updated via updateOne',
           filesField: [
             {
-              fileId: textFile.id,
+              fileId: file1.id,
               label: 'added-text.txt',
             },
             {
-              fileId: imageFile.id,
-              label: 'original-image.png',
+              fileId: file2.id,
+              label: 'test-file2.txt',
             },
           ],
         },
@@ -461,16 +459,16 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.id).toBe(recordId);
     expect(updatedRecord.name).toBe('Record updated via updateOne');
     expect(updatedRecord.filesField).toHaveLength(2);
-    expect(updatedRecord.filesField[1].fileId).toBe(imageFile.id);
-    expect(updatedRecord.filesField[1].label).toBe('original-image.png');
+    expect(updatedRecord.filesField[1].fileId).toBe(file2.id);
+    expect(updatedRecord.filesField[1].label).toBe('test-file2.txt');
     expect(updatedRecord.filesField[1].url).toBeDefined();
-    expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
+    expect(updatedRecord.filesField[0].fileId).toBe(file1.id);
     expect(updatedRecord.filesField[0].label).toBe('added-text.txt');
     expect(updatedRecord.filesField[0].url).toBeDefined();
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(true);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file1.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file2.id)).toBe(true);
 
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,
@@ -481,23 +479,23 @@ describe('fileFieldSync - FILES field <> files sync', () => {
   });
 
   it('updateOne with removeFiles - verifies files can be removed', async () => {
-    const imageFile = await uploadFile(
-      'test-image-to-delete.png',
-      'fake image content',
-      'image/png',
+    const file1 = await uploadFile(
+      'test-file1.txt',
+      'fake text content',
+      'text/plain',
     );
-    const textFile = await uploadFile(
-      'test-text-to-keep.txt',
+    const file2 = await uploadFile(
+      'test-file2.txt',
       'fake text content',
       'text/plain',
     );
 
-    uploadedFiles.push(imageFile, textFile);
+    uploadedFiles.push(file1, file2);
 
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(imageFile.id)).toBe(true);
-    expect(await checkFileIsTemporary(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(true);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileIsTemporary(file1.id)).toBe(true);
+    expect(await checkFileIsTemporary(file2.id)).toBe(true);
 
     const createResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
@@ -507,11 +505,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
             name: 'Record for file deletion test',
             filesField: [
               {
-                fileId: imageFile.id,
-                label: 'image-to-delete.png',
+                fileId: file1.id,
+                label: 'test-file1.txt',
               },
               {
-                fileId: textFile.id,
+                fileId: file2.id,
                 label: 'text-to-keep.txt',
               },
             ],
@@ -521,8 +519,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       },
     });
 
-    expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file1.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file2.id)).toBe(true);
 
     const createdRecord = createResponse.body.data.createFileSyncTestObjects[0];
     const recordId = createdRecord.id;
@@ -534,7 +532,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
         data: {
           filesField: [
             {
-              fileId: textFile.id,
+              fileId: file2.id,
               label: 'text-to-keep.txt',
             },
           ],
@@ -547,11 +545,11 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     const updatedRecord = updateResponse.body.data.updateFileSyncTestObject;
 
     expect(updatedRecord.filesField).toHaveLength(1);
-    expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
+    expect(updatedRecord.filesField[0].fileId).toBe(file2.id);
 
-    expect(await checkFileExistsInDB(imageFile.id)).toBe(false);
-    expect(await checkFileExistsInDB(textFile.id)).toBe(true);
-    expect(await checkFileIsInPermanentStorage(textFile.id)).toBe(true);
+    expect(await checkFileExistsInDB(file1.id)).toBe(false);
+    expect(await checkFileExistsInDB(file2.id)).toBe(true);
+    expect(await checkFileIsInPermanentStorage(file2.id)).toBe(true);
 
     await makeGraphqlAPIRequest({
       query: deleteRecordsQuery,

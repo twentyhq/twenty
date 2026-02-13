@@ -24,11 +24,10 @@ const WORKFLOW_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_WORKFLOW_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'workflowRecordPage',
   name: 'Default Workflow Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.workflow.universalIdentifier,
   universalIdentifier: '20202020-a106-4006-8006-a0bcf10aa006',
-  defaultTabUniversalIdentifier: WORKFLOW_PAGE_TABS.flow.universalIdentifier,
+  defaultTabUniversalIdentifier: null,
   tabs: WORKFLOW_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

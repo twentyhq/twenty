@@ -11,12 +11,11 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
             "errors": [
               {
                 "code": "INVALID_OBJECT_INPUT",
-                "message": "labelIdentifierFieldMetadataId validation failed: field type not compatible",
+                "message": "labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible",
                 "userFriendlyMessage": "Field cannot be used as label identifier",
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "namePlural": "whatevers",
               "nameSingular": "whatever",
               "universalIdentifier": Any<String>,
@@ -36,10 +35,9 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
               },
             ],
             "flatEntityMinimalInformation": {
-              "fieldMetadataId": Any<String>,
-              "id": Any<String>,
+              "fieldMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
-              "viewId": Any<String>,
+              "viewUniversalIdentifier": Any<String>,
             },
             "metadataName": "viewField",
             "status": "fail",
@@ -64,13 +62,15 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 exports[`Object metadata update should fail when labelIdentifier is not a known field metadata id 1`] = `
 [
   {
+    "eventId": Any<String>,
     "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_OBJECT_INPUT",
-      "userFriendlyMessage": "Invalid object input.",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "subCode": "ENTITY_NOT_FOUND",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "New label identifier field not found for object metadata",
-    "name": "UserInputError",
+    "message": "Could not find flat entity in maps",
+    "name": "InternalServerError",
   },
 ]
 `;
@@ -88,46 +88,6 @@ exports[`Object metadata update should fail when labelIdentifier is not a uuid 1
     },
     "message": "Invalid UUID",
     "name": "ValidationError",
-  },
-]
-`;
-
-exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
-[
-  {
-    "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
-      "errors": {
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_OBJECT_INPUT",
-                "message": "labelIdentifierFieldMetadataId cannot be null",
-                "userFriendlyMessage": "Field label identifier is required",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "namePlural": "whatevers",
-              "nameSingular": "whatever",
-              "universalIdentifier": Any<String>,
-            },
-            "metadataName": "objectMetadata",
-            "status": "fail",
-            "type": "update",
-          },
-        ],
-      },
-      "message": "Validation failed for 1 objectMetadata",
-      "summary": {
-        "objectMetadata": 1,
-        "totalErrors": 1,
-      },
-      "userFriendlyMessage": "Metadata validation failed",
-    },
-    "message": "Multiple validation errors occurred while updating object",
-    "name": "GraphQLError",
   },
 ]
 `;

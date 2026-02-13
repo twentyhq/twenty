@@ -5,20 +5,19 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
 export const findFlatEntityByUniversalIdentifierOrThrow = <
-  T extends SyncableFlatEntity,
+  T extends SyncableFlatEntity | UniversalSyncableFlatEntity,
 >({
   flatEntityMaps,
   universalIdentifier,
 }: {
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMaps: UniversalFlatEntityMaps<T>;
   universalIdentifier: string;
-}): T & {
-  id: string;
-} => {
+}): T => {
   const flatEntity = findFlatEntityByUniversalIdentifier({
     flatEntityMaps,
     universalIdentifier,

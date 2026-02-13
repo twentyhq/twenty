@@ -6,7 +6,6 @@ import { type WORKSPACE_MIGRATION_ACTION_TYPE } from 'src/engine/workspace-manag
 export type BaseUniversalCreateWorkspaceMigrationAction<
   T extends AllMetadataName,
 > = {
-  // TODO prastoin rename to universalFlatEntity ?
   flatEntity: MetadataUniversalFlatEntity<T>;
   type: typeof WORKSPACE_MIGRATION_ACTION_TYPE.create;
   metadataName: T;

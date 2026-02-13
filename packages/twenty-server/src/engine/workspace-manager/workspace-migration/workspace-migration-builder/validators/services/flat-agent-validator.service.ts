@@ -5,13 +5,13 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util';
 import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
@@ -23,12 +23,11 @@ export class FlatAgentValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatAgentMaps: optimisticFlatAgentMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<'agent', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatAgent.id,
         universalIdentifier: flatAgent.universalIdentifier,
         name: flatAgent.name,
       },
@@ -70,12 +69,11 @@ export class FlatAgentValidatorService {
       flatAgentMaps: optimisticFlatAgentMaps,
     },
     buildOptions,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<'agent', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
         name: flatEntityToValidate.name,
       },
@@ -83,8 +81,8 @@ export class FlatAgentValidatorService {
       type: 'delete',
     });
 
-    const existingAgent = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatEntityToValidate.id,
+    const existingAgent = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatEntityToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatAgentMaps,
     });
 
@@ -100,12 +98,10 @@ export class FlatAgentValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      // TODO refactor once agent has been migrated to universal pattern
-      isDefined(existingAgent.__universal) &&
       belongsToTwentyStandardApp({
         universalIdentifier: existingAgent.universalIdentifier,
         applicationUniversalIdentifier:
-          existingAgent.__universal.applicationUniversalIdentifier,
+          existingAgent.applicationUniversalIdentifier,
       })
     ) {
       validationResult.errors.push({
@@ -119,7 +115,7 @@ export class FlatAgentValidatorService {
   }
 
   public validateFlatAgentUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatAgentMaps: optimisticFlatAgentMaps,
@@ -128,15 +124,14 @@ export class FlatAgentValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<'agent', 'update'> {
-    const fromFlatAgent = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const fromFlatAgent = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatAgentMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: fromFlatAgent?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'agent',
       type: 'update',
@@ -154,12 +149,10 @@ export class FlatAgentValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      // TODO refactor once agent has been migrated to universal pattern
-      isDefined(fromFlatAgent.__universal) &&
       belongsToTwentyStandardApp({
         universalIdentifier: fromFlatAgent.universalIdentifier,
         applicationUniversalIdentifier:
-          fromFlatAgent.__universal.applicationUniversalIdentifier,
+          fromFlatAgent.applicationUniversalIdentifier,
       })
     ) {
       validationResult.errors.push({
@@ -169,7 +162,7 @@ export class FlatAgentValidatorService {
       });
     }
 
-    const optimisticFlatAgent: FlatAgent = {
+    const optimisticFlatAgent: UniversalFlatAgent = {
       ...fromFlatAgent,
       ...flatEntityUpdate,
     };
@@ -178,7 +171,7 @@ export class FlatAgentValidatorService {
       optimisticFlatAgentMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((agent) => agent.id !== flatEntityId);
+      .filter((agent) => agent.universalIdentifier !== universalIdentifier);
 
     validationResult.errors.push(
       ...validateAgentRequiredProperties({

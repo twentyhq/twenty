@@ -66,7 +66,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
 
   updatedNodes.push(ifElseNode);
 
-  const branches = step.settings.input.branches;
+  const branches = step.settings?.input?.branches ?? [];
   const totalBranches = branches.length;
 
   branches.forEach((branch, branchIndex) => {

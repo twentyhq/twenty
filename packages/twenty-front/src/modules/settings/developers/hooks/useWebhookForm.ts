@@ -32,7 +32,7 @@ type UseWebhookFormProps = {
 const DEFAULT_FORM_VALUES: WebhookFormValues = {
   targetUrl: '',
   description: '',
-  operations: [{ object: '*', action: '*' }],
+  operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
   secret: '',
 };
 

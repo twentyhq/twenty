@@ -27,7 +27,6 @@ exports[`Role update should fail updating role with existing write permissions s
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -63,7 +62,6 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -99,7 +97,6 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -135,7 +132,6 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -171,7 +167,6 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -207,7 +202,6 @@ exports[`Role update should fail when updating label to one that already exists 
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -243,7 +237,6 @@ exports[`Role update should fail when updating to enable write permissions witho
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",

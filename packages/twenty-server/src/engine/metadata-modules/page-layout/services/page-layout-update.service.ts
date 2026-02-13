@@ -6,14 +6,16 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
-import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
@@ -109,14 +111,29 @@ export class PageLayoutUpdateService {
         flatPageLayoutTabMaps,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
 
     const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
       this.computeWidgetOperationsForAllTabs({
         tabs,
         flatPageLayoutWidgetMaps,
+        flatPageLayoutTabMaps,
+        flatObjectMetadataMaps,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        flatFieldMetadataMaps,
       });
 
     const validateAndBuildResult =
@@ -196,12 +213,14 @@ export class PageLayoutUpdateService {
     flatPageLayoutTabMaps,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     existingPageLayout: FlatPageLayout;
     tabs: UpdatePageLayoutTabWithWidgetsInput[];
     flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): {
     tabsToCreate: FlatPageLayoutTab[];
     tabsToUpdate: FlatPageLayoutTab[];
@@ -238,13 +257,17 @@ export class PageLayoutUpdateService {
           title: tabInput.title,
           position: tabInput.position,
           pageLayoutId: existingPageLayout.id,
+          pageLayoutUniversalIdentifier: existingPageLayout.universalIdentifier,
           workspaceId,
           createdAt: now.toISOString(),
           updatedAt: now.toISOString(),
           deletedAt: null,
           universalIdentifier: tabId,
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           widgetIds: [],
+          widgetUniversalIdentifiers: [],
           icon: null,
           layoutMode: PageLayoutTabLayoutMode.GRID,
         };
@@ -316,14 +339,24 @@ export class PageLayoutUpdateService {
   private computeWidgetOperationsForAllTabs({
     tabs,
     flatPageLayoutWidgetMaps,
+    flatPageLayoutTabMaps,
+    flatObjectMetadataMaps,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
+    flatFieldMetadataMaps,
   }: {
     tabs: UpdatePageLayoutTabWithWidgetsInput[];
-    flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
     workspaceId: string;
     workspaceCustomApplicationId: string;
-  }): {
+    workspaceCustomApplicationUniversalIdentifier: string;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatPageLayoutTabMaps'
+    | 'flatPageLayoutWidgetMaps'
+  >): {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
     widgetsToDelete: FlatPageLayoutWidget[];
@@ -337,8 +370,12 @@ export class PageLayoutUpdateService {
           tabId: tabInput.id,
           widgets: tabInput.widgets,
           flatPageLayoutWidgetMaps,
+          flatPageLayoutTabMaps,
+          flatObjectMetadataMaps,
           workspaceId,
           workspaceCustomApplicationId,
+          workspaceCustomApplicationUniversalIdentifier,
+          flatFieldMetadataMaps,
         });
 
       allWidgetsToCreate.push(...widgetsToCreate);
@@ -356,15 +393,25 @@ export class PageLayoutUpdateService {
     tabId,
     widgets,
     flatPageLayoutWidgetMaps,
+    flatPageLayoutTabMaps,
+    flatObjectMetadataMaps,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
+    flatFieldMetadataMaps,
   }: {
     tabId: string;
     widgets: UpdatePageLayoutWidgetWithIdInput[];
-    flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
     workspaceId: string;
     workspaceCustomApplicationId: string;
-  }): {
+    workspaceCustomApplicationUniversalIdentifier: string;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatPageLayoutTabMaps'
+    | 'flatPageLayoutWidgetMaps'
+  >): {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
   } {
@@ -389,27 +436,52 @@ export class PageLayoutUpdateService {
     });
 
     const now = new Date();
-
     const widgetsToCreate: FlatPageLayoutWidget[] = entitiesToCreate.map(
       (widgetInput) => {
         const widgetId = widgetInput.id ?? v4();
 
+        const {
+          pageLayoutTabUniversalIdentifier,
+          objectMetadataUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: widgetInput.pageLayoutTabId,
+            objectMetadataId: widgetInput.objectMetadataId,
+          },
+          flatEntityMaps: {
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+          },
+        });
+
         return {
           id: widgetId,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
+          pageLayoutTabUniversalIdentifier,
           title: widgetInput.title,
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
+          objectMetadataUniversalIdentifier,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
-          configuration: widgetInput.configuration ?? null,
+          configuration: widgetInput.configuration,
           workspaceId,
           createdAt: now.toISOString(),
           updatedAt: now.toISOString(),
           deletedAt: null,
           universalIdentifier: widgetId,
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           conditionalDisplay: null,
+          universalConfiguration:
+            fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+              configuration: widgetInput.configuration,
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              shouldThrowOnMissingIdentifier: true,
+            }),
         };
       },
     );
@@ -421,6 +493,8 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutWidgetMaps,
         });
 
+        const updatedConfiguration = widgetInput.configuration ?? null;
+
         return {
           ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
@@ -429,8 +503,16 @@ export class PageLayoutUpdateService {
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
-          configuration: widgetInput.configuration ?? null,
+          configuration: updatedConfiguration,
           updatedAt: now.toISOString(),
+          ...(isDefined(updatedConfiguration) && {
+            universalConfiguration:
+              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+                configuration: updatedConfiguration,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+              }),
+          }),
         };
       },
     );
@@ -442,6 +524,8 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutWidgetMaps,
         });
 
+        const restoredConfiguration = widgetInput.configuration ?? null;
+
         return {
           ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
@@ -450,9 +534,17 @@ export class PageLayoutUpdateService {
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
-          configuration: widgetInput.configuration ?? null,
+          configuration: restoredConfiguration,
           deletedAt: null,
           updatedAt: now.toISOString(),
+          ...(isDefined(restoredConfiguration) && {
+            universalConfiguration:
+              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+                configuration: restoredConfiguration,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+              }),
+          }),
         };
       });
 

@@ -39,7 +39,7 @@ export type AnimatedPlaceholderType =
   | keyof typeof BACKGROUND
   | keyof typeof MOVING_IMAGE;
 
-interface AnimatedPlaceholderProps {
+export interface AnimatedPlaceholderProps {
   type: AnimatedPlaceholderType;
 }
 

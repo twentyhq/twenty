@@ -1,7 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Query } from '@nestjs/graphql';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,7 +17,7 @@ import { LineChartDataOutputDTO } from 'src/modules/dashboard/chart-data/dtos/ou
 import { ChartDataGraphqlApiExceptionFilter } from 'src/modules/dashboard/chart-data/filters/chart-data-graphql-api-exception.filter';
 import { LineChartDataService } from 'src/modules/dashboard/chart-data/services/line-chart-data.service';
 
-@Resolver()
+@MetadataResolver()
 @UseFilters(ChartDataGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)

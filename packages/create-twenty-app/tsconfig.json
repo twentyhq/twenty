@@ -12,7 +12,8 @@
     "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "jsx": "react"
   },
   "include": [
     "src/**/*.ts",

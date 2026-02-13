@@ -7,7 +7,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -91,12 +90,10 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const { queryRunner, flatAction } = context;
     const { flatFieldMetadatas } = flatAction;
 
-    const fieldMetadataRepository =
-      queryRunner.manager.getRepository<FieldMetadataEntity>(
-        FieldMetadataEntity,
-      );
-
-    await fieldMetadataRepository.insert(flatFieldMetadatas);
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: flatFieldMetadatas,
+    });
   }
 
   async executeForWorkspaceSchema(

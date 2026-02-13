@@ -1,19 +1,19 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type ValidateJunctionTargetSettingsArgs = {
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  flatFieldMetadataMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
 };
 
 const createError = (
@@ -29,18 +29,22 @@ const createError = (
 });
 
 export const validateJunctionTargetSettings = ({
-  flatFieldMetadata,
+  universalFlatFieldMetadata,
   flatFieldMetadataMaps,
 }: ValidateJunctionTargetSettingsArgs): FlatFieldMetadataValidationError[] => {
-  const { settings } = flatFieldMetadata;
+  const { universalSettings } = universalFlatFieldMetadata;
 
-  const junctionTargetFieldId = settings.junctionTargetFieldId;
+  const junctionTargetFieldUniversalIdentifier =
+    universalSettings.junctionTargetFieldUniversalIdentifier;
 
-  if (!isDefined(junctionTargetFieldId) || junctionTargetFieldId.length === 0) {
+  if (
+    !isDefined(junctionTargetFieldUniversalIdentifier) ||
+    junctionTargetFieldUniversalIdentifier.length === 0
+  ) {
     return [];
   }
 
-  if (settings.relationType !== RelationType.ONE_TO_MANY) {
+  if (universalSettings.relationType !== RelationType.ONE_TO_MANY) {
     return [
       createError(
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -50,19 +54,8 @@ export const validateJunctionTargetSettings = ({
     ];
   }
 
-  if (!isValidUuid(junctionTargetFieldId)) {
-    return [
-      createError(
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        `Invalid junction target field ID: ${junctionTargetFieldId}`,
-        msg`Invalid junction target field ID`,
-        junctionTargetFieldId,
-      ),
-    ];
-  }
-
-  const targetField = findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
-    flatEntityId: junctionTargetFieldId,
+  const targetField = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: junctionTargetFieldUniversalIdentifier,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
@@ -70,34 +63,34 @@ export const validateJunctionTargetSettings = ({
     return [
       createError(
         FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-        `Junction target field not found: ${junctionTargetFieldId}`,
+        `Junction target field not found: ${junctionTargetFieldUniversalIdentifier}`,
         msg`Junction target field not found`,
-        junctionTargetFieldId,
+        junctionTargetFieldUniversalIdentifier,
       ),
     ];
   }
 
   if (
-    targetField.objectMetadataId !==
-    flatFieldMetadata.relationTargetObjectMetadataId
+    targetField.objectMetadataUniversalIdentifier !==
+    universalFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier
   ) {
     return [
       createError(
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        `Junction target field ${junctionTargetFieldId} is not on the junction object`,
+        `Junction target field ${junctionTargetFieldUniversalIdentifier} is not on the junction object`,
         msg`Junction target field must be on the junction object`,
-        junctionTargetFieldId,
+        junctionTargetFieldUniversalIdentifier,
       ),
     ];
   }
 
-  if (!isMorphOrRelationFlatFieldMetadata(targetField)) {
+  if (!isMorphOrRelationUniversalFlatFieldMetadata(targetField)) {
     return [
       createError(
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        `Junction target field ${junctionTargetFieldId} is not a relation field`,
+        `Junction target field ${junctionTargetFieldUniversalIdentifier} is not a relation field`,
         msg`Junction target field must be a relation field`,
-        junctionTargetFieldId,
+        junctionTargetFieldUniversalIdentifier,
       ),
     ];
   }
@@ -107,13 +100,13 @@ export const validateJunctionTargetSettings = ({
     return [];
   }
 
-  if (targetField.settings.relationType !== RelationType.MANY_TO_ONE) {
+  if (targetField.universalSettings.relationType !== RelationType.MANY_TO_ONE) {
     return [
       createError(
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        `Junction target field ${junctionTargetFieldId} is not a MANY_TO_ONE relation`,
+        `Junction target field ${junctionTargetFieldUniversalIdentifier} is not a MANY_TO_ONE relation`,
         msg`Junction target field must be a MANY_TO_ONE relation`,
-        junctionTargetFieldId,
+        junctionTargetFieldUniversalIdentifier,
       ),
     ];
   }

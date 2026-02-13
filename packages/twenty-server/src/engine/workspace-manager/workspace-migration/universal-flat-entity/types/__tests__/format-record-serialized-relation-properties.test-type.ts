@@ -1,7 +1,9 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
-import { type SerializedRelation } from 'twenty-shared/types';
+import {
+  type SerializedRelation,
+  type FormatRecordSerializedRelationProperties,
+} from 'twenty-shared/types';
 
-import { type FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 type ObjectWithRelation = {

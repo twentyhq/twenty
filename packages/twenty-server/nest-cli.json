@@ -7,7 +7,8 @@
       "**/node_modules/**",
       "**/dist/**",
       "**/.git/**",
-      "**/.nx/**"
+      "**/.nx/**",
+      "**/.local-storage/**"
     ]
   },
   "compilerOptions": {
@@ -16,19 +17,15 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/seed-project/**",
+        "include": "engine/core-modules/logic-function/logic-function-resource/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/package.json",
+        "include": "engine/core-modules/application/constants/seed-dependencies/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/yarn.lock",
-        "outDir": "dist/assets"
-      },
-      {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/engine/**",
+        "include": "engine/core-modules/application/constants/yarn-engine/**",
         "outDir": "dist/assets"
       },
       {
@@ -41,10 +38,6 @@
       },
       {
         "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
-        "outDir": "dist/assets"
-      },
-      {
-        "include": "engine/core-modules/application/constants/default-package-files/**",
         "outDir": "dist/assets"
       }
     ]

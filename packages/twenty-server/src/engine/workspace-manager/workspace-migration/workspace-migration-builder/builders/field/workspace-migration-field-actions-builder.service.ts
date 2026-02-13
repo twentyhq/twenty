@@ -4,9 +4,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service';
 
 @Injectable()
@@ -20,8 +20,10 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.fieldMetadata
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.fieldMetadata,
     'create'
   > {
@@ -37,27 +39,21 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
 
     const { flatEntityToValidate: flatFieldMetadataToValidate } = args;
 
-    const fieldIdByUniversalIdentifier = flatFieldMetadataToValidate.id
-      ? {
-          [flatFieldMetadataToValidate.universalIdentifier]:
-            flatFieldMetadataToValidate.id,
-        }
-      : undefined;
-
     return {
       status: 'success',
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
         universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
-        fieldIdByUniversalIdentifier,
       },
     };
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.fieldMetadata
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.fieldMetadata,
     'delete'
   > {
@@ -87,7 +83,7 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.fieldMetadata
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.fieldMetadata,
     'update'
   > {

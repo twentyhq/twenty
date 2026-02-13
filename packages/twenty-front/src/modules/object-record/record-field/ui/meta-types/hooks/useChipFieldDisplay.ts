@@ -5,11 +5,11 @@ import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -50,7 +50,10 @@ export const useChipFieldDisplay = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordValue = useFamilyRecoilValueV2(
+    recordStoreFamilyStateV2,
+    recordId,
+  );
 
   if (!isNonEmptyString(objectNameSingular)) {
     throw new Error('Object metadata name singular is not a non-empty string');

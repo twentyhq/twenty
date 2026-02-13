@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { useAtom } from 'jotai';
 import { useContext } from 'react';
 
-import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
+import { invalidAvatarUrlsAtomV2 } from '@ui/display/avatar/components/states/invalidAvatarUrlsAtomV2';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
@@ -10,7 +11,6 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
-import { useRecoilState } from 'recoil';
 import { type Nullable } from 'twenty-shared/types';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
@@ -72,7 +72,6 @@ export type AvatarProps = {
   onClick?: () => void;
 };
 
-// TODO: Remove recoil because we don't want it into twenty-ui and find a solution for invalid avatar urls
 export const Avatar = ({
   avatarUrl,
   size = 'md',
@@ -86,8 +85,8 @@ export const Avatar = ({
   backgroundColor,
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
-  const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
-    invalidAvatarUrlsState,
+  const [invalidAvatarUrls, setInvalidAvatarUrls] = useAtom(
+    invalidAvatarUrlsAtomV2,
   );
 
   const avatarImageURI = isNonEmptyString(avatarUrl)

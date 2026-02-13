@@ -1,4 +1,3 @@
-import { type Sources } from '@/types';
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
 import { type FieldManifest } from './fieldManifestType';
@@ -15,5 +14,4 @@ export type Manifest = {
   frontComponents: FrontComponentManifest[];
   roles: RoleManifest[];
   publicAssets: AssetManifest[];
-  sources: Sources;
 };

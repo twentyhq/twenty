@@ -1,19 +1,21 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import {
   type FlatIndexFieldMetadata,
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { type UniversalFlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   indexName: AllStandardObjectIndexName<O>;
@@ -58,49 +60,80 @@ export const createStandardIndexFlatMetadata = <
     universalIdentifier: string;
   };
 
+  const objectFields = STANDARD_OBJECTS[objectName].fields;
+
   const objectMetadataId =
     standardObjectMetadataRelatedEntityIds[objectName].id;
-  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityId: objectMetadataId,
-    flatEntityMaps: flatObjectMetadataMaps,
-  });
-
   const relatedFieldIds = relatedFieldNames.map(
     (fieldName) =>
       standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
   );
-  const flatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityIds: relatedFieldIds,
-    flatEntityMaps: flatFieldMetadataMaps,
+
+  const objectMetadataUniversalIdentifier =
+    STANDARD_OBJECTS[objectName].universalIdentifier;
+  const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+    universalIdentifier: objectMetadataUniversalIdentifier,
+    flatEntityMaps: flatObjectMetadataMaps,
   });
+
+  const relatedFieldUniversalIdentifiers = relatedFieldNames.map(
+    (fieldName) =>
+      objectFields[fieldName as keyof typeof objectFields].universalIdentifier,
+  );
+  const flatFieldMetadatas =
+    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
+      universalIdentifiers: relatedFieldUniversalIdentifiers,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
   const indexId = v4();
 
-  return generateFlatIndexMetadataWithNameOrThrow({
+  const unviersalFlatIndex = generateFlatIndexMetadataWithNameOrThrow({
     flatIndex: {
       createdAt: now,
-      applicationId: twentyStandardApplicationId,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
       indexType,
       indexWhereClause,
       isCustom: false,
       isUnique,
-      objectMetadataId,
+      objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       universalIdentifier: indexDefinition.universalIdentifier,
       updatedAt: now,
-      workspaceId,
-      id: indexId,
-      flatIndexFieldMetadatas: flatFieldMetadatas.map<FlatIndexFieldMetadata>(
-        ({ id: fieldMetadataId }, index) => ({
-          createdAt: now,
-          fieldMetadataId,
-          id: v4(),
-          indexMetadataId: indexId,
-          order: index,
-          updatedAt: now,
-        }),
-      ),
+      universalFlatIndexFieldMetadatas:
+        flatFieldMetadatas.map<UniversalFlatIndexFieldMetadata>(
+          (
+            { universalIdentifier: fieldMetadataUniversalIdentifier },
+            index,
+          ) => ({
+            createdAt: now,
+            order: index,
+            updatedAt: now,
+            fieldMetadataUniversalIdentifier,
+            indexMetadataUniversalIdentifier:
+              indexDefinition.universalIdentifier,
+          }),
+        ),
     },
     flatObjectMetadata,
     objectFlatFieldMetadatas: flatFieldMetadatas,
   });
+
+  return {
+    ...unviersalFlatIndex,
+    applicationId: twentyStandardApplicationId,
+    id: v4(),
+    flatIndexFieldMetadatas: relatedFieldIds.map<FlatIndexFieldMetadata>(
+      (fieldMetadataId, index) => ({
+        createdAt: now,
+        fieldMetadataId,
+        id: v4(),
+        indexMetadataId: indexId,
+        order: index,
+        updatedAt: now,
+      }),
+    ),
+    workspaceId,
+    objectMetadataId,
+  };
 };

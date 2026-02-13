@@ -1,14 +1,14 @@
 import {
-  type LogicFunctionExecutorDriver,
+  type LogicFunctionDriver,
   type LogicFunctionExecuteResult,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-export class DisabledDriver implements LogicFunctionExecutorDriver {
+export class DisabledDriver implements LogicFunctionDriver {
   async delete(): Promise<void> {
     // No-op when disabled
   }

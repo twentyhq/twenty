@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { type ObjectPermission } from '~/generated/graphql';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export type SettingsRolePermissionsObjectPermission = {
   key: keyof Pick<

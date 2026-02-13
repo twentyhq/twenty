@@ -1,8 +1,22 @@
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
+import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 
 describe('Front component creation should succeed', () => {
   let createdFrontComponentId: string | undefined;
+  let cleanupBuiltFile: (() => void) | undefined;
+
+  beforeAll(async () => {
+    const { cleanup } = await seedBuiltFrontComponentFile({
+      builtComponentPath: 'src/front-components/index.mjs',
+    });
+
+    cleanupBuiltFile = cleanup;
+  });
+
+  afterAll(() => {
+    cleanupBuiltFile?.();
+  });
 
   afterEach(async () => {
     if (createdFrontComponentId) {
@@ -19,6 +33,10 @@ describe('Front component creation should succeed', () => {
       expectToFail: false,
       input: {
         name: 'testFrontComponent',
+        componentName: 'TestFrontComponent',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
       },
     });
 
@@ -35,6 +53,10 @@ describe('Front component creation should succeed', () => {
       expectToFail: false,
       input: {
         name: '  frontComponentWithSpaces  ',
+        componentName: 'FrontComponentWithSpaces',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
       },
     });
 

@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFrontComponentModule } from 'src/engine/metadata-modules/flat-front-component/flat-front-component.module';
+import { FrontComponentController } from 'src/engine/metadata-modules/front-component/controllers/front-component.controller';
+import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import { FrontComponentResolver } from 'src/engine/metadata-modules/front-component/front-component.resolver';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
@@ -18,10 +20,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     FlatFrontComponentModule,
   ],
+  controllers: [FrontComponentController],
   providers: [
     FrontComponentService,
     FrontComponentResolver,
     FrontComponentGraphqlApiExceptionInterceptor,
+    FrontComponentRestApiExceptionFilter,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
   exports: [FrontComponentService],

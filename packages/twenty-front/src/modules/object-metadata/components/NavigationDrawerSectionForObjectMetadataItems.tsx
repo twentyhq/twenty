@@ -19,7 +19,6 @@ const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
 ];
 
 const ORDERED_LAST_STANDARD_OBJECTS: string[] = [
-  CoreObjectNameSingular.Workflow,
   CoreObjectNameSingular.Dashboard,
 ];
 
@@ -27,12 +26,24 @@ type NavigationDrawerSectionForObjectMetadataItemsProps = {
   sectionTitle: string;
   isRemote: boolean;
   objectMetadataItems: ObjectMetadataItem[];
+  rightIcon?: React.ReactNode;
+  isEditMode?: boolean;
+  selectedObjectMetadataItemId?: string | null;
+  onObjectMetadataItemClick?: (objectMetadataItem: ObjectMetadataItem) => void;
+  onActiveObjectMetadataItemClick?: (
+    objectMetadataItem: ObjectMetadataItem,
+  ) => void;
 };
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
   isRemote,
   objectMetadataItems,
+  rightIcon,
+  isEditMode = false,
+  selectedObjectMetadataItemId = null,
+  onObjectMetadataItemClick,
+  onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForObjectMetadataItemsProps) => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
@@ -103,6 +114,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
           <NavigationDrawerSectionTitle
             label={sectionTitle}
             onClick={() => toggleNavigationSection()}
+            rightIcon={rightIcon}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
         {isNavigationSectionOpen &&
@@ -111,6 +123,20 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
               <NavigationDrawerItemForObjectMetadataItem
                 key={`navigation-drawer-item-${objectMetadataItem.id}`}
                 objectMetadataItem={objectMetadataItem}
+                isEditMode={isEditMode}
+                isSelectedInEditMode={
+                  selectedObjectMetadataItemId === objectMetadataItem.id
+                }
+                onEditModeClick={
+                  onObjectMetadataItemClick
+                    ? () => onObjectMetadataItemClick(objectMetadataItem)
+                    : undefined
+                }
+                onActiveItemClickWhenNotInEditMode={
+                  onActiveObjectMetadataItemClick
+                    ? () => onActiveObjectMetadataItemClick(objectMetadataItem)
+                    : undefined
+                }
               />
             ),
           )}

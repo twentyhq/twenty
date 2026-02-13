@@ -111,7 +111,7 @@ export class RoleService {
     const flatRoleToCreate = fromCreateRoleInputToFlatRoleToCreate({
       createRoleInput: input,
       workspaceId,
-      applicationId: ownerFlatApplication.id,
+      flatApplication: ownerFlatApplication,
     });
 
     const validateAndBuildResult =

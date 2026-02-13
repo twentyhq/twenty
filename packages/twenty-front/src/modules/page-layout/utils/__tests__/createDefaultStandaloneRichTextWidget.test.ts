@@ -1,4 +1,4 @@
-import { WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 
 describe('createDefaultStandaloneRichTextWidget', () => {

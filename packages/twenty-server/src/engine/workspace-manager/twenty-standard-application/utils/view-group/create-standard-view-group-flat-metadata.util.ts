@@ -1,8 +1,9 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type AllStandardObjectViewGroupName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-group-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
@@ -39,10 +40,12 @@ export const createStandardViewGroupFlatMetadata = <
   now,
 }: CreateStandardViewGroupArgs<O, V>): FlatViewGroup => {
   // @ts-expect-error ignore
-  const viewGroupDefinition = STANDARD_OBJECTS[objectName].views[viewName]
-    .viewGroups[viewGroupName] as {
+  const viewDefinition = STANDARD_OBJECTS[objectName].views[viewName] as {
     universalIdentifier: string;
+    viewGroups: Record<string, { universalIdentifier: string }>;
   };
+
+  const viewGroupDefinition = viewDefinition.viewGroups[viewGroupName];
 
   if (!isDefined(viewGroupDefinition)) {
     throw new Error(
@@ -54,9 +57,12 @@ export const createStandardViewGroupFlatMetadata = <
     id: v4(),
     universalIdentifier: viewGroupDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
     workspaceId,
     viewId:
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
+    viewUniversalIdentifier: viewDefinition.universalIdentifier,
     isVisible,
     fieldValue,
     position,

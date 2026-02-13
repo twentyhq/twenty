@@ -5,10 +5,17 @@ import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/hooks/us
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const WORKFLOW_OBJECTS_IN_SIDEBAR = [
+  CoreObjectNameSingular.Workflow,
+  CoreObjectNameSingular.WorkflowRun,
+  CoreObjectNameSingular.WorkflowVersion,
+];
 
 export const NavigationDrawerOpenedSection = () => {
   const { t } = useLingui();
@@ -49,9 +56,15 @@ export const NavigationDrawerOpenedSection = () => {
     ? workspaceNavigationMenuItemsObjectMetadataItems
     : workspaceFavoritesObjectMetadataItems;
 
-  const shouldDisplayObjectInOpenedSection = !workspaceItemsToExclude
-    .map((item) => item.id)
-    .includes(objectMetadataItem.id);
+  const isWorkflowObjectInSidebar = WORKFLOW_OBJECTS_IN_SIDEBAR.includes(
+    objectMetadataItem.nameSingular as CoreObjectNameSingular,
+  );
+
+  const shouldDisplayObjectInOpenedSection =
+    !isWorkflowObjectInSidebar &&
+    !workspaceItemsToExclude
+      .map((item) => item.id)
+      .includes(objectMetadataItem.id);
 
   if (loading) {
     return <NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader />;

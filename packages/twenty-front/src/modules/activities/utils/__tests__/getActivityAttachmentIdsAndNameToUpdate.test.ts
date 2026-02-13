@@ -33,7 +33,7 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
       },
     ]);
     const attachmentIdsAndNameToUpdate =
-      getActivityAttachmentIdsAndNameToUpdate(activityBody, attachments);
+      getActivityAttachmentIdsAndNameToUpdate(activityBody, attachments, false);
     expect(attachmentIdsAndNameToUpdate).toEqual([]);
   });
 
@@ -68,7 +68,7 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
       },
     ]);
     const attachmentIdsAndNameToUpdate =
-      getActivityAttachmentIdsAndNameToUpdate(activityBody, attachments);
+      getActivityAttachmentIdsAndNameToUpdate(activityBody, attachments, false);
     expect(attachmentIdsAndNameToUpdate).toEqual([{ id: '2', name: 'image4' }]);
   });
 });

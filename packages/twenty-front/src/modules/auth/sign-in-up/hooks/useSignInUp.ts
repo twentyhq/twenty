@@ -24,13 +24,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
-  const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+  const [signInUpMode, setSignInUpMode] = useRecoilStateV2(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetRecoilState(

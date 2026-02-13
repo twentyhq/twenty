@@ -20,8 +20,8 @@ import {
   type GroupByDateField,
   type GroupByField,
   type GroupByRegularField,
-} from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { getGroupByOrderExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-order-expression.util';
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { getGroupByOrderExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-order-expression.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type AggregationField,

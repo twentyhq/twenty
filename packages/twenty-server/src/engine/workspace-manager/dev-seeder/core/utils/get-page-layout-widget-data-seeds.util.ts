@@ -1,6 +1,7 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -87,6 +88,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Total Pipeline Value',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: opportunityAmountFieldId,
@@ -111,6 +119,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Rocket Count (Object Permission Test)',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 3,
+            rowSpan: 4,
+            columnSpan: 4,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: rocketIdFieldId,
@@ -137,6 +152,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Pipeline Value by Close Date (Stacked by Stage)',
           type: WidgetType.GRAPH,
           gridPosition: { row: 4, column: 0, rowSpan: 8, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 4,
+            column: 0,
+            rowSpan: 8,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: opportunityAmountFieldId,
@@ -169,6 +191,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Rockets by Created Date (Object Permission Test)',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 5 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 5,
+            columnSpan: 5,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: rocketIdFieldId,
@@ -198,6 +227,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Opportunity Count',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 5,
+            rowSpan: 5,
+            columnSpan: 7,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: opportunityIdFieldId,
@@ -224,6 +260,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Total Customers',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
@@ -250,6 +293,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Companies by Size (Stacked by City)',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 8, rowSpan: 10, columnSpan: 8 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 8,
+            rowSpan: 10,
+            columnSpan: 8,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: companyIdFieldId,
@@ -285,6 +335,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Annual Recurring Revenue',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 4,
+            columnSpan: 4,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: companyArrFieldId,
@@ -309,6 +366,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'LinkedIn Profiles Count (Field Permission Test)',
           type: WidgetType.GRAPH,
           gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 2,
+            column: 0,
+            rowSpan: 4,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
@@ -332,6 +396,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Team Size',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: personIdFieldId,
@@ -356,6 +427,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Geographic Distribution',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 6,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.BAR_CHART,
             aggregateFieldMetadataId: personIdFieldId,
@@ -387,6 +465,13 @@ export const getPageLayoutWidgetDataSeeds = (
           title: 'Open Tasks',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 6,
+            rowSpan: 6,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: taskIdFieldId,
@@ -409,6 +494,13 @@ export const getPageLayoutWidgetDataSeeds = (
       title: 'Front Component',
       type: WidgetType.FRONT_COMPONENT,
       gridPosition: { row: 2, column: 7, rowSpan: 2, columnSpan: 5 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 2,
+        column: 7,
+        rowSpan: 2,
+        columnSpan: 5,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.FRONT_COMPONENT,
         frontComponentId: '6cdf2607-4b28-40e6-8c53-cc06799ddc88',

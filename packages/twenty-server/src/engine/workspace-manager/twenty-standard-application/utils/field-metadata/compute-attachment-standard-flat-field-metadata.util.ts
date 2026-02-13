@@ -1,10 +1,10 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -126,6 +126,27 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  file: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'file',
+      type: FieldMetadataType.FILES,
+      label: 'File',
+      description: 'Attachment file',
+      icon: 'IconFileUpload',
+      isNullable: true,
+      isUIReadOnly: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  //deprecated
   fullPath: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -143,6 +164,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  //deprecated
   fileCategory: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

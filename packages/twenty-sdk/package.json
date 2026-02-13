@@ -1,22 +1,21 @@
 {
   "name": "twenty-sdk",
-  "version": "0.4.3",
+  "version": "0.5.2",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "twenty": "dist/cli/index.cjs"
+    "twenty": "dist/cli.cjs"
   },
   "files": [
     "dist",
-    "front-component",
-    "front-component-constants",
-    "ui"
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",
-    "prepack": "tsx ./scripts/prepack.ts",
-    "postpack": "tsx ./scripts/postpack.ts"
+    "prepublishOnly": "tsx ../twenty-utils/pack-scripts/pre-publish-only.ts",
+    "postpublish": "tsx ../twenty-utils/pack-scripts/post-publish.ts"
   },
   "keywords": [
     "twenty",
@@ -32,20 +31,15 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./front-component": {
-      "types": "./dist/front-component/index.d.ts",
-      "import": "./dist/front-component/index.mjs",
-      "require": "./dist/front-component/index.cjs"
-    },
-    "./front-component-constants": {
-      "types": "./dist/front-component-constants/index.d.ts",
-      "import": "./dist/front-component-constants/index.mjs",
-      "require": "./dist/front-component-constants/index.cjs"
-    },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
       "import": "./dist/ui/index.mjs",
       "require": "./dist/ui/index.cjs"
+    },
+    "./front-component": {
+      "types": "./dist/front-component/index.d.ts",
+      "import": "./dist/front-component/index.mjs",
+      "require": "./dist/front-component/index.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -56,7 +50,7 @@
     "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
     "archiver": "^7.0.1",
-    "axios": "^1.6.0",
+    "axios": "^1.13.5",
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
@@ -91,7 +85,7 @@
     "@types/node": "^24.0.0",
     "@types/react": "18.2.66",
     "@types/react-dom": "18.2.22",
-    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/browser-playwright": "^4.0.18",
     "playwright": "^1.56.1",
     "storybook": "^10.1.11",
     "ts-morph": "^25.0.0",
@@ -105,14 +99,11 @@
   },
   "typesVersions": {
     "*": {
-      "front-component": [
-        "dist/front-component/index.d.ts"
-      ],
-      "front-component-constants": [
-        "dist/front-component-constants/index.d.ts"
-      ],
       "ui": [
         "dist/ui/index.d.ts"
+      ],
+      "front-component": [
+        "dist/front-component/index.d.ts"
       ]
     }
   }

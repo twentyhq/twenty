@@ -13,6 +13,7 @@ export const fromViewFieldEntityToFlatViewField = ({
   applicationIdToUniversalIdentifierMap,
   fieldMetadataIdToUniversalIdentifierMap,
   viewIdToUniversalIdentifierMap,
+  viewFieldGroupIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'viewField'>): FlatViewField => {
   const viewFieldEntityWithoutRelations = removePropertiesFromRecord(
     viewFieldEntity,
@@ -52,17 +53,31 @@ export const fromViewFieldEntityToFlatViewField = ({
     );
   }
 
+  let viewFieldGroupUniversalIdentifier: string | null = null;
+
+  if (isDefined(viewFieldEntity.viewFieldGroupId)) {
+    viewFieldGroupUniversalIdentifier =
+      viewFieldGroupIdToUniversalIdentifierMap.get(
+        viewFieldEntity.viewFieldGroupId,
+      ) ?? null;
+
+    if (!isDefined(viewFieldGroupUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `ViewFieldGroup with id ${viewFieldEntity.viewFieldGroupId} not found for viewField ${viewFieldEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     ...viewFieldEntityWithoutRelations,
     createdAt: viewFieldEntity.createdAt.toISOString(),
     updatedAt: viewFieldEntity.updatedAt.toISOString(),
     deletedAt: viewFieldEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewFieldEntityWithoutRelations.universalIdentifier,
-    __universal: {
-      universalIdentifier: viewFieldEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      fieldMetadataUniversalIdentifier,
-      viewUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
+    viewUniversalIdentifier,
+    viewFieldGroupUniversalIdentifier,
   };
 };

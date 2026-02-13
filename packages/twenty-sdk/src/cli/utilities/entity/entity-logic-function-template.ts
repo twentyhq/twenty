@@ -9,7 +9,6 @@ export const getLogicFunctionBaseFile = ({
   universalIdentifier?: string;
 }) => {
   const kebabCaseName = kebabCase(name);
-  const triggerUniversalIdentifier = v4();
 
   return `import { defineLogicFunction } from 'twenty-sdk';
 
@@ -32,26 +31,19 @@ export default defineLogicFunction({
   description: 'Add a description for your logic function',
   timeoutSeconds: 5,
   handler,
-  triggers: [
-    // Add your triggers here
+    // Add your trigger here
     // Route trigger example:
-    // {
-    //   universalIdentifier: '${triggerUniversalIdentifier}',
-    //   type: 'route',
+    // httpRouteTriggerSettings: {
     //   path: '/${kebabCaseName}',
     //   httpMethod: 'POST',
     //   isAuthRequired: true,
     // },
     // Cron trigger example:
-    // {
-    //   universalIdentifier: '...',
-    //   type: 'cron',
+    // cronTriggerSettings: {
     //   pattern: '0 0 * * *', // Daily at midnight
     // },
     // Database event trigger example:
-    // {
-    //   universalIdentifier: '...',
-    //   type: 'databaseEvent',
+    // databaseEventTriggerSettings: {
     //   eventName: 'objectName.created',
     // },
   ],

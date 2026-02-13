@@ -79,7 +79,7 @@ export class LogicFunctionExecuteCommand {
         } else {
           console.log(
             chalk.yellow(
-              'No functions found for this application. Have you synced your app with `yarn app:sync`?',
+              'No functions found for this application. Have you synced your app with `yarn app:dev`?',
             ),
           );
         }

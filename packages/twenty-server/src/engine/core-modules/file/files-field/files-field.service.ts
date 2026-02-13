@@ -4,8 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Readable } from 'stream';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -15,11 +16,13 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FilesFieldFileDTO } from 'src/engine/core-modules/file/files-field/dtos/files-field-file.dto';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 import {
   FilesFieldException,
@@ -32,6 +35,8 @@ export class FilesFieldService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -41,37 +46,42 @@ export class FilesFieldService {
   async uploadFile({
     file,
     filename,
-    declaredMimeType,
     workspaceId,
-    applicationId,
+    fieldMetadataId,
   }: {
     file: Buffer;
     filename: string;
-    declaredMimeType: string | undefined;
     workspaceId: string;
-    applicationId: string;
-  }): Promise<FileEntity> {
+    fieldMetadataId: string;
+  }): Promise<FilesFieldFileDTO> {
     const { mimeType, ext } = await extractFileInfo({
       file,
-      declaredMimeType,
       filename,
     });
 
     const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
-    const name = `${fileId}${ext ? `.${ext}` : ''}`;
+    const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
 
-    const application = await this.applicationRepository.findOneOrFail({
+    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
+      select: ['applicationId', 'universalIdentifier'],
       where: {
-        id: applicationId,
+        id: fieldMetadataId,
         workspaceId,
       },
     });
 
-    return await this.fileStorageService.writeFile_v2({
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: fieldMetadata.applicationId,
+        workspaceId,
+      },
+    });
+
+    const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
-      resourcePath: name,
+      resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
       mimeType,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,
@@ -82,6 +92,11 @@ export class FilesFieldService {
         toDelete: false,
       },
     });
+
+    return {
+      ...savedFile,
+      url: this.signFileUrl({ fileId, workspaceId }),
+    };
   }
 
   async deleteFilesFieldFile({
@@ -118,10 +133,8 @@ export class FilesFieldService {
     const file = await this.fileRepository.findOneOrFail({
       where: {
         id: fileId,
+        path: Like(`${FileFolder.FilesField}/%`),
         workspaceId,
-        application: {
-          workspaceId,
-        },
       },
     });
 
@@ -142,7 +155,7 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.readFile_v2({
+    return await this.fileStorageService.readFile({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,

@@ -1,8 +1,8 @@
 import {
+  type CodeBlockWriter,
   type Project,
   type SourceFile,
   VariableDeclarationKind,
-  type WriterFunction,
 } from 'ts-morph';
 
 import {
@@ -13,7 +13,6 @@ import {
 import { type ComponentSchema, type PropertySchema } from './schemas';
 import {
   addFileHeader,
-  generatePropertiesConfig,
   schemaTypeToConstructor,
   schemaTypeToTs,
 } from './utils';
@@ -84,7 +83,9 @@ const generateCommonEventsType = (
     type: (writer) => {
       writer.block(() => {
         for (const event of events) {
-          writer.writeLine(`${event}(event: RemoteEvent): void;`);
+          writer.writeLine(
+            `${event}(event: RemoteEvent<SerializedEventData>): void;`,
+          );
         }
       });
     },
@@ -145,7 +146,9 @@ const generateElementPropertyType = (
       isExported: true,
       name: `${component.name}Properties`,
       type: (writer) => {
-        writer.write(`${TYPE_NAMES.COMMON_PROPERTIES} & `);
+        if (component.isHtmlElement) {
+          writer.write(`${TYPE_NAMES.COMMON_PROPERTIES} & `);
+        }
         writer.block(() => {
           for (const entry of entries) {
             writer.writeLine(`${entry};`);
@@ -156,12 +159,14 @@ const generateElementPropertyType = (
   }
 };
 
-const createPropertiesConfigWriter = (
+const writePropertyEntries = (
+  writer: CodeBlockWriter,
   properties: Record<string, PropertySchema>,
-): WriterFunction => {
-  return (writer) => {
-    writer.write(generatePropertiesConfig(properties));
-  };
+): void => {
+  for (const [name, schema] of Object.entries(properties)) {
+    const constructorType = schemaTypeToConstructor(schema.type);
+    writer.writeLine(`'${name}': { type: ${constructorType} },`);
+  }
 };
 
 const generateElementDefinition = (
@@ -170,21 +175,27 @@ const generateElementDefinition = (
   specificProperties: Record<string, PropertySchema>,
   options: ElementGenerationOptions,
 ): void => {
-  const { useSharedEvents, useSharedPropertiesConfig } = options;
+  const useSharedEvents = options.useSharedEvents && component.isHtmlElement;
+  const { useSharedPropertiesConfig } = options;
   const hasEvents = component.events.length > 0;
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
   const hasProps = Object.keys(component.properties).length > 0;
+  const hasSlots = (component.slots ?? []).length > 0;
 
   const propsType = hasSpecificProps
     ? `${component.name}Properties`
-    : hasProps
+    : hasProps && component.isHtmlElement
       ? TYPE_NAMES.COMMON_PROPERTIES
       : TYPE_NAMES.EMPTY_RECORD;
+
+  const slotsType = hasSlots
+    ? `{ ${(component.slots ?? []).map((slot) => `'${slot}': true`).join('; ')} }`
+    : TYPE_NAMES.EMPTY_RECORD;
 
   const eventsType = hasEvents
     ? useSharedEvents
       ? TYPE_NAMES.COMMON_EVENTS
-      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent): void`).join('; ')} }`
+      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent<SerializedEventData>): void`).join('; ')} }`
     : TYPE_NAMES.EMPTY_RECORD;
 
   sourceFile.addVariableStatement({
@@ -199,13 +210,13 @@ const generateElementDefinition = (
           writer.indent(() => {
             writer.writeLine(`${propsType},`);
             writer.writeLine('Record<string, never>,');
-            writer.writeLine('Record<string, never>,');
+            writer.writeLine(`${slotsType},`);
             writer.write(eventsType);
           });
           writer.newLine();
           writer.write('>');
 
-          const hasConfig = hasProps || hasEvents;
+          const hasConfig = hasProps || hasEvents || hasSlots;
           if (!hasConfig) {
             writer.write('({})');
             return;
@@ -213,34 +224,33 @@ const generateElementDefinition = (
 
           writer.write('(');
           writer.block(() => {
+            if (hasSlots) {
+              writer.write(
+                `slots: [${(component.slots ?? []).map((slot) => `'${slot}'`).join(', ')}],`,
+              );
+              writer.newLine();
+            }
             if (hasProps) {
-              if (hasSpecificProps) {
+              if (hasSpecificProps && component.isHtmlElement) {
                 writer.write('properties: ');
                 writer.block(() => {
                   writer.writeLine(
                     `...${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
                   );
-                  for (const [name, schema] of Object.entries(
-                    specificProperties,
-                  )) {
-                    const constructorType = schemaTypeToConstructor(
-                      schema.type,
-                    );
-                    writer.writeLine(
-                      `'${name}': { type: ${constructorType} },`,
-                    );
-                  }
+                  writePropertyEntries(writer, specificProperties);
                 });
                 writer.write(',');
                 writer.newLine();
-              } else if (useSharedPropertiesConfig) {
+              } else if (useSharedPropertiesConfig && component.isHtmlElement) {
                 writer.write(
                   `properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
                 );
                 writer.newLine();
               } else {
                 writer.write('properties: ');
-                createPropertiesConfigWriter(component.properties)(writer);
+                writer.block(() => {
+                  writePropertyEntries(writer, specificProperties);
+                });
                 writer.write(',');
                 writer.newLine();
               }
@@ -311,10 +321,9 @@ const prepareComponentsWithSpecificProps = (
 ): ComponentWithSpecificProps[] => {
   return components.map((component) => ({
     component,
-    specificProperties: getElementSpecificProperties(
-      component,
-      commonPropertyNames,
-    ),
+    specificProperties: component.isHtmlElement
+      ? getElementSpecificProperties(component, commonPropertyNames)
+      : component.properties,
   }));
 };
 
@@ -346,6 +355,11 @@ export const generateRemoteElements = (
     ],
   });
 
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../../sdk/front-component-common/SerializedEventData',
+    namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
+  });
+
   const commonPropertyNames = new Set(Object.keys(commonProperties));
   const componentsWithProps = prepareComponentsWithSpecificProps(
     components,
@@ -374,12 +388,9 @@ export const generateRemoteElements = (
 
   generateCustomElementRegistrations(sourceFile, components);
 
-  sourceFile.addExportDeclaration({
-    namedExports: [
-      INTERNAL_ELEMENT_CLASSES.ROOT,
-      INTERNAL_ELEMENT_CLASSES.FRAGMENT,
-    ],
-  });
+  sourceFile.addStatements(
+    `export { ${INTERNAL_ELEMENT_CLASSES.ROOT}, ${INTERNAL_ELEMENT_CLASSES.FRAGMENT} };`,
+  );
 
   generateTagNameMapDeclaration(sourceFile, components);
 

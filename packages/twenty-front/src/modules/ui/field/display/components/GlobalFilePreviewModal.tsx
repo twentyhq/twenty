@@ -1,13 +1,13 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -72,7 +72,7 @@ const StyledLoadingText = styled.div`
 
 export const GlobalFilePreviewModal = (): JSX.Element | null => {
   const { t } = useLingui();
-  const [filePreview, setFilePreview] = useRecoilState(filePreviewState);
+  const [filePreview, setFilePreview] = useRecoilStateV2(filePreviewStateV2);
   const { openModal, closeModal } = useModal();
 
   useEffect(() => {

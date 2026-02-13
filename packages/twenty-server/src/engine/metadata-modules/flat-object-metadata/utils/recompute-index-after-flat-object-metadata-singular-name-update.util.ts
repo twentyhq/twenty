@@ -1,8 +1,8 @@
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type RecomputeIndexAfterFlatObjectMetadataSingularNameUpdateArgs = {
   existingFlatObjectMetadata: FlatObjectMetadata;
@@ -13,10 +13,11 @@ export const recomputeIndexAfterFlatObjectMetadataSingularNameUpdate = ({
   flatIndexMaps,
   updatedSingularName,
   flatFieldMetadataMaps,
-}: RecomputeIndexAfterFlatObjectMetadataSingularNameUpdateArgs): FlatIndexMetadata[] => {
+}: RecomputeIndexAfterFlatObjectMetadataSingularNameUpdateArgs): UniversalFlatIndexMetadata[] => {
   const allRelatedFlatIndexMetadata =
-    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: existingFlatObjectMetadata.indexMetadataIds,
+    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
+      universalIdentifiers:
+        existingFlatObjectMetadata.indexMetadataUniversalIdentifiers,
       flatEntityMaps: flatIndexMaps,
     });
 
@@ -30,18 +31,21 @@ export const recomputeIndexAfterFlatObjectMetadataSingularNameUpdate = ({
   };
 
   const objectFlatFieldMetadatas =
-    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: optimisticFlatObjectMetadata.fieldIds,
+      universalIdentifiers:
+        optimisticFlatObjectMetadata.fieldUniversalIdentifiers,
     });
 
-  return allRelatedFlatIndexMetadata.map<FlatIndexMetadata>((flatIndex) => {
-    const newIndex = generateFlatIndexMetadataWithNameOrThrow({
-      flatIndex,
-      flatObjectMetadata: optimisticFlatObjectMetadata,
-      objectFlatFieldMetadatas,
-    });
+  return allRelatedFlatIndexMetadata.map<UniversalFlatIndexMetadata>(
+    (flatIndex) => {
+      const newIndex = generateFlatIndexMetadataWithNameOrThrow({
+        flatIndex,
+        flatObjectMetadata: optimisticFlatObjectMetadata,
+        objectFlatFieldMetadatas,
+      });
 
-    return newIndex;
-  });
+      return newIndex;
+    },
+  );
 };

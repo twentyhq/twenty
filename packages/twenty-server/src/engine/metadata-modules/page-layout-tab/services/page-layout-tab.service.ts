@@ -140,11 +140,20 @@ export class PageLayoutTabService {
         { workspaceId },
       );
 
+    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
     const flatPageLayoutTabToCreate =
       fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate({
         createPageLayoutTabInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
       });
 
     const validateAndBuildResult =

@@ -20,12 +20,23 @@ export class LocalDriver implements StorageDriver {
     this.options = options;
   }
 
-  private async createFolder(path: string) {
-    return fs.mkdir(path, { recursive: true });
+  private async createFolder(folderPath: string) {
+    return fs.mkdir(folderPath, { recursive: true });
+  }
+
+  private assertRealPathIsWithinStorage(realPath: string): void {
+    const storageRoot = realpathSync(path.resolve(this.options.storagePath));
+
+    if (!realPath.startsWith(storageRoot + path.sep)) {
+      throw new FileStorageException(
+        'Access denied',
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
   }
 
   async readFile(params: { filePath: string }): Promise<Readable> {
-    const joinedPath = join(`${this.options.storagePath}/`, params.filePath);
+    const joinedPath = join(this.options.storagePath, params.filePath);
     let filePath: string;
 
     try {
@@ -36,14 +47,8 @@ export class LocalDriver implements StorageDriver {
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }
-    const storageRoot = realpathSync(path.resolve(this.options.storagePath));
 
-    if (!filePath.startsWith(storageRoot + path.sep)) {
-      throw new FileStorageException(
-        'Access denied',
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
+    this.assertRealPathIsWithinStorage(filePath);
 
     try {
       return createReadStream(filePath);
@@ -64,7 +69,7 @@ export class LocalDriver implements StorageDriver {
     sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void> {
-    const filePath = `${this.options.storagePath}/${params.filePath}`;
+    const filePath = path.resolve(this.options.storagePath, params.filePath);
     const folderPath = dirname(filePath);
 
     await this.createFolder(folderPath);
@@ -76,9 +81,12 @@ export class LocalDriver implements StorageDriver {
     onStoragePath: string;
     localPath: string;
   }): Promise<void> {
-    await this.createFolder(dirname(params.localPath));
+    const filePath = path.resolve(
+      this.options.storagePath,
+      params.onStoragePath,
+    );
 
-    const filePath = join(`${this.options.storagePath}/`, params.onStoragePath);
+    await this.createFolder(dirname(params.localPath));
 
     const content = await fs.readFile(filePath);
 
@@ -89,8 +97,8 @@ export class LocalDriver implements StorageDriver {
     onStoragePath: string;
     localPath: string;
   }): Promise<void> {
-    const rootFolderPath = join(
-      `${this.options.storagePath}/`,
+    const rootFolderPath = path.resolve(
+      this.options.storagePath,
       params.onStoragePath,
     );
 
@@ -146,27 +154,27 @@ export class LocalDriver implements StorageDriver {
     folderPath: string;
     filename?: string;
   }): Promise<void> {
-    const filePath = join(
-      `${this.options.storagePath}/`,
+    const filePath = path.resolve(
+      this.options.storagePath,
       params.folderPath,
       params.filename || '',
     );
 
-    await fs.rm(filePath, { recursive: true });
+    await fs.rm(filePath, { recursive: true, force: true });
   }
 
   async move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
-    const fromPath = join(
-      `${this.options.storagePath}/`,
+    const fromPath = path.resolve(
+      this.options.storagePath,
       params.from.folderPath,
       params.from.filename || '',
     );
 
-    const toPath = join(
-      `${this.options.storagePath}/`,
+    const toPath = path.resolve(
+      this.options.storagePath,
       params.to.folderPath,
       params.to.filename || '',
     );
@@ -194,13 +202,14 @@ export class LocalDriver implements StorageDriver {
     if (!params.from.filename && params.to.filename) {
       throw new Error('Cannot copy folder to file');
     }
-    const fromPath = join(
+
+    const fromPath = path.resolve(
       this.options.storagePath,
       params.from.folderPath,
       params.from.filename || '',
     );
 
-    const toPath = join(
+    const toPath = path.resolve(
       this.options.storagePath,
       params.to.folderPath,
       params.to.filename || '',
@@ -223,13 +232,16 @@ export class LocalDriver implements StorageDriver {
   }
 
   async checkFileExists(params: { filePath: string }): Promise<boolean> {
-    const fullPath = join(this.options.storagePath, params.filePath);
+    const fullPath = path.resolve(this.options.storagePath, params.filePath);
 
     return existsSync(fullPath);
   }
 
   async checkFolderExists(params: { folderPath: string }): Promise<boolean> {
-    const folderFullPath = join(this.options.storagePath, params.folderPath);
+    const folderFullPath = path.resolve(
+      this.options.storagePath,
+      params.folderPath,
+    );
 
     return existsSync(folderFullPath);
   }

@@ -5,7 +5,7 @@ import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/
 import { t } from '@lingui/core/macro';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetConfigurationType } from '~/generated/graphql';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type GetChartLimitMessageParams = {
   widgetConfigurationType: WidgetConfigurationType;

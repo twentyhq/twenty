@@ -1223,7 +1223,6 @@ export class WorkspaceEntityManager extends EntityManager {
 
       let filesFieldDiffByEntityIndex = null;
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = new Map<string, string>();
 
       filesFieldDiffByEntityIndex =
         filesFieldSync.computeFilesFieldDiffBeforeUpsert(
@@ -1241,7 +1240,6 @@ export class WorkspaceEntityManager extends EntityManager {
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         entityWithConnectedRelations.splice(
           0,
@@ -1286,10 +1284,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .finally(() => queryRunnerForEntityPersistExecutor.release());
 
       if (isDefined(filesFieldFileIds)) {
-        await filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+        await filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
       const resultArray = Array.isArray(result) ? result : [result];

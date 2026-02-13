@@ -1,4 +1,4 @@
-import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
+import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';

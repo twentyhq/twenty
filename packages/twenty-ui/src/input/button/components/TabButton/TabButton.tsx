@@ -4,7 +4,7 @@ import { TabContent } from '@ui/input/button/components/TabButton/internals/comp
 import { type ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
-type TabButtonProps = {
+export type TabButtonProps = {
   id: string;
   active?: boolean;
   disabled?: boolean;

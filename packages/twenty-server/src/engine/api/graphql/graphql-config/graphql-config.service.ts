@@ -19,17 +19,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import {
-  ApiConfig,
-  Billing,
-  Captcha,
-  ClientAIModelConfig,
-  NativeModelCapabilities,
-  PublicFeatureFlag,
-  PublicFeatureFlagMetadata,
-  Sentry as SentryConfig,
-  Support,
-} from 'src/engine/core-modules/client-config/client-config.entity';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
@@ -93,28 +82,17 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
       include: [CoreEngineModule],
-      buildSchemaOptions: {
-        orphanedTypes: [
-          ApiConfig,
-          Billing,
-          Captcha,
-          ClientAIModelConfig,
-          NativeModelCapabilities,
-          PublicFeatureFlag,
-          PublicFeatureFlagMetadata,
-          SentryConfig,
-          Support,
-        ],
-      },
+      resolverSchemaScope: 'core',
+      buildSchemaOptions: {},
       conditionalSchema: async (context) => {
-        const { workspace, user } = context.req;
+        const { workspace, user, application } = context.req;
 
         try {
           if (!isDefined(workspace)) {
             return new GraphQLSchema({});
           }
 
-          return await this.createSchema(context, workspace);
+          return await this.createSchema(context, workspace, application?.id);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {
@@ -181,6 +159,7 @@ export class GraphQLConfigService
   async createSchema(
     context: YogaDriverServerContext<'express'> & YogaInitialContext,
     workspace: WorkspaceEntity,
+    applicationId?: string,
   ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
@@ -199,6 +178,6 @@ export class GraphQLConfigService
       },
     );
 
-    return await workspaceFactory.createGraphQLSchema(workspace);
+    return await workspaceFactory.createGraphQLSchema(workspace, applicationId);
   }
 }

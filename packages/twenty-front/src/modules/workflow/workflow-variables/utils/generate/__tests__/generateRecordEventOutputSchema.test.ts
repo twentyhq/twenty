@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordEventOutputSchema';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 const createMockObjectMetadataItem = (
   overrides: Partial<ObjectMetadataItem> = {},

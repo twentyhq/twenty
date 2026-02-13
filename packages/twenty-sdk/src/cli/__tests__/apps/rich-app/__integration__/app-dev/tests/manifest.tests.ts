@@ -35,10 +35,8 @@ export const defineManifestTests = (appPath: string): void => {
     it('should have correct application config', async () => {
       const manifest = await fs.readJson(manifestOutputPath);
 
-      expect(manifest?.application.displayName).toBe('Hello World');
-      expect(manifest?.application.description).toBe(
-        'A simple hello world app',
-      );
+      expect(manifest?.application.displayName).toBe('Rich App');
+      expect(manifest?.application.description).toBe('A simple rich app');
     });
 
     it('should load all entity types', async () => {

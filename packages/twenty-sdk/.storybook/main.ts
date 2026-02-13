@@ -31,6 +31,13 @@ const config: StorybookConfig = {
           '@': path.resolve(dirname, '../src'),
         },
       },
+      optimizeDeps: {
+        ...viteConfig.optimizeDeps,
+        include: [
+          ...(viteConfig.optimizeDeps?.include ?? []),
+          'transliteration',
+        ],
+      },
     };
   },
 };

@@ -1,7 +1,6 @@
-import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { createState } from '@ui/utilities/state/utils/createState';
+import { atom } from 'jotai';
 
-export const iconsState = createState<Record<string, IconComponent>>({
-  key: 'iconsState',
-  defaultValue: {},
-});
+import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+
+export const iconsState = atom<Record<string, IconComponent>>({});
+iconsState.debugLabel = 'iconsState';

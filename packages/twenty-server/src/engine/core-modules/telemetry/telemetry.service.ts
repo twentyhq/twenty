@@ -1,6 +1,6 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type CreateEventInput = {
@@ -12,7 +12,7 @@ type CreateEventInput = {
 export class TelemetryService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly httpService: HttpService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
   async create(
@@ -36,7 +36,11 @@ export class TelemetryService {
     };
 
     try {
-      await this.httpService.axiosRef.post(`/selfHostingEvent`, data);
+      const httpClient = this.secureHttpClientService.getHttpClient({
+        baseURL: 'https://twenty-telemetry.com/api/v2',
+      });
+
+      await httpClient.post(`/selfHostingEvent`, data);
     } catch {
       return { success: false };
     }

@@ -2,16 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import { UniversalUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   ValidateAndBuildArgs,
   ValidateAndBuildReturnType,
   WorkspaceEntityMigrationBuilderService,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatLogicFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service';
 
 @Injectable()
@@ -27,7 +26,6 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
   public async validateAndBuild(
     args: ValidateAndBuildArgs<typeof ALL_METADATA_NAME.logicFunction>,
   ): ValidateAndBuildReturnType<typeof ALL_METADATA_NAME.logicFunction> {
-    const { to: toFlatEntityMaps } = args;
     const baseResult = await super.validateAndBuild(args);
 
     if (baseResult.status === 'fail') {
@@ -35,19 +33,7 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
     }
 
     const updatedActions = baseResult.actions.update.map((action) => {
-      if (action.type !== 'update') {
-        return action;
-      }
-
-      const toLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: action.entityId,
-        flatEntityMaps: toFlatEntityMaps,
-      });
-
-      return {
-        ...action,
-        code: toLogicFunction?.code,
-      };
+      return action;
     });
 
     return {
@@ -60,8 +46,10 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.logicFunction>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.logicFunction
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.logicFunction,
     'create'
   > {
@@ -90,8 +78,10 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.logicFunction>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.logicFunction
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.logicFunction,
     'delete'
   > {
@@ -123,7 +113,7 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.logicFunction
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.logicFunction,
     'update'
   > {
@@ -139,12 +129,12 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateLogicFunctionAction: FlatUpdateLogicFunctionAction = {
+    const updateLogicFunctionAction: UniversalUpdateLogicFunctionAction = {
       type: 'update',
       metadataName: 'logicFunction',
-      entityId: flatEntityId,
+      universalIdentifier,
       update: flatEntityUpdate,
     };
 

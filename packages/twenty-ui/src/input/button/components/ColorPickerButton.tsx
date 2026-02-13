@@ -6,7 +6,7 @@ import {
   type LightIconButtonProps,
 } from '@ui/input/button/components/LightIconButton';
 
-type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
+export type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
   Pick<LightIconButtonProps, 'onClick'> & {
     isSelected?: boolean;
   };

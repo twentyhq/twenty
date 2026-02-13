@@ -1,8 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
 export type CircularDependencyValidationSuccess = {
   status: 'success';
@@ -20,23 +21,23 @@ export type CircularDependencyValidationResult =
   | CircularDependencyValidationFailure;
 
 export const validateFlatEntityCircularDependency = <
-  T extends SyncableFlatEntity,
+  T extends SyncableFlatEntity | UniversalSyncableFlatEntity,
   K extends keyof T,
 >({
-  flatEntityId,
-  flatEntityParentId,
+  flatEntityUniversalIdentifier,
+  flatEntityParentUniversalIdentifier,
   maxDepth,
-  parentIdKey,
+  parentUniversalIdentifierKey,
   flatEntityMaps,
 }: {
-  flatEntityId: string;
-  flatEntityParentId: string;
+  flatEntityUniversalIdentifier: string;
+  flatEntityParentUniversalIdentifier: string;
   maxDepth?: number;
-  parentIdKey: K;
-  flatEntityMaps: FlatEntityMaps<T>;
+  parentUniversalIdentifierKey: K;
+  flatEntityMaps: UniversalFlatEntityMaps<T>;
 }): CircularDependencyValidationResult => {
   // Direct self-reference check
-  if (flatEntityId === flatEntityParentId) {
+  if (flatEntityUniversalIdentifier === flatEntityParentUniversalIdentifier) {
     return {
       status: 'fail',
       reason: 'self_reference',
@@ -45,10 +46,11 @@ export const validateFlatEntityCircularDependency = <
 
   // Traverse ancestor chain to detect cycles and measure depth
   const visited = new Set<string>();
-  let currentParentId: string | null | undefined = flatEntityParentId;
+  let currentParentUniversalIdentifier: string | null | undefined =
+    flatEntityParentUniversalIdentifier;
   let depth = 1;
 
-  while (isDefined(currentParentId)) {
+  while (isDefined(currentParentUniversalIdentifier)) {
     if (isDefined(maxDepth) && depth > maxDepth) {
       return {
         status: 'fail',
@@ -58,7 +60,7 @@ export const validateFlatEntityCircularDependency = <
     }
 
     // Check for circular dependency
-    if (currentParentId === flatEntityId) {
+    if (currentParentUniversalIdentifier === flatEntityUniversalIdentifier) {
       return {
         status: 'fail',
         reason: 'circular_dependency',
@@ -67,7 +69,7 @@ export const validateFlatEntityCircularDependency = <
     }
 
     // Check for cycle in ancestors (already visited node)
-    if (visited.has(currentParentId)) {
+    if (visited.has(currentParentUniversalIdentifier)) {
       return {
         status: 'fail',
         reason: 'circular_dependency',
@@ -75,10 +77,10 @@ export const validateFlatEntityCircularDependency = <
       };
     }
 
-    visited.add(currentParentId);
+    visited.add(currentParentUniversalIdentifier);
 
-    const parentEntity: T | undefined = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: currentParentId,
+    const parentEntity: T | undefined = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: currentParentUniversalIdentifier,
       flatEntityMaps,
     });
 
@@ -86,11 +88,13 @@ export const validateFlatEntityCircularDependency = <
       break;
     }
 
-    const nextParentId: T[K] = parentEntity[parentIdKey];
+    const nextParentUniversalIdentifier: T[K] =
+      parentEntity[parentUniversalIdentifierKey];
 
-    currentParentId =
-      isDefined(nextParentId) && typeof nextParentId === 'string'
-        ? nextParentId
+    currentParentUniversalIdentifier =
+      isDefined(nextParentUniversalIdentifier) &&
+      typeof nextParentUniversalIdentifier === 'string'
+        ? nextParentUniversalIdentifier
         : undefined;
     depth++;
   }

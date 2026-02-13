@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import FileType from 'file-type';
@@ -11,6 +10,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };
@@ -26,7 +26,7 @@ export class FileUploadService {
   constructor(
     private readonly fileStorage: FileStorageService,
     private readonly fileService: FileService,
-    private readonly httpService: HttpService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
   private async _uploadFile({
@@ -40,7 +40,7 @@ export class FileUploadService {
     mimeType: string | undefined;
     folder: string;
   }) {
-    await this.fileStorage.writeFile({
+    await this.fileStorage.writeFileLegacy({
       file,
       name: filename,
       mimeType,
@@ -95,10 +95,9 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }) {
-    const buffer = await getImageBufferFromUrl(
-      imageUrl,
-      this.httpService.axiosRef,
-    );
+    const httpClient = this.secureHttpClientService.getHttpClient();
+
+    const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
 
     const type = await FileType.fromBuffer(buffer);
 

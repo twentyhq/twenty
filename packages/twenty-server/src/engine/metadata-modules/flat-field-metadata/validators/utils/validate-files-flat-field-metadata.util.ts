@@ -21,9 +21,9 @@ export const validateFilesFlatFieldMetadata = ({
   }
 
   if (
-    !isDefined(flatEntityToValidate?.settings?.maxNumberOfValues) ||
-    flatEntityToValidate.settings.maxNumberOfValues < 1 ||
-    flatEntityToValidate.settings.maxNumberOfValues >
+    !isDefined(flatEntityToValidate?.universalSettings?.maxNumberOfValues) ||
+    flatEntityToValidate.universalSettings.maxNumberOfValues < 1 ||
+    flatEntityToValidate.universalSettings.maxNumberOfValues >
       FILES_FIELD_MAX_NUMBER_OF_VALUES
   ) {
     errors.push({

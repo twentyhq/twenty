@@ -87,7 +87,7 @@ export class RowLevelPermissionPredicateEntity
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'workspaceMemberFieldMetadataId' })
-  workspaceMemberFieldMetadata: Relation<FieldMetadataEntity>;
+  workspaceMemberFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   rowLevelPermissionPredicateGroupId: string | null;
@@ -120,5 +120,5 @@ export class RowLevelPermissionPredicateEntity
     },
   )
   @JoinColumn({ name: 'rowLevelPermissionPredicateGroupId' })
-  rowLevelPermissionPredicateGroup: Relation<RowLevelPermissionPredicateGroupEntity>;
+  rowLevelPermissionPredicateGroup: Relation<RowLevelPermissionPredicateGroupEntity> | null;
 }
