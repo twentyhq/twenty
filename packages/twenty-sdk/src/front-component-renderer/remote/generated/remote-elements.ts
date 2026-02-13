@@ -13,7 +13,7 @@ import {
   RemoteFragmentElement,
   type RemoteEvent,
 } from '@remote-dom/core/elements';
-import { type SerializedEventData } from '../../../sdk/front-component-api/SerializedEventData';
+import { type SerializedEventData } from '../../../sdk/front-component-api/constants/SerializedEventData';
 
 export type HtmlCommonProperties = {
   id?: string;

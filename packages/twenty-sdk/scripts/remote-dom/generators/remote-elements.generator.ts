@@ -356,7 +356,7 @@ export const generateRemoteElements = (
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../../../sdk/front-component-api/SerializedEventData',
+    moduleSpecifier: '../../../sdk/front-component-api/constants/SerializedEventData',
     namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
   });
 

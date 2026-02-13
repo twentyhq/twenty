@@ -12,7 +12,7 @@ import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
-import { type SerializedEventData } from '../../../sdk/front-component-api/SerializedEventData';
+import { type SerializedEventData } from '../../../sdk/front-component-api/constants/SerializedEventData';
 import {
   AnimatedButton,
   AnimatedLightIconButton,

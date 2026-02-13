@@ -96,7 +96,7 @@ export const Lifecycle: Story = {
 
 export const ErrorHandling: Story = {
   args: {
-    componentUrl: '/built/nonexistent.front-component.mjs',
+    componentUrl: getBuiltStoryComponentPathForRender('nonexistent.front-component'),
   },
   play: async () => {
     await waitFor(
