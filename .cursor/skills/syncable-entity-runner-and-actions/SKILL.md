@@ -213,7 +213,7 @@ export class DeleteMyEntityActionHandlerService extends WorkspaceDeleteActionHan
   ): Promise<void> {
     const ids = flatActions.map((action) => action.flatEntity.id);
 
-    await this.myEntityRepository.softDelete(ids);
+    await this.myEntityRepository.delete(ids);
   }
 
   protected async executeForWorkspaceSchema(): Promise<void> {
@@ -319,10 +319,10 @@ protected transpileUniversalActionToFlatAction(
   });
 }
 
-// Soft delete
+// Delete
 protected async executeForMetadata(flatActions) {
   const ids = flatActions.map(a => a.flatEntity.id);
-  await this.myEntityRepository.softDelete(ids);
+  await this.myEntityRepository.delete(ids);
 }
 ```
 
@@ -343,7 +343,7 @@ Before moving to Step 5:
 - [ ] Create handler uses `insertFlatEntitiesInRepository`
 - [ ] Update handler uses `resolveUniversalUpdateRelationIdentifiersToIds`
 - [ ] Delete handler uses `transpileUniversalDeleteActionToFlatDeleteAction`
-- [ ] Delete handler uses soft delete (`softDelete()`)
+- [ ] Delete handler uses hard delete (`delete()`)
 
 ---
 

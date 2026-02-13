@@ -8,6 +8,16 @@ alwaysApply: false
 
 This is the master guide for creating **syncable entities** in Twenty's workspace migration architecture.
 
+## Documentation Structure
+
+This master guide provides a high-level overview and navigation hub.
+
+**⚡ Skills** (`.cursor/skills/syncable-entity-*/SKILL.md`) - Concise, action-oriented implementation guides for each step. Reference these when creating a new syncable entity.
+
+**When to use:**
+- Start here for architecture overview and workflow
+- Reference specific skills (`@syncable-entity-types-and-constants`) when implementing each step
+
 ## What is a Syncable Entity?
 
 A syncable entity is a metadata entity that:
@@ -36,9 +46,9 @@ Input DTO → Transform → Universal Flat Entity → Builder/Validator → Runn
 
 ## Implementation Steps
 
-Follow these guides in order:
+Follow these skills in order:
 
-### 1️⃣ **Foundation: Types & Constants** → `@syncable-entity-1-types-and-constants`
+### 1️⃣ **Foundation: Types & Constants** → `@syncable-entity-types-and-constants`
 
 **What:** Define all types, entities, and register in central constants
 
@@ -46,83 +56,74 @@ Follow these guides in order:
 - Create TypeORM entity (extends `SyncableEntity`)
 - Define flat entity types
 - Define action types (universal + flat)
-- Register in `ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME`
-- Register in `ALL_UNIVERSAL_METADATA_RELATIONS`
-- Register in `AllFlatEntityTypesByMetadataName`
+- Register in 4 central constants
 
 **Why first:** Everything else depends on these types
 
 ---
 
-### 2️⃣ **Data Layer: Cache & Transform** → `@syncable-entity-2-cache-and-transform`
+### 2️⃣ **Data Layer: Cache & Transform** → `@syncable-entity-cache-and-transform`
 
 **What:** Handle conversion between different representations
 
 **Tasks:**
 - Create cache service
-- Create entity-to-flat conversion (`from*EntityToFlat*Entity`)
-- Create input transform utils (`fromCreate*InputToUniversalFlat*`)
+- Create entity-to-flat conversion
+- Create input transform utils
 - Handle foreign key resolution
 
-**Dependencies:** Requires Step 1 (types)
+**Dependencies:** Requires Step 1
 
 ---
 
-### 3️⃣ **Business Logic: Builder & Validation** → `@syncable-entity-3-builder-and-validation`
+### 3️⃣ **Business Logic: Builder & Validation** → `@syncable-entity-builder-and-validation`
 
 **What:** Validate business rules and create actions
 
 **Tasks:**
-- Create validator service (create/update/delete validation)
+- Create validator service (never throws, never mutates)
 - Create builder service
-- Wire into orchestrator service (⚠️ often forgotten!)
+- Wire into orchestrator (⚠️ critical!)
 
 **Dependencies:** Requires Steps 1-2
 
-**Key Rule:** Never throws, never mutates - pure validation
-
 ---
 
-### 4️⃣ **Execution: Runner & Actions** → `@syncable-entity-4-runner-and-actions`
+### 4️⃣ **Execution: Runner & Actions** → `@syncable-entity-runner-and-actions`
 
 **What:** Execute migration actions against the database
 
 **Tasks:**
 - Create action handlers (create/update/delete)
-- Implement `transpileUniversalActionToFlatAction` methods
+- Implement transpilation methods
 - Create universal-to-flat conversion utilities
-- Implement database operations
 
 **Dependencies:** Requires Steps 1-3
 
 ---
 
-### 5️⃣ **Assembly: Integration** → `@syncable-entity-5-integration`
+### 5️⃣ **Assembly: Integration** → `@syncable-entity-integration`
 
 **What:** Wire everything together
 
 **Tasks:**
-- Register in builder module
-- Register in validators module
-- Register in action handlers module
-- Create service layer and resolvers
-- Use exception interceptor for GraphQL
+- Register in 3 NestJS modules
+- Create service and resolver layers
+- Use exception interceptor
 
 **Dependencies:** Requires Steps 1-4
 
 ---
 
-### 6️⃣ **Testing: Integration Tests** → `@syncable-entity-6-integration-testing` (**MANDATORY**)
+### 6️⃣ **Testing: Integration Tests** (**MANDATORY**) → `@syncable-entity-testing`
 
-**What:** Comprehensive test suite covering all scenarios
+**What:** Comprehensive test suite
 
 **Tasks:**
-- Create test utilities (query factories + wrappers)
+- Create test utilities
 - Write failing tests (all validator exceptions)
 - Write successful tests (all CRUD operations)
-- Test edge cases (sanitization, formatting, etc.)
-- Use snapshot testing for errors
-- Verify complete checklist
+- Use snapshot testing
 
 **Dependencies:** Requires all previous steps
 
@@ -206,17 +207,10 @@ Before considering complete:
 
 ## Need Help?
 
-- **Types not working?** → Check `@syncable-entity-1-types-and-constants`
-- **Transform errors?** → Check `@syncable-entity-2-cache-and-transform`
-- **Validation issues?** → Check `@syncable-entity-3-builder-and-validation`
-- **Database errors?** → Check `@syncable-entity-4-runner-and-actions`
-- **Module registration?** → Check `@syncable-entity-5-integration`
-- **Testing patterns?** → Check `@syncable-entity-6-integration-testing`
-
-**Pro tip:** Use the `@` syntax to reference specific guides:
-- `@syncable-entity-1-types-and-constants`
-- `@syncable-entity-2-cache-and-transform`
-- `@syncable-entity-3-builder-and-validation`
-- `@syncable-entity-4-runner-and-actions`
-- `@syncable-entity-5-integration`
-- `@syncable-entity-6-integration-testing`
+Reference the appropriate skill for step-by-step guidance:
+- `@syncable-entity-types-and-constants` - Types, entities, constants
+- `@syncable-entity-cache-and-transform` - Cache & transform
+- `@syncable-entity-builder-and-validation` - Builder & validation
+- `@syncable-entity-runner-and-actions` - Runner & actions
+- `@syncable-entity-integration` - Integration & wiring
+- `@syncable-entity-testing` - Testing patterns
