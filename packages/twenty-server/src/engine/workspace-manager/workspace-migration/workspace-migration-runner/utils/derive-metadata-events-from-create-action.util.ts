@@ -18,7 +18,10 @@ export const deriveMetadataEventsFromCreateAction = (
           recordId: flatFieldMetadata.id,
           metadataName: 'fieldMetadata',
           properties: {
-            after: flatFieldMetadata,
+            after: flatEntityToScalarFlatEntity({
+              flatEntity: flatFieldMetadata,
+              metadataName: 'fieldMetadata',
+            }),
           },
         }),
       );
