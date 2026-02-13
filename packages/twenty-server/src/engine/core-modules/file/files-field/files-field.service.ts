@@ -10,18 +10,13 @@ import { Like, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  FilesFieldTokenJwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileWithSignedUrlDto } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FilesFieldFileDTO } from 'src/engine/core-modules/file/files-field/dtos/files-field-file.dto';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 import {
@@ -39,8 +34,7 @@ export class FilesFieldService {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly jwtWrapperService: JwtWrapperService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   async uploadFile({
@@ -53,7 +47,7 @@ export class FilesFieldService {
     filename: string;
     workspaceId: string;
     fieldMetadataId: string;
-  }): Promise<FilesFieldFileDTO> {
+  }): Promise<FileWithSignedUrlDto> {
     const { mimeType, ext } = await extractFileInfo({
       file,
       filename,
@@ -95,7 +89,11 @@ export class FilesFieldService {
 
     return {
       ...savedFile,
-      url: this.signFileUrl({ fileId, workspaceId }),
+      url: this.fileUrlService.signFileByIdUrl({
+        fileId,
+        workspaceId,
+        fileFolder: FileFolder.FilesField,
+      }),
     };
   }
 
@@ -161,31 +159,5 @@ export class FilesFieldService {
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
     });
-  }
-
-  signFileUrl(
-    payloadToEncode: Omit<FilesFieldTokenJwtPayload, 'type' | 'sub'>,
-  ) {
-    const fileTokenExpiresIn = this.twentyConfigService.get(
-      'FILE_TOKEN_EXPIRES_IN',
-    );
-
-    const payload: FilesFieldTokenJwtPayload = {
-      ...payloadToEncode,
-      sub: payloadToEncode.workspaceId,
-      type: JwtTokenTypeEnum.FILE,
-    };
-
-    const secret = this.jwtWrapperService.generateAppSecret(
-      payload.type,
-      payloadToEncode.workspaceId,
-    );
-
-    const token = this.jwtWrapperService.sign(payload, {
-      secret,
-      expiresIn: fileTokenExpiresIn,
-    });
-
-    return `${process.env.SERVER_URL}/files-field/${payloadToEncode.fileId}?token=${token}`;
   }
 }
