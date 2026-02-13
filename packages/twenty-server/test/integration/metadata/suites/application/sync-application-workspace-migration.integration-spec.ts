@@ -81,6 +81,7 @@ describe('syncApplication', () => {
       ],
       objects: [
         {
+          labelIdentifierFieldMetadataUniversalIdentifier: TEST_FIELD_ID,
           universalIdentifier: TEST_OBJECT_ID,
           nameSingular: 'ticket',
           namePlural: 'tickets',
@@ -134,7 +135,7 @@ describe('syncApplication', () => {
         {
           universalIdentifier: TEST_FIELD_ID,
           type: FieldMetadataType.TEXT,
-          name: 'description',
+          name: 'body',
           label: 'Body',
           description: 'Ticket description',
           icon: 'IconFileDescription',
