@@ -5,7 +5,7 @@ import { type MenuItemAccent } from '../types/MenuItemAccent';
 import { type IconComponent } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
 import { type ReactNode } from 'react';
-import { type GripMode } from '../internals/components/MenuItemLeftContent';
+import { type MenuItemDraggableGripMode } from '../types/MenuItemDraggableGripMode';
 import { type MenuItemIconButton } from './MenuItem';
 
 export type MenuItemDraggableProps = {
@@ -18,7 +18,7 @@ export type MenuItemDraggableProps = {
   text: ReactNode;
   className?: string;
   isIconDisplayedOnHoverOnly?: boolean;
-  gripMode?: GripMode;
+  gripMode?: MenuItemDraggableGripMode;
   isDragDisabled?: boolean;
   isHoverDisabled?: boolean;
 };

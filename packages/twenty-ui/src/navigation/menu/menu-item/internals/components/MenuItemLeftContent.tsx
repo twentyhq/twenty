@@ -8,6 +8,7 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconWithGripSwap } from './MenuItemIconWithGripSwap';
 import { StyledIconContainer } from './StyledIconContainer';
@@ -31,14 +32,12 @@ const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
   margin-left: auto;
 `;
 
-export type GripMode = 'always' | 'onHover' | 'never';
-
 export type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
   withIconContainer?: boolean;
-  gripMode?: GripMode;
+  gripMode?: MenuItemDraggableGripMode;
   disabled?: boolean;
   text: ReactNode;
   contextualText?: ReactNode;
