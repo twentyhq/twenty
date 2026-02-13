@@ -1,16 +1,16 @@
 ---
-description: Master guide for creating syncable entities in Twenty's workspace migration system
+description: Main guide for creating syncable entities in Twenty's workspace migration system
 globs: ["**/metadata-modules/**", "**/workspace-migration/**"]
 alwaysApply: false
 ---
 
-# Creating a New Syncable Entity - Master Guide
+# Creating a New Syncable Entity - Main Guide
 
-This is the master guide for creating **syncable entities** in Twenty's workspace migration architecture.
+This is the main guide for creating **syncable entities** in Twenty's workspace migration architecture.
 
 ## Documentation Structure
 
-This master guide provides a high-level overview and navigation hub.
+This main guide provides a high-level overview and navigation hub.
 
 **⚡ Skills** (`.cursor/skills/syncable-entity-*/SKILL.md`) - Concise, action-oriented implementation guides for each step. Reference these when creating a new syncable entity.
 
