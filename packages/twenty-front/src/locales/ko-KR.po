@@ -4232,6 +4232,11 @@ msgstr "전체 워크스페이스 삭제"
 msgid "Deleted"
 msgstr "삭제됨"
 
+#. js-lingui-id: oAhMKF
+#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+msgid "Deleted record"
+msgstr ""
+
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Deleted records"
@@ -13104,6 +13109,12 @@ msgstr "이중 인증 설정이 성공적으로 완료되었습니다!"
 msgid "Type"
 msgstr "유형"
 
+#. js-lingui-id: SKD2e4
+#: src/modules/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextEditorContent.tsx
+#: src/modules/activities/components/ActivityRichTextEditor.tsx
+msgid "Type '/' for commands, '@' for mentions"
+msgstr ""
+
 #. js-lingui-id: qzD6hf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
@@ -13227,6 +13238,11 @@ msgstr "알 수 없는 필드"
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "알 수 없는 파일"
+
+#. js-lingui-id: num3KD
+#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+msgid "Unknown object"
+msgstr ""
 
 #. js-lingui-id: GQCXQS
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx

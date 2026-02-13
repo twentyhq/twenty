@@ -59,16 +59,14 @@ export {
 export type { FrontComponentExecutionContext } from './front-component-api';
 
 // Front Component Common exports
-export {
-  ALLOWED_HTML_ELEMENTS,
-  COMMON_HTML_EVENTS,
-  EVENT_TO_REACT,
-  HTML_COMMON_PROPERTIES,
-  HTML_TAG_TO_REMOTE_COMPONENT,
-} from './front-component-common';
-export type { AllowedHtmlElement } from './front-component-common';
+export type { AllowedHtmlElement } from './front-component-api';
+export { ALLOWED_HTML_ELEMENTS } from './front-component-api';
+export { COMMON_HTML_EVENTS } from './front-component-api';
+export { EVENT_TO_REACT } from './front-component-api';
+export { HTML_COMMON_PROPERTIES } from './front-component-api';
+export { HTML_TAG_TO_REMOTE_COMPONENT } from './front-component-api';
 
 // Style bridge utilities for CSS-in-JS libraries in remote components
 export { installStyleBridge } from '../front-component/remote/polyfills/installStyleBridge';
-export { exposeGlobals } from '../front-component/remote/utils/exposeGlobals';
-export { patchElementFactoriesForRemoteComponents } from '../front-component/remote/utils/patchElementFactoriesForRemoteComponents';
+export { exposeGlobals } from '../front-component-renderer/remote/utils/exposeGlobals';
+export { patchElementFactoriesForRemoteComponents } from '../front-component-renderer/remote/utils/patchElementFactoriesForRemoteComponents';

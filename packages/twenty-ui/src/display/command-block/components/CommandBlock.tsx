@@ -29,7 +29,7 @@ const StyledLineSpan = styled.span`
   color: ${({ theme }) => theme.code.text.green};
 `;
 
-export type CommandBlockProps = {
+type CommandBlockProps = {
   commands: string[];
   button?: ReactElement;
 };

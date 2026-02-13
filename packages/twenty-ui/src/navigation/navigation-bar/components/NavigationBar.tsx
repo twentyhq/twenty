@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   z-index: 1001;
 `;
 
-export type NavigationBarProps = {
+type NavigationBarProps = {
   activeItemName: string;
   items: { name: string; Icon: IconComponent; onClick: () => void }[];
 };

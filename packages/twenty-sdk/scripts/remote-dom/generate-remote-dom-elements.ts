@@ -4,10 +4,10 @@ import * as path from 'path';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
 import { fileURLToPath } from 'url';
 
-import { ALLOWED_HTML_ELEMENTS } from '../../src/sdk/front-component-common/AllowedHtmlElements';
-import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-common/CommonHtmlEvents';
-import { EVENT_TO_REACT } from '../../src/sdk/front-component-common/EventToReact';
-import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-common/HtmlCommonProperties';
+import { ALLOWED_HTML_ELEMENTS } from '../../src/sdk/front-component-api/constants/AllowedHtmlElements';
+import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-api/constants/CommonHtmlEvents';
+import { EVENT_TO_REACT } from '../../src/sdk/front-component-api/constants/EventToReact';
+import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-api/constants/HtmlCommonProperties';
 
 import {
   type ComponentSchema,
@@ -18,7 +18,6 @@ import {
   HtmlElementConfigArrayZ,
   OUTPUT_FILES,
 } from './generators';
-import { extractAllComponentsFromTwentyUi } from './twenty-ui-extractor';
 import {
   logCount,
   logDetail,
@@ -39,7 +38,10 @@ const parseVerboseFlag = (): boolean => {
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_PATH = path.resolve(SCRIPT_DIR, '../..');
-const FRONT_COMPONENT_PATH = path.join(PACKAGE_PATH, 'src/front-component');
+const FRONT_COMPONENT_PATH = path.join(
+  PACKAGE_PATH,
+  'src/front-component-renderer',
+);
 const HOST_GENERATED_DIR = path.join(FRONT_COMPONENT_PATH, 'host/generated');
 const REMOTE_GENERATED_DIR = path.join(
   FRONT_COMPONENT_PATH,
@@ -96,25 +98,6 @@ const getUtilityComponentSchemas = (): ComponentSchema[] => {
   ];
 };
 
-const getUiComponentSchemas = (): ComponentSchema[] => {
-  const discoveredComponents = extractAllComponentsFromTwentyUi();
-
-  return discoveredComponents.map((component) => ({
-    name: component.name,
-    tagName: component.name,
-    customElementName: component.tag,
-    properties: component.properties,
-    slots: component.slots,
-    events: component.events,
-    isHtmlElement: false,
-    htmlTag: undefined,
-    componentImport: component.componentImport,
-    componentPath: component.componentPath,
-    propsTypeName: component.propsTypeName,
-    supportsRefForwarding: component.supportsRefForwarding,
-  }));
-};
-
 const createProject = (): Project => {
   return new Project({
     manipulationSettings: {
@@ -158,12 +141,10 @@ const main = (): void => {
   logTitle('Remote DOM Elements Generator');
 
   let htmlElements: ComponentSchema[];
-  let uiComponents: ComponentSchema[];
   let utilityComponents: ComponentSchema[];
 
   try {
     htmlElements = getHtmlElementSchemas();
-    uiComponents = getUiComponentSchemas();
     utilityComponents = getUtilityComponentSchemas();
   } catch (error) {
     logError('Validation failed:', error);
@@ -180,12 +161,6 @@ const main = (): void => {
   logDetail(`Events: ${COMMON_HTML_EVENTS.length} common events per element`);
 
   logEmpty();
-  logCount('UI Components', uiComponents.length, 'component', 'components');
-  logDetail(
-    `Tags: ${uiComponents.map((component) => component.customElementName).join(', ')}`,
-  );
-
-  logEmpty();
   logCount(
     'Utility Components',
     utilityComponents.length,
@@ -196,11 +171,7 @@ const main = (): void => {
     `Tags: ${utilityComponents.map((component) => component.customElementName).join(', ')}`,
   );
 
-  const allComponents = [
-    ...htmlElements,
-    ...uiComponents,
-    ...utilityComponents,
-  ];
+  const allComponents = [...htmlElements, ...utilityComponents];
 
   ensureDirectoriesExist();
 

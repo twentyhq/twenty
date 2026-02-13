@@ -43,7 +43,7 @@ const StyledContent = styled.span`
   white-space: nowrap;
 `;
 
-export type StatusProps = {
+type StatusProps = {
   className?: string;
   color: ThemeColor;
   isLoaderVisible?: boolean;

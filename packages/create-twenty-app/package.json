@@ -10,9 +10,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build",
-    "prepublishOnly": "tsx ../twenty-utils/pack-scripts/pre-publish-only.ts",
-    "postpublish": "tsx ../twenty-utils/pack-scripts/post-publish.ts"
+    "build": "npx rimraf dist && npx vite build"
   },
   "keywords": [
     "twenty",
@@ -38,7 +36,6 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
-    "twenty-shared": "workspace:*",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -48,6 +45,8 @@
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.startcase": "^4",
     "@types/node": "^20.0.0",
+    "twenty-sdk": "workspace:*",
+    "twenty-shared": "workspace:*",
     "typescript": "^5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",

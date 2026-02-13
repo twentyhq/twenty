@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
-export type MenuItemSelectAvatarProps = {
+type MenuItemSelectAvatarProps = {
   avatar?: ReactNode;
   selected: boolean;
   text: string;

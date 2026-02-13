@@ -23,7 +23,7 @@ const StyledClickableLink = withTheme(styled.a<{
   }
 `);
 
-export type ContactLinkProps = {
+type ContactLinkProps = {
   href: string;
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
