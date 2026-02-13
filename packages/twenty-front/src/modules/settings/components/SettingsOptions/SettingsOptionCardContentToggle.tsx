@@ -1,10 +1,11 @@
 import { Separator } from '@/settings/components/Separator';
 import {
   StyledSettingsCardContent,
-  StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
+import { SettingsOptionCardDescription } from '@/settings/components/SettingsOptions/SettingsOptionCardDescription';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -27,6 +28,7 @@ const StyledSettingsCardToggleButton = styled(Toggle)<{
 }>`
   align-self: ${({ toggleCentered }) =>
     toggleCentered ? 'center' : 'flex-start'};
+  flex-shrink: 0;
   margin-left: auto;
 `;
 
@@ -70,17 +72,15 @@ export const SettingsOptionCardContentToggle = ({
             <SettingsOptionIconCustomizer Icon={Icon} />
           </StyledSettingsCardIcon>
         )}
-        <div>
+        <StyledSettingsCardTextContainer>
           <StyledSettingsCardTitle>
             <label htmlFor={toggleId}>
               {title}
               <StyledSettingsCardToggleCover />
             </label>
           </StyledSettingsCardTitle>
-          <StyledSettingsCardDescription>
-            {description}
-          </StyledSettingsCardDescription>
-        </div>
+          <SettingsOptionCardDescription description={description} />
+        </StyledSettingsCardTextContainer>
         <StyledSettingsCardToggleButton
           id={toggleId}
           value={checked}

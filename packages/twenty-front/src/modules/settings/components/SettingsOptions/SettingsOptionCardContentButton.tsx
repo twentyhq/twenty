@@ -1,9 +1,10 @@
 import {
   StyledSettingsCardContent,
-  StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
+import { SettingsOptionCardDescription } from '@/settings/components/SettingsOptions/SettingsOptionCardDescription';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/display';
@@ -17,6 +18,7 @@ type SettingsOptionCardContentButtonProps = {
 };
 
 const StyledButtonContainer = styled.div`
+  flex-shrink: 0;
   margin-left: auto;
 `;
 
@@ -34,12 +36,10 @@ export const SettingsOptionCardContentButton = ({
           <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsCardIcon>
       )}
-      <div>
+      <StyledSettingsCardTextContainer>
         <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-        <StyledSettingsCardDescription>
-          {description}
-        </StyledSettingsCardDescription>
-      </div>
+        <SettingsOptionCardDescription description={description} />
+      </StyledSettingsCardTextContainer>
       {Button && <StyledButtonContainer>{Button}</StyledButtonContainer>}
     </StyledSettingsCardContent>
   );

@@ -1,9 +1,10 @@
 import {
   StyledSettingsCardContent,
-  StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
+import { SettingsOptionCardDescription } from '@/settings/components/SettingsOptions/SettingsOptionCardDescription';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/display';
@@ -17,6 +18,7 @@ type SettingsOptionCardContentSelectProps = {
 };
 
 const StyledSelectContainer = styled.div`
+  flex-shrink: 0;
   justify-content: flex-end;
   margin-left: auto;
   max-width: 120px;
@@ -36,12 +38,10 @@ export const SettingsOptionCardContentSelect = ({
           <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsCardIcon>
       )}
-      <div>
+      <StyledSettingsCardTextContainer>
         <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-        <StyledSettingsCardDescription>
-          {description}
-        </StyledSettingsCardDescription>
-      </div>
+        <SettingsOptionCardDescription description={description} />
+      </StyledSettingsCardTextContainer>
       <StyledSelectContainer>{children}</StyledSelectContainer>
     </StyledSettingsCardContent>
   );

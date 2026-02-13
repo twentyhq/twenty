@@ -1,10 +1,11 @@
 import { SettingsCounter } from '@/settings/components/SettingsCounter';
 import {
   StyledSettingsCardContent,
-  StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
+import { SettingsOptionCardDescription } from '@/settings/components/SettingsOptions/SettingsOptionCardDescription';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { type IconComponent } from 'twenty-ui/display';
 
@@ -38,14 +39,10 @@ export const SettingsOptionCardContentCounter = ({
           <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsCardIcon>
       )}
-      <div>
+      <StyledSettingsCardTextContainer>
         <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-        {description && (
-          <StyledSettingsCardDescription>
-            {description}
-          </StyledSettingsCardDescription>
-        )}
-      </div>
+        <SettingsOptionCardDescription description={description} />
+      </StyledSettingsCardTextContainer>
       <SettingsCounter
         value={value}
         onChange={onChange}
