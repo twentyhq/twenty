@@ -4,7 +4,9 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { createReactInlineContentSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant } from 'twenty-ui/components';
 
 const StyledRecordChip = styled(RecordChip)`
@@ -26,29 +28,19 @@ const MentionInlineContentRenderer = ({
     (item) => item.id === objectMetadataId,
   );
 
-  const objectNameSingular = objectMetadataItem?.nameSingular ?? '';
+  const objectNameSingular = objectMetadataItem?.nameSingular;
 
   const { record, loading } = useFindOneRecord({
-    objectNameSingular,
+    objectNameSingular: objectNameSingular ?? '',
     objectRecordId: recordId,
-    skip: !objectNameSingular || !recordId,
+    skip: !isNonEmptyString(objectNameSingular) || !isNonEmptyString(recordId),
   });
 
   if (loading) {
     return null;
   }
 
-  if (!record) {
-    return (
-      <Chip
-        label={t`Deleted record`}
-        variant={ChipVariant.Transparent}
-        disabled
-      />
-    );
-  }
-
-  if (!objectNameSingular) {
+  if (!isDefined(objectMetadataItem)) {
     return (
       <Chip
         label={t`Unknown object`}
@@ -58,9 +50,19 @@ const MentionInlineContentRenderer = ({
     );
   }
 
+  if (!isDefined(record)) {
+    return (
+      <Chip
+        label={t`Deleted record`}
+        variant={ChipVariant.Transparent}
+        disabled
+      />
+    );
+  }
+
   return (
     <StyledRecordChip
-      objectNameSingular={objectNameSingular}
+      objectNameSingular={objectMetadataItem.nameSingular}
       record={record}
       forceDisableClick={false}
     />
