@@ -380,7 +380,7 @@ export class SignInUpService {
   }
 
   private async setDefaultImpersonateAndAccessFullAdminPanel() {
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
 
       // let the creation of the first workspace
