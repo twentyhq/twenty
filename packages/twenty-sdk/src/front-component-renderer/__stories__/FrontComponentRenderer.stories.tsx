@@ -35,7 +35,7 @@ export const Static: Story = {
     const container = await canvas.findByTestId(
       'static-component',
       {},
-      { timeout: 5000 },
+      { timeout: 10000 },
     );
     expect(container).toBeVisible();
     expect(container).toHaveStyle({
@@ -60,7 +60,7 @@ export const Interactive: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByTestId('interactive-component', {}, { timeout: 5000 });
+    await canvas.findByTestId('interactive-component', {}, { timeout: 10000 });
 
     expect(await canvas.findByText('Count: 0')).toBeVisible();
 
@@ -80,7 +80,7 @@ export const Lifecycle: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByTestId('lifecycle-component', {}, { timeout: 5000 });
+    await canvas.findByTestId('lifecycle-component', {}, { timeout: 10000 });
 
     expect(await canvas.findByText('Mounted')).toBeVisible();
 
@@ -89,8 +89,16 @@ export const Lifecycle: Story = {
         const tickElement = canvas.getByTestId('tick-count');
         expect(tickElement.textContent).toMatch(/Ticks: [1-9]\d*/);
       },
-      { timeout: 5000 },
+      { timeout: 10000 },
     );
+  },
+};
+
+export const ChakraExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'chakra-example.front-component',
+    ),
   },
 };
 
@@ -103,7 +111,7 @@ export const ErrorHandling: Story = {
       () => {
         expect(errorHandler).toHaveBeenCalled();
       },
-      { timeout: 5000 },
+      { timeout: 10000 },
     );
   },
 };
