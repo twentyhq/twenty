@@ -1,3 +1,5 @@
-export const getBuiltStoryComponentPathForRender = (componentName: string): string => {
+export const getBuiltStoryComponentPathForRender = (
+  componentName: string,
+): string => {
   return `/built/${componentName}.mjs`;
 };

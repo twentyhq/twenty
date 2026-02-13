@@ -1,6 +1,9 @@
 import path from 'path';
+import { PackageJson } from 'type-fest';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+
+import packageJson from './package.json';
 
 
 const entries = ['src/ui/index.ts', 'src/front-component-renderer/index.ts'];
@@ -70,6 +73,15 @@ export default defineConfig(() => {
             return;
           }
           warn(warning);
+        },
+        external: (id: string) => {
+          const deps = Object.entries(
+            (packageJson as PackageJson).dependencies || {},
+          ).filter(([_, version]) => !version?.startsWith('workspace:'));
+
+          return deps.some(
+            ([dep, _]) => id === dep || id.startsWith(dep + '/'),
+          );
         },
         output: [
           {
