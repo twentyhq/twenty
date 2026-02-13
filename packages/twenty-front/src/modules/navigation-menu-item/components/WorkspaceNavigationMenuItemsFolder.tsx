@@ -48,6 +48,9 @@ const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
 const StyledFolderDroppableContent = styled.div<{
   $compact: boolean;
 }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
   padding-bottom: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
 `;
 

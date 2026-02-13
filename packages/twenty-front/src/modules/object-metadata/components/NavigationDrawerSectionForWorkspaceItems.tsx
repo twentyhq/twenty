@@ -1,4 +1,5 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
+import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
@@ -34,6 +35,12 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+
+const StyledWorkspaceDroppableList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
+`;
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
@@ -169,7 +176,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           isDropDisabled={workspaceDropDisabled}
         >
           {(provided) => (
-            <div
+            <StyledWorkspaceDroppableList
               ref={provided.innerRef}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...provided.droppableProps}
@@ -338,7 +345,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                   />
                 )}
               {provided.placeholder}
-            </div>
+            </StyledWorkspaceDroppableList>
           )}
         </Droppable>
       )}
