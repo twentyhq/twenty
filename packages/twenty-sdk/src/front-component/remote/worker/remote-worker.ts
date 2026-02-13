@@ -9,11 +9,13 @@ import {
   type RemoteConnection,
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import * as TwentySharedTypes from 'twenty-shared/types';
 import * as TwentySharedUtils from 'twenty-shared/utils';
+import { installStyleBridge } from '../polyfills/installStyleBridge';
 
 import * as TwentySdk from '@/sdk';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
@@ -25,6 +27,7 @@ import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderCo
 import { type WorkerExports } from '../../types/WorkerExports';
 import * as RemoteComponents from '../generated/remote-components';
 import { exposeGlobals } from '../utils/exposeGlobals';
+import { patchElementFactoriesForRemoteComponents } from '../utils/patchElementFactoriesForRemoteComponents';
 
 exposeGlobals({
   React,
@@ -38,14 +41,19 @@ exposeGlobals({
   },
 });
 
+patchElementFactoriesForRemoteComponents(RemoteComponents);
+
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
+  const renderContainer = document.createElement('remote-fragment');
   root.connect(batchedConnection);
+  root.append(renderContainer);
   document.body.append(root);
+  installStyleBridge(root);
 
   const response = await fetch(renderContext.componentUrl, {
     headers: { Authorization: `Bearer ${renderContext.authToken}` },
@@ -69,7 +77,8 @@ const render: WorkerExports['render'] = async (
     /* @vite-ignore */
     const componentModule = await import(importUrl);
 
-    const reactRoot = createRoot(root);
+    const reactRoot = createRoot(renderContainer);
+
     reactRoot.render(componentModule.default);
   } finally {
     URL.revokeObjectURL(importUrl);
