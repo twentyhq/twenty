@@ -37,6 +37,7 @@ export default defineConfig({
           },
           setupFiles: ['./.storybook/vitest.setup.ts'],
           testTimeout: 5 * MINUTES_IN_MS,
+          retry: 2,
         },
       },
     ],

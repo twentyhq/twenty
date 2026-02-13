@@ -43,6 +43,12 @@ const config: StorybookConfig = {
         include: [
           ...(viteConfig.optimizeDeps?.include ?? []),
           'transliteration',
+          '@remote-dom/core/polyfill',
+          '@remote-dom/react/polyfill',
+          '@remote-dom/core/elements',
+          '@remote-dom/react',
+          'react-dom/client',
+          'react/jsx-runtime',
         ],
       },
     };
