@@ -96,7 +96,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     await this.insertFlatEntitiesInRepository({
       queryRunner,
-      flatEntities: flatFieldMetadatas,
+      flatEntities: [flatEntity, relatedFlatFieldMetadata].filter(isDefined),
     });
   }
 
@@ -109,14 +109,17 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps },
       workspaceId,
     } = context;
-    const { flatFieldMetadatas } = flatAction;
+    const { flatEntity, relatedFlatFieldMetadata } = flatAction;
 
     const fieldsByObjectMetadataId = new Map<
       string,
-      typeof flatFieldMetadatas
+      FlatFieldMetadata[]
     >();
 
-    for (const flatFieldMetadata of flatFieldMetadatas) {
+    for (const flatFieldMetadata of [
+      flatEntity,
+      relatedFlatFieldMetadata,
+    ].filter(isDefined)) {
       const existingFields = fieldsByObjectMetadataId.get(
         flatFieldMetadata.objectMetadataId,
       );
