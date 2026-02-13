@@ -50,6 +50,7 @@ export const useUploadAttachmentFile = () => {
   ) => {
     let attachmentPath: string;
     let fileId: string | undefined;
+    let fileUrl: string | undefined;
 
     if (isFilesFieldMigrated) {
       assertIsDefinedOrThrow(
@@ -69,6 +70,7 @@ export const useUploadAttachmentFile = () => {
 
       attachmentPath = uploadedFile.path;
       fileId = uploadedFile.id;
+      fileUrl = uploadedFile.url;
     } else {
       const result = await uploadFile({
         variables: {
@@ -93,7 +95,7 @@ export const useUploadAttachmentFile = () => {
 
     const attachmentToCreate = {
       name: file.name,
-      fullPath: attachmentPath,
+      fullPath: isFilesFieldMigrated ? null : attachmentPath,
       fileCategory: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
       ...(isFilesFieldMigrated && isDefined(fileId)
@@ -110,7 +112,12 @@ export const useUploadAttachmentFile = () => {
 
     const createdAttachment = await createOneAttachment(attachmentToCreate);
 
-    return { attachmentAbsoluteURL: createdAttachment.fullPath };
+    return {
+      attachmentAbsoluteURL: isFilesFieldMigrated
+        ? fileUrl
+        : createdAttachment.fullPath,
+      attachmentFileId: fileId,
+    };
   };
 
   return { uploadAttachmentFile };

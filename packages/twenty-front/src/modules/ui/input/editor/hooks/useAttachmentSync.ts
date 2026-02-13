@@ -8,8 +8,13 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useAttachmentSync = (attachments: Attachment[]) => {
+  const isFilesFieldMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+  );
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
@@ -42,6 +47,7 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
       newBody,
       attachments,
       previousBodyOrEmptyArray,
+      isFilesFieldMigrated,
     );
 
     if (attachmentIdsToDelete.length > 0) {
@@ -53,16 +59,18 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
       newBody,
       attachments,
+      isFilesFieldMigrated,
     );
 
     if (attachmentPathsToRestore.length > 0) {
       const softDeletedAttachments =
         (await findSoftDeletedAttachments()) as Attachment[];
 
-      const attachmentIdsToRestore = filterAttachmentsToRestore(
+      const attachmentIdsToRestore = filterAttachmentsToRestore({
         attachmentPathsToRestore,
-        softDeletedAttachments ?? [],
-      );
+        softDeletedAttachments: softDeletedAttachments ?? [],
+        isFilesFieldMigrated,
+      });
 
       await restoreAttachments({
         idsToRestore: attachmentIdsToRestore,
@@ -72,6 +80,7 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
       newBody,
       attachments,
+      isFilesFieldMigrated,
     );
 
     for (const attachmentToUpdate of attachmentsToUpdate) {
