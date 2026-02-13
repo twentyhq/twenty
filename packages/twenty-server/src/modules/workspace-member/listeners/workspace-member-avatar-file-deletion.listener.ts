@@ -63,7 +63,7 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     workspaceId: string,
   ): Promise<void> {
     for (const fileId of fileIds) {
-      this.fileCorePictureService.deleteCorePicture({
+      await this.fileCorePictureService.deleteCorePicture({
         workspaceId,
         fileId,
       });

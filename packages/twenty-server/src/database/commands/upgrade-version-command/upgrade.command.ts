@@ -23,6 +23,7 @@ import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrad
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
+import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -61,6 +62,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateAttachmentFilesCommand: MigrateAttachmentFilesCommand,
     protected readonly migrateActivityRichTextAttachmentFileIdsCommand: MigrateActivityRichTextAttachmentFileIdsCommand,
     protected readonly migrateWorkspacePicturesCommand: MigrateWorkspacePicturesCommand,
+    protected readonly migrateWorkflowSendEmailAttachmentsCommand: MigrateWorkflowSendEmailAttachmentsCommand,
   ) {
     super(
       workspaceRepository,
@@ -91,6 +93,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateAttachmentFilesCommand,
       this.migrateActivityRichTextAttachmentFileIdsCommand,
       this.migrateWorkspacePicturesCommand,
+      this.migrateWorkflowSendEmailAttachmentsCommand,
       this.backfillFileSizeAndMimeTypeCommand,
     ];
 

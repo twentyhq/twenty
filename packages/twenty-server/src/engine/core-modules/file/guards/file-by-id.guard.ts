@@ -10,6 +10,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.CorePicture,
   FileFolder.FilesField,
+  FileFolder.Workflow,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];
