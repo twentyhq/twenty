@@ -1,7 +1,7 @@
-import { PageLayoutType } from '~/generated/graphql';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { getTabListInstanceIdFromPageLayoutId } from './getTabListInstanceIdFromPageLayoutId';
 import { isDefined } from 'twenty-shared/utils';
+import { type PageLayoutType } from '~/generated/graphql';
 
 export const getTabListInstanceIdFromPageLayoutAndRecord = ({
   pageLayoutId,
@@ -15,9 +15,7 @@ export const getTabListInstanceIdFromPageLayoutAndRecord = ({
   // Include record ID in tab instance ID to prevent tab synchronization between different records
   // Only for RECORD_PAGE layouts, as DASHBOARD layouts are standalone
   const recordId =
-    layoutType === PageLayoutType.RECORD_PAGE
-      ? targetRecordIdentifier?.id
-      : undefined;
+    layoutType === 'RECORD_PAGE' ? targetRecordIdentifier?.id : undefined;
   const baseInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
   return isDefined(recordId) ? `${baseInstanceId}-${recordId}` : baseInstanceId;
 };
