@@ -3,11 +3,11 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createFrontComponentBuildOptions } from '../../../cli/utilities/build/common/front-component-build/utils/create-front-component-build-options';
+import { createFrontComponentBuildOptions } from './utils/create-front-component-build-options';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const mocksDir = path.resolve(dirname, '../mocks');
-const outputDir = path.resolve(dirname, '../built');
+const exampleSourcesDir = path.resolve(dirname, '../../src/front-component-renderer/__stories__/example-sources');
+const exampleSourcesBuiltDir = path.resolve(dirname, '../../src/front-component-renderer/__stories__/example-sources-built');
 const sdkRoot = path.resolve(dirname, '../../../..');
 
 const STORY_COMPONENTS = [
@@ -16,17 +16,17 @@ const STORY_COMPONENTS = [
   'lifecycle.front-component',
 ];
 
-export const buildMockComponents = async (): Promise<void> => {
-  fs.mkdirSync(outputDir, { recursive: true });
+export const buildSourceExamples = async (): Promise<void> => {
+  fs.mkdirSync(exampleSourcesBuiltDir, { recursive: true });
 
   const entryPoints: Record<string, string> = {};
 
   for (const name of STORY_COMPONENTS) {
-    const filePath = path.join(mocksDir, `${name}.tsx`);
+    const filePath = path.join(exampleSourcesDir, `${name}.tsx`);
     if (!fs.existsSync(filePath)) {
       throw new Error(
         `Story component source file not found: ${filePath}\n` +
-          `Ensure the file exists in ${mocksDir} and the name in STORY_COMPONENTS is correct.`,
+          `Ensure the file exists in ${exampleSourcesDir} and the name in STORY_COMPONENTS is correct.`,
       );
     }
     entryPoints[name] = filePath;
@@ -34,18 +34,18 @@ export const buildMockComponents = async (): Promise<void> => {
 
   const buildOptions = createFrontComponentBuildOptions({
     entryPoints,
-    outdir: outputDir,
-    tsconfigPath: path.join(sdkRoot, 'tsconfig.json'),
+    outdir: exampleSourcesBuiltDir,
+    tsconfigPath: path.join(dirname, '../../tsconfig.json'),
   });
 
   await esbuild.build(buildOptions);
 
   console.log(
-    `Built ${STORY_COMPONENTS.length} story components to ${outputDir}`,
+    `Built ${STORY_COMPONENTS.length} story components to ${exampleSourcesBuiltDir}`,
   );
 };
 
-buildMockComponents().catch((error) => {
+buildSourceExamples().catch((error) => {
   console.error('Failed to build mock components:', error);
   process.exit(1);
 });

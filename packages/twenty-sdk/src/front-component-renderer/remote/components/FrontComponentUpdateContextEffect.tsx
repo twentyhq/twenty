@@ -1,6 +1,6 @@
-import { type FrontComponentExecutionContext } from '@/front-component/types/FrontComponentExecutionContext';
-import { type FrontComponentHostCommunicationApi } from '@/front-component/types/FrontComponentHostCommunicationApi';
-import { type WorkerExports } from '@/front-component/types/WorkerExports';
+import { type FrontComponentExecutionContext } from '@/front-component-renderer/types/FrontComponentExecutionContext';
+import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
+import { type WorkerExports } from '@/front-component-renderer/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';
 import { useEffect } from 'react';
 

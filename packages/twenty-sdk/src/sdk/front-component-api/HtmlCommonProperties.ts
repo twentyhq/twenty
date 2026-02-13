@@ -1,4 +1,4 @@
-import { type PropertySchema } from '@/front-component/types/PropertySchema';
+import { type PropertySchema } from '@/front-component-renderer/types/PropertySchema';
 
 export const HTML_COMMON_PROPERTIES: Record<string, PropertySchema> = {
   id: { type: 'string', optional: true },

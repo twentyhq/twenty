@@ -3,7 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '../host/components/FrontComponentRenderer';
 
-import { getBuiltComponentPath } from './utils/loadBuiltComponent';
+import { getBuiltStoryComponentPathForRender } from './utils/getBuiltStoryComponentPathForRender';
 
 const errorHandler = fn();
 
@@ -27,7 +27,7 @@ type Story = StoryObj<typeof FrontComponentRenderer>;
 
 export const Static: Story = {
   args: {
-    componentUrl: getBuiltComponentPath('static.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender('static.front-component'),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -55,7 +55,7 @@ export const Static: Story = {
 
 export const Interactive: Story = {
   args: {
-    componentUrl: getBuiltComponentPath('interactive.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender('interactive.front-component'),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -75,7 +75,7 @@ export const Interactive: Story = {
 
 export const Lifecycle: Story = {
   args: {
-    componentUrl: getBuiltComponentPath('lifecycle.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender('lifecycle.front-component'),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

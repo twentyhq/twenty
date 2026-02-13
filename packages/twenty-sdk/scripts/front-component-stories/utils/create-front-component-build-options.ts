@@ -1,7 +1,7 @@
 import type * as esbuild from 'esbuild';
 
-import { FRONT_COMPONENT_EXTERNAL_MODULES } from '../constants/front-component-external-modules';
-import { getFrontComponentBuildPlugins } from './get-front-component-build-plugins';
+import { FRONT_COMPONENT_EXTERNAL_MODULES } from '../../../src/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
+import { getFrontComponentBuildPlugins } from '../../../src/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 
 export type FrontComponentBuildOptions = {
   entryPoints: esbuild.BuildOptions['entryPoints'];

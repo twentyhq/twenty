@@ -1,5 +1,5 @@
-import { type FrontComponentHostCommunicationApi } from '@/front-component/types/FrontComponentHostCommunicationApi';
-import { type WorkerExports } from '@/front-component/types/WorkerExports';
+import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
+import { type WorkerExports } from '@/front-component-renderer/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';
 import { useEffect } from 'react';
 

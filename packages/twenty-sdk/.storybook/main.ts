@@ -16,7 +16,7 @@ const config: StorybookConfig = {
 
   staticDirs: [
     {
-      from: '../src/front-component/__stories__/built',
+      from: '../src/front-component-renderer/__stories__/example-sources-built',
       to: '/built',
     },
   ],
