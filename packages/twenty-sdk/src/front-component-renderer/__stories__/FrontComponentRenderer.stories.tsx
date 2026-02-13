@@ -110,6 +110,46 @@ export const TailwindExample: Story = {
   },
 };
 
+export const EmotionExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'emotion-example.front-component',
+    ),
+  },
+};
+
+export const StyledComponentsExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'styled-components-example.front-component',
+    ),
+  },
+};
+
+export const ShadcnExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'shadcn-example.front-component',
+    ),
+  },
+};
+
+export const MuiExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'mui-example.front-component',
+    ),
+  },
+};
+
+export const TwentyUiExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'twenty-ui-example.front-component',
+    ),
+  },
+};
+
 export const ErrorHandling: Story = {
   args: {
     componentUrl: getBuiltStoryComponentPathForRender('nonexistent.front-component'),

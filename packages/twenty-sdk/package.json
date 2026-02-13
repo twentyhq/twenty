@@ -77,6 +77,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@mui/material": "^7.3.8",
     "@prettier/sync": "^0.5.2",
     "@storybook/addon-vitest": "^10.1.11",
     "@storybook/react-vite": "^10.1.11",
