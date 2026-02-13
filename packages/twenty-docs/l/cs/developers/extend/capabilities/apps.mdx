@@ -27,40 +27,40 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Vygenerujte kostru nové aplikace
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# Pokud nepoužíváte yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# Přihlaste se pomocí svého API klíče (budete vyzváni)
 yarn twenty auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
 yarn twenty app:dev
 ```
 
 Odtud můžete:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Přidejte do vaší aplikace novou entitu (s průvodcem)
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Vygenerujte typovaného klienta Twenty a typy entit pracovního prostoru
 yarn twenty app:generate
 
-# Watch your application's function logs
+# Sledujte logy funkcí vaší aplikace
 yarn twenty function:logs
 
-# Execute a function by name
+# Spusťte funkci podle názvu
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Odinstalujte aplikaci z aktuálního pracovního prostoru
 yarn twenty app:uninstall
 
-# Display commands' help
+# Zobrazte nápovědu k příkazům
 yarn twenty help
 ```
 
@@ -102,7 +102,7 @@ my-twenty-app/
 
 V kostce:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
+* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skript `twenty`, který deleguje na lokální `twenty` CLI. Spusťte `yarn twenty help` pro výpis všech dostupných příkazů.
 * **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
@@ -142,8 +142,8 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn twenty app:generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
 
 ## Ověření
 
