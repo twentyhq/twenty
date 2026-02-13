@@ -71,7 +71,7 @@ describe('copyBaseApplicationProject', () => {
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
     expect(packageJson.dependencies['twenty-sdk']).toBe('latest');
-    expect(packageJson.scripts['app:dev']).toBe('twenty app:dev');
+    expect(packageJson.scripts['twenty']).toBe('twenty');
   });
 
   it('should create .gitignore file', async () => {
