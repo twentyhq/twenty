@@ -27,40 +27,40 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# 搭建一个新应用
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# 如果你不使用 yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# 使用你的 API 密钥进行身份验证（系统会提示你）
 yarn twenty auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# 启动开发模式：会将本地更改自动同步到你的工作区
 yarn twenty app:dev
 ```
 
 从这里您可以：
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# 向你的应用添加一个新实体（引导式）
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# 生成类型化的 Twenty 客户端和工作区实体类型
 yarn twenty app:generate
 
-# Watch your application's function logs
+# 监听你的应用函数日志
 yarn twenty function:logs
 
-# Execute a function by name
+# 按名称执行一个函数
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# 从当前工作区卸载该应用
 yarn twenty app:uninstall
 
-# Display commands' help
+# 显示命令帮助
 yarn twenty help
 ```
 
@@ -102,7 +102,7 @@ my-twenty-app/
 
 总体来说：
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
+* **package.json**：声明应用名称、版本、引擎（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及一个 `twenty` 脚本，该脚本会委托给本地的 `twenty` CLI。 运行 `yarn twenty help` 以列出所有可用命令。
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
@@ -142,8 +142,8 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn twenty app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
+* `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
 
 ## 身份验证
 

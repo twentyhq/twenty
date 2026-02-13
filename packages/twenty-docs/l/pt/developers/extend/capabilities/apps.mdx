@@ -45,22 +45,22 @@ yarn twenty app:dev
 A partir daqui você pode:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adicionar uma nova entidade à sua aplicação (assistido)
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Gerar um cliente Twenty tipado e tipos de entidades do espaço de trabalho
 yarn twenty app:generate
 
-# Watch your application's function logs
+# Acompanhar os logs das funções da sua aplicação
 yarn twenty function:logs
 
-# Execute a function by name
+# Executar uma função pelo nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Desinstalar a aplicação do espaço de trabalho atual
 yarn twenty app:uninstall
 
-# Display commands' help
+# Exibir a ajuda dos comandos
 yarn twenty help
 ```
 
@@ -102,7 +102,7 @@ my-twenty-app/
 
 Em alto nível:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
+* **package.json**: Declara o nome do app, versão, engines (Node 24+, Yarn 4), e adiciona `twenty-sdk` além de um script `twenty` que delega para a CLI `twenty` local. Execute `yarn twenty help` para listar todos os comandos disponíveis.
 * **.gitignore**: Ignora artefatos comuns como `node_modules`, `.yarn`, `generated/` (cliente tipado), `dist/`, `build/`, pastas de cobertura, arquivos de log e arquivos `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloqueiam e configuram a ferramenta Yarn 4 usada pelo projeto.
 * **.nvmrc**: Fixa a versão do Node.js esperada pelo projeto.
@@ -142,8 +142,8 @@ export default defineObject({
 
 Comandos posteriores adicionarão mais arquivos e pastas:
 
-* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn twenty app:generate` criará uma pasta `generated/` (cliente tipado do Twenty + tipos do espaço de trabalho).
+* `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end ou papéis personalizados.
 
 ## Autenticação
 
