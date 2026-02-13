@@ -4,10 +4,10 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
 
-import { ALLOWED_HTML_ELEMENTS } from '../../src/sdk/front-component-common/AllowedHtmlElements';
-import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-common/CommonHtmlEvents';
-import { EVENT_TO_REACT } from '../../src/sdk/front-component-common/EventToReact';
-import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-common/HtmlCommonProperties';
+import { ALLOWED_HTML_ELEMENTS } from '../../src/sdk/front-component-api/constants/AllowedHtmlElements';
+import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-api/constants/CommonHtmlEvents';
+import { EVENT_TO_REACT } from '../../src/sdk/front-component-api/constants/EventToReact';
+import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-api/constants/HtmlCommonProperties';
 
 import {
   type ComponentSchema,
@@ -39,7 +39,7 @@ const parseVerboseFlag = (): boolean => {
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_PATH = path.resolve(SCRIPT_DIR, '../..');
-const FRONT_COMPONENT_PATH = path.join(PACKAGE_PATH, 'src/front-component');
+const FRONT_COMPONENT_PATH = path.join(PACKAGE_PATH, 'src/front-component-renderer');
 const HOST_GENERATED_DIR = path.join(FRONT_COMPONENT_PATH, 'host/generated');
 const REMOTE_GENERATED_DIR = path.join(
   FRONT_COMPONENT_PATH,

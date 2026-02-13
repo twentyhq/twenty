@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Field, ObjectType, Query } from '@nestjs/graphql';
+import { Args, Field, ObjectType, Query } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 
@@ -60,5 +60,35 @@ export class ToolIndexResolver {
       userId: user?.id,
       userWorkspaceId,
     });
+  }
+
+  // Resolves the inputSchema for a single tool on demand (avoids computing
+  // schemas for every tool in the workspace when listing the tool index).
+  @Query(() => graphqlTypeJson, { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  async getToolInputSchema(
+    @Args('toolName') toolName: string,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<object | null> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+
+    if (!roleId) {
+      return null;
+    }
+
+    const schemas = await this.toolRegistryService.resolveSchemas([toolName], {
+      workspaceId: workspace.id,
+      roleId,
+      rolePermissionConfig: { unionOf: [roleId] },
+      userId: user?.id,
+      userWorkspaceId,
+    });
+
+    return schemas.get(toolName) ?? null;
   }
 }

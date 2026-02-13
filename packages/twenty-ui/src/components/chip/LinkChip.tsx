@@ -26,6 +26,7 @@ const StyledLink = styled(Link)`
   display: inline-flex;
   text-decoration: none;
   min-width: 0;
+  vertical-align: middle;
 `;
 
 export const LinkChip = ({

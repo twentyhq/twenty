@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
@@ -131,7 +131,7 @@ export class SystemPromptBuilderService {
   }
 
   buildFullPrompt(
-    toolCatalog: ToolDescriptor[],
+    toolCatalog: ToolIndexEntry[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
     contextString?: string,
@@ -242,12 +242,12 @@ ${skillsList}`;
   }
 
   buildToolCatalogSection(
-    toolCatalog: ToolDescriptor[],
+    toolCatalog: ToolIndexEntry[],
     preloadedTools: string[],
   ): string {
     const preloadedSet = new Set(preloadedTools);
 
-    const toolsByCategory = new Map<string, ToolDescriptor[]>();
+    const toolsByCategory = new Map<string, ToolIndexEntry[]>();
 
     for (const tool of toolCatalog) {
       const category = tool.category;
