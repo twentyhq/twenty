@@ -106,7 +106,6 @@ export const WorkflowEditActionEmailBase = ({
     await triggerApisOAuth(missingScopes.provider, {
       redirectLocation: redirectUrl,
       loginHint: missingScopes.loginHint,
-      extraScopes: missingScopes.extraScopes,
     });
   };
 
@@ -180,7 +179,6 @@ export const WorkflowEditActionEmailBase = ({
     selectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
     missingDraftScopes.length > 0
       ? {
-          extraScopes: missingDraftScopes,
           provider: selectedAccount.provider,
           loginHint: selectedAccount.handle,
         }

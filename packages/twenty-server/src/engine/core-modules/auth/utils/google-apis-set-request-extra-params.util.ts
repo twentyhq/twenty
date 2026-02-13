@@ -13,7 +13,6 @@ type GoogleAPIsRequestExtraParams = {
   userId?: string;
   workspaceId?: string;
   skipMessageChannelConfiguration?: string;
-  extraScopes?: string;
 };
 
 export const setRequestExtraParams = (
@@ -29,7 +28,6 @@ export const setRequestExtraParams = (
     userId,
     workspaceId,
     skipMessageChannelConfiguration,
-    extraScopes,
   } = params;
 
   if (!transientToken) {
@@ -68,9 +66,5 @@ export const setRequestExtraParams = (
   if (skipMessageChannelConfiguration) {
     request.params.skipMessageChannelConfiguration =
       skipMessageChannelConfiguration;
-  }
-
-  if (extraScopes) {
-    request.params.extraScopes = extraScopes;
   }
 };
