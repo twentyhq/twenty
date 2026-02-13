@@ -1,8 +1,8 @@
-import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { defineFrontComponent } from '@/sdk';
 
-const containerStyle = css`
+const Container = styled.div`
   padding: 20px;
   background-color: #fefce8;
   border: 2px solid #facc15;
@@ -10,21 +10,21 @@ const containerStyle = css`
   font-family: system-ui, sans-serif;
 `;
 
-const headingStyle = css`
+const Heading = styled.h2`
   color: #854d0e;
   font-weight: 700;
   font-size: 18px;
   margin-bottom: 12px;
 `;
 
-const countStyle = css`
+const Count = styled.p`
   font-size: 32px;
   font-weight: 800;
   color: #ca8a04;
   margin-bottom: 16px;
 `;
 
-const buttonStyle = css`
+const StyledButton = styled.button`
   padding: 10px 20px;
   background-color: #eab308;
   color: white;
@@ -38,25 +38,22 @@ const EmotionComponent = () => {
   const [count, setCount] = useState(0);
 
   return (
-    <div data-testid="emotion-component" css={containerStyle}>
-      <h2 css={headingStyle}>Emotion CSS Component</h2>
-      <p css={countStyle} data-testid="emotion-count">
-        Count: {count}
-      </p>
-      <button
+    <Container data-testid="emotion-component">
+      <Heading>Emotion Styled Component</Heading>
+      <Count data-testid="emotion-count">Count: {count}</Count>
+      <StyledButton
         data-testid="emotion-button"
-        css={buttonStyle}
         onClick={() => setCount((previous) => previous + 1)}
       >
         Increment
-      </button>
-    </div>
+      </StyledButton>
+    </Container>
   );
 };
 
 export default defineFrontComponent({
   universalIdentifier: 'test-emotion-0000-0000-0000-000000000006',
   name: 'emotion-component',
-  description: 'A front component using Emotion css prop',
+  description: 'A front component using @emotion/styled',
   component: EmotionComponent,
 });
