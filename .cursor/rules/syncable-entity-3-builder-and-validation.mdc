@@ -1,0 +1,474 @@
+---
+description: Builder and validation logic for syncable entities - Step 3 of 5
+globs: ["**/workspace-migration-builder/builders/**", "**/workspace-migration-builder/validators/**", "**/workspace-migration-build-orchestrator.service.ts"]
+alwaysApply: false
+---
+
+# Syncable Entity Step 3: Builder & Validation
+
+**Purpose:** Create validator and builder services that validate business rules and create migration actions.
+
+**Dependencies:** Requires Steps 1-2 (types and cache/transform)
+
+---
+
+## Overview
+
+This step creates:
+1. Validator service (pure business logic validation)
+2. Builder service (orchestrates validation, creates actions)
+3. Orchestrator wiring (⚠️ CRITICAL - often forgotten!)
+
+**Key Rule:** Never throws, never mutates - pure validation returning errors
+
+---
+
+## Step 3.1: Create Validator Service
+
+**File:** `src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-my-entity-validator.service.ts`
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { MyEntityExceptionCode } from 'src/engine/metadata-modules/my-entity/my-entity.exception';
+import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
+import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+
+@Injectable()
+export class FlatMyEntityValidatorService {
+  public validateFlatMyEntityCreation({
+    flatEntityToValidate: flatMyEntity,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatMyEntityMaps: optimisticFlatMyEntityMaps,
+    },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.myEntity
+  >): FailedFlatEntityValidation<'myEntity', 'create'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatMyEntity.id,
+        universalIdentifier: flatMyEntity.universalIdentifier,
+        name: flatMyEntity.name,
+      },
+      metadataName: 'myEntity',
+      type: 'create',
+    });
+
+    // Add validation rules here
+    // Example: Check uniqueness, required fields, business constraints
+
+    return validationResult;
+  }
+
+  public validateFlatMyEntityDeletion({
+    flatEntityToValidate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatMyEntityMaps: optimisticFlatMyEntityMaps,
+    },
+    buildOptions,
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.myEntity
+  >): FailedFlatEntityValidation<'myEntity', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityToValidate.id,
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
+        name: flatEntityToValidate.name,
+      },
+      metadataName: 'myEntity',
+      type: 'delete',
+    });
+
+    const existingEntity = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatEntityToValidate.id,
+      flatEntityMaps: optimisticFlatMyEntityMaps,
+    });
+
+    if (!isDefined(existingEntity)) {
+      validationResult.errors.push({
+        code: MyEntityExceptionCode.MY_ENTITY_NOT_FOUND,
+        message: t`Entity not found`,
+        userFriendlyMessage: msg`Entity not found`,
+      });
+
+      return validationResult;
+    }
+
+    // Prevent deletion of standard entities unless system build
+    if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(existingEntity)) {
+      validationResult.errors.push({
+        code: MyEntityExceptionCode.MY_ENTITY_IS_STANDARD,
+        message: t`Cannot delete standard entity`,
+        userFriendlyMessage: msg`Cannot delete standard entity`,
+      });
+    }
+
+    return validationResult;
+  }
+
+  public validateFlatMyEntityUpdate({
+    flatEntityId,
+    flatEntityUpdates,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatMyEntityMaps: optimisticFlatMyEntityMaps,
+    },
+    buildOptions,
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.myEntity
+  >): FailedFlatEntityValidation<'myEntity', 'update'> {
+    const fromFlatEntity = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatMyEntityMaps,
+    });
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: fromFlatEntity?.universalIdentifier,
+      },
+      metadataName: 'myEntity',
+      type: 'update',
+    });
+
+    if (!isDefined(fromFlatEntity)) {
+      validationResult.errors.push({
+        code: MyEntityExceptionCode.MY_ENTITY_NOT_FOUND,
+        message: t`Entity not found`,
+        userFriendlyMessage: msg`Entity not found`,
+      });
+
+      return validationResult;
+    }
+
+    // Add update validation rules here
+
+    return validationResult;
+  }
+}
+```
+
+**Critical Validator Rules:**
+1. **Never throw** - Return errors in array (fail slow)
+2. **Never mutate** - Only read from entity maps
+3. **No transformations** - Only validate business rules
+4. **Pure function** - Same inputs = same outputs
+
+---
+
+## Step 3.2: Create Builder Service
+
+**File:** `src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/my-entity/workspace-migration-my-entity-actions-builder.service.ts`
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
+import { UpdateMyEntityAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/my-entity/types/workspace-migration-my-entity-action.type';
+import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatMyEntityValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-my-entity-validator.service';
+
+@Injectable()
+export class WorkspaceMigrationMyEntityActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
+  typeof ALL_METADATA_NAME.myEntity
+> {
+  constructor(
+    private readonly flatMyEntityValidatorService: FlatMyEntityValidatorService,
+  ) {
+    super(ALL_METADATA_NAME.myEntity);
+  }
+
+  protected validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.myEntity>,
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.myEntity, 'create'> {
+    const validationResult =
+      this.flatMyEntityValidatorService.validateFlatMyEntityCreation(args);
+
+    if (validationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...validationResult,
+      };
+    }
+
+    const { flatEntityToValidate } = args;
+
+    return {
+      status: 'success',
+      action: {
+        type: 'create',
+        metadataName: 'myEntity',
+        flatEntity: flatEntityToValidate, // Universal flat entity
+      },
+    };
+  }
+
+  protected validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.myEntity>,
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.myEntity, 'delete'> {
+    const validationResult =
+      this.flatMyEntityValidatorService.validateFlatMyEntityDeletion(args);
+
+    if (validationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...validationResult,
+      };
+    }
+
+    const { flatEntityToValidate } = args;
+
+    return {
+      status: 'success',
+      action: {
+        type: 'delete',
+        metadataName: 'myEntity',
+        entityId: flatEntityToValidate.id,
+      },
+    };
+  }
+
+  protected validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.myEntity>,
+  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.myEntity, 'update'> {
+    const validationResult =
+      this.flatMyEntityValidatorService.validateFlatMyEntityUpdate(args);
+
+    if (validationResult.errors.length > 0) {
+      return {
+        status: 'fail',
+        ...validationResult,
+      };
+    }
+
+    const { flatEntityId, flatEntityUpdates } = args;
+
+    const updateAction: UpdateMyEntityAction = {
+      type: 'update',
+      metadataName: 'myEntity',
+      entityId: flatEntityId,
+      update: flatEntityUpdates, // Universal updates
+    };
+
+    return {
+      status: 'success',
+      action: updateAction,
+    };
+  }
+}
+```
+
+**Builder Behavior:**
+- Delegates to validator
+- Returns `{ status: 'fail', errors: [...] }` on validation failure
+- Returns `{ status: 'success', action: {...} }` on success
+- Base class handles optimistic cache updates
+- Never throws, never mutates
+
+---
+
+## Step 3.3: Wire in Orchestrator (⚠️ CRITICAL!)
+
+**This step is frequently forgotten! The orchestrator must call your builder.**
+
+**File:** `src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service.ts`
+
+### 3.3a. Add Import
+
+```typescript
+import { WorkspaceMigrationMyEntityActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/my-entity/workspace-migration-my-entity-actions-builder.service';
+```
+
+### 3.3b. Add to Constructor
+
+```typescript
+constructor(
+  // ... existing services
+  private readonly workspaceMigrationMyEntityActionsBuilderService: WorkspaceMigrationMyEntityActionsBuilderService,
+) {}
+```
+
+### 3.3c. Extract from fromToAllFlatEntityMaps
+
+```typescript
+const {
+  // ... existing extractions
+  flatMyEntityMaps,
+} = fromToAllFlatEntityMaps;
+```
+
+### 3.3d. Add Builder Call Block
+
+```typescript
+if (isDefined(flatMyEntityMaps)) {
+  const { from: fromFlatMyEntityMaps, to: toFlatMyEntityMaps } =
+    flatMyEntityMaps;
+
+  const myEntityResult =
+    await this.workspaceMigrationMyEntityActionsBuilderService.validateAndBuild(
+      {
+        additionalCacheDataMaps,
+        from: fromFlatMyEntityMaps,
+        to: toFlatMyEntityMaps,
+        buildOptions,
+        dependencyOptimisticFlatEntityMaps: undefined, // Or add dependencies
+        workspaceId,
+      },
+    );
+
+  this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+    {
+      allFlatEntityMaps: optimisticAllFlatEntityMaps,
+      flatEntityMapsAndRelatedFlatEntityMaps:
+        myEntityResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    },
+  );
+
+  if (myEntityResult.status === 'fail') {
+    orchestratorFailureReport.myEntity.push(...myEntityResult.errors);
+  } else {
+    orchestratorActionsReport.myEntity = myEntityResult.actions;
+  }
+}
+```
+
+### 3.3e. Add Actions to Return Statement
+
+```typescript
+return {
+  // ... existing
+  workspaceMigration: {
+    // ... existing
+    actions: [
+      // ... existing actions
+
+      // My Entity
+      ...aggregatedOrchestratorActionsReport.myEntity.delete,
+      ...aggregatedOrchestratorActionsReport.myEntity.create,
+      ...aggregatedOrchestratorActionsReport.myEntity.update,
+    ],
+  },
+};
+```
+
+---
+
+## Validation Patterns
+
+### Pattern 1: Entity Exists Check
+
+```typescript
+const existingEntity = findFlatEntityByIdInFlatEntityMaps({
+  flatEntityId,
+  flatEntityMaps,
+});
+
+if (!isDefined(existingEntity)) {
+  validationResult.errors.push({
+    code: MyEntityExceptionCode.MY_ENTITY_NOT_FOUND,
+    message: t`Entity not found`,
+    userFriendlyMessage: msg`Entity not found`,
+  });
+  return validationResult;
+}
+```
+
+### Pattern 2: Uniqueness Check
+
+**⚠️ Performance Warning:** `Object.values()` with `.find()` is O(n) and costly for large datasets. Prefer using indexed maps (e.g., `byName`, `byKey`) for uniqueness checks.
+
+#### ❌ Avoid: Iterating with Object.values (O(n))
+
+```typescript
+// BAD: Slow for large datasets
+const duplicateEntity = Object.values(optimisticFlatMyEntityMaps.byId).find(
+  (entity) =>
+    entity.name === flatMyEntity.name &&
+    entity.id !== flatMyEntity.id
+);
+```
+
+#### ✅ Prefer: Use indexed maps (O(1))
+
+```typescript
+// GOOD: Use an indexed map for O(1) lookup
+const existingEntityWithName = optimisticFlatMyEntityMaps.byName[flatMyEntity.name];
+
+if (isDefined(existingEntityWithName) && existingEntityWithName.id !== flatMyEntity.id) {
+  validationResult.errors.push({
+    code: MyEntityExceptionCode.MY_ENTITY_ALREADY_EXISTS,
+    message: t`Entity with name ${flatMyEntity.name} already exists`,
+    userFriendlyMessage: msg`An entity with this name already exists`,
+  });
+}
+```
+
+**Note:** If you need to check uniqueness by a property, ensure your flat entity maps include an index for that property (e.g., `byName`, `byKey`). Add it to your `FlatMyEntityMaps` type if needed.
+
+### Pattern 3: Relation Validation
+
+```typescript
+const relatedEntity = findFlatEntityByIdInFlatEntityMaps({
+  flatEntityId: flatMyEntity.parentEntityId,
+  flatEntityMaps: optimisticParentEntityMaps,
+});
+
+if (!isDefined(relatedEntity)) {
+  validationResult.errors.push({
+    code: MyEntityExceptionCode.PARENT_ENTITY_NOT_FOUND,
+    message: t`Parent entity not found`,
+    userFriendlyMessage: msg`The parent entity does not exist`,
+  });
+}
+```
+
+### Pattern 4: Standard Entity Protection
+
+```typescript
+if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(existingEntity)) {
+  validationResult.errors.push({
+    code: MyEntityExceptionCode.MY_ENTITY_IS_STANDARD,
+    message: t`Cannot modify standard entity`,
+    userFriendlyMessage: msg`Standard entities cannot be modified`,
+  });
+}
+```
+
+---
+
+## Checklist for Step 3
+
+- [ ] Validator service created
+- [ ] Validator has all 3 methods (create/update/delete)
+- [ ] Validator **never throws** - returns errors array
+- [ ] Validator **never mutates** entity maps
+- [ ] Validator contains only business logic validation
+- [ ] Builder service created
+- [ ] Builder extends `WorkspaceEntityMigrationBuilderService`
+- [ ] Builder delegates to validator
+- [ ] Builder creates actions with universal entities
+- [ ] ⚠️ **Builder imported in orchestrator**
+- [ ] ⚠️ **Builder injected in orchestrator constructor**
+- [ ] ⚠️ **Builder called in `buildWorkspaceMigration` method**
+- [ ] ⚠️ **Actions added to orchestrator return statement**
+
+**Missing orchestrator wiring is the #1 reason entities don't work!**
+
+---
+
+## Next Step
+
+✅ **Step 3 Complete!** → Proceed to `@syncable-entity-4-runner-and-actions`
+
+Builder and validator are ready. Next, you'll create the action handlers.
