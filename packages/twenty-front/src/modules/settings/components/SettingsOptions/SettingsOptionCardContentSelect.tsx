@@ -1,18 +1,18 @@
 import {
   StyledSettingsCardContent,
+  StyledSettingsCardDescription,
   StyledSettingsCardIcon,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
-import { SettingsOptionCardDescription } from '@/settings/components/SettingsOptions/SettingsOptionCardDescription';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: string | React.ReactNode;
+  description?: string;
   disabled?: boolean;
   children?: React.ReactNode;
 };
@@ -40,7 +40,11 @@ export const SettingsOptionCardContentSelect = ({
       )}
       <StyledSettingsCardTextContainer>
         <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-        <SettingsOptionCardDescription description={description} />
+        {description && (
+          <StyledSettingsCardDescription>
+            <OverflowingTextWithTooltip text={description} />
+          </StyledSettingsCardDescription>
+        )}
       </StyledSettingsCardTextContainer>
       <StyledSelectContainer>{children}</StyledSelectContainer>
     </StyledSettingsCardContent>

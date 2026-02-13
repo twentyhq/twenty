@@ -1,16 +1,16 @@
 import { Separator } from '@/settings/components/Separator';
 import {
   StyledSettingsCardContent,
+  StyledSettingsCardDescription,
   StyledSettingsCardIcon,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
-import { SettingsOptionCardDescription } from '@/settings/components/SettingsOptions/SettingsOptionCardDescription';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
@@ -41,7 +41,7 @@ const StyledSettingsCardToggleCover = styled.span`
 type SettingsOptionCardContentToggleProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: React.ReactNode;
+  description?: string;
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
@@ -79,7 +79,11 @@ export const SettingsOptionCardContentToggle = ({
               <StyledSettingsCardToggleCover />
             </label>
           </StyledSettingsCardTitle>
-          <SettingsOptionCardDescription description={description} />
+          {description && (
+            <StyledSettingsCardDescription>
+              <OverflowingTextWithTooltip text={description} />
+            </StyledSettingsCardDescription>
+          )}
         </StyledSettingsCardTextContainer>
         <StyledSettingsCardToggleButton
           id={toggleId}
