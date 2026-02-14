@@ -1836,7 +1836,7 @@ msgid "Ask AI"
 msgstr "Yêu cầu AI"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/components/AIChatTab.tsx
+#: src/modules/ai/hooks/useAIChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr ""
 
@@ -4231,6 +4231,11 @@ msgstr "Xóa toàn bộ không gian làm việc của bạn"
 #: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
 msgid "Deleted"
 msgstr "Đã xóa"
+
+#. js-lingui-id: oAhMKF
+#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+msgid "Deleted record"
+msgstr ""
 
 #. js-lingui-id: WH/5rN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -11103,9 +11108,9 @@ msgstr ""
 msgid "Searched the web"
 msgstr ""
 
-#. js-lingui-id: KLJPmq
+#. js-lingui-id: J7YRXR
 #: src/modules/ai/utils/getToolDisplayMessage.ts
-msgid "Searched the web for '{query}'"
+msgid "Searched the web for {query}"
 msgstr ""
 
 #. js-lingui-id: AyoeWR
@@ -11113,9 +11118,9 @@ msgstr ""
 msgid "Searching the web"
 msgstr ""
 
-#. js-lingui-id: dW40bt
+#. js-lingui-id: BOCV5/
 #: src/modules/ai/utils/getToolDisplayMessage.ts
-msgid "Searching the web for '{query}'"
+msgid "Searching the web for {query}"
 msgstr ""
 
 #. js-lingui-id: 8sgZS9
@@ -13104,6 +13109,12 @@ msgstr "Thiết lập xác thực hai yếu tố thành công!"
 msgid "Type"
 msgstr "Loại"
 
+#. js-lingui-id: SKD2e4
+#: src/modules/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextEditorContent.tsx
+#: src/modules/activities/components/ActivityRichTextEditor.tsx
+msgid "Type '/' for commands, '@' for mentions"
+msgstr ""
+
 #. js-lingui-id: qzD6hf
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
@@ -13227,6 +13238,11 @@ msgstr "Trường không xác định"
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Tệp không xác định"
+
+#. js-lingui-id: num3KD
+#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+msgid "Unknown object"
+msgstr ""
 
 #. js-lingui-id: GQCXQS
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
