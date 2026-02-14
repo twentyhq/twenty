@@ -24,7 +24,7 @@ const getVariableStatementKind = (
 export const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
   const exports: DeclarationOccurrence[] = [];
 
-  const visit = (node: ts.Node) => {
+  const visit = (node: ts.Node): void => {
     if (!ts.canHaveModifiers(node)) {
       return ts.forEachChild(node, visit);
     }
@@ -106,7 +106,7 @@ export const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
             const exportName = element.name.text;
 
             const isTypeExport =
-              node.isTypeOnly || ts.isTypeOnlyExportDeclaration(node);
+              node.isTypeOnly || element.isTypeOnly;
 
             if (isTypeExport) {
               exports.push({
