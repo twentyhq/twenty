@@ -82,29 +82,29 @@ export const MentionSuggestionMenu = forwardRef<
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       const navigationKeys = ['ArrowUp', 'ArrowDown', 'Enter'];
       if (navigationKeys.includes(event.key)) {
-        let newIndex = clampedSelectedIndex;
-
         switch (event.key) {
-          case 'ArrowUp':
+          case 'ArrowUp': {
             if (!items.length) {
               return false;
             }
-            newIndex = clampedSelectedIndex - 1;
+            let newIndex = clampedSelectedIndex - 1;
             if (newIndex < 0) {
               newIndex = items.length - 1;
             }
             setSelectedIndex(newIndex);
             return true;
-          case 'ArrowDown':
+          }
+          case 'ArrowDown': {
             if (!items.length) {
               return false;
             }
-            newIndex = clampedSelectedIndex + 1;
+            let newIndex = clampedSelectedIndex + 1;
             if (newIndex >= items.length) {
               newIndex = 0;
             }
             setSelectedIndex(newIndex);
             return true;
+          }
           case 'Enter':
             if (!items.length) {
               return false;

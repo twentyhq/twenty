@@ -47,7 +47,12 @@ export const AIChatSuggestedPrompts = ({
     const text = resolveMessage(picked);
 
     setAgentChatInput(text);
-    editor?.commands.setContent(`<p>${text}</p>`);
+    editor?.commands.setContent({
+      type: 'doc',
+      content: [
+        { type: 'paragraph', content: [{ type: 'text', text }] },
+      ],
+    });
     editor?.commands.focus('end');
   };
 
