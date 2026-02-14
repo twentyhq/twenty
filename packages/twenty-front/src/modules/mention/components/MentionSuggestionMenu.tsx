@@ -9,8 +9,6 @@ import {
 import { motion } from 'framer-motion';
 import {
   forwardRef,
-  useCallback,
-  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
@@ -73,21 +71,22 @@ export const MentionSuggestionMenu = forwardRef<
     },
   });
 
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [items]);
+  const prevItemsRef = useRef(items);
+  if (prevItemsRef.current !== items) {
+    prevItemsRef.current = items;
+    if (selectedIndex !== 0) {
+      setSelectedIndex(0);
+    }
+  }
 
-  const selectItem = useCallback(
-    (index: number) => {
-      const item = items[index];
-      if (!item) {
-        return;
-      }
+  const selectItem = (index: number) => {
+    const item = items[index];
+    if (!item) {
+      return;
+    }
 
-      onSelect(item);
-    },
-    [onSelect, items],
-  );
+    onSelect(item);
+  };
 
   useImperativeHandle(parentRef, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
