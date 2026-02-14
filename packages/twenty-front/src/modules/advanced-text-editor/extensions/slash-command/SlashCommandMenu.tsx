@@ -1,5 +1,5 @@
 import { type Editor, type Range } from '@tiptap/core';
-import { forwardRef, useCallback, useRef, useState } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
@@ -8,7 +8,6 @@ import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 export type SlashCommandMenuProps = {
   items: SlashCommandItem[];
   onSelect: (item: SlashCommandItem) => void;
-  clientRect: (() => DOMRect | null) | null;
   editor: Editor;
   range: Range;
   query: string;
@@ -23,18 +22,13 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     const [prevSelectedIndex, setPrevSelectedIndex] = useState(0);
     const [prevQuery, setPrevQuery] = useState('');
 
-    // Track selectedIndex for ArrowLeft restoration via a ref
-    // populated by onKeyDown callbacks from the generic menu
-    const selectedIndexRef = useRef(0);
-
     const handleKeyDown = useCallback(
-      (event: KeyboardEvent) => {
+      (event: KeyboardEvent, selectedIndex: number) => {
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
           editor.chain().focus().insertContentAt(range, `/${prevQuery}`).run();
           setTimeout(() => {
-            // Restore previous index -- handled via the ref
-            selectedIndexRef.current = prevSelectedIndex;
+            setPrevSelectedIndex(prevSelectedIndex);
           }, 0);
           return true;
         }
@@ -45,7 +39,7 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
 
         if (event.key === 'Enter' && items.length > 0) {
           setPrevQuery(query);
-          setPrevSelectedIndex(selectedIndexRef.current);
+          setPrevSelectedIndex(selectedIndex);
         }
 
         return undefined;

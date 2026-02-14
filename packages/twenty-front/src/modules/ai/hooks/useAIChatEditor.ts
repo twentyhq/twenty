@@ -1,3 +1,14 @@
+import { t } from '@lingui/core/macro';
+import { Document } from '@tiptap/extension-document';
+import { HardBreak } from '@tiptap/extension-hard-break';
+import { Paragraph } from '@tiptap/extension-paragraph';
+import { Text } from '@tiptap/extension-text';
+import { Placeholder } from '@tiptap/extensions';
+import { useEditor } from '@tiptap/react';
+import { useCallback, useMemo } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
@@ -7,15 +18,6 @@ import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { t } from '@lingui/core/macro';
-import { Document } from '@tiptap/extension-document';
-import { HardBreak } from '@tiptap/extension-hard-break';
-import { Paragraph } from '@tiptap/extension-paragraph';
-import { Text } from '@tiptap/extension-text';
-import { Placeholder } from '@tiptap/extensions';
-import { type Editor, useEditor } from '@tiptap/react';
-import { useCallback, useMemo, useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type UseAIChatEditorProps = {
@@ -29,24 +31,6 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const onSendMessageRef = useRef(onSendMessage);
-  onSendMessageRef.current = onSendMessage;
-
-  const searchMentionRecordsRef = useRef(searchMentionRecords);
-  searchMentionRecordsRef.current = searchMentionRecords;
-
-  const stableSearchMentionRecords = useCallback(
-    (query: string) => searchMentionRecordsRef.current(query),
-    [],
-  );
-
-  const editorRef = useRef<Editor | null>(null);
-
-  const handleSendAndClear = () => {
-    onSendMessageRef.current();
-    editorRef.current?.commands.clearContent();
-  };
-
   const extensions = useMemo(
     () => [
       Document,
@@ -59,11 +43,9 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
         keepMarks: false,
       }),
       MentionTag,
-      MentionSuggestion.configure({
-        searchMentionRecords: stableSearchMentionRecords,
-      }),
+      MentionSuggestion,
     ],
-    [stableSearchMentionRecords],
+    [],
   );
 
   const editor = useEditor({
@@ -74,12 +56,15 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
           const suggestionState = MENTION_SUGGESTION_PLUGIN_KEY.getState(
             view.state,
           );
-          if (suggestionState?.active) {
+          if (suggestionState?.active === true) {
             return false;
           }
 
           event.preventDefault();
-          handleSendAndClear();
+          onSendMessage();
+
+          const { state } = view;
+          view.dispatch(state.tr.delete(0, state.doc.content.size));
           return true;
         }
         return false;
@@ -109,7 +94,23 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
     injectCSS: false,
   });
 
-  editorRef.current = editor;
+  // Keep search function in sync via Tiptap extension storage,
+  // avoiding stale closures without useRef
+  if (isDefined(editor)) {
+    const storage = editor.extensionStorage as unknown as Record<
+      string,
+      unknown
+    >;
+    const mentionStorage = storage['mention-suggestion'] as {
+      searchMentionRecords: typeof searchMentionRecords;
+    };
+    mentionStorage.searchMentionRecords = searchMentionRecords;
+  }
+
+  const handleSendAndClear = useCallback(() => {
+    onSendMessage();
+    editor?.commands.clearContent();
+  }, [onSendMessage, editor]);
 
   return { editor, handleSendAndClear };
 };

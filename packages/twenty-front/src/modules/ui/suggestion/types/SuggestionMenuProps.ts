@@ -8,5 +8,8 @@ export type SuggestionMenuProps<TItem> = {
   range: Range;
   getItemKey: (item: TItem) => string;
   renderItem: (item: TItem, isSelected: boolean) => ReactNode;
-  onKeyDown?: (event: KeyboardEvent) => boolean | undefined;
+  onKeyDown?: (
+    event: KeyboardEvent,
+    selectedIndex: number,
+  ) => boolean | undefined;
 };

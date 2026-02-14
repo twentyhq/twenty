@@ -6,14 +6,12 @@ import { Text } from '@tiptap/extension-text';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 
-// Mock ReactNodeViewRenderer and SuggestionRenderer (DOM-dependent)
+// Mock ReactNodeViewRenderer and ReactRenderer (DOM-dependent)
 jest.mock('@tiptap/react', () => ({
   mergeAttributes: jest.requireActual('@tiptap/react').mergeAttributes,
   ReactNodeViewRenderer: () => () => ({}),
-}));
-
-jest.mock('@/ui/suggestion/components/SuggestionRenderer', () => ({
-  SuggestionRenderer: jest.fn().mockImplementation(() => ({
+  ReactRenderer: jest.fn().mockImplementation(() => ({
+    element: document.createElement('div'),
     ref: null,
     updateProps: jest.fn(),
     destroy: jest.fn(),

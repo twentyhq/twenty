@@ -1831,7 +1831,7 @@ msgid "Ask AI"
 msgstr ""
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/hooks/useAIChatEditor.ts
+#: src/modules/ai/components/AIChatTab.tsx
 msgid "Ask, search or make anything..."
 msgstr ""
 
@@ -11114,9 +11114,9 @@ msgstr ""
 msgid "Searched the web"
 msgstr ""
 
-#. js-lingui-id: J7YRXR
+#. js-lingui-id: KLJPmq
 #: src/modules/ai/utils/getToolDisplayMessage.ts
-msgid "Searched the web for {query}"
+msgid "Searched the web for '{query}'"
 msgstr ""
 
 #. js-lingui-id: AyoeWR
@@ -11124,9 +11124,9 @@ msgstr ""
 msgid "Searching the web"
 msgstr ""
 
-#. js-lingui-id: BOCV5/
+#. js-lingui-id: dW40bt
 #: src/modules/ai/utils/getToolDisplayMessage.ts
-msgid "Searching the web for {query}"
+msgid "Searching the web for '{query}'"
 msgstr ""
 
 #. js-lingui-id: 8sgZS9

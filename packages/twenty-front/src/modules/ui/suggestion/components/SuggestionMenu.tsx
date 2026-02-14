@@ -1,4 +1,3 @@
-import { ThemeProvider } from '@emotion/react';
 import {
   autoUpdate,
   flip,
@@ -15,26 +14,22 @@ import {
   useRef,
   useState,
 } from 'react';
-import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 
-import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 
-// forwardRef does not natively support generics, so we cast via a helper
-function SuggestionMenuInner<TItem>(
+type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
+
+// forwardRef does not natively support generics, so we use a helper + cast
+const SuggestionMenuInner = <TItem,>(
   props: SuggestionMenuInnerProps<TItem>,
   parentRef: React.ForwardedRef<unknown>,
-) {
+) => {
   const { items, onSelect, editor, range, getItemKey, renderItem, onKeyDown } =
     props;
-
-  const colorScheme = document.documentElement.className.includes('dark')
-    ? 'Dark'
-    : 'Light';
-  const theme = colorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -79,8 +74,7 @@ function SuggestionMenuInner<TItem>(
 
   useImperativeHandle(parentRef, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-      // Allow consumer-provided key handlers to run first
-      const customResult = onKeyDown?.(event);
+      const customResult = onKeyDown?.(event, clampedSelectedIndex);
       if (customResult === true) {
         return true;
       }
@@ -144,46 +138,42 @@ function SuggestionMenuInner<TItem>(
   }, [clampedSelectedIndex]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <ThemeContextProvider theme={theme}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.1 }}
-          data-suggestion-menu
-        >
-          <OverlayContainer
-            ref={refs.setFloating}
-            style={{
-              ...floatingStyles,
-              zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
-            }}
-          >
-            <DropdownContent ref={listContainerRef}>
-              <DropdownMenuItemsContainer hasMaxHeight>
-                {items.map((item, index) => {
-                  const isSelected = index === clampedSelectedIndex;
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.1 }}
+      data-suggestion-menu
+    >
+      <OverlayContainer
+        ref={refs.setFloating}
+        style={{
+          ...floatingStyles,
+          zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
+        }}
+      >
+        <DropdownContent ref={listContainerRef}>
+          <DropdownMenuItemsContainer hasMaxHeight>
+            {items.map((item, index) => {
+              const isSelected = index === clampedSelectedIndex;
 
-                  return (
-                    <div
-                      key={getItemKey(item)}
-                      ref={isSelected ? activeItemRef : null}
-                      onMouseDown={(event) => {
-                        event.preventDefault();
-                      }}
-                    >
-                      {renderItem(item, isSelected)}
-                    </div>
-                  );
-                })}
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          </OverlayContainer>
-        </motion.div>
-      </ThemeContextProvider>
-    </ThemeProvider>
+              return (
+                <div
+                  key={getItemKey(item)}
+                  ref={isSelected ? activeItemRef : null}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                  }}
+                >
+                  {renderItem(item, isSelected)}
+                </div>
+              );
+            })}
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
+      </OverlayContainer>
+    </motion.div>
   );
-}
+};
 
 export const SuggestionMenu = forwardRef(SuggestionMenuInner) as <TItem>(
   props: SuggestionMenuProps<TItem> & { ref?: React.Ref<unknown> },

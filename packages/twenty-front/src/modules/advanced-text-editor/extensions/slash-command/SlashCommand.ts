@@ -11,7 +11,7 @@ import {
   SlashCommandMenu,
   type SlashCommandMenuProps,
 } from '@/advanced-text-editor/extensions/slash-command/SlashCommandMenu';
-import { SuggestionRenderer } from '@/ui/suggestion/components/SuggestionRenderer';
+import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 
 export type SlashCommandItem = {
   id: string;
@@ -22,35 +22,6 @@ export type SlashCommandItem = {
   isActive?: () => boolean;
   isVisible?: () => boolean;
   command: (options: { editor: Editor; range: Range }) => void;
-};
-
-type SlashCommandRendererProps = {
-  items: SlashCommandItem[];
-  command: (item: SlashCommandItem) => void;
-  clientRect: (() => DOMRect | null) | null;
-  editor: Editor;
-  range: Range;
-  query: string;
-};
-
-type SuggestionRenderProps = {
-  items: SlashCommandItem[];
-  command: (item: SlashCommandItem) => void;
-  clientRect?: (() => DOMRect | null) | null;
-  range: Range;
-  query: string;
-};
-
-const slashRendererConfig = {
-  component: SlashCommandMenu,
-  mapProps: (props: SlashCommandRendererProps): SlashCommandMenuProps => ({
-    items: props.items,
-    onSelect: props.command,
-    clientRect: props.clientRect,
-    editor: props.editor,
-    range: props.range,
-    query: props.query,
-  }),
 };
 
 const createSlashCommandItem = (
@@ -120,76 +91,23 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
         editor: this.editor,
         ...this.options.suggestions,
         items: ({ query, editor: ed }) => buildItems(ed, query),
-        render: () => {
-          let component: SuggestionRenderer<
-            SlashCommandRendererProps,
+        render: () =>
+          createSuggestionRenderLifecycle<
+            SlashCommandItem,
             SlashCommandMenuProps
-          > | null = null;
-
-          const closeMenu = () => {
-            if (component !== null) {
-              component.destroy();
-              component = null;
-            }
-          };
-
-          return {
-            onStart: (props: SuggestionRenderProps) => {
-              if (!props.clientRect) {
-                return;
-              }
-
-              component = new SuggestionRenderer(slashRendererConfig, {
-                items: props.items,
-                command: (item: SlashCommandItem) => {
-                  props.command(item);
-                  closeMenu();
-                },
-                clientRect: props.clientRect,
-                editor: this.editor,
-                range: props.range,
-                query: props.query,
-              });
+          >(
+            {
+              component: SlashCommandMenu,
+              getMenuProps: ({ items, onSelect, editor, range, query }) => ({
+                items,
+                onSelect,
+                editor,
+                range,
+                query,
+              }),
             },
-            onUpdate: (props: SuggestionRenderProps) => {
-              if (component === null) {
-                return;
-              }
-
-              if (!props.clientRect) {
-                return;
-              }
-
-              if (props.items.length === 0) {
-                closeMenu();
-                return;
-              }
-
-              component.updateProps({
-                items: props.items,
-                command: (item: SlashCommandItem) => {
-                  props.command(item);
-                  closeMenu();
-                },
-                clientRect: props.clientRect,
-                editor: this.editor,
-                range: props.range,
-                query: props.query,
-              });
-            },
-            onKeyDown: (props: { event: KeyboardEvent }) => {
-              if (props.event.key === 'Escape') {
-                closeMenu();
-                return true;
-              }
-
-              return component?.ref?.onKeyDown?.(props) ?? false;
-            },
-            onExit: () => {
-              closeMenu();
-            },
-          };
-        },
+            this.editor,
+          ),
       }),
     ];
   },
