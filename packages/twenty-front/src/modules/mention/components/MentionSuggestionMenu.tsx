@@ -39,6 +39,9 @@ export const MentionSuggestionMenu = forwardRef<
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const clampedSelectedIndex =
+    items.length > 0 ? Math.min(selectedIndex, items.length - 1) : 0;
+
   const activeItemRef = useRef<HTMLDivElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
 
@@ -46,12 +49,7 @@ export const MentionSuggestionMenu = forwardRef<
     () => ({
       getBoundingClientRect: () => {
         const start = editor.view.coordsAtPos(range.from);
-        return new DOMRect(
-          start.left,
-          start.top,
-          0,
-          start.bottom - start.top,
-        );
+        return new DOMRect(start.left, start.top, 0, start.bottom - start.top);
       },
     }),
     [editor, range],
@@ -71,14 +69,6 @@ export const MentionSuggestionMenu = forwardRef<
     },
   });
 
-  const prevItemsRef = useRef(items);
-  if (prevItemsRef.current !== items) {
-    prevItemsRef.current = items;
-    if (selectedIndex !== 0) {
-      setSelectedIndex(0);
-    }
-  }
-
   const selectItem = (index: number) => {
     const item = items[index];
     if (!item) {
@@ -92,14 +82,14 @@ export const MentionSuggestionMenu = forwardRef<
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       const navigationKeys = ['ArrowUp', 'ArrowDown', 'Enter'];
       if (navigationKeys.includes(event.key)) {
-        let newIndex = selectedIndex;
+        let newIndex = clampedSelectedIndex;
 
         switch (event.key) {
           case 'ArrowUp':
             if (!items.length) {
               return false;
             }
-            newIndex = selectedIndex - 1;
+            newIndex = clampedSelectedIndex - 1;
             if (newIndex < 0) {
               newIndex = items.length - 1;
             }
@@ -109,7 +99,7 @@ export const MentionSuggestionMenu = forwardRef<
             if (!items.length) {
               return false;
             }
-            newIndex = selectedIndex + 1;
+            newIndex = clampedSelectedIndex + 1;
             if (newIndex >= items.length) {
               newIndex = 0;
             }
@@ -119,7 +109,7 @@ export const MentionSuggestionMenu = forwardRef<
             if (!items.length) {
               return false;
             }
-            selectItem(selectedIndex);
+            selectItem(clampedSelectedIndex);
             return true;
           default:
             return false;
@@ -146,7 +136,7 @@ export const MentionSuggestionMenu = forwardRef<
 
     scrollableContainer.style.transition = 'none';
     scrollableContainer.scrollTop = offsetTop - offsetHeight;
-  }, [selectedIndex]);
+  }, [clampedSelectedIndex]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -168,7 +158,7 @@ export const MentionSuggestionMenu = forwardRef<
             <DropdownContent ref={listContainerRef}>
               <DropdownMenuItemsContainer hasMaxHeight>
                 {items.map((item, index) => {
-                  const isSelected = index === selectedIndex;
+                  const isSelected = index === clampedSelectedIndex;
 
                   return (
                     <div
