@@ -1,0 +1,12 @@
+{
+  "name": "twenty-build-tools",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@prettier/sync": "^0.5.2",
+    "glob": "^10.3.10",
+    "prettier": "^3.2.5",
+    "slash": "^5.1.0",
+    "typescript": "^5.3.3"
+  }
+}

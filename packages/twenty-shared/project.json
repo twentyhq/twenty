@@ -57,7 +57,7 @@
       "cache": true,
       "inputs": [
         "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
+        "{workspaceRoot}/packages/twenty-build-tools/src/**/*.ts"
       ],
       "outputs": [
         "{projectRoot}/src/index.ts",
@@ -65,7 +65,7 @@
         "{projectRoot}/package.json"
       ],
       "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
+        "command": "tsx packages/twenty-build-tools/src/generate-barrels.ts --package-path {projectRoot}"
       }
     },
     "typecheck": {},
