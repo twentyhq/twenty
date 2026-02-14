@@ -47,6 +47,7 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
                 recordId: selectedItem.recordId,
                 objectNameSingular: selectedItem.objectNameSingular,
                 label: selectedItem.label,
+                imageUrl: selectedItem.imageUrl,
               },
             })
             .insertContent(' ')

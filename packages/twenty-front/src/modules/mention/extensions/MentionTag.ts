@@ -31,6 +31,13 @@ export const MentionTag = Node.create({
         'data-label': attributes.label,
       }),
     },
+    imageUrl: {
+      default: '',
+      parseHTML: (element) => element.getAttribute('data-image-url'),
+      renderHTML: (attributes) => ({
+        'data-image-url': attributes.imageUrl,
+      }),
+    },
   }),
 
   renderHTML: ({ node, HTMLAttributes }) => {
