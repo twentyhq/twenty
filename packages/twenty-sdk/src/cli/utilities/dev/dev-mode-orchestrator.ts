@@ -4,6 +4,10 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ApiService } from '@/cli/utilities/api/api-service';
+import {
+  type ApplicationTokenPair,
+  ConfigService,
+} from '@/cli/utilities/config/config-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type FileFolder } from 'twenty-shared/types';
 import type { Location } from 'esbuild';
@@ -20,6 +24,8 @@ export type DevModeOrchestratorOptions = {
 };
 
 export class DevModeOrchestrator {
+  private static readonly TOKEN_RENEWAL_WINDOW_IN_MILLISECONDS = 60_000;
+
   private appPath: string;
   private debounceMs: number;
 
@@ -35,6 +41,8 @@ export class DevModeOrchestrator {
 
   private fileUploader: FileUploader | null = null;
   private apiService = new ApiService({ disableInterceptors: true });
+  private configService = new ConfigService();
+  private applicationIdByUniversalIdentifier = new Map<string, string>();
 
   private activeUploads = new Set<Promise<void>>();
 
@@ -272,6 +280,11 @@ export class DevModeOrchestrator {
         manifestFilePaths: result.filePaths,
       });
 
+      const applicationUniversalIdentifier =
+        result.manifest.application.universalIdentifier;
+
+      let applicationId: string | undefined;
+
       if (validation.warnings.length > 0) {
         for (const warning of validation.warnings) {
           this.uiStateManager.addEvent({
@@ -322,6 +335,11 @@ export class DevModeOrchestrator {
               message: 'Application created',
               status: 'success',
             });
+            applicationId = createApplicationResult.data.id;
+            this.applicationIdByUniversalIdentifier.set(
+              applicationUniversalIdentifier,
+              createApplicationResult.data.id,
+            );
           } else {
             this.uiStateManager.addEvent({
               message: `Application creation failed with error ${JSON.stringify(createApplicationResult.error, null, 2)}`,
@@ -337,8 +355,7 @@ export class DevModeOrchestrator {
 
         this.fileUploader = new FileUploader({
           appPath: this.appPath,
-          applicationUniversalIdentifier:
-            result.manifest.application.universalIdentifier,
+          applicationUniversalIdentifier,
         });
 
         for (const [
@@ -348,6 +365,11 @@ export class DevModeOrchestrator {
           this.uploadFile(builtPath, sourcePath, fileFolder);
         }
       }
+
+      await this.ensureApplicationTokenPair({
+        applicationUniversalIdentifier,
+        applicationId,
+      });
 
       while (this.activeUploads.size > 0) {
         await Promise.all(this.activeUploads);
@@ -411,5 +433,138 @@ export class DevModeOrchestrator {
     } finally {
       this.isSyncing = false;
     }
+  }
+
+  private isTokenExpiredOrExpiringSoon(expiresAt: string): boolean {
+    const expirationTimestamp = Date.parse(expiresAt);
+
+    if (Number.isNaN(expirationTimestamp)) {
+      return true;
+    }
+
+    return (
+      expirationTimestamp - Date.now() <=
+      DevModeOrchestrator.TOKEN_RENEWAL_WINDOW_IN_MILLISECONDS
+    );
+  }
+
+  private async resolveApplicationId(
+    applicationUniversalIdentifier: string,
+  ): Promise<string | null> {
+    const applicationIdFromMemory =
+      this.applicationIdByUniversalIdentifier.get(
+        applicationUniversalIdentifier,
+      ) ?? null;
+
+    if (applicationIdFromMemory) {
+      return applicationIdFromMemory;
+    }
+
+    const applicationLookupResult =
+      await this.apiService.findOneApplicationByUniversalIdentifier(
+        applicationUniversalIdentifier,
+      );
+
+    if (!applicationLookupResult.success) {
+      return null;
+    }
+
+    const { id: applicationId } = applicationLookupResult.data;
+
+    if (!applicationId) {
+      return null;
+    }
+
+    this.applicationIdByUniversalIdentifier.set(
+      applicationUniversalIdentifier,
+      applicationId,
+    );
+
+    return applicationId;
+  }
+
+  private async ensureApplicationTokenPair({
+    applicationUniversalIdentifier,
+    applicationId,
+  }: {
+    applicationUniversalIdentifier: string;
+    applicationId?: string;
+  }): Promise<ApplicationTokenPair | null> {
+    const resolvedApplicationId =
+      applicationId ??
+      (await this.resolveApplicationId(applicationUniversalIdentifier));
+
+    if (!resolvedApplicationId) {
+      this.uiStateManager.addEvent({
+        message:
+          'Skipping application token pair refresh: failed to resolve application id',
+        status: 'warning',
+      });
+
+      return null;
+    }
+
+    this.applicationIdByUniversalIdentifier.set(
+      applicationUniversalIdentifier,
+      resolvedApplicationId,
+    );
+
+    const storedApplicationTokenPair =
+      await this.configService.getApplicationTokenPair(
+        applicationUniversalIdentifier,
+      );
+
+    if (
+      storedApplicationTokenPair &&
+      !this.isTokenExpiredOrExpiringSoon(
+        storedApplicationTokenPair.applicationAccessToken.expiresAt,
+      )
+    ) {
+      return storedApplicationTokenPair;
+    }
+
+    let nextApplicationTokenPair: ApplicationTokenPair | null = null;
+
+    if (
+      storedApplicationTokenPair &&
+      !this.isTokenExpiredOrExpiringSoon(
+        storedApplicationTokenPair.applicationRefreshToken.expiresAt,
+      )
+    ) {
+      const renewApplicationTokenResult =
+        await this.apiService.renewApplicationToken(
+          storedApplicationTokenPair.applicationRefreshToken.token,
+        );
+
+      if (renewApplicationTokenResult.success) {
+        nextApplicationTokenPair = renewApplicationTokenResult.data;
+      }
+    }
+
+    if (!nextApplicationTokenPair) {
+      const generateApplicationTokenPairResult =
+        await this.apiService.generateApplicationTokenPair(
+          resolvedApplicationId,
+        );
+
+      if (!generateApplicationTokenPairResult.success) {
+        this.uiStateManager.addEvent({
+          message:
+            'Failed to refresh local application token pair for app:generate',
+          status: 'warning',
+        });
+
+        return null;
+      }
+
+      nextApplicationTokenPair = generateApplicationTokenPairResult.data;
+    }
+
+    await this.configService.setApplicationTokenPair({
+      applicationUniversalIdentifier,
+      applicationTokenPair: nextApplicationTokenPair,
+    });
+
+    return nextApplicationTokenPair;
   }
 }

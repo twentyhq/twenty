@@ -5726,6 +5726,13 @@ export type UploadFilesFieldFileMutationVariables = Exact<{
 
 export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'FilesFieldFile', id: string, path: string, size: number, createdAt: string, url: string } };
 
+export type RenewApplicationTokenMutationVariables = Exact<{
+  applicationRefreshToken: Scalars['String'];
+}>;
+
+
+export type RenewApplicationTokenMutation = { __typename?: 'Mutation', renewApplicationToken: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+
 export type FindManyFrontComponentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -10425,6 +10432,46 @@ export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHoo
 export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
+export const RenewApplicationTokenDocument = gql`
+    mutation RenewApplicationToken($applicationRefreshToken: String!) {
+  renewApplicationToken(applicationRefreshToken: $applicationRefreshToken) {
+    applicationAccessToken {
+      token
+      expiresAt
+    }
+    applicationRefreshToken {
+      token
+      expiresAt
+    }
+  }
+}
+    `;
+export type RenewApplicationTokenMutationFn = Apollo.MutationFunction<RenewApplicationTokenMutation, RenewApplicationTokenMutationVariables>;
+
+/**
+ * __useRenewApplicationTokenMutation__
+ *
+ * To run a mutation, you first call `useRenewApplicationTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenewApplicationTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renewApplicationTokenMutation, { data, loading, error }] = useRenewApplicationTokenMutation({
+ *   variables: {
+ *      applicationRefreshToken: // value for 'applicationRefreshToken'
+ *   },
+ * });
+ */
+export function useRenewApplicationTokenMutation(baseOptions?: Apollo.MutationHookOptions<RenewApplicationTokenMutation, RenewApplicationTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenewApplicationTokenMutation, RenewApplicationTokenMutationVariables>(RenewApplicationTokenDocument, options);
+      }
+export type RenewApplicationTokenMutationHookResult = ReturnType<typeof useRenewApplicationTokenMutation>;
+export type RenewApplicationTokenMutationResult = Apollo.MutationResult<RenewApplicationTokenMutation>;
+export type RenewApplicationTokenMutationOptions = Apollo.BaseMutationOptions<RenewApplicationTokenMutation, RenewApplicationTokenMutationVariables>;
 export const FindManyFrontComponentsDocument = gql`
     query FindManyFrontComponents {
   frontComponents {

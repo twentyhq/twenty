@@ -1,4 +1,8 @@
-import { ConfigService } from '@/cli/utilities/config/config-service';
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import {
+  type ApplicationTokenPair,
+  ConfigService,
+} from '@/cli/utilities/config/config-service';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import * as fs from 'fs';
@@ -9,13 +13,14 @@ import {
   printSchema,
 } from 'graphql/index';
 import * as path from 'path';
-import {
-  type ApplicationManifest,
-  type Manifest,
-} from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
+
+type ApplicationLookup = {
+  id: string;
+  universalIdentifier: string;
+};
 
 export class ApiService {
   private client: AxiosInstance;
@@ -31,7 +36,7 @@ export class ApiService {
 
       config.baseURL = twentyConfig.apiUrl;
 
-      if (twentyConfig.apiKey) {
+      if (twentyConfig.apiKey && !config.headers.Authorization) {
         config.headers.Authorization = `Bearer ${twentyConfig.apiKey}`;
       }
 
@@ -145,9 +150,54 @@ export class ApiService {
     }
   }
 
+  async findOneApplicationByUniversalIdentifier(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<ApplicationLookup>> {
+    try {
+      const query = `
+        query FindOneApplicationForDev($universalIdentifier: UUID!) {
+          findOneApplication(universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+          }
+        }
+      `;
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findOneApplication,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async createApplication(
     manifest: Manifest,
-  ): Promise<ApiResponse<ApplicationManifest>> {
+  ): Promise<ApiResponse<ApplicationLookup>> {
     try {
       const mutation = `
         mutation CreateOneApplication($input: CreateApplicationInput!) {
@@ -192,6 +242,114 @@ export class ApiService {
         success: true,
         data: response.data.data.createOneApplication,
         message: `Successfully create application: ${manifest.application.displayName}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async generateApplicationTokenPair(
+    applicationId: string,
+  ): Promise<ApiResponse<ApplicationTokenPair>> {
+    try {
+      const mutation = `
+        mutation GenerateApplicationToken($applicationId: UUID!) {
+          generateApplicationToken(applicationId: $applicationId) {
+            applicationAccessToken {
+              token
+              expiresAt
+            }
+            applicationRefreshToken {
+              token
+              expiresAt
+            }
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { applicationId },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message ||
+            'Failed to generate application token pair',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.generateApplicationToken,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async renewApplicationToken(
+    applicationRefreshToken: string,
+  ): Promise<ApiResponse<ApplicationTokenPair>> {
+    try {
+      const mutation = `
+        mutation RenewApplicationToken($applicationRefreshToken: String!) {
+          renewApplicationToken(applicationRefreshToken: $applicationRefreshToken) {
+            applicationAccessToken {
+              token
+              expiresAt
+            }
+            applicationRefreshToken {
+              token
+              expiresAt
+            }
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { applicationRefreshToken },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message ||
+            'Failed to renew application token pair',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.renewApplicationToken,
       };
     } catch (error) {
       return {
@@ -295,7 +453,9 @@ export class ApiService {
     }
   }
 
-  async getSchema(): Promise<ApiResponse<string>> {
+  async getSchema(options?: {
+    authorizationToken?: string;
+  }): Promise<ApiResponse<string>> {
     try {
       const introspectionQuery = getIntrospectionQuery();
 
@@ -308,6 +468,11 @@ export class ApiService {
           headers: {
             'Content-Type': 'application/json',
             Accept: '*/*',
+            ...(options?.authorizationToken
+              ? {
+                  Authorization: `Bearer ${options.authorizationToken}`,
+                }
+              : {}),
           },
         },
       );

@@ -42,8 +42,7 @@ export const FrontComponentWorkerEffect = ({
 
     worker.onerror = (event: ErrorEvent) => {
       const workerError =
-        event.error ??
-        new Error(event.message || 'Unknown worker error');
+        event.error ?? new Error(event.message || 'Unknown worker error');
 
       console.error('[FrontComponentRenderer] Worker error:', workerError);
       setError(workerError);
@@ -54,6 +53,8 @@ export const FrontComponentWorkerEffect = ({
       {
         navigate: (...args) =>
           frontComponentHostCommunicationApiRef.current.navigate(...args),
+        requestAccessTokenRefresh: () =>
+          frontComponentHostCommunicationApiRef.current.requestAccessTokenRefresh(),
       };
 
     const thread = new ThreadWebWorker<
@@ -80,14 +81,9 @@ export const FrontComponentWorkerEffect = ({
       setThread(null);
       worker.terminate();
     };
-  }, [
-    componentUrl,
-    applicationAccessToken,
-    apiUrl,
-    setError,
-    setReceiver,
-    setThread,
-  ]);
+    // applicationAccessToken intentionally excluded — token is captured at
+    // worker creation time; refreshes happen via the fetch interceptor callback.
+  }, [componentUrl, apiUrl, setError, setReceiver, setThread]);
 
   return null;
 };

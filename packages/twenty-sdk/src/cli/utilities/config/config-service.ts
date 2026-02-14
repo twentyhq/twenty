@@ -6,6 +6,20 @@ import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 export type TwentyConfig = {
   apiUrl: string;
   apiKey?: string;
+  applicationTokenPairsByApplicationUniversalIdentifier?: Record<
+    string,
+    ApplicationTokenPair
+  >;
+};
+
+export type ApplicationAuthToken = {
+  token: string;
+  expiresAt: string;
+};
+
+export type ApplicationTokenPair = {
+  applicationAccessToken: ApplicationAuthToken;
+  applicationRefreshToken: ApplicationAuthToken;
 };
 
 type PersistedConfig = TwentyConfig & {
@@ -59,10 +73,13 @@ export class ConfigService {
       // Fallback to legacy top-level values if profile value is missing
       const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;
       const apiKey = profileConfig?.apiKey;
+      const applicationTokenPairsByApplicationUniversalIdentifier =
+        profileConfig?.applicationTokenPairsByApplicationUniversalIdentifier;
 
       return {
         apiUrl,
         apiKey,
+        applicationTokenPairsByApplicationUniversalIdentifier,
       };
     } catch {
       return defaultConfig;
@@ -105,6 +122,74 @@ export class ConfigService {
       delete raw.apiKey;
       raw.apiUrl = defaultConfig.apiUrl;
     }
+
+    await fs.ensureDir(path.dirname(this.configPath));
+    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
+  }
+
+  async getApplicationTokenPair(
+    applicationUniversalIdentifier: string,
+  ): Promise<ApplicationTokenPair | undefined> {
+    const config = await this.getConfig();
+
+    return config.applicationTokenPairsByApplicationUniversalIdentifier?.[
+      applicationUniversalIdentifier
+    ];
+  }
+
+  async setApplicationTokenPair({
+    applicationUniversalIdentifier,
+    applicationTokenPair,
+  }: {
+    applicationUniversalIdentifier: string;
+    applicationTokenPair: ApplicationTokenPair;
+  }): Promise<void> {
+    const raw = await this.readRawConfig();
+    const profile = this.getActiveWorkspaceName();
+
+    if (!raw.profiles) {
+      raw.profiles = {};
+    }
+
+    const currentProfile = raw.profiles[profile] || { apiUrl: '' };
+    const currentApplicationTokenPairs =
+      currentProfile.applicationTokenPairsByApplicationUniversalIdentifier ??
+      {};
+
+    raw.profiles[profile] = {
+      ...currentProfile,
+      applicationTokenPairsByApplicationUniversalIdentifier: {
+        ...currentApplicationTokenPairs,
+        [applicationUniversalIdentifier]: applicationTokenPair,
+      },
+    };
+
+    await fs.ensureDir(path.dirname(this.configPath));
+    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
+  }
+
+  async clearApplicationTokenPair(
+    applicationUniversalIdentifier: string,
+  ): Promise<void> {
+    const raw = await this.readRawConfig();
+    const profile = this.getActiveWorkspaceName();
+
+    if (!raw.profiles?.[profile]) {
+      return;
+    }
+
+    const currentApplicationTokenPairs = {
+      ...(raw.profiles[profile]
+        .applicationTokenPairsByApplicationUniversalIdentifier ?? {}),
+    };
+
+    delete currentApplicationTokenPairs[applicationUniversalIdentifier];
+
+    raw.profiles[profile] = {
+      ...raw.profiles[profile],
+      applicationTokenPairsByApplicationUniversalIdentifier:
+        currentApplicationTokenPairs,
+    };
 
     await fs.ensureDir(path.dirname(this.configPath));
     await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));

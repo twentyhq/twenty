@@ -7,4 +7,5 @@ export type FrontComponentHostCommunicationApi = {
     queryParams?: Record<string, unknown>,
     options?: NavigateOptions,
   ) => Promise<void>;
+  requestAccessTokenRefresh: () => Promise<string>;
 };

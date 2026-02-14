@@ -26,6 +26,7 @@ import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderCo
 import { type WorkerExports } from '../../types/WorkerExports';
 import * as RemoteComponents from '../generated/remote-components';
 import { exposeGlobals } from '../utils/exposeGlobals';
+import { setupFetchInterceptor } from './utils/setupFetchInterceptor';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
 exposeGlobals({
@@ -44,6 +45,17 @@ const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
+  // Register fetch interceptor before any network calls
+  const hostApi =
+    ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
+
+  if (isDefined(renderContext.apiUrl)) {
+    setupFetchInterceptor({
+      requestRefresh: () => hostApi.requestAccessTokenRefresh(),
+      trustedBaseUrl: renderContext.apiUrl,
+    });
+  }
+
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
   root.connect(batchedConnection);

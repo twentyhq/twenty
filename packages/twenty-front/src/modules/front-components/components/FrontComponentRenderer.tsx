@@ -1,13 +1,21 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  type FrontComponentHostCommunicationApi,
+  FrontComponentRenderer as SharedFrontComponentRenderer,
+} from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
+import {
+  type ApplicationTokenPair,
+  useFindOneFrontComponentQuery,
+  useRenewApplicationTokenMutation,
+} from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -43,25 +51,92 @@ export const FrontComponentRenderer = ({
     onError: handleError,
   });
 
-  if (
-    loading ||
-    !isDefined(data?.frontComponent) ||
-    !isDefined(data.frontComponent.applicationTokenPair)
-  ) {
-    return null;
-  }
+  const [renewApplicationToken] = useRenewApplicationTokenMutation();
+  const [applicationTokenPair, setApplicationTokenPair] =
+    useState<ApplicationTokenPair | null>(null);
+
+  const queriedApplicationTokenPair =
+    data?.frontComponent?.applicationTokenPair;
+
+  const handleApplicationTokenPairChange = useCallback(
+    (nextApplicationTokenPair: ApplicationTokenPair | null) => {
+      if (!isDefined(nextApplicationTokenPair)) {
+        setApplicationTokenPair(null);
+        return;
+      }
+
+      setApplicationTokenPair((currentApplicationTokenPair) => {
+        if (
+          currentApplicationTokenPair?.applicationAccessToken.token ===
+            nextApplicationTokenPair.applicationAccessToken.token &&
+          currentApplicationTokenPair?.applicationRefreshToken.token ===
+            nextApplicationTokenPair.applicationRefreshToken.token
+        ) {
+          return currentApplicationTokenPair;
+        }
+
+        return nextApplicationTokenPair;
+      });
+    },
+    [],
+  );
+
+  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
+    if (!isDefined(applicationTokenPair)) {
+      throw new Error('No refresh token available');
+    }
+
+    const result = await renewApplicationToken({
+      variables: {
+        applicationRefreshToken:
+          applicationTokenPair.applicationRefreshToken.token,
+      },
+    });
+
+    const renewedApplicationTokenPair = result.data?.renewApplicationToken;
+
+    if (!isDefined(renewedApplicationTokenPair)) {
+      throw new Error('Failed to renew application token');
+    }
+
+    setApplicationTokenPair(renewedApplicationTokenPair);
+
+    return renewedApplicationTokenPair.applicationAccessToken.token;
+  }, [applicationTokenPair, renewApplicationToken]);
+
+  const composedFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
+    useMemo(
+      () => ({
+        ...frontComponentHostCommunicationApi,
+        requestAccessTokenRefresh,
+      }),
+      [frontComponentHostCommunicationApi, requestAccessTokenRefresh],
+    );
 
   return (
-    <SharedFrontComponentRenderer
-      theme={theme}
-      componentUrl={componentUrl}
-      applicationAccessToken={
-        data.frontComponent.applicationTokenPair.applicationAccessToken.token
-      }
-      apiUrl={REACT_APP_SERVER_BASE_URL}
-      executionContext={executionContext}
-      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
-      onError={handleError}
-    />
+    <>
+      <FrontComponentApplicationTokenPairEffect
+        frontComponentId={frontComponentId}
+        queriedApplicationTokenPair={queriedApplicationTokenPair}
+        onApplicationTokenPairChange={handleApplicationTokenPairChange}
+      />
+      {!loading &&
+        isDefined(data?.frontComponent) &&
+        isDefined(applicationTokenPair) && (
+          <SharedFrontComponentRenderer
+            theme={theme}
+            componentUrl={componentUrl}
+            applicationAccessToken={
+              applicationTokenPair.applicationAccessToken.token
+            }
+            apiUrl={REACT_APP_SERVER_BASE_URL}
+            executionContext={executionContext}
+            frontComponentHostCommunicationApi={
+              composedFrontComponentHostCommunicationApi
+            }
+            onError={handleError}
+          />
+        )}
+    </>
   );
 };

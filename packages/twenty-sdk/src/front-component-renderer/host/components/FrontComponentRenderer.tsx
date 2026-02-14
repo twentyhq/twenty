@@ -9,7 +9,7 @@ import {
   type RemoteReceiver,
   RemoteRootRenderer,
 } from '@remote-dom/react/host';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ThemeProvider } from '@emotion/react';
@@ -43,8 +43,8 @@ export const FrontComponentRenderer = ({
   > | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  const MemoizedFrontComponentWorkerEffect = useMemo(() => {
-    return (
+  return (
+    <>
       <FrontComponentWorkerEffect
         componentUrl={componentUrl}
         applicationAccessToken={applicationAccessToken}
@@ -54,20 +54,6 @@ export const FrontComponentRenderer = ({
         setThread={setThread}
         setError={setError}
       />
-    );
-  }, [
-    componentUrl,
-    frontComponentHostCommunicationApi,
-    setError,
-    setReceiver,
-    setThread,
-    applicationAccessToken,
-    apiUrl,
-  ]);
-
-  return (
-    <>
-      {MemoizedFrontComponentWorkerEffect}
 
       {isDefined(error) && (
         <>

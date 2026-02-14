@@ -23,10 +23,24 @@ describe('generateApplicationToken', () => {
     });
 
     expect(data.generateApplicationToken).toBeDefined();
-    expect(data.generateApplicationToken.token).toBeDefined();
-    expect(typeof data.generateApplicationToken.token).toBe('string');
-    expect(data.generateApplicationToken.token.length).toBeGreaterThan(0);
-    expect(data.generateApplicationToken.expiresAt).toBeDefined();
+    expect(
+      data.generateApplicationToken.applicationAccessToken.token,
+    ).toBeDefined();
+    expect(
+      typeof data.generateApplicationToken.applicationAccessToken.token,
+    ).toBe('string');
+    expect(
+      data.generateApplicationToken.applicationAccessToken.token.length,
+    ).toBeGreaterThan(0);
+    expect(
+      data.generateApplicationToken.applicationAccessToken.expiresAt,
+    ).toBeDefined();
+    expect(
+      data.generateApplicationToken.applicationRefreshToken.token,
+    ).toBeDefined();
+    expect(
+      data.generateApplicationToken.applicationRefreshToken.expiresAt,
+    ).toBeDefined();
   });
 
   it('should generate an application token with API key access token', async () => {
@@ -37,10 +51,24 @@ describe('generateApplicationToken', () => {
     });
 
     expect(data.generateApplicationToken).toBeDefined();
-    expect(data.generateApplicationToken.token).toBeDefined();
-    expect(typeof data.generateApplicationToken.token).toBe('string');
-    expect(data.generateApplicationToken.token.length).toBeGreaterThan(0);
-    expect(data.generateApplicationToken.expiresAt).toBeDefined();
+    expect(
+      data.generateApplicationToken.applicationAccessToken.token,
+    ).toBeDefined();
+    expect(
+      typeof data.generateApplicationToken.applicationAccessToken.token,
+    ).toBe('string');
+    expect(
+      data.generateApplicationToken.applicationAccessToken.token.length,
+    ).toBeGreaterThan(0);
+    expect(
+      data.generateApplicationToken.applicationAccessToken.expiresAt,
+    ).toBeDefined();
+    expect(
+      data.generateApplicationToken.applicationRefreshToken.token,
+    ).toBeDefined();
+    expect(
+      data.generateApplicationToken.applicationRefreshToken.expiresAt,
+    ).toBeDefined();
   });
 
   it('should fail with a non-existent application id', async () => {

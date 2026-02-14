@@ -1,5 +1,9 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { ConfigService } from '@/cli/utilities/config/config-service';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
+import {
+  type ApplicationTokenPair,
+  ConfigService,
+} from '@/cli/utilities/config/config-service';
 import { generate } from '@genql/cli';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
@@ -7,11 +11,14 @@ import { join, resolve } from 'path';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
+  OUTPUT_DIR,
 } from 'twenty-shared/application';
 
 export const GENERATED_FOLDER_NAME = 'generated';
 
 export class ClientService {
+  private static readonly TOKEN_RENEWAL_WINDOW_IN_MILLISECONDS = 60_000;
+
   private configService: ConfigService;
   private apiService: ApiService;
 
@@ -43,7 +50,32 @@ export class ClientService {
     console.log(chalk.gray(`API URL: ${url}`));
     console.log(chalk.gray(`Output: ${outputPath}`));
 
-    const getSchemaResponse = await this.apiService.getSchema();
+    const applicationUniversalIdentifier =
+      await this.getApplicationUniversalIdentifier(appPath);
+    const applicationTokenPair = applicationUniversalIdentifier
+      ? await this.getValidApplicationTokenPair(applicationUniversalIdentifier)
+      : null;
+
+    if (applicationTokenPair) {
+      console.log(
+        chalk.gray('Using application access token to introspect schema'),
+      );
+    } else if (applicationUniversalIdentifier) {
+      console.log(
+        chalk.yellow(
+          '⚠️  Could not resolve application token pair, falling back to API key schema introspection',
+        ),
+      );
+    }
+
+    const getSchemaResponse = await this.apiService.getSchema(
+      applicationTokenPair
+        ? {
+            authorizationToken:
+              applicationTokenPair.applicationAccessToken.token,
+          }
+        : undefined,
+    );
 
     if (!getSchemaResponse.success) {
       return;
@@ -151,5 +183,104 @@ export default class Twenty {
 `;
 
     await fs.appendFile(join(output, 'index.ts'), twentyClientContent);
+  }
+
+  private isTokenExpiredOrExpiringSoon(expiresAt: string): boolean {
+    const expirationTimestamp = Date.parse(expiresAt);
+
+    if (Number.isNaN(expirationTimestamp)) {
+      return true;
+    }
+
+    return (
+      expirationTimestamp - Date.now() <=
+      ClientService.TOKEN_RENEWAL_WINDOW_IN_MILLISECONDS
+    );
+  }
+
+  private async getApplicationUniversalIdentifier(
+    appPath: string,
+  ): Promise<string | null> {
+    const outputManifestPath = join(appPath, OUTPUT_DIR, 'manifest.json');
+
+    if (await fs.pathExists(outputManifestPath)) {
+      const outputManifest = await fs.readJSON(outputManifestPath);
+      const outputApplicationUniversalIdentifier =
+        outputManifest?.application?.universalIdentifier;
+
+      if (typeof outputApplicationUniversalIdentifier === 'string') {
+        return outputApplicationUniversalIdentifier;
+      }
+    }
+
+    const manifestBuildResult = await buildManifest(appPath);
+
+    return (
+      manifestBuildResult.manifest?.application.universalIdentifier ?? null
+    );
+  }
+
+  private async getValidApplicationTokenPair(
+    applicationUniversalIdentifier: string,
+  ): Promise<ApplicationTokenPair | null> {
+    const storedApplicationTokenPair =
+      await this.configService.getApplicationTokenPair(
+        applicationUniversalIdentifier,
+      );
+
+    if (
+      storedApplicationTokenPair &&
+      !this.isTokenExpiredOrExpiringSoon(
+        storedApplicationTokenPair.applicationAccessToken.expiresAt,
+      )
+    ) {
+      return storedApplicationTokenPair;
+    }
+
+    if (
+      storedApplicationTokenPair &&
+      !this.isTokenExpiredOrExpiringSoon(
+        storedApplicationTokenPair.applicationRefreshToken.expiresAt,
+      )
+    ) {
+      const renewApplicationTokenResult =
+        await this.apiService.renewApplicationToken(
+          storedApplicationTokenPair.applicationRefreshToken.token,
+        );
+
+      if (renewApplicationTokenResult.success) {
+        await this.configService.setApplicationTokenPair({
+          applicationUniversalIdentifier,
+          applicationTokenPair: renewApplicationTokenResult.data,
+        });
+
+        return renewApplicationTokenResult.data;
+      }
+    }
+
+    const findApplicationResult =
+      await this.apiService.findOneApplicationByUniversalIdentifier(
+        applicationUniversalIdentifier,
+      );
+
+    if (!findApplicationResult.success) {
+      return null;
+    }
+
+    const generateApplicationTokenPairResult =
+      await this.apiService.generateApplicationTokenPair(
+        findApplicationResult.data.id,
+      );
+
+    if (!generateApplicationTokenPairResult.success) {
+      return null;
+    }
+
+    await this.configService.setApplicationTokenPair({
+      applicationUniversalIdentifier,
+      applicationTokenPair: generateApplicationTokenPairResult.data,
+    });
+
+    return generateApplicationTokenPairResult.data;
   }
 }
