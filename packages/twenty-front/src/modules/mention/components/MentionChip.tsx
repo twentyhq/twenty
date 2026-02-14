@@ -1,7 +1,7 @@
 import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
+import { NodeViewWrapper } from '@tiptap/react';
 
-export const MentionChip = ({ node }: NodeViewProps) => {
+export const MentionChip = ({ node }: MentionChipProps) => {
   const recordId = node.attrs.recordId as string;
   const objectNameSingular = node.attrs.objectNameSingular as string;
   const label = node.attrs.label as string;

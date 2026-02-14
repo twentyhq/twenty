@@ -18,8 +18,7 @@ export const MentionTag = Node.create({
     },
     objectNameSingular: {
       default: null,
-      parseHTML: (element) =>
-        element.getAttribute('data-object-name-singular'),
+      parseHTML: (element) => element.getAttribute('data-object-name-singular'),
       renderHTML: (attributes) => ({
         'data-object-name-singular': attributes.objectNameSingular,
       }),

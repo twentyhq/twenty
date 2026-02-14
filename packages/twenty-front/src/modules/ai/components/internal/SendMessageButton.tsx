@@ -10,8 +10,7 @@ type SendMessageButtonProps = {
 
 export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
   const agentChatInput = useRecoilValue(agentChatInputState);
-  const { handleStop, isLoading, isStreaming } =
-    useAgentChatContextOrThrow();
+  const { handleStop, isLoading, isStreaming } = useAgentChatContextOrThrow();
 
   if (isStreaming) {
     return (

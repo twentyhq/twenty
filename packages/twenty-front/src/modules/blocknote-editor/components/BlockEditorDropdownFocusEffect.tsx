@@ -1,5 +1,5 @@
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { isSlashMenuOpenComponentState } from '@/ui/input/editor/states/isSlashMenuOpenComponentState';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';

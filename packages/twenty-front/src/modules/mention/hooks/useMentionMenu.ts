@@ -1,6 +1,6 @@
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
-import { type MentionItem } from '@/ui/input/editor/components/types';
+import { type MentionItem } from '@/blocknote-editor/types/types';
 import { useCallback } from 'react';
 
 export const useMentionMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {

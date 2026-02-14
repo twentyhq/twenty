@@ -1,5 +1,5 @@
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
-import { type SuggestionItem } from '@/ui/input/editor/components/types';
+import { type SuggestionItem } from '@/blocknote-editor/types/types';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';

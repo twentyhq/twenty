@@ -5,15 +5,15 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ClipboardEvent } from 'react';
 
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
-import { CustomMentionMenu } from '@/ui/input/editor/components/CustomMentionMenu';
-import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
+import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
+import { CustomSideMenu } from '@/blocknote-editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
   type SuggestionItem,
-} from '@/ui/input/editor/components/CustomSlashMenu';
-import { useMentionMenu } from '@/ui/input/editor/hooks/useMentionMenu';
+} from '@/blocknote-editor/components/CustomSlashMenu';
+import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;

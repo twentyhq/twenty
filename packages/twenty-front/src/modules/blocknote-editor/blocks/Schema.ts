@@ -4,8 +4,8 @@ import {
   defaultInlineContentSpecs,
 } from '@blocknote/core';
 
-import { FileBlock } from '@/activities/blocks/components/FileBlock';
-import { MentionInlineContent } from '@/activities/blocks/components/MentionInlineContent';
+import { FileBlock } from '@/blocknote-editor/blocks/FileBlock';
+import { MentionInlineContent } from '@/blocknote-editor/blocks/MentionInlineContent';
 
 export const BLOCK_SCHEMA = BlockNoteSchema.create({
   blockSpecs: {

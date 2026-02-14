@@ -5,11 +5,11 @@ import { type MouseEvent as ReactMouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
-import { CustomMentionMenuListItem } from '@/ui/input/editor/components/CustomMentionMenuListItem';
+import { MentionMenuListItem } from '@/mention/components/MentionMenuListItem';
 import {
   type CustomMentionMenuProps,
   type MentionItem,
-} from '@/ui/input/editor/components/types';
+} from '@/blocknote-editor/types/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -67,7 +67,7 @@ export const CustomMentionMenu = ({
               <DropdownContent widthInPixels={MenuPixelWidth}>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredItems.map((item, index) => (
-                    <CustomMentionMenuListItem
+                    <MentionMenuListItem
                       key={item.recordId!}
                       recordId={item.recordId!}
                       objectNameSingular={item.objectNameSingular!}

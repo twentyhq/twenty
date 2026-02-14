@@ -1,12 +1,7 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  AvatarChip,
-  Chip,
-  ChipVariant,
-  LinkChip,
-} from 'twenty-ui/components';
+import { AvatarChip, Chip, ChipVariant, LinkChip } from 'twenty-ui/components';
 
 type MentionRecordChipProps = {
   recordId: string;

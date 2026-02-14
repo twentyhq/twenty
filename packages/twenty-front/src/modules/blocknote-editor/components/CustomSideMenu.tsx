@@ -1,6 +1,6 @@
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { CustomAddBlockItem } from '@/ui/input/editor/components/CustomAddBlockItem';
-import { CustomSideMenuOptions } from '@/ui/input/editor/components/CustomSideMenuOptions';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { CustomAddBlockItem } from '@/blocknote-editor/components/CustomAddBlockItem';
+import { CustomSideMenuOptions } from '@/blocknote-editor/components/CustomSideMenuOptions';
 import {
   BlockColorsItem,
   DragHandleButton,

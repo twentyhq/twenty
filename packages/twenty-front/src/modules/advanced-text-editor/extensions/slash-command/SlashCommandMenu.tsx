@@ -31,11 +31,7 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
       (event: KeyboardEvent) => {
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
-          editor
-            .chain()
-            .focus()
-            .insertContentAt(range, `/${prevQuery}`)
-            .run();
+          editor.chain().focus().insertContentAt(range, `/${prevQuery}`).run();
           setTimeout(() => {
             // Restore previous index -- handled via the ref
             selectedIndexRef.current = prevSelectedIndex;

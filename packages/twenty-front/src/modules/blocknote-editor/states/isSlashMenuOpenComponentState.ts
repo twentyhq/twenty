@@ -1,4 +1,4 @@
-import { BlockEditorComponentInstanceContext } from '@/ui/input/editor/contexts/BlockEditorCompoponeInstanceContext';
+import { BlockEditorComponentInstanceContext } from '@/blocknote-editor/contexts/BlockEditorCompoponeInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const isSlashMenuOpenComponentState = createComponentState<boolean>({

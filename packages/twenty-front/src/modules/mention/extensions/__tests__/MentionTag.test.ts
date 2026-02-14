@@ -67,9 +67,7 @@ describe('MentionTag', () => {
 
       const text = editor.getText();
 
-      expect(text).toBe(
-        'Hello [[record:company:abc-123:Acme Corp]] world',
-      );
+      expect(text).toBe('Hello [[record:company:abc-123:Acme Corp]] world');
     });
 
     it('should handle mentions with empty label', () => {

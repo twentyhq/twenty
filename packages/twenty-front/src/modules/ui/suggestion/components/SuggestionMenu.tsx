@@ -25,7 +25,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 
 // forwardRef does not natively support generics, so we cast via a helper
 function SuggestionMenuInner<TItem>(
-  props: SuggestionMenuProps<TItem>,
+  props: SuggestionMenuInnerProps<TItem>,
   parentRef: React.ForwardedRef<unknown>,
 ) {
   const { items, onSelect, editor, range, getItemKey, renderItem, onKeyDown } =
@@ -185,7 +185,6 @@ function SuggestionMenuInner<TItem>(
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SuggestionMenu = forwardRef(SuggestionMenuInner) as <TItem>(
   props: SuggestionMenuProps<TItem> & { ref?: React.Ref<unknown> },
 ) => ReturnType<typeof SuggestionMenuInner>;

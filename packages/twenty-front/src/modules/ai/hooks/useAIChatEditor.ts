@@ -71,8 +71,9 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
     editorProps: {
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
-          const suggestionState =
-            MENTION_SUGGESTION_PLUGIN_KEY.getState(view.state);
+          const suggestionState = MENTION_SUGGESTION_PLUGIN_KEY.getState(
+            view.state,
+          );
           if (suggestionState?.active) {
             return false;
           }

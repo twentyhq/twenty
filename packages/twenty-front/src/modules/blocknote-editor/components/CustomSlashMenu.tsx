@@ -6,12 +6,12 @@ import { createPortal } from 'react-dom';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
-import { CustomSlashMenuListItem } from '@/ui/input/editor/components/CustomSlashMenuListItem';
-import { CustomSlashMenuSelectedIndexSyncEffect } from '@/ui/input/editor/components/CustomSlashMenuSelectedIndexSyncEffect';
+import { CustomSlashMenuListItem } from '@/blocknote-editor/components/CustomSlashMenuListItem';
+import { CustomSlashMenuSelectedIndexSyncEffect } from '@/blocknote-editor/components/CustomSlashMenuSelectedIndexSyncEffect';
 import type {
   CustomSlashMenuProps,
   SuggestionItem,
-} from '@/ui/input/editor/components/types';
+} from '@/blocknote-editor/types/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';

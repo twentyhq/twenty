@@ -4,7 +4,7 @@ import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
-type CustomMentionMenuListItemProps = {
+type MentionMenuListItemProps = {
   recordId: string;
   objectNameSingular: string;
   label: string;
@@ -14,7 +14,7 @@ type CustomMentionMenuListItemProps = {
   onClick: () => void;
 };
 
-export const CustomMentionMenuListItem = ({
+export const MentionMenuListItem = ({
   recordId,
   objectNameSingular,
   label,
@@ -22,7 +22,7 @@ export const CustomMentionMenuListItem = ({
   objectLabelSingular,
   isSelected,
   onClick,
-}: CustomMentionMenuListItemProps) => {
+}: MentionMenuListItemProps) => {
   const handleClick = (event?: MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();

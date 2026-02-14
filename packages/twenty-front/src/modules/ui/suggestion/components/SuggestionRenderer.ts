@@ -1,4 +1,8 @@
-import { createElement, type ForwardRefExoticComponent, type RefAttributes } from 'react';
+import {
+  createElement,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
 type SuggestionRef = {
