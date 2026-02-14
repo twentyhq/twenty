@@ -13,13 +13,10 @@ type SuggestionCallbackProps<TItem> = {
   query: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Matches Tiptap's ReactRenderer generic constraint
 type AnyRecord = Record<string, any>;
 
-type SuggestionRenderLifecycleConfig<
-  TItem,
-  TMenuProps extends AnyRecord,
-> = {
+type SuggestionRenderLifecycleConfig<TItem, TMenuProps extends AnyRecord> = {
   component: React.ComponentType<TMenuProps>;
   getMenuProps: (args: {
     items: TItem[];

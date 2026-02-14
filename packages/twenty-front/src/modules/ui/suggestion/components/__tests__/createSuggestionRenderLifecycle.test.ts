@@ -68,9 +68,7 @@ describe('createSuggestionRenderLifecycle', () => {
     it('should not create renderer when clientRect is missing', () => {
       const lifecycle = createTestLifecycle();
 
-      lifecycle.onStart(
-        createMockCallbackProps({ clientRect: undefined }),
-      );
+      lifecycle.onStart(createMockCallbackProps({ clientRect: undefined }));
 
       const { ReactRenderer } = jest.requireMock('@tiptap/react');
       expect(ReactRenderer).not.toHaveBeenCalled();
@@ -169,9 +167,7 @@ describe('createSuggestionRenderLifecycle', () => {
       const lifecycle = createTestLifecycle();
       const originalCommand = jest.fn();
 
-      lifecycle.onStart(
-        createMockCallbackProps({ command: originalCommand }),
-      );
+      lifecycle.onStart(createMockCallbackProps({ command: originalCommand }));
 
       // Extract the onSelect callback from the props passed to ReactRenderer
       const { ReactRenderer } = jest.requireMock('@tiptap/react');
