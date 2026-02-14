@@ -12,15 +12,15 @@ export const buildObjectIdByNameMaps = (
   const idByNameSingular: Record<string, string> = {};
   const idByNamePlural: Record<string, string> = {};
 
-  for (const [objectId, objectMetadata] of Object.entries(
-    flatObjectMetadataMaps.byId,
+  for (const objectMetadata of Object.values(
+    flatObjectMetadataMaps.byUniversalIdentifier,
   )) {
     if (!isDefined(objectMetadata)) {
       continue;
     }
 
-    idByNameSingular[objectMetadata.nameSingular] = objectId;
-    idByNamePlural[objectMetadata.namePlural] = objectId;
+    idByNameSingular[objectMetadata.nameSingular] = objectMetadata.id;
+    idByNamePlural[objectMetadata.namePlural] = objectMetadata.id;
   }
 
   return { idByNameSingular, idByNamePlural };

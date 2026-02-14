@@ -21,30 +21,37 @@ describe('ViewQueryParamsService', () => {
   const mockFieldMetadataId = 'field-metadata-id';
 
   const mockFlatObjectMetadataMaps = {
-    byId: {
-      [mockObjectMetadataId]: {
+    byUniversalIdentifier: {
+      'object-universal-id': {
         id: mockObjectMetadataId,
         nameSingular: 'company',
         namePlural: 'companies',
         labelSingular: 'Company',
         labelPlural: 'Companies',
+        universalIdentifier: 'object-universal-id',
       },
     },
-    byNameSingular: {},
-    byNamePlural: {},
+    universalIdentifierById: {
+      [mockObjectMetadataId]: 'object-universal-id',
+    },
+    universalIdentifiersByApplicationId: {},
   };
 
   const mockFlatFieldMetadataMaps = {
-    byId: {
-      [mockFieldMetadataId]: {
+    byUniversalIdentifier: {
+      'field-universal-id': {
         id: mockFieldMetadataId,
         name: 'name',
         type: FieldMetadataType.TEXT,
         label: 'Name',
         options: null,
+        universalIdentifier: 'field-universal-id',
       },
     },
-    byNameAndObjectId: {},
+    universalIdentifierById: {
+      [mockFieldMetadataId]: 'field-universal-id',
+    },
+    universalIdentifiersByApplicationId: {},
   };
 
   beforeEach(async () => {

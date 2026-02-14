@@ -20,18 +20,24 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
   flatEntity,
   flatEntityMapsToMutate,
 }: AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  if (isDefined(flatEntityMapsToMutate.byId[flatEntity.id])) {
+  if (
+    isDefined(
+      flatEntityMapsToMutate.byUniversalIdentifier[
+        flatEntity.universalIdentifier
+      ],
+    )
+  ) {
     throw new FlatEntityMapsException(
       'addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists',
       FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
     );
   }
 
-  flatEntityMapsToMutate.byId[flatEntity.id] = flatEntity;
+  flatEntityMapsToMutate.byUniversalIdentifier[flatEntity.universalIdentifier] =
+    flatEntity;
 
-  flatEntityMapsToMutate.idByUniversalIdentifier[
-    flatEntity.universalIdentifier
-  ] = flatEntity.id;
+  flatEntityMapsToMutate.universalIdentifierById[flatEntity.id] =
+    flatEntity.universalIdentifier;
 
   if (isDefined(flatEntity.applicationId)) {
     const existingUniversalIdentifiers =

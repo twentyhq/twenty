@@ -1,10 +1,12 @@
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
+import { PageLayoutRelationWidgetsSyncEffect } from '@/page-layout/components/PageLayoutRelationWidgetsSyncEffect';
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -19,6 +21,8 @@ export const PageLayoutRenderer = ({
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
+  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
+
   const onInitialized = (pageLayout: PageLayout) => {
     if (isPageLayoutEmpty(pageLayout)) {
       setIsPageLayoutInEditMode(true);
@@ -26,6 +30,12 @@ export const PageLayoutRenderer = ({
       setIsPageLayoutInEditMode(false);
     }
   };
+
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId,
+    layoutType,
+    targetRecordIdentifier,
+  });
 
   return (
     <PageLayoutComponentInstanceContext.Provider
@@ -35,13 +45,14 @@ export const PageLayoutRenderer = ({
     >
       <TabListComponentInstanceContext.Provider
         value={{
-          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayoutId),
+          instanceId: tabListInstanceId,
         }}
       >
         <PageLayoutInitializationQueryEffect
           pageLayoutId={pageLayoutId}
           onInitialized={onInitialized}
         />
+        <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
         <PageLayoutRendererContent />
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>

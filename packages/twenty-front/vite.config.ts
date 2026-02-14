@@ -264,6 +264,7 @@ export default defineConfig(({ command, mode }) => {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
         IS_DEBUG_MODE,
+        IS_DEV_ENV: mode === 'development' ? 'true' : 'false',
       },
     },
     css: {

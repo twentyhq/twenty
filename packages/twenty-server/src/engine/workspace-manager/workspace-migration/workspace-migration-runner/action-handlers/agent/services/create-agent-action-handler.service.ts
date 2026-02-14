@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { CreateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatCreateAgentAction,
+  UniversalCreateAgentAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -15,23 +22,36 @@ export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     super();
   }
 
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateAgentAction>): Promise<FlatCreateAgentAction> {
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+      },
+    };
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateAgentAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner } = context;
+    const { flatEntity } = flatAction;
 
-    const agentRepository =
-      queryRunner.manager.getRepository<AgentEntity>(AgentEntity);
-
-    await agentRepository.save({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateAgentAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
   ): Promise<void> {
     return;
   }

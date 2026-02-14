@@ -202,4 +202,65 @@ describe('reactGlobalsPlugin', () => {
       expect(result).not.toContain('globalThis.React.useEffect');
     });
   });
+
+  describe('multiple entry points', () => {
+    it('should handle multiple files with different React imports', async () => {
+      const fileA = path.join(tempDir, 'component-a.tsx');
+      const fileB = path.join(tempDir, 'component-b.tsx');
+
+      fs.writeFileSync(
+        fileA,
+        `
+        import { useState } from 'react';
+        export const ComponentA = () => {
+          const [state] = useState(0);
+          return state;
+        };
+      `,
+        'utf-8',
+      );
+
+      fs.writeFileSync(
+        fileB,
+        `
+        import { useEffect } from 'react';
+        export const ComponentB = () => {
+          useEffect(() => {}, []);
+          return null;
+        };
+      `,
+        'utf-8',
+      );
+
+      const result = await esbuild.build({
+        entryPoints: [fileA, fileB],
+        bundle: true,
+        write: false,
+        format: 'esm',
+        jsx: 'automatic',
+        outdir: tempDir,
+        plugins: [reactGlobalsPlugin],
+      });
+
+      const outputA = result.outputFiles.find(
+        (f) => path.basename(f.path) === 'component-a.js',
+      )?.text;
+      const outputB = result.outputFiles.find(
+        (f) => path.basename(f.path) === 'component-b.js',
+      )?.text;
+
+      expect(outputA).toBeDefined();
+      expect(outputB).toBeDefined();
+
+      // Each file should only include the React exports it needs
+      expect(outputA).toContain('globalThis.React.useState');
+      expect(outputB).toContain('globalThis.React.useEffect');
+      expect(outputA).not.toContain('globalThis.React.useEffect');
+      expect(outputB).not.toContain('globalThis.React.useState');
+
+      // No raw react imports should remain
+      expect(outputA).not.toContain('from "react"');
+      expect(outputB).not.toContain('from "react"');
+    });
+  });
 });

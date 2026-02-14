@@ -5,17 +5,17 @@ import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/da
 type NoteTargetDataSeed = {
   id: string;
   noteId: string | null;
-  personId: string | null;
-  companyId: string | null;
-  opportunityId: string | null;
+  targetPersonId: string | null;
+  targetCompanyId: string | null;
+  targetOpportunityId: string | null;
 };
 
 export const NOTE_TARGET_DATA_SEED_COLUMNS: (keyof NoteTargetDataSeed)[] = [
   'id',
   'noteId',
-  'personId',
-  'companyId',
-  'opportunityId',
+  'targetPersonId',
+  'targetCompanyId',
+  'targetOpportunityId',
 ];
 
 const GENERATE_NOTE_TARGET_IDS = (): Record<string, string> => {
@@ -47,12 +47,12 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
     NOTE_TARGET_SEEDS.push({
       id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
       noteId: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
-      personId:
+      targetPersonId:
         PERSON_DATA_SEED_IDS[
           `ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS
         ],
-      companyId: null,
-      opportunityId: null,
+      targetCompanyId: null,
+      targetOpportunityId: null,
     });
   }
 
@@ -62,12 +62,12 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
     NOTE_TARGET_SEEDS.push({
       id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
       noteId: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
-      personId: null,
-      companyId:
+      targetPersonId: null,
+      targetCompanyId:
         COMPANY_DATA_SEED_IDS[
           `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
         ],
-      opportunityId: null,
+      targetOpportunityId: null,
     });
   }
 

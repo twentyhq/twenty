@@ -4,27 +4,40 @@
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
   "tags": [
-    "scope:sdk"
+    "scope:sdk",
+    "scope:shared"
   ],
   "targets": {
     "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "production",
+        "^production"
+      ],
       "dependsOn": [
-        "generateBarrels",
         "^build"
       ],
       "outputs": [
         "{projectRoot}/dist"
-      ]
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts",
+          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+        ],
+        "parallel": false
+      }
     },
     "dev": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        "generateBarrels",
         "^build"
       ],
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "npx rimraf dist && npx vite build --watch"
+        "command": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist && npx vite build -c vite.config.node.ts --watch & npx vite build -c vite.config.browser.ts --watch"
       }
     },
     "start": {
@@ -35,22 +48,6 @@
       "options": {
         "cwd": "packages/twenty-sdk",
         "command": "node dist/cli.cjs"
-      }
-    },
-    "generateBarrels": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
-      "outputs": [
-        "{projectRoot}/src/index.ts",
-        "{projectRoot}/src/*/index.ts",
-        "{projectRoot}/package.json"
-      ],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
     "typecheck": {},
@@ -97,16 +94,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && npx vitest run --config vitest.integration.config.ts"
+        "command": "npx vitest run --config vitest.integration.config.ts"
       }
     },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-sdk",
-        "commands": [
-          "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts"
-        ]
+        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts"
       },
       "parallel": false,
       "dependsOn": [
@@ -120,6 +115,90 @@
           "projects": "twenty-server"
         }
       ]
-    }
+    },
+    "generate-remote-dom-elements": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "{projectRoot}/scripts/remote-dom/**/*",
+        "{projectRoot}/src/sdk/front-component-api/**/*",
+        "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
+        "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
+      ],
+      "outputs": [
+        "{projectRoot}/src/front-component-renderer/host/generated/*",
+        "{projectRoot}/src/front-component-renderer/remote/generated/*"
+      ],
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "tsx -r tsconfig-paths/register scripts/remote-dom/generate-remote-dom-elements.ts"
+      },
+      "configurations": {
+        "verbose": {
+          "command": "tsx -r tsconfig-paths/register scripts/remote-dom/generate-remote-dom-elements.ts --verbose"
+        }
+      }
+    },
+    "storybook:prebuild": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "generate-remote-dom-elements"
+      ],
+      "inputs": [
+        "{projectRoot}/scripts/front-component-stories/**/*",
+        "{projectRoot}/src/front-component-renderer/__stories__/example-sources/*",
+        "{projectRoot}/src/cli/utilities/build/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/src/front-component-renderer/__stories__/example-sources-built/*"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/front-component-stories/build-source-examples.ts"
+      }
+    },
+    "storybook:build": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:serve:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "port": 6008
+      }
+    },
+    "storybook:serve:static": {
+      "options": {
+        "buildTarget": "twenty-sdk:storybook:build",
+        "port": 6008
+      },
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:test": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "options": {
+        "command": "vitest run --coverage --config vitest.storybook.config.ts --shard={args.shard}"
+      }
+    },
+    "storybook:test:no-coverage": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "options": {
+        "command": "vitest run --config vitest.storybook.config.ts --shard={args.shard}"
+      }
+    },
+    "storybook:coverage": {}
   }
 }

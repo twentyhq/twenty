@@ -15,7 +15,6 @@ exports[`View Filter Group update should fail with circular dependency when pare
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "viewFilterGroup",
@@ -51,7 +50,6 @@ exports[`View Filter Group update should fail with circular dependency when upda
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "viewFilterGroup",

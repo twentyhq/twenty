@@ -144,7 +144,7 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
     [FieldMetadataType.FILES]: {
       label: 'Files',
       Icon: IllustrationIconFile,
-      category: 'Advanced',
+      category: 'Basic',
       exampleValues: [
         [
           {
@@ -167,5 +167,5 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
         ],
         [],
       ],
-    } as const satisfies SettingsFieldTypeConfig<FieldFilesValue>,
+    } as const satisfies SettingsFieldTypeConfig<FieldFilesValue[]>,
   };

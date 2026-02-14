@@ -11,9 +11,11 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
     ({
       recordId,
       allowRequestsToTwentyIcons,
+      isFilesFieldMigrated,
     }: {
       recordId: string;
       allowRequestsToTwentyIcons: boolean;
+      isFilesFieldMigrated?: boolean;
     }) =>
     ({ get }) => {
       const recordFromStore = get(recordStoreFamilyState(recordId));
@@ -35,6 +37,7 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
         objectMetadataItem: objectMetadataItem,
         record: recordFromStore,
         allowRequestsToTwentyIcons,
+        isFilesFieldMigrated,
       });
     },
 });

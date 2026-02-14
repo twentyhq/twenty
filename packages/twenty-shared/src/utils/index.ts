@@ -108,6 +108,7 @@ export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
 export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';
 export { isMatchingDateFilter } from './filter/utils/isMatchingDateFilter';
+export { isMatchingFilesFilter } from './filter/utils/isMatchingFilesFilter';
 export { isMatchingFloatFilter } from './filter/utils/isMatchingFloatFilter';
 export { isMatchingMultiSelectFilter } from './filter/utils/isMatchingMultiSelectFilter';
 export { isMatchingRatingFilter } from './filter/utils/isMatchingRatingFilter';
@@ -144,8 +145,10 @@ export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeD
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
+export { camelToSnakeCase } from './strings/camelToSnakeCase';
 export { capitalize } from './strings/capitalize';
 export { pascalCase } from './strings/pascalCase';
+export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export type {

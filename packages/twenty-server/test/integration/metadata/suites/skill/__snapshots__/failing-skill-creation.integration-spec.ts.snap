@@ -15,7 +15,6 @@ exports[`Skill creation should fail when content is empty string 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "emptyContentSkill",
             "universalIdentifier": Any<String>,
           },
@@ -66,7 +65,6 @@ exports[`Skill creation should fail when label is empty string 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "emptyLabelSkill",
             "universalIdentifier": Any<String>,
           },
@@ -117,7 +115,6 @@ exports[`Skill creation should fail when name already exists 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "existingTestSkill",
             "universalIdentifier": Any<String>,
           },

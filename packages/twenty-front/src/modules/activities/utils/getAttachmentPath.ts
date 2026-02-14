@@ -1,4 +1,8 @@
 export const getAttachmentPath = (attachmentFullPath: string) => {
+  if (attachmentFullPath.includes('/files-field/')) {
+    return attachmentFullPath?.split('?')[0];
+  }
+
   if (!attachmentFullPath.includes('/files/')) {
     return attachmentFullPath?.split('?')[0];
   }

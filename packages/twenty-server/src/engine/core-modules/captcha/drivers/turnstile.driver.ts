@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios';
+import { type AxiosInstance } from 'axios';
 
 import { type CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-driver.interface';
 import { type CaptchaServerResponse } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-server-response';
@@ -12,12 +12,13 @@ export class TurnstileDriver implements CaptchaDriver {
   private readonly _siteKey: string;
   private readonly secretKey: string;
   private readonly httpService: AxiosInstance;
-  constructor(private _options: CaptchaDriverOptions) {
+  constructor(
+    private _options: CaptchaDriverOptions,
+    httpClient: AxiosInstance,
+  ) {
     this._siteKey = _options.siteKey;
     this.secretKey = _options.secretKey;
-    this.httpService = axios.create({
-      baseURL: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-    });
+    this.httpService = httpClient;
   }
 
   async validate(token: string): Promise<CaptchaValidateResult> {

@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { RelationType } from '~/generated/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 export const hasNestedFields = (fieldMetadata: FieldMetadataItem) => {
   return (

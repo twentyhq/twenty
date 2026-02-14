@@ -15,7 +15,7 @@ import {
   useCreateCoreViewMutation,
   useDestroyCoreViewMutation,
   ViewType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const usePerformViewAPIPersist = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();

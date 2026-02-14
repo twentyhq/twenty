@@ -11,11 +11,10 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
 
 type RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
-  update: PropertyUpdate<FlatFieldMetadata<EnumFieldMetadataType>, 'options'>;
+  toOptions: FlatFieldMetadata<EnumFieldMetadataType>['options'];
 } & Pick<AllFlatEntityMaps, 'flatViewFilterMaps'>;
 
 export type FlatViewFiltersToDeleteAndUpdate = {
@@ -25,7 +24,7 @@ export type FlatViewFiltersToDeleteAndUpdate = {
 export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   flatViewFilterMaps,
   fromFlatFieldMetadata,
-  update,
+  toOptions,
 }: RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs): FlatViewFiltersToDeleteAndUpdate => {
   const flatViewFiltersToCreateAndUpdate: FlatViewFiltersToDeleteAndUpdate = {
     flatViewFiltersToDelete: [],
@@ -38,7 +37,7 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
   } = compareTwoFlatFieldMetadataEnumOptions({
     compareLabel: false,
     fromOptions: fromFlatFieldMetadata.options,
-    toOptions: update.to,
+    toOptions,
   });
 
   if (

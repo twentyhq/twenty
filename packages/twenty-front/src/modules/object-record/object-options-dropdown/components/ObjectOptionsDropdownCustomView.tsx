@@ -31,7 +31,7 @@ import {
   IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { ViewCalendarLayout } from '~/generated/graphql';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 interface ObjectOptionsDropdownCustomViewProps {
   onBackToDefault?: () => void;

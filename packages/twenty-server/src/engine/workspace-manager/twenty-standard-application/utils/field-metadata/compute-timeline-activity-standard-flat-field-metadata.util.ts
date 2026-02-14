@@ -4,6 +4,7 @@ import {
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -12,7 +13,6 @@ import {
   type CreateStandardFieldArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 export const buildTimelineActivityStandardFlatFieldMetadatas = ({
   now,
@@ -241,7 +241,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
       label: 'Person',
       description: 'Event person',
@@ -266,7 +266,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
       label: 'Company',
       description: 'Event company',
@@ -291,7 +291,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'Event opportunity',
@@ -316,7 +316,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetNote',
       label: 'Note',
       description: 'Event note',
@@ -341,7 +341,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetTask',
       label: 'Task',
       description: 'Event task',
@@ -366,7 +366,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflow',
       label: 'Workflow',
       description: 'Event workflow',
@@ -391,7 +391,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflowVersion',
       label: 'WorkflowVersion',
       description: 'Event workflow version',
@@ -416,7 +416,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflowRun',
       label: 'Workflow Run',
       description: 'Event workflow run',
@@ -441,7 +441,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetDashboard',
       label: 'Dashboard',
       description: 'Event dashboard',

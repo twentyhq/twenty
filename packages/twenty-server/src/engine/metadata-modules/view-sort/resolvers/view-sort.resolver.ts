@@ -1,8 +1,9 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
@@ -18,7 +19,7 @@ import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 
-@Resolver(() => ViewSortDTO)
+@MetadataResolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewSortResolver {

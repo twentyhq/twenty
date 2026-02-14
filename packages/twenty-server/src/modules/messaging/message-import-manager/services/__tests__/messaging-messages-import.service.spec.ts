@@ -13,6 +13,7 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
+  MessageFolderImportPolicy,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
@@ -32,7 +33,15 @@ describe('MessagingMessagesImportService', () => {
   let saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService;
 
   const workspaceId = 'workspace-id';
-  let mockMessageChannel: MessageChannelWorkspaceEntity;
+  let mockMessageChannel: Pick<
+    MessageChannelWorkspaceEntity,
+    | 'id'
+    | 'syncStage'
+    | 'connectedAccountId'
+    | 'handle'
+    | 'messageFolders'
+    | 'messageFolderImportPolicy'
+  >;
   let mockConnectedAccount: ConnectedAccountWorkspaceEntity;
   let providersBase: Provider[];
 
@@ -52,7 +61,9 @@ describe('MessagingMessagesImportService', () => {
       syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
       connectedAccountId: mockConnectedAccount.id,
       handle: 'test@gmail.com',
-    } as MessageChannelWorkspaceEntity;
+      messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+    };
 
     providersBase = [
       MessagingMessagesImportService,
@@ -201,7 +212,7 @@ describe('MessagingMessagesImportService', () => {
 
     expect(
       service.processMessageBatchImport(
-        mockMessageChannel,
+        mockMessageChannel as MessageChannelWorkspaceEntity,
         mockConnectedAccount,
         workspaceId,
       ),
@@ -210,7 +221,7 @@ describe('MessagingMessagesImportService', () => {
 
   it('should process message batch import successfully', async () => {
     await service.processMessageBatchImport(
-      mockMessageChannel,
+      mockMessageChannel as MessageChannelWorkspaceEntity,
       mockConnectedAccount,
       workspaceId,
     );
@@ -237,6 +248,7 @@ describe('MessagingMessagesImportService', () => {
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
       },
+      mockMessageChannel,
     );
     expect(
       saveMessagesService.saveMessagesAndEnqueueContactCreation,
@@ -293,7 +305,7 @@ describe('MessagingMessagesImportService', () => {
       );
 
     await service.processMessageBatchImport(
-      mockMessageChannel,
+      mockMessageChannel as MessageChannelWorkspaceEntity,
       mockConnectedAccount,
       workspaceId,
     );

@@ -4,6 +4,7 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -16,6 +17,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -90,6 +92,10 @@ export const useSetRecordTableData = ({
             };
 
             set(recordStoreFamilyState(record.id), newRecord);
+            jotaiStore.set(
+              recordStoreFamilyStateV2.atomFamily(record.id),
+              newRecord,
+            );
           }
         }
 

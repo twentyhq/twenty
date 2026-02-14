@@ -118,7 +118,7 @@ const StyledCaretContainer = styled.div`
 const StyledCaret = styled.div`
   width: 1px;
   height: 2rem;
-  background-color: white;
+  background-color: ${({ theme }) => theme.font.color.light};
 `;
 
 const FakeCaret = () => {
@@ -137,7 +137,7 @@ const StyledDashContainer = styled.div`
 `;
 
 const StyledDash = styled.div`
-  background-color: black;
+  background-color: ${({ theme }) => theme.font.color.primary};
   border-radius: 9999px;
   height: 0.25rem;
   width: 0.75rem;

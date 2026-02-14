@@ -110,7 +110,7 @@ describe('ObjectPermissionService', () => {
       workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: {
-            byId: {
+            byUniversalIdentifier: {
               [systemObjectMetadataId]: {
                 id: systemObjectMetadataId,
                 isSystem: true,
@@ -122,7 +122,9 @@ describe('ObjectPermissionService', () => {
                 applicationId: null,
               } as any,
             },
-            idByUniversalIdentifier: {},
+            universalIdentifierById: {
+              [systemObjectMetadataId]: systemObjectMetadataId,
+            },
             universalIdentifiersByApplicationId: {},
           },
         } as any,
@@ -167,7 +169,7 @@ describe('ObjectPermissionService', () => {
       workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: {
-            byId: {
+            byUniversalIdentifier: {
               [customObjectMetadataId]: {
                 id: customObjectMetadataId,
                 isSystem: false,
@@ -179,7 +181,9 @@ describe('ObjectPermissionService', () => {
                 applicationId: null,
               } as any,
             },
-            idByUniversalIdentifier: {},
+            universalIdentifierById: {
+              [customObjectMetadataId]: customObjectMetadataId,
+            },
             universalIdentifiersByApplicationId: {},
           },
         } as any,
@@ -254,8 +258,8 @@ describe('ObjectPermissionService', () => {
       workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: {
-            byId: {},
-            idByUniversalIdentifier: {},
+            byUniversalIdentifier: {},
+            universalIdentifierById: {},
             universalIdentifiersByApplicationId: {},
           },
         } as any,

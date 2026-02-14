@@ -18,6 +18,7 @@ import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modu
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -27,6 +28,7 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 
 export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   viewField: ViewFieldEntity,
+  viewFieldGroup: ViewFieldGroupEntity,
   viewFilter: ViewFilterEntity,
   viewGroup: ViewGroupEntity,
   viewFilterGroup: ViewFilterGroupEntity,

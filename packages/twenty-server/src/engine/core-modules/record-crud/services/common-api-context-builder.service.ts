@@ -16,6 +16,7 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -77,7 +78,10 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const flatObjectMetadata = flatObjectMetadataMaps.byId[objectId];
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(flatObjectMetadata)) {
       throw new RecordCrudException(

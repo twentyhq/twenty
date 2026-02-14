@@ -54,7 +54,7 @@ export class MessagingMessagesImportJob {
         where: {
           id: messageChannelId,
         },
-        relations: ['connectedAccount'],
+        relations: ['connectedAccount', 'messageFolders'],
       });
 
       if (!messageChannel) {
@@ -82,6 +82,7 @@ export class MessagingMessagesImportJob {
         isThrottled(
           messageChannel.syncStageStartedAt,
           messageChannel.throttleFailureCount,
+          messageChannel.throttleRetryAfter,
         )
       ) {
         await this.messageChannelSyncStatusService.markAsMessagesImportPending(

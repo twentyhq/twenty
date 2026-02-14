@@ -1,7 +1,7 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getConfigKeyFromSettingId } from '@/command-menu/pages/page-layout/utils/getConfigKeyFromSettingId';
-import { BarChartGroupMode } from '~/generated/graphql';
+import { BarChartGroupMode } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from './useChartSettingsValues';
 import { useUpdateCurrentWidgetConfig } from './useUpdateCurrentWidgetConfig';
 

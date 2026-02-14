@@ -9,7 +9,12 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import {
+  getToolDisplayMessage,
+  resolveToolInput,
+} from '@/ai/utils/getToolDisplayMessage';
+import { ToolOutputMessageSchema } from '@/ai/schemas/toolOutputMessageSchema';
+import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,12 +24,6 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -132,15 +131,14 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
   const { input, output, type, errorText } = toolPart;
-  const toolName = type.split('-')[1];
+  const rawToolName = type.split('-')[1];
 
-  const toolInput =
-    isDefined(input) && typeof input === 'object' && 'input' in input
-      ? input.input
-      : input;
+  const { resolvedInput: toolInput, resolvedToolName: toolName } =
+    resolveToolInput(input, rawToolName);
 
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
+  const ToolIcon = getToolIcon(toolName);
 
   if (toolName === 'code_interpreter') {
     const codeInput = toolInput as { code?: string } | undefined;
@@ -172,13 +170,14 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
       <StyledContainer>
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
-            <StyledLoadingContainer>
+            <StyledIconTextContainer>
+              <ToolIcon size={theme.icon.size.sm} />
               <ShimmeringText>
                 <StyledDisplayMessage>
-                  {getToolDisplayMessage(input, toolName, false)}
+                  {getToolDisplayMessage(input, rawToolName, false)}
                 </StyledDisplayMessage>
               </ShimmeringText>
-            </StyledLoadingContainer>
+            </StyledIconTextContainer>
           </StyledLeftContent>
           <StyledRightContent>
             <StyledToolName>{toolName}</StyledToolName>
@@ -188,21 +187,29 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
     );
   }
 
-  const displayMessage = hasError
-    ? t`Tool execution failed`
-    : output &&
-        typeof output === 'object' &&
-        'message' in output &&
-        typeof output.message === 'string'
-      ? output.message
-      : getToolDisplayMessage(input, toolName, true);
-
-  const result =
-    output && typeof output === 'object' && 'result' in output
-      ? (output as { result: string }).result
+  // For execute_tool, the actual result is nested inside output.result
+  const outputResult = ToolOutputResultSchema.safeParse(output);
+  const unwrappedOutput =
+    rawToolName === 'execute_tool' && outputResult.success
+      ? outputResult.data.result
       : output;
 
-  const ToolIcon = getToolIcon(toolName);
+  const unwrappedResult = ToolOutputResultSchema.safeParse(unwrappedOutput);
+  const unwrappedMessage = ToolOutputMessageSchema.safeParse(unwrappedOutput);
+
+  const displayMessage = hasError
+    ? t`Tool execution failed`
+    : rawToolName === 'learn_tools' ||
+        rawToolName === 'execute_tool' ||
+        rawToolName === 'load_skills'
+      ? getToolDisplayMessage(input, rawToolName, true)
+      : unwrappedMessage.success
+        ? unwrappedMessage.data.message
+        : getToolDisplayMessage(input, rawToolName, true);
+
+  const result = unwrappedResult.success
+    ? unwrappedResult.data.result
+    : unwrappedOutput;
 
   return (
     <StyledContainer>

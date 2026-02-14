@@ -20,6 +20,7 @@ export const FILTERABLE_FIELD_TYPES = [
   'ACTOR',
   'ARRAY',
   'RAW_JSON',
+  'FILES',
   'BOOLEAN',
   'UUID',
 ] as const;

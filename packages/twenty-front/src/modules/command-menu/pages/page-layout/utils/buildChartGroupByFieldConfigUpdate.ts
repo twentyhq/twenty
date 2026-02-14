@@ -5,7 +5,7 @@ import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/ut
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { BarChartGroupMode, GraphOrderBy } from '~/generated/graphql';
+import { BarChartGroupMode, GraphOrderBy } from '~/generated-metadata/graphql';
 
 type BuildChartGroupByFieldConfigUpdateArgs<T extends ChartConfiguration> = {
   configuration: T;

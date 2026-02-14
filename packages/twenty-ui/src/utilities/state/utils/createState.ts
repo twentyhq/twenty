@@ -1,18 +1,13 @@
-import { atom, type AtomEffect } from 'recoil';
+import { atom, type PrimitiveAtom } from 'jotai';
 
 export const createState = <ValueType>({
   key,
   defaultValue,
-  effects,
 }: {
   key: string;
   defaultValue: ValueType;
-  effects?: ReadonlyArray<AtomEffect<ValueType>>;
-}) => {
-  const recoilState = atom<ValueType>({
-    key,
-    default: defaultValue,
-    effects,
-  });
-  return recoilState;
+}): PrimitiveAtom<ValueType> => {
+  const jotaiAtom = atom<ValueType>(defaultValue);
+  jotaiAtom.debugLabel = key;
+  return jotaiAtom;
 };

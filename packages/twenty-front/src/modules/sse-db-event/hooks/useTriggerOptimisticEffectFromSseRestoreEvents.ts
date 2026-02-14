@@ -13,7 +13,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   DatabaseEventAction,
   type ObjectRecordEvent,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseRestoreEvents = () => {
   const apolloCoreClient = useApolloCoreClient();

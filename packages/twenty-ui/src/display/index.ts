@@ -11,7 +11,7 @@ export type { AvatarProps } from './avatar/components/Avatar';
 export { Avatar } from './avatar/components/Avatar';
 export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
 export { AvatarGroup } from './avatar/components/AvatarGroup';
-export { invalidAvatarUrlsState } from './avatar/components/states/isInvalidAvatarUrlState';
+export { invalidAvatarUrlsAtomV2 } from './avatar/components/states/invalidAvatarUrlsAtomV2';
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
@@ -19,6 +19,8 @@ export type { BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
 export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
+export type { CalloutVariant, CalloutProps } from './callout/Callout';
+export { Callout } from './callout/Callout';
 export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedCheckmark';
 export { AnimatedCheckmark } from './checkmark/components/AnimatedCheckmark';
 export type { CheckmarkProps } from './checkmark/components/Checkmark';
@@ -29,6 +31,8 @@ export type {
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
 export { CommandBlock } from './command-block/components/CommandBlock';
+export type { IconProps } from './icon/components/Icon';
+export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
@@ -253,6 +257,7 @@ export {
   IconFolderOpen,
   IconFolderPlus,
   IconFolderRoot,
+  IconFolderSymlink,
   IconForbid,
   IconFrame,
   IconFunction,
@@ -270,6 +275,7 @@ export {
   IconHeart,
   IconHeartOff,
   IconHeartRateMonitor,
+  IconHelp,
   IconHelpCircle,
   IconHierarchy,
   IconHierarchy2,
@@ -329,6 +335,7 @@ export {
   IconMoon,
   IconMouse2,
   IconNorthStar,
+  IconNewSection,
   IconNoteOff,
   IconNotes,
   IconNumber,
@@ -374,6 +381,8 @@ export {
   IconReload,
   IconReorder,
   IconRepeat,
+  IconRowInsertBottom,
+  IconRowInsertTop,
   IconRestore,
   IconRobot,
   IconRocket,

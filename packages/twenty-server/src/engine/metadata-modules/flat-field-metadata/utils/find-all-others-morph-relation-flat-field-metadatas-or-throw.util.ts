@@ -6,6 +6,7 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -22,7 +23,12 @@ export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
   flatFieldMetadata: morphRelationFlatFieldMetadata,
 }: FindAllMorphRelationFlatFieldMetadatasOrThrowArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
   if (
-    !isDefined(flatFieldMetadataMaps.byId[morphRelationFlatFieldMetadata.id])
+    !isDefined(
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: morphRelationFlatFieldMetadata.id,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+    )
   ) {
     throw new FlatEntityMapsException(
       'Morph relation field not found in flat field metadata maps',

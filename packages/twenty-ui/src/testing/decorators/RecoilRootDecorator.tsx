@@ -1,9 +1,10 @@
 import { type Decorator } from '@storybook/react-vite';
 
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
+// Kept as RecoilRootDecorator name for backward compatibility during migration
 export const RecoilRootDecorator: Decorator = (Story, _context) => (
-  <RecoilRoot>
+  <JotaiProvider>
     <Story />
-  </RecoilRoot>
+  </JotaiProvider>
 );

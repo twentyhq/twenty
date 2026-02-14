@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
@@ -51,7 +52,9 @@ export class PageLayoutService {
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const activeLayouts = Object.values(flatPageLayoutMaps.byId)
+    const activeLayouts = Object.values(
+      flatPageLayoutMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((layout) => !isDefined(layout.deletedAt));
 
@@ -66,12 +69,15 @@ export class PageLayoutService {
     );
   }
 
-  async findByObjectMetadataId({
+  async findBy({
     workspaceId,
-    objectMetadataId,
+    filter: { objectMetadataId, pageLayoutType },
   }: {
     workspaceId: string;
-    objectMetadataId: string;
+    filter: {
+      objectMetadataId?: string;
+      pageLayoutType?: PageLayoutType;
+    };
   }): Promise<PageLayoutDTO[]> {
     const {
       flatPageLayoutMaps,
@@ -79,13 +85,21 @@ export class PageLayoutService {
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const activeLayouts = Object.values(flatPageLayoutMaps.byId)
+    const activeLayouts = Object.values(
+      flatPageLayoutMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
-      .filter(
-        (layout) =>
-          layout.objectMetadataId === objectMetadataId &&
-          !isDefined(layout.deletedAt),
-      );
+      .filter((layout) => {
+        const isNotDeleted = !isDefined(layout.deletedAt);
+        const matchesObjectMetadataId = isNonEmptyString(objectMetadataId)
+          ? layout.objectMetadataId === objectMetadataId
+          : true;
+        const matchesPageLayoutType = isDefined(pageLayoutType)
+          ? layout.type === pageLayoutType
+          : true;
+
+        return isNotDeleted && matchesObjectMetadataId && matchesPageLayoutType;
+      });
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
@@ -111,7 +125,10 @@ export class PageLayoutService {
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const flatLayout = flatPageLayoutMaps.byId[id];
+    const flatLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     const isLayoutNotFound =
       !isDefined(flatLayout) || isDefined(flatLayout.deletedAt);
@@ -173,11 +190,20 @@ export class PageLayoutService {
         { workspaceId },
       );
 
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
     const flatPageLayoutToCreate =
       fromCreatePageLayoutInputToFlatPageLayoutToCreate({
         createPageLayoutInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =
@@ -192,6 +218,8 @@ export class PageLayoutService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -227,11 +255,19 @@ export class PageLayoutService {
     workspaceId: string;
     updateData: UpdatePageLayoutInput;
   }): Promise<Omit<PageLayoutDTO, 'tabs'>> {
-    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const {
+      flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatPageLayoutMaps'],
+          flatMapsKeys: ['flatPageLayoutMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -244,6 +280,7 @@ export class PageLayoutService {
       fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow({
         updatePageLayoutInput,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =
@@ -258,6 +295,8 @@ export class PageLayoutService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -301,6 +340,11 @@ export class PageLayoutService {
     workspaceId: string;
     isLinkedDashboardAlreadyDestroyed?: boolean;
   }): Promise<boolean> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -327,6 +371,8 @@ export class PageLayoutService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -361,6 +407,11 @@ export class PageLayoutService {
       return true;
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -388,6 +439,8 @@ export class PageLayoutService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

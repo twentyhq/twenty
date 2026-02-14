@@ -2,7 +2,7 @@ import { type PieChartConvertibleFields } from '@/command-menu/pages/page-layout
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const convertBarOrLineChartConfigToPieChart = (
   configuration: BarChartConfiguration | LineChartConfiguration,

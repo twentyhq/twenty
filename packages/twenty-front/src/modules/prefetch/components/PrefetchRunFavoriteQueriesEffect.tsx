@@ -19,7 +19,7 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {

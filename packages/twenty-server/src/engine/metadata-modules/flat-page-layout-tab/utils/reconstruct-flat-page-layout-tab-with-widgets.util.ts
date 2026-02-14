@@ -15,7 +15,9 @@ export const reconstructFlatPageLayoutTabWithWidgets = ({
   tab: FlatPageLayoutTab;
   flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
 }): FlatPageLayoutTabWithWidgets => {
-  const widgets = Object.values(flatPageLayoutWidgetMaps.byId).filter(
+  const widgets = Object.values(
+    flatPageLayoutWidgetMaps.byUniversalIdentifier,
+  ).filter(
     (widget): widget is FlatPageLayoutWidget =>
       isDefined(widget) &&
       widget.pageLayoutTabId === tab.id &&

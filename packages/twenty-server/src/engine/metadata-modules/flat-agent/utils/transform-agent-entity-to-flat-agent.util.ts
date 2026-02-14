@@ -26,7 +26,6 @@ export const transformAgentEntityToFlatAgent = ({
     deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
     updatedAt: agentEntity.updatedAt.toISOString(),
     id: agentEntity.id,
-    standardId: agentEntity.standardId,
     name: agentEntity.name,
     label: agentEntity.label,
     icon: agentEntity.icon,
@@ -40,9 +39,6 @@ export const transformAgentEntityToFlatAgent = ({
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
     evaluationInputs: agentEntity.evaluationInputs,
-    __universal: {
-      universalIdentifier: agentEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
   };
 };

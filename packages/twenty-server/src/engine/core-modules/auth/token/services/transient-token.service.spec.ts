@@ -91,6 +91,7 @@ describe('TransientTokenService', () => {
       const mockToken = 'valid-token';
       const mockPayload = {
         sub: 'workspace-member-id',
+        type: JwtTokenTypeEnum.LOGIN,
         userId: 'user-id',
         workspaceId: 'workspace-id',
         workspaceMemberId: 'workspace-member-id',

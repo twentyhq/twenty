@@ -7,85 +7,49 @@ describe('defineLogicFunction', () => {
     universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     name: 'Send Postcard',
     handler: mockHandler,
-    triggers: [
-      {
-        universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-        type: 'route' as const,
-        path: '/postcards/send',
-        httpMethod: 'POST' as const,
-        isAuthRequired: true,
-      },
-    ],
+    httpRouteTriggerSettings: {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/postcards/send',
+      httpMethod: 'POST',
+      isAuthRequired: true,
+    },
   };
 
   it('should return the config when valid with route trigger', () => {
-    const result = defineLogicFunction(validRouteConfig);
+    const result = defineLogicFunction(validRouteConfig as any);
 
     expect(result.config).toEqual(validRouteConfig);
   });
 
-  it('should accept cron trigger', () => {
+  it('should accept cronTriggerSettings', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Daily Report',
       handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-          type: 'cron' as const,
-          pattern: '0 9 * * *',
-        },
-      ],
+      cronTriggerSettings: {
+        pattern: '0 9 * * *',
+      },
     };
 
-    const result = defineLogicFunction(config);
+    const result = defineLogicFunction(config as any);
 
-    expect(result.config.triggers[0].type).toBe('cron');
+    expect(result.config.cronTriggerSettings.pattern).toBeDefined();
   });
 
-  it('should accept databaseEvent trigger', () => {
+  it('should accept databaseEventTriggerSettings', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-          type: 'databaseEvent' as const,
-          eventName: 'contact.created',
-        },
-      ],
+      databaseEventTriggerSettings: {
+        eventName: 'contact.created',
+      },
     };
 
-    const result = defineLogicFunction(config);
+    const result = defineLogicFunction(config as any);
 
-    expect(result.config.triggers[0].type).toBe('databaseEvent');
-  });
-
-  it('should accept multiple triggers', () => {
-    const config = {
-      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-      name: 'Multi-trigger Function',
-      handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-          type: 'route' as const,
-          path: '/sync',
-          httpMethod: 'POST' as const,
-          isAuthRequired: true,
-        },
-        {
-          universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-          type: 'cron' as const,
-          pattern: '0 * * * *',
-        },
-      ],
-    };
-
-    const result = defineLogicFunction(config);
-
-    expect(result.config.triggers).toHaveLength(2);
+    expect(result.config.databaseEventTriggerSettings.eventName).toBeDefined();
   });
 
   it('should pass through optional fields', () => {
@@ -95,7 +59,7 @@ describe('defineLogicFunction', () => {
       timeoutSeconds: 30,
     };
 
-    const result = defineLogicFunction(config);
+    const result = defineLogicFunction(config as any);
 
     expect(result.config.description).toBe('Send a postcard to a contact');
     expect(result.config.timeoutSeconds).toBe(30);
@@ -105,7 +69,7 @@ describe('defineLogicFunction', () => {
     const config = {
       name: 'Send Postcard',
       handler: mockHandler,
-      triggers: validRouteConfig.triggers,
+      httpRouteTriggerSettings: validRouteConfig.httpRouteTriggerSettings,
     };
     const result = defineLogicFunction(config as any);
 
@@ -119,7 +83,7 @@ describe('defineLogicFunction', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
-      triggers: validRouteConfig.triggers,
+      httpRouteTriggerSettings: validRouteConfig.httpRouteTriggerSettings,
     };
 
     const result = defineLogicFunction(config as any);
@@ -133,7 +97,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
       handler: 'not-a-function',
-      triggers: validRouteConfig.triggers,
+      httpRouteTriggerSettings: validRouteConfig.httpRouteTriggerSettings,
     };
 
     const result = defineLogicFunction(config as any);
@@ -144,20 +108,20 @@ describe('defineLogicFunction', () => {
     );
   });
 
-  it('should accept empty triggers array', () => {
+  it('should accept empty undefined', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
       handler: mockHandler,
-      triggers: [],
+      httpRouteTriggerSettings: undefined,
     };
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.triggers).toEqual([]);
+    expect(result.config.httpRouteTriggerSettings).toBeUndefined();
   });
 
-  it('should accept missing triggers', () => {
+  it('should accept missing trigger', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
@@ -166,50 +130,7 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.triggers).toBeUndefined();
-  });
-
-  it('should return error when trigger is missing universalIdentifier', () => {
-    const config = {
-      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-      name: 'Send Postcard',
-      handler: mockHandler,
-      triggers: [
-        {
-          type: 'route' as const,
-          path: '/postcards/send',
-          httpMethod: 'POST' as const,
-          isAuthRequired: true,
-        },
-      ],
-    };
-
-    const result = defineLogicFunction(config as any);
-
-    expect(result.success).toBe(false);
-    expect(result.errors).toContain(
-      'Each trigger must have a universalIdentifier',
-    );
-  });
-
-  it('should return error when trigger is missing type', () => {
-    const config = {
-      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-      name: 'Send Postcard',
-      handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-          path: '/postcards/send',
-          httpMethod: 'POST' as const,
-        },
-      ],
-    };
-
-    const result = defineLogicFunction(config as any);
-
-    expect(result.success).toBe(false);
-    expect(result.errors).toContain('Each trigger must have a type');
+    expect(result.config.httpRouteTriggerSettings).toBeUndefined();
   });
 
   it('should return error when route trigger is missing path', () => {
@@ -217,14 +138,11 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
       handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-          type: 'route' as const,
-          httpMethod: 'POST' as const,
-          isAuthRequired: true,
-        },
-      ],
+      httpRouteTriggerSettings: {
+        type: 'route',
+        httpMethod: 'POST',
+        isAuthRequired: true,
+      },
     };
 
     const result = defineLogicFunction(config as any);
@@ -238,14 +156,11 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Send Postcard',
       handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-          type: 'route' as const,
-          path: '/postcards/send',
-          isAuthRequired: true,
-        },
-      ],
+      httpRouteTriggerSettings: {
+        type: 'route',
+        path: '/postcards/send',
+        isAuthRequired: true,
+      },
     };
 
     const result = defineLogicFunction(config as any);
@@ -259,12 +174,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'Daily Report',
       handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-          type: 'cron' as const,
-        },
-      ],
+      cronTriggerSettings: {},
     };
 
     const result = defineLogicFunction(config as any);
@@ -278,12 +188,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-          type: 'databaseEvent' as const,
-        },
-      ],
+      databaseEventTriggerSettings: {},
     };
 
     const result = defineLogicFunction(config as any);
@@ -292,23 +197,5 @@ describe('defineLogicFunction', () => {
     expect(result.errors).toContain(
       'Database event trigger must have an eventName',
     );
-  });
-
-  it('should return error for unknown trigger type', () => {
-    const config = {
-      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-      name: 'Unknown Trigger',
-      handler: mockHandler,
-      triggers: [
-        {
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-          type: 'unknown' as any,
-        },
-      ],
-    };
-    const result = defineLogicFunction(config as any);
-
-    expect(result.success).toBe(false);
-    expect(result.errors).toContain('Unknown trigger type: unknown');
   });
 });

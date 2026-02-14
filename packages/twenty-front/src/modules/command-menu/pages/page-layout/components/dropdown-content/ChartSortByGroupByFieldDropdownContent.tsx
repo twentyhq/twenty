@@ -22,9 +22,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
-  GraphOrderBy,
-  type GraphOrderBy as GraphOrderByType,
-} from '~/generated/graphql';
+  type GraphOrderBy,
+  GraphOrderBy as GraphOrderByEnum,
+} from '~/generated-metadata/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -74,12 +74,12 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     return null;
   }
 
-  const handleSelectSortOption = (orderBy: GraphOrderByType) => {
+  const handleSelectSortOption = (orderBy: GraphOrderBy) => {
     const configToUpdate: Record<string, unknown> = {
       secondaryAxisOrderBy: orderBy,
     };
 
-    if (orderBy === GraphOrderBy.MANUAL) {
+    if (orderBy === GraphOrderByEnum.MANUAL) {
       const existingManualSortOrder =
         configuration.secondaryAxisManualSortOrder;
 
@@ -94,7 +94,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
       return;
     }
 
-    if (configuration.secondaryAxisOrderBy === GraphOrderBy.MANUAL) {
+    if (configuration.secondaryAxisOrderBy === GraphOrderByEnum.MANUAL) {
       configToUpdate.secondaryAxisManualSortOrder = null;
     }
 
@@ -125,7 +125,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
         selectableItemIdArray={availableOptions.map((option) => option.value)}
       >
         {availableOptions.map((sortOption) => {
-          const isManualOption = sortOption.value === GraphOrderBy.MANUAL;
+          const isManualOption = sortOption.value === GraphOrderByEnum.MANUAL;
 
           return (
             <SelectableListItem
@@ -138,8 +138,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
               <MenuItemSelect
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
-                  groupByFieldMetadataId:
-                    configuration.secondaryAxisGroupByFieldMetadataId,
+                  groupByFieldMetadataId: secondaryAxisField.id,
                 })}
                 selected={
                   configuration.secondaryAxisOrderBy === sortOption.value

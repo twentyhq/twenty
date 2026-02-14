@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -39,7 +40,10 @@ export const generateFakeFormResponse = ({
         );
       }
 
-      const flatObjectMetadata = flatObjectMetadataMaps.byId[objectId];
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
 
       if (!isDefined(flatObjectMetadata)) {
         throw new Error(

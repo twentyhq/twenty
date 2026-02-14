@@ -11,6 +11,7 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -25,11 +26,14 @@ import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -40,10 +44,10 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
-  const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
+  const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
-  const setAuthProviders = useSetRecoilState(authProvidersState);
-  const setAiModels = useSetRecoilState(aiModelsState);
+  const setAuthProviders = useSetRecoilStateV2(authProvidersState);
+  const setAiModels = useSetRecoilStateV2(aiModelsState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
@@ -65,7 +69,7 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCaptcha = useSetRecoilState(captchaState);
 
-  const setChromeExtensionId = useSetRecoilState(chromeExtensionIdState);
+  const setChromeExtensionId = useSetRecoilStateV2(chromeExtensionIdState);
 
   const setApiConfig = useSetRecoilState(apiConfigState);
 
@@ -120,7 +124,11 @@ export const useClientConfig = (): UseClientConfigResult => {
     isCloudflareIntegrationEnabledState,
   );
 
-  const setAppVersion = useSetRecoilState(appVersionState);
+  const setIsClickHouseConfigured = useSetRecoilState(
+    isClickHouseConfiguredState,
+  );
+
+  const setAppVersion = useSetRecoilStateV2(appVersionState);
 
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({
@@ -183,6 +191,10 @@ export const useClientConfig = (): UseClientConfigResult => {
       setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
       setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
+      jotaiStore.set(
+        isAttachmentPreviewEnabledStateV2.atom,
+        clientConfig?.isAttachmentPreviewEnabled,
+      );
       setIsConfigVariablesInDbEnabled(
         clientConfig?.isConfigVariablesInDbEnabled,
       );
@@ -198,6 +210,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsCloudflareIntegrationEnabled(
         clientConfig?.isCloudflareIntegrationEnabled,
       );
+      setIsClickHouseConfigured(clientConfig?.isClickHouseConfigured ?? false);
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error('Failed to fetch client config');
@@ -231,6 +244,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
     setIsEmailingDomainsEnabled,
+    setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setLabPublicFeatureFlags,
     setMicrosoftCalendarEnabled,

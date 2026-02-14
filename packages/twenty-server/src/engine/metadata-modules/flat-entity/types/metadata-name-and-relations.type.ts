@@ -4,7 +4,7 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 
 type ExtractRelationIdProperties<T> = {
   [K in keyof T]: K extends `${infer _}Id`
-    ? K extends 'id' | 'workspaceId' | 'standardId'
+    ? K extends 'id' | 'workspaceId'
       ? never
       : T[K] extends string | null | undefined
         ? K

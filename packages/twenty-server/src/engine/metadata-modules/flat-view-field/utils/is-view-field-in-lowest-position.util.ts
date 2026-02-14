@@ -1,11 +1,11 @@
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 export const isViewFieldInLowestPosition = ({
   flatViewField,
   otherFlatViewFields,
 }: {
-  otherFlatViewFields: FlatViewField[];
-  flatViewField: FlatViewField;
+  otherFlatViewFields: UniversalFlatViewField[];
+  flatViewField: UniversalFlatViewField;
 }) => {
   if (otherFlatViewFields.length === 0) {
     return true;

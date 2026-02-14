@@ -81,18 +81,16 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     viewId: navigationMenuItemEntity.viewId,
     folderId: navigationMenuItemEntity.folderId,
     name: navigationMenuItemEntity.name,
+    link: navigationMenuItemEntity.link,
     position: navigationMenuItemEntity.position,
     workspaceId: navigationMenuItemEntity.workspaceId,
     universalIdentifier: navigationMenuItemEntity.universalIdentifier,
     applicationId: navigationMenuItemEntity.applicationId,
     createdAt: navigationMenuItemEntity.createdAt.toISOString(),
     updatedAt: navigationMenuItemEntity.updatedAt.toISOString(),
-    __universal: {
-      universalIdentifier: navigationMenuItemEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      targetObjectMetadataUniversalIdentifier,
-      folderUniversalIdentifier,
-      viewUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    targetObjectMetadataUniversalIdentifier,
+    folderUniversalIdentifier,
+    viewUniversalIdentifier,
   };
 };

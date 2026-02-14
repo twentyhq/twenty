@@ -7,7 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;

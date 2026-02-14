@@ -29,19 +29,13 @@ export class EventStreamService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.metricsService.createObservableGauge(
-      'twenty_event_streams_live_total',
-      { description: 'Current number of live event streams' },
-      async (observableResult) => {
-        try {
-          const count = await this.getTotalActiveStreamCount();
-
-          observableResult.observe(count);
-        } catch (error) {
-          this.logger.error('Failed to collect event streams metrics', error);
-        }
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_event_streams_live_total',
+      options: { description: 'Current number of live event streams' },
+      callback: async () => {
+        return this.getTotalActiveStreamCount();
       },
-    );
+    });
   }
 
   async getTotalActiveStreamCount(): Promise<number> {
@@ -157,23 +151,12 @@ export class EventStreamService implements OnModuleInit {
   }
 
   async isAuthorized({
-    workspaceId,
-    eventStreamChannelId,
     authContext,
+    streamData,
   }: {
-    workspaceId: string;
-    eventStreamChannelId: string;
     authContext: SerializableAuthContext;
+    streamData: EventStreamData;
   }): Promise<boolean> {
-    const streamData = await this.getStreamData(
-      workspaceId,
-      eventStreamChannelId,
-    );
-
-    if (!isDefined(streamData)) {
-      return false;
-    }
-
     if (isDefined(authContext.userWorkspaceId)) {
       return (
         streamData.authContext.userWorkspaceId === authContext.userWorkspaceId
@@ -262,7 +245,7 @@ export class EventStreamService implements OnModuleInit {
     return `workspace:${workspaceId}:activeStreams`;
   }
 
-  private async getStreamData(
+  async getStreamData(
     workspaceId: string,
     eventStreamChannelId: string,
   ): Promise<EventStreamData | undefined> {

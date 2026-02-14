@@ -9,5 +9,6 @@ export const getGoogleApisOauthScopes = () => {
     'https://www.googleapis.com/auth/calendar.events',
     'https://www.googleapis.com/auth/profile.emails.read',
     'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/gmail.compose',
   ];
 };

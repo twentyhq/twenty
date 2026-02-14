@@ -1,5 +1,6 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -12,7 +13,6 @@ import {
   type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
-import { Type } from 'class-transformer';
 
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 
@@ -60,9 +60,6 @@ export class CreateObjectInput {
 
   @HideField()
   applicationId?: string;
-
-  @HideField()
-  standardId?: string;
 
   @HideField()
   universalIdentifier?: string;

@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateWebhookInputToFlatWebhookToCreate } from 'src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create.util';
@@ -111,7 +111,7 @@ export class WebhookService {
         targetUrl: normalizedTargetUrl,
       },
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
+      flatApplication: workspaceCustomFlatApplication,
     });
 
     const validateAndBuildResult =
@@ -125,6 +125,8 @@ export class WebhookService {
             },
           },
           workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -155,6 +157,11 @@ export class WebhookService {
     input: UpdateWebhookInput,
     workspaceId: string,
   ): Promise<WebhookDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const normalizedInput = {
       ...input,
       update: {
@@ -190,6 +197,8 @@ export class WebhookService {
             },
           },
           workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -217,6 +226,11 @@ export class WebhookService {
   }
 
   async delete(id: string, workspaceId: string): Promise<WebhookDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatWebhookMaps: existingFlatWebhookMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -241,6 +255,8 @@ export class WebhookService {
             },
           },
           workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

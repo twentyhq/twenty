@@ -18,7 +18,11 @@ export const addFlatEntityToFlatEntityMapsOrThrow = <
   flatEntity,
   flatEntityMaps,
 }: AddFlatEntityToFlatEntityMapsOrThrowArgs<T>): FlatEntityMaps<T> => {
-  if (isDefined(flatEntityMaps.byId[flatEntity.id])) {
+  if (
+    isDefined(
+      flatEntityMaps.byUniversalIdentifier[flatEntity.universalIdentifier],
+    )
+  ) {
     throw new FlatEntityMapsException(
       'addFlatEntityToFlatEntityMapsOrThrow: flat entity to add already exists',
       FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
@@ -26,13 +30,13 @@ export const addFlatEntityToFlatEntityMapsOrThrow = <
   }
 
   return {
-    byId: {
-      ...flatEntityMaps.byId,
-      [flatEntity.id]: flatEntity,
+    byUniversalIdentifier: {
+      ...flatEntityMaps.byUniversalIdentifier,
+      [flatEntity.universalIdentifier]: flatEntity,
     },
-    idByUniversalIdentifier: {
-      ...flatEntityMaps.idByUniversalIdentifier,
-      [flatEntity.universalIdentifier]: flatEntity.id,
+    universalIdentifierById: {
+      ...flatEntityMaps.universalIdentifierById,
+      [flatEntity.id]: flatEntity.universalIdentifier,
     },
     universalIdentifiersByApplicationId: {
       ...flatEntityMaps.universalIdentifiersByApplicationId,

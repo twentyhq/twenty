@@ -18,9 +18,9 @@ module.exports = {
 
     './src/modules/billing/graphql/**/*.{ts,tsx}',
     './src/modules/settings/**/graphql/**/*.{ts,tsx}',
+    './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
 
     './src/modules/databases/graphql/**/*.{ts,tsx}',
-    './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
     './src/modules/navigation-menu-item/graphql/**/*.{ts,tsx}',
@@ -28,9 +28,13 @@ module.exports = {
     './src/modules/attachments/graphql/**/*.{ts,tsx}',
     './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
+    './src/modules/front-components/graphql/**/*.{ts,tsx}',
 
     './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
 
+    './src/modules/dashboards/graphql/**/*.{ts,tsx}',
+    './src/modules/page-layout/graphql/**/*.{ts,tsx}',
+    './src/modules/marketplace/graphql/**/*.{ts,tsx}',
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',

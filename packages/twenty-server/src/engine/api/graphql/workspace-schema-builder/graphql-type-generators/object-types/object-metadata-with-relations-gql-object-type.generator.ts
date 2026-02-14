@@ -18,6 +18,7 @@ import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspac
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -110,10 +111,10 @@ export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
         );
       }
 
-      const objectMetadataTarget =
-        context.flatObjectMetadataMaps.byId[
-          flatFieldMetadata.relationTargetObjectMetadataId
-        ];
+      const objectMetadataTarget = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: context.flatObjectMetadataMaps,
+      });
 
       if (!isDefined(objectMetadataTarget)) {
         throw new Error(

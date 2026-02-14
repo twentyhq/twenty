@@ -1,4 +1,3 @@
-import { HTTPMethod } from 'twenty-shared/types';
 import {
   Check,
   Column,
@@ -6,32 +5,17 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
 
-import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-import { LogicFunctionLayerEntity } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-
-export type CronTriggerSettings = {
-  pattern: string;
-};
-
-export type DatabaseEventTriggerSettings = {
-  eventName: string;
-  updatedFields?: string[];
-};
-
-export type HttpRouteTriggerSettings = {
-  path: string;
-  httpMethod: HTTPMethod;
-  isAuthRequired: boolean;
-  forwardedRequestHeaders?: string[];
-};
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 const DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -40,13 +24,8 @@ export enum LogicFunctionRuntime {
   NODE22 = 'nodejs22.x',
 }
 
-export const DEFAULT_SOURCE_HANDLER_PATH = 'src/index.ts';
-export const DEFAULT_BUILT_HANDLER_PATH = 'src/index.mjs';
-export const DEFAULT_HANDLER_NAME = 'main';
-
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
-@Index('IDX_LOGIC_FUNCTION_LAYER_ID', ['logicFunctionLayerId'])
 export class LogicFunctionEntity
   extends SyncableEntity
   implements Required<LogicFunctionEntity>
@@ -57,13 +36,13 @@ export class LogicFunctionEntity
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false, default: DEFAULT_SOURCE_HANDLER_PATH })
+  @Column({ nullable: false })
   sourceHandlerPath: string;
 
-  @Column({ nullable: false, default: DEFAULT_BUILT_HANDLER_PATH })
+  @Column({ nullable: false })
   builtHandlerPath: string;
 
-  @Column({ nullable: false, default: DEFAULT_HANDLER_NAME })
+  @Column({ nullable: false })
   handlerName: string;
 
   @Column({ nullable: true, type: 'varchar' })
@@ -85,16 +64,8 @@ export class LogicFunctionEntity
   @Column({ nullable: false, default: false })
   isTool: boolean;
 
-  @Column({ nullable: false, type: 'uuid' })
-  logicFunctionLayerId: string;
-
-  @ManyToOne(
-    () => LogicFunctionLayerEntity,
-    (logicFunctionLayer) => logicFunctionLayer.logicFunctions,
-    { nullable: false },
-  )
-  @JoinColumn({ name: 'logicFunctionLayerId' })
-  logicFunctionLayer: Relation<LogicFunctionLayerEntity>;
+  @Column({ nullable: false, type: 'boolean', default: true })
+  isBuildUpToDate: boolean;
 
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;

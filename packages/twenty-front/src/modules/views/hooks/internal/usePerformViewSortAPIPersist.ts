@@ -10,7 +10,7 @@ import {
   useDeleteCoreViewSortMutation,
   useDestroyCoreViewSortMutation,
   useUpdateCoreViewSortMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';

@@ -1,4 +1,5 @@
 import { type DataSource } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
@@ -42,14 +43,7 @@ export const seedCoreSchema = async ({
   await queryRunner.startTransaction();
 
   try {
-    const customWorkspaceApplication =
-      await applicationService.createWorkspaceCustomApplication(
-        {
-          workspaceId,
-          workspaceDisplayName: createWorkspaceStaticInput.displayName,
-        },
-        queryRunner,
-      );
+    const workspaceCustomApplicationId = v4();
 
     await createWorkspace({
       queryRunner,
@@ -57,9 +51,18 @@ export const seedCoreSchema = async ({
       createWorkspaceInput: {
         ...createWorkspaceStaticInput,
         version,
-        workspaceCustomApplicationId: customWorkspaceApplication.id,
+        workspaceCustomApplicationId,
       },
     });
+
+    await applicationService.createWorkspaceCustomApplication(
+      {
+        workspaceId,
+        applicationId: workspaceCustomApplicationId,
+        workspaceDisplayName: createWorkspaceStaticInput.displayName,
+      },
+      queryRunner,
+    );
 
     await seedUsers({ queryRunner, schemaName });
 

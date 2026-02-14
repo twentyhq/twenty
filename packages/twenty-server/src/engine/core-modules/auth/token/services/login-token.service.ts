@@ -5,6 +5,10 @@ import ms from 'ms';
 
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import {
   type LoginTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -54,8 +58,18 @@ export class LoginTokenService {
   async verifyLoginToken(loginToken: string): Promise<LoginTokenJwtPayload> {
     await this.jwtWrapperService.verifyJwtToken(loginToken);
 
-    return this.jwtWrapperService.decode(loginToken, {
-      json: true,
-    });
+    const decoded = this.jwtWrapperService.decode<LoginTokenJwtPayload>(
+      loginToken,
+      { json: true },
+    );
+
+    if (decoded.type !== JwtTokenTypeEnum.LOGIN) {
+      throw new AuthException(
+        'Expected a login token',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
+
+    return decoded;
   }
 }

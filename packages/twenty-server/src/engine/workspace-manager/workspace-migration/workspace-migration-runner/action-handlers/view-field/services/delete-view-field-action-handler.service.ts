@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { DeleteViewFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteViewFieldAction,
+  UniversalDeleteViewFieldAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,28 +21,28 @@ export class DeleteViewFieldActionHandlerService extends WorkspaceMigrationRunne
     super();
   }
 
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteViewFieldAction>,
-  ): Promise<void> {
-    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteViewFieldAction>,
+  ): Promise<FlatDeleteViewFieldAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
+  }
 
-    const flatViewField = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatViewFieldMaps,
-      universalIdentifier,
-    });
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteViewFieldAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner, workspaceId } = context;
 
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
     await viewFieldRepository.delete({
-      id: flatViewField.id,
+      id: flatAction.entityId,
       workspaceId,
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<DeleteViewFieldAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatDeleteViewFieldAction>,
   ): Promise<void> {
     return;
   }

@@ -3,10 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
-import { reduceFlatViewGroupsByViewId } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-id.util';
+import { reduceFlatViewGroupsByViewUniversalIdentifier } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-universal-identifier.util';
 
 type RecomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdateArgs = FromTo<
   FlatFieldMetadata,
@@ -47,15 +48,19 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
     ),
     flatEntityMaps: allFlatViewGroups,
   });
-  const { flatViewGroupRecordByViewId, highestViewGroupPositionByViewId } =
-    reduceFlatViewGroupsByViewId({
-      flatViewGroups,
-    });
+  const {
+    flatViewGroupRecordByViewUniversalIdentifier,
+    highestViewGroupPositionByViewUniversalIdentifier,
+  } = reduceFlatViewGroupsByViewUniversalIdentifier({
+    flatViewGroups,
+  });
 
-  for (const viewId in flatViewGroupRecordByViewId) {
-    const flatViewGroups = Object.values(flatViewGroupRecordByViewId[viewId]);
+  for (const viewUniversalIdentifier in flatViewGroupRecordByViewUniversalIdentifier) {
+    const flatViewGroupsForView = Object.values(
+      flatViewGroupRecordByViewUniversalIdentifier[viewUniversalIdentifier],
+    );
 
-    const emptyValueFlatViewGroup = flatViewGroups.find(
+    const emptyValueFlatViewGroup = flatViewGroupsForView.find(
       (flatViewGroup) => flatViewGroup.fieldValue === '',
     );
 
@@ -63,21 +68,32 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
       toFlatFieldMetadata.isNullable === true &&
       !isDefined(emptyValueFlatViewGroup)
     ) {
-      const highestViewGroupPosition = highestViewGroupPositionByViewId[viewId];
+      const highestViewGroupPosition =
+        highestViewGroupPositionByViewUniversalIdentifier[
+          viewUniversalIdentifier
+        ];
       const viewGroupId = v4();
       const createdAt = new Date().toISOString();
+
+      const flatView = findFlatEntityByUniversalIdentifierOrThrow({
+        flatEntityMaps: flatViewMaps,
+        universalIdentifier: viewUniversalIdentifier,
+      });
 
       sideEffectResult.flatViewGroupsToCreate.push({
         id: viewGroupId,
         universalIdentifier: viewGroupId,
         fieldValue: '',
         position: highestViewGroupPosition + 1,
+        applicationUniversalIdentifier:
+          toFlatFieldMetadata.applicationUniversalIdentifier,
+        viewUniversalIdentifier,
         isVisible: true,
         workspaceId: toFlatFieldMetadata.workspaceId,
         createdAt,
         updatedAt: createdAt,
         deletedAt: null,
-        viewId,
+        viewId: flatView.id,
         applicationId: toFlatFieldMetadata.applicationId,
       });
     } else if (isDefined(emptyValueFlatViewGroup)) {

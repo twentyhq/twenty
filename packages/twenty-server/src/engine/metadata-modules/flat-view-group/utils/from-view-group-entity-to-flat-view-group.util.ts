@@ -45,10 +45,7 @@ export const fromViewGroupEntityToFlatViewGroup = ({
     updatedAt: viewGroupEntity.updatedAt.toISOString(),
     deletedAt: viewGroupEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewGroupEntityWithoutRelations.universalIdentifier,
-    __universal: {
-      universalIdentifier: viewGroupEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      viewUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    viewUniversalIdentifier,
   };
 };

@@ -5,9 +5,9 @@ import {
   type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -90,7 +90,6 @@ export const createStandardRelationFieldFlatMetadata = <
   return {
     id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
@@ -133,6 +132,6 @@ export const createStandardRelationFieldFlatMetadata = <
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    universalSettings: null,
+    universalSettings: settings,
   };
 };

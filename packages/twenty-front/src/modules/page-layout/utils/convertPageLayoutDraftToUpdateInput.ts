@@ -1,5 +1,5 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
-import { type UpdatePageLayoutWithTabsInput } from '~/generated/graphql';
+import { type UpdatePageLayoutWithTabsInput } from '~/generated-metadata/graphql';
 
 export const convertPageLayoutDraftToUpdateInput = (
   pageLayoutDraft: DraftPageLayout,

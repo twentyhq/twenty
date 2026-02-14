@@ -56,9 +56,11 @@ Commands:
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
   function:logs        Watch application function logs
-  function:execute     Execute a serverless function with a JSON payload
+  function:execute     Execute a logic function with a JSON payload
   help [command]       display help for command
 ```
+
+In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty app:dev`, etc.
 
 ## Global Options
 

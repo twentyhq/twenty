@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import {
   PageLayoutException,
@@ -27,7 +28,10 @@ export const fromDestroyPageLayoutInputToFlatPageLayoutOrThrow = ({
     ['id'],
   );
 
-  const existingFlatPageLayoutToDestroy = flatPageLayoutMaps.byId[pageLayoutId];
+  const existingFlatPageLayoutToDestroy = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: pageLayoutId,
+    flatEntityMaps: flatPageLayoutMaps,
+  });
 
   if (!isDefined(existingFlatPageLayoutToDestroy)) {
     throw new PageLayoutException(

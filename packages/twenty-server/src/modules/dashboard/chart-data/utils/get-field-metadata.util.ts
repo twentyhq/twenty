@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   ChartDataException,
@@ -9,9 +11,12 @@ import {
 
 export const getFieldMetadata = (
   fieldMetadataId: string,
-  fieldMetadataById: Partial<Record<string, FlatFieldMetadata>>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): FlatFieldMetadata => {
-  const fieldMetadata = fieldMetadataById[fieldMetadataId];
+  const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (!isDefined(fieldMetadata)) {
     throw new ChartDataException(

@@ -39,9 +39,6 @@ export class ObjectMetadataEntity
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true, type: 'uuid' })
-  standardId: string | null;
-
   @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;
 
@@ -100,7 +97,7 @@ export class ObjectMetadataEntity
   shortcut: string | null;
 
   // TODO: This should not be nullable - legacy field introduced when label identifier was nullable
-  // TODO: This should be a joinColumn and we should have a FK on this too
+  // TODO: This should be a joinColumn and we should have a FK on this too https://github.com/twentyhq/core-team-issues/issues/2172
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId: string | null;
 

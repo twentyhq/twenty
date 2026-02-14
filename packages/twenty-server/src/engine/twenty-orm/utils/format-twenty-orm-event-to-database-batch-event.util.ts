@@ -7,7 +7,7 @@ import {
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   assertUnreachable,
   isDefined,
@@ -47,7 +47,10 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   recordsAfter?: T[];
   recordsBefore?: T[];
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
-  if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.timelineActivity) {
+  if (
+    objectMetadataItem.universalIdentifier ===
+    STANDARD_OBJECTS.timelineActivity.universalIdentifier
+  ) {
     return;
   }
 
@@ -79,6 +82,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           const event = new ObjectRecordCreateEvent<T>();
 
           event.userId = authContext?.user?.id;
+          event.userWorkspaceId = authContext?.userWorkspaceId;
           event.workspaceMemberId = authContext?.workspaceMemberId;
           event.recordId = recordAfter.id;
           event.properties = { after: recordAfter };
@@ -140,6 +144,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
 
           const eventPayload = {
             userId: authContext?.user?.id,
+            userWorkspaceId: authContext?.userWorkspaceId,
             workspaceMemberId: authContext?.workspaceMemberId,
             recordId: recordAfter.id,
             properties: {
@@ -189,6 +194,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordDestroyEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.userWorkspaceId = authContext?.userWorkspaceId;
         event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = recordBefore.id;
         event.properties = { before: recordBefore };
@@ -210,6 +216,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordUpsertEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.userWorkspaceId = authContext?.userWorkspaceId;
         event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = recordAfter.id;
 

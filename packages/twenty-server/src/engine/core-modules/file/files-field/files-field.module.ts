@@ -12,13 +12,19 @@ import { FilesFieldDeletionListener } from 'src/engine/core-modules/file/files-f
 import { FilesFieldResolver } from 'src/engine/core-modules/file/files-field/resolvers/files-field.resolver';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([
+      FileEntity,
+      WorkspaceEntity,
+      ApplicationEntity,
+      FieldMetadataEntity,
+    ]),
     PermissionsModule,
     FileStorageModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

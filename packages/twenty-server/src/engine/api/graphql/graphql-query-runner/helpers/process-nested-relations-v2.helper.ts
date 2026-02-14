@@ -293,10 +293,10 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
-    const targetRelation =
-      flatFieldMetadataMaps.byId[
-        targetFieldMetadata.relationTargetFieldMetadataId
-      ];
+    const targetRelation = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: targetFieldMetadata.relationTargetFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     const targetRelationName = targetRelation?.name;
 
@@ -417,9 +417,6 @@ export class ProcessNestedRelationsV2Helper {
           (rel) => rel[joinField] === item.id,
         );
       } else {
-        if (relationResults.length === 0) {
-          item[`${sourceFieldName}Id`] = null;
-        }
         item[sourceFieldName] =
           relationResults.find(
             (rel) => rel.id === item[`${sourceFieldName}Id`],

@@ -11,11 +11,7 @@ exports[`Install application should fail when entity does not exist should fail 
     },
     "code": "APPLICATION_INSTALLATION_FAILED",
     "errors": {
-      "metadata": {
-        "code": "ENTITY_NOT_FOUND",
-        "message": "Could not find flat entity with universal identifier 20202020-6110-4547-9fd0-2525257a2c3f",
-      },
-      "workspaceSchema": {
+      "actionTranspilation": {
         "code": "ENTITY_NOT_FOUND",
         "message": "Could not find flat entity with universal identifier 20202020-6110-4547-9fd0-2525257a2c3f",
       },

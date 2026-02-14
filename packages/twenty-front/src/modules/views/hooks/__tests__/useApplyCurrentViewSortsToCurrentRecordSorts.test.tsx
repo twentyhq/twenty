@@ -11,7 +11,7 @@ import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential'
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import {
   mockedCoreViewsData,

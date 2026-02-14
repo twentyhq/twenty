@@ -8,6 +8,12 @@
   ],
   "targets": {
     "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "production",
+        "^production"
+      ],
       "dependsOn": [
         "generateBarrels",
         "^build"
@@ -22,10 +28,6 @@
         "{projectRoot}/constants/dist",
         "{projectRoot}/database-events/package.json",
         "{projectRoot}/database-events/dist",
-        "{projectRoot}/front-component/package.json",
-        "{projectRoot}/front-component/dist",
-        "{projectRoot}/front-component-constants/package.json",
-        "{projectRoot}/front-component-constants/dist",
         "{projectRoot}/metadata/package.json",
         "{projectRoot}/metadata/dist",
         "{projectRoot}/testing/package.json",
@@ -40,7 +42,15 @@
         "{projectRoot}/workflow/dist",
         "{projectRoot}/workspace/package.json",
         "{projectRoot}/workspace/dist"
-      ]
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx vite build",
+          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+        ],
+        "parallel": false
+      }
     },
     "generateBarrels": {
       "executor": "nx:run-commands",

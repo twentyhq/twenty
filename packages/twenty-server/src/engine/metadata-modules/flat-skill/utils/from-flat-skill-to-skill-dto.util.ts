@@ -3,7 +3,6 @@ import { type SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto'
 
 export const fromFlatSkillToSkillDto = (flatSkill: FlatSkill): SkillDTO => ({
   id: flatSkill.id,
-  standardId: flatSkill.standardId,
   name: flatSkill.name,
   label: flatSkill.label,
   icon: flatSkill.icon ?? undefined,

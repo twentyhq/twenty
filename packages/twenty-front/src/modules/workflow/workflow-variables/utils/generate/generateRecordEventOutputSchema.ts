@@ -12,7 +12,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { DatabaseEventAction } from '~/generated/graphql';
+import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 const camelToTitleCase = (camelCaseText: string): string =>
   capitalize(

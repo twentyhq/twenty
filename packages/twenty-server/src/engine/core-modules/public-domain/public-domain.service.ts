@@ -93,7 +93,9 @@ export class PublicDomainService {
 
     try {
       await this.publicDomainRepository.insert(
-        publicDomain as QueryDeepPartialEntity<PublicDomainEntity>,
+        publicDomain as QueryDeepPartialEntity<
+          Omit<PublicDomainEntity, 'workspace'>
+        >,
       );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {

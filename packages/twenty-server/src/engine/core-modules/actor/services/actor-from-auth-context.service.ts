@@ -10,6 +10,7 @@ import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/acto
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -103,7 +104,10 @@ export class ActorFromAuthContextService {
     );
     const objectId = idByNameSingular[objectMetadataNameSingular];
     const objectMetadata = objectId
-      ? flatObjectMetadataMaps.byId[objectId]
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: objectId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
       : undefined;
 
     const fieldIdByName = objectMetadata

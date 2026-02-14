@@ -1,7 +1,7 @@
 import {
   type ManifestBuildResult,
-  updateManifestChecksums,
-} from '@/cli/utilities/build/manifest/update-manifest-checksums';
+  manifestUpdateChecksums,
+} from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
@@ -10,7 +10,7 @@ import type { Location } from 'esbuild';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { type EventName } from 'chokidar/handler.js';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
-import { validateManifest } from '@/cli/utilities/build/manifest/validate-manifest';
+import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
 export type DevModeOrchestratorOptions = {
   appPath: string;
@@ -248,7 +248,7 @@ export class DevModeOrchestrator {
         return;
       }
 
-      const validation = validateManifest(result.manifest);
+      const validation = manifestValidate(result.manifest);
 
       if (!validation.isValid) {
         for (const e of validation.errors) {
@@ -289,11 +289,58 @@ export class DevModeOrchestrator {
       await this.handleManifestBuilt(result);
 
       if (!this.fileUploader) {
+        const checkApplicationExistResult =
+          await this.apiService.checkApplicationExist(
+            result.manifest.application.universalIdentifier,
+          );
+
+        if (!checkApplicationExistResult.success) {
+          this.uiStateManager.addEvent({
+            message: `Failed to check if application ${result.manifest.application.universalIdentifier} already exists`,
+            status: 'error',
+          });
+          this.uiStateManager.updateManifestState({
+            manifestStatus: 'error',
+            error: `Failed to check if application already exists`,
+          });
+          return;
+        }
+
+        const applicationExists = checkApplicationExistResult.data;
+
+        if (!applicationExists) {
+          this.uiStateManager.addEvent({
+            message: 'Creating application',
+            status: 'info',
+          });
+
+          const createApplicationResult =
+            await this.apiService.createApplication(result.manifest);
+
+          if (createApplicationResult.success) {
+            this.uiStateManager.addEvent({
+              message: 'Application created',
+              status: 'success',
+            });
+          } else {
+            this.uiStateManager.addEvent({
+              message: `Application creation failed with error ${JSON.stringify(createApplicationResult.error, null, 2)}`,
+              status: 'error',
+            });
+            this.uiStateManager.updateManifestState({
+              manifestStatus: 'error',
+              error: `Application creation failed with error ${JSON.stringify(createApplicationResult.error, null, 2)}`,
+            });
+            return;
+          }
+        }
+
         this.fileUploader = new FileUploader({
           appPath: this.appPath,
           applicationUniversalIdentifier:
             result.manifest.application.universalIdentifier,
         });
+
         for (const [
           builtPath,
           { fileFolder, sourcePath },
@@ -306,7 +353,7 @@ export class DevModeOrchestrator {
         await Promise.all(this.activeUploads);
       }
 
-      const manifest = updateManifestChecksums({
+      const manifest = manifestUpdateChecksums({
         manifest: result.manifest,
         builtFileInfos: this.builtFileInfos,
       });

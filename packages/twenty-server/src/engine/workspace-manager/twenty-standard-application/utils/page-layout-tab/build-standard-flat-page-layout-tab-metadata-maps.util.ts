@@ -6,7 +6,7 @@ import {
   STANDARD_PAGE_LAYOUTS,
   STANDARD_RECORD_PAGE_LAYOUTS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { type StandardPageLayoutTabDefinition } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
+import { type StandardPageLayoutTabConfig } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 import {
   type CreateStandardPageLayoutTabArgs,
   createStandardPageLayoutTabFlatMetadata,
@@ -39,7 +39,7 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = ({
 
     const layout = STANDARD_PAGE_LAYOUTS[
       layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
-    ] as { tabs: Record<string, StandardPageLayoutTabDefinition> };
+    ] as { tabs: Record<string, StandardPageLayoutTabConfig> };
 
     for (const tabTitle of Object.keys(layout.tabs)) {
       const tab = layout.tabs[tabTitle];

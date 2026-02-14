@@ -19,6 +19,7 @@ import { WorkspaceMigrationLogicFunctionActionsBuilderService } from 'src/engine
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-view-field-actions-builder.service';
+import { WorkspaceMigrationViewFieldGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field-group/workspace-migration-view-field-group-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
 import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-view-filter-actions-builder.service';
@@ -37,6 +38,7 @@ import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/work
     WorkspaceMigrationViewFilterActionsBuilderService,
     WorkspaceMigrationViewFilterGroupActionsBuilderService,
     WorkspaceMigrationViewGroupActionsBuilderService,
+    WorkspaceMigrationViewFieldGroupActionsBuilderService,
     WorkspaceMigrationViewSortActionsBuilderService,
     WorkspaceMigrationIndexActionsBuilderService,
     WorkspaceMigrationLogicFunctionActionsBuilderService,
@@ -63,6 +65,7 @@ import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/work
     WorkspaceMigrationViewFilterActionsBuilderService,
     WorkspaceMigrationViewFilterGroupActionsBuilderService,
     WorkspaceMigrationViewGroupActionsBuilderService,
+    WorkspaceMigrationViewFieldGroupActionsBuilderService,
     WorkspaceMigrationViewSortActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
     WorkspaceMigrationLogicFunctionActionsBuilderService,

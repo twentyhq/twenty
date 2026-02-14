@@ -18,6 +18,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -277,7 +278,10 @@ export class WorkflowDatabaseEventTriggerListener {
         }
 
         const relatedObjectMetadataNameSingular =
-          flatObjectMetadataMaps.byId[relatedObjectMetadataId]?.nameSingular;
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: relatedObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })?.nameSingular;
 
         if (!isDefined(relatedObjectMetadataNameSingular)) {
           continue;

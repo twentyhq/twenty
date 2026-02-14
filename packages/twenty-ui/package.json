@@ -1,5 +1,6 @@
 {
   "name": "twenty-ui",
+  "private": true,
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "style": "./dist/style.css",
@@ -33,12 +34,12 @@
     "framer-motion": "^11.18.0",
     "glob": "^11.1.0",
     "hex-rgb": "^5.0.0",
+    "jotai": "^2.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "react-tooltip": "^5.13.1",
-    "recoil": "^0.7.7",
     "twenty-shared": "workspace:*",
     "zod": "^4.1.11"
   },

@@ -8,12 +8,12 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
 }): LogicFunctionDTO => {
   return {
     id: flatLogicFunction.id,
+    universalIdentifier: flatLogicFunction.universalIdentifier,
     name: flatLogicFunction.name,
     description: flatLogicFunction.description ?? undefined,
     runtime: flatLogicFunction.runtime,
     timeoutSeconds: flatLogicFunction.timeoutSeconds,
     sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-    builtHandlerPath: flatLogicFunction.builtHandlerPath,
     handlerName: flatLogicFunction.handlerName,
     toolInputSchema: flatLogicFunction.toolInputSchema ?? undefined,
     isTool: flatLogicFunction.isTool,

@@ -1,3 +1,4 @@
+import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
@@ -19,6 +20,7 @@ import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
@@ -54,19 +56,22 @@ export const AppRouterProviders = () => {
                           <UserThemeProviderEffect />
                           <SnackBarProvider>
                             <ErrorMessageEffect />
-                            <DialogComponentInstanceContext.Provider
-                              value={{ instanceId: 'dialog-manager' }}
-                            >
-                              <DialogManager>
-                                <StrictMode>
-                                  <PromiseRejectionEffect />
-                                  <GotoHotkeysEffectsProvider />
-                                  <PageTitle title={pageTitle} />
-                                  <PageFavicon />
-                                  <Outlet />
-                                </StrictMode>
-                              </DialogManager>
-                            </DialogComponentInstanceContext.Provider>
+                            <AgentChatProvider>
+                              <DialogComponentInstanceContext.Provider
+                                value={{ instanceId: 'dialog-manager' }}
+                              >
+                                <DialogManager>
+                                  <StrictMode>
+                                    <PromiseRejectionEffect />
+                                    <GotoHotkeysEffectsProvider />
+                                    <PageTitle title={pageTitle} />
+                                    <PageFavicon />
+                                    <Outlet />
+                                    <GlobalFilePreviewModal />
+                                  </StrictMode>
+                                </DialogManager>
+                              </DialogComponentInstanceContext.Provider>
+                            </AgentChatProvider>
                           </SnackBarProvider>
                           <MainContextStoreProvider />
                           <SupportChatEffect />

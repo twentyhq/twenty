@@ -7,12 +7,10 @@
     "outDir": "../../.cache/tsc",
     "types": ["node"]
   },
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.js", "src/**/*.ts"],
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",
-    "**/*.spec.tsx",
-    "**/*.test.tsx",
     "**/__mocks__/**/*"
   ]
 }

@@ -35,22 +35,22 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
       edges {
         node {
           id
-          company {
+          targetCompany {
             id
           }
           note {
             id
           }
-          person {
+          targetPerson {
             id
             company {
               id
             }
           }
-          company {
+          targetCompany {
             id
           }
-          opportunity {
+          targetOpportunity {
             id
           }
         }
@@ -60,19 +60,19 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
       edges {
         node {
           id
-          company {
+          targetCompany {
             id
           }
-          person {
+          targetPerson {
             id
             company {
               id
             }
           }
-          company {
+          targetCompany {
             id
           }
-          opportunity {
+          targetOpportunity {
             id
           }
         }

@@ -12,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { SsoIdentityProviderStatus } from '~/generated/graphql';
+import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 type SettingsSecuritySSORowDropdownMenuProps = {
   SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];

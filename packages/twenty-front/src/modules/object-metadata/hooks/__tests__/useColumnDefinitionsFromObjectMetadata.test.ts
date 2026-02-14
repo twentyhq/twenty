@@ -10,7 +10,7 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
   WorkspaceActivationStatus,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -61,6 +61,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       ],
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
+      eventLogRetentionDays: 365 * 3,
       fastModel: DEFAULT_FAST_MODEL,
       smartModel: DEFAULT_SMART_MODEL,
     });

@@ -10,4 +10,5 @@ export enum FileFolder {
   PublicAsset = 'public-asset',
   Source = 'source',
   FilesField = 'files-field',
+  Dependencies = 'dependencies',
 }

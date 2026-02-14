@@ -2,101 +2,106 @@ import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
 
-import { FileFolder } from 'twenty-shared/types';
-
 import {
-  type LogicFunctionExecutorDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
+  type LogicFunctionDriver,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
+import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import {
-  getLogicFunctionBaseFolderPath,
-  getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
+import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 export interface LocalDriverOptions {
-  fileStorageService: FileStorageService;
+  logicFunctionResourceService: LogicFunctionResourceService;
 }
 
-export class LocalDriver implements LogicFunctionExecutorDriver {
-  private readonly fileStorageService: FileStorageService;
+export class LocalDriver implements LogicFunctionDriver {
+  private readonly logicFunctionResourceService: LogicFunctionResourceService;
 
   constructor(options: LocalDriverOptions) {
-    this.fileStorageService = options.fileStorageService;
+    this.logicFunctionResourceService = options.logicFunctionResourceService;
   }
 
-  private getInMemoryLayerFolderPath = (
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) => {
-    return join(
-      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
-      flatLogicFunctionLayer.checksum,
-    );
+  private getInMemoryLayerFolderPath = (flatApplication: FlatApplication) => {
+    const checksum = flatApplication.yarnLockChecksum ?? 'default';
+
+    return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, checksum);
   };
 
-  private async createLayerIfNotExists(
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) {
-    const inMemoryLayerFolderPath = this.getInMemoryLayerFolderPath(
-      flatLogicFunctionLayer,
-    );
+  private async createLayerIfNotExists({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    const inMemoryLayerFolderPath =
+      this.getInMemoryLayerFolderPath(flatApplication);
 
     try {
       await fs.access(inMemoryLayerFolderPath);
     } catch {
-      await copyAndBuildDependencies(
-        inMemoryLayerFolderPath,
-        flatLogicFunctionLayer,
-      );
+      await this.logicFunctionResourceService.copyDependenciesInMemory({
+        applicationUniversalIdentifier,
+        workspaceId: flatApplication.workspaceId,
+        inMemoryFolderPath: inMemoryLayerFolderPath,
+      });
+      await copyYarnEngineAndBuildDependencies(inMemoryLayerFolderPath);
     }
   }
 
   async delete() {}
 
-  private async build(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    await this.createLayerIfNotExists(flatLogicFunctionLayer);
+  private async build({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    await this.createLayerIfNotExists({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
   }
 
   async execute({
     flatLogicFunction,
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
     payload,
     env,
+    timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build(flatLogicFunctionLayer);
+    await this.build({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
 
     const startTime = Date.now();
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const temporaryDirManager = new TemporaryDirManager();
 
     try {
-      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+      const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const baseFolderPath = getLogicFunctionBaseFolderPath(
-        flatLogicFunction.builtHandlerPath,
-      );
-
-      await this.fileStorageService.downloadFolder_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
-      });
+      const inMemoryBuiltHandlerPath =
+        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          inMemoryDestinationPath: sourceTemporaryDir,
+        });
 
       try {
         await fs.symlink(
           join(
-            this.getInMemoryLayerFolderPath(flatLogicFunctionLayer),
+            this.getInMemoryLayerFolderPath(flatApplication),
             'node_modules',
           ),
           join(sourceTemporaryDir, 'node_modules'),
@@ -142,15 +147,9 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
       });
 
       try {
-        const relativeBuiltPath = getRelativePathFromBase(
-          flatLogicFunction.builtHandlerPath,
-          baseFolderPath,
-        );
-        const builtBundleFilePath = join(sourceTemporaryDir, relativeBuiltPath);
-
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,
-          builtFileAbsPath: builtBundleFilePath,
+          builtFileAbsPath: inMemoryBuiltHandlerPath,
           handlerName: flatLogicFunction.handlerName,
         });
 
@@ -159,7 +158,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
             runnerPath,
             env: env ?? {},
             payload,
-            timeoutMs: 900_000, // timeout is handled by the logic function service
+            timeoutMs,
           });
 
         if (stdout)
@@ -203,7 +202,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
         consoleListener.release();
       }
     } finally {
-      await lambdaBuildDirectoryManager.clean();
+      await temporaryDirManager.clean();
     }
   }
 

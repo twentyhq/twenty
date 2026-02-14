@@ -5,7 +5,10 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,

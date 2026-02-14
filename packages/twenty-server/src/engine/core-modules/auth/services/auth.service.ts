@@ -397,20 +397,20 @@ export class AuthService {
     workspaceId,
     impersonatorUserWorkspaceId,
     impersonatedUserWorkspaceId,
-    impersonatorUserId,
+    _impersonatorUserId,
     impersonatedUserId,
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
     impersonatedUserWorkspaceId: string;
-    impersonatorUserId: string;
+    _impersonatorUserId: string;
     impersonatedUserId: string;
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
     const analytics = this.auditService.createContext({
       workspaceId,
-      userId: impersonatorUserId,
+      userWorkspaceId: impersonatorUserWorkspaceId,
     });
 
     analytics.insertWorkspaceEvent('Monitoring', {

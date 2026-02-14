@@ -3,10 +3,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
-import { msg } from '@lingui/core/macro';
 
 import type Stripe from 'stripe';
 
@@ -145,6 +145,7 @@ export class BillingWebhookSubscriptionService {
       if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
         await this.workspaceRepository.update(workspaceId, {
           activationStatus: WorkspaceActivationStatus.SUSPENDED,
+          suspendedAt: new Date(),
         });
       } else if (
         workspace.activationStatus ===
@@ -157,6 +158,7 @@ export class BillingWebhookSubscriptionService {
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
+        suspendedAt: null,
       });
 
       await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(

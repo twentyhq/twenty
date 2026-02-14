@@ -24,6 +24,7 @@ import {
   useVerifyEmailAndGetLoginTokenMutation,
   useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
   type AuthTokenPair,
+  type AuthToken,
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -58,14 +59,14 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { iconsState } from 'twenty-ui/display';
-import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -124,9 +125,12 @@ export const useAuth = () => {
   const clearSession = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
+        const sseClient = getSnapshotValue(snapshot, sseClientState);
+
+        sseClient?.dispose();
+
         const emptySnapshot = snapshot_UNSTABLE();
 
-        const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
           .getLoadable(workspaceAuthProvidersState)
           .getValue();
@@ -158,7 +162,6 @@ export const useAuth = () => {
           .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState, iconsValue);
           set(workspaceAuthProvidersState, authProvidersValue);
           set(billingState, billing);
           set(

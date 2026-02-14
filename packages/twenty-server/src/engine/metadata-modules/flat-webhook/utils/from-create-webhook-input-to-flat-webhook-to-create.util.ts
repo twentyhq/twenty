@@ -1,6 +1,7 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { generateWebhookSecret } from 'src/engine/metadata-modules/webhook/utils/generate-webhook-secret.util';
@@ -8,11 +9,11 @@ import { generateWebhookSecret } from 'src/engine/metadata-modules/webhook/utils
 export const fromCreateWebhookInputToFlatWebhookToCreate = ({
   createWebhookInput,
   workspaceId,
-  applicationId,
+  flatApplication,
 }: {
   createWebhookInput: CreateWebhookInput;
   workspaceId: string;
-  applicationId: string;
+  flatApplication: FlatApplication;
 }): FlatWebhook => {
   const now = new Date().toISOString();
 
@@ -36,6 +37,7 @@ export const fromCreateWebhookInputToFlatWebhookToCreate = ({
     updatedAt: now,
     deletedAt: null,
     universalIdentifier: id,
-    applicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

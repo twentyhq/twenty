@@ -61,8 +61,10 @@ export const useChartSettingsValues = ({
   let groupByOrderBy: GraphOrderBy | undefined | null;
 
   if (isBarOrLineChart) {
-    groupByFieldXId = configuration.primaryAxisGroupByFieldMetadataId;
-    groupByFieldYId = configuration.secondaryAxisGroupByFieldMetadataId;
+    groupByFieldXId =
+      configuration.primaryAxisGroupByFieldMetadataId ?? undefined;
+    groupByFieldYId =
+      configuration.secondaryAxisGroupByFieldMetadataId ?? undefined;
     groupBySubFieldNameX = configuration.primaryAxisGroupBySubFieldName as
       | CompositeFieldSubFieldName
       | undefined;

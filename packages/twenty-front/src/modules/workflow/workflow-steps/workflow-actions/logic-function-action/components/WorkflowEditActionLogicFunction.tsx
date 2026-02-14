@@ -1,6 +1,6 @@
 import { getDefaultFunctionInputFromInputSchema } from '@/logic-functions/utils/getDefaultFunctionInputFromInputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
-import { useGetOneLogicFunction } from '@/settings/logic-functions/hooks/useGetOneLogicFunction';
+import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';

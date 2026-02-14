@@ -4,7 +4,7 @@ import {
   isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export type SortOption = {
   value: GraphOrderBy;

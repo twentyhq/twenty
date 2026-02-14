@@ -13,13 +13,19 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/display';
+import {
+  IconArchive,
+  IconFilter,
+  IconSearch,
+  IconSettings,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -81,6 +87,9 @@ export const SettingsObjectFieldTable = ({
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
+  const [showSystemFields, setShowSystemFields] = useState(false);
+
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_FIELD_TABLE_METADATA;
 
@@ -98,17 +107,19 @@ export const SettingsObjectFieldTable = ({
   }, [objectMetadataItem, setSettingsObjectFields]);
 
   const allObjectSettingsDetailItems = useMemo(() => {
-    const nonSystemFields = settingsObjectFields?.filter(
-      (fieldMetadataItem) => !fieldMetadataItem.isSystem,
-    );
+    const filteredBySystem = showSystemFields
+      ? settingsObjectFields
+      : settingsObjectFields?.filter(
+          (fieldMetadataItem) => !fieldMetadataItem.isSystem,
+        );
 
     const fieldsToDisplay = excludeRelations
-      ? nonSystemFields?.filter(
+      ? filteredBySystem?.filter(
           (fieldMetadataItem) =>
             fieldMetadataItem.type !== FieldMetadataType.RELATION &&
             fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION,
         )
-      : nonSystemFields;
+      : filteredBySystem;
 
     return (
       fieldsToDisplay?.map(
@@ -119,6 +130,7 @@ export const SettingsObjectFieldTable = ({
     settingsObjectFields,
     mapFieldMetadataItemToSettingsObjectDetailTableItem,
     excludeRelations,
+    showSystemFields,
   ]);
 
   const sortedAllObjectSettingsDetailItems = useSortedArray(
@@ -174,6 +186,17 @@ export const SettingsObjectFieldTable = ({
                   text={t`Inactive`}
                   toggleSize="small"
                 />
+                {isAdvancedModeEnabled && (
+                  <MenuItemToggle
+                    LeftIcon={IconSettings}
+                    onToggleChange={() =>
+                      setShowSystemFields(!showSystemFields)
+                    }
+                    toggled={showSystemFields}
+                    text={t`System fields`}
+                    toggleSize="small"
+                  />
+                )}
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

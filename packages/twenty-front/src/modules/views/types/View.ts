@@ -6,8 +6,10 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { type ViewType } from '@/views/types/ViewType';
-import { type ViewVisibility } from '~/generated-metadata/graphql';
-import { type ViewCalendarLayout } from '~/generated/graphql';
+import {
+  type ViewVisibility,
+  type ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 import { type ViewSort } from '@/views/types/ViewSort';
 
 export type View = {

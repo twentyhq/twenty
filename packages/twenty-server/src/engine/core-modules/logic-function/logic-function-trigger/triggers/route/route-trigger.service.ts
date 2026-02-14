@@ -9,13 +9,13 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class RouteTriggerService {
@@ -146,12 +146,11 @@ export class RouteTriggerService {
       forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
-    const result =
-      await this.logicFunctionExecutorService.executeOneLogicFunction({
-        id: logicFunction.id,
-        workspaceId: logicFunction.workspaceId,
-        payload: event,
-      });
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: logicFunction.id,
+      workspaceId: logicFunction.workspaceId,
+      payload: event,
+    });
 
     if (!isDefined(result)) {
       return result;

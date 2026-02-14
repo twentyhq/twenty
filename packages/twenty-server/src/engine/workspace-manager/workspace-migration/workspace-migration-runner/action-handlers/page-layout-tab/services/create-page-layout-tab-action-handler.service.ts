@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { CreatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
+import {
+  FlatCreatePageLayoutTabAction,
+  UniversalCreatePageLayoutTabAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -15,25 +23,45 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     super();
   }
 
+  override async transpileUniversalActionToFlatAction({
+    action,
+    allFlatEntityMaps,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreatePageLayoutTabAction>): Promise<FlatCreatePageLayoutTabAction> {
+    const { pageLayoutId } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
+
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        pageLayoutId,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+        widgetIds: [],
+      },
+    };
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutTabAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreatePageLayoutTabAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner } = context;
+    const { flatEntity } = flatAction;
 
-    const pageLayoutTabRepository =
-      queryRunner.manager.getRepository<PageLayoutTabEntity>(
-        PageLayoutTabEntity,
-      );
-
-    await pageLayoutTabRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutTabAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreatePageLayoutTabAction>,
   ): Promise<void> {
     return;
   }

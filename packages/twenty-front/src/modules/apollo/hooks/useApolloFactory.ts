@@ -1,7 +1,7 @@
 import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -12,12 +12,14 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
+import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line twenty/no-state-useref
@@ -28,14 +30,14 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const appVersion = useRecoilValue(appVersionState);
+  const appVersion = useRecoilValueV2(appVersionState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
 
-  const setPreviousUrl = useSetRecoilState(previousUrlState);
+  const setPreviousUrl = useSetRecoilStateV2(previousUrlState);
   const location = useLocation();
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -86,6 +88,14 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           message,
           options: {
             dedupeKey: 'app-version-mismatch',
+          },
+        });
+      },
+      onPayloadTooLarge: (message) => {
+        enqueueErrorSnackBar({
+          message,
+          options: {
+            dedupeKey: 'payload-too-large',
           },
         });
       },

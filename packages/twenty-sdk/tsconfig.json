@@ -20,10 +20,20 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.d.ts",
+    "scripts/**/*.ts",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
     "**/__mocks__/**/*",
     "**/__tests__/**/*",
     "vite.config.ts",
-    "scripts/generateBarrels.ts",
+    "vite.config.node.ts",
+    "vite.config.browser.ts",
     "jest.config.mjs"
+  ],
+  "exclude": [
+    "src/front-component-renderer/remote/mock/**/*",
+    "src/front-component-renderer/host/generated/host-component-registry.ts",
+    "src/front-component-renderer/remote/generated/remote-components.ts",
+    "src/front-component-renderer/remote/generated/remote-elements.ts"
   ]
 }

@@ -1,11 +1,11 @@
-import { WidgetType } from '~/generated-metadata/graphql';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
   WidgetConfigurationType,
+  WidgetType,
   type PageLayoutWidget,
-} from '~/generated/graphql';
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+} from '~/generated-metadata/graphql';
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {

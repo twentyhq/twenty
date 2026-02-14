@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -28,6 +28,9 @@ export const CommandMenuWorkflowSelectAction = ({
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isDraftEmailEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
+  );
   const theme = useTheme();
 
   const { t } = useLingui();
@@ -35,6 +38,10 @@ export const CommandMenuWorkflowSelectAction = ({
   const logicFunctions = useRecoilValue(logicFunctionsState);
 
   const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
+
+  const coreActions = isDraftEmailEnabled
+    ? CORE_ACTIONS
+    : CORE_ACTIONS.filter((action) => action.type !== 'DRAFT_EMAIL');
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });
@@ -83,7 +90,7 @@ export const CommandMenuWorkflowSelectAction = ({
         {t`Core`}
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={CORE_ACTIONS}
+        actions={coreActions}
         onClick={handleActionClick}
       />
 

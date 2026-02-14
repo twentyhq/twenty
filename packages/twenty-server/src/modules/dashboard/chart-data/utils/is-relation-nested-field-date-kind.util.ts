@@ -1,5 +1,6 @@
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -30,7 +31,10 @@ export const isRelationNestedFieldDateKind = ({
     return false;
   }
 
-  const targetObjectMetadata = flatObjectMetadataMaps.byId[targetObjectId];
+  const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: targetObjectId,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
   if (!isDefined(targetObjectMetadata)) {
     return false;
@@ -41,7 +45,12 @@ export const isRelationNestedFieldDateKind = ({
   const targetFieldIds = targetObjectMetadata.fieldIds;
 
   const nestedFieldMetadata = targetFieldIds
-    .map((fieldId: string) => flatFieldMetadataMaps.byId[fieldId])
+    .map((fieldId: string) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+    )
     .find(
       (fieldMetadata: FlatFieldMetadata | undefined) =>
         isDefined(fieldMetadata) && fieldMetadata.name === nestedFieldName,

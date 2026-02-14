@@ -1,14 +1,21 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
@@ -21,9 +28,14 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   FrontComponentGraphqlApiExceptionInterceptor,
 )
-@Resolver(() => FrontComponentDTO)
+@MetadataResolver(() => FrontComponentDTO)
 export class FrontComponentResolver {
-  constructor(private readonly frontComponentService: FrontComponentService) {}
+  constructor(
+    @Inject(FrontComponentService)
+    private readonly frontComponentService: FrontComponentService,
+    @Inject(ApplicationTokenService)
+    private readonly applicationTokenService: ApplicationTokenService,
+  ) {}
 
   @Query(() => [FrontComponentDTO])
   @UseGuards(NoPermissionGuard)
@@ -34,12 +46,31 @@ export class FrontComponentResolver {
   }
 
   @Query(() => FrontComponentDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async frontComponent(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: UserEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<FrontComponentDTO | null> {
-    return await this.frontComponentService.findById(id, workspace.id);
+    const dto = await this.frontComponentService.findById(id, workspace.id);
+
+    if (!dto) {
+      return null;
+    }
+
+    const tokenPair =
+      await this.applicationTokenService.generateApplicationTokenPair({
+        applicationId: dto.applicationId,
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        userId: user.id,
+      });
+
+    return {
+      ...dto,
+      applicationTokenPair: tokenPair,
+    };
   }
 
   @Mutation(() => FrontComponentDTO)
@@ -48,7 +79,12 @@ export class FrontComponentResolver {
     @Args('input') input: CreateFrontComponentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO> {
-    return await this.frontComponentService.create(input, workspace.id);
+    const flatFrontComponent = await this.frontComponentService.createOne({
+      input,
+      workspaceId: workspace.id,
+    });
+
+    return fromFlatFrontComponentToFrontComponentDto(flatFrontComponent);
   }
 
   @Mutation(() => FrontComponentDTO)
@@ -57,7 +93,13 @@ export class FrontComponentResolver {
     @Args('input') input: UpdateFrontComponentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO> {
-    return await this.frontComponentService.update(input, workspace.id);
+    const flatFrontComponent = await this.frontComponentService.updateOne({
+      id: input.id,
+      update: input.update,
+      workspaceId: workspace.id,
+    });
+
+    return fromFlatFrontComponentToFrontComponentDto(flatFrontComponent);
   }
 
   @Mutation(() => FrontComponentDTO)
@@ -66,6 +108,11 @@ export class FrontComponentResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO> {
-    return await this.frontComponentService.delete(id, workspace.id);
+    const flatFrontComponent = await this.frontComponentService.destroyOne({
+      id,
+      workspaceId: workspace.id,
+    });
+
+    return fromFlatFrontComponentToFrontComponentDto(flatFrontComponent);
   }
 }

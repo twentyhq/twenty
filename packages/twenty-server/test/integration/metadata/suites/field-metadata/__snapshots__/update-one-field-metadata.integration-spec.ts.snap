@@ -16,9 +16,8 @@ exports[`updateOne failing update should not update a field name if it is not sy
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "newName",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
@@ -62,9 +61,8 @@ exports[`updateOne failing update should throw if the field name is not availabl
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "otherTestName",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",

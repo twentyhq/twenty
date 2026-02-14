@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
@@ -31,8 +32,10 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
     ['id'],
   );
 
-  const existingFlatPageLayoutTabToUpdate =
-    flatPageLayoutTabMaps.byId[pageLayoutTabToUpdateId];
+  const existingFlatPageLayoutTabToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: pageLayoutTabToUpdateId,
+    flatEntityMaps: flatPageLayoutTabMaps,
+  });
 
   if (!isDefined(existingFlatPageLayoutTabToUpdate)) {
     throw new PageLayoutTabException(

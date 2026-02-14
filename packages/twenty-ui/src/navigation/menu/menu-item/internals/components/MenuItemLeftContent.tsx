@@ -8,6 +8,10 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
+import { MenuItemIcon } from './MenuItemIcon';
+import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
+import { MenuItemIconWithGripSwap } from './MenuItemIconWithGripSwap';
 import {
   StyledDraggableItem,
   StyledMenuItemContextualText,
@@ -24,15 +28,6 @@ const StyledMainText = styled.div`
   max-width: 100%;
 `;
 
-const StyledIconContainer = styled.div`
-  align-items: flex-start;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
   margin-left: auto;
 `;
@@ -42,7 +37,7 @@ type MenuItemLeftContentProps = {
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
   withIconContainer?: boolean;
-  showGrip?: boolean;
+  gripMode?: MenuItemDraggableGripMode;
   disabled?: boolean;
   text: ReactNode;
   contextualText?: ReactNode;
@@ -57,36 +52,48 @@ export const MenuItemLeftContent = ({
   text,
   contextualText,
   contextualTextPosition = 'left',
-  showGrip = false,
+  gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
   const theme = useTheme();
 
+  const gripIconColor = withIconContainer
+    ? theme.font.color.tertiary
+    : disabled
+      ? theme.font.color.extraLight
+      : theme.font.color.light;
+
   return (
     <StyledMenuItemLeftContent className={className}>
-      {showGrip && (
-        <StyledDraggableItem>
-          <IconGripVertical
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-            color={
-              withIconContainer
-                ? theme.font.color.tertiary
-                : disabled
-                  ? theme.font.color.extraLight
-                  : theme.font.color.light
-            }
-          />
-        </StyledDraggableItem>
-      )}
-      {LeftIcon &&
+      {gripMode === 'always' &&
         (withIconContainer ? (
-          <StyledIconContainer>
-            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-          </StyledIconContainer>
+          <MenuItemIconBoxContainer>
+            <StyledDraggableItem>
+              <IconGripVertical
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+                color={gripIconColor}
+              />
+            </StyledDraggableItem>
+          </MenuItemIconBoxContainer>
         ) : (
-          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <StyledDraggableItem>
+            <IconGripVertical
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={gripIconColor}
+            />
+          </StyledDraggableItem>
         ))}
+      {gripMode === 'onHover' ? (
+        <MenuItemIconWithGripSwap
+          LeftIcon={LeftIcon}
+          withIconContainer={withIconContainer}
+          gripIconColor={gripIconColor}
+        />
+      ) : (
+        <MenuItemIcon Icon={LeftIcon} withContainer={withIconContainer} />
+      )}
       {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (

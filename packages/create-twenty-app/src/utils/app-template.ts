@@ -33,20 +33,27 @@ export const copyBaseApplicationProject = async ({
   await createDefaultRoleConfig({
     displayName: appDisplayName,
     appDirectory: sourceFolderPath,
+    fileFolder: 'roles',
+    fileName: 'default-role.ts',
   });
 
   await createDefaultFrontComponent({
     appDirectory: sourceFolderPath,
+    fileFolder: 'front-components',
+    fileName: 'hello-world.tsx',
   });
 
   await createDefaultFunction({
     appDirectory: sourceFolderPath,
+    fileFolder: 'logic-functions',
+    fileName: 'hello-world.ts',
   });
 
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
     appDirectory: sourceFolderPath,
+    fileName: 'application-config.ts',
   });
 };
 
@@ -108,9 +115,13 @@ yarn-error.log*
 const createDefaultRoleConfig = async ({
   displayName,
   appDirectory,
+  fileFolder,
+  fileName,
 }: {
   displayName: string;
   appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
 }) => {
   const universalIdentifier = v4();
 
@@ -130,13 +141,18 @@ export default defineRole({
 });
 `;
 
-  await fs.writeFile(join(appDirectory, 'default.role.ts'), content);
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
 const createDefaultFrontComponent = async ({
   appDirectory,
+  fileFolder,
+  fileName,
 }: {
   appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
 }) => {
   const universalIdentifier = v4();
 
@@ -159,19 +175,20 @@ export default defineFrontComponent({
 });
 `;
 
-  await fs.writeFile(
-    join(appDirectory, 'hello-world.front-component.tsx'),
-    content,
-  );
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
 const createDefaultFunction = async ({
   appDirectory,
+  fileFolder,
+  fileName,
 }: {
   appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
 }) => {
   const universalIdentifier = v4();
-  const triggerUniversalIdentifier = v4();
 
   const content = `import { defineLogicFunction } from 'twenty-sdk';
 
@@ -186,35 +203,33 @@ export default defineLogicFunction({
   description: 'A simple logic function',
   timeoutSeconds: 5,
   handler,
-  triggers: [
-    {
-      universalIdentifier: '${triggerUniversalIdentifier}',
-      type: 'route',
-      path: '/hello-world-logic-function',
-      httpMethod: 'GET',
-      isAuthRequired: false,
-    },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/hello-world-logic-function',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
 });
 `;
 
-  await fs.writeFile(
-    join(appDirectory, 'hello-world.logic-function.ts'),
-    content,
-  );
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
 const createApplicationConfig = async ({
   displayName,
   description,
   appDirectory,
+  fileFolder,
+  fileName,
 }: {
   displayName: string;
   description?: string;
   appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
@@ -224,7 +239,8 @@ export default defineApplication({
 });
 `;
 
-  await fs.writeFile(join(appDirectory, 'application.config.ts'), content);
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
 const createPackageJson = async ({
@@ -245,29 +261,18 @@ const createPackageJson = async ({
     },
     packageManager: 'yarn@4.9.2',
     scripts: {
-      'auth:login': 'twenty auth:login',
-      'auth:logout': 'twenty auth:logout',
-      'auth:status': 'twenty auth:status',
-      'auth:switch': 'twenty auth:switch',
-      'auth:list': 'twenty auth:list',
-      'app:dev': 'twenty app:dev',
-      'entity:add': 'twenty entity:add',
-      'app:generate': 'twenty app:generate',
-      'function:logs': 'twenty function:logs',
-      'function:execute': 'twenty function:execute',
-      'app:uninstall': 'twenty app:uninstall',
-      help: 'twenty help',
+      twenty: 'twenty',
       lint: 'eslint',
       'lint:fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.4.0',
+      'twenty-sdk': 'latest',
     },
     devDependencies: {
       typescript: '^5.9.3',
       '@types/node': '^24.7.2',
-      '@types/react': '^19.0.2',
-      react: '^19.0.2',
+      '@types/react': '^18.2.0',
+      react: '^18.2.0',
       eslint: '^9.32.0',
       'typescript-eslint': '^8.50.0',
     },

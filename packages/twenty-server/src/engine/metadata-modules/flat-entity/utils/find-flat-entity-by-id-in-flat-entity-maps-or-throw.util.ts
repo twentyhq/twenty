@@ -20,7 +20,17 @@ export const findFlatEntityByIdInFlatEntityMapsOrThrow = <
   flatEntityMaps,
   flatEntityId,
 }: FindFlatEntityByIdInFlatEntityMapsOrThrowArgs<T>): T => {
-  const flatEntity = flatEntityMaps.byId[flatEntityId];
+  const universalIdentifier =
+    flatEntityMaps.universalIdentifierById[flatEntityId];
+
+  if (!isDefined(universalIdentifier)) {
+    throw new FlatEntityMapsException(
+      t`Could not find flat entity in maps`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
+  const flatEntity = flatEntityMaps.byUniversalIdentifier[universalIdentifier];
 
   if (!isDefined(flatEntity)) {
     throw new FlatEntityMapsException(

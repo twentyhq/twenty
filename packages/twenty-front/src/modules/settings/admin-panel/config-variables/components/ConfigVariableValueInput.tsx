@@ -5,7 +5,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { type ConfigVariableValue } from 'twenty-shared/types';
-import { type ConfigVariable } from '~/generated/graphql';
+import { type ConfigVariable } from '~/generated-metadata/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 
 type ConfigVariableValueInputProps = {

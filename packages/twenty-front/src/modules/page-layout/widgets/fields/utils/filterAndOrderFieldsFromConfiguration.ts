@@ -45,6 +45,12 @@ export const filterAndOrderFieldsFromConfiguration = ({
             return false;
           }
 
+          // Check user-controlled visibility flag
+          // TODO: This will be replaced by proper conditional display later
+          if (fieldConfig.isVisible === false) {
+            return false;
+          }
+
           return evaluateWidgetVisibility({
             conditionalDisplay: fieldConfig.conditionalDisplay,
             context,

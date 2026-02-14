@@ -11,7 +11,9 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import jsoncParser from 'jsonc-eslint-parser';
 
-const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+const twentyRules = await nxPlugin.loadWorkspaceRules(
+  'packages/twenty-eslint-rules',
+);
 
 export default [
   // Base JavaScript configuration
@@ -64,6 +66,10 @@ export default [
             {
               sourceTag: 'scope:sdk',
               onlyDependOnLibsWithTags: ['scope:sdk', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:create-app',
+              onlyDependOnLibsWithTags: ['scope:create-app', 'scope:shared'],
             },
             {
               sourceTag: 'scope:shared',
@@ -197,7 +203,7 @@ export default [
     plugins: {
       ...mdxPlugin.flat.plugins,
       '@nx': nxPlugin,
-      'twenty': { rules: twentyRules },
+      twenty: { rules: twentyRules },
     },
   },
   mdxPlugin.flatCodeBlocks,

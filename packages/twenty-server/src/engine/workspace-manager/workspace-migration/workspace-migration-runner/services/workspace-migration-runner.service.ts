@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -9,6 +10,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -19,6 +21,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -148,8 +151,12 @@ export class WorkspaceMigrationRunnerService {
 
   run = async ({
     actions,
+    applicationUniversalIdentifier,
     workspaceId,
-  }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
+  }: WorkspaceMigration): Promise<{
+    allFlatEntityMaps: AllFlatEntityMaps;
+    metadataEvents: MetadataEvent[];
+  }> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
@@ -161,6 +168,7 @@ export class WorkspaceMigrationRunnerService {
       ...new Set([
         ...actionMetadataNames,
         ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
+        ...actionMetadataNames.flatMap(getMetadataSerializedRelationNames),
       ]),
     ];
     const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
@@ -168,25 +176,50 @@ export class WorkspaceMigrationRunnerService {
     );
 
     let allFlatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: allFlatEntityMapsKeys,
-        },
-      );
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
+        typeof allFlatEntityMapsKeys
+      >({
+        workspaceId,
+        flatMapsKeys: allFlatEntityMapsKeys,
+      });
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+    const flatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : undefined;
+
+    if (!isDefined(applicationId) || !isDefined(flatApplication)) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
+        code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+      });
+    }
+
     this.logger.time('Runner', 'Transaction execution');
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+
+      const allMetadataEvents: MetadataEvent[] = [];
+
       for (const action of actions) {
-        const result =
+        const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
               context: {
+                flatApplication,
                 action,
                 allFlatEntityMaps,
                 queryRunner,
@@ -197,8 +230,10 @@ export class WorkspaceMigrationRunnerService {
 
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
-          ...result,
-        };
+          ...partialOptimisticCache,
+        } as typeof allFlatEntityMaps;
+
+        allMetadataEvents.push(...metadataEvents);
       }
 
       await queryRunner.commitTransaction();
@@ -212,7 +247,7 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Total execution');
 
-      return allFlatEntityMaps;
+      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction().catch((error) =>
@@ -228,6 +263,7 @@ export class WorkspaceMigrationRunnerService {
           {
             action: invertedAction,
             context: {
+              flatApplication,
               action: invertedAction,
               allFlatEntityMaps,
               workspaceId,

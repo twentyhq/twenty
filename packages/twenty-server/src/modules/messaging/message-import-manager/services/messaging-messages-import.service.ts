@@ -121,6 +121,7 @@ export class MessagingMessagesImportService {
         const allMessages = await this.messagingGetMessagesService.getMessages(
           messageIdsToFetch,
           connectedAccountWithFreshTokens,
+          messageChannel,
         );
 
         const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -188,6 +189,7 @@ export class MessagingMessagesImportService {
           },
           {
             throttleFailureCount: 0,
+            throttleRetryAfter: null,
             syncStageStartedAt: null,
           },
         );

@@ -14,6 +14,7 @@ import {
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -46,7 +47,10 @@ export const convertChartFilterToGqlOperationFilter = ({
   const fieldIds = flatObjectMetadata.fieldIds ?? [];
   const fields: PartialFieldMetadataItem[] = fieldIds
     .map((fieldId: string) => {
-      const field = flatFieldMetadataMaps.byId[fieldId];
+      const field = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
 
       if (!isDefined(field)) {
         return null;
@@ -70,7 +74,10 @@ export const convertChartFilterToGqlOperationFilter = ({
 
   const convertedRecordFilters: RecordFilter[] = recordFilters.map(
     (recordFilter) => {
-      const field = flatFieldMetadataMaps.byId[recordFilter.fieldMetadataId];
+      const field = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: recordFilter.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
 
       return {
         id: recordFilter.id,

@@ -1,5 +1,5 @@
 import { type WidgetSizeConfig } from '@/page-layout/types/WidgetSizeConfig';
-import { WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 export const WIDGET_SIZES: Partial<Record<WidgetType, WidgetSizeConfig>> = {
   [WidgetType.IFRAME]: {
@@ -9,5 +9,9 @@ export const WIDGET_SIZES: Partial<Record<WidgetType, WidgetSizeConfig>> = {
   [WidgetType.STANDALONE_RICH_TEXT]: {
     default: { w: 4, h: 4 },
     minimum: { w: 2, h: 2 },
+  },
+  [WidgetType.FRONT_COMPONENT]: {
+    default: { w: 8, h: 8 },
+    minimum: { w: 4, h: 4 },
   },
 };

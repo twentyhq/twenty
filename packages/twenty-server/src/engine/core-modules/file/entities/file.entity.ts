@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,6 +18,11 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 
 @Entity('file')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
+@Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [
+  'workspaceId',
+  'applicationId',
+  'path',
+])
 export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,4 +56,11 @@ export class FileEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: true, type: 'jsonb' })
   settings: FileSettings | null;
+
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    default: 'application/octet-stream',
+  })
+  mimeType: string;
 }
