@@ -11,6 +11,7 @@ import {
 } from '@remote-dom/core/elements';
 
 import React from 'react';
+import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import * as TwentySharedTypes from 'twenty-shared/types';
@@ -33,6 +34,7 @@ import { setWorkerEnv } from './utils/setWorkerEnv';
 
 exposeGlobals({
   React,
+  ReactDOM: { ...ReactDOM, createRoot },
   RemoteComponents,
   jsx,
   jsxs,

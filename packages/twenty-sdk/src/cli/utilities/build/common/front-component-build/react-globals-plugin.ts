@@ -17,6 +17,45 @@ export var jsxs = /* @__PURE__ */ (() => globalThis.jsxs)();
 export var Fragment = /* @__PURE__ */ (() => globalThis.React.Fragment)();
 `.trim();
 
+// Comprehensive list of React exports so that minified third-party code
+// (MUI, Chakra, etc.) always resolves every React API from globalThis.React
+const REACT_STATIC_EXPORTS = `
+export var Children = /* @__PURE__ */ (() => globalThis.React.Children)();
+export var Component = /* @__PURE__ */ (() => globalThis.React.Component)();
+export var Fragment = /* @__PURE__ */ (() => globalThis.React.Fragment)();
+export var Profiler = /* @__PURE__ */ (() => globalThis.React.Profiler)();
+export var PureComponent = /* @__PURE__ */ (() => globalThis.React.PureComponent)();
+export var StrictMode = /* @__PURE__ */ (() => globalThis.React.StrictMode)();
+export var Suspense = /* @__PURE__ */ (() => globalThis.React.Suspense)();
+export var cloneElement = /* @__PURE__ */ (() => globalThis.React.cloneElement)();
+export var createContext = /* @__PURE__ */ (() => globalThis.React.createContext)();
+export var createElement = /* @__PURE__ */ (() => globalThis.React.createElement)();
+export var createFactory = /* @__PURE__ */ (() => globalThis.React.createFactory)();
+export var createRef = /* @__PURE__ */ (() => globalThis.React.createRef)();
+export var forwardRef = /* @__PURE__ */ (() => globalThis.React.forwardRef)();
+export var isValidElement = /* @__PURE__ */ (() => globalThis.React.isValidElement)();
+export var lazy = /* @__PURE__ */ (() => globalThis.React.lazy)();
+export var memo = /* @__PURE__ */ (() => globalThis.React.memo)();
+export var startTransition = /* @__PURE__ */ (() => globalThis.React.startTransition)();
+export var useCallback = /* @__PURE__ */ (() => globalThis.React.useCallback)();
+export var useContext = /* @__PURE__ */ (() => globalThis.React.useContext)();
+export var useDebugValue = /* @__PURE__ */ (() => globalThis.React.useDebugValue)();
+export var useDeferredValue = /* @__PURE__ */ (() => globalThis.React.useDeferredValue)();
+export var useEffect = /* @__PURE__ */ (() => globalThis.React.useEffect)();
+export var useId = /* @__PURE__ */ (() => globalThis.React.useId)();
+export var useImperativeHandle = /* @__PURE__ */ (() => globalThis.React.useImperativeHandle)();
+export var useInsertionEffect = /* @__PURE__ */ (() => globalThis.React.useInsertionEffect)();
+export var useLayoutEffect = /* @__PURE__  */ (() => globalThis.React.useLayoutEffect)();
+export var useMemo = /* @__PURE__ */ (() => globalThis.React.useMemo)();
+export var useReducer = /* @__PURE__ */ (() => globalThis.React.useReducer)();
+export var useRef = /* @__PURE__ */ (() => globalThis.React.useRef)();
+export var useState = /* @__PURE__ */ (() => globalThis.React.useState)();
+export var useSyncExternalStore = /* @__PURE__ */ (() => globalThis.React.useSyncExternalStore)();
+export var useTransition = /* @__PURE__ */ (() => globalThis.React.useTransition)();
+export var version = /* @__PURE__ */ (() => globalThis.React.version)();
+export default /* @__PURE__ */ (() => globalThis.React)();
+`.trim();
+
 // Scans source for `namespaceName.property` accesses (e.g. React.createElement)
 const collectNamespacePropertyUsages = (
   sourceContent: string,
@@ -123,6 +162,7 @@ export const reactGlobalsPlugin = createGlobalsPlugin({
   collectImports: collectReactImports,
   generateExports: generateReactExports,
   staticContents: {
+    react: REACT_STATIC_EXPORTS,
     'react/jsx-runtime': JSX_RUNTIME_EXPORTS,
   },
 });

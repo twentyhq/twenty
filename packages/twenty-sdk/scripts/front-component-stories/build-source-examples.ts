@@ -20,7 +20,8 @@ const STORY_COMPONENTS = [
   'styled-components-example.front-component',
   'shadcn-example.front-component',
   'mui-example.front-component',
-  'twenty-ui-example.front-component',
+  // TODO: re-enable once twenty-ui packaging exports ThemeProvider correctly
+  // 'twenty-ui-example.front-component',
 ];
 
 export const buildSourceExamples = async (): Promise<void> => {
