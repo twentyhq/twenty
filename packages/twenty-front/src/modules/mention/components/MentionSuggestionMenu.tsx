@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useMemo,
@@ -71,6 +72,10 @@ export const MentionSuggestionMenu = forwardRef<
       reference: positionReference,
     },
   });
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [items]);
 
   const selectItem = useCallback(
     (index: number) => {

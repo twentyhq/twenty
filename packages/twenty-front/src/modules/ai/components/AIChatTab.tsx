@@ -126,7 +126,7 @@ export const AIChatTab = () => {
   const { uploadFiles } = useAIChatFileUpload();
   const { navigateCommandMenu } = useCommandMenu();
 
-  const editor = useAIChatEditor({
+  const { editor, handleSendAndClear } = useAIChatEditor({
     onSendMessage: handleSendMessage,
   });
 
@@ -171,7 +171,7 @@ export const AIChatTab = () => {
             </StyledScrollWrapper>
           )}
           {messages.length === 0 && !error && !isLoading && (
-            <AIChatEmptyState />
+            <AIChatEmptyState editor={editor} />
           )}
           {messages.length === 0 && error && !isLoading && (
             <AIChatStandaloneError error={error} />
@@ -200,7 +200,7 @@ export const AIChatTab = () => {
                   ariaLabel={t`View Previous AI Chats`}
                 />
                 <AgentChatFileUploadButton />
-                <SendMessageButton />
+                <SendMessageButton onSend={handleSendAndClear} />
               </StyledButtonsContainer>
             </StyledInputBox>
           </StyledInputArea>

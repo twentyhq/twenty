@@ -110,5 +110,5 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
 
   editorRef.current = editor;
 
-  return editor;
+  return { editor, handleSendAndClear };
 };

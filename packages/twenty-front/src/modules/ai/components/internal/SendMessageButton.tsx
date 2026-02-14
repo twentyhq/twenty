@@ -4,12 +4,13 @@ import { useRecoilValue } from 'recoil';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
 
-// Enter-to-send is handled by the Tiptap editor's handleKeyDown in useAIChatEditor.
-// The global hotkey was removed to prevent double-send (Tiptap consumes the event
-// but does not stop propagation, so a document-level listener would fire again).
-export const SendMessageButton = () => {
+type SendMessageButtonProps = {
+  onSend: () => void;
+};
+
+export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
   const agentChatInput = useRecoilValue(agentChatInputState);
-  const { handleSendMessage, handleStop, isLoading, isStreaming } =
+  const { handleStop, isLoading, isStreaming } =
     useAgentChatContextOrThrow();
 
   if (isStreaming) {
@@ -26,7 +27,7 @@ export const SendMessageButton = () => {
     <RoundedIconButton
       Icon={IconArrowUp}
       size="medium"
-      onClick={() => handleSendMessage()}
+      onClick={onSend}
       disabled={!agentChatInput || isLoading}
     />
   );
