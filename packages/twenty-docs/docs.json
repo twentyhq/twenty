@@ -363,6 +363,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "developers/extend/capabilities/apis",
+                      "developers/extend/capabilities/mcp",
                       "developers/extend/capabilities/webhooks",
                       "developers/extend/capabilities/apps"
                     ]
@@ -808,6 +809,7 @@
                     "group": "Capacités",
                     "pages": [
                       "l/fr/developers/extend/capabilities/apis",
+                      "l/fr/developers/extend/capabilities/mcp",
                       "l/fr/developers/extend/capabilities/webhooks",
                       "l/fr/developers/extend/capabilities/apps"
                     ]
@@ -1253,6 +1255,7 @@
                     "group": "القدرات",
                     "pages": [
                       "l/ar/developers/extend/capabilities/apis",
+                      "l/ar/developers/extend/capabilities/mcp",
                       "l/ar/developers/extend/capabilities/webhooks",
                       "l/ar/developers/extend/capabilities/apps"
                     ]
@@ -1698,6 +1701,7 @@
                     "group": "Možnosti",
                     "pages": [
                       "l/cs/developers/extend/capabilities/apis",
+                      "l/cs/developers/extend/capabilities/mcp",
                       "l/cs/developers/extend/capabilities/webhooks",
                       "l/cs/developers/extend/capabilities/apps"
                     ]
@@ -2143,6 +2147,7 @@
                     "group": "Funktionen",
                     "pages": [
                       "l/de/developers/extend/capabilities/apis",
+                      "l/de/developers/extend/capabilities/mcp",
                       "l/de/developers/extend/capabilities/webhooks",
                       "l/de/developers/extend/capabilities/apps"
                     ]
@@ -2588,6 +2593,7 @@
                     "group": "Capacidades",
                     "pages": [
                       "l/es/developers/extend/capabilities/apis",
+                      "l/es/developers/extend/capabilities/mcp",
                       "l/es/developers/extend/capabilities/webhooks",
                       "l/es/developers/extend/capabilities/apps"
                     ]
@@ -3033,6 +3039,7 @@
                     "group": "Funzionalità",
                     "pages": [
                       "l/it/developers/extend/capabilities/apis",
+                      "l/it/developers/extend/capabilities/mcp",
                       "l/it/developers/extend/capabilities/webhooks",
                       "l/it/developers/extend/capabilities/apps"
                     ]
@@ -3478,6 +3485,7 @@
                     "group": "機能",
                     "pages": [
                       "l/ja/developers/extend/capabilities/apis",
+                      "l/ja/developers/extend/capabilities/mcp",
                       "l/ja/developers/extend/capabilities/webhooks",
                       "l/ja/developers/extend/capabilities/apps"
                     ]
@@ -3923,6 +3931,7 @@
                     "group": "기능",
                     "pages": [
                       "l/ko/developers/extend/capabilities/apis",
+                      "l/ko/developers/extend/capabilities/mcp",
                       "l/ko/developers/extend/capabilities/webhooks",
                       "l/ko/developers/extend/capabilities/apps"
                     ]
@@ -4368,6 +4377,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/pt/developers/extend/capabilities/apis",
+                      "l/pt/developers/extend/capabilities/mcp",
                       "l/pt/developers/extend/capabilities/webhooks",
                       "l/pt/developers/extend/capabilities/apps"
                     ]
@@ -4813,6 +4823,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ro/developers/extend/capabilities/apis",
+                      "l/ro/developers/extend/capabilities/mcp",
                       "l/ro/developers/extend/capabilities/webhooks",
                       "l/ro/developers/extend/capabilities/apps"
                     ]
@@ -5258,6 +5269,7 @@
                     "group": "Возможности",
                     "pages": [
                       "l/ru/developers/extend/capabilities/apis",
+                      "l/ru/developers/extend/capabilities/mcp",
                       "l/ru/developers/extend/capabilities/webhooks",
                       "l/ru/developers/extend/capabilities/apps"
                     ]
@@ -5703,6 +5715,7 @@
                     "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/developers/extend/capabilities/apis",
+                      "l/tr/developers/extend/capabilities/mcp",
                       "l/tr/developers/extend/capabilities/webhooks",
                       "l/tr/developers/extend/capabilities/apps"
                     ]
@@ -6148,6 +6161,7 @@
                     "group": "功能",
                     "pages": [
                       "l/zh/developers/extend/capabilities/apis",
+                      "l/zh/developers/extend/capabilities/mcp",
                       "l/zh/developers/extend/capabilities/webhooks",
                       "l/zh/developers/extend/capabilities/apps"
                     ]

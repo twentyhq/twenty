@@ -1,0 +1,136 @@
+---
+title: MCP (Model Context Protocol)
+description: Connect AI clients like Claude and Cursor to your Twenty workspace using MCP.
+---
+
+MCP lets AI clients connect directly to your Twenty workspace as a tool server. You can use it to let agents read and update CRM data through your existing Twenty permissions model.
+
+## What Twenty MCP Provides
+
+Twenty exposes two MCP endpoints:
+
+- **Core schema** (`/mcp`): Workspace data access tools
+- **Metadata schema** (`/mcp/metadata`): Data model and metadata tools
+
+Both endpoints use your Twenty API key for authentication.
+
+## Prerequisites
+
+- A Twenty workspace (cloud or self-hosted)
+- An API key from **Settings → APIs & Webhooks**
+- AI enabled for your workspace
+
+<Note>
+API key role permissions still apply. MCP only exposes tools your key is allowed to use.
+</Note>
+
+## Endpoints
+
+| Environment | Core MCP | Metadata MCP |
+|-------------|----------|--------------|
+| **Cloud** | `https://api.twenty.com/mcp` | `https://api.twenty.com/mcp/metadata` |
+| **Self-Hosted** | `https://{your-domain}/mcp` | `https://{your-domain}/mcp/metadata` |
+
+## Authentication
+
+Send your API key as a bearer token:
+
+```text
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Client Configuration
+
+Twenty MCP uses `streamable-http` transport. Use one server entry per schema.
+
+### Claude Desktop
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://api.twenty.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    },
+    "twenty-metadata": {
+      "type": "streamable-http",
+      "url": "https://api.twenty.com/mcp/metadata",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://api.twenty.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+### VS Code MCP
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://api.twenty.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Tip>
+You can copy ready-made MCP JSON from **Settings → AI → MCP Server** in Twenty.
+</Tip>
+
+## Tool Coverage
+
+Current MCP behavior includes:
+
+- `initialize`
+- `ping`
+- `tools/list`
+- `tools/call`
+
+Prompts and resources are currently listed as empty arrays.
+
+## Security Best Practices
+
+- Create dedicated API keys for MCP clients
+- Assign the minimum role permissions needed
+- Rotate keys regularly
+- Use HTTPS in production (especially for self-hosting)
+
+## Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---------|--------------|-----|
+| `401` or `403` | Missing/invalid API key, role restrictions, or AI disabled | Verify `Authorization` header, role assignment, and AI settings |
+| No tools listed | Key does not have permissions for available tools | Assign a role with required tool permissions |
+| Validation error | Invalid JSON-RPC payload | Ensure client sends valid MCP JSON-RPC requests |
+| Connection issues on self-host | URL/TLS/reverse proxy configuration | Confirm public HTTPS URL and route forwarding to `/mcp` |
+
+## Related
+
+- [APIs](/developers/extend/capabilities/apis)
+- [Webhooks](/developers/extend/capabilities/webhooks)
+- [Apps](/developers/extend/capabilities/apps)

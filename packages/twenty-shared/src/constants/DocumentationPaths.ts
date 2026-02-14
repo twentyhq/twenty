@@ -47,6 +47,7 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_CONTRIBUTE_CONTRIBUTE: '/developers/contribute/contribute',
   DEVELOPERS_EXTEND_CAPABILITIES_APIS: '/developers/extend/capabilities/apis',
   DEVELOPERS_EXTEND_CAPABILITIES_APPS: '/developers/extend/capabilities/apps',
+  DEVELOPERS_EXTEND_CAPABILITIES_MCP: '/developers/extend/capabilities/mcp',
   DEVELOPERS_EXTEND_CAPABILITIES_WEBHOOKS:
     '/developers/extend/capabilities/webhooks',
   DEVELOPERS_EXTEND_EXTEND: '/developers/extend/extend',

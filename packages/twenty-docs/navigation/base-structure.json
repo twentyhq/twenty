@@ -370,6 +370,7 @@
               "label": "Capabilities",
               "pages": [
                 "developers/extend/capabilities/apis",
+                "developers/extend/capabilities/mcp",
                 "developers/extend/capabilities/webhooks",
                 "developers/extend/capabilities/apps"
               ]
