@@ -816,8 +816,8 @@ msgid "Add BCC"
 msgstr ""
 
 #. js-lingui-id: We0vOO
-#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 msgid "Add Block"
 msgstr "Voeg Blokkie By"
 
@@ -1836,7 +1836,7 @@ msgid "Ask AI"
 msgstr "Vra AI"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/components/AIChatTab.tsx
+#: src/modules/ai/hooks/useAIChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr ""
 
@@ -2479,8 +2479,8 @@ msgid "CC"
 msgstr ""
 
 #. js-lingui-id: tHntRt
-#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 msgid "Change Color"
 msgstr "Verander Kleur"
 
@@ -3080,6 +3080,11 @@ msgstr "Konteksrekords"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context size"
 msgstr "Konteksgrootte"
+
+#. js-lingui-id: LXIm4m
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "Context window"
+msgstr ""
 
 #. js-lingui-id: xGVfLh
 #: src/pages/onboarding/SyncEmails.tsx
@@ -4021,7 +4026,6 @@ msgstr "verwyder"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
@@ -4040,6 +4044,7 @@ msgstr "verwyder"
 #: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -4233,7 +4238,8 @@ msgid "Deleted"
 msgstr "Verwyder"
 
 #. js-lingui-id: oAhMKF
-#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+#: src/modules/mention/components/MentionRecordChip.tsx
+#: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
 msgid "Deleted record"
 msgstr ""
 
@@ -11119,9 +11125,9 @@ msgstr ""
 msgid "Searched the web"
 msgstr ""
 
-#. js-lingui-id: KLJPmq
+#. js-lingui-id: J7YRXR
 #: src/modules/ai/utils/getToolDisplayMessage.ts
-msgid "Searched the web for '{query}'"
+msgid "Searched the web for {query}"
 msgstr ""
 
 #. js-lingui-id: AyoeWR
@@ -11129,9 +11135,9 @@ msgstr ""
 msgid "Searching the web"
 msgstr ""
 
-#. js-lingui-id: dW40bt
+#. js-lingui-id: BOCV5/
 #: src/modules/ai/utils/getToolDisplayMessage.ts
-msgid "Searching the web for '{query}'"
+msgid "Searching the web for {query}"
 msgstr ""
 
 #. js-lingui-id: 8sgZS9
@@ -13255,7 +13261,8 @@ msgid "Unknown file"
 msgstr "Onbekende lêer"
 
 #. js-lingui-id: num3KD
-#: src/modules/activities/blocks/components/MentionInlineContent.tsx
+#: src/modules/mention/components/MentionRecordChip.tsx
+#: src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
 msgid "Unknown object"
 msgstr ""
 
@@ -13291,6 +13298,7 @@ msgstr ""
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
+#: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/command-menu/components/CommandMenuContextChip.tsx
 #: src/modules/ai/components/RecordLink.tsx
 #: src/modules/ai/components/AIChatThreadGroup.tsx
@@ -13423,7 +13431,7 @@ msgstr "Laai lêer op"
 
 #. js-lingui-id: IQ3gAw
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
-#: src/modules/activities/blocks/components/FileBlock.tsx
+#: src/modules/blocknote-editor/blocks/FileBlock.tsx
 msgid "Upload File"
 msgstr "Laai lêer op"
 
