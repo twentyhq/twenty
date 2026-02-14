@@ -4,6 +4,7 @@ import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
+import { HostnameGuardService } from 'src/engine/core-modules/hostname-guard/hostname-guard.service';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
@@ -20,6 +21,8 @@ export class ImapClientProvider {
 
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
   private static readonly GREETING_TIMEOUT_MS = 16000;
+
+  constructor(private readonly hostnameGuardService: HostnameGuardService) {}
 
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
@@ -66,8 +69,12 @@ export class ImapClientProvider {
       );
     }
 
+    const validatedImapHost = await this.hostnameGuardService.getValidatedHost(
+      connectionParameters.IMAP?.host || '',
+    );
+
     const client = new ImapFlow({
-      host: connectionParameters.IMAP?.host || '',
+      host: validatedImapHost,
       port: connectionParameters.IMAP?.port || 993,
       secure: connectionParameters.IMAP?.secure,
       auth: {
