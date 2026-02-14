@@ -64,11 +64,13 @@ export class ImapSmtpCaldavValidatorService {
   private async assertHostNotPrivate(host: string): Promise<void> {
     const hostname = this.extractHostname(host);
 
-    const resolvedIp = isIP(hostname)
-      ? hostname
-      : await this.resolveHostname(hostname);
+    const resolvedIps = isIP(hostname)
+      ? [hostname]
+      : await this.resolveAllAddresses(hostname);
 
-    if (isPrivateIp(resolvedIp)) {
+    const privateIp = resolvedIps.find((ip) => isPrivateIp(ip));
+
+    if (privateIp) {
       throw new UserInputError(
         'Connection to private or internal network addresses is not allowed.',
         {
@@ -92,11 +94,11 @@ export class ImapSmtpCaldavValidatorService {
     }
   }
 
-  private async resolveHostname(hostname: string): Promise<string> {
+  private async resolveAllAddresses(hostname: string): Promise<string[]> {
     try {
-      const { address } = await dns.lookup(hostname);
+      const results = await dns.lookup(hostname, { all: true });
 
-      return address;
+      return results.map(({ address }) => address);
     } catch {
       throw new UserInputError(`Could not resolve hostname: ${hostname}`, {
         userFriendlyMessage: msg`We couldn't find the server you specified. Please check the hostname and try again.`,

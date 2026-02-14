@@ -8,7 +8,7 @@ jest.mock('dns/promises', () => ({
   lookup: jest.fn(),
 }));
 
-const mockedDnsLookup = dns.lookup as jest.MockedFunction<typeof dns.lookup>;
+const mockedDnsLookup = dns.lookup as jest.Mock;
 
 const buildValidParams = (
   overrides: Partial<ConnectionParameters> = {},
@@ -47,16 +47,17 @@ describe('ImapSmtpCaldavValidatorService', () => {
     });
 
     it('should resolve hostname via DNS and accept public IP', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '93.184.216.34',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+      ]);
 
       const params = buildValidParams();
       const result = await service.validateProtocolConnectionParams(params);
 
       expect(result).toEqual(params);
-      expect(mockedDnsLookup).toHaveBeenCalledWith('mail.example.com');
+      expect(mockedDnsLookup).toHaveBeenCalledWith('mail.example.com', {
+        all: true,
+      });
     });
 
     it('should skip DNS when host is already an IP', async () => {
@@ -69,23 +70,23 @@ describe('ImapSmtpCaldavValidatorService', () => {
     });
 
     it('should strip protocol prefix before resolving', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '93.184.216.34',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+      ]);
 
       const params = buildValidParams({ host: 'https://mail.example.com' });
 
       await service.validateProtocolConnectionParams(params);
 
-      expect(mockedDnsLookup).toHaveBeenCalledWith('mail.example.com');
+      expect(mockedDnsLookup).toHaveBeenCalledWith('mail.example.com', {
+        all: true,
+      });
     });
 
     it('should extract hostname from CalDAV URL with path', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '93.184.216.34',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+      ]);
 
       const params = buildValidParams({
         host: 'caldav.example.com/remote.php/dav/principals/',
@@ -93,14 +94,15 @@ describe('ImapSmtpCaldavValidatorService', () => {
 
       await service.validateProtocolConnectionParams(params);
 
-      expect(mockedDnsLookup).toHaveBeenCalledWith('caldav.example.com');
+      expect(mockedDnsLookup).toHaveBeenCalledWith('caldav.example.com', {
+        all: true,
+      });
     });
 
     it('should extract hostname from host with port but no protocol', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '93.184.216.34',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+      ]);
 
       const params = buildValidParams({
         host: 'caldav.example.com:8443',
@@ -108,14 +110,15 @@ describe('ImapSmtpCaldavValidatorService', () => {
 
       await service.validateProtocolConnectionParams(params);
 
-      expect(mockedDnsLookup).toHaveBeenCalledWith('caldav.example.com');
+      expect(mockedDnsLookup).toHaveBeenCalledWith('caldav.example.com', {
+        all: true,
+      });
     });
 
     it('should extract hostname from full CalDAV URL with port and path', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '93.184.216.34',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+      ]);
 
       const params = buildValidParams({
         host: 'https://caldav.example.com:8443/remote.php/dav/',
@@ -123,14 +126,15 @@ describe('ImapSmtpCaldavValidatorService', () => {
 
       await service.validateProtocolConnectionParams(params);
 
-      expect(mockedDnsLookup).toHaveBeenCalledWith('caldav.example.com');
+      expect(mockedDnsLookup).toHaveBeenCalledWith('caldav.example.com', {
+        all: true,
+      });
     });
 
     it('should block private IP hidden in CalDAV URL with path', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '192.168.1.100',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '192.168.1.100', family: 4 },
+      ]);
 
       const params = buildValidParams({
         host: 'internal.local/remote.php/dav/',
@@ -141,11 +145,23 @@ describe('ImapSmtpCaldavValidatorService', () => {
       ).rejects.toThrow(UserInputError);
     });
 
+    it('should reject when any resolved address is private', async () => {
+      mockedDnsLookup.mockResolvedValue([
+        { address: '93.184.216.34', family: 4 },
+        { address: '10.0.0.1', family: 4 },
+      ]);
+
+      const params = buildValidParams({ host: 'dual-record.attacker.com' });
+
+      await expect(
+        service.validateProtocolConnectionParams(params),
+      ).rejects.toThrow(UserInputError);
+    });
+
     it('should reject hostname that resolves to a private IP', async () => {
-      mockedDnsLookup.mockResolvedValue({
-        address: '169.254.169.254',
-        family: 4,
-      });
+      mockedDnsLookup.mockResolvedValue([
+        { address: '169.254.169.254', family: 4 },
+      ]);
 
       const params = buildValidParams({
         host: 'metadata.google.internal',
