@@ -15,37 +15,27 @@ import { z } from 'zod';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import {
-  SendEmailToolException,
-  SendEmailToolExceptionCode,
-} from 'src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception';
-import { SendEmailInputZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
-import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
-import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/send-email-tool/utils/parse-comma-separated-emails.util';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import {
-  type Tool,
-  type ToolExecutionContext,
-} from 'src/engine/core-modules/tool/types/tool.type';
+  EmailToolException,
+  EmailToolExceptionCode,
+} from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
+import { type EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
+import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
+import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
-import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
-export class SendEmailTool implements Tool {
-  private readonly logger = new Logger(SendEmailTool.name);
-
-  description =
-    'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
-  inputSchema = SendEmailInputZodSchema;
+export class EmailComposerService {
+  private readonly logger = new Logger(EmailComposerService.name);
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly sendMessageService: MessagingSendMessageService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
@@ -57,9 +47,9 @@ export class SendEmailTool implements Tool {
     workspaceId: string,
   ) {
     if (!isValidUuid(connectedAccountId)) {
-      throw new SendEmailToolException(
+      throw new EmailToolException(
         `Connected Account ID is not a valid UUID`,
-        SendEmailToolExceptionCode.INVALID_CONNECTED_ACCOUNT_ID,
+        EmailToolExceptionCode.INVALID_CONNECTED_ACCOUNT_ID,
       );
     }
 
@@ -83,9 +73,9 @@ export class SendEmailTool implements Tool {
         });
 
         if (!isDefined(connectedAccount)) {
-          throw new SendEmailToolException(
+          throw new EmailToolException(
             `Connected Account '${connectedAccountId}' not found`,
-            SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
           );
         }
 
@@ -110,9 +100,9 @@ export class SendEmailTool implements Tool {
         const allAccounts = await connectedAccountRepository.find();
 
         if (!allAccounts || allAccounts.length === 0) {
-          throw new SendEmailToolException(
+          throw new EmailToolException(
             'No connected accounts found for this workspace',
-            SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
           );
         }
 
@@ -122,7 +112,7 @@ export class SendEmailTool implements Tool {
     );
   }
 
-  private normalizeRecipients(parameters: SendEmailInput): {
+  private normalizeRecipients(parameters: EmailToolInput): {
     to: string[];
     cc: string[];
     bcc: string[];
@@ -132,18 +122,18 @@ export class SendEmailTool implements Tool {
       !parameters.recipients.to ||
       parameters.recipients.to.trim().length === 0
     ) {
-      throw new SendEmailToolException(
+      throw new EmailToolException(
         'No recipients specified',
-        SendEmailToolExceptionCode.INVALID_EMAIL,
+        EmailToolExceptionCode.INVALID_EMAIL,
       );
     }
 
     const to = parseCommaSeparatedEmails(parameters.recipients.to);
 
     if (to.length === 0) {
-      throw new SendEmailToolException(
+      throw new EmailToolException(
         'No valid recipients specified',
-        SendEmailToolExceptionCode.INVALID_EMAIL,
+        EmailToolExceptionCode.INVALID_EMAIL,
       );
     }
 
@@ -202,9 +192,9 @@ export class SendEmailTool implements Tool {
     }
 
     if (filesNotFound.length > 0) {
-      throw new SendEmailToolException(
+      throw new EmailToolException(
         `Files not found: ${filesNotFound.join(', ')}`,
-        SendEmailToolExceptionCode.FILE_NOT_FOUND,
+        EmailToolExceptionCode.FILE_NOT_FOUND,
       );
     }
 
@@ -235,10 +225,10 @@ export class SendEmailTool implements Tool {
     return attachments;
   }
 
-  async execute(
-    parameters: SendEmailInput,
+  async composeEmail(
+    parameters: EmailToolInput,
     context: ToolExecutionContext,
-  ): Promise<ToolOutput> {
+  ): Promise<EmailComposerResult> {
     const { workspaceId } = context;
     const { subject, body, files } = parameters;
     let { connectedAccountId } = parameters;
@@ -248,11 +238,16 @@ export class SendEmailTool implements Tool {
     try {
       recipients = this.normalizeRecipients(parameters);
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Invalid recipients';
+
       return {
         success: false,
-        message: 'No recipients specified',
-        error:
-          error instanceof Error ? error.message : 'No recipients specified',
+        output: {
+          success: false,
+          message: errorMessage,
+          error: errorMessage,
+        },
       };
     }
 
@@ -261,108 +256,76 @@ export class SendEmailTool implements Tool {
     if (invalidEmails.length > 0) {
       return {
         success: false,
-        message: `Invalid email addresses: ${invalidEmails.join(', ')}`,
-        error: `Invalid email addresses: ${invalidEmails.join(', ')}`,
+        output: {
+          success: false,
+          message: `Invalid email addresses: ${invalidEmails.join(', ')}`,
+          error: `Invalid email addresses: ${invalidEmails.join(', ')}`,
+        },
       };
     }
 
     const toRecipientsDisplay = recipients.to.join(', ');
 
-    try {
-      if (!connectedAccountId) {
-        connectedAccountId =
-          await this.getOrThrowFirstConnectedAccountId(workspaceId);
-      }
-
-      const connectedAccount = await this.getConnectedAccount(
-        connectedAccountId,
-        workspaceId,
-      );
-
-      const messageChannel = connectedAccount.messageChannels.find(
-        (channel) => channel.handle === connectedAccount.handle,
-      );
-
-      if (!isDefined(messageChannel)) {
-        throw new SendEmailToolException(
-          `No message channel found for connected account '${connectedAccountId}'`,
-          SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-        );
-      }
-
-      const { accessToken, refreshToken } =
-        await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-          {
-            connectedAccount,
-            workspaceId,
-            messageChannelId: messageChannel.id,
-          },
-        );
-
-      const connectedAccountWithFreshTokens = {
-        ...connectedAccount,
-        accessToken,
-        refreshToken,
-      };
-
-      const attachments = await this.getAttachments(files || [], workspaceId);
-
-      const parsedBody = parseEmailBody(body);
-      const reactMarkup = reactMarkupFromJSON(parsedBody);
-      const htmlBody = await render(reactMarkup);
-      const textBody = toPlainText(htmlBody);
-
-      const { JSDOM } = await import('jsdom');
-      const window = new JSDOM('').window;
-      const purify = DOMPurify(window);
-      const safeHtmlBody = purify.sanitize(htmlBody || '');
-      const safeSubject = purify.sanitize(subject || '');
-
-      await this.sendMessageService.sendMessage(
-        {
-          to: recipients.to,
-          cc: recipients.cc.length > 0 ? recipients.cc : undefined,
-          bcc: recipients.bcc.length > 0 ? recipients.bcc : undefined,
-          subject: safeSubject,
-          body: textBody,
-          html: safeHtmlBody,
-          attachments,
-        },
-        connectedAccountWithFreshTokens,
-      );
-
-      this.logger.log(
-        `Email sent successfully to ${toRecipientsDisplay}${attachments.length > 0 ? ` with ${attachments.length} attachments` : ''}`,
-      );
-
-      return {
-        success: true,
-        message: `Email sent successfully to ${toRecipientsDisplay}`,
-        result: {
-          recipients: recipients.to,
-          ccRecipients: recipients.cc,
-          bccRecipients: recipients.bcc,
-          subject: safeSubject,
-          connectedAccountId,
-          attachmentCount: attachments.length,
-        },
-      };
-    } catch (error) {
-      if (error instanceof SendEmailToolException) {
-        return {
-          success: false,
-          message: `Failed to send email to ${toRecipientsDisplay}`,
-          error: error.message,
-        };
-      }
-
-      this.logger.error(`Failed to send email: ${error}`);
-
-      return {
-        success: false,
-        message: `Failed to send email to ${toRecipientsDisplay}`,
-        error: error instanceof Error ? error.message : 'Failed to send email',
-      };
+    if (!connectedAccountId) {
+      connectedAccountId =
+        await this.getOrThrowFirstConnectedAccountId(workspaceId);
     }
+
+    const connectedAccount = await this.getConnectedAccount(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    const messageChannel = connectedAccount.messageChannels.find(
+      (channel) => channel.handle === connectedAccount.handle,
+    );
+
+    if (!isDefined(messageChannel)) {
+      throw new EmailToolException(
+        `No message channel found for connected account '${connectedAccountId}'`,
+        EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+      );
+    }
+
+    const { accessToken, refreshToken } =
+      await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+        {
+          connectedAccount,
+          workspaceId,
+          messageChannelId: messageChannel.id,
+        },
+      );
+
+    const connectedAccountWithFreshTokens = {
+      ...connectedAccount,
+      accessToken,
+      refreshToken,
+    };
+
+    const attachments = await this.getAttachments(files || [], workspaceId);
+
+    const parsedBody = parseEmailBody(body);
+    const reactMarkup = reactMarkupFromJSON(parsedBody);
+    const htmlBody = await render(reactMarkup);
+    const plainTextBody = toPlainText(htmlBody);
+
+    const { JSDOM } = await import('jsdom');
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+    const sanitizedHtmlBody = purify.sanitize(htmlBody || '');
+    const sanitizedSubject = purify.sanitize(subject || '');
+
+    return {
+      success: true,
+      data: {
+        recipients,
+        toRecipientsDisplay,
+        sanitizedSubject,
+        plainTextBody,
+        sanitizedHtmlBody,
+        attachments,
+        connectedAccount: connectedAccountWithFreshTokens,
+      },
+    };
   }
 }

@@ -21,7 +21,8 @@ import {
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -35,6 +36,7 @@ export class ActionToolProvider implements ToolProvider {
   constructor(
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
+    private readonly draftEmailTool: DraftEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly permissionsService: PermissionsService,
@@ -43,6 +45,7 @@ export class ActionToolProvider implements ToolProvider {
     this.toolMap = new Map<string, Tool>([
       ['http_request', this.httpTool],
       ['send_email', this.sendEmailTool],
+      ['draft_email', this.draftEmailTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
     ]);
@@ -95,6 +98,13 @@ export class ActionToolProvider implements ToolProvider {
     if (hasEmailPermission) {
       descriptors.push(
         this.buildDescriptor('send_email', this.sendEmailTool, includeSchemas),
+      );
+      descriptors.push(
+        this.buildDescriptor(
+          'draft_email',
+          this.draftEmailTool,
+          includeSchemas,
+        ),
       );
     }
 

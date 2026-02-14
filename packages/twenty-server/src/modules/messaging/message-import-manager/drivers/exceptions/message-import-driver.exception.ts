@@ -3,6 +3,7 @@ import { type MessageNetworkExceptionCode } from 'src/modules/messaging/message-
 export class MessageImportDriverException extends Error {
   code: MessageImportDriverExceptionCode | MessageNetworkExceptionCode;
   cause?: Error;
+  throttleRetryAfter?: Date;
   context?: {
     messageChannelId?: string;
     workspaceId?: string;
@@ -14,6 +15,7 @@ export class MessageImportDriverException extends Error {
     code: MessageImportDriverExceptionCode | MessageNetworkExceptionCode,
     options?: {
       cause?: Error;
+      throttleRetryAfter?: Date;
       context?: {
         messageChannelId?: string;
         workspaceId?: string;
@@ -25,6 +27,7 @@ export class MessageImportDriverException extends Error {
     this.name = 'MessageImportDriverException';
     this.code = code;
     this.cause = options?.cause;
+    this.throttleRetryAfter = options?.throttleRetryAfter;
     this.context = options?.context;
 
     if (options?.cause?.stack) {

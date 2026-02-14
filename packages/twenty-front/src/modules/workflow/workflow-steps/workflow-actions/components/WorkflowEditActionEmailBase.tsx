@@ -1,6 +1,5 @@
-import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
-import { MICROSOFT_SEND_SCOPE } from '@/accounts/constants/MicrosoftSendScope';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -21,60 +20,42 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { type WorkflowEmailAction } from '@/workflow/workflow-steps/workflow-actions/email-action/types/WorkflowEmailAction';
+import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { type EmailRecipients } from 'twenty-shared/workflow';
-import { IconPlus } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
+import { Callout, IconPlus } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { type JsonValue } from 'type-fest';
-import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
 
 const EMAIL_EDITOR_MAX_WIDTH = 600;
 
-type WorkflowEditActionSendEmailProps = {
-  action: WorkflowSendEmailAction;
+type WorkflowEditActionEmailBaseProps = {
+  action: WorkflowEmailAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowSendEmailAction) => void;
+        onActionUpdate: (action: WorkflowEmailAction) => void;
       };
 };
 
-type WorkflowFile = {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  createdAt: string;
-};
-
-type SendEmailFormData = {
-  connectedAccountId: string;
-  recipients: Required<EmailRecipients>;
-  subject: string;
-  body: string;
-  files: WorkflowFile[];
-};
-
-export const WorkflowEditActionSendEmail = ({
+export const WorkflowEditActionEmailBase = ({
   action,
   actionOptions,
-}: WorkflowEditActionSendEmailProps) => {
+}: WorkflowEditActionEmailBaseProps) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -89,20 +70,13 @@ export const WorkflowEditActionSendEmail = ({
 
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const [formData, setFormData] = useState<SendEmailFormData>(() => {
-    const inputRecipients = action.settings.input.recipients;
-
-    return {
-      connectedAccountId: action.settings.input.connectedAccountId,
-      recipients: {
-        to: inputRecipients?.to ?? '',
-        cc: inputRecipients?.cc ?? '',
-        bcc: inputRecipients?.bcc ?? '',
-      },
-      subject: action.settings.input.subject ?? '',
-      body: action.settings.input.body ?? '',
-      files: action.settings.input.files ?? [],
-    };
+  const { formData, handleFieldChange, saveAction } = useEmailForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly: actionOptions.readonly === true,
   });
 
   const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
@@ -119,95 +93,24 @@ export const WorkflowEditActionSendEmail = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const advancedOptionsDropdownId = 'send-email-advanced-options';
+  const advancedOptionsDropdownId = `${action.id}-email-advanced-options`;
 
   const hasAvailableAdvancedOptions =
     !visibleAdvancedFields.cc || !visibleAdvancedFields.bcc;
 
-  const checkConnectedAccountScopes = async (
-    connectedAccountId: string | null,
-  ) => {
-    const connectedAccount = accounts.find(
-      (account) => account.id === connectedAccountId,
-    );
-    if (!isDefined(connectedAccount)) {
+  const handleReauthorize = async () => {
+    if (!isDefined(missingScopes)) {
       return;
     }
 
-    const scopes = connectedAccount.scopes;
-
-    const hasSendScope = (
-      connectedAccount: ConnectedAccount,
-      scopes: string[],
-    ): boolean => {
-      switch (connectedAccount.provider) {
-        case ConnectedAccountProvider.GOOGLE:
-          return scopes.some((scope) => scope === GMAIL_SEND_SCOPE);
-        case ConnectedAccountProvider.MICROSOFT:
-          return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
-        case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-          return isDefined(connectedAccount.connectionParameters?.SMTP);
-        default:
-          assertUnreachable(
-            connectedAccount.provider,
-            'Provider not yet supported for sending emails',
-          );
-      }
-    };
-
-    if (
-      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
-      (!isDefined(scopes) || !hasSendScope(connectedAccount, scopes))
-    ) {
-      await triggerApisOAuth(connectedAccount.provider, {
-        redirectLocation: redirectUrl,
-        loginHint: connectedAccount.handle,
-      });
-    }
+    await triggerApisOAuth(missingScopes.provider, {
+      redirectLocation: redirectUrl,
+      loginHint: missingScopes.loginHint,
+    });
   };
 
-  const saveAction = useDebouncedCallback(
-    async (formData: SendEmailFormData) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
-      actionOptions.onActionUpdate({
-        ...action,
-        settings: {
-          ...action.settings,
-          input: {
-            connectedAccountId: formData.connectedAccountId,
-            recipients: formData.recipients,
-            subject: formData.subject,
-            body: formData.body,
-            files: formData.files,
-          },
-        },
-      });
-
-      await checkConnectedAccountScopes(formData.connectedAccountId);
-    },
-    1_000,
-  );
-
-  useEffect(() => {
-    return () => {
-      saveAction.flush();
-    };
-  }, [saveAction]);
-
-  const handleFieldChange = (
-    fieldName: keyof SendEmailFormData,
-    updatedValue: JsonValue,
-  ) => {
-    const newFormData: SendEmailFormData = {
-      ...formData,
-      [fieldName]: updatedValue,
-    };
-
-    setFormData(newFormData);
-
-    saveAction(newFormData);
+  const handleConnectedAccountChange = (connectedAccountId: string | null) => {
+    handleFieldChange('connectedAccountId', connectedAccountId);
   };
 
   const handleUploadAttachment = async (file: File) => {
@@ -263,6 +166,24 @@ export const WorkflowEditActionSendEmail = ({
     },
   });
 
+  const selectedAccount = accounts.find(
+    (account) => account.id === formData.connectedAccountId,
+  );
+
+  const missingDraftScopes = isDefined(selectedAccount)
+    ? getMissingDraftEmailScopes(selectedAccount)
+    : [];
+
+  const missingScopes =
+    isDefined(selectedAccount) &&
+    selectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+    missingDraftScopes.length > 0
+      ? {
+          provider: selectedAccount.provider,
+          loginHint: selectedAccount.handle,
+        }
+      : null;
+
   let emptyOption: SelectOption<string | null> = {
     label: t`None`,
     value: null,
@@ -284,8 +205,6 @@ export const WorkflowEditActionSendEmail = ({
     if (account.accountOwnerId === currentWorkspaceMember?.id) {
       connectedAccountOptions.push(selectOption);
     } else {
-      // This handle the case when the current connected account does not belong to the currentWorkspaceMember
-      // In that case, current connected account email is displayed, but cannot be selected
       emptyOption = selectOption;
     }
   });
@@ -293,6 +212,12 @@ export const WorkflowEditActionSendEmail = ({
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
+
+  useEffect(() => {
+    return () => {
+      saveAction.flush();
+    };
+  }, [saveAction]);
 
   return (
     !loading && (
@@ -314,12 +239,25 @@ export const WorkflowEditActionSendEmail = ({
               text: t`Add account`,
             }}
             onChange={(connectedAccountId) => {
-              handleFieldChange('connectedAccountId', connectedAccountId);
+              handleConnectedAccountChange(connectedAccountId);
             }}
             disabled={actionOptions.readonly}
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
+          {isDefined(missingScopes) && (
+            <>
+              <Callout
+                variant={'error'}
+                title={t`Missing email draft permission.`}
+                description={t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`}
+                action={{
+                  label: t`Reauthorize`,
+                  onClick: handleReauthorize,
+                }}
+              />
+            </>
+          )}
           <FormMultiTextFieldInput
             label={t`To`}
             placeholder={t`Enter emails, comma-separated`}
@@ -434,7 +372,7 @@ export const WorkflowEditActionSendEmail = ({
                 href: '#',
               },
               {
-                children: isDefined(action.name) ? action.name : t`Send Email`,
+                children: isDefined(action.name) ? action.name : t`Email`,
                 href: '#',
               },
               {

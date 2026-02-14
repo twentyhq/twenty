@@ -4,9 +4,7 @@ import { google } from 'googleapis';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
-import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { GmailMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/gmail/services/gmail-message-outbound.service';
 
 jest.mock('nodemailer/lib/mail-composer', () => {
   return jest.fn().mockImplementation(() => ({
@@ -16,8 +14,8 @@ jest.mock('nodemailer/lib/mail-composer', () => {
   }));
 });
 
-describe('MessagingSendMessageService - Gmail HTML Support', () => {
-  let service: MessagingSendMessageService;
+describe('GmailMessageOutboundService', () => {
+  let service: GmailMessageOutboundService;
 
   const mockSend = jest.fn().mockResolvedValue({ data: { id: 'message-id' } });
 
@@ -54,7 +52,7 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MessagingSendMessageService,
+        GmailMessageOutboundService,
         {
           provide: OAuth2ClientManagerService,
           useValue: {
@@ -63,19 +61,11 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
               .mockResolvedValue(mockOAuth2Client),
           },
         },
-        {
-          provide: SmtpClientProvider,
-          useValue: {},
-        },
-        {
-          provide: ImapClientProvider,
-          useValue: {},
-        },
       ],
     }).compile();
 
-    service = module.get<MessagingSendMessageService>(
-      MessagingSendMessageService,
+    service = module.get<GmailMessageOutboundService>(
+      GmailMessageOutboundService,
     );
   });
 
@@ -105,7 +95,7 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     expect(mockSend).toHaveBeenCalledWith({
       userId: 'me',
       requestBody: {
-        raw: Buffer.from('mocked-email-content').toString('base64'),
+        raw: Buffer.from('mocked-email-content').toString('base64url'),
       },
     });
   });
@@ -137,7 +127,7 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     expect(mockSend).toHaveBeenCalledWith({
       userId: 'me',
       requestBody: {
-        raw: Buffer.from('mocked-email-content').toString('base64'),
+        raw: Buffer.from('mocked-email-content').toString('base64url'),
       },
     });
   });

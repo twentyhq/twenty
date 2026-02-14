@@ -19,7 +19,7 @@ const EmailRecipientsZodSchema = z.object({
     .default(''),
 });
 
-export const SendEmailInputZodSchema = z.object({
+export const EmailToolInputZodSchema = z.object({
   recipients: EmailRecipientsZodSchema.describe(
     'Recipients object with to, cc, and bcc fields (comma-separated)',
   ),

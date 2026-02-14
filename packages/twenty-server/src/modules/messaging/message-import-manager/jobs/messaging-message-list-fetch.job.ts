@@ -84,6 +84,7 @@ export class MessagingMessageListFetchJob {
           isThrottled(
             messageChannel.syncStageStartedAt,
             messageChannel.throttleFailureCount,
+            messageChannel.throttleRetryAfter,
           )
         ) {
           await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(

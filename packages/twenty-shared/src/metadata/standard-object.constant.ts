@@ -821,6 +821,9 @@ export const STANDARD_OBJECTS = {
       throttleFailureCount: {
         universalIdentifier: '20202020-0291-42be-9ad0-d578a51684ab',
       },
+      throttleRetryAfter: {
+        universalIdentifier: '20202020-a1e3-4d7f-b5c2-9f8e6d4c3b2a',
+      },
     },
     indexes: {
       connectedAccountIdIndex: {

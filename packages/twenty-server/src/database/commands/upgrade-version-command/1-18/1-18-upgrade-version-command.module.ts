@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
+import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
@@ -40,12 +41,14 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     MigrateAttachmentFilesCommand,
     BackfillFileSizeAndMimeTypeCommand,
     MigrateActivityRichTextAttachmentFileIdsCommand,
+    BackfillMessageChannelThrottleRetryAfterCommand,
   ],
   exports: [
     MigratePersonAvatarFilesCommand,
     MigrateAttachmentFilesCommand,
     BackfillFileSizeAndMimeTypeCommand,
     MigrateActivityRichTextAttachmentFileIdsCommand,
+    BackfillMessageChannelThrottleRetryAfterCommand,
   ],
 })
 export class V1_18_UpgradeVersionCommandModule {}
