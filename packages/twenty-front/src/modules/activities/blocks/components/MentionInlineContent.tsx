@@ -1,3 +1,4 @@
+import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -15,7 +16,8 @@ const StyledRecordChip = styled(RecordChip)`
   padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
 `;
 
-const MentionInlineContentRenderer = ({
+// Backward-compatible renderer for legacy notes that only stored objectMetadataId + recordId
+const LegacyMentionRenderer = ({
   recordId,
   objectMetadataId,
 }: {
@@ -79,15 +81,43 @@ export const MentionInlineContent = createReactInlineContentSpec(
       objectMetadataId: {
         default: '' as const,
       },
+      objectNameSingular: {
+        default: '' as const,
+      },
+      label: {
+        default: '' as const,
+      },
+      imageUrl: {
+        default: '' as const,
+      },
     },
     content: 'none',
   },
   {
     render: (props) => {
-      const { recordId, objectMetadataId } = props.inlineContent.props;
+      const {
+        recordId,
+        objectMetadataId,
+        objectNameSingular,
+        label,
+        imageUrl,
+      } = props.inlineContent.props;
 
+      // New notes store objectNameSingular + label + imageUrl directly
+      if (isNonEmptyString(objectNameSingular) && isNonEmptyString(label)) {
+        return (
+          <MentionRecordChip
+            recordId={recordId}
+            objectNameSingular={objectNameSingular}
+            label={label}
+            imageUrl={imageUrl}
+          />
+        );
+      }
+
+      // Legacy notes only have objectMetadataId + recordId: fetch data
       return (
-        <MentionInlineContentRenderer
+        <LegacyMentionRenderer
           recordId={recordId}
           objectMetadataId={objectMetadataId}
         />

@@ -15,6 +15,9 @@ export type MentionItem = DefaultReactSuggestionItem & {
   recordId?: string;
   objectNameSingular?: string;
   objectMetadataId?: string;
+  label?: string;
+  imageUrl?: string;
+  objectLabelSingular?: string;
 };
 
 export type CustomMentionMenuProps = SuggestionMenuProps<MentionItem>;

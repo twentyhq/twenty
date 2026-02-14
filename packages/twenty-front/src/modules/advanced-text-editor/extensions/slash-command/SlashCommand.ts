@@ -7,7 +7,11 @@ import {
   DEFAULT_SLASH_COMMANDS,
   type SlashCommandConfig,
 } from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
-import { SlashCommandRenderer } from '@/advanced-text-editor/extensions/slash-command/SlashCommandRenderer';
+import {
+  SlashCommandMenu,
+  type SlashCommandMenuProps,
+} from '@/advanced-text-editor/extensions/slash-command/SlashCommandMenu';
+import { SuggestionRenderer } from '@/ui/suggestion/components/SuggestionRenderer';
 
 export type SlashCommandItem = {
   id: string;
@@ -20,12 +24,33 @@ export type SlashCommandItem = {
   command: (options: { editor: Editor; range: Range }) => void;
 };
 
+type SlashCommandRendererProps = {
+  items: SlashCommandItem[];
+  command: (item: SlashCommandItem) => void;
+  clientRect: (() => DOMRect | null) | null;
+  editor: Editor;
+  range: Range;
+  query: string;
+};
+
 type SuggestionRenderProps = {
   items: SlashCommandItem[];
   command: (item: SlashCommandItem) => void;
   clientRect?: (() => DOMRect | null) | null;
   range: Range;
   query: string;
+};
+
+const slashRendererConfig = {
+  component: SlashCommandMenu,
+  mapProps: (props: SlashCommandRendererProps): SlashCommandMenuProps => ({
+    items: props.items,
+    onSelect: props.command,
+    clientRect: props.clientRect,
+    editor: props.editor,
+    range: props.range,
+    query: props.query,
+  }),
 };
 
 const createSlashCommandItem = (
@@ -96,7 +121,10 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
         ...this.options.suggestions,
         items: ({ query, editor: ed }) => buildItems(ed, query),
         render: () => {
-          let component: SlashCommandRenderer | null = null;
+          let component: SuggestionRenderer<
+            SlashCommandRendererProps,
+            SlashCommandMenuProps
+          > | null = null;
 
           const closeMenu = () => {
             if (component !== null) {
@@ -111,7 +139,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                 return;
               }
 
-              component = new SlashCommandRenderer({
+              component = new SuggestionRenderer(slashRendererConfig, {
                 items: props.items,
                 command: (item: SlashCommandItem) => {
                   props.command(item);

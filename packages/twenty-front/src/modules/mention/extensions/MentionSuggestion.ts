@@ -1,15 +1,41 @@
-import { Extension, type Range } from '@tiptap/core';
+import { type Editor, Extension, type Range } from '@tiptap/core';
 import Suggestion from '@tiptap/suggestion';
 
+import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMenu';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
-import { MentionSuggestionRenderer } from '@/mention/extensions/MentionSuggestionRenderer';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
+import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';
+import { SuggestionRenderer } from '@/ui/suggestion/components/SuggestionRenderer';
+
+type MentionSuggestionRendererProps = {
+  items: MentionSearchResult[];
+  command: (item: MentionSearchResult) => void;
+  clientRect: () => DOMRect | null;
+  editor: Editor;
+  range: Range;
+};
 
 type MentionSuggestionRenderProps = {
   items: MentionSearchResult[];
   command: (item: MentionSearchResult) => void;
   clientRect?: (() => DOMRect | null) | null;
   range: Range;
+};
+
+const mentionRendererConfig: {
+  component: typeof MentionSuggestionMenu;
+  mapProps: (
+    props: MentionSuggestionRendererProps,
+  ) => MentionSuggestionMenuProps;
+} = {
+  component: MentionSuggestionMenu,
+  mapProps: (props) => ({
+    items: props.items,
+    onSelect: props.command,
+    clientRect: props.clientRect,
+    editor: props.editor,
+    range: props.range,
+  }),
 };
 
 type MentionSuggestionOptions = {
@@ -54,7 +80,10 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
             .run();
         },
         render: () => {
-          let component: MentionSuggestionRenderer | null = null;
+          let component: SuggestionRenderer<
+            MentionSuggestionRendererProps,
+            MentionSuggestionMenuProps
+          > | null = null;
 
           const closeMenu = () => {
             if (component !== null) {
@@ -69,7 +98,7 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
                 return;
               }
 
-              component = new MentionSuggestionRenderer({
+              component = new SuggestionRenderer(mentionRendererConfig, {
                 items: props.items,
                 command: (item: MentionSearchResult) => {
                   props.command(item);
@@ -91,7 +120,7 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
               }
 
               if (component === null) {
-                component = new MentionSuggestionRenderer({
+                component = new SuggestionRenderer(mentionRendererConfig, {
                   items: props.items,
                   command: (item: MentionSearchResult) => {
                     props.command(item);
