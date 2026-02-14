@@ -56,7 +56,8 @@ describe('MentionSuggestion', () => {
   it('should add ProseMirror plugins', () => {
     const plugins = editor.state.plugins;
     const hasSuggestionPlugin = plugins.some(
-      (plugin) => (plugin as { key: string }).key === 'mention-suggestion$',
+      (plugin) =>
+        (plugin as unknown as { key: string }).key === 'mention-suggestion$',
     );
 
     expect(hasSuggestionPlugin).toBe(true);
