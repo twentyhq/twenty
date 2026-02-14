@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: twenty-config
+  namespace: twenty-crm
+data:
+  # Application Configuration
+  NODE_ENV: "production"
+  SERVER_URL: "https://api.yourcrm.com"  # CHANGE THIS to your domain
+  FRONTEND_URL: "https://yourcrm.com"    # CHANGE THIS to your domain
+  PORT: "3000"
+
+  # Storage Configuration (OVHcloud Object Storage)
+  STORAGE_TYPE: "s3"
+  STORAGE_S3_NAME: "twenty-crm-files"  # CHANGE THIS to your bucket name
+  STORAGE_S3_REGION: "gra"             # OVHcloud region: gra, sbg, bhs, etc.
+  STORAGE_S3_ENDPOINT: "https://s3.gra.cloud.ovh.net"  # CHANGE if using different region
+
+  # Feature Flags
+  SIGN_IN_PREFILLED: "false"
+  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS: "false"
+  CODE_INTERPRETER_TYPE: "local"
+
+  # Authentication (adjust based on your needs)
+  AUTH_GOOGLE_ENABLED: "true"
+  AUTH_GOOGLE_CALLBACK_URL: "https://api.yourcrm.com/auth/google/redirect"
+  AUTH_GOOGLE_APIS_CALLBACK_URL: "https://api.yourcrm.com/auth/google-apis/get-access-token"
+
+  # Integrations
+  MESSAGING_PROVIDER_GMAIL_ENABLED: "true"
+  CALENDAR_PROVIDER_GOOGLE_ENABLED: "true"
+  IS_IMAP_SMTP_CALDAV_ENABLED: "true"
+
+  # Email Configuration (configure based on your SMTP provider)
+  EMAIL_DRIVER: "smtp"
+  EMAIL_FROM_ADDRESS: "noreply@yourcrm.com"
+  EMAIL_FROM_NAME: "Twenty CRM"
+
+  # Optional: Email Server Settings
+  # Uncomment and configure if using SMTP
+  # EMAIL_SMTP_HOST: ""
+  # EMAIL_SMTP_PORT: "587"
+  # EMAIL_SMTP_USER: ""

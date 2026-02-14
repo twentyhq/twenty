@@ -1,0 +1,168 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twenty-frontend
+  namespace: twenty-crm
+  labels:
+    app: twenty-frontend
+spec:
+  replicas: 2  # High availability
+  selector:
+    matchLabels:
+      app: twenty-frontend
+  template:
+    metadata:
+      labels:
+        app: twenty-frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+
+        volumeMounts:
+        - name: frontend-build
+          mountPath: /usr/share/nginx/html
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+      # Init container copies frontend build from main image
+      initContainers:
+      - name: copy-frontend
+        image: twentycrm/twenty:latest
+        command:
+        - sh
+        - -c
+        - |
+          if [ -d "/app/packages/twenty-server/dist/front" ]; then
+            cp -r /app/packages/twenty-server/dist/front/* /frontend-build/
+            echo "Frontend files copied successfully"
+            ls -la /frontend-build/
+          else
+            echo "ERROR: Frontend build directory not found!"
+            exit 1
+          fi
+        volumeMounts:
+        - name: frontend-build
+          mountPath: /frontend-build
+
+      volumes:
+      - name: frontend-build
+        emptyDir: {}
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: twenty-crm
+data:
+  nginx.conf: |
+    events {
+      worker_connections 1024;
+    }
+
+    http {
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+
+      # Logging
+      access_log /var/log/nginx/access.log;
+      error_log /var/log/nginx/error.log;
+
+      # Performance
+      sendfile on;
+      tcp_nopush on;
+      tcp_nodelay on;
+      keepalive_timeout 65;
+
+      # Compression
+      gzip on;
+      gzip_vary on;
+      gzip_proxied any;
+      gzip_comp_level 6;
+      gzip_types text/plain text/css text/xml text/javascript application/json application/javascript application/xml+rss application/rss+xml font/truetype font/opentype application/vnd.ms-fontobject image/svg+xml;
+
+      server {
+        listen 80;
+        server_name _;
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+
+        # SPA routing - all routes go to index.html
+        location / {
+          try_files $uri $uri/ /index.html;
+        }
+
+        # Cache static assets
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+          expires 1y;
+          add_header Cache-Control "public, immutable";
+        }
+
+        # Don't cache index.html
+        location = /index.html {
+          expires -1;
+          add_header Cache-Control "no-cache, no-store, must-revalidate";
+        }
+
+        # Health check endpoint
+        location /health {
+          access_log off;
+          return 200 "healthy\n";
+          add_header Content-Type text/plain;
+        }
+      }
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twenty-frontend-service
+  namespace: twenty-crm
+  labels:
+    app: twenty-frontend
+spec:
+  selector:
+    app: twenty-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    name: http
+  type: ClusterIP

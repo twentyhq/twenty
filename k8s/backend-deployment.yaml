@@ -1,0 +1,169 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twenty-backend
+  namespace: twenty-crm
+  labels:
+    app: twenty-backend
+spec:
+  replicas: 2  # High availability with 2 replicas
+  selector:
+    matchLabels:
+      app: twenty-backend
+  template:
+    metadata:
+      labels:
+        app: twenty-backend
+    spec:
+      containers:
+      - name: backend
+        image: twentycrm/twenty:latest  # Or use your private registry
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+
+        env:
+        # Import from ConfigMap
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: NODE_ENV
+        - name: SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: SERVER_URL
+        - name: FRONTEND_URL
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: FRONTEND_URL
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: PORT
+        - name: STORAGE_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_TYPE
+        - name: STORAGE_S3_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_S3_NAME
+        - name: STORAGE_S3_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_S3_REGION
+        - name: STORAGE_S3_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_S3_ENDPOINT
+        - name: AUTH_GOOGLE_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: AUTH_GOOGLE_ENABLED
+        - name: AUTH_GOOGLE_CALLBACK_URL
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: AUTH_GOOGLE_CALLBACK_URL
+        - name: MESSAGING_PROVIDER_GMAIL_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: MESSAGING_PROVIDER_GMAIL_ENABLED
+        - name: CALENDAR_PROVIDER_GOOGLE_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: CALENDAR_PROVIDER_GOOGLE_ENABLED
+        - name: EMAIL_DRIVER
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: EMAIL_DRIVER
+        - name: EMAIL_FROM_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: EMAIL_FROM_ADDRESS
+
+        # Import from Secrets
+        - name: PG_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: PG_DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: REDIS_URL
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: APP_SECRET
+        - name: STORAGE_S3_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: STORAGE_S3_ACCESS_KEY_ID
+        - name: STORAGE_S3_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: STORAGE_S3_SECRET_ACCESS_KEY
+
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twenty-backend-service
+  namespace: twenty-crm
+  labels:
+    app: twenty-backend
+spec:
+  selector:
+    app: twenty-backend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+    name: http
+  type: ClusterIP

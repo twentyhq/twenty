@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: twenty-ingress
+  namespace: twenty-crm
+  annotations:
+    # SSL/TLS configuration
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    # Force HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+    # Increase body size for file uploads
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+    # Timeouts for long-running requests
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+
+    # CORS headers (if needed for development)
+    # nginx.ingress.kubernetes.io/enable-cors: "true"
+    # nginx.ingress.kubernetes.io/cors-allow-origin: "https://yourcrm.com"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - yourcrm.com              # CHANGE THIS to your domain
+    - api.yourcrm.com          # CHANGE THIS to your API domain
+    secretName: twenty-tls-cert
+
+  rules:
+  # Frontend routing
+  - host: yourcrm.com          # CHANGE THIS to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: twenty-frontend-service
+            port:
+              number: 80
+
+  # Backend API routing
+  - host: api.yourcrm.com      # CHANGE THIS to your API domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: twenty-backend-service
+            port:
+              number: 3000

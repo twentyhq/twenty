@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twenty-worker
+  namespace: twenty-crm
+  labels:
+    app: twenty-worker
+spec:
+  replicas: 1  # Single worker instance for queue processing
+  selector:
+    matchLabels:
+      app: twenty-worker
+  template:
+    metadata:
+      labels:
+        app: twenty-worker
+    spec:
+      containers:
+      - name: worker
+        image: twentycrm/twenty:latest
+        imagePullPolicy: Always
+        command: ["node", "dist/queue-worker/queue-worker"]
+
+        env:
+        # Import from ConfigMap (same as backend)
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: NODE_ENV
+        - name: SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: SERVER_URL
+        - name: FRONTEND_URL
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: FRONTEND_URL
+        - name: STORAGE_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_TYPE
+        - name: STORAGE_S3_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_S3_NAME
+        - name: STORAGE_S3_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_S3_REGION
+        - name: STORAGE_S3_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: STORAGE_S3_ENDPOINT
+        - name: MESSAGING_PROVIDER_GMAIL_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: MESSAGING_PROVIDER_GMAIL_ENABLED
+        - name: CALENDAR_PROVIDER_GOOGLE_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: twenty-config
+              key: CALENDAR_PROVIDER_GOOGLE_ENABLED
+
+        # Import from Secrets
+        - name: PG_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: PG_DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: REDIS_URL
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: APP_SECRET
+        - name: STORAGE_S3_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: STORAGE_S3_ACCESS_KEY_ID
+        - name: STORAGE_S3_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: twenty-secrets
+              key: STORAGE_S3_SECRET_ACCESS_KEY
+
+        # Worker-specific settings
+        - name: DISABLE_DB_MIGRATIONS
+          value: "true"  # Backend handles migrations, not worker
+
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
+        # Liveness probe checks if worker process is running
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "pgrep -f queue-worker > /dev/null"
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
