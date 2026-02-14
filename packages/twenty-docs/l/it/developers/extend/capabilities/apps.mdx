@@ -27,40 +27,40 @@ Le app ti consentono di creare e gestire le personalizzazioni di Twenty **come c
 Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e inizia a sviluppare:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Crea lo scaffold di una nuova app
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# Se non usi yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# Autenticati usando la tua API key (ti verrà richiesto)
 yarn twenty auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# Avvia la modalità di sviluppo: sincronizza automaticamente le modifiche locali con il tuo workspace
 yarn twenty app:dev
 ```
 
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Genera un client Twenty tipizzato e i tipi di entità dell'area di lavoro
 yarn twenty app:generate
 
-# Watch your application's function logs
+# Monitora i log delle funzioni della tua applicazione
 yarn twenty function:logs
 
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
+# Esegui una funzione per nome
+yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
 
-# Uninstall the application from the current workspace
+# Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn twenty app:uninstall
 
-# Display commands' help
+# Mostra l'aiuto dei comandi
 yarn twenty help
 ```
 
@@ -102,7 +102,7 @@ my-twenty-app/
 
 A livello generale:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
+* **package.json**: Dichiara il nome dell'app, la versione, i motori (Node 24+, Yarn 4) e aggiunge `twenty-sdk` più uno script `twenty` che delega alla CLI locale `twenty`. Esegui `yarn twenty help` per elencare tutti i comandi disponibili.
 * **.gitignore**: Ignora i file generati comuni come `node_modules`, `.yarn`, `generated/` (client tipizzato), `dist/`, `build/`, cartelle di coverage, file di log e file `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloccano e configurano la toolchain Yarn 4 utilizzata dal progetto.
 * **.nvmrc**: Fissa la versione di Node.js prevista dal progetto.
@@ -142,12 +142,12 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn twenty app:generate` creerà una cartella `generated/` (client Twenty tipizzato + tipi dello spazio di lavoro).
+* `yarn twenty entity:add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti, funzioni, componenti front-end o ruoli personalizzati.
 
 ## Autenticazione
 
-The first time you run `yarn twenty auth:login`, you'll be prompted for:
+La prima volta che esegui `yarn twenty auth:login`, ti verranno richiesti:
 
 * URL dell'API (predefinito a http://localhost:3000 o al profilo dello spazio di lavoro corrente)
 * Chiave API
@@ -176,7 +176,7 @@ yarn twenty auth:switch production
 yarn twenty auth:status
 ```
 
-Once you've switched workspaces with `yarn twenty auth:switch`, all subsequent commands will use that workspace by default. Puoi comunque sovrascriverla temporaneamente con `--workspace <name>`.
+Una volta che hai cambiato area di lavoro con `yarn twenty auth:switch`, tutti i comandi successivi utilizzeranno quell'area di lavoro per impostazione predefinita. Puoi comunque sovrascriverla temporaneamente con `--workspace <name>`.
 
 ## Usa le risorse dell'SDK (tipi e configurazione)
 
@@ -276,7 +276,7 @@ Punti chiave:
 * Il `universalIdentifier` deve essere univoco e stabile tra i deployment.
 * Ogni campo richiede un `name`, `type`, `label` e il proprio `universalIdentifier` stabile.
 * L'array `fields` è facoltativo: puoi definire oggetti senza campi personalizzati.
-* You can scaffold new objects using `yarn twenty entity:add`, which guides you through naming, fields, and relationships.
+* Puoi generare nuovi oggetti con `yarn twenty entity:add`, che ti guida nella denominazione, nei campi e nelle relazioni.
 
 <Note>
   **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard come `name`, `createdAt`, `updatedAt`, `createdBy`, `position` e `deletedAt`. Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 Puoi creare nuove funzioni in due modi:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new logic function. Questo genera un file iniziale con un handler e una configurazione.
+* **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere una nuova funzione logica. Questo genera un file iniziale con un handler e una configurazione.
 * **Manuale**: Crea un nuovo file `*.logic-function.ts` e usa `defineLogicFunction()`, seguendo lo stesso schema.
 
 ### Componenti front-end
@@ -584,16 +584,16 @@ Punti chiave:
 * I componenti front-end sono componenti React che eseguono il rendering in contesti isolati all'interno di Twenty.
 * Usa il suffisso di file `*.front-component.tsx` per il rilevamento automatico.
 * Il campo `component` fa riferimento al tuo componente React.
-* Components are built and synced automatically during `yarn twenty app:dev`.
+* I componenti vengono compilati e sincronizzati automaticamente durante `yarn twenty app:dev`.
 
 Puoi creare nuovi componenti front-end in due modi:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
+* **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere un nuovo componente front-end.
 * **Manuale**: Crea un nuovo file `*.front-component.tsx` e usa `defineFrontComponent()`.
 
 ### Client tipizzato generato
 
-Run `yarn twenty app:generate` to create a local typed client in `generated/` based on your workspace schema. Usalo nelle tue funzioni:
+Esegui `yarn twenty app:generate` per creare un client tipizzato locale in `generated/` basato sullo schema del tuo spazio di lavoro. Usalo nelle tue funzioni:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn twenty app:generate`. Eseguilo nuovamente dopo aver modificato i tuoi oggetti oppure quando effettui l'onboarding su un nuovo spazio di lavoro.
+Il client viene rigenerato da `yarn twenty app:generate`. Eseguilo nuovamente dopo aver modificato i tuoi oggetti oppure quando effettui l'onboarding su un nuovo spazio di lavoro.
 
 #### Credenziali di runtime nelle funzioni logiche
 
@@ -623,13 +623,13 @@ Esplora un esempio minimale end-to-end che dimostra oggetti, funzioni logiche, c
 
 ## Configurazione manuale (senza lo scaffolder)
 
-Sebbene consigliamo di utilizzare `create-twenty-app` per la migliore esperienza iniziale, puoi anche configurare un progetto manualmente. Non installare la CLI globalmente. Instead, add `twenty-sdk` as a local dependency and wire a single script in your package.json:
+Sebbene consigliamo di utilizzare `create-twenty-app` per la migliore esperienza iniziale, puoi anche configurare un progetto manualmente. Non installare la CLI globalmente. Invece, aggiungi `twenty-sdk` come dipendenza locale e collega un unico script nel tuo package.json:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add a `twenty` script:
+Quindi aggiungi uno script `twenty`:
 
 ```json filename="package.json"
 {
@@ -639,13 +639,13 @@ Then add a `twenty` script:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, ecc.
 
 ## Risoluzione dei problemi
 
-* Authentication errors: run `yarn twenty auth:login` and ensure your API key has the required permissions.
+* Errori di autenticazione: esegui `yarn twenty auth:login` e assicurati che la tua chiave API abbia i permessi richiesti.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Types or client missing/outdated: run `yarn twenty app:generate`.
-* Dev mode not syncing: ensure `yarn twenty app:dev` is running and that changes are not ignored by your environment.
+* Tipi o client mancanti/obsoleti: esegui `yarn twenty app:generate`.
+* Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty app:dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

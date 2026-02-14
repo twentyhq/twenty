@@ -27,40 +27,40 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# 搭建一个新应用
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# 如果你不使用 yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# 使用你的 API 密钥进行身份验证（系统会提示你）
 yarn twenty auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# 启动开发模式：会将本地更改自动同步到你的工作区
 yarn twenty app:dev
 ```
 
 从这里您可以：
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# 向你的应用添加一个新实体（引导式）
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# 生成类型化的 Twenty 客户端和工作区实体类型
 yarn twenty app:generate
 
-# Watch your application's function logs
+# 监听你的应用函数日志
 yarn twenty function:logs
 
-# Execute a function by name
+# 按名称执行一个函数
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# 从当前工作区卸载该应用
 yarn twenty app:uninstall
 
-# Display commands' help
+# 显示命令帮助
 yarn twenty help
 ```
 
@@ -102,7 +102,7 @@ my-twenty-app/
 
 总体来说：
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
+* **package.json**：声明应用名称、版本、引擎（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及一个 `twenty` 脚本，该脚本会委托给本地的 `twenty` CLI。 运行 `yarn twenty help` 以列出所有可用命令。
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
@@ -142,12 +142,12 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn twenty app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
+* `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
 
 ## 身份验证
 
-The first time you run `yarn twenty auth:login`, you'll be prompted for:
+首次运行 `yarn twenty auth:login` 时，你将被提示输入：
 
 * API URL（默认为 http://localhost:3000 或你当前的工作空间配置）
 * API 密钥
@@ -176,7 +176,7 @@ yarn twenty auth:switch production
 yarn twenty auth:status
 ```
 
-Once you've switched workspaces with `yarn twenty auth:switch`, all subsequent commands will use that workspace by default. 你仍可通过 `--workspace <name>` 临时覆盖。
+使用 `yarn twenty auth:switch` 切换工作空间后，后续所有命令将默认使用该工作空间。 你仍可通过 `--workspace <name>` 临时覆盖。
 
 ## 使用 SDK 资源（类型与配置）
 
@@ -276,7 +276,7 @@ export default defineObject({
 * `universalIdentifier` 必须在各次部署间保持唯一且稳定。
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
-* You can scaffold new objects using `yarn twenty entity:add`, which guides you through naming, fields, and relationships.
+* 你可以使用 `yarn twenty entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
 
 <Note>
   **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 你可以通过两种方式创建新函数：
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new logic function. 这将生成一个包含处理程序和配置的入门文件。
+* **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
 * **手动**：创建一个新的 `*.logic-function.ts` 文件，并使用 `defineLogicFunction()`，遵循相同的模式。
 
 ### 前端组件
@@ -584,16 +584,16 @@ export default defineFrontComponent({
 * 前端组件是在 Twenty 中的隔离上下文中渲染的 React 组件。
 * 使用 `*.front-component.tsx` 文件后缀以便自动检测。
 * `component` 字段引用你的 React 组件。
-* Components are built and synced automatically during `yarn twenty app:dev`.
+* 组件会在 `yarn twenty app:dev` 期间自动构建并同步。
 
 你可以通过两种方式创建新的前端组件：
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
+* **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新前端组件的选项。
 * **手动**：创建一个新的 `*.front-component.tsx` 文件，并使用 `defineFrontComponent()`。
 
 ### 生成的类型化客户端
 
-Run `yarn twenty app:generate` to create a local typed client in `generated/` based on your workspace schema. 在你的函数中使用它：
+运行 `yarn twenty app:generate`，根据你的工作空间模式在 `generated/` 中创建本地类型化客户端。 在你的函数中使用它：
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn twenty app:generate`. 在更改对象之后或接入新工作空间时，请重新运行。
+客户端会通过 `yarn twenty app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
 
 #### 逻辑函数中的运行时凭据
 
@@ -623,13 +623,13 @@ The client is re-generated by `yarn twenty app:generate`. 在更改对象之后�
 
 ## 手动设置（不使用脚手架）
 
-虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 Instead, add `twenty-sdk` as a local dependency and wire a single script in your package.json:
+虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 相反，请将 `twenty-sdk` 添加为本地依赖，并在你的 package.json 中配置一个脚本：
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add a `twenty` script:
+然后添加一个 `twenty` 脚本：
 
 ```json filename="package.json"
 {
@@ -639,13 +639,13 @@ Then add a `twenty` script:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty app:generate`、`yarn twenty help` 等。
 
 ## 故障排除
 
-* Authentication errors: run `yarn twenty auth:login` and ensure your API key has the required permissions.
+* 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* Types or client missing/outdated: run `yarn twenty app:generate`.
-* Dev mode not syncing: ensure `yarn twenty app:dev` is running and that changes are not ignored by your environment.
+* 类型或客户端缺失/过期：运行 `yarn twenty app:generate`。
+* 开发模式未同步：确保 `yarn twenty app:dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322
