@@ -36,32 +36,32 @@ corepack enable
 yarn install
 
 # Autentifică-te folosind cheia ta API (ți se va solicita)
-yarn auth:login
+yarn twenty auth:login
 
 # Pornește modul de dezvoltare: sincronizează automat modificările locale cu spațiul tău de lucru
-yarn app:dev
+yarn twenty app:dev
 ```
 
 De aici puteți:
 
 ```bash filename="Terminal"
 # Adaugă o entitate nouă în aplicația ta (ghidat)
-yarn entity:add
+yarn twenty entity:add
 
-# Generează un client Twenty tipat și tipurile de entități ale spațiului de lucru
-yarn app:generate
+# Generează un client Twenty tipizat și tipurile de entități ale spațiului de lucru
+yarn twenty app:generate
 
 # Urmărește jurnalele funcțiilor aplicației tale
-yarn function:logs
+yarn twenty function:logs
 
 # Execută o funcție după nume
-yarn function:execute -n my-function -p '{"name": "test"}'
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
 # Dezinstalează aplicația din spațiul de lucru curent
-yarn app:uninstall
+yarn twenty app:uninstall
 
 # Afișează ajutorul pentru comenzi
-yarn help},{
+yarn twenty help
 ```
 
 Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -102,7 +102,7 @@ my-twenty-app/
 
 Pe scurt:
 
-* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, precum și comenzi de autentificare care deleagă către CLI-ul local `twenty`.
+* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus un script `twenty` care deleagă către CLI-ul local `twenty`. Rulează `yarn twenty help` pentru a lista toate comenzile disponibile.
 * **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
@@ -142,12 +142,12 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn app:generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
-* `yarn entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end sau rolurile personalizate.
+* `yarn twenty app:generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
+* `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end sau rolurile personalizate.
 
 ## Autentificare
 
-Prima dată când rulați `yarn auth:login`, vi se vor solicita:
+Prima dată când rulați `yarn twenty auth:login`, vi se vor solicita:
 
 * URL-ul API (implicit http://localhost:3000 sau profilul spațiului de lucru curent)
 * Cheie API
@@ -158,25 +158,25 @@ Acreditările dvs. sunt stocate per utilizator în `~/.twenty/config.json`. Pute
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth:login
+yarn twenty auth:login
 
 # Login to a specific workspace profile
-yarn auth:login --workspace my-custom-workspace
+yarn twenty auth:login --workspace my-custom-workspace
 
 # List all configured workspaces
-yarn auth:list
+yarn twenty auth:list
 
 # Switch the default workspace (interactive)
-yarn auth:switch
+yarn twenty auth:switch
 
 # Switch to a specific workspace
-yarn auth:switch production
+yarn twenty auth:switch production
 
 # Check current authentication status
-yarn auth:status
+yarn twenty auth:status
 ```
 
-După ce ați schimbat spațiul de lucru cu `auth:switch`, toate comenzile ulterioare vor folosi implicit acel spațiu de lucru. Îl puteți totuși suprascrie temporar cu `--workspace <name>`.
+După ce ați schimbat spațiul de lucru cu `yarn twenty auth:switch`, toate comenzile ulterioare vor folosi implicit acel spațiu de lucru. Îl puteți totuși suprascrie temporar cu `--workspace <name>`.
 
 ## Utilizați resursele SDK (tipuri și configurare)
 
@@ -276,7 +276,7 @@ Puncte cheie:
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
-* Puteți genera obiecte noi folosind `yarn entity:add`, care vă ghidează prin denumire, câmpuri și relații.
+* Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
   **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 Puteți crea funcții noi în două moduri:
 
-* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o funcție de logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o funcție logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
 * **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
 
 ### Componente Front
@@ -584,16 +584,16 @@ Puncte cheie:
 * Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
 * Folosiți sufixul de fișier `*.front-component.tsx` pentru detectare automată.
 * Câmpul `component` face referire la componenta React.
-* Componentele sunt construite și sincronizate automat în timpul `yarn app:dev`.
+* Componentele sunt construite și sincronizate automat în timpul `yarn twenty app:dev`.
 
 Puteți crea componente Front noi în două moduri:
 
-* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o componentă Front nouă.
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o componentă frontend nouă.
 * **Manual**: Creați un fișier nou `*.front-component.tsx` și folosiți `defineFrontComponent()`.
 
 ### Client tipizat generat
 
-Rulați yarn app:generate pentru a crea un client tipizat local în generated/, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
+Rulați `yarn twenty app:generate` pentru a crea un client tipizat local în `generated/`, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Clientul este regenerat de `yarn app:generate`. Rulați din nou după ce vă modificați obiectele sau când vă integrați într-un spațiu de lucru nou.
+Clientul este regenerat de `yarn twenty app:generate`. Rulați din nou după ce vă modificați obiectele sau când vă integrați într-un spațiu de lucru nou.
 
 #### Acreditări la runtime în funcțiile de logică
 
@@ -623,40 +623,29 @@ Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de
 
 ## Configurare manuală (fără generator)
 
-Deși recomandăm utilizarea `create-twenty-app` pentru cea mai bună experiență de început, puteți configura și un proiect manual. Nu instalați CLI-ul global. În schimb, adăugați `twenty-sdk` ca dependență locală și conectați scripturile în package.json-ul dvs.:
+Deși recomandăm utilizarea `create-twenty-app` pentru cea mai bună experiență de început, puteți configura și un proiect manual. Nu instalați CLI-ul global. În schimb, adăugați `twenty-sdk` ca dependență locală și conectați un singur script în package.json-ul dvs.:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Apoi adăugați scripturi ca acestea:
+Apoi adăugați un script `twenty`:
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth:login": "twenty auth:login",
-    "auth:logout": "twenty auth:logout",
-    "auth:status": "twenty auth:status",
-    "auth:switch": "twenty auth:switch",
-    "auth:list": "twenty auth:list",
-    "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
-    "app:uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
-    "function:logs": "twenty function:logs",
-    "function:execute": "twenty function:execute",
-    "help": "twenty help"
+    "twenty": "twenty"
   }
 }
 ```
 
-Acum puteți rula aceleași comenzi prin Yarn, de ex. `yarn app:dev`, `yarn app:generate`, etc.
+Acum puteți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
 
 ## Depanare
 
-* Erori de autentificare: rulați `yarn auth:login` și asigurați-vă că cheia API are permisiunile necesare.
+* Erori de autentificare: rulați `yarn twenty auth:login` și asigurați-vă că cheia API are permisiunile necesare.
 * Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Tipuri sau client lipsă/învechite: rulați `yarn app:generate`.
-* Modul dev nu sincronizează: asigurați-vă că `yarn app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
+* Tipuri sau client lipsă/învechite: rulați `yarn twenty app:generate`.
+* Modul dev nu sincronizează: asigurați-vă că `yarn twenty app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
 
 Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

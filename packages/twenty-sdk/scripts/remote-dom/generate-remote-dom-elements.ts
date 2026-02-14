@@ -18,7 +18,6 @@ import {
   HtmlElementConfigArrayZ,
   OUTPUT_FILES,
 } from './generators';
-import { extractAllComponentsFromTwentyUi } from './twenty-ui-extractor';
 import {
   logCount,
   logDetail,
@@ -77,25 +76,6 @@ const getHtmlElementSchemas = (): ComponentSchema[] => {
   }));
 };
 
-const getUiComponentSchemas = (): ComponentSchema[] => {
-  const discoveredComponents = extractAllComponentsFromTwentyUi();
-
-  return discoveredComponents.map((component) => ({
-    name: component.name,
-    tagName: component.name,
-    customElementName: component.tag,
-    properties: component.properties,
-    slots: component.slots,
-    events: component.events,
-    isHtmlElement: false,
-    htmlTag: undefined,
-    componentImport: component.componentImport,
-    componentPath: component.componentPath,
-    propsTypeName: component.propsTypeName,
-    supportsRefForwarding: component.supportsRefForwarding,
-  }));
-};
-
 const createProject = (): Project => {
   return new Project({
     manipulationSettings: {
@@ -139,11 +119,9 @@ const main = (): void => {
   logTitle('Remote DOM Elements Generator');
 
   let htmlElements: ComponentSchema[];
-  let uiComponents: ComponentSchema[];
 
   try {
     htmlElements = getHtmlElementSchemas();
-    uiComponents = getUiComponentSchemas();
   } catch (error) {
     logError('Validation failed:', error);
     process.exit(1);
@@ -158,13 +136,7 @@ const main = (): void => {
   );
   logDetail(`Events: ${COMMON_HTML_EVENTS.length} common events per element`);
 
-  logEmpty();
-  logCount('UI Components', uiComponents.length, 'component', 'components');
-  logDetail(
-    `Tags: ${uiComponents.map((component) => component.customElementName).join(', ')}`,
-  );
-
-  const allComponents = [...htmlElements, ...uiComponents];
+  const allComponents = [...htmlElements];
 
   ensureDirectoriesExist();
 

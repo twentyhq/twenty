@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.5.2",
+  "version": "0.6.0-alpha",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",
@@ -13,9 +13,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts",
-    "prepublishOnly": "tsx ../twenty-utils/pack-scripts/pre-publish-only.ts",
-    "postpublish": "tsx ../twenty-utils/pack-scripts/post-publish.ts"
+    "build": "npx rimraf dist && npx vite build"
   },
   "keywords": [
     "twenty",
@@ -68,8 +66,6 @@
     "lodash.camelcase": "^4.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
@@ -77,6 +73,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@mui/material": "^7.3.8",
     "@prettier/sync": "^0.5.2",
     "@storybook/addon-vitest": "^10.1.11",
     "@storybook/react-vite": "^10.1.11",
@@ -92,6 +89,8 @@
     "storybook": "^10.1.11",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "wait-on": "^7.2.0"
   },

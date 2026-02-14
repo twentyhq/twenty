@@ -36,32 +36,32 @@ corepack enable
 yarn install
 
 # قم بالمصادقة باستخدام مفتاح واجهة برمجة التطبيقات الخاص بك (سيُطلب منك ذلك)
-yarn auth:login
+yarn twenty auth:login
 
 # ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
-yarn app:dev
+yarn twenty app:dev
 ```
 
 من هنا يمكنك:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
-yarn entity:add
+# أضف كيانًا جديدًا إلى تطبيقك (موجّه)
+yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
-yarn app:generate
+# ولِّد عميل Twenty مضبوط الأنواع وأنواع كيانات مساحة العمل
+yarn twenty app:generate
 
-# Watch your application's function logs
-yarn function:logs
+# راقب سجلات وظائف تطبيقك
+yarn twenty function:logs
 
-# Execute a function by name
-yarn function:execute -n my-function -p '{"name": "test"}'
+# نفّذ وظيفة بالاسم
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
-yarn app:uninstall
+# أزل تثبيت التطبيق من مساحة العمل الحالية
+yarn twenty app:uninstall
 
-# Display commands' help
-yarn help
+# اعرض مساعدة الأوامر
+yarn twenty help
 ```
 
 راجع أيضًا: صفحات مرجع CLI لـ [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) و[twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -102,7 +102,7 @@ my-twenty-app/
 
 بشكل عام:
 
-* **package.json**: يصرّح باسم التطبيق والإصدار والمحرّكات (Node 24+، Yarn 4)، ويضيف `twenty-sdk` فضلًا عن نصوص مثل `app:dev` و`app:generate` و`entity:add` و`function:logs` و`function:execute` و`app:uninstall` وأوامر المصادقة التي تُفوِّض إلى `twenty` CLI المحلي.
+* **package.json**: يصرّح باسم التطبيق والإصدار والمحرّكات (Node 24+، Yarn 4)، ويضيف `twenty-sdk` بالإضافة إلى نص برمجي `twenty` يفوِّض إلى `twenty` CLI المحلي. شغِّل `yarn twenty help` لعرض جميع الأوامر المتاحة.
 * **.gitignore**: يتجاهل العناصر الشائعة مثل `node_modules` و`.yarn` و`generated/` (عميل مضبوط الأنواع) و`dist/` و`build/` ومجلدات التغطية وملفات السجلات وملفات `.env*`.
 * **yarn.lock**، **.yarnrc.yml**، **.yarn/**: تقوم بقفل وتكوين حزمة أدوات Yarn 4 المستخدمة في المشروع.
 * **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
@@ -142,12 +142,12 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* `yarn app:generate` سيُنشئ مجلدًا `generated/` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
-* `yarn entity:add` سيضيف ملفات تعريف الكيانات تحت `src/` لكائناتك المخصصة أو الوظائف أو المكونات الواجهية أو الأدوار.
+* `yarn twenty app:generate` سيُنشئ مجلدًا `generated/` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
+* `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات تحت `src/` لكائناتك المخصصة أو الوظائف أو المكونات الواجهية أو الأدوار.
 
 ## المصادقة
 
-في المرة الأولى التي تشغّل فيها `yarn auth:login`، سيُطلب منك إدخال:
+في المرة الأولى التي تشغّل فيها `yarn twenty auth:login`، سيُطلب منك إدخال:
 
 * عنوان URL لواجهة برمجة التطبيقات (الافتراضي http://localhost:3000 أو ملف تعريف مساحة العمل الحالية لديك)
 * مفتاح واجهة برمجة التطبيقات
@@ -157,26 +157,26 @@ export default defineObject({
 ### Managing workspaces
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
-yarn auth:login
+# تسجيل الدخول تفاعليًا (مُوصى به)
+yarn twenty auth:login
 
-# Login to a specific workspace profile
-yarn auth:login --workspace my-custom-workspace
+# تسجيل الدخول إلى ملف تعريف لمساحة عمل محددة
+yarn twenty auth:login --workspace my-custom-workspace
 
-# List all configured workspaces
-yarn auth:list
+# عرض جميع مساحات العمل المُكوَّنة
+yarn twenty auth:list
 
-# Switch the default workspace (interactive)
-yarn auth:switch
+# تبديل مساحة العمل الافتراضية (تفاعليًا)
+yarn twenty auth:switch
 
-# Switch to a specific workspace
-yarn auth:switch production
+# التبديل إلى مساحة عمل محددة
+yarn twenty auth:switch production
 
-# Check current authentication status
-yarn auth:status
+# التحقق من حالة المصادقة الحالية
+yarn twenty auth:status
 ```
 
-Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+بمجرد أن تقوم بالتبديل بين مساحات العمل باستخدام `yarn twenty auth:switch`، ستستخدم جميع الأوامر اللاحقة تلك المساحة افتراضيًا. You can still override it temporarily with `--workspace <name>`.
 
 ## استخدم موارد SDK (الأنواع والتكوين)
 
@@ -276,7 +276,7 @@ export default defineObject({
 * `universalIdentifier` يجب أن يكون فريدًا وثابتًا عبر عمليات النشر.
 * يتطلب كل حقل `name` و`type` و`label` ومعرّف `universalIdentifier` ثابتًا خاصًا به.
 * المصفوفة `fields` اختيارية — يمكنك تعريف كائنات بدون حقول مخصصة.
-* يمكنك إنشاء كائنات جديدة باستخدام `yarn entity:add`، والذي يرشدك خلال التسمية والحقول والعلاقات.
+* يمكنك إنشاء كائنات جديدة باستخدام `yarn twenty entity:add`، والذي يرشدك خلال التسمية والحقول والعلاقات.
 
 <Note>
   **يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية مثل `name` و`createdAt` و`updatedAt` و`createdBy` و`position` و`deletedAt`. لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 يمكنك إنشاء وظائف جديدة بطريقتين:
 
-* **مُنشأ بالقالب**: شغّل `yarn entity:add` واختر خيار إضافة وظيفة منطقية جديدة. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
+* **مُنشأ بالقالب**: شغّل `yarn twenty entity:add` واختر خيار إضافة وظيفة منطقية جديدة. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
 * **يدوي**: أنشئ ملفًا جديدًا `*.logic-function.ts` واستخدم `defineLogicFunction()` مع اتباع النمط نفسه.
 
 ### المكوّنات الأمامية
@@ -584,16 +584,16 @@ export default defineFrontComponent({
 * المكوّنات الأمامية هي مكوّنات React تُعرَض ضمن سياقات معزولة داخل Twenty.
 * استخدم لاحقة الملف `*.front-component.tsx` للاكتشاف التلقائي.
 * يشير الحقل `component` إلى مكوّن React الخاص بك.
-* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn app:dev`.
+* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn twenty app:dev`.
 
 يمكنك إنشاء مكوّنات أمامية جديدة بطريقتين:
 
-* **مُنشأ بالقالب**: شغّل `yarn entity:add` واختر خيار إضافة مكوّن أمامي جديد.
+* **مُنشأ بالقالب**: شغّل `yarn twenty entity:add` واختر خيار إضافة مكوّن أمامي جديد.
 * **يدوي**: أنشئ ملفًا جديدًا `*.front-component.tsx` واستخدم `defineFrontComponent()`.
 
 ### عميل مُولَّد مضبوط الأنواع
 
-شغّل yarn app:generate لإنشاء عميل محلي مضبوط الأنواع في generated/ استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
+شغّل `yarn twenty app:generate` لإنشاء عميل محلي مضبوط الأنواع في `generated/` استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-يُعاد توليد العميل بواسطة `yarn app:generate`. أعِد التشغيل بعد تغيير كائناتك أو عند الانضمام إلى مساحة عمل جديدة.
+يُعاد توليد العميل بواسطة `yarn twenty app:generate`. أعِد التشغيل بعد تغيير كائناتك أو عند الانضمام إلى مساحة عمل جديدة.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -623,40 +623,29 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 ## إعداد يدوي (بدون المهيئ)
 
-بينما نوصي باستخدام `create-twenty-app` للحصول على أفضل تجربة للبدء، يمكنك أيضًا إعداد مشروع يدويًا. لا تثبّت CLI عالميًا. بدل ذلك، أضف `twenty-sdk` كاعتماد محلي ووصل السكربتات في ملف package.json لديك:
+بينما نوصي باستخدام `create-twenty-app` للحصول على أفضل تجربة للبدء، يمكنك أيضًا إعداد مشروع يدويًا. لا تثبّت CLI عالميًا. بدل ذلك، أضف `twenty-sdk` كاعتماد محلي واربط سكربتًا واحدًا في ملف package.json لديك:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-ثم أضف نصوصًا مثل هذه:
+ثم أضف سكربتًا باسم `twenty`:
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth:login": "twenty auth:login",
-    "auth:logout": "twenty auth:logout",
-    "auth:status": "twenty auth:status",
-    "auth:switch": "twenty auth:switch",
-    "auth:list": "twenty auth:list",
-    "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
-    "app:uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
-    "function:logs": "twenty function:logs",
-    "function:execute": "twenty function:execute",
-    "help": "twenty help"
+    "twenty": "twenty"
   }
 }
 ```
 
-يمكنك الآن تشغيل الأوامر نفسها عبر Yarn، مثل `yarn app:dev` و`yarn app:generate`، إلخ.
+الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty app:dev`، `yarn twenty app:generate`، `yarn twenty help`، إلخ.
 
 ## استكشاف الأخطاء وإصلاحها
 
-* أخطاء المصادقة: شغّل `yarn auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
+* أخطاء المصادقة: شغّل `yarn twenty auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
 * يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة البرمجة وأن خادم Twenty قابل للوصول.
-* الأنواع أو العميل مفقود/قديم: شغّل `yarn app:generate`.
-* وضع التطوير لا يزامن: تأكد من أن `yarn app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
+* الأنواع أو العميل مفقود/قديم: شغّل `yarn twenty app:generate`.
+* وضع التطوير لا يزامن: تأكد من أن `yarn twenty app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
 
 قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

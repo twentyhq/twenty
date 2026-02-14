@@ -36,32 +36,32 @@ corepack enable
 yarn install
 
 # Přihlaste se pomocí svého API klíče (budete vyzváni)
-yarn auth:login
+yarn twenty auth:login
 
 # Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
-yarn app:dev
+yarn twenty app:dev
 ```
 
 Odtud můžete:
 
 ```bash filename="Terminal"
 # Přidejte do vaší aplikace novou entitu (s průvodcem)
-yarn entity:add
+yarn twenty entity:add
 
 # Vygenerujte typovaného klienta Twenty a typy entit pracovního prostoru
-yarn app:generate
+yarn twenty app:generate
 
 # Sledujte logy funkcí vaší aplikace
-yarn function:logs
+yarn twenty function:logs
 
 # Spusťte funkci podle názvu
-yarn function:execute -n my-function -p '{"name": "test"}'
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
 # Odinstalujte aplikaci z aktuálního pracovního prostoru
-yarn app:uninstall
+yarn twenty app:uninstall
 
 # Zobrazte nápovědu k příkazům
-yarn help
+yarn twenty help
 ```
 
 Viz také: referenční stránky CLI pro [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) a [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -102,7 +102,7 @@ my-twenty-app/
 
 V kostce:
 
-* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skripty jako `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` a autentizační příkazy, které delegují na lokální `twenty` CLI.
+* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skript `twenty`, který deleguje na lokální `twenty` CLI. Spusťte `yarn twenty help` pro výpis všech dostupných příkazů.
 * **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
@@ -142,12 +142,12 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn app:generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
-* `yarn entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
+* `yarn twenty app:generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
 
 ## Ověření
 
-Při prvním spuštění `yarn auth:login` budete vyzváni k zadání:
+Při prvním spuštění `yarn twenty auth:login` budete vyzváni k zadání:
 
 * URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
 * Klíč API
@@ -158,25 +158,25 @@ Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twe
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth:login
+yarn twenty auth:login
 
 # Login to a specific workspace profile
-yarn auth:login --workspace my-custom-workspace
+yarn twenty auth:login --workspace my-custom-workspace
 
 # List all configured workspaces
-yarn auth:list
+yarn twenty auth:list
 
 # Switch the default workspace (interactive)
-yarn auth:switch
+yarn twenty auth:switch
 
 # Switch to a specific workspace
-yarn auth:switch production
+yarn twenty auth:switch production
 
 # Check current authentication status
-yarn auth:status
+yarn twenty auth:status
 ```
 
-Jakmile přepnete pracovní prostor pomocí `auth:switch`, všechny následující příkazy budou tento pracovní prostor používat jako výchozí. Můžete jej stále dočasně přepsat pomocí `--workspace <name>`.
+Jakmile přepnete pracovní prostor pomocí `yarn twenty auth:switch`, všechny následující příkazy budou tento pracovní prostor používat jako výchozí. Můžete jej stále dočasně přepsat pomocí `--workspace <name>`.
 
 ## Používejte zdroje SDK (typy a konfiguraci)
 
@@ -276,7 +276,7 @@ Hlavní body:
 * Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
 * Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
 * Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
-* Nové objekty můžete vygenerovat pomocí `yarn entity:add`, který vás provede pojmenováním, poli a vztahy.
+* Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
   **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 Nové funkce můžete vytvářet dvěma způsoby:
 
-* **Vygenerované**: Spusťte `yarn entity:add` a zvolte možnost přidat novou logickou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou logickou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
 * **Ruční**: Vytvořte nový soubor `*.logic-function.ts` a použijte `defineLogicFunction()` podle stejného vzoru.
 
 ### Frontendové komponenty
@@ -584,16 +584,16 @@ Hlavní body:
 * Frontendové komponenty jsou React komponenty, které se vykreslují v izolovaných kontextech v rámci Twenty.
 * Pro automatickou detekci použijte příponu souboru `*.front-component.tsx`.
 * Pole `component` odkazuje na vaši React komponentu.
-* Komponenty se během `yarn app:dev` automaticky sestaví a synchronizují.
+* Komponenty se během `yarn twenty app:dev` automaticky sestaví a synchronizují.
 
 Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
-* **Vygenerované**: Spusťte `yarn entity:add` a zvolte možnost přidat novou frontendovou komponentu.
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou frontendovou komponentu.
 * **Ruční**: Vytvořte nový soubor `*.front-component.tsx` a použijte `defineFrontComponent()`.
 
 ### Generovaný typovaný klient
 
-Spusťte yarn app:generate a vytvořte lokálního typovaného klienta v generated/ na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Spusťte `yarn twenty app:generate` a vytvořte lokálního typovaného klienta v `generated/` na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Klient je znovu generován příkazem `yarn app:generate`. Spusťte znovu po změně vašich objektů nebo při připojování k novému pracovnímu prostoru.
+Klient je znovu generován příkazem `yarn twenty app:generate`. Spusťte znovu po změně vašich objektů nebo při připojování k novému pracovnímu prostoru.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -623,40 +623,29 @@ Prozkoumejte minimalistický end-to-end příklad, který demonstruje objekty, l
 
 ## Ruční nastavení (bez scaffolderu)
 
-Ačkoli pro nejlepší začátky doporučujeme použít `create-twenty-app`, projekt můžete nastavit i ručně. Neinstalujte CLI globálně. Místo toho přidejte `twenty-sdk` jako lokální závislost a propojte skripty v souboru package.json:
+Ačkoli pro nejlepší začátky doporučujeme použít `create-twenty-app`, projekt můžete nastavit i ručně. Neinstalujte CLI globálně. Místo toho přidejte `twenty-sdk` jako lokální závislost a přidejte jeden skript do souboru package.json:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Poté přidejte skripty jako tyto:
+Poté přidejte skript `twenty`:
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth:login": "twenty auth:login",
-    "auth:logout": "twenty auth:logout",
-    "auth:status": "twenty auth:status",
-    "auth:switch": "twenty auth:switch",
-    "auth:list": "twenty auth:list",
-    "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
-    "app:uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
-    "function:logs": "twenty function:logs",
-    "function:execute": "twenty function:execute",
-    "help": "twenty help"
+    "twenty": "twenty"
   }
 }
 ```
 
-Nyní můžete spouštět stejné příkazy přes Yarn, např. `yarn app:dev`, `yarn app:generate` atd.
+Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` atd.
 
 ## Řešení potíží
 
-* Chyby ověření: spusťte `yarn auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
+* Chyby ověření: spusťte `yarn twenty auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
 * Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Typy nebo klient chybí nebo jsou zastaralé: spusťte `yarn app:generate`.
-* Režim vývoje nesynchronizuje: ujistěte se, že běží `yarn app:dev` a že vaše prostředí změny neignoruje.
+* Typy nebo klient chybí nebo jsou zastaralé: spusťte `yarn twenty app:generate`.
+* Režim vývoje se nesynchronizuje: ujistěte se, že běží `yarn twenty app:dev` a že vaše prostředí změny neignoruje.
 
 Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

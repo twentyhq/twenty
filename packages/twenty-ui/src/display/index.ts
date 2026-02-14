@@ -15,7 +15,7 @@ export { invalidAvatarUrlsAtomV2 } from './avatar/components/states/invalidAvata
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
-export type { BannerVariant, BannerProps } from './banner/components/Banner';
+export type { BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
 export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
@@ -30,79 +30,43 @@ export type {
   ColorSampleProps,
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
-export type { CommandBlockProps } from './command-block/components/CommandBlock';
 export { CommandBlock } from './command-block/components/CommandBlock';
 export type { IconProps } from './icon/components/Icon';
 export { Icon } from './icon/components/Icon';
-export type { IconAddressBookProps } from './icon/components/IconAddressBook';
 export { IconAddressBook } from './icon/components/IconAddressBook';
-export type { IconChartBarHorizontalProps } from './icon/components/IconChartBarHorizontal';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
-export type { IconGmailProps } from './icon/components/IconGmail';
 export { IconGmail } from './icon/components/IconGmail';
-export type { IconGoogleProps } from './icon/components/IconGoogle';
 export { IconGoogle } from './icon/components/IconGoogle';
-export type { IconGoogleCalendarProps } from './icon/components/IconGoogleCalendar';
 export { IconGoogleCalendar } from './icon/components/IconGoogleCalendar';
-export type { IconLockCustomProps } from './icon/components/IconLock';
 export { IconLockCustom } from './icon/components/IconLock';
-export type { IconMicrosoftProps } from './icon/components/IconMicrosoft';
 export { IconMicrosoft } from './icon/components/IconMicrosoft';
-export type { IconMicrosoftCalendarProps } from './icon/components/IconMicrosoftCalendar';
 export { IconMicrosoftCalendar } from './icon/components/IconMicrosoftCalendar';
-export type { IconMicrosoftOutlookProps } from './icon/components/IconMicrosoftOutlook';
 export { IconMicrosoftOutlook } from './icon/components/IconMicrosoftOutlook';
-export type { IconRelationManyToOneProps } from './icon/components/IconRelationManyToOne';
 export { IconRelationManyToOne } from './icon/components/IconRelationManyToOne';
-export type { IconTrashXOffProps } from './icon/components/IconTrashXOff';
 export { IconTrashXOff } from './icon/components/IconTrashXOff';
-export type { IconTwentyStarProps } from './icon/components/IconTwentyStar';
 export { IconTwentyStar } from './icon/components/IconTwentyStar';
-export type { IconTwentyStarFilledProps } from './icon/components/IconTwentyStarFilled';
 export { IconTwentyStarFilled } from './icon/components/IconTwentyStarFilled';
-export type { IllustrationIconArrayProps } from './icon/components/IllustrationIconArray';
 export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
-export type { IllustrationIconCalendarEventProps } from './icon/components/IllustrationIconCalendarEvent';
 export { IllustrationIconCalendarEvent } from './icon/components/IllustrationIconCalendarEvent';
-export type { IllustrationIconCalendarTimeProps } from './icon/components/IllustrationIconCalendarTime';
 export { IllustrationIconCalendarTime } from './icon/components/IllustrationIconCalendarTime';
-export type { IllustrationIconCurrencyProps } from './icon/components/IllustrationIconCurrency';
 export { IllustrationIconCurrency } from './icon/components/IllustrationIconCurrency';
-export type { IllustrationIconFileProps } from './icon/components/IllustrationIconFile';
 export { IllustrationIconFile } from './icon/components/IllustrationIconFile';
-export type { IllustrationIconJsonProps } from './icon/components/IllustrationIconJson';
 export { IllustrationIconJson } from './icon/components/IllustrationIconJson';
-export type { IllustrationIconLinkProps } from './icon/components/IllustrationIconLink';
 export { IllustrationIconLink } from './icon/components/IllustrationIconLink';
-export type { IllustrationIconMailProps } from './icon/components/IllustrationIconMail';
 export { IllustrationIconMail } from './icon/components/IllustrationIconMail';
-export type { IllustrationIconManyToManyProps } from './icon/components/IllustrationIconManyToMany';
 export { IllustrationIconManyToMany } from './icon/components/IllustrationIconManyToMany';
-export type { IllustrationIconMapProps } from './icon/components/IllustrationIconMap';
 export { IllustrationIconMap } from './icon/components/IllustrationIconMap';
-export type { IllustrationIconNumbersProps } from './icon/components/IllustrationIconNumbers';
 export { IllustrationIconNumbers } from './icon/components/IllustrationIconNumbers';
-export type { IllustrationIconOneToManyProps } from './icon/components/IllustrationIconOneToMany';
 export { IllustrationIconOneToMany } from './icon/components/IllustrationIconOneToMany';
-export type { IllustrationIconOneToOneProps } from './icon/components/IllustrationIconOneToOne';
 export { IllustrationIconOneToOne } from './icon/components/IllustrationIconOneToOne';
-export type { IllustrationIconPhoneProps } from './icon/components/IllustrationIconPhone';
 export { IllustrationIconPhone } from './icon/components/IllustrationIconPhone';
-export type { IllustrationIconSettingProps } from './icon/components/IllustrationIconSetting';
 export { IllustrationIconSetting } from './icon/components/IllustrationIconSetting';
-export type { IllustrationIconStarProps } from './icon/components/IllustrationIconStar';
 export { IllustrationIconStar } from './icon/components/IllustrationIconStar';
-export type { IllustrationIconTagProps } from './icon/components/IllustrationIconTag';
 export { IllustrationIconTag } from './icon/components/IllustrationIconTag';
-export type { IllustrationIconTagsProps } from './icon/components/IllustrationIconTags';
 export { IllustrationIconTags } from './icon/components/IllustrationIconTags';
-export type { IllustrationIconTextProps } from './icon/components/IllustrationIconText';
 export { IllustrationIconText } from './icon/components/IllustrationIconText';
-export type { IllustrationIconToggleProps } from './icon/components/IllustrationIconToggle';
 export { IllustrationIconToggle } from './icon/components/IllustrationIconToggle';
-export type { IllustrationIconUidProps } from './icon/components/IllustrationIconUid';
 export { IllustrationIconUid } from './icon/components/IllustrationIconUid';
-export type { IllustrationIconUserProps } from './icon/components/IllustrationIconUser';
 export { IllustrationIconUser } from './icon/components/IllustrationIconUser';
 export { IllustrationIconWrapper } from './icon/components/IllustrationIconWrapper';
 export type { TablerIconsProps } from './icon/components/TablerIcons';
@@ -508,7 +472,6 @@ export {
   IconX,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
-export type { IconsProviderProps } from './icon/providers/IconsProvider';
 export { IconsProvider } from './icon/providers/IconsProvider';
 export { iconsState } from './icon/states/iconsState';
 export type {
@@ -517,9 +480,7 @@ export type {
 } from './icon/types/IconComponent';
 export type { InfoAccent, InfoProps } from './info/components/Info';
 export { Info } from './info/components/Info';
-export type { StatusProps } from './status/components/Status';
 export { Status } from './status/components/Status';
-export type { HorizontalSeparatorProps } from './text/components/HorizontalSeparator';
 export { HorizontalSeparator } from './text/components/HorizontalSeparator';
 export { SeparatorLineText } from './text/components/SeparatorLineText';
 export type { AppTooltipProps } from './tooltip/AppTooltip';
@@ -528,17 +489,12 @@ export {
   TooltipDelay,
   AppTooltip,
 } from './tooltip/AppTooltip';
-export type { OverflowingTextWithTooltipProps } from './tooltip/OverflowingTextWithTooltip';
 export { OverflowingTextWithTooltip } from './tooltip/OverflowingTextWithTooltip';
-export type { H1TitleProps } from './typography/components/H1Title';
 export { H1TitleFontColor, H1Title } from './typography/components/H1Title';
-export type { H2TitleProps } from './typography/components/H2Title';
 export { H2Title } from './typography/components/H2Title';
-export type { H3TitleProps } from './typography/components/H3Title';
 export { H3Title } from './typography/components/H3Title';
 export type { LabelVariant } from './typography/components/Label';
 export { Label } from './typography/components/Label';
-export type { StyledTextProps } from './typography/components/StyledText';
 export {
   StyledTextContent,
   StyledTextWrapper,
