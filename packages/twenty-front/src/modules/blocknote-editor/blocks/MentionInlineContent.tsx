@@ -16,6 +16,12 @@ const StyledRecordChip = styled(RecordChip)`
   padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
 `;
 
+const StyledInlineMentionRecordChip = styled(MentionRecordChip)`
+  height: auto;
+  margin: 0;
+  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+`;
+
 // Backward-compatible renderer for legacy notes that only stored objectMetadataId + recordId
 const LegacyMentionRenderer = ({
   recordId,
@@ -106,7 +112,7 @@ export const MentionInlineContent = createReactInlineContentSpec(
       // New notes store objectNameSingular + label + imageUrl directly
       if (isNonEmptyString(objectNameSingular) && isNonEmptyString(label)) {
         return (
-          <MentionRecordChip
+          <StyledInlineMentionRecordChip
             recordId={recordId}
             objectNameSingular={objectNameSingular}
             label={label}

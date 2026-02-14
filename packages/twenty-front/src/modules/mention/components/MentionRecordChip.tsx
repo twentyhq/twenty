@@ -8,6 +8,7 @@ type MentionRecordChipProps = {
   objectNameSingular: string;
   label: string;
   imageUrl: string;
+  className?: string;
 };
 
 export const MentionRecordChip = ({
@@ -15,6 +16,7 @@ export const MentionRecordChip = ({
   objectNameSingular,
   label,
   imageUrl,
+  className,
 }: MentionRecordChipProps) => {
   if (!isNonEmptyString(objectNameSingular)) {
     return (
@@ -46,6 +48,7 @@ export const MentionRecordChip = ({
       emptyLabel={t`Untitled`}
       to={linkToShowPage}
       variant={ChipVariant.Highlighted}
+      className={className}
       leftComponent={
         <AvatarChip
           placeholder={label}
