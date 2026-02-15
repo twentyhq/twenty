@@ -5,12 +5,13 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
-import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
 import {
   ViewSortException,
   ViewSortExceptionCode,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 
 export const fromDestroyViewSortInputToFlatViewSortOrThrow = ({
   destroyViewSortInput,
@@ -18,13 +19,16 @@ export const fromDestroyViewSortInputToFlatViewSortOrThrow = ({
 }: {
   destroyViewSortInput: DestroyViewSortInput;
   flatViewSortMaps: FlatViewSortMaps;
-}): FlatViewSort => {
+}): UniversalFlatViewSort => {
   const { id: viewSortId } = extractAndSanitizeObjectStringFields(
     destroyViewSortInput,
     ['id'],
   );
 
-  const existingFlatViewSortToDestroy = flatViewSortMaps.byId[viewSortId];
+  const existingFlatViewSortToDestroy = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewSortId,
+    flatEntityMaps: flatViewSortMaps,
+  });
 
   if (!isDefined(existingFlatViewSortToDestroy)) {
     throw new ViewSortException(

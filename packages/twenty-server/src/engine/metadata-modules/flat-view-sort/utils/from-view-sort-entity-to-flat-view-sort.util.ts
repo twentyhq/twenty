@@ -56,11 +56,8 @@ export const fromViewSortEntityToFlatViewSort = ({
     updatedAt: viewSortEntity.updatedAt.toISOString(),
     deletedAt: viewSortEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewSortEntityWithoutRelations.universalIdentifier,
-    __universal: {
-      universalIdentifier: viewSortEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      viewUniversalIdentifier,
-      fieldMetadataUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    viewUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
   };
 };

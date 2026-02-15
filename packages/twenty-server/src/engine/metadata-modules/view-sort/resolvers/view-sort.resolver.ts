@@ -17,7 +17,6 @@ import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
-import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 
 @MetadataResolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -54,27 +53,10 @@ export class ViewSortResolver {
     @Args('input') createViewSortInput: CreateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    const createdViewSort = await this.viewSortService.createOne({
+    return await this.viewSortService.createOne({
       createViewSortInput,
-      workspaceId: workspaceId,
-    });
-
-    return fromFlatViewSortToViewSortDto(createdViewSort);
-  }
-
-  @Mutation(() => [ViewSortDTO])
-  @UseGuards(CreateViewSortPermissionGuard)
-  async createManyCoreViewSorts(
-    @Args('inputs', { type: () => [CreateViewSortInput] })
-    createViewSortInputs: CreateViewSortInput[],
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ViewSortDTO[]> {
-    const createdViewSorts = await this.viewSortService.createMany({
-      createViewSortInputs,
       workspaceId,
     });
-
-    return createdViewSorts.map(fromFlatViewSortToViewSortDto);
   }
 
   @Mutation(() => ViewSortDTO)
@@ -83,12 +65,10 @@ export class ViewSortResolver {
     @Args('input') updateViewSortInput: UpdateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    const updatedViewSort = await this.viewSortService.updateOne({
+    return await this.viewSortService.updateOne({
       updateViewSortInput,
       workspaceId,
     });
-
-    return fromFlatViewSortToViewSortDto(updatedViewSort);
   }
 
   @Mutation(() => ViewSortDTO)
@@ -97,12 +77,10 @@ export class ViewSortResolver {
     @Args('input') deleteViewSortInput: DeleteViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    const deletedViewSort = await this.viewSortService.deleteOne({
+    return await this.viewSortService.deleteOne({
       deleteViewSortInput,
       workspaceId,
     });
-
-    return fromFlatViewSortToViewSortDto(deletedViewSort);
   }
 
   @Mutation(() => ViewSortDTO)
@@ -111,11 +89,9 @@ export class ViewSortResolver {
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    const destroyedViewSort = await this.viewSortService.destroyOne({
+    return await this.viewSortService.destroyOne({
       destroyViewSortInput,
       workspaceId,
     });
-
-    return fromFlatViewSortToViewSortDto(destroyedViewSort);
   }
 }

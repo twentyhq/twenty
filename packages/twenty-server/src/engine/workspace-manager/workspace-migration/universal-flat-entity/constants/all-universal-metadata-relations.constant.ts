@@ -139,6 +139,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
       indexFieldMetadatas: null,
       viewFields: { metadataName: 'viewField' },
       viewFilters: { metadataName: 'viewFilter' },
+      viewSorts: { metadataName: 'viewSort' },
       kanbanAggregateOperationViews: { metadataName: 'view' },
       calendarViews: { metadataName: 'view' },
       mainGroupByFieldMetadataViews: { metadataName: 'view' },

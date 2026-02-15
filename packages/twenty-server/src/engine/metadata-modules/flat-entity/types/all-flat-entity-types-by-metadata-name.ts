@@ -33,6 +33,7 @@ import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-f
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -46,7 +47,6 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
-import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
@@ -67,6 +67,7 @@ import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/
 import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
@@ -256,6 +257,9 @@ import {
   type FlatCreateViewSortAction,
   type FlatDeleteViewSortAction,
   type FlatUpdateViewSortAction,
+  type UniversalCreateViewSortAction,
+  type UniversalDeleteViewSortAction,
+  type UniversalUpdateViewSortAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
@@ -359,13 +363,19 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewGroup'>;
   };
   viewSort: {
-    actions: {
+    flatEntityMaps: FlatViewSortMaps;
+    universalActions: {
+      create: UniversalCreateViewSortAction;
+      update: UniversalUpdateViewSortAction;
+      delete: UniversalDeleteViewSortAction;
+    };
+    flatActions: {
       create: FlatCreateViewSortAction;
       update: FlatUpdateViewSortAction;
       delete: FlatDeleteViewSortAction;
     };
     flatEntity: FlatViewSort;
-    universalFlatEntity: UniversalFlatEntityFrom<ViewSortEntity>;
+    universalFlatEntity: UniversalFlatViewSort;
     entity: MetadataEntity<'viewSort'>;
   };
   rowLevelPermissionPredicate: {
