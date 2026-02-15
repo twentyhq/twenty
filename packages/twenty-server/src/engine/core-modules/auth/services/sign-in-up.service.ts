@@ -394,6 +394,13 @@ export class SignInUpService {
       return { canImpersonate: true, canAccessFullAdminPanel: true };
     }
 
+    if (
+      this.isWorkspaceCreationLimitedToServerAdmins() &&
+      (await this.isFirstWorkspaceInSystem())
+    ) {
+      return { canImpersonate: true, canAccessFullAdminPanel: true };
+    }
+
     return { canImpersonate: false, canAccessFullAdminPanel: false };
   }
 
@@ -465,17 +472,8 @@ export class SignInUpService {
       }
     }
 
-    let { canImpersonate, canAccessFullAdminPanel } =
+    const { canImpersonate, canAccessFullAdminPanel } =
       await this.setDefaultImpersonateAndAccessFullAdminPanel();
-    
-    if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      this.isWorkspaceCreationLimitedToServerAdmins() &&
-      (await this.isFirstWorkspaceInSystem())
-    ) {
-      canAccessFullAdminPanel = true;
-      canImpersonate = true;
-    }
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
