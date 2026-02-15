@@ -3,8 +3,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createFrontComponentBuildOptions } from '../../src/cli/utilities/build/common/front-component-build/utils/create-front-component-build-options';
-import { createTreeShakeIndividualBuildsPlugin } from '../../src/cli/utilities/build/common/front-component-build/tree-shake-individual-builds-plugin';
+import { getFrontComponentBuildPlugins } from '../../src/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const exampleSourcesDir = path.resolve(
@@ -58,17 +57,13 @@ const twentySharedAliases = Object.fromEntries(
   ]),
 );
 
-const sdkIndividualDir = path.resolve(dirname, '../../dist/sdk');
-const twentyUiIndividualDir = path.resolve(
-  dirname,
-  '../../../twenty-ui/dist/individual',
-);
-
-const treeShakePlugin = createTreeShakeIndividualBuildsPlugin([
-  sdkIndividualDir,
-  twentySharedIndividualDir,
-  twentyUiIndividualDir,
-]);
+const storyAlias = {
+  react: path.join(rootNodeModules, 'react'),
+  'react-dom': path.join(rootNodeModules, 'react-dom'),
+  '@/sdk': sdkIndividualIndex,
+  'twenty-sdk/ui': twentyUiIndividualIndex,
+  ...twentySharedAliases,
+};
 
 const STORY_COMPONENTS = [
   'static.front-component',
@@ -132,24 +127,28 @@ const buildSourceExamples = async (): Promise<void> => {
   const entryPoints = resolveEntryPoints();
   const tsconfigPath = path.join(dirname, '../../tsconfig.json');
 
+  const commonOptions: esbuild.BuildOptions = {
+    entryPoints,
+    bundle: true,
+    splitting: false,
+    format: 'esm',
+    outExtension: { '.js': '.mjs' },
+    tsconfig: tsconfigPath,
+    jsx: 'automatic',
+    sourcemap: true,
+    metafile: true,
+    logLevel: 'silent',
+    minify: true,
+    alias: storyAlias,
+  };
+
   fs.mkdirSync(exampleSourcesBuiltDir, { recursive: true });
 
-  await esbuild.build(
-    createFrontComponentBuildOptions({
-      entryPoints,
-      outdir: exampleSourcesBuiltDir,
-      tsconfigPath,
-      minify: true,
-      alias: {
-        react: path.join(rootNodeModules, 'react'),
-        'react-dom': path.join(rootNodeModules, 'react-dom'),
-        '@/sdk': sdkIndividualIndex,
-        'twenty-sdk/ui': twentyUiIndividualIndex,
-        ...twentySharedAliases,
-      },
-      plugins: [treeShakePlugin],
-    }),
-  );
+  await esbuild.build({
+    ...commonOptions,
+    outdir: exampleSourcesBuiltDir,
+    plugins: getFrontComponentBuildPlugins(),
+  });
 
   console.log(
     `Built ${STORY_COMPONENTS.length} React story components to ${exampleSourcesBuiltDir}`,
@@ -157,23 +156,11 @@ const buildSourceExamples = async (): Promise<void> => {
 
   fs.mkdirSync(exampleSourcesBuiltPreactDir, { recursive: true });
 
-  await esbuild.build(
-    createFrontComponentBuildOptions({
-      entryPoints,
-      outdir: exampleSourcesBuiltPreactDir,
-      tsconfigPath,
-      usePreact: true,
-      minify: true,
-      alias: {
-        react: path.join(rootNodeModules, 'react'),
-        'react-dom': path.join(rootNodeModules, 'react-dom'),
-        '@/sdk': sdkIndividualIndex,
-        'twenty-sdk/ui': twentyUiIndividualIndex,
-        ...twentySharedAliases,
-      },
-      plugins: [treeShakePlugin],
-    }),
-  );
+  await esbuild.build({
+    ...commonOptions,
+    outdir: exampleSourcesBuiltPreactDir,
+    plugins: getFrontComponentBuildPlugins({ usePreact: true }),
+  });
 
   console.log(
     `Built ${STORY_COMPONENTS.length} Preact story components to ${exampleSourcesBuiltPreactDir}`,
