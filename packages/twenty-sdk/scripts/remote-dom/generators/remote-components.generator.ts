@@ -1,8 +1,8 @@
 import type { Project, SourceFile } from 'ts-morph';
 
-import { EVENT_TO_REACT } from '@/sdk/front-component-api/constants/EventToReact';
+import { EVENT_TO_REACT } from '../../../src/sdk/front-component-api/constants/EventToReact';
 import { type ComponentSchema } from './schemas';
-import { addExportedConst, addFileHeader } from './utils';
+import { addExportedConst } from './utils';
 
 const generateComponentDefinition = (
   sourceFile: SourceFile,
@@ -58,8 +58,6 @@ export const generateRemoteComponents = (
   for (const component of components) {
     generateComponentDefinition(sourceFile, component);
   }
-
-  addFileHeader(sourceFile);
 
   return sourceFile;
 };

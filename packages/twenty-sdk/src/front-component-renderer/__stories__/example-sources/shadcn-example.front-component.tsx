@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from '@/sdk';
 
-// shadcn UI uses Tailwind utility classes with Radix UI primitives.
-// This example simulates that pattern with a bundled CSS subset.
 const SHADCN_CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 .inline-flex{display:inline-flex}

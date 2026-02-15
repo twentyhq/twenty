@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 
 import { ALLOWED_HTML_ELEMENTS } from '../../src/sdk/front-component-api/constants/AllowedHtmlElements';
 import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-api/constants/CommonHtmlEvents';
-import { EVENT_TO_REACT } from '../../src/sdk/front-component-api/constants/EventToReact';
 import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-api/constants/HtmlCommonProperties';
 
 import {
@@ -182,11 +181,7 @@ const main = (): void => {
 
   logGroupLabel('Host');
 
-  const hostRegistry = generateHostRegistry(
-    project,
-    allComponents,
-    EVENT_TO_REACT,
-  );
+  const hostRegistry = generateHostRegistry(project, allComponents);
   writeGeneratedFile(
     HOST_GENERATED_DIR,
     OUTPUT_FILES.HOST_REGISTRY,

@@ -38,9 +38,6 @@ const createComponentStory = (
   ...(options?.play ? { play: options.play } : {}),
 });
 
-// Shared play function that tests the counter increment for every UI library.
-// Each component must expose data-testid="<prefix>-count" (text "Count: N")
-// and data-testid="<prefix>-button" (the increment button).
 const createCounterTest =
   (testIdPrefix: string): Story['play'] =>
   async ({ canvasElement }) => {
@@ -62,10 +59,6 @@ const createCounterTest =
     expect(await canvas.findByText('Count: 2')).toBeVisible();
   };
 
-// ---------------------------------------------------------------------------
-// Chakra UI
-// ---------------------------------------------------------------------------
-
 const chakraTest = createCounterTest('chakra');
 
 export const ChakraReact: Story = createComponentStory('chakra-example', {
@@ -75,10 +68,6 @@ export const ChakraPreact: Story = createComponentStory('chakra-example', {
   runtime: 'preact',
   play: chakraTest,
 });
-
-// ---------------------------------------------------------------------------
-// Tailwind CSS
-// ---------------------------------------------------------------------------
 
 const tailwindTest = createCounterTest('tailwind');
 
@@ -90,10 +79,6 @@ export const TailwindPreact: Story = createComponentStory('tailwind-example', {
   play: tailwindTest,
 });
 
-// ---------------------------------------------------------------------------
-// Emotion
-// ---------------------------------------------------------------------------
-
 const emotionTest = createCounterTest('emotion');
 
 export const EmotionReact: Story = createComponentStory('emotion-example', {
@@ -103,10 +88,6 @@ export const EmotionPreact: Story = createComponentStory('emotion-example', {
   runtime: 'preact',
   play: emotionTest,
 });
-
-// ---------------------------------------------------------------------------
-// Styled Components
-// ---------------------------------------------------------------------------
 
 const styledComponentsTest = createCounterTest('styled-components');
 
@@ -119,10 +100,6 @@ export const StyledComponentsPreact: Story = createComponentStory(
   { runtime: 'preact', play: styledComponentsTest },
 );
 
-// ---------------------------------------------------------------------------
-// shadcn UI
-// ---------------------------------------------------------------------------
-
 const shadcnTest = createCounterTest('shadcn');
 
 export const ShadcnReact: Story = createComponentStory('shadcn-example', {
@@ -133,10 +110,6 @@ export const ShadcnPreact: Story = createComponentStory('shadcn-example', {
   play: shadcnTest,
 });
 
-// ---------------------------------------------------------------------------
-// MUI (Material UI)
-// ---------------------------------------------------------------------------
-
 const muiTest = createCounterTest('mui');
 
 export const MuiReact: Story = createComponentStory('mui-example', {
@@ -146,10 +119,6 @@ export const MuiPreact: Story = createComponentStory('mui-example', {
   runtime: 'preact',
   play: muiTest,
 });
-
-// ---------------------------------------------------------------------------
-// Twenty UI
-// ---------------------------------------------------------------------------
 
 const twentyUiTest = createCounterTest('twenty-ui');
 

@@ -1,7 +1,5 @@
 type StoryComponentVariant = 'react' | 'preact';
 
-// Returns an absolute URL because the worker runs inside a Blob URL
-// where relative paths cannot be resolved.
 export const getBuiltStoryComponentPathForRender = (
   componentName: string,
   variant: StoryComponentVariant = 'react',

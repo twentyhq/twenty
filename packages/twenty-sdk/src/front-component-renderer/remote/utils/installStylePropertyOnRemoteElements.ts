@@ -1,25 +1,8 @@
 import { ALLOWED_HTML_ELEMENTS } from '@/sdk/front-component-api/constants/AllowedHtmlElements';
 
-// React DOM expects element.style to be a CSSStyleDeclaration-like
-// object with individual CSS property setters (element.style.color = ...).
-// Remote DOM custom elements define `style` as a plain string property
-// that is serialized to the host.
-//
-// This utility patches each registered custom element prototype so that
-// element.style returns a Proxy that:
-//   1. Accepts individual CSS property writes from React DOM
-//   2. Flushes them as a CSS string via `updateRemoteProperty`,
-//      the Remote DOM public API for sending property changes to the host
-//
-// IMPORTANT: By defining `style` on the prototype, the RemoteElement
-// constructor will skip creating its own instance-level getter/setter
-// (it checks `prototype.hasOwnProperty(property)` and skips if true).
-// We compensate by calling `updateRemoteProperty` directly in the flush.
-
 const camelToKebab = (property: string): string =>
   property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 
-// CSS properties where numeric values should NOT be suffixed with "px"
 const UNITLESS_CSS_PROPERTIES = new Set([
   'animationIterationCount',
   'borderImageOutset',
@@ -178,7 +161,6 @@ const createStyleProxy = (
   });
 };
 
-// Minimal interface for the Remote DOM element's public API
 type RemoteElementLike = Element & {
   updateRemoteProperty: (name: string, value: unknown) => void;
 };
@@ -200,9 +182,6 @@ export const installStylePropertyOnRemoteElements = (): void => {
         if (!proxy) {
           const element = this;
 
-          // Flush CSS text directly via Remote DOM's serialization API.
-          // This bypasses setAttribute entirely, sending the style
-          // property change straight to the host.
           const flush: FlushFn = (cssText: string) => {
             element.updateRemoteProperty('style', cssText || undefined);
           };

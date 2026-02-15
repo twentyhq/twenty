@@ -89,7 +89,6 @@ export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
       void 0;
     }
 
-    // styled-components uses insertBefore to add CSS text nodes
     const originalInsertBeforeOnStyle =
       styleElement.insertBefore.bind(styleElement);
     try {
@@ -106,7 +105,6 @@ export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
       void 0;
     }
 
-    // Some libraries also use removeChild on style elements
     const originalRemoveChildOnStyle =
       styleElement.removeChild.bind(styleElement);
     try {

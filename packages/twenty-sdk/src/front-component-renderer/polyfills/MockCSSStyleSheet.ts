@@ -34,7 +34,6 @@ export class MockCSSStyleSheet {
     this.notify();
   }
 
-  // Aggregate all tracked rules into a single CSS string
   private notify(): void {
     const cssText = this.cssRules.map((rule) => rule.cssText).join('\n');
     this.onChange(cssText);

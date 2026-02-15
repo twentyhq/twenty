@@ -26,20 +26,9 @@ import { type WorkerExports } from '../../types/WorkerExports';
 import { exposeGlobals } from '../utils/exposeGlobals';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
-// Patch custom element prototypes so .style behaves like a
-// CSSStyleDeclaration (React DOM sets element.style.color = ...).
 installStylePropertyOnRemoteElements();
-
-// React 18 uses setAttribute('class', ...) on custom elements instead
-// of element.className. Patch to route through the property setter
-// so Remote DOM serializes className to the host.
 patchRemoteElementSetAttribute();
 
-// External libraries (React, ReactDOM, twenty-shared, twenty-sdk) are no
-// longer exposed as globals — each front component bundles its own copy
-// (tree-shaken).  Only the HTML-tag-to-custom-element mapping is exposed
-// for the jsx-runtime wrapper plugin to map standard HTML tags (e.g. "div")
-// to remote DOM custom elements (e.g. "html-div").
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
@@ -90,10 +79,6 @@ const render: WorkerExports['render'] = async (
     /* @vite-ignore */
     const componentModule = await import(importUrl);
 
-    // The component bundles its own React + ReactDOM and exports a
-    // render(container) function — this avoids the "two React instances"
-    // problem where hooks fail because the dispatcher belongs to a
-    // different React copy.
     componentModule.default(renderContainer);
   } finally {
     URL.revokeObjectURL(importUrl);

@@ -11,11 +11,7 @@ import {
   TYPE_NAMES,
 } from './constants';
 import { type ComponentSchema, type PropertySchema } from './schemas';
-import {
-  addFileHeader,
-  schemaTypeToConstructor,
-  schemaTypeToTs,
-} from './utils';
+import { schemaTypeToConstructor, schemaTypeToTs } from './utils';
 
 type ElementGenerationOptions = {
   useSharedEvents: boolean;
@@ -384,8 +380,6 @@ export const generateRemoteElements = (
   );
 
   generateTagNameMapDeclaration(sourceFile, components);
-
-  addFileHeader(sourceFile);
 
   return sourceFile;
 };

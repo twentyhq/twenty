@@ -81,7 +81,6 @@ export const buildSourceExamples = async (): Promise<void> => {
   const entryPoints = resolveEntryPoints();
   const tsconfigPath = path.join(dirname, '../../tsconfig.json');
 
-  // Build React variants
   fs.mkdirSync(exampleSourcesBuiltDir, { recursive: true });
 
   const reactBuildOptions = createFrontComponentBuildOptions({
@@ -96,7 +95,6 @@ export const buildSourceExamples = async (): Promise<void> => {
     `Built ${STORY_COMPONENTS.length} React story components to ${exampleSourcesBuiltDir}`,
   );
 
-  // Build Preact variants
   fs.mkdirSync(exampleSourcesBuiltPreactDir, { recursive: true });
 
   const preactBuildOptions = createFrontComponentBuildOptions({
@@ -112,7 +110,6 @@ export const buildSourceExamples = async (): Promise<void> => {
     `Built ${STORY_COMPONENTS.length} Preact story components to ${exampleSourcesBuiltPreactDir}`,
   );
 
-  // Write bundle-sizes manifest for the Storybook size story
   const sizes = collectBundleSizes();
   const manifestPath = path.join(exampleSourcesBuiltDir, 'bundle-sizes.json');
 

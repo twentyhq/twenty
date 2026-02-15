@@ -30,6 +30,5 @@ export const RemoteStyleRenderer = ({
     }
   }, [cssText]);
 
-  // Renders nothing in the React tree; the style tag lives in document.head
   return null;
 };
