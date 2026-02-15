@@ -57,8 +57,8 @@ export const computeStandardTimelineActivityViewFields = (
         size: 150,
       },
     }),
-    allTimelineActivitiesTargetOpportunity:
-      createStandardViewFieldFlatMetadata({
+    allTimelineActivitiesTargetOpportunity: createStandardViewFieldFlatMetadata(
+      {
         ...args,
         objectName: 'timelineActivity',
         context: {
@@ -69,7 +69,8 @@ export const computeStandardTimelineActivityViewFields = (
           isVisible: true,
           size: 150,
         },
-      }),
+      },
+    ),
     allTimelineActivitiesTargetTask: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'timelineActivity',
@@ -119,8 +120,8 @@ export const computeStandardTimelineActivityViewFields = (
           size: 150,
         },
       }),
-    allTimelineActivitiesTargetWorkflowRun:
-      createStandardViewFieldFlatMetadata({
+    allTimelineActivitiesTargetWorkflowRun: createStandardViewFieldFlatMetadata(
+      {
         ...args,
         objectName: 'timelineActivity',
         context: {
@@ -131,7 +132,8 @@ export const computeStandardTimelineActivityViewFields = (
           isVisible: true,
           size: 150,
         },
-      }),
+      },
+    ),
     allTimelineActivitiesTargetDashboard: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'timelineActivity',
