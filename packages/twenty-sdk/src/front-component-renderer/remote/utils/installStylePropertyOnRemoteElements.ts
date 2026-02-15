@@ -50,9 +50,7 @@ const UNITLESS_CSS_PROPERTIES = new Set([
 
 type FlushFn = (cssText: string) => void;
 
-const createStyleProxy = (
-  flush: FlushFn,
-): Record<string, unknown> => {
+const createStyleProxy = (flush: FlushFn): Record<string, unknown> => {
   const styleStore: Record<string, string> = {};
 
   const flushToRemoteProperty = (): void => {
@@ -64,7 +62,7 @@ const createStyleProxy = (
   };
 
   return new Proxy(styleStore, {
-    get(target, property) {
+    get: (target, property) => {
       if (property === 'cssText') {
         return Object.entries(target)
           .map(([key, value]) => `${key}:${value}`)
@@ -106,7 +104,7 @@ const createStyleProxy = (
 
       return undefined;
     },
-    set(target, property, value) {
+    set: (target, property, value) => {
       if (property === 'cssText') {
         for (const key of Object.keys(target)) {
           delete target[key];

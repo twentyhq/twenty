@@ -108,9 +108,7 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   return serialized;
 };
 
-const wrapEventHandler = (
-  handler: (detail: SerializedEventData) => void,
-) => {
+const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
   return (event: unknown) => {
     handler(serializeEvent(event));
   };

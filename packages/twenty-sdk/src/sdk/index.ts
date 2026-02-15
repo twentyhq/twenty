@@ -3,7 +3,7 @@ export { defineApplication } from './application/define-application';
 export type {
   DefinableEntity,
   DefineEntity,
-  ValidationResult
+  ValidationResult,
 } from './common/types/define-entity.type';
 export type { SyncableEntityOptions } from './common/types/syncable-entity-options.type';
 export { createValidationResult } from './common/utils/create-validation-result';
@@ -16,7 +16,7 @@ export type {
   FullNameField,
   LinksField,
   PhonesField,
-  RichTextField
+  RichTextField,
 } from './fields/composite-fields';
 export { defineField } from './fields/define-field';
 export { FieldType } from './fields/field-type';
@@ -25,12 +25,12 @@ export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
 export type {
   FrontComponentConfig,
-  FrontComponentType
+  FrontComponentType,
 } from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
 export type {
   LogicFunctionConfig,
-  LogicFunctionHandler
+  LogicFunctionHandler,
 } from './logic-functions/logic-function-config';
 export type { CronPayload } from './logic-functions/triggers/cron-payload-type';
 export type {
@@ -42,7 +42,7 @@ export type {
   ObjectRecordEvent,
   ObjectRecordRestoreEvent,
   ObjectRecordUpdateEvent,
-  ObjectRecordUpsertEvent
+  ObjectRecordUpsertEvent,
 } from './logic-functions/triggers/database-event-payload-type';
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
 export { defineObject } from './objects/define-object';
@@ -54,7 +54,7 @@ export { PermissionFlag } from './roles/permission-flag-type';
 export {
   navigate,
   useFrontComponentExecutionContext,
-  useUserId
+  useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
 
@@ -64,7 +64,7 @@ export {
   COMMON_HTML_EVENTS,
   EVENT_TO_REACT,
   HTML_COMMON_PROPERTIES,
-  HTML_TAG_TO_REMOTE_COMPONENT
+  HTML_TAG_TO_REMOTE_COMPONENT,
 } from './front-component-api';
 export type { AllowedHtmlElement } from './front-component-api';
 

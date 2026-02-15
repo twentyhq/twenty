@@ -1,24 +1,11 @@
 import type * as esbuild from 'esbuild';
 
-// Wraps both react/jsx-runtime and react so that ALL element creation
-// (jsx, jsxs, createElement — including from third-party libraries)
-// goes through remote component mapping, style injection, and event
-// handler bridging.
-//
-// React 18 uses event delegation — it never calls addEventListener
-// on individual elements and strips function props from custom elements.
-// Remote DOM only forwards events with explicit listeners.  We bridge
-// this by extracting event handler props (onClick, onChange, …) and
-// using a ref callback to set them as properties (element.onclick = fn)
-// which triggers Remote DOM's event serialization to the host.
-
-// Shared helper code injected into both wrappers
 const SHARED_HELPERS = `
-var _customElementMap = globalThis.__HTML_TAG_TO_CUSTOM_ELEMENT_TAG__ || {};
+export var customElementMap = globalThis.__HTML_TAG_TO_CUSTOM_ELEMENT_TAG__ || {};
 
 var _injectedStyleKeys = {};
 
-function _injectStyleViaHead(cssText) {
+export function injectStyleViaHead(cssText) {
   if (!cssText) return;
   var hash = 0;
   for (var i = 0; i < cssText.length; i++) {
@@ -33,7 +20,7 @@ function _injectStyleViaHead(cssText) {
   document.head.appendChild(el);
 }
 
-function _extractCssText(children) {
+export function extractCssText(children) {
   if (typeof children === 'string') return children;
   if (Array.isArray(children))
     return children
@@ -42,25 +29,21 @@ function _extractCssText(children) {
   return '';
 }
 
-// Map React event prop names that differ from the DOM event name
 var _reactToDomEvent = {
   ondoubleclick: 'ondblclick',
 };
 
-// Returns true for React event handler props: onClick, onChange, etc.
 function _isEventProp(name) {
   return (
     name.length > 2 &&
-    name.charCodeAt(0) === 111 && // 'o'
-    name.charCodeAt(1) === 110 && // 'n'
+    name.charCodeAt(0) === 111 &&
+    name.charCodeAt(1) === 110 &&
     name.charCodeAt(2) >= 65 &&
-    name.charCodeAt(2) <= 90      // uppercase letter
+    name.charCodeAt(2) <= 90
   );
 }
 
-// Extract event handler props from a props object.
-// Returns { cleanProps, events } where events is null if none found.
-function _splitEventProps(props) {
+export function splitEventProps(props) {
   if (!props) return { cleanProps: props, events: null };
   var events = null;
   var cleanProps = null;
@@ -82,10 +65,7 @@ function _splitEventProps(props) {
   return { cleanProps: cleanProps || props, events: events };
 }
 
-// Create a ref callback that sets event handler properties on the DOM
-// element.  Remote DOM elements have property setters for on<event>
-// that register the listener and forward it to the host.
-function _makeEventRef(events, userRef) {
+export function makeEventRef(events, userRef) {
   return function(el) {
     if (el) {
       for (var name in events) {
@@ -97,7 +77,7 @@ function _makeEventRef(events, userRef) {
     else if (userRef != null && typeof userRef === 'object') userRef.current = el;
   };
 }
-`;
+`.trim();
 
 const JSX_RUNTIME_WRAPPER = `
 import {
@@ -106,7 +86,13 @@ import {
   Fragment,
 } from '__real_react_jsx_runtime__';
 
-${SHARED_HELPERS}
+import {
+  customElementMap,
+  injectStyleViaHead,
+  extractCssText,
+  splitEventProps,
+  makeEventRef,
+} from '__jsx_shared_helpers__';
 
 function _wrapJsxFactory(originalFactory) {
   return function wrappedJsx(type, props, key) {
@@ -115,17 +101,17 @@ function _wrapJsxFactory(originalFactory) {
         var css =
           props && props.dangerouslySetInnerHTML
             ? props.dangerouslySetInnerHTML.__html || ''
-            : _extractCssText(props && props.children);
-        _injectStyleViaHead(css);
+            : extractCssText(props && props.children);
+        injectStyleViaHead(css);
         return null;
       }
 
-      var customTag = _customElementMap[type];
+      var customTag = customElementMap[type];
       if (customTag) {
-        var split = _splitEventProps(props);
+        var split = splitEventProps(props);
         if (split.events) {
           var cp = split.cleanProps;
-          cp.ref = _makeEventRef(split.events, cp.ref);
+          cp.ref = makeEventRef(split.events, cp.ref);
           return originalFactory(customTag, cp, key);
         }
         return originalFactory(customTag, props, key);
@@ -144,7 +130,13 @@ const REACT_WRAPPER = `
 export * from '__real_react__';
 import _React from '__real_react__';
 
-${SHARED_HELPERS}
+import {
+  customElementMap,
+  injectStyleViaHead,
+  extractCssText,
+  splitEventProps,
+  makeEventRef,
+} from '__jsx_shared_helpers__';
 
 var _originalCreateElement = _React.createElement;
 
@@ -156,19 +148,19 @@ function createElement(type) {
       if (props) {
         var css = props.dangerouslySetInnerHTML
           ? props.dangerouslySetInnerHTML.__html || ''
-          : _extractCssText(props.children);
-        _injectStyleViaHead(css);
+          : extractCssText(props.children);
+        injectStyleViaHead(css);
       }
       return null;
     }
 
-    var customTag = _customElementMap[type];
+    var customTag = customElementMap[type];
     if (customTag) {
       var ceProps = args.length > 1 ? args[1] : null;
-      var split = _splitEventProps(ceProps);
+      var split = splitEventProps(ceProps);
       if (split.events) {
         var cp = split.cleanProps || {};
-        cp.ref = _makeEventRef(split.events, cp.ref);
+        cp.ref = makeEventRef(split.events, cp.ref);
         var newArgs = [customTag, cp];
         for (var i = 2; i < args.length; i++) newArgs.push(args[i]);
         return _originalCreateElement.apply(null, newArgs);
@@ -194,18 +186,26 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
 ): esbuild.Plugin => {
   const usePreact = options?.usePreact ?? false;
 
-  // When usePreact is true, resolve the underlying modules to preact
-  const jsxRuntimeModule = usePreact ? 'preact/jsx-runtime' : 'react/jsx-runtime';
+  const jsxRuntimeModule = usePreact
+    ? 'preact/jsx-runtime'
+    : 'react/jsx-runtime';
   const reactModule = usePreact ? 'preact/compat' : 'react';
 
   return {
     name: 'jsx-runtime-remote-wrapper',
-    setup(build) {
+    setup: (build) => {
       let realJsxRuntimePath: string | undefined;
       let realReactPath: string | undefined;
-      let preactCompatPath: string | undefined;
 
-      // --- react/jsx-runtime ---
+      build.onResolve({ filter: /^__jsx_shared_helpers__$/ }, () => ({
+        path: '__jsx_shared_helpers__',
+        namespace: 'jsx-shared-helpers',
+      }));
+
+      build.onLoad({ filter: /.*/, namespace: 'jsx-shared-helpers' }, () => ({
+        contents: SHARED_HELPERS,
+        loader: 'js' as const,
+      }));
 
       build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
         if (args.pluginData?.skipJsxWrapper) {
@@ -238,15 +238,10 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
         return { path: realJsxRuntimePath };
       });
 
-      build.onLoad(
-        { filter: /.*/, namespace: 'jsx-runtime-wrapper' },
-        () => ({
-          contents: JSX_RUNTIME_WRAPPER,
-          loader: 'js' as const,
-        }),
-      );
-
-      // --- react (for createElement wrapping) ---
+      build.onLoad({ filter: /.*/, namespace: 'jsx-runtime-wrapper' }, () => ({
+        contents: JSX_RUNTIME_WRAPPER,
+        loader: 'js' as const,
+      }));
 
       build.onResolve({ filter: /^react$/ }, async (args) => {
         if (args.pluginData?.skipJsxWrapper) {
@@ -279,46 +274,10 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
         return { path: realReactPath };
       });
 
-      build.onLoad(
-        { filter: /.*/, namespace: 'react-wrapper' },
-        () => ({
-          contents: REACT_WRAPPER,
-          loader: 'js' as const,
-        }),
-      );
-
-      // --- react-dom aliasing (for Preact compatibility) ---
-
-      if (usePreact) {
-        build.onResolve(
-          { filter: /^react-dom\/client$/ },
-          async (args) => {
-            if (!preactCompatPath) {
-              const resolved = await build.resolve('preact/compat/client', {
-                kind: args.kind,
-                resolveDir: args.resolveDir,
-              });
-
-              preactCompatPath = resolved.path;
-            }
-
-            return { path: preactCompatPath };
-          },
-        );
-
-        build.onResolve({ filter: /^react-dom$/ }, async (args) => {
-          const resolved = await build.resolve('preact/compat', {
-            kind: args.kind,
-            resolveDir: args.resolveDir,
-          });
-
-          return { path: resolved.path };
-        });
-      }
+      build.onLoad({ filter: /.*/, namespace: 'react-wrapper' }, () => ({
+        contents: REACT_WRAPPER,
+        loader: 'js' as const,
+      }));
     },
   };
 };
-
-// Default export using React (backward compatible)
-export const jsxRuntimeRemoteWrapperPlugin =
-  createJsxRuntimeRemoteWrapperPlugin();

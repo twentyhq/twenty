@@ -19,11 +19,10 @@ export const patchRemoteElementSetAttribute = (): void => {
       continue;
     }
 
-    const originalSetAttribute =
-      elementConstructor.prototype.setAttribute as (
-        name: string,
-        value: string,
-      ) => void;
+    const originalSetAttribute = elementConstructor.prototype.setAttribute as (
+      name: string,
+      value: string,
+    ) => void;
 
     elementConstructor.prototype.setAttribute = function (
       this: Element & Record<string, unknown>,

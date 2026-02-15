@@ -8,13 +8,14 @@ const CONTEXT_KEY = '__twentySdkExecutionContext__';
 const LISTENERS_KEY = '__twentySdkContextListeners__';
 
 const getListeners = (): Set<Listener> => {
-  if (
-    !(globalThis as Record<string, unknown>)[LISTENERS_KEY]
-  ) {
-    (globalThis as Record<string, unknown>)[LISTENERS_KEY] = new Set<Listener>();
+  if (!(globalThis as Record<string, unknown>)[LISTENERS_KEY]) {
+    (globalThis as Record<string, unknown>)[LISTENERS_KEY] =
+      new Set<Listener>();
   }
 
-  return (globalThis as Record<string, unknown>)[LISTENERS_KEY] as Set<Listener>;
+  return (globalThis as Record<string, unknown>)[
+    LISTENERS_KEY
+  ] as Set<Listener>;
 };
 
 export const setFrontComponentExecutionContext = (
