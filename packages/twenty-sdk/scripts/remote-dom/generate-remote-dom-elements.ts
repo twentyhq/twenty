@@ -10,26 +10,26 @@ import { EVENT_TO_REACT } from '../../src/sdk/front-component-api/constants/Even
 import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-api/constants/HtmlCommonProperties';
 
 import {
-  type ComponentSchema,
-  extractHtmlTag,
-  generateHostRegistry,
-  generateRemoteComponents,
-  generateRemoteElements,
-  HtmlElementConfigArrayZ,
-  OUTPUT_FILES,
+    type ComponentSchema,
+    extractHtmlTag,
+    generateHostRegistry,
+    generateRemoteComponents,
+    generateRemoteElements,
+    HtmlElementConfigArrayZ,
+    OUTPUT_FILES,
 } from './generators';
 import {
-  logCount,
-  logDetail,
-  logEmpty,
-  logError,
-  logFileWritten,
-  logGroupLabel,
-  logSectionHeader,
-  logSeparator,
-  logSuccess,
-  logTitle,
-  setVerbose,
+    logCount,
+    logDetail,
+    logEmpty,
+    logError,
+    logFileWritten,
+    logGroupLabel,
+    logSectionHeader,
+    logSeparator,
+    logSuccess,
+    logTitle,
+    setVerbose,
 } from './utils/logger';
 
 const parseVerboseFlag = (): boolean => {

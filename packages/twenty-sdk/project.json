@@ -146,7 +146,11 @@
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": [
-        "generate-remote-dom-elements"
+        "generate-remote-dom-elements",
+        {
+          "target": "build:individual",
+          "projects": "twenty-ui"
+        }
       ],
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",

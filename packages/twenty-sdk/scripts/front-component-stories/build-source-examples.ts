@@ -29,8 +29,7 @@ const STORY_COMPONENTS = [
   'styled-components-example.front-component',
   'shadcn-example.front-component',
   'mui-example.front-component',
-  // TODO: re-enable once twenty-ui packaging exports ThemeProvider correctly
-  // 'twenty-ui-example.front-component',
+  'twenty-ui-example.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {
@@ -51,6 +50,31 @@ const resolveEntryPoints = (): Record<string, string> => {
 
   return entryPoints;
 };
+
+type BundleSizeEntry = {
+  name: string;
+  reactBytes: number;
+  preactBytes: number;
+};
+
+const collectBundleSizes = (): BundleSizeEntry[] =>
+  STORY_COMPONENTS.map((name) => {
+    const reactFile = path.join(exampleSourcesBuiltDir, `${name}.mjs`);
+    const preactFile = path.join(
+      exampleSourcesBuiltPreactDir,
+      `${name}.mjs`,
+    );
+
+    return {
+      name,
+      reactBytes: fs.existsSync(reactFile)
+        ? fs.statSync(reactFile).size
+        : 0,
+      preactBytes: fs.existsSync(preactFile)
+        ? fs.statSync(preactFile).size
+        : 0,
+    };
+  });
 
 export const buildSourceExamples = async (): Promise<void> => {
   const entryPoints = resolveEntryPoints();
@@ -86,6 +110,13 @@ export const buildSourceExamples = async (): Promise<void> => {
   console.log(
     `Built ${STORY_COMPONENTS.length} Preact story components to ${exampleSourcesBuiltPreactDir}`,
   );
+
+  // Write bundle-sizes manifest for the Storybook size story
+  const sizes = collectBundleSizes();
+  const manifestPath = path.join(exampleSourcesBuiltDir, 'bundle-sizes.json');
+
+  fs.writeFileSync(manifestPath, JSON.stringify(sizes, null, 2));
+  console.log(`Wrote bundle size manifest to ${manifestPath}`);
 };
 
 buildSourceExamples().catch((error) => {

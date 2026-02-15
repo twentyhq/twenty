@@ -1,14 +1,6 @@
-import { useState } from 'react';
 import { defineFrontComponent } from '@/sdk';
-import {
-  Button,
-  Chip,
-  ChipVariant,
-  H2Title,
-  Tag,
-  THEME_LIGHT,
-  ThemeProvider,
-} from 'twenty-sdk/ui';
+import { useState } from 'react';
+import { Button, H2Title, THEME_LIGHT, ThemeProvider } from 'twenty-sdk/ui';
 
 const TwentyUiComponent = () => {
   const [count, setCount] = useState(0);
@@ -25,10 +17,12 @@ const TwentyUiComponent = () => {
         }}
       >
         <H2Title title="Twenty UI Component" />
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Tag text={`Count: ${count}`} color="blue" />
-          <Chip label="Remote Component" variant={ChipVariant.Highlighted} />
-        </div>
+        <p
+          data-testid="twenty-ui-count"
+          style={{ fontSize: 24, fontWeight: 700 }}
+        >
+          Count: {count}
+        </p>
         <div style={{ display: 'flex', gap: 8 }}>
           <Button
             data-testid="twenty-ui-button"
