@@ -66,3 +66,18 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 2,
   },
 } as const;
+
+export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
+  Record<keyof typeof STANDARD_NAVIGATION_MENU_ITEMS, string>
+> = {
+  allCompanies: 'indigo',
+  allPeople: 'indigo',
+  allTasks: 'teal',
+  allNotes: 'teal',
+  allOpportunities: 'tomato',
+  workflowsFolder: 'orange',
+  allDashboards: 'gray',
+  workflowsFolderAllWorkflows: 'gray',
+  workflowsFolderAllWorkflowRuns: 'gray',
+  workflowsFolderAllWorkflowVersions: 'gray',
+};

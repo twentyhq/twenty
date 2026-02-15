@@ -640,6 +640,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       name: null,
       link: null,
       icon: null,
+      color: null,
       position: nextPosition,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
