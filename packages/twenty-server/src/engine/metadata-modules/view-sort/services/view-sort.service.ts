@@ -162,8 +162,9 @@ export class ViewSortService {
       );
 
     return fromFlatViewSortToViewSortDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewSort.universalIdentifier,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewSort.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewSortMaps,
       }),
     );
@@ -232,8 +233,8 @@ export class ViewSortService {
       );
 
     return fromFlatViewSortToViewSortDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId:
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
           optimisticallyUpdatedFlatViewSortWithDeletedAt.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewSortMaps,
       }),
