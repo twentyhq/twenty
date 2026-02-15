@@ -9,7 +9,6 @@ const generateComponentDefinition = (
   component: ComponentSchema,
 ): void => {
   const hasEvents = component.events.length > 0;
-  const componentExportName = component.tagName;
 
   let initializer: string;
 
@@ -30,7 +29,7 @@ ${eventProps}
     initializer = `createRemoteComponent('${component.customElementName}', ${component.name}Element)`;
   }
 
-  addExportedConst(sourceFile, componentExportName, initializer);
+  addExportedConst(sourceFile, component.name, initializer);
 };
 
 export const generateRemoteComponents = (
@@ -46,13 +45,9 @@ export const generateRemoteComponents = (
     namedImports: ['createRemoteComponent'],
   });
 
-  const elementImports = components.map(
-    (component) => `${component.name}Element`,
-  );
-
   sourceFile.addImportDeclaration({
     moduleSpecifier: './remote-elements',
-    namedImports: elementImports,
+    namedImports: components.map((component) => `${component.name}Element`),
   });
 
   for (const component of components) {

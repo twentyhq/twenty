@@ -9,31 +9,13 @@ import { COMMON_HTML_EVENTS } from '../../src/sdk/front-component-api/constants/
 import { HTML_COMMON_PROPERTIES } from '../../src/sdk/front-component-api/constants/HtmlCommonProperties';
 
 import {
-    type ComponentSchema,
-    extractHtmlTag,
-    generateHostRegistry,
-    generateRemoteComponents,
-    generateRemoteElements,
-    HtmlElementConfigArrayZ,
-    OUTPUT_FILES,
+  type ComponentSchema,
+  generateHostRegistry,
+  generateRemoteComponents,
+  generateRemoteElements,
+  HtmlElementConfigArrayZ,
+  OUTPUT_FILES,
 } from './generators';
-import {
-    logCount,
-    logDetail,
-    logEmpty,
-    logError,
-    logFileWritten,
-    logGroupLabel,
-    logSectionHeader,
-    logSeparator,
-    logSuccess,
-    logTitle,
-    setVerbose,
-} from './utils/logger';
-
-const parseVerboseFlag = (): boolean => {
-  return process.argv.includes('--verbose');
-};
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_PATH = path.resolve(SCRIPT_DIR, '../..');
@@ -47,65 +29,43 @@ const REMOTE_GENERATED_DIR = path.join(
   'remote/generated',
 );
 
-const formatZodError = (error: {
-  issues: { path: PropertyKey[]; message: string }[];
-}): string => {
-  return error.issues
-    .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
-    .join('\n');
-};
+const extractHtmlTag = (tag: string): string => tag.slice(5);
 
 const getHtmlElementSchemas = (): ComponentSchema[] => {
   const result = HtmlElementConfigArrayZ.safeParse(ALLOWED_HTML_ELEMENTS);
 
   if (!result.success) {
-    throw new Error(
-      `Invalid HTML element configuration:\n${formatZodError(result.error)}`,
-    );
+    const details = result.error.issues
+      .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+      .join('\n');
+    throw new Error(`Invalid HTML element configuration:\n${details}`);
   }
 
   return result.data.map((element) => ({
     name: element.name,
-    tagName: element.name,
     customElementName: element.tag,
     properties: {
       ...HTML_COMMON_PROPERTIES,
       ...element.properties,
     },
     events: COMMON_HTML_EVENTS,
-    isHtmlElement: true,
     htmlTag: extractHtmlTag(element.tag),
   }));
 };
 
-const getUtilityComponentSchemas = (): ComponentSchema[] => {
-  return [
-    {
-      name: 'RemoteStyle',
-      tagName: 'RemoteStyle',
-      customElementName: 'remote-style',
-      properties: {
-        cssText: { type: 'string', optional: true },
-        styleKey: { type: 'string', optional: true },
-      },
-      events: [],
-      isHtmlElement: false,
-      htmlTag: undefined,
-      customHostRenderer: 'RemoteStyleRenderer',
-      customHostRendererPath: '../components/RemoteStyleRenderer',
+const getUtilityComponentSchemas = (): ComponentSchema[] => [
+  {
+    name: 'RemoteStyle',
+    customElementName: 'remote-style',
+    properties: {
+      cssText: { type: 'string', optional: true },
+      styleKey: { type: 'string', optional: true },
     },
-  ];
-};
-
-const createProject = (): Project => {
-  return new Project({
-    manipulationSettings: {
-      indentationText: IndentationText.TwoSpaces,
-      quoteKind: QuoteKind.Single,
-      useTrailingCommas: true,
-    },
-  });
-};
+    events: [],
+    customHostRenderer: 'RemoteStyleRenderer',
+    customHostRendererPath: '../components/RemoteStyleRenderer',
+  },
+];
 
 const writeGeneratedFile = (
   dir: string,
@@ -121,65 +81,23 @@ const writeGeneratedFile = (
     endOfLine: 'lf',
   });
   fs.writeFileSync(filePath, formattedContent, 'utf-8');
-  logFileWritten(filePath);
-};
-
-const ensureDirectoriesExist = (): void => {
-  if (!fs.existsSync(HOST_GENERATED_DIR)) {
-    fs.mkdirSync(HOST_GENERATED_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(REMOTE_GENERATED_DIR)) {
-    fs.mkdirSync(REMOTE_GENERATED_DIR, { recursive: true });
-  }
 };
 
 const main = (): void => {
-  const verbose = parseVerboseFlag();
-  setVerbose(verbose);
-
-  logTitle('Remote DOM Elements Generator');
-
-  let htmlElements: ComponentSchema[];
-  let utilityComponents: ComponentSchema[];
-
-  try {
-    htmlElements = getHtmlElementSchemas();
-    utilityComponents = getUtilityComponentSchemas();
-  } catch (error) {
-    logError('Validation failed:', error);
-    process.exit(1);
-  }
-
-  logSeparator();
-  logSectionHeader('Summary');
-
-  logCount('HTML Elements', htmlElements.length, 'element', 'elements');
-  logDetail(
-    `Tags: ${htmlElements.map((element) => element.htmlTag).join(', ')}`,
-  );
-  logDetail(`Events: ${COMMON_HTML_EVENTS.length} common events per element`);
-
-  logEmpty();
-  logCount(
-    'Utility Components',
-    utilityComponents.length,
-    'component',
-    'components',
-  );
-  logDetail(
-    `Tags: ${utilityComponents.map((component) => component.customElementName).join(', ')}`,
-  );
-
+  const htmlElements = getHtmlElementSchemas();
+  const utilityComponents = getUtilityComponentSchemas();
   const allComponents = [...htmlElements, ...utilityComponents];
 
-  ensureDirectoriesExist();
+  fs.mkdirSync(HOST_GENERATED_DIR, { recursive: true });
+  fs.mkdirSync(REMOTE_GENERATED_DIR, { recursive: true });
 
-  const project = createProject();
-
-  logSeparator();
-  logSectionHeader('Writing Files');
-
-  logGroupLabel('Host');
+  const project = new Project({
+    manipulationSettings: {
+      indentationText: IndentationText.TwoSpaces,
+      quoteKind: QuoteKind.Single,
+      useTrailingCommas: true,
+    },
+  });
 
   const hostRegistry = generateHostRegistry(project, allComponents);
   writeGeneratedFile(
@@ -187,9 +105,6 @@ const main = (): void => {
     OUTPUT_FILES.HOST_REGISTRY,
     hostRegistry.getFullText(),
   );
-
-  logEmpty();
-  logGroupLabel('Remote');
 
   const remoteElements = generateRemoteElements(
     project,
@@ -209,12 +124,6 @@ const main = (): void => {
     OUTPUT_FILES.REMOTE_COMPONENTS,
     remoteComponents.getFullText(),
   );
-
-  logSeparator();
-  logSuccess('Done!', 'All generated files created.');
-  logDetail(`Host:   ${HOST_GENERATED_DIR}`);
-  logDetail(`Remote: ${REMOTE_GENERATED_DIR}`);
-  logEmpty();
 };
 
 main();

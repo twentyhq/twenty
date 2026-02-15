@@ -3,7 +3,6 @@ import type { Project, SourceFile } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
-import { addStatement } from './utils';
 
 const getCustomRendererImports = (
   components: ComponentSchema[],
@@ -79,7 +78,7 @@ export const generateHostRegistry = (
     });
   }
 
-  addStatement(sourceFile, generateRegistryEntries(components));
+  sourceFile.addStatements(generateRegistryEntries(components));
 
   return sourceFile;
 };
