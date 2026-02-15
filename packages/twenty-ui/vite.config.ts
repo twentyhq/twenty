@@ -101,8 +101,6 @@ export default defineConfig(({ command }) => {
         },
       }),
     ],
-    // Configuration for building your library.
-    // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
       cssCodeSplit: false,
       minify: 'esbuild',
@@ -121,7 +119,6 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        // External packages that should not be bundled into your library.
         external: Object.keys(packageJson.dependencies || {}),
         output: [
           {

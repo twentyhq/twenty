@@ -7,9 +7,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 import packageJson from './package.json';
 
-// Externalize ALL dependencies (like the barrel build). The consumer's
-// bundler (esbuild for front-components) resolves + bundles them,
-// guaranteeing a single instance of React, Emotion, etc.
 const depNames = Object.keys(packageJson.dependencies || {});
 
 const isExternal = (id: string): boolean =>
@@ -77,8 +74,6 @@ export default defineConfig(() => {
       rollupOptions: {
         external: isExternal,
         output: {
-          // One file per source module — enables near-perfect tree-shaking.
-          // All deps are external so only twenty-ui's own source is preserved.
           preserveModules: true,
           preserveModulesRoot: 'src',
           entryFileNames: '[name].js',
