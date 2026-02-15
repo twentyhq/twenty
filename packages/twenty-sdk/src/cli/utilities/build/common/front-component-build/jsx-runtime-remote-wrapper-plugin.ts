@@ -185,92 +185,140 @@ export { createElement };
 export default Object.assign({}, _React, { createElement: createElement });
 `.trim();
 
-export const jsxRuntimeRemoteWrapperPlugin: esbuild.Plugin = {
-  name: 'jsx-runtime-remote-wrapper',
-  setup(build) {
-    let realJsxRuntimePath: string | undefined;
-    let realReactPath: string | undefined;
-
-    // --- react/jsx-runtime ---
-
-    build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
-      if (args.pluginData?.skipJsxWrapper) {
-        return undefined;
-      }
-
-      if (!realJsxRuntimePath) {
-        const resolved = await build.resolve('react/jsx-runtime', {
-          kind: args.kind,
-          resolveDir: args.resolveDir,
-          pluginData: { skipJsxWrapper: true },
-        });
-
-        realJsxRuntimePath = resolved.path;
-      }
-
-      return {
-        path: 'react/jsx-runtime',
-        namespace: 'jsx-runtime-wrapper',
-      };
-    });
-
-    build.onResolve({ filter: /^__real_react_jsx_runtime__$/ }, () => {
-      if (!realJsxRuntimePath) {
-        throw new Error(
-          'jsx-runtime-remote-wrapper: real jsx-runtime path not resolved yet',
-        );
-      }
-
-      return { path: realJsxRuntimePath };
-    });
-
-    build.onLoad(
-      { filter: /.*/, namespace: 'jsx-runtime-wrapper' },
-      () => ({
-        contents: JSX_RUNTIME_WRAPPER,
-        loader: 'js' as const,
-      }),
-    );
-
-    // --- react (for createElement wrapping) ---
-
-    build.onResolve({ filter: /^react$/ }, async (args) => {
-      if (args.pluginData?.skipJsxWrapper) {
-        return undefined;
-      }
-
-      if (!realReactPath) {
-        const resolved = await build.resolve('react', {
-          kind: args.kind,
-          resolveDir: args.resolveDir,
-          pluginData: { skipJsxWrapper: true },
-        });
-
-        realReactPath = resolved.path;
-      }
-
-      return {
-        path: 'react',
-        namespace: 'react-wrapper',
-      };
-    });
-
-    build.onResolve({ filter: /^__real_react__$/ }, () => {
-      if (!realReactPath) {
-        throw new Error(
-          'jsx-runtime-remote-wrapper: real react path not resolved yet',
-        );
-      }
-
-      return { path: realReactPath };
-    });
-
-    build.onLoad(
-      { filter: /.*/, namespace: 'react-wrapper' },
-      () => ({
-        contents: REACT_WRAPPER,
-        loader: 'js' as const,
-      }),
-    );
-  },
+type JsxRuntimeRemoteWrapperPluginOptions = {
+  usePreact?: boolean;
 };
+
+export const createJsxRuntimeRemoteWrapperPlugin = (
+  options?: JsxRuntimeRemoteWrapperPluginOptions,
+): esbuild.Plugin => {
+  const usePreact = options?.usePreact ?? false;
+
+  // When usePreact is true, resolve the underlying modules to preact
+  const jsxRuntimeModule = usePreact ? 'preact/jsx-runtime' : 'react/jsx-runtime';
+  const reactModule = usePreact ? 'preact/compat' : 'react';
+
+  return {
+    name: 'jsx-runtime-remote-wrapper',
+    setup(build) {
+      let realJsxRuntimePath: string | undefined;
+      let realReactPath: string | undefined;
+      let preactCompatPath: string | undefined;
+
+      // --- react/jsx-runtime ---
+
+      build.onResolve({ filter: /^react\/jsx-runtime$/ }, async (args) => {
+        if (args.pluginData?.skipJsxWrapper) {
+          return undefined;
+        }
+
+        if (!realJsxRuntimePath) {
+          const resolved = await build.resolve(jsxRuntimeModule, {
+            kind: args.kind,
+            resolveDir: args.resolveDir,
+            pluginData: { skipJsxWrapper: true },
+          });
+
+          realJsxRuntimePath = resolved.path;
+        }
+
+        return {
+          path: 'react/jsx-runtime',
+          namespace: 'jsx-runtime-wrapper',
+        };
+      });
+
+      build.onResolve({ filter: /^__real_react_jsx_runtime__$/ }, () => {
+        if (!realJsxRuntimePath) {
+          throw new Error(
+            'jsx-runtime-remote-wrapper: real jsx-runtime path not resolved yet',
+          );
+        }
+
+        return { path: realJsxRuntimePath };
+      });
+
+      build.onLoad(
+        { filter: /.*/, namespace: 'jsx-runtime-wrapper' },
+        () => ({
+          contents: JSX_RUNTIME_WRAPPER,
+          loader: 'js' as const,
+        }),
+      );
+
+      // --- react (for createElement wrapping) ---
+
+      build.onResolve({ filter: /^react$/ }, async (args) => {
+        if (args.pluginData?.skipJsxWrapper) {
+          return undefined;
+        }
+
+        if (!realReactPath) {
+          const resolved = await build.resolve(reactModule, {
+            kind: args.kind,
+            resolveDir: args.resolveDir,
+            pluginData: { skipJsxWrapper: true },
+          });
+
+          realReactPath = resolved.path;
+        }
+
+        return {
+          path: 'react',
+          namespace: 'react-wrapper',
+        };
+      });
+
+      build.onResolve({ filter: /^__real_react__$/ }, () => {
+        if (!realReactPath) {
+          throw new Error(
+            'jsx-runtime-remote-wrapper: real react path not resolved yet',
+          );
+        }
+
+        return { path: realReactPath };
+      });
+
+      build.onLoad(
+        { filter: /.*/, namespace: 'react-wrapper' },
+        () => ({
+          contents: REACT_WRAPPER,
+          loader: 'js' as const,
+        }),
+      );
+
+      // --- react-dom aliasing (for Preact compatibility) ---
+
+      if (usePreact) {
+        build.onResolve(
+          { filter: /^react-dom\/client$/ },
+          async (args) => {
+            if (!preactCompatPath) {
+              const resolved = await build.resolve('preact/compat/client', {
+                kind: args.kind,
+                resolveDir: args.resolveDir,
+              });
+
+              preactCompatPath = resolved.path;
+            }
+
+            return { path: preactCompatPath };
+          },
+        );
+
+        build.onResolve({ filter: /^react-dom$/ }, async (args) => {
+          const resolved = await build.resolve('preact/compat', {
+            kind: args.kind,
+            resolveDir: args.resolveDir,
+          });
+
+          return { path: resolved.path };
+        });
+      }
+    },
+  };
+};
+
+// Default export using React (backward compatible)
+export const jsxRuntimeRemoteWrapperPlugin =
+  createJsxRuntimeRemoteWrapperPlugin();

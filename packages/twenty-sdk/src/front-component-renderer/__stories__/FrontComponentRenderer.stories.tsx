@@ -25,6 +25,10 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
+// ---------------------------------------------------------------------------
+// React stories
+// ---------------------------------------------------------------------------
+
 export const Static: Story = {
   args: {
     componentUrl: getBuiltStoryComponentPathForRender('static.front-component'),
@@ -55,7 +59,9 @@ export const Static: Story = {
 
 export const Interactive: Story = {
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('interactive.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'interactive.front-component',
+    ),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -75,7 +81,9 @@ export const Interactive: Story = {
 
 export const Lifecycle: Story = {
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('lifecycle.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'lifecycle.front-component',
+    ),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -152,7 +160,9 @@ export const TwentyUiExample: Story = {
 
 export const ErrorHandling: Story = {
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('nonexistent.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'nonexistent.front-component',
+    ),
   },
   play: async () => {
     await waitFor(
@@ -161,5 +171,93 @@ export const ErrorHandling: Story = {
       },
       { timeout: 10000 },
     );
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Preact stories — same source components, built with preact/compat
+// ---------------------------------------------------------------------------
+
+export const PreactStatic: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'static.front-component',
+      'preact',
+    ),
+  },
+  play: Static.play,
+};
+
+export const PreactInteractive: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'interactive.front-component',
+      'preact',
+    ),
+  },
+  play: Interactive.play,
+};
+
+export const PreactLifecycle: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'lifecycle.front-component',
+      'preact',
+    ),
+  },
+  play: Lifecycle.play,
+};
+
+export const PreactChakraExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'chakra-example.front-component',
+      'preact',
+    ),
+  },
+};
+
+export const PreactTailwindExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'tailwind-example.front-component',
+      'preact',
+    ),
+  },
+};
+
+export const PreactEmotionExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'emotion-example.front-component',
+      'preact',
+    ),
+  },
+};
+
+export const PreactStyledComponentsExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'styled-components-example.front-component',
+      'preact',
+    ),
+  },
+};
+
+export const PreactShadcnExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'shadcn-example.front-component',
+      'preact',
+    ),
+  },
+};
+
+export const PreactMuiExample: Story = {
+  args: {
+    componentUrl: getBuiltStoryComponentPathForRender(
+      'mui-example.front-component',
+      'preact',
+    ),
   },
 };

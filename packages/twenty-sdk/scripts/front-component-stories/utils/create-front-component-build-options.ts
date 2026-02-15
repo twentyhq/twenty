@@ -13,6 +13,7 @@ export type FrontComponentBuildOptions = {
   minify?: boolean;
   metafile?: boolean;
   sourcemap?: boolean;
+  usePreact?: boolean;
 };
 
 export const createFrontComponentBuildOptions = ({
@@ -22,9 +23,10 @@ export const createFrontComponentBuildOptions = ({
   externalModules = FRONT_COMPONENT_EXTERNAL_MODULES,
   logLevel = 'silent',
   platform,
-  minify,
+  minify = true,
   metafile = true,
   sourcemap = true,
+  usePreact = false,
 }: FrontComponentBuildOptions): esbuild.BuildOptions => {
   return {
     entryPoints,
@@ -41,6 +43,6 @@ export const createFrontComponentBuildOptions = ({
     metafile,
     logLevel,
     minify,
-    plugins: getFrontComponentBuildPlugins(),
+    plugins: getFrontComponentBuildPlugins({ usePreact }),
   };
 };

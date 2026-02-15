@@ -6,9 +6,18 @@ import { fileURLToPath } from 'node:url';
 import { createFrontComponentBuildOptions } from './utils/create-front-component-build-options';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const exampleSourcesDir = path.resolve(dirname, '../../src/front-component-renderer/__stories__/example-sources');
-const exampleSourcesBuiltDir = path.resolve(dirname, '../../src/front-component-renderer/__stories__/example-sources-built');
-const sdkRoot = path.resolve(dirname, '../../../..');
+const exampleSourcesDir = path.resolve(
+  dirname,
+  '../../src/front-component-renderer/__stories__/example-sources',
+);
+const exampleSourcesBuiltDir = path.resolve(
+  dirname,
+  '../../src/front-component-renderer/__stories__/example-sources-built',
+);
+const exampleSourcesBuiltPreactDir = path.resolve(
+  dirname,
+  '../../src/front-component-renderer/__stories__/example-sources-built-preact',
+);
 
 const STORY_COMPONENTS = [
   'static.front-component',
@@ -24,32 +33,58 @@ const STORY_COMPONENTS = [
   // 'twenty-ui-example.front-component',
 ];
 
-export const buildSourceExamples = async (): Promise<void> => {
-  fs.mkdirSync(exampleSourcesBuiltDir, { recursive: true });
-
+const resolveEntryPoints = (): Record<string, string> => {
   const entryPoints: Record<string, string> = {};
 
   for (const name of STORY_COMPONENTS) {
     const filePath = path.join(exampleSourcesDir, `${name}.tsx`);
+
     if (!fs.existsSync(filePath)) {
       throw new Error(
         `Story component source file not found: ${filePath}\n` +
           `Ensure the file exists in ${exampleSourcesDir} and the name in STORY_COMPONENTS is correct.`,
       );
     }
+
     entryPoints[name] = filePath;
   }
 
-  const buildOptions = createFrontComponentBuildOptions({
+  return entryPoints;
+};
+
+export const buildSourceExamples = async (): Promise<void> => {
+  const entryPoints = resolveEntryPoints();
+  const tsconfigPath = path.join(dirname, '../../tsconfig.json');
+
+  // Build React variants
+  fs.mkdirSync(exampleSourcesBuiltDir, { recursive: true });
+
+  const reactBuildOptions = createFrontComponentBuildOptions({
     entryPoints,
     outdir: exampleSourcesBuiltDir,
-    tsconfigPath: path.join(dirname, '../../tsconfig.json'),
+    tsconfigPath,
   });
 
-  await esbuild.build(buildOptions);
+  await esbuild.build(reactBuildOptions);
 
   console.log(
-    `Built ${STORY_COMPONENTS.length} story components to ${exampleSourcesBuiltDir}`,
+    `Built ${STORY_COMPONENTS.length} React story components to ${exampleSourcesBuiltDir}`,
+  );
+
+  // Build Preact variants
+  fs.mkdirSync(exampleSourcesBuiltPreactDir, { recursive: true });
+
+  const preactBuildOptions = createFrontComponentBuildOptions({
+    entryPoints,
+    outdir: exampleSourcesBuiltPreactDir,
+    tsconfigPath,
+    usePreact: true,
+  });
+
+  await esbuild.build(preactBuildOptions);
+
+  console.log(
+    `Built ${STORY_COMPONENTS.length} Preact story components to ${exampleSourcesBuiltPreactDir}`,
   );
 };
 

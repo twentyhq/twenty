@@ -51048,6 +51048,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"preact@npm:^10.28.3":
+  version: 10.28.3
+  resolution: "preact@npm:10.28.3"
+  checksum: 10c0/e8854fae8d8d40c918538f7a90888dd4f8acd388b8ba8e0c612ed0eb1a7d2cc6c15a7dc0a7b7c7bb5c361d2df63aa283e501cf1d47f8eb1413979cee611a38ef
+  languageName: node
+  linkType: hard
+
 "prebuild-install@npm:^7.1.1":
   version: 7.1.2
   resolution: "prebuild-install@npm:7.1.2"
@@ -58363,6 +58370,7 @@ __metadata:
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
     playwright: "npm:^1.56.1"
+    preact: "npm:^10.28.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     storybook: "npm:^10.1.11"
