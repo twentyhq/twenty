@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createFrontComponentBuildOptions } from './utils/create-front-component-build-options';
+import { createFrontComponentBuildOptions } from '../../src/cli/utilities/build/common/front-component-build/utils/create-front-component-build-options';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const exampleSourcesDir = path.resolve(
@@ -17,6 +17,11 @@ const exampleSourcesBuiltDir = path.resolve(
 const exampleSourcesBuiltPreactDir = path.resolve(
   dirname,
   '../../src/front-component-renderer/__stories__/example-sources-built-preact',
+);
+
+const twentyUiIndividualIndex = path.resolve(
+  dirname,
+  '../../../twenty-ui/dist/individual/individual-entry.js',
 );
 
 const STORY_COMPONENTS = [
@@ -77,19 +82,21 @@ const collectBundleSizes = (): BundleSizeEntry[] =>
     };
   });
 
-export const buildSourceExamples = async (): Promise<void> => {
+const buildSourceExamples = async (): Promise<void> => {
   const entryPoints = resolveEntryPoints();
   const tsconfigPath = path.join(dirname, '../../tsconfig.json');
 
   fs.mkdirSync(exampleSourcesBuiltDir, { recursive: true });
 
-  const reactBuildOptions = createFrontComponentBuildOptions({
-    entryPoints,
-    outdir: exampleSourcesBuiltDir,
-    tsconfigPath,
-  });
-
-  await esbuild.build(reactBuildOptions);
+  await esbuild.build(
+    createFrontComponentBuildOptions({
+      entryPoints,
+      outdir: exampleSourcesBuiltDir,
+      tsconfigPath,
+      minify: true,
+      alias: { 'twenty-sdk/ui': twentyUiIndividualIndex },
+    }),
+  );
 
   console.log(
     `Built ${STORY_COMPONENTS.length} React story components to ${exampleSourcesBuiltDir}`,
@@ -97,14 +104,16 @@ export const buildSourceExamples = async (): Promise<void> => {
 
   fs.mkdirSync(exampleSourcesBuiltPreactDir, { recursive: true });
 
-  const preactBuildOptions = createFrontComponentBuildOptions({
-    entryPoints,
-    outdir: exampleSourcesBuiltPreactDir,
-    tsconfigPath,
-    usePreact: true,
-  });
-
-  await esbuild.build(preactBuildOptions);
+  await esbuild.build(
+    createFrontComponentBuildOptions({
+      entryPoints,
+      outdir: exampleSourcesBuiltPreactDir,
+      tsconfigPath,
+      usePreact: true,
+      minify: true,
+      alias: { 'twenty-sdk/ui': twentyUiIndividualIndex },
+    }),
+  );
 
   console.log(
     `Built ${STORY_COMPONENTS.length} Preact story components to ${exampleSourcesBuiltPreactDir}`,
