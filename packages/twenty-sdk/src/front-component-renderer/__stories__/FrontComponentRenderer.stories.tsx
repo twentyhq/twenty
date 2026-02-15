@@ -116,3 +116,41 @@ export const ErrorHandling: Story = {
     );
   },
 };
+
+export const SdkContext: Story = {
+  ...createComponentStory('sdk-context-example'),
+  args: {
+    ...createComponentStory('sdk-context-example').args,
+    executionContext: { userId: 'test-user-abc-123' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'sdk-context-component',
+      {},
+      { timeout: 30000 },
+    );
+
+    // The component should display the userId from the execution context
+    const userIdElement = await canvas.findByTestId('sdk-context-user-id');
+    expect(userIdElement).toBeVisible();
+    expect(userIdElement).toHaveTextContent('test-user-abc-123');
+
+    // The full context JSON should contain the userId
+    const jsonElement = await canvas.findByTestId('sdk-context-json');
+    expect(jsonElement).toHaveTextContent('"userId": "test-user-abc-123"');
+
+    // The re-render button should work without losing context
+    const button = await canvas.findByTestId('sdk-context-button');
+    await userEvent.click(button);
+
+    const renderCount = await canvas.findByTestId(
+      'sdk-context-render-count',
+    );
+    expect(renderCount).toHaveTextContent('Renders: 1');
+
+    // Context should still be available after re-render
+    expect(userIdElement).toHaveTextContent('test-user-abc-123');
+  },
+};

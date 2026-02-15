@@ -6,8 +6,6 @@ import {
 } from '../jsx-runtime-remote-wrapper-plugin';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../jsx-transform-to-remote-dom-worker-format-plugin';
 import { stripCommentsPlugin } from '../strip-comments-plugin';
-import { twentySdkGlobalsPlugin } from '../twenty-sdk-globals-plugin';
-import { twentySharedGlobalsPlugin } from '../twenty-shared-globals-plugin';
 
 type GetFrontComponentBuildPluginsOptions = {
   usePreact?: boolean;
@@ -19,8 +17,6 @@ export const getFrontComponentBuildPlugins = (
   options?.usePreact
     ? createJsxRuntimeRemoteWrapperPlugin({ usePreact: true })
     : jsxRuntimeRemoteWrapperPlugin,
-  twentySdkGlobalsPlugin,
-  twentySharedGlobalsPlugin,
   jsxTransformToRemoteDomWorkerFormatPlugin,
   stripCommentsPlugin,
 ];

@@ -10,14 +10,11 @@ import {
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
 
-import * as TwentySharedTypes from 'twenty-shared/types';
-import * as TwentySharedUtils from 'twenty-shared/utils';
 import { isDefined } from 'twenty-shared/utils';
 
 import { installStyleBridge } from '@/front-component-renderer/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/front-component-renderer/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
-import * as TwentySdk from '@/sdk';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
@@ -38,17 +35,13 @@ installStylePropertyOnRemoteElements();
 // so Remote DOM serializes className to the host.
 patchRemoteElementSetAttribute();
 
-// React and ReactDOM are no longer exposed as globals — each front
-// component bundles its own copy (tree-shaken).  The jsx-runtime wrapper
-// plugin uses __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__ to map standard HTML
-// tags (e.g. "div") to remote DOM custom elements (e.g. "html-div").
+// External libraries (React, ReactDOM, twenty-shared, twenty-sdk) are no
+// longer exposed as globals — each front component bundles its own copy
+// (tree-shaken).  Only the HTML-tag-to-custom-element mapping is exposed
+// for the jsx-runtime wrapper plugin to map standard HTML tags (e.g. "div")
+// to remote DOM custom elements (e.g. "html-div").
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
-  TwentySdk,
-  TwentyShared: {
-    utils: TwentySharedUtils,
-    types: TwentySharedTypes,
-  },
 });
 
 const render: WorkerExports['render'] = async (

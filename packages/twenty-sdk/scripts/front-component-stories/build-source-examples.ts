@@ -30,6 +30,7 @@ const STORY_COMPONENTS = [
   'shadcn-example.front-component',
   'mui-example.front-component',
   'twenty-ui-example.front-component',
+  'sdk-context-example.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {
