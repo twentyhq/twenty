@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -249,6 +250,23 @@ export class ProcessNestedRelationsV2Helper {
         selectedFields,
       });
     }
+
+    const junctionTargetFieldName = this.getJunctionTargetFieldName(
+      sourceFieldMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const isTargetFieldRequested =
+      isDefined(junctionTargetFieldName) &&
+      junctionTargetFieldName in nestedRelations;
+
+    if (isTargetFieldRequested) {
+      this.filterInaccessibleJunctionRows(
+        parentObjectRecords,
+        sourceFieldName,
+        junctionTargetFieldName,
+      );
+    }
   }
 
   private getTargetObjectMetadata({
@@ -426,5 +444,45 @@ export class ProcessNestedRelationsV2Helper {
 
     parentObjectRecordsAggregatedValues[sourceFieldName] =
       relationAggregatedFieldsResult;
+  }
+
+  private getJunctionTargetFieldName(
+    sourceFieldMetadata: FlatFieldMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): string | undefined {
+    const junctionTargetFieldId =
+      sourceFieldMetadata.settings &&
+      'junctionTargetFieldId' in sourceFieldMetadata.settings
+        ? sourceFieldMetadata.settings.junctionTargetFieldId
+        : undefined;
+
+    if (!isDefined(junctionTargetFieldId)) {
+      return undefined;
+    }
+
+    const junctionTargetField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: junctionTargetFieldId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    return junctionTargetField?.name;
+  }
+
+  private filterInaccessibleJunctionRows(
+    parentRecords: ObjectRecord[],
+    sourceFieldName: string,
+    junctionTargetFieldName: string,
+  ): void {
+    for (const parentRecord of parentRecords) {
+      const junctionRows = parentRecord[sourceFieldName];
+
+      if (!Array.isArray(junctionRows)) {
+        continue;
+      }
+
+      parentRecord[sourceFieldName] = junctionRows.filter((junctionRow) =>
+        isDefined(junctionRow[junctionTargetFieldName]),
+      );
+    }
   }
 }

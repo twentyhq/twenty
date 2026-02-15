@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -5,11 +6,13 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
+import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useContext, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextGenericProps = {
   recordField: RecordField;
@@ -29,6 +32,8 @@ export const RecordTableCellFieldContextGeneric = ({
     objectPermissionsByObjectMetadataId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -51,6 +56,35 @@ export const RecordTableCellFieldContextGeneric = ({
     );
 
     hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
+
+    if (
+      hasObjectReadPermissions &&
+      hasJunctionTargetFieldId(fieldDefinition.metadata.settings)
+    ) {
+      const junctionObjectMetadata = objectMetadataItems.find(
+        (item) => item.id === relationObjectMetadataId,
+      );
+
+      if (isDefined(junctionObjectMetadata)) {
+        const junctionTargetField = junctionObjectMetadata.fields.find(
+          (field) =>
+            field.id ===
+            fieldDefinition.metadata.settings?.junctionTargetFieldId,
+        );
+
+        const targetObjectMetadataId =
+          junctionTargetField?.relation?.targetObjectMetadata.id;
+
+        if (isDefined(targetObjectMetadataId)) {
+          const targetPermissions = getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            targetObjectMetadataId,
+          );
+
+          hasObjectReadPermissions = targetPermissions.canReadObjectRecords;
+        }
+      }
+    }
   }
 
   return (

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
+import { ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -10,7 +10,7 @@ import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.typ
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type SelectFields = {
@@ -78,8 +78,7 @@ export class RestToCommonSelectedFieldsHandler {
         flatEntityId: fieldId,
       });
 
-      if (!isFlatFieldMetadataOfType(flatField, FieldMetadataType.RELATION))
-        continue;
+      if (!isMorphOrRelationFlatFieldMetadata(flatField)) continue;
 
       const relationTargetObjectMetadata =
         findFlatEntityByIdInFlatEntityMapsOrThrow({
