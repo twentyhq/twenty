@@ -120,7 +120,20 @@ export const MuiPreact: Story = createComponentStory('mui-example', {
   play: muiTest,
 });
 
-const twentyUiTest = createCounterTest('twenty-ui');
+const twentyUiTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await canvas.findByTestId('twenty-ui-component', {}, { timeout: 30000 });
+
+  expect(await canvas.findByText('Count: 0')).toBeVisible();
+
+  const button = await canvas.findByText('Increment');
+  await userEvent.click(button);
+  expect(await canvas.findByText('Count: 1')).toBeVisible();
+
+  await userEvent.click(button);
+  expect(await canvas.findByText('Count: 2')).toBeVisible();
+};
 
 export const TwentyUiReact: Story = createComponentStory('twenty-ui-example', {
   play: twentyUiTest,

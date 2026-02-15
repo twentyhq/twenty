@@ -62,7 +62,6 @@ const TwentyUiComponent = () => {
         </p>
         <div style={ROW_STYLE}>
           <Button
-            data-testid="twenty-ui-button"
             title="Increment"
             accent="blue"
             onClick={() => setCount((previous) => previous + 1)}
