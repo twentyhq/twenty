@@ -1,20 +1,10 @@
-import {
-  contextStoreCurrentViewIdComponentState,
-} from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import {
-  currentRecordFilterGroupsComponentState,
-} from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import {
-  anyFieldFilterValueComponentState,
-} from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import {
-  currentRecordFiltersComponentState,
-} from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import {
-  useRecoilComponentCallbackState,
-} from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
@@ -240,18 +230,17 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             return undefined;
           }
 
-          const createViewSortInputs = viewSortsToCreate.map(
-            (viewSort) => ({
-              input: {
-                id: viewSort.id,
-                fieldMetadataId: viewSort.fieldMetadataId,
-                viewId: newViewId,
-                direction: viewSort.direction,
-              },
-            }),
-          );
+          const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
+            input: {
+              id: viewSort.id,
+              fieldMetadataId: viewSort.fieldMetadataId,
+              viewId: newViewId,
+              direction: viewSort.direction,
+            },
+          }));
 
-          const sortResult = await performViewSortAPICreate(createViewSortInputs);
+          const sortResult =
+            await performViewSortAPICreate(createViewSortInputs);
           if (sortResult.status === 'failed') {
             return undefined;
           }

@@ -9,7 +9,8 @@ import { type ViewType } from '@/views/types/ViewType';
 import {
   type ViewVisibility,
   type ViewCalendarLayout,
-} from '~/generated-metadata/graphql';import { type ViewSort } from '@/views/types/ViewSort';
+} from '~/generated-metadata/graphql';
+import { type ViewSort } from '@/views/types/ViewSort';
 export type GraphQLView = {
   id: string;
   name: string;
