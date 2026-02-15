@@ -22,7 +22,7 @@ import { selectedPublicDomainState } from '@/settings/domains/states/selectedPub
 import { useRecoilState } from 'recoil';
 import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
+import { z } from 'zod';
 
 const StyledButtonGroup = styled(ButtonGroup)`
   & > :not(:first-of-type) > button {
@@ -93,7 +93,23 @@ export const SettingPublicDomain = () => {
     });
   };
 
-  const validationSchema = getDomainValidationSchema(t);
+  const validationSchema = z
+    .string()
+    .regex(
+      /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/,
+      {
+        message: t`Invalid domain. Please include at least one subdomain (e.g., sub.example.com).`,
+      },
+    )
+    .regex(
+      /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+      {
+        message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+      },
+    )
+    .max(256)
+    .optional()
+    .or(z.literal(''));
 
   const onCreate = async () => {
     if (!isDefined(newPublicDomain)) {
