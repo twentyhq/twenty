@@ -22,6 +22,7 @@ export class FlatViewSortValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewSortMaps: optimisticFlatViewSortMaps,
       flatViewMaps,
+      flatFieldMetadataMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewSort
@@ -53,7 +54,7 @@ export class FlatViewSortValidatorService {
     const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
         flatViewSortToValidate.fieldMetadataUniversalIdentifier,
-      flatEntityMaps: optimisticFlatViewSortMaps,
+      flatEntityMaps: flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
