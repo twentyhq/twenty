@@ -107,6 +107,7 @@ export default defineConfig(({ command }) => {
       cssCodeSplit: false,
       minify: 'esbuild',
       sourcemap: false,
+      emptyOutDir: false,
       outDir: './dist',
       reportCompressedSize: true,
       commonjsOptions: {

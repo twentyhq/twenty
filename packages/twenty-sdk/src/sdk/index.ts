@@ -71,4 +71,3 @@ export type { AllowedHtmlElement } from './front-component-api';
 // Style bridge utilities for CSS-in-JS libraries in remote components
 export { installStyleBridge } from '../front-component-renderer/polyfills/installStyleBridge';
 export { exposeGlobals } from '../front-component-renderer/remote/utils/exposeGlobals';
-

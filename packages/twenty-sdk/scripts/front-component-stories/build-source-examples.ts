@@ -4,6 +4,7 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createFrontComponentBuildOptions } from '../../src/cli/utilities/build/common/front-component-build/utils/create-front-component-build-options';
+import { createTreeShakeIndividualBuildsPlugin } from '../../src/cli/utilities/build/common/front-component-build/tree-shake-individual-builds-plugin';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const exampleSourcesDir = path.resolve(
@@ -19,10 +20,55 @@ const exampleSourcesBuiltPreactDir = path.resolve(
   '../../src/front-component-renderer/__stories__/example-sources-built-preact',
 );
 
+const rootNodeModules = path.resolve(dirname, '../../../../node_modules');
+
 const twentyUiIndividualIndex = path.resolve(
   dirname,
   '../../../twenty-ui/dist/individual/individual-entry.js',
 );
+
+const sdkIndividualIndex = path.resolve(
+  dirname,
+  '../../dist/sdk/index.js',
+);
+
+const twentySharedIndividualDir = path.resolve(
+  dirname,
+  '../../../twenty-shared/dist/individual',
+);
+
+const TWENTY_SHARED_SUBMODULES = [
+  'ai',
+  'application',
+  'constants',
+  'database-events',
+  'metadata',
+  'testing',
+  'translations',
+  'types',
+  'utils',
+  'workflow',
+  'workspace',
+];
+
+const twentySharedAliases = Object.fromEntries(
+  TWENTY_SHARED_SUBMODULES.map((submodule) => [
+    `twenty-shared/${submodule}`,
+    path.join(twentySharedIndividualDir, submodule, 'index.js'),
+  ]),
+);
+
+const sdkIndividualDir = path.resolve(dirname, '../../dist/sdk');
+const twentyUiIndividualDir = path.resolve(
+  dirname,
+  '../../../twenty-ui/dist/individual',
+);
+
+const treeShakePlugin = createTreeShakeIndividualBuildsPlugin([
+  sdkIndividualDir,
+  twentySharedIndividualDir,
+  twentyUiIndividualDir,
+]);
 
 const STORY_COMPONENTS = [
   'static.front-component',
@@ -94,7 +140,14 @@ const buildSourceExamples = async (): Promise<void> => {
       outdir: exampleSourcesBuiltDir,
       tsconfigPath,
       minify: true,
-      alias: { 'twenty-sdk/ui': twentyUiIndividualIndex },
+      alias: {
+        react: path.join(rootNodeModules, 'react'),
+        'react-dom': path.join(rootNodeModules, 'react-dom'),
+        '@/sdk': sdkIndividualIndex,
+        'twenty-sdk/ui': twentyUiIndividualIndex,
+        ...twentySharedAliases,
+      },
+      plugins: [treeShakePlugin],
     }),
   );
 
@@ -111,7 +164,14 @@ const buildSourceExamples = async (): Promise<void> => {
       tsconfigPath,
       usePreact: true,
       minify: true,
-      alias: { 'twenty-sdk/ui': twentyUiIndividualIndex },
+      alias: {
+        react: path.join(rootNodeModules, 'react'),
+        'react-dom': path.join(rootNodeModules, 'react-dom'),
+        '@/sdk': sdkIndividualIndex,
+        'twenty-sdk/ui': twentyUiIndividualIndex,
+        ...twentySharedAliases,
+      },
+      plugins: [treeShakePlugin],
     }),
   );
 
