@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
-import { UpdateViewSortAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
+import { UniversalUpdateViewSortAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
 import { FlatViewSortValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 
 @Injectable()
 export class WorkspaceMigrationViewSortActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
@@ -20,8 +20,8 @@ export class WorkspaceMigrationViewSortActionsBuilderService extends WorkspaceEn
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewSort>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewSort>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewSort,
     'create'
   > {
@@ -48,8 +48,8 @@ export class WorkspaceMigrationViewSortActionsBuilderService extends WorkspaceEn
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewSort>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewSort>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewSort,
     'delete'
   > {
@@ -77,7 +77,7 @@ export class WorkspaceMigrationViewSortActionsBuilderService extends WorkspaceEn
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewSort>,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewSort,
     'update'
   > {
@@ -91,13 +91,13 @@ export class WorkspaceMigrationViewSortActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateViewSortAction: UpdateViewSortAction = {
+    const updateViewSortAction: UniversalUpdateViewSortAction = {
       type: 'update',
       metadataName: 'viewSort',
-      entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      universalIdentifier,
+      update: flatEntityUpdate,
     };
 
     return {

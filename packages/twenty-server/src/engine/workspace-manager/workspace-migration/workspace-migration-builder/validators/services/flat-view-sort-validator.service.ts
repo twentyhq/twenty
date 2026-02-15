@@ -4,47 +4,44 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewSortExceptionCode } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
-import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 
 @Injectable()
 export class FlatViewSortValidatorService {
   constructor() {}
 
-  public validateFlatViewSortCreation({
+  validateFlatViewSortCreation({
     flatEntityToValidate: flatViewSortToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewSortMaps: optimisticFlatViewSortMaps,
-      flatFieldMetadataMaps,
       flatViewMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewSort
   >): FailedFlatEntityValidation<'viewSort', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatViewSortToValidate.id,
         universalIdentifier: flatViewSortToValidate.universalIdentifier,
-        viewId: flatViewSortToValidate.viewId,
-        fieldMetadataId: flatViewSortToValidate.fieldMetadataId,
+        viewUniversalIdentifier: flatViewSortToValidate.viewUniversalIdentifier,
       },
       metadataName: 'viewSort',
       type: 'create',
     });
 
-    const existingFlatViewSort =
-      optimisticFlatViewSortMaps.byId[flatViewSortToValidate.id];
+    const existingFlatViewSort = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewSortToValidate.universalIdentifier,
+      flatEntityMaps: optimisticFlatViewSortMaps,
+    });
 
     if (isDefined(existingFlatViewSort)) {
-      const flatViewSortId = flatViewSortToValidate.id;
+      const flatViewSortId = flatViewSortToValidate.universalIdentifier;
 
       validationResult.errors.push({
         code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -53,9 +50,10 @@ export class FlatViewSortValidatorService {
       });
     }
 
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewSortToValidate.fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        flatViewSortToValidate.fieldMetadataUniversalIdentifier,
+      flatEntityMaps: optimisticFlatViewSortMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
@@ -66,7 +64,10 @@ export class FlatViewSortValidatorService {
       });
     }
 
-    const flatView = flatViewMaps.byId[flatViewSortToValidate.viewId];
+    const flatView = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewSortToValidate.viewUniversalIdentifier,
+      flatEntityMaps: flatViewMaps,
+    });
 
     if (!isDefined(flatView)) {
       validationResult.errors.push({
@@ -78,15 +79,18 @@ export class FlatViewSortValidatorService {
       return validationResult;
     }
 
-    const otherFlatViewSorts = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: flatView.viewSortIds,
-      flatEntityMaps: optimisticFlatViewSortMaps,
-    });
+    const otherFlatViewSorts =
+      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
+        universalIdentifiers: flatView.viewSortUniversalIdentifiers,
+        flatEntityMaps: optimisticFlatViewSortMaps,
+      });
 
     const equivalentExistingFlatViewSortExists = otherFlatViewSorts.some(
       (flatViewSort) =>
-        flatViewSort.viewId === flatViewSortToValidate.viewId &&
-        flatViewSort.fieldMetadataId === flatViewSortToValidate.fieldMetadataId,
+        flatViewSort.universalIdentifier ===
+          flatViewSortToValidate.universalIdentifier &&
+        flatViewSort.fieldMetadataUniversalIdentifier ===
+          flatViewSortToValidate.fieldMetadataUniversalIdentifier,
     );
 
     if (equivalentExistingFlatViewSortExists) {
@@ -114,8 +118,8 @@ export class FlatViewSortValidatorService {
   }
 
   public validateFlatViewSortUpdate({
-    flatEntityId,
-    flatEntityUpdates,
+    universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewSortMaps: optimisticFlatViewSortMaps,
       flatViewMaps,
@@ -123,12 +127,14 @@ export class FlatViewSortValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewSort
   >): FailedFlatEntityValidation<'viewSort', 'update'> {
-    const existingFlatViewSort = optimisticFlatViewSortMaps.byId[flatEntityId];
+    const existingFlatViewSort = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
+      flatEntityMaps: optimisticFlatViewSortMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingFlatViewSort?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'viewSort',
       type: 'update',
@@ -146,9 +152,7 @@ export class FlatViewSortValidatorService {
 
     const updatedFlatViewSort = {
       ...existingFlatViewSort,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     if (
@@ -159,7 +163,7 @@ export class FlatViewSortValidatorService {
       )
     ) {
       validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         message: t`Correct direction is required`,
         userFriendlyMessage: msg`Correct direction is required`,
       });
@@ -167,13 +171,11 @@ export class FlatViewSortValidatorService {
 
     validationResult.flatEntityMinimalInformation = {
       ...validationResult.flatEntityMinimalInformation,
-      id: updatedFlatViewSort.id,
-      viewId: updatedFlatViewSort.viewId,
-      fieldMetadataId: updatedFlatViewSort.fieldMetadataId,
+      viewUniversalIdentifier: updatedFlatViewSort.viewUniversalIdentifier,
     };
 
-    const flatView = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatViewSort.viewId,
+    const flatView = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: updatedFlatViewSort.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -191,24 +193,25 @@ export class FlatViewSortValidatorService {
   }
 
   public validateFlatViewSortDeletion({
-    flatEntityToValidate: { id: viewSortIdToDelete, universalIdentifier },
+    flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewSortMaps: optimisticFlatViewSortMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewSort
   >): FailedFlatEntityValidation<'viewSort', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: viewSortIdToDelete,
         universalIdentifier,
       },
       metadataName: 'viewSort',
       type: 'delete',
     });
 
-    const existingFlatViewSort =
-      optimisticFlatViewSortMaps.byId[viewSortIdToDelete];
+    const existingFlatViewSort = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
+      flatEntityMaps: optimisticFlatViewSortMaps,
+    });
 
     if (!isDefined(existingFlatViewSort)) {
       validationResult.errors.push({

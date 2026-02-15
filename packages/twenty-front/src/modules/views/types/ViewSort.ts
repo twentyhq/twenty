@@ -1,4 +1,4 @@
-import { type ViewSortDirection } from '~/generated/graphql';
+import { type ViewSortDirection } from '~/generated-metadata/graphql';
 
 export type ViewSort = {
   __typename: 'ViewSort';

@@ -1,5 +1,5 @@
-import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_VIEW_SORT_EDITABLE_PROPERTIES = [
   'direction',
-] as const satisfies (keyof FlatViewSort)[];
+] as const satisfies MetadataEntityPropertyName<'viewSort'>[];

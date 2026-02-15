@@ -253,9 +253,9 @@ import {
   type UniversalUpdateWebhookAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
 import {
-  type CreateViewSortAction,
-  type DeleteViewSortAction,
-  type UpdateViewSortAction,
+  type FlatCreateViewSortAction,
+  type FlatDeleteViewSortAction,
+  type FlatUpdateViewSortAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
@@ -360,9 +360,9 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   viewSort: {
     actions: {
-      create: CreateViewSortAction;
-      update: UpdateViewSortAction;
-      delete: DeleteViewSortAction;
+      create: FlatCreateViewSortAction;
+      update: FlatUpdateViewSortAction;
+      delete: FlatDeleteViewSortAction;
     };
     flatEntity: FlatViewSort;
     universalFlatEntity: UniversalFlatEntityFrom<ViewSortEntity>;
