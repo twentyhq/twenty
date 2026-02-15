@@ -28,6 +28,7 @@
     "vite.config.ts",
     "vite.config.node.ts",
     "vite.config.browser.ts",
+    "vite.config.sdk.ts",
     "jest.config.mjs"
   ],
   "exclude": [

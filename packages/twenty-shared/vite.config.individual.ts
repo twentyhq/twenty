@@ -1,6 +1,6 @@
 // @ts-ignore
 import path from 'path';
-import { defineConfig } from 'vite';
+import { type UserConfig, defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 // @ts-ignore
 import packageJson from './package.json';
@@ -29,7 +29,7 @@ const isExternal = (id: string): boolean => {
   return true;
 };
 
-export default defineConfig(() => {
+export default defineConfig((): UserConfig => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared-individual',
