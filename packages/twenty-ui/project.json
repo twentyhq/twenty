@@ -59,8 +59,7 @@
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": [
-        "^build",
-        "generateBarrels"
+        "build"
       ],
       "inputs": [
         "production",

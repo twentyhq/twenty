@@ -9,7 +9,7 @@ import { getFrontComponentBuildPlugins } from '../../../src/cli/utilities/build/
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const twentyUiIndividualIndex = path.resolve(
   dirname,
-  '../../../../twenty-ui/dist/individual/index.js',
+  '../../../../twenty-ui/dist/individual/individual-entry.js',
 );
 
 export type FrontComponentBuildOptions = {

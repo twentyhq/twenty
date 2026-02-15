@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Badge,
   Box,
   Button,
   ChakraProvider,
@@ -11,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { defineFrontComponent } from 'twenty-sdk';
 
-export const ChakraComponent = () => {
+const ChakraComponent = () => {
   const [count, setCount] = useState(0);
 
   return (
@@ -19,30 +20,51 @@ export const ChakraComponent = () => {
       <Box
         data-testid="chakra-component"
         p={6}
-        borderWidth="1px"
-        borderRadius="lg"
-        borderColor="gray.200"
-        shadow="sm"
+        borderWidth="2px"
+        borderRadius="xl"
+        borderColor="teal.400"
+        bg="teal.50"
+        maxW="360px"
+        fontFamily="system-ui, sans-serif"
       >
-        <VStack gap={3} align="start">
-          <Heading size="md" color="teal.600">
-            Chakra UI Component
+        <VStack gap={4} align="start">
+          <Heading size="md" color="teal.700">
+            Chakra UI
           </Heading>
-          <Text fontSize="2xl" fontWeight="bold" data-testid="chakra-count">
+          <Text fontSize="sm" color="teal.600">
+            Component library with built-in design tokens and responsive styles.
+          </Text>
+          <HStack gap={2}>
+            <Badge colorPalette="teal" variant="solid">
+              Badge
+            </Badge>
+            <Badge colorPalette="purple" variant="solid">
+              Styled
+            </Badge>
+            <Badge colorPalette="orange" variant="outline">
+              Outline
+            </Badge>
+          </HStack>
+          <Text
+            data-testid="chakra-count"
+            fontSize="2xl"
+            fontWeight="bold"
+            color="teal.800"
+          >
             Count: {count}
           </Text>
           <HStack gap={2}>
             <Button
               data-testid="chakra-button"
               colorPalette="teal"
-              size="md"
+              size="sm"
               onClick={() => setCount((previous) => previous + 1)}
             >
               Increment
             </Button>
             <Button
               variant="outline"
-              size="md"
+              size="sm"
               onClick={() => setCount(0)}
             >
               Reset

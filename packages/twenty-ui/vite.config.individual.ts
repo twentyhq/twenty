@@ -7,39 +7,13 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 import packageJson from './package.json';
 
-// Per-module entry points (components, theme, input, …) plus the
-// combined entry that re-exports everything.  Vite code-splits so
-// each module becomes its own chunk and shared deps are deduped.
-const moduleEntries = Object.keys(packageJson.exports)
-  .filter((exportPath) => exportPath !== './style.css' && exportPath !== '.')
-  .reduce<Record<string, string>>(
-    (entries, exportPath) => {
-      const moduleName = exportPath.replace('./', '');
-
-      return {
-        ...entries,
-        [moduleName]: `src/${moduleName}/index.ts`,
-      };
-    },
-    {},
-  );
-
-// Only React and Emotion are externalized so the consumer's bundler
-// (e.g. the front-component esbuild) resolves exactly one instance.
-const EXTERNAL_PATTERNS = [
-  /^react$/,
-  /^react\//,
-  /^react-dom$/,
-  /^react-dom\//,
-  /^@emotion\/react$/,
-  /^@emotion\/react\//,
-  /^@emotion\/styled$/,
-  /^@emotion\/is-prop-valid$/,
-  /^twenty-shared/,
-];
+// Externalize ALL dependencies (like the barrel build). The consumer's
+// bundler (esbuild for front-components) resolves + bundles them,
+// guaranteeing a single instance of React, Emotion, etc.
+const depNames = Object.keys(packageJson.dependencies || {});
 
 const isExternal = (id: string): boolean =>
-  EXTERNAL_PATTERNS.some((pattern) => pattern.test(id));
+  depNames.some((dep) => id === dep || id.startsWith(dep + '/'));
 
 export default defineConfig(() => {
   return {
@@ -90,7 +64,6 @@ export default defineConfig(() => {
       sourcemap: true,
       outDir: './dist/individual',
       emptyOutDir: true,
-      reportCompressedSize: true,
       commonjsOptions: {
         transformMixedEsModules: true,
         interopDefault: true,
@@ -98,17 +71,17 @@ export default defineConfig(() => {
         requireReturnsDefault: 'auto',
       },
       lib: {
-        entry: {
-          index: 'src/individual-entry.ts',
-          ...moduleEntries,
-        },
+        entry: 'src/individual-entry.ts',
         formats: ['es'],
       },
       rollupOptions: {
         external: isExternal,
         output: {
-          // Stable chunk names (no hashes) so consumers can reference them
-          chunkFileNames: 'shared/[name].js',
+          // One file per source module — enables near-perfect tree-shaking.
+          // All deps are external so only twenty-ui's own source is preserved.
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+          entryFileNames: '[name].js',
         },
       },
     },

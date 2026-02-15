@@ -8,7 +8,7 @@ import { getBuiltStoryComponentPathForRender } from './utils/getBuiltStoryCompon
 const errorHandler = fn();
 
 const meta: Meta<typeof FrontComponentRenderer> = {
-  title: 'FrontComponent/FrontComponentRenderer',
+  title: 'FrontComponent/Feature',
   component: FrontComponentRenderer,
   parameters: {
     layout: 'centered',
@@ -25,7 +25,6 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-// Generates a story that renders a built front-component bundle
 const createComponentStory = (
   name: string,
   options?: { runtime?: 'preact'; play?: Story['play'] },
@@ -40,7 +39,7 @@ const createComponentStory = (
 });
 
 // ---------------------------------------------------------------------------
-// React stories
+// Feature stories
 // ---------------------------------------------------------------------------
 
 export const Static: Story = {
@@ -106,16 +105,6 @@ export const Lifecycle: Story = {
   },
 };
 
-export const ChakraExample = createComponentStory('chakra-example');
-export const TailwindExample = createComponentStory('tailwind-example');
-export const EmotionExample = createComponentStory('emotion-example');
-export const StyledComponentsExample = createComponentStory(
-  'styled-components-example',
-);
-export const ShadcnExample = createComponentStory('shadcn-example');
-export const MuiExample = createComponentStory('mui-example');
-export const TwentyUiExample = createComponentStory('twenty-ui-example');
-
 export const ErrorHandling: Story = {
   ...createComponentStory('nonexistent'),
   play: async () => {
@@ -127,43 +116,3 @@ export const ErrorHandling: Story = {
     );
   },
 };
-
-// ---------------------------------------------------------------------------
-// Preact stories — same source components, built with preact/compat
-// ---------------------------------------------------------------------------
-
-export const PreactStatic = createComponentStory('static', {
-  runtime: 'preact',
-  play: Static.play,
-});
-export const PreactInteractive = createComponentStory('interactive', {
-  runtime: 'preact',
-  play: Interactive.play,
-});
-export const PreactLifecycle = createComponentStory('lifecycle', {
-  runtime: 'preact',
-  play: Lifecycle.play,
-});
-export const PreactChakraExample = createComponentStory('chakra-example', {
-  runtime: 'preact',
-});
-export const PreactTailwindExample = createComponentStory('tailwind-example', {
-  runtime: 'preact',
-});
-export const PreactEmotionExample = createComponentStory('emotion-example', {
-  runtime: 'preact',
-});
-export const PreactStyledComponentsExample = createComponentStory(
-  'styled-components-example',
-  { runtime: 'preact' },
-);
-export const PreactShadcnExample = createComponentStory('shadcn-example', {
-  runtime: 'preact',
-});
-export const PreactMuiExample = createComponentStory('mui-example', {
-  runtime: 'preact',
-});
-export const PreactTwentyUiExample = createComponentStory(
-  'twenty-ui-example',
-  { runtime: 'preact' },
-);
