@@ -4,6 +4,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FileFolder } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -15,8 +17,11 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import {
   ATTACHMENT_DATA_SEED_COLUMNS,
-  ATTACHMENT_DATA_SEEDS,
+  ATTACHMENT_SAMPLE_FILES,
+  getAttachmentDataSeeds,
+  getAttachmentFileSeedMetadata,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import {
   CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_DATA_SEEDS,
@@ -273,7 +278,7 @@ const getRecordSeedsBatches = (
     {
       tableName: 'attachment',
       pgColumns: ATTACHMENT_DATA_SEED_COLUMNS,
-      recordSeeds: ATTACHMENT_DATA_SEEDS,
+      recordSeeds: getAttachmentDataSeeds(workspaceId),
     },
   ];
 
@@ -407,8 +412,6 @@ export class DevSeederDataService {
   }
 
   private async seedAttachmentFiles(workspaceId: string): Promise<void> {
-    // Files are copied to dist/assets during build via nest-cli.json
-    // The pattern **/dev-seeder/data/sample-files/** preserves the full path
     const IS_BUILT = __dirname.includes('/dist/');
     const sampleFilesDir = IS_BUILT
       ? join(
@@ -417,37 +420,40 @@ export class DevSeederDataService {
         )
       : join(__dirname, '../sample-files');
 
-    const filesToCreate = [
-      'sample-contract.pdf',
-      'budget-2024.xlsx',
-      'presentation.pptx',
-      'screenshot.png',
-      'archive.zip',
-    ];
+    // Read each sample file once and cache the buffer
+    const sampleFileBuffers: Buffer[] = [];
 
-    for (const filename of filesToCreate) {
-      const filePath = join(sampleFilesDir, filename);
-      const fileBuffer = await readFile(filePath);
+    for (const sampleFile of ATTACHMENT_SAMPLE_FILES) {
+      const filePath = join(sampleFilesDir, sampleFile.filename);
 
-      await this.fileStorageService.writeFileLegacy({
-        file: fileBuffer,
-        name: filename,
-        folder: `workspace-${workspaceId}/attachment`,
-        mimeType: this.getMimeType(filename),
+      sampleFileBuffers.push(await readFile(filePath));
+    }
+
+    const fieldUniversalIdentifier =
+      STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
+    const applicationUniversalIdentifier =
+      TWENTY_STANDARD_APPLICATION.universalIdentifier;
+
+    // Create a FileEntity record for each attachment seed
+    const fileSeedMetadata = getAttachmentFileSeedMetadata(workspaceId);
+
+    for (const metadata of fileSeedMetadata) {
+      const resourcePath = `${metadata.fileId}.${metadata.extension}`;
+      const sourceFile = sampleFileBuffers[metadata.sampleFileIndex];
+
+      await this.fileStorageService.writeFile({
+        sourceFile,
+        mimeType: metadata.mimeType,
+        fileFolder: FileFolder.FilesField,
+        applicationUniversalIdentifier,
+        workspaceId,
+        resourcePath: `${fieldUniversalIdentifier}/${resourcePath}`,
+        fileId: metadata.fileId,
+        settings: {
+          isTemporaryFile: false,
+          toDelete: false,
+        },
       });
     }
-  }
-
-  private getMimeType(filename: string): string {
-    const ext = filename.split('.').pop()?.toLowerCase();
-    const mimeTypes: Record<string, string> = {
-      pdf: 'application/pdf',
-      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      png: 'image/png',
-      zip: 'application/zip',
-    };
-
-    return mimeTypes[ext || ''] || 'application/octet-stream';
   }
 }
