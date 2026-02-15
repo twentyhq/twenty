@@ -89,6 +89,40 @@ export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
       void 0;
     }
 
+    // styled-components uses insertBefore to add CSS text nodes
+    const originalInsertBeforeOnStyle =
+      styleElement.insertBefore.bind(styleElement);
+    try {
+      (
+        styleElement as Element & {
+          insertBefore: typeof originalInsertBeforeOnStyle;
+        }
+      ).insertBefore = <T extends Node>(child: T, ref: Node | null): T => {
+        const result = originalInsertBeforeOnStyle(child, ref);
+        syncCssFromStyleElement();
+        return result;
+      };
+    } catch {
+      void 0;
+    }
+
+    // Some libraries also use removeChild on style elements
+    const originalRemoveChildOnStyle =
+      styleElement.removeChild.bind(styleElement);
+    try {
+      (
+        styleElement as Element & {
+          removeChild: typeof originalRemoveChildOnStyle;
+        }
+      ).removeChild = <T extends Node>(child: T): T => {
+        const result = originalRemoveChildOnStyle(child);
+        syncCssFromStyleElement();
+        return result;
+      };
+    } catch {
+      void 0;
+    }
+
     if (typeof MutationObserver === 'function') {
       try {
         const styleObserver = new MutationObserver(() => {

@@ -10,16 +10,15 @@ import {
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
 
-import React from 'react';
-import * as ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import { jsx, jsxs } from 'react/jsx-runtime';
 import * as TwentySharedTypes from 'twenty-shared/types';
 import * as TwentySharedUtils from 'twenty-shared/utils';
 import { isDefined } from 'twenty-shared/utils';
 
 import { installStyleBridge } from '@/front-component-renderer/polyfills/installStyleBridge';
+import { installStylePropertyOnRemoteElements } from '@/front-component-renderer/remote/utils/installStylePropertyOnRemoteElements';
+import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
 import * as TwentySdk from '@/sdk';
+import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
 
@@ -27,25 +26,30 @@ import { type FrontComponentExecutionContext } from '../../types/FrontComponentE
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
-import * as RemoteComponents from '../generated/remote-components';
 import { exposeGlobals } from '../utils/exposeGlobals';
-import { patchElementFactoriesForRemoteComponents } from '../utils/patchElementFactoriesForRemoteComponents';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
+// Patch custom element prototypes so .style behaves like a
+// CSSStyleDeclaration (React DOM sets element.style.color = ...).
+installStylePropertyOnRemoteElements();
+
+// React 18 uses setAttribute('class', ...) on custom elements instead
+// of element.className. Patch to route through the property setter
+// so Remote DOM serializes className to the host.
+patchRemoteElementSetAttribute();
+
+// React and ReactDOM are no longer exposed as globals — each front
+// component bundles its own copy (tree-shaken).  The jsx-runtime wrapper
+// plugin uses __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__ to map standard HTML
+// tags (e.g. "div") to remote DOM custom elements (e.g. "html-div").
 exposeGlobals({
-  React,
-  ReactDOM: { ...ReactDOM, createRoot },
-  RemoteComponents,
-  jsx,
-  jsxs,
+  __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
   TwentySdk,
   TwentyShared: {
     utils: TwentySharedUtils,
     types: TwentySharedTypes,
   },
 });
-
-patchElementFactoriesForRemoteComponents(RemoteComponents);
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
@@ -93,9 +97,11 @@ const render: WorkerExports['render'] = async (
     /* @vite-ignore */
     const componentModule = await import(importUrl);
 
-    const reactRoot = createRoot(renderContainer);
-
-    reactRoot.render(componentModule.default);
+    // The component bundles its own React + ReactDOM and exports a
+    // render(container) function — this avoids the "two React instances"
+    // problem where hooks fail because the dispatcher belongs to a
+    // different React copy.
+    componentModule.default(renderContainer);
   } finally {
     URL.revokeObjectURL(importUrl);
   }

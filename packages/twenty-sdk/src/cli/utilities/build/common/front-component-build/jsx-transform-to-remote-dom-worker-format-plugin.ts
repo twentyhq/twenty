@@ -15,20 +15,14 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
         try {
           const frontComponentSourceCode = await fs.readFile(path, 'utf8');
 
-          const sourceWithRemoteComponents =
-            replaceHtmlTagsWithRemoteComponents(frontComponentSourceCode);
-
-          const hasRemoteComponentReplacements =
-            sourceWithRemoteComponents !== frontComponentSourceCode;
-
-          const sourceWithUnwrappedFrontComponent =
+          // HTML tag → custom element mapping is handled at runtime by
+          // the jsx-runtime wrapper plugin (which also converts style
+          // objects to CSS strings).  Build-time replacement is no longer
+          // needed and would bypass the wrapper's style conversion.
+          const transformedContents =
             unwrapDefineFrontComponentToDirectExport(
-              sourceWithRemoteComponents,
+              frontComponentSourceCode,
             );
-
-          const transformedContents = hasRemoteComponentReplacements
-            ? `var RemoteComponents = globalThis.RemoteComponents;\n${sourceWithUnwrappedFrontComponent}`
-            : sourceWithUnwrappedFrontComponent;
 
           return { contents: transformedContents, loader: 'tsx' };
         } catch (transformError) {
