@@ -2182,7 +2182,6 @@ export type Mutation = {
   createManyCoreViewFieldGroups: Array<CoreViewFieldGroup>;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
-  createManyCoreViewSorts: Array<CoreViewSort>;
   createNavigationMenuItem: NavigationMenuItem;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
@@ -2465,11 +2464,6 @@ export type MutationCreateManyCoreViewFieldsArgs = {
 
 export type MutationCreateManyCoreViewGroupsArgs = {
   inputs: Array<CreateViewGroupInput>;
-};
-
-
-export type MutationCreateManyCoreViewSortsArgs = {
-  inputs: Array<CreateViewSortInput>;
 };
 
 
