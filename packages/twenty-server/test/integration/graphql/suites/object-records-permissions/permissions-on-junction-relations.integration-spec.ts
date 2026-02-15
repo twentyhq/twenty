@@ -1,19 +1,27 @@
+import { randomUUID } from 'crypto';
+
 import { default as request } from 'supertest';
 import gql from 'graphql-tag';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-const PERSON_WITH_JUNCTION = PERSON_DATA_SEED_IDS.ID_1;
+const personId = randomUUID();
+const companyAId = randomUUID();
+const companyBId = randomUUID();
+const employmentHistoryAId = randomUUID();
+const employmentHistoryBId = randomUUID();
 
 const createRoleWithPermissions = async ({
   label,
@@ -142,6 +150,58 @@ describe('permissionsOnJunctionRelations', () => {
     originalMemberRoleId = rolesResponse.body.data.getRoles.find(
       (role: any) => role.label === 'Member',
     ).id;
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id name',
+        data: { id: companyAId, name: 'Junction Test Company A' },
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id name',
+        data: { id: companyBId, name: 'Junction Test Company B' },
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        data: {
+          id: personId,
+          name: { firstName: 'Junction', lastName: 'TestPerson' },
+          city: 'TestCity',
+        },
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'employmentHistory',
+        gqlFields: 'id',
+        data: {
+          id: employmentHistoryAId,
+          personId,
+          companyId: companyAId,
+        },
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'employmentHistory',
+        gqlFields: 'id',
+        data: {
+          id: employmentHistoryBId,
+          personId,
+          companyId: companyBId,
+        },
+      }),
+    );
   });
 
   afterAll(async () => {
@@ -150,6 +210,46 @@ describe('permissionsOnJunctionRelations', () => {
       roleId: originalMemberRoleId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
+
+    await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'employmentHistory',
+        gqlFields: 'id',
+        recordId: employmentHistoryAId,
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'employmentHistory',
+        gqlFields: 'id',
+        recordId: employmentHistoryBId,
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        recordId: personId,
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: companyAId,
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: companyBId,
+      }),
+    );
   });
 
   afterEach(async () => {
@@ -193,7 +293,7 @@ describe('permissionsOnJunctionRelations', () => {
         }
       `,
       filter: {
-        id: { eq: PERSON_WITH_JUNCTION },
+        id: { eq: personId },
       },
     });
 
@@ -248,7 +348,7 @@ describe('permissionsOnJunctionRelations', () => {
         }
       `,
       filter: {
-        id: { eq: PERSON_WITH_JUNCTION },
+        id: { eq: personId },
       },
     });
 
@@ -292,7 +392,7 @@ describe('permissionsOnJunctionRelations', () => {
         }
       `,
       filter: {
-        id: { eq: PERSON_WITH_JUNCTION },
+        id: { eq: personId },
       },
     });
 
