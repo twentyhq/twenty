@@ -6,6 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import { isWorkspaceCreationLimitedToServerAdminsState } from '@/client-config/states/isWorkspaceCreationLimitedToServerAdminsState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -99,7 +100,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     );
   };
 
-  const canUserCreateWorkspace = currentUser?.canAccessFullAdminPanel;
+  const isWorkspaceCreationLimitedToServerAdmins = useRecoilValue(
+    isWorkspaceCreationLimitedToServerAdminsState,
+  );
+  const canUserCreateWorkspace =
+    !isWorkspaceCreationLimitedToServerAdmins ||
+    currentUser?.canAccessFullAdminPanel;
 
   const createWorkspace = () => {
     signUpInNewWorkspaceMutation({

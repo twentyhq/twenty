@@ -21,6 +21,7 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isWorkspaceCreationLimitedToServerAdminsState } from '@/client-config/states/isWorkspaceCreationLimitedToServerAdminsState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -54,6 +55,9 @@ export const useClientConfig = (): UseClientConfigResult => {
   );
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
+  );
+  const setIsWorkspaceCreationLimitedToServerAdmins = useSetRecoilState(
+    isWorkspaceCreationLimitedToServerAdminsState,
   );
   const setIsEmailVerificationRequired = useSetRecoilState(
     isEmailVerificationRequiredState,
@@ -163,6 +167,9 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
+      setIsWorkspaceCreationLimitedToServerAdmins(
+        clientConfig.isWorkspaceCreationLimitedToServerAdmins,
+      );
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
       setBilling(clientConfig.billing);
       setSupportChat(clientConfig.support);
@@ -243,6 +250,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
+    setIsWorkspaceCreationLimitedToServerAdmins,
     setIsEmailingDomainsEnabled,
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
