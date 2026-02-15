@@ -79,5 +79,8 @@ RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
 # Use non root user with uid 1000
 USER 1000
 
+# Expose the default port for auto-detection
+EXPOSE 3000
+
 CMD ["node", "dist/main"]
 ENTRYPOINT ["/app/entrypoint.sh"]
