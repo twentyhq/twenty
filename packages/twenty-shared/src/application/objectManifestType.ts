@@ -9,5 +9,5 @@ export type ObjectManifest = SyncableEntityOptions & {
   description?: string;
   icon?: string;
   fields: ObjectFieldManifest[];
-  labelIdentifierFieldMetadataUniversalIdentifier?: string;
+  labelIdentifierFieldMetadataUniversalIdentifier: string;
 };
