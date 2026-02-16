@@ -131,19 +131,16 @@ const StyledMarkdownContainer = styled.div`
     display: none;
   }
 
-  a,
   .markdown-link {
     color: ${({ theme }) => theme.accent.accent11};
     text-decoration: none;
     -webkit-text-decoration: none;
   }
 
-  a:visited,
   .markdown-link:visited {
     color: ${({ theme }) => theme.accent.accent11};
   }
 
-  a:hover,
   .markdown-link:hover {
     text-decoration: underline !important;
   }
