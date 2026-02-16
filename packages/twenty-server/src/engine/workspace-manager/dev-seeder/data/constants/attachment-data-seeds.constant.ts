@@ -212,7 +212,9 @@ const generateAttachmentSeedsForWorkspace = (
     seeds.push({
       id: attachmentId,
       name: nameVariation.name,
-      file: JSON.stringify([{ fileId, label: nameVariation.name }]),
+      file: JSON.stringify([
+        { fileId, label: nameVariation.name, extension: sampleFile.extension },
+      ]),
       createdBySource: FieldActorSource.MANUAL,
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdByName: 'Tim A',
