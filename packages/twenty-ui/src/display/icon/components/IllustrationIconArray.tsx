@@ -2,7 +2,7 @@ import IllustrationIconArrayRaw from '@assets/icons/illustration-array.svg?react
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-export type IllustrationIconArrayProps = Pick<IconComponentProps, 'size'>;
+type IllustrationIconArrayProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconArray = (props: IllustrationIconArrayProps) => {
   const theme = useTheme();

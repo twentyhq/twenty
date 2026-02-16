@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   type TwentyORMException,
@@ -165,6 +167,20 @@ export class MessageImportExceptionHandlerService {
         1,
         undefined,
         ['throttleFailureCount', 'id'],
+      );
+
+      const throttleRetryAfter =
+        exception instanceof MessageImportDriverException
+          ? exception.throttleRetryAfter
+          : undefined;
+
+      await messageChannelRepository.update(
+        { id: messageChannel.id },
+        {
+          throttleRetryAfter: isDefined(throttleRetryAfter)
+            ? throttleRetryAfter.toISOString()
+            : null,
+        },
       );
     }, authContext);
 

@@ -36,32 +36,32 @@ corepack enable
 yarn install
 
 # 使用你的 API 密钥进行身份验证（系统会提示你）
-yarn auth:login
+yarn twenty auth:login
 
 # 启动开发模式：会将本地更改自动同步到你的工作区
-yarn app:dev
+yarn twenty app:dev
 ```
 
 从这里您可以：
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
-yarn entity:add
+# 向你的应用添加一个新实体（引导式）
+yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
-yarn app:generate
+# 生成类型化的 Twenty 客户端和工作区实体类型
+yarn twenty app:generate
 
-# Watch your application's function logs
-yarn function:logs
+# 监听你的应用函数日志
+yarn twenty function:logs
 
-# Execute a function by name
-yarn function:execute -n my-function -p '{\"name\": \"test\"}'
+# 按名称执行一个函数
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
-yarn app:uninstall
+# 从当前工作区卸载该应用
+yarn twenty app:uninstall
 
-# Display commands' help
-yarn help
+# 显示命令帮助
+yarn twenty help
 ```
 
 另请参阅：[create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 和 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) 的 CLI 参考页面。
@@ -102,7 +102,7 @@ my-twenty-app/
 
 总体来说：
 
-* **package.json**：声明应用名称、版本、运行时（Node 24+、Yarn 4），并添加 `twenty-sdk`，以及诸如 `app:dev`、`app:generate`、`entity:add`、`function:logs`、`function:execute`、`app:uninstall` 等脚本和认证命令，它们都会委托给本地的 `twenty` CLI。
+* **package.json**：声明应用名称、版本、引擎（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及一个 `twenty` 脚本，该脚本会委托给本地的 `twenty` CLI。 运行 `yarn twenty help` 以列出所有可用命令。
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
@@ -142,12 +142,12 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
-* `yarn entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
+* `yarn twenty app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
+* `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
 
 ## 身份验证
 
-首次运行 `yarn auth:login` 时，你将被提示输入：
+首次运行 `yarn twenty auth:login` 时，你将被提示输入：
 
 * API URL（默认为 http://localhost:3000 或你当前的工作空间配置）
 * API 密钥
@@ -158,25 +158,25 @@ export default defineObject({
 
 ```bash filename="Terminal"
 # Login interactively (recommended)
-yarn auth:login
+yarn twenty auth:login
 
 # Login to a specific workspace profile
-yarn auth:login --workspace my-custom-workspace
+yarn twenty auth:login --workspace my-custom-workspace
 
 # List all configured workspaces
-yarn auth:list
+yarn twenty auth:list
 
 # Switch the default workspace (interactive)
-yarn auth:switch
+yarn twenty auth:switch
 
 # Switch to a specific workspace
-yarn auth:switch production
+yarn twenty auth:switch production
 
 # Check current authentication status
-yarn auth:status
+yarn twenty auth:status
 ```
 
-使用 `auth:switch` 切换工作空间后，后续所有命令将默认使用该工作空间。 你仍可通过 `--workspace <name>` 临时覆盖。
+使用 `yarn twenty auth:switch` 切换工作空间后，后续所有命令将默认使用该工作空间。 你仍可通过 `--workspace <name>` 临时覆盖。
 
 ## 使用 SDK 资源（类型与配置）
 
@@ -276,7 +276,7 @@ export default defineObject({
 * `universalIdentifier` 必须在各次部署间保持唯一且稳定。
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
-* 你可以使用 `yarn entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
+* 你可以使用 `yarn twenty entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
 
 <Note>
   **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 你可以通过两种方式创建新函数：
 
-* **脚手架生成**：运行 `yarn entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
+* **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
 * **手动**：创建一个新的 `*.logic-function.ts` 文件，并使用 `defineLogicFunction()`，遵循相同的模式。
 
 ### 前端组件
@@ -584,16 +584,16 @@ export default defineFrontComponent({
 * 前端组件是在 Twenty 中的隔离上下文中渲染的 React 组件。
 * 使用 `*.front-component.tsx` 文件后缀以便自动检测。
 * `component` 字段引用你的 React 组件。
-* 组件会在 `yarn app:dev` 期间自动构建并同步。
+* 组件会在 `yarn twenty app:dev` 期间自动构建并同步。
 
 你可以通过两种方式创建新的前端组件：
 
-* **脚手架生成**：运行 `yarn entity:add` 并选择添加新前端组件的选项。
+* **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新前端组件的选项。
 * **手动**：创建一个新的 `*.front-component.tsx` 文件，并使用 `defineFrontComponent()`。
 
 ### 生成的类型化客户端
 
-运行 yarn app:generate，根据你的工作空间模式在 generated/ 中创建本地类型化客户端。 在你的函数中使用它：
+运行 `yarn twenty app:generate`，根据你的工作空间模式在 `generated/` 中创建本地类型化客户端。 在你的函数中使用它：
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-客户端会通过 `yarn app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
+客户端会通过 `yarn twenty app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
 
 #### 逻辑函数中的运行时凭据
 
@@ -623,40 +623,29 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 ## 手动设置（不使用脚手架）
 
-虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 相反，请将 `twenty-sdk` 添加为本地依赖，并在你的 package.json 中连接相关脚本：
+虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 相反，请将 `twenty-sdk` 添加为本地依赖，并在你的 package.json 中配置一个脚本：
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-然后添加如下脚本：
+然后添加一个 `twenty` 脚本：
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth:login": "twenty auth:login",
-    "auth:logout": "twenty auth:logout",
-    "auth:status": "twenty auth:status",
-    "auth:switch": "twenty auth:switch",
-    "auth:list": "twenty auth:list",
-    "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
-    "app:uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
-    "function:logs": "twenty function:logs",
-    "function:execute": "twenty function:execute",
-    "help": "twenty help"
+    "twenty": "twenty"
   }
 }
 ```
 
-现在你可以通过 Yarn 运行相同的命令，例如 `yarn app:dev`、`yarn app:generate` 等。
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty app:generate`、`yarn twenty help` 等。
 
 ## 故障排除
 
-* 身份验证错误：运行 `yarn auth:login`，并确保你的 API 密钥具有所需权限。
+* 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：运行 `yarn app:generate`。
-* 开发模式未同步：确保 `yarn app:dev` 正在运行，并且你的环境不会忽略变更。
+* 类型或客户端缺失/过期：运行 `yarn twenty app:generate`。
+* 开发模式未同步：确保 `yarn twenty app:dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

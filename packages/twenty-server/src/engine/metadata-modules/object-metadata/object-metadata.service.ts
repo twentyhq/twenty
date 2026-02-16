@@ -10,6 +10,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -21,6 +22,9 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
+import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
@@ -30,6 +34,8 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
@@ -37,6 +43,10 @@ import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visi
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import {
+  TAB_PROPS,
+  WIDGET_PROPS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -56,6 +66,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super(objectMetadataRepository);
   }
@@ -415,6 +426,48 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
       });
 
+    let flatRecordPageFieldsViewToCreate:
+      | (UniversalFlatView & { id: string })
+      | null = null;
+    let flatRecordPageFieldsViewFieldsToCreate: UniversalFlatViewField[] = [];
+    let flatDefaultRecordPageLayoutsToCreate: {
+      pageLayouts: FlatPageLayout[];
+      pageLayoutTabs: FlatPageLayoutTab[];
+      pageLayoutWidgets: FlatPageLayoutWidget[];
+    } = {
+      pageLayouts: [],
+      pageLayoutTabs: [],
+      pageLayoutWidgets: [],
+    };
+
+    if (
+      this.twentyConfigService.get('SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS')
+    ) {
+      flatRecordPageFieldsViewToCreate =
+        this.computeFlatRecordPageFieldsViewToCreate({
+          objectMetadata: flatObjectMetadataToCreate,
+          flatApplication: resolvedOwnerFlatApplication,
+        });
+
+      flatRecordPageFieldsViewFieldsToCreate =
+        await this.computeFlatViewFieldsToCreate({
+          flatApplication: workspaceCustomFlatApplication,
+          objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
+          viewUniversalIdentifier:
+            flatRecordPageFieldsViewToCreate.universalIdentifier,
+        });
+
+      flatDefaultRecordPageLayoutsToCreate =
+        this.computeFlatDefaultRecordPageLayoutToCreate({
+          objectMetadata: flatObjectMetadataToCreate,
+          flatApplication: resolvedOwnerFlatApplication,
+          recordPageFieldsView: flatRecordPageFieldsViewToCreate,
+          workspaceId,
+        });
+    }
+
     const isNavigationMenuItemEnabled =
       existingFeatureFlagsMap[FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED] ??
       false;
@@ -439,12 +492,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToUpdate: [],
             },
             view: {
-              flatEntityToCreate: [flatDefaultViewToCreate],
+              flatEntityToCreate: [
+                flatDefaultViewToCreate,
+                ...(isDefined(flatRecordPageFieldsViewToCreate)
+                  ? [flatRecordPageFieldsViewToCreate]
+                  : []),
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
             viewField: {
-              flatEntityToCreate: flatDefaultViewFieldsToCreate,
+              flatEntityToCreate: [
+                ...flatDefaultViewFieldsToCreate,
+                ...flatRecordPageFieldsViewFieldsToCreate,
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -458,6 +519,27 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             index: {
               flatEntityToCreate: flatIndexMetadataToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            pageLayout: {
+              flatEntityToCreate: [
+                ...flatDefaultRecordPageLayoutsToCreate.pageLayouts,
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            pageLayoutTab: {
+              flatEntityToCreate: [
+                ...flatDefaultRecordPageLayoutsToCreate.pageLayoutTabs,
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            pageLayoutWidget: {
+              flatEntityToCreate: [
+                ...flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -555,6 +637,182 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       viewFilterGroupUniversalIdentifiers: [],
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
+  }
+
+  private computeFlatRecordPageFieldsViewToCreate({
+    objectMetadata,
+    flatApplication,
+  }: {
+    flatApplication: FlatApplication;
+    objectMetadata: UniversalFlatObjectMetadata & { id: string };
+  }): UniversalFlatView & { id: string } {
+    const createdAt = new Date().toISOString();
+
+    return {
+      id: v4(),
+      objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+      name: `${objectMetadata.labelSingular} Record Page Fields`,
+      key: null,
+      icon: 'IconList',
+      type: ViewType.FIELDS_WIDGET,
+      createdAt,
+      updatedAt: createdAt,
+      deletedAt: null,
+      isCustom: true,
+      anyFieldFilterValue: null,
+      calendarFieldMetadataUniversalIdentifier: null,
+      calendarLayout: null,
+      isCompact: false,
+      shouldHideEmptyGroups: false,
+      kanbanAggregateOperation: null,
+      kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
+      mainGroupByFieldMetadataUniversalIdentifier: null,
+      openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+      position: 0,
+      universalIdentifier: v4(),
+      visibility: ViewVisibility.WORKSPACE,
+      createdByUserWorkspaceId: null,
+      viewFieldUniversalIdentifiers: [],
+      viewFieldGroupUniversalIdentifiers: [],
+      viewFilterUniversalIdentifiers: [],
+      viewGroupUniversalIdentifiers: [],
+      viewFilterGroupUniversalIdentifiers: [],
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    };
+  }
+
+  private computeFlatDefaultRecordPageLayoutToCreate({
+    objectMetadata,
+    flatApplication,
+    recordPageFieldsView,
+    workspaceId,
+  }: {
+    flatApplication: FlatApplication;
+    objectMetadata: UniversalFlatObjectMetadata & { id: string };
+    recordPageFieldsView: UniversalFlatView & { id: string };
+    workspaceId: string;
+  }): {
+    pageLayouts: FlatPageLayout[];
+    pageLayoutTabs: FlatPageLayoutTab[];
+    pageLayoutWidgets: FlatPageLayoutWidget[];
+  } {
+    const now = new Date().toISOString();
+    const pageLayoutId = v4();
+    const pageLayoutUniversalIdentifier = v4();
+
+    const tabDefinitions = [
+      { key: 'home' as const, widgetKey: 'fields' as const },
+      { key: 'timeline' as const, widgetKey: 'timeline' as const },
+      { key: 'tasks' as const, widgetKey: 'tasks' as const },
+      { key: 'notes' as const, widgetKey: 'notes' as const },
+      { key: 'files' as const, widgetKey: 'files' as const },
+      { key: 'emails' as const, widgetKey: 'emails' as const },
+      { key: 'calendar' as const, widgetKey: 'calendar' as const },
+    ];
+
+    const pageLayoutTabs: FlatPageLayoutTab[] = [];
+    const pageLayoutWidgets: FlatPageLayoutWidget[] = [];
+
+    for (const { key, widgetKey } of tabDefinitions) {
+      const tabProps = TAB_PROPS[key];
+      const widgetProps = WIDGET_PROPS[widgetKey];
+      const tabId = v4();
+      const tabUniversalIdentifier = v4();
+      const widgetId = v4();
+      const widgetUniversalIdentifier = v4();
+
+      pageLayoutTabs.push({
+        id: tabId,
+        universalIdentifier: tabUniversalIdentifier,
+        applicationId: flatApplication.id,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        workspaceId,
+        title: tabProps.title,
+        position: tabProps.position,
+        pageLayoutId,
+        pageLayoutUniversalIdentifier,
+        widgetIds: [widgetId],
+        widgetUniversalIdentifiers: [widgetUniversalIdentifier],
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+        icon: tabProps.icon,
+        layoutMode: tabProps.layoutMode,
+      });
+
+      const isFieldsWidget = widgetKey === 'fields';
+
+      const configuration = isFieldsWidget
+        ? {
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: recordPageFieldsView.id,
+          }
+        : {
+            configurationType:
+              WidgetConfigurationType[
+                widgetKey.toUpperCase() as keyof typeof WidgetConfigurationType
+              ],
+          };
+
+      const universalConfiguration = isFieldsWidget
+        ? {
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: recordPageFieldsView.universalIdentifier,
+          }
+        : {
+            configurationType:
+              WidgetConfigurationType[
+                widgetKey.toUpperCase() as keyof typeof WidgetConfigurationType
+              ],
+          };
+
+      pageLayoutWidgets.push({
+        id: widgetId,
+        universalIdentifier: widgetUniversalIdentifier,
+        applicationId: flatApplication.id,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        workspaceId,
+        pageLayoutTabId: tabId,
+        pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
+        title: widgetProps.title,
+        type: widgetProps.type,
+        gridPosition: widgetProps.gridPosition,
+        position: widgetProps.position,
+        // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
+        configuration,
+        // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
+        universalConfiguration,
+        objectMetadataId: objectMetadata.id,
+        objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+        conditionalDisplay: null,
+      });
+    }
+
+    const pageLayout: FlatPageLayout = {
+      id: pageLayoutId,
+      universalIdentifier: pageLayoutUniversalIdentifier,
+      applicationId: flatApplication.id,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      workspaceId,
+      name: `Default ${objectMetadata.labelSingular} Layout`,
+      type: PageLayoutType.RECORD_PAGE,
+      objectMetadataId: objectMetadata.id,
+      objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+      tabIds: pageLayoutTabs.map((tab) => tab.id),
+      tabUniversalIdentifiers: pageLayoutTabs.map(
+        (tab) => tab.universalIdentifier,
+      ),
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+      defaultTabToFocusOnMobileAndSidePanelId: null,
+      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: null,
+    };
+
+    return { pageLayouts: [pageLayout], pageLayoutTabs, pageLayoutWidgets };
   }
 
   private async computeFlatViewFieldsToCreate({

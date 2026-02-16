@@ -7,10 +7,6 @@ import {
     RULE_NAME as effectComponentsName,
 } from './rules/effect-components';
 import {
-    rule as exportComponentProps,
-    RULE_NAME as exportComponentPropsName,
-} from './rules/export-component-props';
-import {
     rule as explicitBooleanPredicatesInIf,
     RULE_NAME as explicitBooleanPredicatesInIfName,
 } from './rules/explicit-boolean-predicates-in-if';
@@ -99,7 +95,6 @@ module.exports = {
   rules: {
     [componentPropsNamingName]: componentPropsNaming,
     [effectComponentsName]: effectComponents,
-    [exportComponentPropsName]: exportComponentProps,
     [matchingStateVariableName]: matchingStateVariable,
     [noHardcodedColorsName]: noHardcodedColors,
     [noStateUserefName]: noStateUseref,

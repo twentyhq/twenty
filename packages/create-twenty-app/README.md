@@ -35,29 +35,29 @@ cd my-twenty-app
 corepack enable
 yarn install
 
-# Get help
-yarn run help
+# Get help and list all available commands
+yarn twenty help
 
 # Authenticate using your API key (you'll be prompted)
-yarn auth:login
+yarn twenty auth:login
 
 # Add a new entity to your application (guided)
-yarn entity:add
+yarn twenty entity:add
 
 # Generate a typed Twenty client and workspace entity types
-yarn app:generate
+yarn twenty app:generate
 
 # Start dev mode: watches, builds, and syncs local changes to your workspace
-yarn app:dev
+yarn twenty app:dev
 
 # Watch your application's function logs
-yarn function:logs
+yarn twenty function:logs
 
 # Execute a function with a JSON payload
-yarn function:execute -n my-function -p '{"key": "value"}'
+yarn twenty function:execute -n my-function -p '{"key": "value"}'
 
 # Uninstall the application from the current workspace
-yarn app:uninstall
+yarn twenty app:uninstall
 ```
 
 ## What gets scaffolded
@@ -67,13 +67,14 @@ yarn app:uninstall
   - `logic-functions/hello-world.ts` - Example logic function with HTTP trigger
   - `front-components/hello-world.tsx` - Example front component
 - TypeScript configuration
-- Prewired scripts that wrap the `twenty` CLI from twenty-sdk
+- A prewired `twenty` script that delegates to the `twenty` CLI from twenty-sdk
 
 ## Next steps
-- Use `yarn auth:login` to authenticate with your Twenty workspace.
-- Explore the generated project and add your first entity with `yarn entity:add` (logic functions, front components, objects, roles).
-- Use `yarn app:dev` while you iterate — it watches, builds, and syncs changes to your workspace in real time.
-- Keep your types up‑to‑date using `yarn app:generate`.
+- Run `yarn twenty help` to see all available commands.
+- Use `yarn twenty auth:login` to authenticate with your Twenty workspace.
+- Explore the generated project and add your first entity with `yarn twenty entity:add` (logic functions, front components, objects, roles).
+- Use `yarn twenty app:dev` while you iterate — it watches, builds, and syncs changes to your workspace in real time.
+- Keep your types up‑to‑date using `yarn twenty app:generate`.
 
 
 ## Publish your application
@@ -101,8 +102,8 @@ git push
 Our team reviews contributions for quality, security, and reusability before merging.
 
 ## Troubleshooting
-- Auth prompts not appearing: run `yarn auth:login` again and verify the API key permissions.
-- Types not generated: ensure `yarn app:generate` runs without errors, then re‑start `yarn app:dev`.
+- Auth prompts not appearing: run `yarn twenty auth:login` again and verify the API key permissions.
+- Types not generated: ensure `yarn twenty app:generate` runs without errors, then re‑start `yarn twenty app:dev`.
 
 ## Contributing
 - See our [GitHub](https://github.com/twentyhq/twenty)

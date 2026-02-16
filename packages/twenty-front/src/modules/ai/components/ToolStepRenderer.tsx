@@ -123,7 +123,13 @@ const StyledTab = styled.div<{ isActive: boolean }>`
 
 type TabType = 'output' | 'input';
 
-export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
+export const ToolStepRenderer = ({
+  toolPart,
+  isStreaming,
+}: {
+  toolPart: ToolUIPart;
+  isStreaming: boolean;
+}) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
@@ -151,7 +157,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
       };
     } | null;
 
-    const isRunning = !output && !hasError;
+    const isRunning = !output && !hasError && isStreaming;
 
     return (
       <CodeExecutionDisplay
@@ -166,17 +172,23 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   }
 
   if (!output && !hasError) {
+    const displayText = isStreaming
+      ? getToolDisplayMessage(input, rawToolName, false)
+      : getToolDisplayMessage(input, rawToolName, true);
+
     return (
       <StyledContainer>
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
             <StyledIconTextContainer>
               <ToolIcon size={theme.icon.size.sm} />
-              <ShimmeringText>
-                <StyledDisplayMessage>
-                  {getToolDisplayMessage(input, rawToolName, false)}
-                </StyledDisplayMessage>
-              </ShimmeringText>
+              {isStreaming ? (
+                <ShimmeringText>
+                  <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
+                </ShimmeringText>
+              ) : (
+                <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
+              )}
             </StyledIconTextContainer>
           </StyledLeftContent>
           <StyledRightContent>

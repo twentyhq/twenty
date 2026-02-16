@@ -21,7 +21,10 @@ export const Default: Story = {
     variant: 'neutral',
     title: 'An callout component',
     description: 'Description of callout component',
-    learnMoreText: 'Learn more link',
+    action: {
+      label: 'Learn more link',
+      onClick: () => {},
+    },
   },
   decorators: [ComponentDecorator],
 };
@@ -30,7 +33,10 @@ export const Catalog: CatalogStory<Story, typeof Callout> = {
   args: {
     title: 'An callout component',
     description: 'Description of callout component',
-    learnMoreText: 'Learn more link',
+    action: {
+      label: 'Learn more link',
+      onClick: () => {},
+    },
   },
   argTypes: {
     variant: { control: false },

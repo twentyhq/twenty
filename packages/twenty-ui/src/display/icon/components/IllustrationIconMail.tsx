@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export type IllustrationIconMailProps = Pick<IconComponentProps, 'size'>;
+type IllustrationIconMailProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconMail = (props: IllustrationIconMailProps) => {
   const theme = useTheme();

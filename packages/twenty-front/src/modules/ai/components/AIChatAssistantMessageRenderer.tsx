@@ -57,7 +57,13 @@ const InitialLoadingIndicator = () => {
   );
 };
 
-const MessagePartRenderer = ({ part }: { part: ExtendedUIMessagePart }) => {
+const MessagePartRenderer = ({
+  part,
+  isStreaming,
+}: {
+  part: ExtendedUIMessagePart;
+  isStreaming: boolean;
+}) => {
   switch (part.type) {
     case 'reasoning':
       return (
@@ -85,7 +91,7 @@ const MessagePartRenderer = ({ part }: { part: ExtendedUIMessagePart }) => {
       );
     default:
       if (isToolUIPart(part)) {
-        return <ToolStepRenderer toolPart={part} />;
+        return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
       }
       return null;
   }
@@ -117,7 +123,11 @@ export const AIChatAssistantMessageRenderer = ({
     <div>
       <StyledMessagePartsContainer>
         {filteredParts.map((part, index) => (
-          <MessagePartRenderer key={index} part={part} />
+          <MessagePartRenderer
+            key={index}
+            part={part}
+            isStreaming={isLastMessageStreaming}
+          />
         ))}
       </StyledMessagePartsContainer>
       {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}

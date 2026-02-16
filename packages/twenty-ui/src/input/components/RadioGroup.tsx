@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 
 import { type RadioProps } from './Radio';
 
-export type RadioGroupProps = React.PropsWithChildren & {
+type RadioGroupProps = React.PropsWithChildren & {
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onValueChange?: (value: string) => void;

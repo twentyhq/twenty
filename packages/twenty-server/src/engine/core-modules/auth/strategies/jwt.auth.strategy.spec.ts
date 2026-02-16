@@ -356,14 +356,14 @@ describe('JwtAuthStrategy', () => {
     });
   });
 
-  describe('APPLICATION token validation', () => {
-    it('should throw AuthExceptionCode if type is APPLICATION, and application not found', async () => {
+  describe('APPLICATION_ACCESS token validation', () => {
+    it('should throw AuthExceptionCode if type is APPLICATION_ACCESS, and application not found', async () => {
       const validApplicationId = randomUUID();
       const validWorkspaceId = randomUUID();
 
       const payload = {
         sub: validApplicationId,
-        type: JwtTokenTypeEnum.APPLICATION,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
         applicationId: validApplicationId,
         workspaceId: validWorkspaceId,
       };
