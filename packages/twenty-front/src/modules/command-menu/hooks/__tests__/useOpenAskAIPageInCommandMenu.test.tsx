@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { type MutableSnapshot, RecoilRoot } from 'recoil';
 
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
@@ -32,7 +31,7 @@ describe('useOpenAskAIPageInCommandMenu', () => {
     jest.clearAllMocks();
   });
 
-  it('should use "Ask AI" as title when no thread title exists', () => {
+  it('should use "Ask AI" as default title when no pageTitle is provided', () => {
     const { result } = renderWithRecoil();
 
     act(() => {
@@ -48,13 +47,11 @@ describe('useOpenAskAIPageInCommandMenu', () => {
     );
   });
 
-  it('should use currentAIChatThreadTitle when it exists', () => {
-    const { result } = renderWithRecoil((snapshot) => {
-      snapshot.set(currentAIChatThreadTitleState, 'My Chat Title');
-    });
+  it('should use explicit pageTitle when provided', () => {
+    const { result } = renderWithRecoil();
 
     act(() => {
-      result.current.openAskAIPage();
+      result.current.openAskAIPage({ pageTitle: 'My Chat Title' });
     });
 
     expect(navigateCommandMenuMock).toHaveBeenCalledWith(
@@ -64,29 +61,11 @@ describe('useOpenAskAIPageInCommandMenu', () => {
     );
   });
 
-  it('should prefer explicit pageTitle over thread title state', () => {
-    const { result } = renderWithRecoil((snapshot) => {
-      snapshot.set(currentAIChatThreadTitleState, 'Thread Title');
-    });
+  it('should fall back to "Ask AI" when pageTitle is null', () => {
+    const { result } = renderWithRecoil();
 
     act(() => {
-      result.current.openAskAIPage({ pageTitle: 'Explicit Title' });
-    });
-
-    expect(navigateCommandMenuMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pageTitle: 'Explicit Title',
-      }),
-    );
-  });
-
-  it('should fall back to "Ask AI" when thread title is null', () => {
-    const { result } = renderWithRecoil((snapshot) => {
-      snapshot.set(currentAIChatThreadTitleState, null);
-    });
-
-    act(() => {
-      result.current.openAskAIPage();
+      result.current.openAskAIPage({ pageTitle: null });
     });
 
     expect(navigateCommandMenuMock).toHaveBeenCalledWith(
