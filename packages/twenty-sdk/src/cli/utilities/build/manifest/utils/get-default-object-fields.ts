@@ -135,7 +135,7 @@ export const getDefaultObjectFields = (
   return [
     idField,
     nameField,
-    updatedAtField,
+    createdAtField,
     updatedAtField,
     deletedAtField,
     createdByField,
