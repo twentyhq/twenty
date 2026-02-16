@@ -364,6 +364,14 @@ export class UserResolver {
       return true;
     }
 
+    const isMultiWorkspaceEnabled = this.twentyConfigService.get(
+      'IS_MULTIWORKSPACE_ENABLED',
+    );
+
+    if (!isMultiWorkspaceEnabled) {
+      return false;
+    }
+
     if (!this.isWorkspaceCreationLimitedToServerAdmins()) {
       return true;
     }
