@@ -1,20 +1,20 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
+import { type SuggestionItem } from '@/blocknote-editor/types/types';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
-import { type SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 import {
-    IconBlockquote,
-    IconCode,
-    type IconComponent,
-    IconH1,
-    IconH2,
-    IconH3,
-    IconList,
-    IconListCheck,
-    IconListNumbers,
-    IconMoodSmile,
-    IconPilcrow,
-    IconTable,
+  IconBlockquote,
+  IconCode,
+  type IconComponent,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconList,
+  IconListCheck,
+  IconListNumbers,
+  IconMoodSmile,
+  IconPilcrow,
+  IconTable,
 } from 'twenty-ui/display';
 
 const Icons: Record<string, IconComponent> = {

@@ -9,10 +9,11 @@ import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-tex
 import { StandaloneRichTextWidgetAutoFocusEffect } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetAutoFocusEffect';
 import { DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { filterSupportedBlocks } from '@/page-layout/widgets/standalone-rich-text/utils/filterSupportedBlocks';
-import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
-import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
-import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
-import { prepareBodyWithSignedUrls } from '@/ui/input/editor/utils/prepareBodyWithSignedUrls';
+
+import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
+import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
