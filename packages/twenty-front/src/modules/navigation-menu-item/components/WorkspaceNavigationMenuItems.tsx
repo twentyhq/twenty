@@ -109,7 +109,10 @@ export const WorkspaceNavigationMenuItems = () => {
         pageTitle: objectMetadataItem.labelPlural,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
-      isNonEmptyString(item.link) && navigate(item.link);
+
+      if (isNonEmptyString(item.link)) {
+        navigate(item.link);
+      }
     }
   };
 
