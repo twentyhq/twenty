@@ -14,7 +14,7 @@ import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-ric
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { getDashboardSlashMenu } from '@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu';
 
-interface DashboardsBlockEditorProps {
+type DashboardsBlockEditorProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -22,7 +22,7 @@ interface DashboardsBlockEditorProps {
   onChange?: () => void;
   readonly?: boolean;
   boundaryElement?: HTMLElement | null;
-}
+};
 
 // TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
 // (DashboardBlockDragHandleMenu, DashboardEditorSideMenu, DashboardColorSelectionMenu).

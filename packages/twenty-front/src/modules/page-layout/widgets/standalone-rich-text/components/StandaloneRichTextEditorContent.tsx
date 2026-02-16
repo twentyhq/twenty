@@ -13,7 +13,6 @@ import { filterSupportedBlocks } from '@/page-layout/widgets/standalone-rich-tex
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
-import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -81,7 +80,7 @@ export const StandaloneRichTextEditorContent = ({
     schema: DASHBOARD_BLOCK_SCHEMA,
     sideMenuDetection: 'editor',
     placeholders: {
-      default: t`Type '/' for commands, '@' for mentions`,
+      default: t`Type '/' for commands`,
     },
   });
 
@@ -112,9 +111,8 @@ export const StandaloneRichTextEditorContent = ({
 
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
-    const preparedBody = prepareBodyWithSignedUrls(newStringifiedBody);
 
-    handlePersistBody(preparedBody);
+    handlePersistBody(newStringifiedBody);
     handleAttachmentSync(newStringifiedBody, currentBody);
   };
 
