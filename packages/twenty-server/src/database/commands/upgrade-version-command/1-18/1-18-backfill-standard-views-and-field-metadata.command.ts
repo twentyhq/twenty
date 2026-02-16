@@ -670,7 +670,6 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
              JOIN core."fieldMetadata" fm
                ON fm."workspaceId" = $1
                AND fm."universalIdentifier" = $3
-               AND fm."deletedAt" IS NULL
              WHERE v."workspaceId" = $1
                AND v."universalIdentifier" = $2
                AND v."deletedAt" IS NULL
