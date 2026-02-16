@@ -58,9 +58,19 @@ export const SettingsObjectTable = ({
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
+  const objectMetadataItemsForTotalCount = useMemo(
+    () =>
+      objectMetadataItems.filter(
+        (objectMetadataItem) =>
+          (showDeactivated || objectMetadataItem.isActive) &&
+          (showSystemObjects || !objectMetadataItem.isSystem),
+      ),
+    [objectMetadataItems, showDeactivated, showSystemObjects],
+  );
+
   const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
     {
-      objectMetadataItems,
+      objectMetadataItems: objectMetadataItemsForTotalCount,
     },
   );
 

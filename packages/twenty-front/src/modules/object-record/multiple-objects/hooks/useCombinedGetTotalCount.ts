@@ -35,14 +35,24 @@ export const useCombinedGetTotalCount = ({
     {
       skip,
       client: apolloCoreClient,
+      errorPolicy: 'all',
+      returnPartialData: true,
     },
   );
 
-  const totalCountByObjectMetadataItemNamePlural = Object.fromEntries(
-    Object.entries(data ?? {}).map(([namePlural, objectRecordConnection]) => [
-      namePlural,
-      objectRecordConnection.totalCount,
-    ]),
+  const totalCountByObjectMetadataItemNamePlural = Object.entries(
+    data ?? {},
+  ).reduce<Record<string, number>>(
+    (acc, [namePlural, objectRecordConnection]) => {
+      const totalCount = objectRecordConnection?.totalCount;
+
+      if (typeof totalCount === 'number') {
+        acc[namePlural] = totalCount;
+      }
+
+      return acc;
+    },
+    {},
   );
 
   return {
