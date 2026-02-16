@@ -94,6 +94,32 @@ const MarkdownRenderer = lazy(async () => {
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
           ),
+          a: ({ children, node: _node, ...props }) => (
+            <a className="markdown-link" {...props}>
+              {processChildrenForRecordLinks(children)}
+            </a>
+          ),
+          code: ({
+            inline,
+            className,
+            children,
+          }: {
+            inline?: boolean;
+            className?: string;
+            children?: React.ReactNode;
+          }) =>
+            inline ? (
+              <code className={`markdown-inline-code ${className ?? ''}`.trim()}>
+                {children}
+              </code>
+            ) : (
+              <code className={className}>{children}</code>
+            ),
+          pre: ({ children }) => (
+            <div className="markdown-code-outer-container">
+              <pre className="markdown-block-code">{children}</pre>
+            </div>
+          ),
         }}
       >
         {children}
@@ -103,6 +129,296 @@ const MarkdownRenderer = lazy(async () => {
 });
 
 const StyledMarkdownContainer = styled.div`
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  line-height: 150%;
+  margin: ${({ theme }) => `${theme.spacing(1.5)} 0`};
+  position: relative;
+  scroll-margin-top: ${({ theme }) => theme.spacing(10)};
+  scroll-margin-bottom: ${({ theme }) => theme.spacing(10)};
+
+  &:empty {
+    display: none;
+  }
+
+  .my-0 {
+    margin: 0;
+  }
+
+  a,
+  .markdown-link {
+    color: ${({ theme }) => theme.accent.accent11};
+    text-decoration: none;
+    -webkit-text-decoration: none;
+  }
+
+  a:visited,
+  .markdown-link:visited {
+    color: ${({ theme }) => theme.accent.accent11};
+  }
+
+  a:hover,
+  .markdown-link:hover {
+    text-decoration: underline !important;
+  }
+
+  strong,
+  b {
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: ${({ theme }) => theme.font.weight.semiBold} !important;
+  }
+
+  h1 {
+    font-size: 1.6em;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  h3 {
+    font-size: 1.15em;
+    line-height: 1.25;
+    margin-bottom: 8px;
+    margin-top: 18px;
+  }
+
+  h4 {
+    font-size: 1.05em;
+    line-height: 1.25;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  h5 {
+    font-size: 0.95em;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+
+  h6 {
+    font-size: 0.85em;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+
+  br {
+    display: none;
+  }
+
+  hr {
+    background-color: ${({ theme }) => theme.border.color.light} !important;
+    border: none;
+    height: 1px;
+    margin: ${({ theme }) => theme.spacing(4)} 0;
+  }
+
+  ol:first-of-type:not(.nested),
+  ul:first-of-type:not(.nested) {
+    margin-top: ${({ theme }) => theme.spacing(1)} !important;
+  }
+
+  ol:last-of-type:not(.nested),
+  ul:last-of-type:not(.nested) {
+    margin-bottom: ${({ theme }) => theme.spacing(1)} !important;
+  }
+
+  li {
+    line-height: 150%;
+    margin-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
+    margin-top: ${({ theme }) => theme.spacing(0.5)} !important;
+  }
+
+  .markdown-inline-code,
+  :not(pre) > code {
+    background-color: ${({ theme }) => theme.background.tertiary};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    color: ${({ theme }) => theme.font.color.primary};
+    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
+    font-size: 0.9em;
+    padding: 1.5px 3px;
+    transition: all 0.1s ease;
+  }
+
+  .markdown-inline-code[style*='cursor: pointer'],
+  :not(pre) > code[style*='cursor: pointer'] {
+    background-color: ${({ theme }) => theme.background.secondary};
+    border: ${({ theme }) => `1px solid ${theme.accent.accent10}`};
+    color: ${({ theme }) => theme.accent.accent10};
+  }
+
+  .markdown-inline-code[style*='cursor: pointer']:hover,
+  :not(pre) > code[style*='cursor: pointer']:hover {
+    background-color: ${({ theme }) => theme.background.transparent.blue};
+  }
+
+  .markdown-code-outer-container {
+    border-radius: ${({ theme }) => theme.border.radius.md} !important;
+    overflow: hidden;
+  }
+
+  .markdown-block-code {
+    border-radius: ${({ theme }) => theme.border.radius.md} !important;
+  }
+
+  .markdown-block-code * {
+    animation: none !important;
+  }
+
+  .markdown-code-block-header:empty {
+    display: none !important;
+  }
+
+  .markdown-block-mermaid-outer {
+    padding: ${({ theme }) => `${theme.spacing(1.5)} 0`};
+  }
+
+  .markdown-block-mermaid {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .markdown-block-mermaid.mermaid-diagram-done {
+    background-color: ${({ theme }) => theme.background.primary};
+    border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+    border-radius: ${({ theme }) => theme.border.radius.md};
+    box-sizing: border-box;
+    contain: paint;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    gap: ${({ theme }) => theme.spacing(1)};
+    width: 100%;
+  }
+
+  .markdown-console-logs .log-level {
+    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
+    font-size: 11px;
+    opacity: 0.9;
+  }
+
+  .markdown-console-logs .log-message {
+    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
+    font-size: 12px;
+    min-width: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .markdown-console-logs .log-message.log-group {
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  }
+
+  .markdown-console-logs .log-location {
+    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
+    font-size: 11px;
+    opacity: 0.7;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .markdown-console-logs .log-code {
+    background-color: ${({ theme }) => theme.background.tertiary};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    color: ${({ theme }) => theme.font.color.primary};
+    display: inline-block;
+    padding: ${({ theme }) => theme.spacing(1, 1.5)};
+  }
+
+  .markdown-console-logs .level-error.log-level,
+  .markdown-console-logs .level-error.log-message {
+    color: ${({ theme }) => theme.font.color.danger};
+  }
+
+  .markdown-console-logs .level-warn.log-level,
+  .markdown-console-logs .level-warn.log-message {
+    color: ${({ theme }) => theme.color.yellow};
+  }
+
+  .markdown-console-logs .level-info.log-level,
+  .markdown-console-logs .level-info.log-message {
+    color: ${({ theme }) => theme.color.blue};
+  }
+
+  .markdown-console-logs .level-debug.log-level,
+  .markdown-console-logs .level-debug.log-message {
+    color: ${({ theme }) => theme.color.green};
+  }
+
+  .markdown-console-logs .level-log.log-level,
+  .markdown-console-logs .level-log.log-message {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
+
+  .markdown-console-logs .log-json-pre {
+    font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
+    font-size: 12px;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .markdown-console-logs .token-key {
+    color: ${({ theme }) => theme.color.cyan};
+  }
+
+  .markdown-console-logs .token-string {
+    color: ${({ theme }) => theme.color.green};
+  }
+
+  .markdown-console-logs .token-number {
+    color: ${({ theme }) => theme.color.purple};
+  }
+
+  .markdown-console-logs .token-boolean {
+    color: ${({ theme }) => theme.color.yellow};
+  }
+
+  .markdown-console-logs .token-null {
+    color: ${({ theme }) => theme.color.red};
+  }
+
+  .markdown-console-logs .token-punct {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+
+  .markdown-memory-citation {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+
+  .markdown-color-token-swatch {
+    --dimension: 1em;
+
+    background: transparent;
+    border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
+    border-radius: 3px;
+    box-sizing: border-box;
+    display: inline-block;
+    flex-shrink: 0;
+    height: var(--dimension);
+    margin-right: 0.25em;
+    overflow: hidden;
+    position: relative;
+    vertical-align: -0.15em;
+    width: var(--dimension);
+  }
+
   img {
     height: auto;
     max-width: 100%;
@@ -111,6 +427,7 @@ const StyledMarkdownContainer = styled.div`
 
 // Using div instead of p to allow RecordLink (which contains div elements) as children
 const StyledParagraph = styled.div`
+  line-height: inherit;
   margin-block: 1em;
 
   &:first-child {
@@ -186,7 +503,7 @@ const LoadingSkeleton = () => {
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
-    <StyledMarkdownContainer>
+    <StyledMarkdownContainer className="markdown-section">
       <Suspense fallback={<LoadingSkeleton />}>
         <MarkdownRenderer
           TableScrollContainer={StyledTableScrollContainer}
