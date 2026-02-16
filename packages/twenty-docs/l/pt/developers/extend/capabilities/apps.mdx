@@ -554,11 +554,11 @@ Você pode criar novas funções de duas formas:
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova função de lógica. Isso gera um arquivo inicial com um handler e configuração.
 * **Manual**: Crie um novo arquivo `*.logic-function.ts` e use `defineLogicFunction()`, seguindo o mesmo padrão.
 
-### Marking a logic function as a tool
+### Marcar uma função lógica como ferramenta
 
-Logic functions can be exposed as **tools** for AI agents and workflows. When a function is marked as a tool, it becomes discoverable by Twenty's AI features and can be selected as a step in workflow automations.
+Funções lógicas podem ser expostas como **ferramentas** para agentes de IA e fluxos de trabalho. Quando uma função é marcada como ferramenta, ela fica disponível para os recursos de IA do Twenty e pode ser selecionada como uma etapa em automações de fluxos de trabalho.
 
-To mark a logic function as a tool, set `isTool: true` and provide a `toolInputSchema` describing the expected input parameters using [JSON Schema](https://json-schema.org/):
+Para marcar uma função lógica como ferramenta, defina `isTool: true` e forneça um `toolInputSchema` descrevendo os parâmetros de entrada esperados usando [JSON Schema](https://json-schema.org/):
 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
@@ -609,14 +609,14 @@ export default defineLogicFunction({
 
 Pontos-chave:
 
-* **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
-* **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
-* Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
-* **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+* **`isTool`** (`boolean`, padrão: `false`): Quando definido como `true`, a função é registrada como uma ferramenta e fica disponível para agentes de IA e automações de fluxos de trabalho.
+* **`toolInputSchema`** (`object`, opcional): Um objeto JSON Schema que descreve os parâmetros que sua função aceita. Os agentes de IA usam esse esquema para entender quais entradas a ferramenta espera e para validar as chamadas. Se omitido, o esquema tem como padrão `{ type: 'object', properties: {} }` (sem parâmetros).
+* Funções com `isTool: false` (ou não definido) **não** são expostas como ferramentas. Elas ainda podem ser executadas diretamente ou chamadas por outras funções, mas não aparecerão na descoberta de ferramentas.
+* **Nomenclatura de ferramentas**: Quando exposta como uma ferramenta, o nome da função é automaticamente normalizado para `logic_function_<name>` (em minúsculas, caracteres não alfanuméricos substituídos por sublinhados). Por exemplo, `enrich-company` torna-se `logic_function_enrich_company`.
+* Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos (cron, eventos de banco de dados, rotas) simultaneamente.
 
 <Note>
-  **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
 </Note>
 
 ### Componentes de front-end

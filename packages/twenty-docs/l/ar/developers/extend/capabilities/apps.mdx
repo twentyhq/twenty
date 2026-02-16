@@ -609,14 +609,14 @@ export default defineLogicFunction({
 
 النقاط الرئيسية:
 
-* **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
-* **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
-* Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
-* **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+* **`isTool`** (`boolean`, الافتراضي: `false`): عند ضبطه على `true`، يتم تسجيل الدالة كأداة وتصبح متاحة لوكلاء الذكاء الاصطناعي ولأتمتة سير العمل.
+* **`toolInputSchema`** (`object`, اختياري): كائن JSON Schema يصف المعلمات التي تقبلها دالتك. يستخدم وكلاء الذكاء الاصطناعي هذا المخطط لفهم المدخلات التي تتوقعها الأداة وللتحقق من صحة الاستدعاءات. إذا تم إغفاله، فالقيمة الافتراضية للمخطط هي `{ type: 'object', properties: {} }` (من دون معلمات).
+* الدوال التي لديها `isTool: false` (أو غير معيَّنة) **غير** معروضة كأدوات. لا يزال بالإمكان تنفيذها مباشرةً أو استدعاؤها بواسطة دوال أخرى، لكنها لن تظهر في اكتشاف الأدوات.
+* **تسمية الأداة**: عند كشفها كأداة، يتم تطبيع اسم الدالة تلقائيًا إلى `logic_function_<name>` (تحويله إلى أحرف صغيرة، واستبدال المحارف غير الأبجدية الرقمية بشرطات سفلية). على سبيل المثال، `enrich-company` تصبح `logic_function_enrich_company`.
+* يمكنك دمج `isTool` مع المشغِّلات — إذ يمكن للدالة أن تكون أداة (قابلة للاستدعاء من قِبل وكلاء الذكاء الاصطناعي) وأن تُشغَّل بواسطة أحداث (cron، وأحداث قاعدة البيانات، والمسارات) في الوقت نفسه.
 
 <Note>
-  **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **اكتب `description` جيدًا.** يعتمد وكلاء الذكاء الاصطناعي على حقل `description` الخاص بالدالة لتحديد وقت استخدام الأداة. كن محددًا بشأن ما تفعله الأداة ومتى ينبغي استدعاؤها.
 </Note>
 
 ### المكوّنات الأمامية

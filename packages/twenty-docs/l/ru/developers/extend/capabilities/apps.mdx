@@ -554,11 +554,11 @@ const handler = async (event: RoutePayload) => {
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления новой функции логики. Это создаёт стартовый файл с обработчиком и конфигурацией.
 * **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
 
-### Marking a logic function as a tool
+### Пометка логической функции как инструмента
 
-Logic functions can be exposed as **tools** for AI agents and workflows. When a function is marked as a tool, it becomes discoverable by Twenty's AI features and can be selected as a step in workflow automations.
+Логические функции можно предоставлять как **инструменты** для ИИ-агентов и рабочих процессов. Когда функция помечена как инструмент, она становится доступной для ИИ Twenty и может быть выбрана в качестве шага в автоматизациях рабочих процессов.
 
-To mark a logic function as a tool, set `isTool: true` and provide a `toolInputSchema` describing the expected input parameters using [JSON Schema](https://json-schema.org/):
+Чтобы пометить логическую функцию как инструмент, установите `isTool: true` и укажите `toolInputSchema` для описания ожидаемых входных параметров с помощью [схемы JSON](https://json-schema.org/):
 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
@@ -609,14 +609,14 @@ export default defineLogicFunction({
 
 Основные моменты:
 
-* **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
-* **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
-* Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
-* **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+* **`isTool`** (`boolean`, по умолчанию: `false`): Если значение равно `true`, функция регистрируется как инструмент и становится доступной агентам ИИ и автоматизациям рабочих процессов.
+* **`toolInputSchema`** (`object`, необязательно): Объект JSON Schema, который описывает параметры, которые принимает ваша функция. Агенты ИИ используют эту схему, чтобы понять, какие входные данные ожидает инструмент, и проверять корректность вызовов. Если опущено, по умолчанию используется схема `{ type: 'object', properties: {} }` (без параметров).
+* Функции с `isTool: false` (или без указания) **не** выставляются как инструменты. Их по-прежнему можно выполнять напрямую или вызывать из других функций, но они не будут отображаться при обнаружении инструментов.
+* **Именование инструмента**: При публикации как инструмента имя функции автоматически нормализуется до `logic_function_<name>` (в нижнем регистре, небуквенно-цифровые символы заменяются на подчёркивания). Например, `enrich-company` становится `logic_function_enrich_company`.
+* Вы можете комбинировать `isTool` с триггерами — функция может одновременно быть инструментом (вызываемым агентами ИИ) и запускаться событиями (cron, события базы данных, маршруты).
 
 <Note>
-  **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.
 </Note>
 
 ### Фронт-компоненты
