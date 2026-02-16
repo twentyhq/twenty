@@ -4,6 +4,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { parseGmailErrorRetryAfter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-error-retry-after.util';
 
 export const parseGmailApiError = (
   error: GaxiosError,
@@ -57,6 +58,9 @@ export const parseGmailApiError = (
       return new MessageImportDriverException(
         gmailApiError.message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        {
+          throttleRetryAfter: parseGmailErrorRetryAfter(gmailApiError.message),
+        },
       );
 
     case 403:
@@ -68,6 +72,11 @@ export const parseGmailApiError = (
         return new MessageImportDriverException(
           gmailApiError.message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+          {
+            throttleRetryAfter: parseGmailErrorRetryAfter(
+              gmailApiError.message,
+            ),
+          },
         );
       }
       if (gmailApiError.reason === 'domainPolicy') {

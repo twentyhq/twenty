@@ -1,17 +1,33 @@
+import styled from '@emotion/styled';
+import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
+import { useLingui } from '@lingui/react/macro';
+
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   type FieldsConfigurationFieldItem,
   type FieldsConfigurationSection,
 } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
-import styled from '@emotion/styled';
-import { useState } from 'react';
-import { IconDotsVertical } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconDotsVertical, IconNewSection } from 'twenty-ui/display';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 
-const StyledFieldsContainer = styled.div`
+const StyledFieldsDroppable = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const StyledSectionContainer = styled.div<{ isDragging: boolean }>`
+  background: ${({ isDragging, theme }) =>
+    isDragging ? theme.background.primary : 'transparent'};
+  border: 1px solid
+    ${({ isDragging, theme }) =>
+      isDragging ? theme.color.blue : 'transparent'};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 type FieldsConfigurationSectionEditorProps = {
@@ -19,14 +35,18 @@ type FieldsConfigurationSectionEditorProps = {
   index: number;
   objectMetadataItem: ObjectMetadataItem;
   onSectionChange: (section: FieldsConfigurationSection) => void;
+  draggableProvided: DraggableProvided;
+  isDragging: boolean;
 };
 
 export const FieldsConfigurationSectionEditor = ({
   section,
   objectMetadataItem,
   onSectionChange,
+  draggableProvided,
+  isDragging,
 }: FieldsConfigurationSectionEditorProps) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const { t } = useLingui();
 
   const handleFieldChange = (
     fieldMetadataId: string,
@@ -51,11 +71,9 @@ export const FieldsConfigurationSectionEditor = ({
       return;
     }
 
-    const currentlyVisible = field.isVisible !== false;
-
     const updatedField: FieldsConfigurationFieldItem = {
       ...field,
-      isVisible: !currentlyVisible,
+      conditionalDisplay: false,
     };
 
     handleFieldChange(fieldMetadataId, updatedField);
@@ -66,47 +84,78 @@ export const FieldsConfigurationSectionEditor = ({
   );
 
   return (
-    <>
-      <MenuItem
-        text={section.title}
-        iconButtons={[
-          {
-            Icon: IconDotsVertical,
-            onClick: (e) => {
-              e.stopPropagation();
-              // TODO: Add section menu
+    <StyledSectionContainer
+      ref={draggableProvided.innerRef}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...draggableProvided.draggableProps}
+      isDragging={isDragging}
+    >
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <div {...draggableProvided.dragHandleProps}>
+        <MenuItemDraggable
+          text={section.title}
+          gripMode="always"
+          isIconDisplayedOnHoverOnly={false}
+          withIconContainer
+          iconButtons={[
+            {
+              Icon: IconDotsVertical,
+              onClick: (e) => {
+                e.stopPropagation();
+                // TODO: Add section menu
+              },
             },
-          },
-        ]}
-        onClick={() => setIsExpanded(!isExpanded)}
-        hasSubMenu
-        isSubMenuOpened={isExpanded}
+          ]}
+        />
+      </div>
+
+      <Droppable droppableId={`section-${section.id}`} type="FIELD">
+        {(droppableProvided) => (
+          <StyledFieldsDroppable
+            ref={droppableProvided.innerRef}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...droppableProvided.droppableProps}
+          >
+            {sortedFields.map((field, fieldIndex) => {
+              const fieldMetadata = objectMetadataItem.fields.find(
+                (f) => f.id === field.fieldMetadataId,
+              );
+
+              if (!fieldMetadata) {
+                return null;
+              }
+
+              return (
+                <DraggableItem
+                  key={field.fieldMetadataId}
+                  draggableId={`field-${field.fieldMetadataId}`}
+                  index={fieldIndex}
+                  isInsideScrollableContainer
+                  itemComponent={
+                    <FieldsConfigurationFieldEditor
+                      field={field}
+                      fieldMetadata={fieldMetadata}
+                      onToggleVisibility={() =>
+                        handleToggleFieldVisibility(field.fieldMetadataId)
+                      }
+                    />
+                  }
+                />
+              );
+            })}
+            {droppableProvided.placeholder}
+          </StyledFieldsDroppable>
+        )}
+      </Droppable>
+
+      <MenuItem
+        LeftIcon={IconNewSection}
+        withIconContainer
+        text={t`Add a Section`}
+        onClick={() => {
+          // TODO: Implement add section
+        }}
       />
-      {isExpanded && (
-        <StyledFieldsContainer>
-          {sortedFields.map((field, fieldIndex) => {
-            const fieldMetadata = objectMetadataItem.fields.find(
-              (f) => f.id === field.fieldMetadataId,
-            );
-
-            if (!fieldMetadata) {
-              return null;
-            }
-
-            return (
-              <FieldsConfigurationFieldEditor
-                key={field.fieldMetadataId}
-                field={field}
-                fieldMetadata={fieldMetadata}
-                index={fieldIndex}
-                onToggleVisibility={() =>
-                  handleToggleFieldVisibility(field.fieldMetadataId)
-                }
-              />
-            );
-          })}
-        </StyledFieldsContainer>
-      )}
-    </>
+    </StyledSectionContainer>
   );
 };

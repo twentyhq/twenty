@@ -191,7 +191,8 @@ export const computeStepOutputSchema = ({
       return generateFormOutputSchema(formFields, objectMetadataItems);
     }
 
-    case 'SEND_EMAIL': {
+    case 'SEND_EMAIL':
+    case 'DRAFT_EMAIL': {
       return {
         success: {
           isLeaf: true,

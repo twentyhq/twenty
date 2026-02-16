@@ -86,6 +86,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isReorderEnabled =
     currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
 
+  const isDeletingWidgetEnabled =
+    currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
+
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
@@ -153,6 +156,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
             isInEditMode={isPageLayoutInEditMode}
             isResizing={isResizing}
             isReorderEnabled={isReorderEnabled}
+            isDeletingWidgetEnabled={isDeletingWidgetEnabled}
             title={widget.title}
             onRemove={handleRemove}
             actions={actions}

@@ -78,6 +78,17 @@ export const useTriggerEventStreamCreation = () => {
                 onEventSubscription: EventSubscription;
               }>,
             ) => {
+              if (isDefined(value?.errors)) {
+                captureException(
+                  new Error(
+                    `SSE subscription error: ${value.errors[0]?.message}`,
+                  ),
+                );
+                set(shouldDestroyEventStreamState, true);
+
+                return;
+              }
+
               if (!hasReceivedFirstEvent) {
                 hasReceivedFirstEvent = true;
                 set(sseEventStreamReadyState, true);
@@ -114,6 +125,14 @@ export const useTriggerEventStreamCreation = () => {
                   switch (subCode) {
                     case 'EVENT_STREAM_ALREADY_EXISTS': {
                       set(shouldDestroyEventStreamState, true);
+                      break;
+                    }
+                    default: {
+                      captureException(
+                        new Error(
+                          `Unhandled SSE message error: ${data.errors[0]?.message}`,
+                        ),
+                      );
                       break;
                     }
                   }

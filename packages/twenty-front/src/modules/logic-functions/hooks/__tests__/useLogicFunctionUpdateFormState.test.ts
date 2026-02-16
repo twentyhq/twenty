@@ -43,7 +43,13 @@ describe('useLogicFunctionUpdateFormState', () => {
     expect(formValues).toEqual({
       name: '',
       description: '',
-      code: mockCode,
+      sourceHandlerCode: '',
+      isTool: false,
+      timeoutSeconds: 300,
+      toolInputSchema: {
+        properties: {},
+        type: 'object',
+      },
     });
   });
 });

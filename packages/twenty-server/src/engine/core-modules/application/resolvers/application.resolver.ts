@@ -6,13 +6,7 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FileFolder } from 'twenty-shared/types';
-
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
-import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -21,52 +15,41 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
-import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
 import { InstallApplicationInput } from 'src/engine/core-modules/application/dtos/install-application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
-import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(ApplicationExceptionFilter)
+@UseGuards(WorkspaceAuthGuard)
 export class ApplicationResolver {
   constructor(
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => [ApplicationDTO])
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findManyApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -75,6 +58,7 @@ export class ApplicationResolver {
   }
 
   @Query(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async checkApplicationExist(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -90,6 +74,7 @@ export class ApplicationResolver {
   }
 
   @Query(() => ApplicationDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -104,61 +89,32 @@ export class ApplicationResolver {
     });
   }
 
-  @Mutation(() => AuthToken)
+  @Mutation(() => ApplicationTokenPairDTO)
+  @UseGuards(NoPermissionGuard)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async generateApplicationToken(
-    @Args() { applicationId }: GenerateApplicationTokenInput,
+  async renewApplicationToken(
+    @Args('applicationRefreshToken') applicationRefreshToken: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AuthToken> {
-    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
+  ): Promise<ApplicationTokenPairDTO> {
+    const applicationRefreshTokenPayload =
+      this.applicationTokenService.validateApplicationRefreshToken(
+        applicationRefreshToken,
+      );
 
-    if (
-      nodeEnv !== NodeEnvironment.DEVELOPMENT &&
-      nodeEnv !== NodeEnvironment.TEST
-    ) {
+    if (applicationRefreshTokenPayload.workspaceId !== workspaceId) {
       throw new ApplicationException(
-        'This endpoint is only available in development mode',
+        'Refresh token workspace does not match authenticated workspace',
         ApplicationExceptionCode.FORBIDDEN,
       );
     }
 
-    const APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60;
-
-    return this.applicationTokenService.generateApplicationToken({
-      workspaceId,
-      applicationId,
-      expiresInSeconds: APPLICATION_TOKEN_EXPIRY_SECONDS,
-    });
-  }
-
-  @Mutation(() => ApplicationDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async createOneApplication(
-    @Args('input') input: CreateApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return await this.applicationService.create({
-      ...input,
-      sourceType: 'local',
-      workspaceId,
-    });
+    return this.applicationTokenService.renewApplicationTokens(
+      applicationRefreshTokenPayload,
+    );
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async syncApplication(
-    @Args() { manifest }: ApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    await this.applicationSyncService.synchronizeFromManifest({
-      workspaceId,
-      manifest,
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async installApplication(
     @Args() { workspaceMigration: { actions } }: InstallApplicationInput,
@@ -198,6 +154,7 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uninstallApplication(
     @Args() { universalIdentifier }: UninstallApplicationInput,
@@ -209,47 +166,5 @@ export class ApplicationResolver {
     });
 
     return true;
-  }
-
-  @Mutation(() => FileDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async uploadApplicationFile(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, mimetype }: FileUpload,
-    @Args()
-    {
-      applicationUniversalIdentifier,
-      fileFolder,
-      filePath,
-    }: UploadApplicationFileInput,
-  ): Promise<FileDTO> {
-    const allowedApplicationFileFolders: FileFolder[] = [
-      FileFolder.BuiltLogicFunction,
-      FileFolder.BuiltFrontComponent,
-      FileFolder.PublicAsset,
-      FileFolder.Source,
-      FileFolder.Dependencies,
-    ];
-
-    if (!allowedApplicationFileFolders.includes(fileFolder)) {
-      throw new ApplicationException(
-        `Invalid fileFolder for application file upload. Allowed values: ${allowedApplicationFileFolders.join(', ')}`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const buffer = await streamToBuffer(createReadStream());
-
-    return await this.fileStorageService.writeFile({
-      sourceFile: buffer,
-      mimeType: mimetype,
-      fileFolder,
-      applicationUniversalIdentifier,
-      workspaceId,
-      resourcePath: filePath,
-      settings: { isTemporaryFile: false, toDelete: false },
-    });
   }
 }

@@ -102,23 +102,10 @@ const MarkdownRenderer = lazy(async () => {
   };
 });
 
-const StyledTableScrollContainer = styled.div`
-  overflow-x: auto;
-
-  table {
-    border-collapse: collapse;
-    margin-block: ${({ theme }) => theme.spacing(2)};
-  }
-
-  th,
-  td {
-    border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-    padding: ${({ theme }) => theme.spacing(2)};
-  }
-
-  th {
-    background-color: ${({ theme }) => theme.background.secondary};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledMarkdownContainer = styled.div`
+  img {
+    height: auto;
+    max-width: 100%;
   }
 `;
 
@@ -140,6 +127,26 @@ const StyledSkeletonContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+`;
+
+const StyledTableScrollContainer = styled.div`
+  overflow-x: auto;
+
+  table {
+    border-collapse: collapse;
+    margin-block: ${({ theme }) => theme.spacing(2)};
+  }
+
+  th,
+  td {
+    border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+    padding: ${({ theme }) => theme.spacing(2)};
+  }
+
+  th {
+    background-color: ${({ theme }) => theme.background.secondary};
+    font-weight: ${({ theme }) => theme.font.weight.medium};
+  }
 `;
 
 const LoadingSkeleton = () => {
@@ -179,13 +186,15 @@ const LoadingSkeleton = () => {
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
-    <Suspense fallback={<LoadingSkeleton />}>
-      <MarkdownRenderer
-        TableScrollContainer={StyledTableScrollContainer}
-        StyledParagraph={StyledParagraph}
-      >
-        {text}
-      </MarkdownRenderer>
-    </Suspense>
+    <StyledMarkdownContainer>
+      <Suspense fallback={<LoadingSkeleton />}>
+        <MarkdownRenderer
+          TableScrollContainer={StyledTableScrollContainer}
+          StyledParagraph={StyledParagraph}
+        >
+          {text}
+        </MarkdownRenderer>
+      </Suspense>
+    </StyledMarkdownContainer>
   );
 };

@@ -46,6 +46,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'my.function.ts',
       builtHandlerPath: 'my.function.mjs',
       builtHandlerChecksum: '[checksum]',
+      toolInputSchema: { type: 'object', properties: {} },
     },
   ],
   frontComponents: [

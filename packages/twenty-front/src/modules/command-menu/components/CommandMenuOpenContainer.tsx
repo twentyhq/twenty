@@ -5,6 +5,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
 import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
+import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
@@ -79,6 +80,7 @@ export const CommandMenuOpenContainer = ({
       LINK_CHIP_CLICK_OUTSIDE_ID,
       RECORD_CHIP_CLICK_OUTSIDE_ID,
       SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
+      MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
       WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID,
       WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID,
       WORKFLOW_DIAGRAM_CREATE_STEP_NODE_CLICK_OUTSIDE_ID,

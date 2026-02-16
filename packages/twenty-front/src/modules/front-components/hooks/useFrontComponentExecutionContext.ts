@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/front-component-renderer';
 import { type AppPath } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';

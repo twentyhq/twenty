@@ -59,7 +59,7 @@ const StyledPre = styled.pre`
   white-space: pre-wrap;
 `;
 
-export type OverflowingTextWithTooltipProps = {
+type OverflowingTextWithTooltipProps = {
   size?: 'large' | 'small';
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;

@@ -26,6 +26,7 @@ export type WidgetCardHeaderProps = {
   className?: string;
   isResizing?: boolean;
   isReorderEnabled?: boolean;
+  isDeletingWidgetEnabled?: boolean;
 };
 
 const StyledWidgetCardHeader = styled.div`
@@ -80,6 +81,7 @@ export const WidgetCardHeader = ({
   isInEditMode = false,
   isResizing = false,
   isReorderEnabled = true,
+  isDeletingWidgetEnabled = true,
   title,
   onRemove,
   forbiddenDisplay,
@@ -119,6 +121,7 @@ export const WidgetCardHeader = ({
           {!isResizing &&
             !isEmpty &&
             isInEditMode &&
+            isDeletingWidgetEnabled &&
             onRemove &&
             isWidgetCardHovered && (
               <StyledIconButtonContainer

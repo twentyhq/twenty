@@ -222,14 +222,19 @@ export const WorkflowEditActionFormBuilder = ({
       <StyledWorkflowStepBody>
         {triggerType && triggerType !== 'MANUAL' && isCalloutVisible && (
           <Callout
-            learnMoreText={t`Learn more`}
             variant={'warning'}
             title={t`This form will appear in workflow runs.`}
             description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
             onClose={() => setIsCalloutVisible(false)}
-            learnMoreUrl={
-              'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form'
-            }
+            action={{
+              label: t`Learn more`,
+              onClick: () =>
+                window.open(
+                  'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
+                  '_blank',
+                  'noopener,noreferrer',
+                ),
+            }}
           />
         )}
         {formData.length === 0 && (

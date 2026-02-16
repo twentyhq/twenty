@@ -186,10 +186,15 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
           );
           throw error;
         }
+
+        this.logger.log(
+          `Created avatarFile field metadata for workspace ${workspaceId}`,
+        );
+      } else {
+        this.logger.log(
+          `[DRY RUN] Would create avatarFile field metadata for workspace ${workspaceId}`,
+        );
       }
-      this.logger.log(
-        `Created avatarFile field metadata for workspace ${workspaceId}`,
-      );
     }
 
     if (!isDefined(avatarFileFieldMetadata)) {

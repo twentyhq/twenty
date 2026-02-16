@@ -17,7 +17,7 @@ import { v4 } from 'uuid';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
@@ -66,8 +66,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
     private readonly codeStepBuildService: CodeStepBuildService,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    private readonly agentService: AgentService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
@@ -98,27 +97,24 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           break;
         }
 
-        const agent = await this.agentRepository.findOne({
-          where: { id: step.settings.input.agentId, workspaceId },
+        const roleTarget = await this.roleTargetRepository.findOne({
+          where: {
+            agentId: step.settings.input.agentId,
+            workspaceId,
+          },
         });
 
-        if (isDefined(agent)) {
-          const roleTarget = await this.roleTargetRepository.findOne({
-            where: {
-              agentId: agent.id,
-              workspaceId,
-            },
+        await this.agentService.deleteManyAgents({
+          ids: [step.settings.input.agentId],
+          workspaceId,
+        });
+
+        if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
+          await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
+            roleId: roleTarget.roleId,
+            roleTargetId: roleTarget.id,
+            workspaceId,
           });
-
-          await this.agentRepository.delete({ id: agent.id, workspaceId });
-
-          if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
-            await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
-              roleId: roleTarget.roleId,
-              roleTargetId: roleTarget.id,
-              workspaceId,
-            });
-          }
         }
         break;
       }
@@ -237,6 +233,28 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...baseStep,
             name: 'Send Email',
             type: WorkflowActionType.SEND_EMAIL,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                connectedAccountId: '',
+                recipients: {
+                  to: '',
+                  cc: '',
+                  bcc: '',
+                },
+                subject: '',
+                body: '',
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.DRAFT_EMAIL: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Draft Email',
+            type: WorkflowActionType.DRAFT_EMAIL,
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
@@ -415,27 +433,20 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             workspaceId,
           });
 
-        const newAgent = await this.agentRepository.save({
-          name: 'workflow-service-agent' + v4(),
-          label: 'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
-          icon: 'IconRobot',
-          description: '',
-          prompt:
-            'You are a helpful AI assistant. Complete the task based on the workflow context.',
-          modelId: DEFAULT_SMART_MODEL,
-          responseFormat: { type: 'text' },
+        const newAgent = await this.agentService.createOneAgent(
+          {
+            label:
+              'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
+            icon: 'IconRobot',
+            description: '',
+            prompt:
+              'You are a helpful AI assistant. Complete the task based on the workflow context.',
+            modelId: DEFAULT_SMART_MODEL,
+            responseFormat: { type: 'text' },
+            isCustom: true,
+          },
           workspaceId,
-          isCustom: true,
-        });
-
-        if (!isDefined(newAgent)) {
-          throw new WorkflowVersionStepException(
-            'Failed to create AI Agent step',
-            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
-          );
-        }
-
-        await this.workspaceCacheService.flush(workspaceId, ['flatAgentMaps']);
+        );
 
         return {
           builtStep: {
@@ -676,29 +687,33 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const existingAgent = await this.agentRepository.findOne({
-          where: { id: step.settings.input.agentId, workspaceId },
-        });
+        const agentId = step.settings.input.agentId;
 
-        if (!isDefined(existingAgent)) {
+        if (!isDefined(agentId)) {
           throw new WorkflowVersionStepException(
-            'Agent not found for cloning',
+            'Agent ID is required for cloning',
             WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
           );
         }
 
-        const clonedAgent = await this.agentRepository.save({
-          name: 'workflow-service-agent' + v4(),
-          label: existingAgent.label,
-          icon: existingAgent.icon,
-          description: existingAgent.description,
-          prompt: existingAgent.prompt,
-          modelId: existingAgent.modelId,
-          responseFormat: existingAgent.responseFormat,
+        const existingAgent = await this.agentService.findOneAgentById({
+          id: agentId,
           workspaceId,
-          isCustom: true,
-          modelConfiguration: existingAgent.modelConfiguration,
         });
+
+        const clonedAgent = await this.agentService.createOneAgent(
+          {
+            label: existingAgent.label,
+            icon: existingAgent.icon ?? undefined,
+            description: existingAgent.description ?? undefined,
+            prompt: existingAgent.prompt,
+            modelId: existingAgent.modelId,
+            responseFormat: existingAgent.responseFormat ?? undefined,
+            modelConfiguration: existingAgent.modelConfiguration ?? undefined,
+            isCustom: true,
+          },
+          workspaceId,
+        );
 
         return {
           ...step,

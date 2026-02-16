@@ -265,6 +265,7 @@ export {
   IconMoon,
   IconMouse2,
   IconNorthStar,
+  IconNewSection,
   IconNoteOff,
   IconNotes,
   IconNumber,
