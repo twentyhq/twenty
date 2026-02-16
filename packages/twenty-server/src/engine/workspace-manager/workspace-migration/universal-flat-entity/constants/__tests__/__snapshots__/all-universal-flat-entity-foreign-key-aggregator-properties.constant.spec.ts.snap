@@ -5,11 +5,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "agent": [],
   "commandMenuItem": [],
   "fieldMetadata": [
-    "calendarViewUniversalIdentifiers",
-    "kanbanAggregateOperationViewUniversalIdentifiers",
-    "mainGroupByFieldMetadataViewUniversalIdentifiers",
     "viewFieldUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",
+    "kanbanAggregateOperationViewUniversalIdentifiers",
+    "calendarViewUniversalIdentifiers",
+    "mainGroupByFieldMetadataViewUniversalIdentifiers",
   ],
   "frontComponent": [],
   "index": [],
@@ -17,8 +17,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "navigationMenuItem": [],
   "objectMetadata": [
     "fieldUniversalIdentifiers",
-    "viewUniversalIdentifiers",
     "indexMetadataUniversalIdentifiers",
+    "targetRelationFieldUniversalIdentifiers",
+    "viewUniversalIdentifiers",
   ],
   "pageLayout": [
     "tabUniversalIdentifiers",
@@ -29,19 +30,22 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "pageLayoutWidget": [],
   "role": [
     "roleTargetUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
+    "rowLevelPermissionPredicateGroupUniversalIdentifiers",
   ],
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [
     "childRowLevelPermissionPredicateGroupUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
   "skill": [],
   "view": [
     "viewFieldUniversalIdentifiers",
-    "viewFieldGroupUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",
-    "viewGroupUniversalIdentifiers",
     "viewFilterGroupUniversalIdentifiers",
+    "viewGroupUniversalIdentifiers",
+    "viewFieldGroupUniversalIdentifiers",
   ],
   "viewField": [],
   "viewFieldGroup": [
@@ -49,8 +53,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   ],
   "viewFilter": [],
   "viewFilterGroup": [
-    "viewFilterUniversalIdentifiers",
     "childViewFilterGroupUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
   ],
   "viewGroup": [],
   "webhook": [],
