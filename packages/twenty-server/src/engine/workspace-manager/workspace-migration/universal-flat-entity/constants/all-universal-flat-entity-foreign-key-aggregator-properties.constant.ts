@@ -18,9 +18,11 @@ type ExtractForeignKeyAggregatorFromManyToOneRelations<
       ? Agg
       : never
     : never;
-}[keyof ManyToOneRelations]
+}[keyof ManyToOneRelations];
 
-export type ExtractUniversalForeignKeyAggregatorForMetadataName<T extends AllMetadataName> = {
+export type ExtractUniversalForeignKeyAggregatorForMetadataName<
+  T extends AllMetadataName,
+> = {
   [M in AllMetadataName]: ExtractForeignKeyAggregatorFromManyToOneRelations<
     (typeof ALL_UNIVERSAL_METADATA_RELATIONS)[M]['manyToOne'],
     T

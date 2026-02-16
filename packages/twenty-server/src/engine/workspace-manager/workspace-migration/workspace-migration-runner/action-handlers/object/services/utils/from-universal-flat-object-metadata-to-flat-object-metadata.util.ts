@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { ExtractUniversalForeignKeyAggregatorForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-flat-entity-foreign-key-aggregator-properties.constant';
+import { type ExtractUniversalForeignKeyAggregatorForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-flat-entity-foreign-key-aggregator-properties.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
@@ -10,9 +10,9 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 
 export type FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs = {
   universalFlatObjectMetadata: Omit<
-        UniversalFlatObjectMetadata,
-        ExtractUniversalForeignKeyAggregatorForMetadataName<'objectMetadata'>
-      >;
+    UniversalFlatObjectMetadata,
+    ExtractUniversalForeignKeyAggregatorForMetadataName<'objectMetadata'>
+  >;
   generatedId: string;
   allFlatEntityMaps: AllFlatEntityMaps;
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
