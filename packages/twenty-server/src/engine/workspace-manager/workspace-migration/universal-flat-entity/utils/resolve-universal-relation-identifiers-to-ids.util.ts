@@ -17,9 +17,7 @@ type ManyToOneRelationsConfig<T extends AllMetadataName> =
   (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[T];
 
 type ExtractUniversalForeignKeys<T> = {
-  [K in keyof T]: T[K] extends { universalForeignKey: infer UFK }
-    ? UFK
-    : never;
+  [K in keyof T]: T[K] extends { universalForeignKey: infer UFK } ? UFK : never;
 }[keyof T];
 
 type MetadataUniversalManyToOneJoinColumn<T extends AllMetadataName> =
@@ -88,15 +86,14 @@ export const resolveUniversalRelationIdentifiersToIds = <
   const result: Record<string, string | null> = {};
 
   for (const relationPropertyName of Object.keys(relationEntries)) {
-    const relationEntry =
-      relationEntries[
-        relationPropertyName as keyof typeof relationEntries
-      ] as {
-        foreignKey: string;
-        metadataName: AllMetadataName;
-        isNullable: boolean;
-        universalForeignKey: string;
-      } | null;
+    const relationEntry = relationEntries[
+      relationPropertyName as keyof typeof relationEntries
+    ] as {
+      foreignKey: string;
+      metadataName: AllMetadataName;
+      isNullable: boolean;
+      universalForeignKey: string;
+    } | null;
 
     if (!isDefined(relationEntry)) {
       continue;

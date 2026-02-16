@@ -41,14 +41,13 @@ export const addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThro
     const manyToOneRelations = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
 
     for (const relationPropertyName of Object.keys(manyToOneRelations)) {
-      const relation =
-        manyToOneRelations[
-          relationPropertyName as keyof typeof manyToOneRelations
-        ] as {
-          metadataName: AllMetadataName;
-          inverseOneToManyProperty: string | null;
-          universalForeignKey: string;
-        } | null;
+      const relation = manyToOneRelations[
+        relationPropertyName as keyof typeof manyToOneRelations
+      ] as {
+        metadataName: AllMetadataName;
+        inverseOneToManyProperty: string | null;
+        universalForeignKey: string;
+      } | null;
 
       if (!isDefined(relation)) {
         continue;

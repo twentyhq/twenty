@@ -42,14 +42,13 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
     const manyToOneRelations = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
 
     for (const relationPropertyName of Object.keys(manyToOneRelations)) {
-      const relation =
-        manyToOneRelations[
-          relationPropertyName as keyof typeof manyToOneRelations
-        ] as {
-          metadataName: AllMetadataName;
-          foreignKey: string;
-          inverseOneToManyProperty: string | null;
-        } | null;
+      const relation = manyToOneRelations[
+        relationPropertyName as keyof typeof manyToOneRelations
+      ] as {
+        metadataName: AllMetadataName;
+        foreignKey: string;
+        inverseOneToManyProperty: string | null;
+      } | null;
 
       if (!isDefined(relation)) {
         continue;

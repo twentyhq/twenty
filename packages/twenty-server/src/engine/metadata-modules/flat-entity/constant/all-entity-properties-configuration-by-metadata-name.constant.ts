@@ -5,7 +5,7 @@ import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/fl
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
-import { ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
+import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
 
 type HasObjectInUnion<T> = T extends unknown
   ? T extends object

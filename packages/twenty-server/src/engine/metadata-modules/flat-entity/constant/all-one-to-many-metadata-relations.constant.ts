@@ -47,8 +47,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
     viewFilters: {
       metadataName: 'viewFilter',
       flatEntityForeignKeyAggregator: 'viewFilterIds',
-      universalFlatEntityForeignKeyAggregator:
-        'viewFilterUniversalIdentifiers',
+      universalFlatEntityForeignKeyAggregator: 'viewFilterUniversalIdentifiers',
     },
     kanbanAggregateOperationViews: {
       metadataName: 'view',
@@ -104,8 +103,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
     viewFilters: {
       metadataName: 'viewFilter',
       flatEntityForeignKeyAggregator: 'viewFilterIds',
-      universalFlatEntityForeignKeyAggregator:
-        'viewFilterUniversalIdentifiers',
+      universalFlatEntityForeignKeyAggregator: 'viewFilterUniversalIdentifiers',
     },
     viewFilterGroups: {
       metadataName: 'viewFilterGroup',
@@ -145,8 +143,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
     roleTargets: {
       metadataName: 'roleTarget',
       flatEntityForeignKeyAggregator: 'roleTargetIds',
-      universalFlatEntityForeignKeyAggregator:
-        'roleTargetUniversalIdentifiers',
+      universalFlatEntityForeignKeyAggregator: 'roleTargetUniversalIdentifiers',
     },
     objectPermissions: null,
     permissionFlags: null,
@@ -206,8 +203,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
     viewFilters: {
       metadataName: 'viewFilter',
       flatEntityForeignKeyAggregator: 'viewFilterIds',
-      universalFlatEntityForeignKeyAggregator:
-        'viewFilterUniversalIdentifiers',
+      universalFlatEntityForeignKeyAggregator: 'viewFilterUniversalIdentifiers',
     },
   },
   frontComponent: {},

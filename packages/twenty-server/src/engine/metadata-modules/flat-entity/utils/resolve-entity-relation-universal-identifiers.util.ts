@@ -72,15 +72,14 @@ export const resolveEntityRelationUniversalIdentifiers = <
   const result: Record<string, string | null> = {};
 
   for (const relationPropertyName of Object.keys(relationEntries)) {
-    const relation =
-      relationEntries[
-        relationPropertyName as keyof typeof relationEntries
-      ] as {
-        foreignKey: string;
-        metadataName: AllMetadataName;
-        isNullable: boolean;
-        universalForeignKey: string;
-      } | null;
+    const relation = relationEntries[
+      relationPropertyName as keyof typeof relationEntries
+    ] as {
+      foreignKey: string;
+      metadataName: AllMetadataName;
+      isNullable: boolean;
+      universalForeignKey: string;
+    } | null;
 
     if (!isDefined(relation)) {
       continue;

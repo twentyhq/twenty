@@ -2,13 +2,13 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type Expect } from 'twenty-shared/testing';
 import { type Relation } from 'typeorm';
 
-import { ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-foreign-key.constant';
+import { type ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-foreign-key.constant';
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
+import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
 
 type FromRelationPropertyToForeignKey<
   TMetadataName extends AllMetadataName,

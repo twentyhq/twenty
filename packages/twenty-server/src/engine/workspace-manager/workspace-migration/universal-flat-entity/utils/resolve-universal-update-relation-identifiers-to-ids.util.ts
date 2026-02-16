@@ -28,14 +28,13 @@ export const resolveUniversalUpdateRelationIdentifiersToIds = <
   const result: Record<string, unknown> = { ...universalUpdate };
 
   for (const relationPropertyName of Object.keys(relationEntries)) {
-    const relation =
-      relationEntries[
-        relationPropertyName as keyof typeof relationEntries
-      ] as {
-        foreignKey: string;
-        universalForeignKey: string;
-        metadataName: AllMetadataName;
-      } | null;
+    const relation = relationEntries[
+      relationPropertyName as keyof typeof relationEntries
+    ] as {
+      foreignKey: string;
+      universalForeignKey: string;
+      metadataName: AllMetadataName;
+    } | null;
 
     if (!isDefined(relation)) {
       continue;
