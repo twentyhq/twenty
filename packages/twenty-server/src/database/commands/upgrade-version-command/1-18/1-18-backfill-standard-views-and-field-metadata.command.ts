@@ -637,7 +637,8 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
                WHERE v."workspaceId" = $1
                  AND v."universalIdentifier" = $5
                  AND v."deletedAt" IS NULL
-             )`,
+             )
+           RETURNING 1`,
           [
             workspaceId,
             view.viewName,
@@ -648,7 +649,7 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
           ],
         );
 
-        const viewInserted = viewInsertResult?.[1] ?? 0;
+        const viewInserted = viewInsertResult?.length ?? 0;
 
         if (viewInserted > 0) {
           this.logger.log(
