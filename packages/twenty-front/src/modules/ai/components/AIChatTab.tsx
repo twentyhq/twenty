@@ -103,7 +103,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(5)};
+  gap: ${({ theme }) => theme.spacing(2)};
   overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(3)};
   width: calc(100% - 24px);
