@@ -256,8 +256,16 @@ export const generateRecordPropertiesZodSchema = (
     }
 
     if (field.name === 'position') {
+      if (!forResponse) {
+        fieldSchema = z.union([
+          z.number(),
+          z.literal('first'),
+          z.literal('last'),
+        ]);
+      }
+
       fieldSchema = fieldSchema.describe(
-        'Leave empty to place at the top of the list (recommended).',
+        'Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).',
       );
     } else if (field.description) {
       fieldSchema = fieldSchema.describe(field.description);
