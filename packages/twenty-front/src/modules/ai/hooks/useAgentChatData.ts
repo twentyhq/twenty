@@ -7,7 +7,6 @@ import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
-import { useSyncCommandMenuTitle } from '@/command-menu/hooks/useSyncCommandMenuTitle';
 import {
   type SetterOrUpdater,
   useRecoilState,
@@ -51,7 +50,6 @@ export const useAgentChatData = () => {
   const setCurrentAIChatThreadTitle = useSetRecoilState(
     currentAIChatThreadTitleState,
   );
-  const { syncCommandMenuTitle } = useSyncCommandMenuTitle();
   const [isCreatingChatThread, setIsCreatingChatThread] = useRecoilState(
     isCreatingChatThreadState,
   );
@@ -78,8 +76,6 @@ export const useAgentChatData = () => {
 
         setCurrentAIChatThread(firstThread.id);
         setCurrentAIChatThreadTitle(firstThread.title ?? null);
-        syncCommandMenuTitle(firstThread.title ?? null);
-
         setUsageFromThread(firstThread, setAgentChatUsage);
       } else if (!isCreatingChatThread) {
         setIsCreatingChatThread(true);

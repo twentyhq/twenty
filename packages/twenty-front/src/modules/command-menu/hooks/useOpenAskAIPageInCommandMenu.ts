@@ -1,9 +1,7 @@
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { IconSparkles } from 'twenty-ui/display';
 import { v4 } from 'uuid';
@@ -14,10 +12,8 @@ export const useOpenAskAIPageInCommandMenu = () => {
   const openAskAIPage = useRecoilCallback(
     ({ snapshot }) =>
       ({
-        pageTitle,
         resetNavigationStack,
       }: {
-        pageTitle?: string | null;
         resetNavigationStack?: boolean;
       } = {}) => {
         const isCommandMenuOpened = snapshot
@@ -29,19 +25,9 @@ export const useOpenAskAIPageInCommandMenu = () => {
             ? resetNavigationStack
             : isCommandMenuOpened;
 
-        const currentAIChatThreadTitle = snapshot
-          .getLoadable(currentAIChatThreadTitleState)
-          .getValue();
-
-        const resolvedTitle = isNonEmptyString(pageTitle)
-          ? pageTitle
-          : isNonEmptyString(currentAIChatThreadTitle)
-            ? currentAIChatThreadTitle
-            : t`Ask AI`;
-
         navigateCommandMenu({
           page: CommandMenuPages.AskAI,
-          pageTitle: resolvedTitle,
+          pageTitle: t`Ask AI`,
           pageIcon: IconSparkles,
           pageId: v4(),
           resetNavigationStack: shouldReset,

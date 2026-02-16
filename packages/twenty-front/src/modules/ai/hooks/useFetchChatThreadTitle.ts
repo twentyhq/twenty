@@ -1,9 +1,9 @@
 import { GET_CHAT_THREAD } from '@/ai/graphql/queries/getChatThread';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { useSyncCommandMenuTitle } from '@/command-menu/hooks/useSyncCommandMenuTitle';
 import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 type GetChatThreadResult = {
@@ -15,37 +15,43 @@ type GetChatThreadResult = {
 
 export const useFetchChatThreadTitle = () => {
   const apolloClient = useApolloClient();
-  const { syncCommandMenuTitle } = useSyncCommandMenuTitle();
 
-  const fetchChatThreadTitle = useRecoilCallback(
+  // Separate callback so each invocation gets a fresh Recoil snapshot
+  const executeTitleFetch = useRecoilCallback(
     ({ snapshot, set }) =>
-      (threadId: string) => {
-        setTimeout(async () => {
-          const activeThread = snapshot
-            .getLoadable(currentAIChatThreadState)
-            .getValue();
+      async (threadId: string) => {
+        const activeThread = snapshot
+          .getLoadable(currentAIChatThreadState)
+          .getValue();
 
-          if (activeThread !== threadId) {
-            return;
-          }
+        if (activeThread !== threadId) {
+          return;
+        }
 
-          const result = await apolloClient
-            .query<GetChatThreadResult>({
-              query: GET_CHAT_THREAD,
-              variables: { id: threadId },
-              fetchPolicy: 'network-only',
-            })
-            .catch(() => null);
+        const result = await apolloClient
+          .query<GetChatThreadResult>({
+            query: GET_CHAT_THREAD,
+            variables: { id: threadId },
+            fetchPolicy: 'network-only',
+          })
+          .catch(() => null);
 
-          const title = result?.data?.chatThread?.title;
+        const title = result?.data?.chatThread?.title;
 
-          if (isNonEmptyString(title)) {
-            set(currentAIChatThreadTitleState, title);
-            syncCommandMenuTitle(title);
-          }
-        }, 3000);
+        if (isNonEmptyString(title)) {
+          set(currentAIChatThreadTitleState, title);
+        }
       },
-    [apolloClient, syncCommandMenuTitle],
+    [apolloClient],
+  );
+
+  const fetchChatThreadTitle = useCallback(
+    (threadId: string) => {
+      setTimeout(() => {
+        executeTitleFetch(threadId);
+      }, 3000);
+    },
+    [executeTitleFetch],
   );
 
   return { fetchChatThreadTitle };

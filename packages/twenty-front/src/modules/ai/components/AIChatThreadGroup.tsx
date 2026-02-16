@@ -108,7 +108,6 @@ export const AIChatThreadGroup = ({
     );
 
     openAskAIPage({
-      pageTitle: thread.title,
       resetNavigationStack: false,
     });
   };
