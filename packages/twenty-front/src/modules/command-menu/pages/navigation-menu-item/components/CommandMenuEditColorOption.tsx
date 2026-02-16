@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { IconColorSwatch } from 'twenty-ui/display';
@@ -41,11 +40,6 @@ const COLOR_LABELS: ColorLabels = {
   yellow: 'Yellow',
 };
 
-const StyledColorLabel = styled.span<{ $themeColor: ThemeColor }>`
-  color: ${({ theme, $themeColor }) => theme.tag.text[$themeColor]};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 type CommandMenuEditColorOptionProps = {
   navigationMenuItemId: string;
   color: string | null | undefined;
@@ -77,11 +71,7 @@ export const CommandMenuEditColorOption = ({
       Icon={IconColorSwatch}
       dropdownId={NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID}
       dropdownPlacement="bottom-start"
-      RightComponent={
-        <StyledColorLabel $themeColor={themeColor}>
-          {colorLabel}
-        </StyledColorLabel>
-      }
+      RightComponent={colorLabel}
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
