@@ -279,7 +279,11 @@ Puncte cheie:
 * Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
-  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
+  precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`.
+  Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+  Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
+  dar acest lucru nu este recomandat.
 </Note>
 
 ### Configurația aplicației (application-config.ts)

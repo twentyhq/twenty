@@ -279,7 +279,11 @@ Hlavní body:
 * Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
-  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
+  jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
+  Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+  Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
+  ale to se nedoporučuje.
 </Note>
 
 ### Konfigurace aplikace (application-config.ts)
