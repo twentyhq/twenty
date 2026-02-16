@@ -288,8 +288,7 @@ export class PageLayoutWidgetService {
     const recomputedMaps = await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
     const createdWidget = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier:
-        flatPageLayoutWidgetToCreate.universalIdentifier,
+      universalIdentifier: flatPageLayoutWidgetToCreate.universalIdentifier,
       flatEntityMaps: recomputedMaps,
     });
 

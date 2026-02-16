@@ -215,8 +215,7 @@ export class NavigationMenuItemService {
 
     return fromFlatNavigationMenuItemToNavigationMenuItemDto(
       findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          flatNavigationMenuItemToCreate.universalIdentifier,
+        universalIdentifier: flatNavigationMenuItemToCreate.universalIdentifier,
         flatEntityMaps: recomputedFlatNavigationMenuItemMaps,
       }),
     );

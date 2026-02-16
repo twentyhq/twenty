@@ -79,12 +79,11 @@ export class PageLayoutDuplicationService {
       newFlatTabs,
       originalTabUniversalIdentifierToNewTabUniversalIdentifierMap,
     } = this.buildDuplicatedTabs({
-        originalTabs: originalTabsWithWidgets.map(({ tab }) => tab),
-        newPageLayoutUniversalIdentifier:
-          newFlatPageLayout.universalIdentifier,
-        flatApplication: workspaceCustomFlatApplication,
-        now,
-      });
+      originalTabs: originalTabsWithWidgets.map(({ tab }) => tab),
+      newPageLayoutUniversalIdentifier: newFlatPageLayout.universalIdentifier,
+      flatApplication: workspaceCustomFlatApplication,
+      now,
+    });
 
     const newFlatWidgets = this.buildDuplicatedWidgets({
       originalTabsWithWidgets,
@@ -337,8 +336,7 @@ export class PageLayoutDuplicationService {
               originalWidget.objectMetadataUniversalIdentifier,
             gridPosition: originalWidget.gridPosition,
             position: originalWidget.position ?? null,
-            applicationUniversalIdentifier:
-              flatApplication.universalIdentifier,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
             conditionalDisplay: null,
             universalConfiguration:
               originalWidget.universalConfiguration ?? null,
