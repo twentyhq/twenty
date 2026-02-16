@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
 {
@@ -18,7 +18,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "objectMetadata": [
     "fieldUniversalIdentifiers",
     "indexMetadataUniversalIdentifiers",
-    "targetRelationFieldUniversalIdentifiers",
     "viewUniversalIdentifiers",
   ],
   "pageLayout": [

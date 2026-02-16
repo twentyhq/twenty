@@ -151,10 +151,10 @@ export class FieldMetadataEntity<
     TFieldMetadataType
   >;
 
-  @ManyToOne(
-    () => ObjectMetadataEntity,
-    { onDelete: 'CASCADE', nullable: true },
-  )
+  @ManyToOne(() => ObjectMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
   relationTargetObjectMetadata: AssignTypeIfIsMorphOrRelationFieldMetadataType<
     Relation<ObjectMetadataEntity>,
