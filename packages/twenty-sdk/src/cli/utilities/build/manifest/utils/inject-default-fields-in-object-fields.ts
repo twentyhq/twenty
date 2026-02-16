@@ -6,7 +6,7 @@ export const injectDefaultFieldsInObjectFields = (
 ) => {
   const defaultObjectFields = getDefaultObjectFields(objectConfig);
 
-  const objectConfigFieldNames = objectConfig.fields.map((f) => f.name);
+  const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
 
   const result = [...objectConfig.fields];
 
