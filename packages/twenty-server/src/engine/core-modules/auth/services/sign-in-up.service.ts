@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type DataSource, type QueryRunner, Repository } from 'typeorm';
+import { Repository, type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
@@ -42,12 +42,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
-
-type WorkspaceCreationPolicyContext = {
-  isMultiWorkspaceEnabled: boolean;
-  isWorkspaceCreationLimitedToServerAdmins: boolean;
-  isFirstWorkspaceInSystem: boolean;
-};
 
 @Injectable()
 // eslint-disable-next-line twenty/inject-workspace-repository
@@ -385,71 +379,39 @@ export class SignInUpService {
     return savedUser;
   }
 
-  private async setDefaultImpersonateAndAccessFullAdminPanel() {
-    const workspaceCreationPolicyContext =
-      await this.getWorkspaceCreationPolicyContext();
+  private async isSignUpEnabled(): Promise<boolean> {
+    const workspaceCount = await this.workspaceRepository.count();
 
-    return this.resolveServerLevelPermissionsForSignup(
-      workspaceCreationPolicyContext,
+    return (
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
+      workspaceCount === 0
     );
   }
 
-  private isWorkspaceCreationLimitedToServerAdmins(): boolean {
-    return this.twentyConfigService.get(
-      'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
-    );
-  }
-
-  private async isFirstWorkspaceInSystem(): Promise<boolean> {
-    const count = await this.workspaceRepository.count();
-
-    return count === 0;
-  }
-
-  private async getWorkspaceCreationPolicyContext(): Promise<WorkspaceCreationPolicyContext> {
-    return {
-      isMultiWorkspaceEnabled: this.twentyConfigService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
-      ),
-      isWorkspaceCreationLimitedToServerAdmins:
-        this.isWorkspaceCreationLimitedToServerAdmins(),
-      isFirstWorkspaceInSystem: await this.isFirstWorkspaceInSystem(),
-    };
-  }
-
-  private resolveServerLevelPermissionsForSignup({
-    isMultiWorkspaceEnabled,
-    isFirstWorkspaceInSystem,
-  }: WorkspaceCreationPolicyContext) {
-    if (!isMultiWorkspaceEnabled) {
-      // Let the creation of the first workspace in single-workspace mode.
-      if (!isFirstWorkspaceInSystem) {
-        throw new AuthException(
-          'New workspace setup is disabled',
-          AuthExceptionCode.SIGNUP_DISABLED,
-        );
-      }
-
-      return { canImpersonate: true, canAccessFullAdminPanel: true };
+  private async assertSignUpEnabled(): Promise<void> {
+    if (!(await this.isSignUpEnabled())) {
+      throw new AuthException(
+        'New workspace setup is disabled',
+        AuthExceptionCode.SIGNUP_DISABLED,
+      );
     }
-
-    if (isFirstWorkspaceInSystem) {
-      return { canImpersonate: true, canAccessFullAdminPanel: true };
-    }
-
-    return { canImpersonate: false, canAccessFullAdminPanel: false };
   }
 
-  private assertWorkspaceCreationAllowed(
-    workspaceCreationPolicyContext: WorkspaceCreationPolicyContext,
+  private async assertWorkspaceCreationAllowed(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-  ): void {
-    if (workspaceCreationPolicyContext.isFirstWorkspaceInSystem) {
+  ): Promise<void> {
+    await this.assertSignUpEnabled();
+
+    const workspaceCount = await this.workspaceRepository.count();
+
+    if (workspaceCount === 0) {
       return;
     }
 
     if (
-      !workspaceCreationPolicyContext.isWorkspaceCreationLimitedToServerAdmins
+      !this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      )
     ) {
       return;
     }
@@ -471,18 +433,6 @@ export class SignInUpService {
     );
   }
 
-  async checkWorkspaceCreationIsAllowedOrThrow(
-    currentUser: UserEntity,
-  ): Promise<void> {
-    const workspaceCreationPolicyContext =
-      await this.getWorkspaceCreationPolicyContext();
-
-    this.assertWorkspaceCreationAllowed(workspaceCreationPolicyContext, {
-      type: 'existingUser',
-      existingUser: currentUser,
-    });
-  }
-
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
   ) {
@@ -501,18 +451,12 @@ export class SignInUpService {
       );
     }
 
-    const workspaceCreationPolicyContext =
-      await this.getWorkspaceCreationPolicyContext();
+    await this.assertWorkspaceCreationAllowed(userData);
 
-    this.assertWorkspaceCreationAllowed(
-      workspaceCreationPolicyContext,
-      userData,
-    );
-
-    const { canImpersonate, canAccessFullAdminPanel } =
-      this.resolveServerLevelPermissionsForSignup(
-        workspaceCreationPolicyContext,
-      );
+    const workspaceCount = await this.workspaceRepository.count();
+    const isFirstWorkspace = workspaceCount === 0;
+    const canImpersonate = isFirstWorkspace;
+    const canAccessFullAdminPanel = isFirstWorkspace;
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
@@ -630,9 +574,17 @@ export class SignInUpService {
       );
     }
 
+    await this.assertSignUpEnabled();
+
+    const workspaceCount = await this.workspaceRepository.count();
+    const isFirstWorkspace = workspaceCount === 0;
+
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
-      await this.setDefaultImpersonateAndAccessFullAdminPanel(),
+      {
+        canImpersonate: isFirstWorkspace,
+        canAccessFullAdminPanel: isFirstWorkspace,
+      },
     );
   }
 }

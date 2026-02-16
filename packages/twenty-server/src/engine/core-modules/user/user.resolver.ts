@@ -96,18 +96,6 @@ export class UserResolver {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  private isWorkspaceCreationLimitedToServerAdmins(): boolean {
-    return this.twentyConfigService.get(
-      'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
-    );
-  }
-
-  private async isFirstWorkspaceInSystem(): Promise<boolean> {
-    const workspaceCount = await this.workspaceRepository.count();
-
-    return workspaceCount === 0;
-  }
-
   private async getUserWorkspacePermissions({
     currentUserWorkspace,
     workspace,
@@ -360,19 +348,21 @@ export class UserResolver {
 
   @ResolveField(() => Boolean)
   async canCreateWorkspace(@Parent() user: UserEntity): Promise<boolean> {
-    if (await this.isFirstWorkspaceInSystem()) {
+    const workspaceCount = await this.workspaceRepository.count();
+
+    if (workspaceCount === 0) {
       return true;
     }
 
-    const isMultiWorkspaceEnabled = this.twentyConfigService.get(
-      'IS_MULTIWORKSPACE_ENABLED',
-    );
-
-    if (!isMultiWorkspaceEnabled) {
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       return false;
     }
 
-    if (!this.isWorkspaceCreationLimitedToServerAdmins()) {
+    if (
+      !this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      )
+    ) {
       return true;
     }
 

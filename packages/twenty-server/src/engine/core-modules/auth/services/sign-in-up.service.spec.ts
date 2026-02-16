@@ -219,22 +219,27 @@ describe('SignInUpService workspace-creation policy', () => {
     });
   });
 
-  it('allows workspace creation checks for non-admin user when restriction is disabled', async () => {
+  it('throws SIGNUP_DISABLED when creating workspace in single-workspace mode after bootstrap', async () => {
     const { service, mockWorkspaceRepository, mockConfigurationValues } =
       createSignInUpServiceForTests();
 
-    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
+    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = false;
     mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
       false;
     mockWorkspaceRepository.count.mockResolvedValue(1);
 
     await expect(
-      service.checkWorkspaceCreationIsAllowedOrThrow({
-        id: 'existing-user-id',
-        email: 'existing.user@acme.dev',
-        canAccessFullAdminPanel: false,
-      } as any),
-    ).resolves.toBeUndefined();
+      service.signUpOnNewWorkspace({
+        type: 'existingUser',
+        existingUser: {
+          id: 'existing-user-id',
+          email: 'existing.user@acme.dev',
+          canAccessFullAdminPanel: true,
+        } as any,
+      }),
+    ).rejects.toMatchObject({
+      code: AuthExceptionCode.SIGNUP_DISABLED,
+    });
   });
 
   it('keeps single-workspace SIGNUP_DISABLED behavior after first workspace exists', async () => {
