@@ -23,6 +23,7 @@ type MockedUser = Pick<
   | 'email'
   | 'firstName'
   | 'lastName'
+  | 'canCreateWorkspace'
   | 'canAccessFullAdminPanel'
   | 'canImpersonate'
   | '__typename'
@@ -184,6 +185,7 @@ export const mockedUserData: MockedUser = {
   email: 'charles@test.com',
   firstName: 'Charles',
   lastName: 'Test',
+  canCreateWorkspace: true,
   canAccessFullAdminPanel: false,
   canImpersonate: false,
   hasPassword: true,
@@ -249,6 +251,7 @@ export const mockedOnboardingUserData = (
     firstName: '',
     lastName: '',
     hasPassword: false,
+    canCreateWorkspace: true,
     canAccessFullAdminPanel: false,
     canImpersonate: false,
     supportUserHash:

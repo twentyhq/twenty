@@ -81,6 +81,8 @@ export class UserResolver {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly userService: UserService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly onboardingService: OnboardingService,
@@ -93,6 +95,18 @@ export class UserResolver {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
+
+  private isWorkspaceCreationLimitedToServerAdmins(): boolean {
+    return this.twentyConfigService.get(
+      'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+    );
+  }
+
+  private async isFirstWorkspaceInSystem(): Promise<boolean> {
+    const workspaceCount = await this.workspaceRepository.count();
+
+    return workspaceCount === 0;
+  }
 
   private async getUserWorkspacePermissions({
     currentUserWorkspace,
@@ -342,6 +356,19 @@ export class UserResolver {
   })
   hasPassword(@Parent() user: UserEntity): boolean {
     return isDefined(user.passwordHash);
+  }
+
+  @ResolveField(() => Boolean)
+  async canCreateWorkspace(@Parent() user: UserEntity): Promise<boolean> {
+    if (await this.isFirstWorkspaceInSystem()) {
+      return true;
+    }
+
+    if (!this.isWorkspaceCreationLimitedToServerAdmins()) {
+      return true;
+    }
+
+    return user.canAccessFullAdminPanel;
   }
 
   @ResolveField(() => String, {

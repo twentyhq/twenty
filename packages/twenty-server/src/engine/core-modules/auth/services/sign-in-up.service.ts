@@ -43,6 +43,12 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
+type WorkspaceCreationPolicyContext = {
+  isMultiWorkspaceEnabled: boolean;
+  isWorkspaceCreationLimitedToServerAdmins: boolean;
+  isFirstWorkspaceInSystem: boolean;
+};
+
 @Injectable()
 // eslint-disable-next-line twenty/inject-workspace-repository
 export class SignInUpService {
@@ -380,28 +386,12 @@ export class SignInUpService {
   }
 
   private async setDefaultImpersonateAndAccessFullAdminPanel() {
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const workspacesCount = await this.workspaceRepository.count();
+    const workspaceCreationPolicyContext =
+      await this.getWorkspaceCreationPolicyContext();
 
-      // let the creation of the first workspace
-      if (workspacesCount > 0) {
-        throw new AuthException(
-          'New workspace setup is disabled',
-          AuthExceptionCode.SIGNUP_DISABLED,
-        );
-      }
-
-      return { canImpersonate: true, canAccessFullAdminPanel: true };
-    }
-
-    if (
-      this.isWorkspaceCreationLimitedToServerAdmins() &&
-      (await this.isFirstWorkspaceInSystem())
-    ) {
-      return { canImpersonate: true, canAccessFullAdminPanel: true };
-    }
-
-    return { canImpersonate: false, canAccessFullAdminPanel: false };
+    return this.resolveServerLevelPermissionsForSignup(
+      workspaceCreationPolicyContext,
+    );
   }
 
   private isWorkspaceCreationLimitedToServerAdmins(): boolean {
@@ -416,23 +406,81 @@ export class SignInUpService {
     return count === 0;
   }
 
+  private async getWorkspaceCreationPolicyContext(): Promise<WorkspaceCreationPolicyContext> {
+    return {
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isWorkspaceCreationLimitedToServerAdmins:
+        this.isWorkspaceCreationLimitedToServerAdmins(),
+      isFirstWorkspaceInSystem: await this.isFirstWorkspaceInSystem(),
+    };
+  }
+
+  private resolveServerLevelPermissionsForSignup({
+    isMultiWorkspaceEnabled,
+    isFirstWorkspaceInSystem,
+  }: WorkspaceCreationPolicyContext) {
+    if (!isMultiWorkspaceEnabled) {
+      // Let the creation of the first workspace in single-workspace mode.
+      if (!isFirstWorkspaceInSystem) {
+        throw new AuthException(
+          'New workspace setup is disabled',
+          AuthExceptionCode.SIGNUP_DISABLED,
+        );
+      }
+
+      return { canImpersonate: true, canAccessFullAdminPanel: true };
+    }
+
+    if (isFirstWorkspaceInSystem) {
+      return { canImpersonate: true, canAccessFullAdminPanel: true };
+    }
+
+    return { canImpersonate: false, canAccessFullAdminPanel: false };
+  }
+
+  private assertWorkspaceCreationAllowed(
+    workspaceCreationPolicyContext: WorkspaceCreationPolicyContext,
+    userData: ExistingUserOrPartialUserWithPicture['userData'],
+  ): void {
+    if (workspaceCreationPolicyContext.isFirstWorkspaceInSystem) {
+      return;
+    }
+
+    if (
+      !workspaceCreationPolicyContext.isWorkspaceCreationLimitedToServerAdmins
+    ) {
+      return;
+    }
+
+    const isExistingAdmin =
+      userData.type === 'existingUser' &&
+      userData.existingUser.canAccessFullAdminPanel;
+
+    if (isExistingAdmin) {
+      return;
+    }
+
+    throw new AuthException(
+      'Workspace creation is restricted to admins',
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      {
+        userFriendlyMessage: msg`Workspace creation is restricted to admins`,
+      },
+    );
+  }
+
   async checkWorkspaceCreationIsAllowedOrThrow(
     currentUser: UserEntity,
   ): Promise<void> {
-    if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
+    const workspaceCreationPolicyContext =
+      await this.getWorkspaceCreationPolicyContext();
 
-    // Only allow bypass during initial system bootstrap (no workspaces exist yet)
-    if (await this.isFirstWorkspaceInSystem()) return;
-
-    if (!currentUser.canAccessFullAdminPanel) {
-      throw new AuthException(
-        'Workspace creation is restricted to admins',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        {
-          userFriendlyMessage: msg`Workspace creation is restricted to admins`,
-        },
-      );
-    }
+    this.assertWorkspaceCreationAllowed(workspaceCreationPolicyContext, {
+      type: 'existingUser',
+      existingUser: currentUser,
+    });
   }
 
   async signUpOnNewWorkspace(
@@ -453,27 +501,18 @@ export class SignInUpService {
       );
     }
 
-    if (
-      this.isWorkspaceCreationLimitedToServerAdmins() &&
-      !(await this.isFirstWorkspaceInSystem())
-    ) {
-      const isExistingAdmin =
-        userData.type === 'existingUser' &&
-        userData.existingUser.canAccessFullAdminPanel;
+    const workspaceCreationPolicyContext =
+      await this.getWorkspaceCreationPolicyContext();
 
-      if (!isExistingAdmin) {
-        throw new AuthException(
-          'Workspace creation is restricted to admins',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          {
-            userFriendlyMessage: msg`Workspace creation is restricted to admins`,
-          },
-        );
-      }
-    }
+    this.assertWorkspaceCreationAllowed(
+      workspaceCreationPolicyContext,
+      userData,
+    );
 
     const { canImpersonate, canAccessFullAdminPanel } =
-      await this.setDefaultImpersonateAndAccessFullAdminPanel();
+      this.resolveServerLevelPermissionsForSignup(
+        workspaceCreationPolicyContext,
+      );
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {

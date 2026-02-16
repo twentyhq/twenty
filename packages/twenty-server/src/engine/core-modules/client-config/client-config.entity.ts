@@ -142,9 +142,6 @@ export class ClientConfig {
   isMultiWorkspaceEnabled: boolean;
 
   @Field(() => Boolean)
-  isWorkspaceCreationLimitedToServerAdmins: boolean;
-
-  @Field(() => Boolean)
   isEmailVerificationRequired: boolean;
 
   @Field(() => String, { nullable: true })
