@@ -2,13 +2,24 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type Expect } from 'twenty-shared/testing';
 import { type Relation } from 'typeorm';
 
-import { type ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-foreign-key.constant';
+import { ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-foreign-key.constant';
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
+
+type FromRelationPropertyToForeignKey<
+  TMetadataName extends AllMetadataName,
+  TRelationProperty extends PropertyKey,
+> = TRelationProperty extends keyof (typeof ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY)[TMetadataName]
+  ? (typeof ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY)[TMetadataName][TRelationProperty] extends {
+      foreignKey: infer FK extends string;
+    }
+    ? FK
+    : never
+  : never;
 
 type ManyToOneRelationValue<
   TSourceMetadataName extends AllMetadataName,
@@ -21,10 +32,10 @@ type ManyToOneRelationValue<
   > extends Relation<infer TTargetEntity extends SyncableEntity>
     ? FromMetadataEntityToMetadataName<TTargetEntity> extends infer TTargetMetadataName extends
         AllMetadataName
-      ? (typeof ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY)[TSourceMetadataName][TRelationProperty &
-          keyof (typeof ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY)[TSourceMetadataName]] extends {
-          foreignKey: infer FK extends string;
-        }
+      ? FromRelationPropertyToForeignKey<
+          TSourceMetadataName,
+          TRelationProperty
+        > extends infer FK
         ? {
             metadataName: TTargetMetadataName;
             foreignKey: FK;
@@ -35,7 +46,7 @@ type ManyToOneRelationValue<
             isNullable: null extends MetadataEntity<TSourceMetadataName>[TRelationProperty]
               ? true
               : false;
-            universalForeignKey: ToUniversalForeignKey<FK>;
+            universalForeignKey: ToUniversalForeignKey<FK & string>;
           }
         : never
       : never
