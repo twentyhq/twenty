@@ -127,12 +127,13 @@ export class CommonSelectFieldsHelper {
 
       const flatFieldIsJoinColumn = getIsFlatFieldAJoinColumn({ flatField });
 
-      const shouldGoOneLevelDeeper =
+      const isLastAllowedLevel =
         depth === MAX_DEPTH &&
         isDefined(flatField.relationTargetObjectMetadataId);
 
       const shouldRecurseIntoRelation =
-        shouldGoOneLevelDeeper || flatFieldIsJoinColumn;
+        isLastAllowedLevel ||
+        (flatFieldIsJoinColumn && recurseIntoJunctionTableRelations);
 
       const nextLevelIsAJunctionTable = flatFieldIsJoinColumn;
 

@@ -579,7 +579,9 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         note: {
           title: true,
         },
-        company: true,
+        company: {
+          name: true,
+        },
       });
     });
 

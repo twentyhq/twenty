@@ -309,6 +309,7 @@ export class WorkspaceEventEmitterService {
       flatFieldMetadataMaps,
       objectsPermissions: permissionsContext.rolesPermissions[roleId],
       onlyUseLabelIdentifierFieldsInRelations: true,
+      recurseIntoJunctionTableRelations: true,
     });
 
     const commonQueryParser = new GraphqlQueryParser(
