@@ -2,13 +2,12 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { supportChatState } from '@/client-config/states/supportChatState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -23,8 +22,8 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { type ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -58,7 +57,6 @@ const StyledDescription = styled.div`
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const currentUser = useRecoilValue(currentUserState);
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
@@ -99,8 +97,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     );
   };
 
-  const canUserCreateWorkspace = currentUser?.canCreateWorkspace === true;
-
   const createWorkspace = () => {
     signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
@@ -135,29 +131,27 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           />
         }
         EndComponent={
-          canUserCreateWorkspace && (
-            <Dropdown
-              clickableComponent={
-                <LightIconButton
-                  Icon={IconDotsVertical}
-                  size="small"
-                  accent="tertiary"
-                />
-              }
-              dropdownId="multi-workspace-dropdown-context-menu"
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItem
-                      LeftIcon={IconPlus}
-                      text={t`Create Workspace`}
-                      onClick={createWorkspace}
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          )
+          <Dropdown
+            clickableComponent={
+              <LightIconButton
+                Icon={IconDotsVertical}
+                size="small"
+                accent="tertiary"
+              />
+            }
+            dropdownId="multi-workspace-dropdown-context-menu"
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconPlus}
+                    text={t`Create Workspace`}
+                    onClick={createWorkspace}
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
         }
       >
         {currentWorkspace?.displayName}

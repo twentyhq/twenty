@@ -19,7 +19,6 @@ export const USER_QUERY_FRAGMENT = gql`
     lastName
     email
     hasPassword
-    canCreateWorkspace
     canAccessFullAdminPanel
     canImpersonate
     supportUserHash
@@ -60,6 +59,7 @@ export const USER_QUERY_FRAGMENT = gql`
       isMicrosoftAuthBypassEnabled
       isPasswordAuthBypassEnabled
       subdomain
+      customDomain
       hasValidEnterpriseKey
       workspaceCustomApplication {
         id
