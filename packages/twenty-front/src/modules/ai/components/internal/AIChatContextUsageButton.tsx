@@ -161,6 +161,7 @@ export const AIChatContextUsageButton = () => {
       {isHovered && (
         <StyledHoverCard>
           <StyledSection>
+            <StyledSectionTitle>{t`Context window`}</StyledSectionTitle>
             <StyledRow>
               <StyledPercentage>{formattedPercentage}%</StyledPercentage>
               <StyledValue>

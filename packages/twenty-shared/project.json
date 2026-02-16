@@ -52,6 +52,24 @@
         "parallel": false
       }
     },
+    "build:individual": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/individual"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vite build -c vite.config.individual.ts"
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,

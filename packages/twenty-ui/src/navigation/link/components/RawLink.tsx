@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-export type RawLinkProps = {
+type RawLinkProps = {
   className?: string;
   href: string;
   children?: React.ReactNode;

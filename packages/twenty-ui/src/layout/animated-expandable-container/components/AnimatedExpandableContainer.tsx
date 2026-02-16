@@ -23,7 +23,7 @@ const StyledMotionContainer = styled(motion.div)<{
   `}
 `;
 
-export type AnimatedExpandableContainerProps = {
+type AnimatedExpandableContainerProps = {
   children: ReactNode;
   isExpanded: boolean;
   dimension?: AnimationDimension;

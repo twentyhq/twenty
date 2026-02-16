@@ -116,6 +116,7 @@ export class MessageChannelSyncStatusService {
         syncCursor: '',
         syncStageStartedAt: null,
         throttleFailureCount: 0,
+        throttleRetryAfter: null,
         pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
       });
 
@@ -225,6 +226,7 @@ export class MessageChannelSyncStatusService {
         syncStatus: MessageChannelSyncStatus.ACTIVE,
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         throttleFailureCount: 0,
+        throttleRetryAfter: null,
         syncStageStartedAt: null,
         syncedAt: new Date().toISOString(),
       });
@@ -307,6 +309,7 @@ export class MessageChannelSyncStatusService {
       await messageChannelRepository.update(messageChannelIds, {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: syncStatus,
+        throttleRetryAfter: null,
       });
 
       const metricsKey =

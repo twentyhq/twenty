@@ -36,32 +36,32 @@ corepack enable
 yarn install
 
 # Authenticate using your API key (you'll be prompted)
-yarn auth:login
+yarn twenty auth:login
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn app:dev
+yarn twenty app:dev
 ```
 
 Buradan şunları yapabilirsiniz:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn entity:add
+yarn twenty entity:add
 
 # Generate a typed Twenty client and workspace entity types
-yarn app:generate
+yarn twenty app:generate
 
 # Watch your application's function logs
-yarn function:logs
+yarn twenty function:logs
 
 # Execute a function by name
-yarn function:execute -n my-function -p '{"name": "test"}'
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
 # Uninstall the application from the current workspace
-yarn app:uninstall
+yarn twenty app:uninstall
 
 # Display commands' help
-yarn help
+yarn twenty help
 ```
 
 Ayrıca bkz.: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) ve [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) için CLI başvuru sayfaları.
@@ -102,7 +102,7 @@ my-twenty-app/
 
 Genel hatlarıyla:
 
-* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve `twenty-sdk` ile `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` gibi betikleri ve yerel `twenty` CLI’sine yetki devreden kimlik doğrulama komutlarını ekler.
+* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve `twenty-sdk` ile yerel `twenty` CLI'sine yetki devreden bir `twenty` betiği ekler. Tüm mevcut komutları listelemek için `yarn twenty help` komutunu çalıştırın.
 * **.gitignore**: `node_modules`, `.yarn`, `generated/` (türlendirilmiş istemci), `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Proje tarafından kullanılan Yarn 4 araç zincirini kilitler ve yapılandırır.
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
@@ -142,12 +142,12 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn app:generate`, `generated/` klasörünü oluşturur (türlendirilmiş Twenty istemcisi + çalışma alanı türleri).
-* `yarn entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz veya rolleriniz için `src/` altında varlık tanım dosyaları ekler.
+* `yarn twenty app:generate`, `generated/` klasörünü oluşturur (türlendirilmiş Twenty istemcisi + çalışma alanı türleri).
+* `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz veya rolleriniz için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
 
-`yarn auth:login` komutunu ilk kez çalıştırdığınızda, sizden şunlar istenir:
+`yarn twenty auth:login` komutunu ilk kez çalıştırdığınızda, sizden şunlar istenir:
 
 * API URL’si (varsayılan: http://localhost:3000 veya mevcut çalışma alanı profiliniz)
 * API anahtarı
@@ -157,26 +157,26 @@ Kimlik bilgileriniz kullanıcı başına `~/.twenty/config.json` içinde saklan�
 ### Managing workspaces
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
-yarn auth:login
+# Etkileşimli giriş yapın (önerilir)
+yarn twenty auth:login
 
-# Login to a specific workspace profile
-yarn auth:login --workspace my-custom-workspace
+# Belirli bir çalışma alanı profiline giriş yapın
+yarn twenty auth:login --workspace my-custom-workspace
 
-# List all configured workspaces
-yarn auth:list
+# Yapılandırılmış tüm çalışma alanlarını listeleyin
+yarn twenty auth:list
 
-# Switch the default workspace (interactive)
-yarn auth:switch
+# Varsayılan çalışma alanını değiştirin (etkileşimli)
+yarn twenty auth:switch
 
-# Switch to a specific workspace
-yarn auth:switch production
+# Belirli bir çalışma alanına geçin
+yarn twenty auth:switch production
 
-# Check current authentication status
-yarn auth:status
+# Mevcut kimlik doğrulama durumunu kontrol edin
+yarn twenty auth:status
 ```
 
-Once you've switched workspaces with `auth:switch`, all subsequent commands will use that workspace by default. You can still override it temporarily with `--workspace <name>`.
+`yarn twenty auth:switch` ile çalışma alanlarını değiştirdikten sonra, sonraki tüm komutlar varsayılan olarak o çalışma alanını kullanacaktır. You can still override it temporarily with `--workspace <name>`.
 
 ## SDK kaynaklarını kullanın (türler ve yapılandırma)
 
@@ -276,7 +276,7 @@ export default defineObject({
 * `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
 * Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
 * `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
-* `yarn entity:add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
+* `yarn twenty entity:add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
   **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, `name`, `createdAt`, `updatedAt`, `createdBy`, `position` ve `deletedAt` gibi standart alanları otomatik olarak ekler. Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
@@ -551,7 +551,7 @@ const handler = async (event: RoutePayload) => {
 
 Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 
-* **Şablondan**: `yarn entity:add` çalıştırın ve yeni bir mantık fonksiyonu ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
+* **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir mantık fonksiyonu ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
 * **Manuel**: Yeni bir `*.logic-function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineLogicFunction()` kullanın.
 
 ### Ön uç bileşenleri
@@ -584,16 +584,16 @@ export default defineFrontComponent({
 * Ön uç bileşenleri, Twenty içinde yalıtılmış bağlamlarda görüntülenen React bileşenleridir.
 * Otomatik algılama için `*.front-component.tsx` dosya soneğini kullanın.
 * `component` alanı, React bileşeninize referans verir.
-* Bileşenler, `yarn app:dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
+* Bileşenler, `yarn twenty app:dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
 
 Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
-* **Şablondan**: `yarn entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
+* **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
 * **Manuel**: Yeni bir `*.front-component.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
 ### Oluşturulmuş türlendirilmiş istemci
 
-Çalışma alanı şemanıza göre generated/ içinde yerel bir türlendirilmiş istemci oluşturmak için yarn app:generate çalıştırın. Fonksiyonlarınızda kullanın:
+Çalışma alanı şemanıza göre `generated/` içinde yerel bir türlendirilmiş istemci oluşturmak için `yarn twenty app:generate` çalıştırın. Fonksiyonlarınızda kullanın:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +602,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-İstemci `yarn app:generate` tarafından yeniden oluşturulur. Nesnelerinizi değiştirdikten sonra veya yeni bir çalışma alanına katılırken yeniden çalıştırın.
+İstemci `yarn twenty app:generate` tarafından yeniden oluşturulur. Nesnelerinizi değiştirdikten sonra veya yeni bir çalışma alanına katılırken yeniden çalıştırın.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
@@ -623,40 +623,29 @@ Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve birden çok teti
 
 ## Manuel kurulum (scaffolder olmadan)
 
-En iyi başlangıç deneyimi için `create-twenty-app` kullanmanızı önersek de, bir projeyi manuel olarak da kurabilirsiniz. CLI'yi global olarak kurmayın. Bunun yerine `twenty-sdk`'yi yerel bir bağımlılık olarak ekleyin ve package.json içinde betikleri bağlayın:
+En iyi başlangıç deneyimi için `create-twenty-app` kullanmanızı önersek de, bir projeyi manuel olarak da kurabilirsiniz. CLI'yi global olarak kurmayın. Bunun yerine `twenty-sdk`'yi yerel bir bağımlılık olarak ekleyin ve package.json içinde tek bir betik tanımlayın:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Ardından şu gibi betikler ekleyin:
+Ardından bir `twenty` betiği ekleyin:
 
 ```json filename="package.json"
 {
   "scripts": {
-    "auth:login": "twenty auth:login",
-    "auth:logout": "twenty auth:logout",
-    "auth:status": "twenty auth:status",
-    "auth:switch": "twenty auth:switch",
-    "auth:list": "twenty auth:list",
-    "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
-    "app:uninstall": "twenty app:uninstall",
-    "entity:add": "twenty entity:add",
-    "function:logs": "twenty function:logs",
-    "function:execute": "twenty function:execute",
-    "help": "twenty help"
+    "twenty": "twenty"
   }
 }
 ```
 
-Artık aynı komutları Yarn üzerinden çalıştırabilirsiniz; örn. `yarn app:dev`, `yarn app:generate` vb.
+Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` vb.
 
 ## Sorun Giderme
 
-* Kimlik doğrulama hataları: `yarn auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
+* Kimlik doğrulama hataları: `yarn twenty auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
 * Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
-* Türler veya istemci eksik/eski: `yarn app:generate` çalıştırın.
-* Geliştirme modu eşitlenmiyor: `yarn app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
+* Türler veya istemci eksik/eski: `yarn twenty app:generate` çalıştırın.
+* Geliştirme modu eşitlenmiyor: `yarn twenty app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
 
 Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322

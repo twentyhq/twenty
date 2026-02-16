@@ -33,7 +33,7 @@ const StyledLoader = styled(motion.div)<{
   width: 8px;
 `;
 
-export type LoaderProps = {
+type LoaderProps = {
   color?: ThemeColor;
 };
 

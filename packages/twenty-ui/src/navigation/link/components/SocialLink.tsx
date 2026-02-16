@@ -10,7 +10,7 @@ export enum LinkType {
   Facebook = 'facebook',
 }
 
-export type SocialLinkProps = {
+type SocialLinkProps = {
   label: string;
   href: string;
   type: LinkType;

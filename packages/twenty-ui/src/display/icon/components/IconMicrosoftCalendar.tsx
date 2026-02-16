@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import IconMicrosoftCalendarRaw from '@assets/icons/microsoft-calendar.svg?react';
 
-export interface IconMicrosoftCalendarProps {
+interface IconMicrosoftCalendarProps {
   size?: number | string;
 }
 

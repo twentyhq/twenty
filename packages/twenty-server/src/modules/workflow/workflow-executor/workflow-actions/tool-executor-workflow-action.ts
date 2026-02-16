@@ -4,8 +4,9 @@ import { resolveInput, resolveRichTextVariables } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
@@ -20,10 +21,12 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
   constructor(
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
+    private readonly draftEmailTool: DraftEmailTool,
   ) {
     this.toolsByActionType = new Map<WorkflowActionType, Tool>([
       [WorkflowActionType.HTTP_REQUEST, this.httpTool],
       [WorkflowActionType.SEND_EMAIL, this.sendEmailTool],
+      [WorkflowActionType.DRAFT_EMAIL, this.draftEmailTool],
     ]);
   }
 
@@ -47,13 +50,16 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
 
     let toolInput = step.settings.input;
 
-    if (step.type === WorkflowActionType.SEND_EMAIL) {
-      const sendEmailInput = toolInput as WorkflowSendEmailActionInput;
+    if (
+      step.type === WorkflowActionType.SEND_EMAIL ||
+      step.type === WorkflowActionType.DRAFT_EMAIL
+    ) {
+      const emailInput = toolInput as WorkflowSendEmailActionInput;
 
-      if (sendEmailInput.body) {
+      if (emailInput.body) {
         toolInput = {
-          ...sendEmailInput,
-          body: resolveRichTextVariables(sendEmailInput.body, context),
+          ...emailInput,
+          body: resolveRichTextVariables(emailInput.body, context),
         };
       }
     }

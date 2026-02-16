@@ -79,7 +79,7 @@ describe('View side effect on object creation', () => {
     });
 
     expect(createdViews).toBeDefined();
-    expect(createdViews.length).toBe(1);
+    expect(createdViews.length).toBe(2);
     const [firstView] = createdViews;
 
     expect(firstView).toMatchObject<Partial<FlatView>>({

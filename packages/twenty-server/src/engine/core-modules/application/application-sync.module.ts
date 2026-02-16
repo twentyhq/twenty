@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/resolvers/application-development.resolver';
 import { ApplicationResolver } from 'src/engine/core-modules/application/resolvers/application.resolver';
 import { MarketplaceResolver } from 'src/engine/core-modules/application/resolvers/marketplace.resolver';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/services/application-manifest-migration.service';
@@ -38,6 +39,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
   ],
   providers: [
     ApplicationResolver,
+    ApplicationDevelopmentResolver,
     MarketplaceResolver,
     ApplicationManifestMigrationService,
     ApplicationSyncService,

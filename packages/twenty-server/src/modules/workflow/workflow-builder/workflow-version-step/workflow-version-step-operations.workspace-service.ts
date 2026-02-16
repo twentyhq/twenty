@@ -249,6 +249,28 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.DRAFT_EMAIL: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Draft Email',
+            type: WorkflowActionType.DRAFT_EMAIL,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                connectedAccountId: '',
+                recipients: {
+                  to: '',
+                  cc: '',
+                  bcc: '',
+                },
+                subject: '',
+                body: '',
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.CREATE_RECORD: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
