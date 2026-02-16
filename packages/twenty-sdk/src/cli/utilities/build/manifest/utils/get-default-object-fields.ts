@@ -104,34 +104,6 @@ export const getDefaultObjectFields = (
     }),
   };
 
-  const positionField = {
-    name: 'position',
-    label: 'Position',
-    description: 'Position',
-    icon: 'IconHierarchy2',
-    isNullable: false,
-    defaultValue: 0,
-    type: FieldMetadataType.POSITION,
-    universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
-      fieldName: 'position',
-    }),
-  };
-
-  const searchVectorField = {
-    name: 'searchVector',
-    label: 'Search vector',
-    icon: 'IconSearch',
-    description: 'Search vector',
-    isNullable: true,
-    defaultValue: null,
-    type: FieldMetadataType.TS_VECTOR,
-    universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
-      fieldName: 'searchVector',
-    }),
-  };
-
   return [
     idField,
     nameField,
@@ -140,7 +112,5 @@ export const getDefaultObjectFields = (
     deletedAtField,
     createdByField,
     updatedByField,
-    positionField,
-    searchVectorField,
   ];
 };
