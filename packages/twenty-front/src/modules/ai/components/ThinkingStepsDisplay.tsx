@@ -121,7 +121,9 @@ const StyledToolRowLabel = styled.div`
 `;
 
 const StyledReasoningContainer = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-left: calc(
+    ${({ theme }) => theme.icon.size.sm}px + ${({ theme }) => theme.spacing(2)}
+  );
 `;
 
 const StyledReasoningText = styled.p`

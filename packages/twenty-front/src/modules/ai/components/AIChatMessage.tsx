@@ -35,8 +35,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   line-height: 1.4em;
   max-width: 100%;
-  padding: ${({ theme, isUser }) =>
-    isUser ? `0 ${theme.spacing(2)}` : 0};
+  padding: ${({ theme, isUser }) => (isUser ? `0 ${theme.spacing(2)}` : 0)};
   width: fit-content;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -50,7 +49,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.4;
-    padding: 1.5px 3px;
+    padding: ${({ theme }) => `${theme.spacing(0.25)} ${theme.spacing(0.75)}`};
     border-radius: ${({ theme }) => theme.border.radius.sm};
     background: ${({ theme }) => theme.background.tertiary};
   }
