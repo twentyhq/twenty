@@ -29,7 +29,7 @@ export class FileCorePictureService {
     private readonly fileUrlService: FileUrlService,
   ) {}
 
-  async uploadCorePicture({
+  private async uploadCorePicture({
     file,
     filename,
     workspaceId,

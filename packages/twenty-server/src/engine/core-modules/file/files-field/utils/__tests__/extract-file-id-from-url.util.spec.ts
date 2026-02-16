@@ -6,7 +6,7 @@ describe('extractFileIdFromUrl', () => {
   const validUuid = '550e8400-e29b-41d4-a716-446655440000';
 
   it('should extract valid UUID from URL with matching file folder', () => {
-    const url = `https://example.com/${FileFolder.FilesField}/${validUuid}`;
+    const url = `https://example.com/file/${FileFolder.FilesField}/${validUuid}`;
 
     expect(extractFileIdFromUrl(url, FileFolder.FilesField)).toBe(validUuid);
   });
@@ -24,27 +24,33 @@ describe('extractFileIdFromUrl', () => {
   });
 
   it('should return null when fileId is not a valid UUID', () => {
-    const url = `https://example.com/${FileFolder.FilesField}/not-a-uuid`;
+    const url = `https://example.com/file/${FileFolder.FilesField}/not-a-uuid`;
 
     expect(extractFileIdFromUrl(url, FileFolder.FilesField)).toBe(null);
   });
 
   it('should return null when pathname has no fileId segment', () => {
-    const url = `https://example.com/${FileFolder.FilesField}/`;
+    const url = `https://example.com/file/${FileFolder.FilesField}/`;
 
     expect(extractFileIdFromUrl(url, FileFolder.FilesField)).toBe(null);
   });
 
   it('should work with different file folders', () => {
-    const corePictureUrl = `https://example.com/${FileFolder.CorePicture}/${validUuid}`;
+    const corePictureUrl = `https://example.com/file/${FileFolder.CorePicture}/${validUuid}`;
 
     expect(extractFileIdFromUrl(corePictureUrl, FileFolder.CorePicture)).toBe(
       validUuid,
     );
   });
 
+  it('should work with query params', () => {
+    const url = `https://example.com/file/${FileFolder.FilesField}/${validUuid}?param=value`;
+
+    expect(extractFileIdFromUrl(url, FileFolder.FilesField)).toBe(validUuid);
+  });
+
   it('should return null when file folder does not match', () => {
-    const url = `https://example.com/${FileFolder.CorePicture}/${validUuid}`;
+    const url = `https://example.com/file/${FileFolder.CorePicture}/${validUuid}`;
 
     expect(extractFileIdFromUrl(url, FileFolder.FilesField)).toBe(null);
   });

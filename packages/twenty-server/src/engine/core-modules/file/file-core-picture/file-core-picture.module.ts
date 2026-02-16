@@ -5,8 +5,8 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/file-core-picture.service';
 import { FileCorePictureResolver } from 'src/engine/core-modules/file/file-core-picture/resolvers/file-core-picture.resolver';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
