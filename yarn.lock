@@ -58621,6 +58621,7 @@ __metadata:
     react-router-dom: "npm:^6.4.4"
     transliteration: "npm:^2.3.5"
     tsx: "npm:^4.19.3"
+    typescript: "npm:^5.9.2"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"

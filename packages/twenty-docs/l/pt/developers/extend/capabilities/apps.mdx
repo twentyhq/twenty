@@ -554,6 +554,71 @@ Você pode criar novas funções de duas formas:
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova função de lógica. Isso gera um arquivo inicial com um handler e configuração.
 * **Manual**: Crie um novo arquivo `*.logic-function.ts` e use `defineLogicFunction()`, seguindo o mesmo padrão.
 
+### Marcar uma função lógica como ferramenta
+
+Funções lógicas podem ser expostas como **ferramentas** para agentes de IA e fluxos de trabalho. Quando uma função é marcada como ferramenta, ela fica disponível para os recursos de IA do Twenty e pode ser selecionada como uma etapa em automações de fluxos de trabalho.
+
+Para marcar uma função lógica como ferramenta, defina `isTool: true` e forneça um `toolInputSchema` descrevendo os parâmetros de entrada esperados usando [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Pontos-chave:
+
+* **`isTool`** (`boolean`, padrão: `false`): Quando definido como `true`, a função é registrada como uma ferramenta e fica disponível para agentes de IA e automações de fluxos de trabalho.
+* **`toolInputSchema`** (`object`, opcional): Um objeto JSON Schema que descreve os parâmetros que sua função aceita. Os agentes de IA usam esse esquema para entender quais entradas a ferramenta espera e para validar as chamadas. Se omitido, o esquema tem como padrão `{ type: 'object', properties: {} }` (sem parâmetros).
+* Funções com `isTool: false` (ou não definido) **não** são expostas como ferramentas. Elas ainda podem ser executadas diretamente ou chamadas por outras funções, mas não aparecerão na descoberta de ferramentas.
+* **Nomenclatura de ferramentas**: Quando exposta como uma ferramenta, o nome da função é automaticamente normalizado para `logic_function_<name>` (em minúsculas, caracteres não alfanuméricos substituídos por sublinhados). Por exemplo, `enrich-company` torna-se `logic_function_enrich_company`.
+* Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos (cron, eventos de banco de dados, rotas) simultaneamente.
+
+<Note>
+  **Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
+</Note>
+
 ### Componentes de front-end
 
 Componentes de front-end permitem criar componentes React personalizados que são renderizados na UI do Twenty. Use `defineFrontComponent()` para definir componentes com validação integrada:
