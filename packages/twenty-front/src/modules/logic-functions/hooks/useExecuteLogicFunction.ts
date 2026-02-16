@@ -42,6 +42,10 @@ export const useExecuteLogicFunction = ({
   );
 
   const executeLogicFunction = async () => {
+    if (isExecuting) {
+      return;
+    }
+
     try {
       setIsExecuting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
