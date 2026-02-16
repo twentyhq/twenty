@@ -5,12 +5,13 @@ import { getAbsoluteUrl } from 'twenty-shared/utils';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { CommandMenuEditColorOption } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption';
 import {
   type OrganizeActionsProps,
   CommandMenuEditOrganizeActions,
 } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions';
-import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { CommandMenuEditOwnerSection } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditOwnerSection';
+import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -40,6 +41,10 @@ export const CommandMenuEditLinkItemView = ({
   return (
     <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
       <CommandGroup heading={t`Customize`}>
+        <CommandMenuEditColorOption
+          navigationMenuItemId={selectedItem.id}
+          color={selectedItem.color}
+        />
         <TextInput
           fullWidth
           placeholder="www.google.com"

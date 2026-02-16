@@ -1,4 +1,6 @@
+import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { CommandMenuEditColorOption } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption';
 import { CommandMenuEditFolderPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView';
 import { CommandMenuEditLinkItemView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditLinkItemView';
 import { CommandMenuEditObjectViewBase } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditObjectViewBase';
@@ -115,6 +117,14 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
           commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(false)}
         >
+          {selectedItem && (
+            <CommandGroup heading={t`Customize`}>
+              <CommandMenuEditColorOption
+                navigationMenuItemId={selectedItem.id}
+                color={selectedItem.color}
+              />
+            </CommandGroup>
+          )}
           <CommandMenuEditOrganizeActions
             canMoveUp={canMoveUp}
             canMoveDown={canMoveDown}
@@ -133,6 +143,14 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
           commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(true)}
         >
+          {selectedItem && (
+            <CommandGroup heading={t`Customize`}>
+              <CommandMenuEditColorOption
+                navigationMenuItemId={selectedItem.id}
+                color={selectedItem.color}
+              />
+            </CommandGroup>
+          )}
           <CommandMenuEditOrganizeActions
             canMoveUp={canMoveUp}
             canMoveDown={canMoveDown}

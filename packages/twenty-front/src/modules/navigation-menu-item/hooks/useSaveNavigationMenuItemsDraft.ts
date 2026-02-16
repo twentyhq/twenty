@@ -88,6 +88,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
             name?: string;
             link?: string;
             icon?: string | null;
+            color?: string | null;
             viewId?: string;
             targetObjectMetadataId?: string;
             targetRecordId?: string;
@@ -98,6 +99,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
           if (isNavigationMenuItemFolder(draftItem)) {
             input.name = draftItem.name ?? undefined;
             input.icon = draftItem.icon ?? null;
+            input.color = draftItem.color ?? null;
           } else if (isNavigationMenuItemLink(draftItem)) {
             input.name = draftItem.name ?? 'Link';
             const linkUrl = (draftItem.link ?? '').trim();
@@ -117,6 +119,10 @@ export const useSaveNavigationMenuItemsDraft = () => {
 
           if (isDefined(draftItem.folderId)) {
             input.folderId = draftItem.folderId;
+          }
+
+          if (draftItem.color !== undefined) {
+            input.color = draftItem.color ?? null;
           }
 
           await createNavigationMenuItemMutation({
@@ -144,13 +150,16 @@ export const useSaveNavigationMenuItemsDraft = () => {
           const iconChanged =
             isNavigationMenuItemFolder(draftItem) &&
             (original.icon ?? null) !== (draftItem.icon ?? null);
+          const colorChanged =
+            (original.color ?? null) !== (draftItem.color ?? null);
 
           if (
             positionChanged ||
             folderIdChanged ||
             nameChanged ||
             linkChanged ||
-            iconChanged
+            iconChanged ||
+            colorChanged
           ) {
             const updateInput: {
               id: string;
@@ -159,6 +168,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
               name?: string;
               link?: string | null;
               icon?: string | null;
+              color?: string | null;
             } = { id: draftItem.id };
 
             if (positionChanged) {
@@ -187,6 +197,9 @@ export const useSaveNavigationMenuItemsDraft = () => {
             }
             if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
               updateInput.icon = draftItem.icon ?? null;
+            }
+            if (colorChanged) {
+              updateInput.color = draftItem.color ?? null;
             }
 
             await updateNavigationMenuItem(updateInput);
