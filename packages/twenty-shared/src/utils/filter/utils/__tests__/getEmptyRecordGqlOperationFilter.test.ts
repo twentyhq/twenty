@@ -1,5 +1,6 @@
 import { FieldMetadataType, ViewFilterOperand } from '@/types';
 import { getEmptyRecordGqlOperationFilter } from '@/utils/filter/utils/getEmptyRecordGqlOperationFilter';
+import { type RecordFilter } from '@/utils';
 
 const makeParams = (
   fieldType: FieldMetadataType,
@@ -15,7 +16,7 @@ const makeParams = (
     type: 'TEXT' as any,
     operand,
     subFieldName,
-  },
+  } as RecordFilter,
 });
 
 describe('getEmptyRecordGqlOperationFilter', () => {
@@ -146,7 +147,11 @@ describe('getEmptyRecordGqlOperationFilter', () => {
 
     it('should handle FULL_NAME type with subfield', () => {
       const result = getEmptyRecordGqlOperationFilter(
-        makeParams(FieldMetadataType.FULL_NAME, ViewFilterOperand.IS_EMPTY, 'firstName'),
+        makeParams(
+          FieldMetadataType.FULL_NAME,
+          ViewFilterOperand.IS_EMPTY,
+          'firstName',
+        ),
       );
 
       expect(result).toHaveProperty('or');

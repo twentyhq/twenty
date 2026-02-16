@@ -3,6 +3,7 @@ import {
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { type RecordFilter } from '@/utils';
 
 const fields = [
   { id: 'f-text', name: 'name', type: FieldMetadataType.TEXT, label: 'Name' },
@@ -136,20 +137,25 @@ const makeFilter = (
   value: string,
   type: string = 'TEXT',
   subFieldName?: string,
-) => ({
-  id: 'test-filter',
-  fieldMetadataId,
-  value,
-  type: type as any,
-  operand,
-  subFieldName,
-});
+) =>
+  ({
+    id: 'test-filter',
+    fieldMetadataId,
+    value,
+    type: type as any,
+    operand,
+    subFieldName,
+  }) as RecordFilter;
 
 describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
   it('should return undefined when field metadata is not found', () => {
     const result = turnRecordFilterIntoRecordGqlOperationFilter({
       filterValueDependencies,
-      recordFilter: makeFilter('nonexistent', RecordFilterOperand.CONTAINS, 'x'),
+      recordFilter: makeFilter(
+        'nonexistent',
+        RecordFilterOperand.CONTAINS,
+        'x',
+      ),
       fieldMetadataItems: fields,
     });
 
@@ -170,7 +176,11 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
     it('should handle CONTAINS operand', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
-        recordFilter: makeFilter('f-text', RecordFilterOperand.CONTAINS, 'test'),
+        recordFilter: makeFilter(
+          'f-text',
+          RecordFilterOperand.CONTAINS,
+          'test',
+        ),
         fieldMetadataItems: fields,
       });
 
@@ -288,11 +298,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
     it('should handle IS_IN_PAST operand', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
-        recordFilter: makeFilter(
-          'f-date',
-          RecordFilterOperand.IS_IN_PAST,
-          '',
-        ),
+        recordFilter: makeFilter('f-date', RecordFilterOperand.IS_IN_PAST, ''),
         fieldMetadataItems: fields,
       });
 
@@ -316,11 +322,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
     it('should handle IS_TODAY operand', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
-        recordFilter: makeFilter(
-          'f-date',
-          RecordFilterOperand.IS_TODAY,
-          '',
-        ),
+        recordFilter: makeFilter('f-date', RecordFilterOperand.IS_TODAY, ''),
         fieldMetadataItems: fields,
       });
 

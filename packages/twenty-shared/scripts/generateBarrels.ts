@@ -271,10 +271,10 @@ const EXCLUDED_DIRECTORIES = [
   '**/__stories__/**',
   '**/internal/**',
 ] as const;
-function getTypeScriptFiles(
+const getTypeScriptFiles = (
   directoryPath: string,
   includeIndex: boolean = false,
-): string[] {
+): string[] => {
   const pattern = slash(path.join(directoryPath, '**', '*.{ts,tsx}'));
   const files = globSync(pattern, {
     cwd: SRC_PATH,
@@ -287,7 +287,7 @@ function getTypeScriptFiles(
       !file.endsWith('.d.ts') &&
       (includeIndex ? true : !file.endsWith('index.ts')),
   );
-}
+};
 
 const getKind = (
   node: ts.VariableStatement,
@@ -305,10 +305,10 @@ const getKind = (
   return 'var';
 };
 
-function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
+const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
   const exports: DeclarationOccurrence[] = [];
 
-  function visit(node: ts.Node) {
+  const visit = (node: ts.Node): void => {
     if (!ts.canHaveModifiers(node)) {
       return ts.forEachChild(node, visit);
     }
@@ -409,11 +409,11 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
         break;
     }
     return ts.forEachChild(node, visit);
-  }
+  };
 
   visit(sourceFile);
   return exports;
-}
+};
 
 type ExportKind =
   | 'type'
@@ -430,7 +430,7 @@ type FileExports = Array<{
   exports: DeclarationOccurrence[];
 }>;
 
-function findAllExports(directoryPath: string): FileExports {
+const findAllExports = (directoryPath: string): FileExports => {
   const results: FileExports = [];
 
   const files = getTypeScriptFiles(directoryPath);
@@ -453,7 +453,7 @@ function findAllExports(directoryPath: string): FileExports {
   }
 
   return results;
-}
+};
 
 type ExportByBarrel = {
   barrel: {

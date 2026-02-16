@@ -20,7 +20,7 @@ describe('getQueryIdentifier', () => {
       filter: {},
       orderBy: [],
       limit: 20,
-      cursorFilter: { id: { gt: 'cursor-123' } },
+      cursorFilter: { cursor: 'cursor-123', cursorDirection: 'before' },
     });
 
     expect(result).toContain('cursor-123');
