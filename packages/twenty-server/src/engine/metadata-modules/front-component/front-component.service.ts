@@ -22,6 +22,8 @@ import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -32,6 +34,7 @@ export class FrontComponentService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   async findAll(workspaceId: string): Promise<FrontComponentDTO[]> {
@@ -129,10 +132,19 @@ export class FrontComponentService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatFrontComponentToCreate.id,
-      flatEntityMaps: recomputedFlatFrontComponentMaps,
+    const createdFlatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: flatFrontComponentToCreate.id,
+        flatEntityMaps: recomputedFlatFrontComponentMaps,
+      },
+    );
+
+    await this.publishFrontComponentUpdatedEvent({
+      flatFrontComponent: createdFlatFrontComponent,
+      workspaceId,
     });
+
+    return createdFlatFrontComponent;
   }
 
   async updateOne({
@@ -200,10 +212,19 @@ export class FrontComponentService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatFrontComponentMaps,
+    const updatedFlatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatFrontComponentMaps,
+      },
+    );
+
+    await this.publishFrontComponentUpdatedEvent({
+      flatFrontComponent: updatedFlatFrontComponent,
+      workspaceId,
     });
+
+    return updatedFlatFrontComponent;
   }
 
   async destroyOne({
@@ -312,6 +333,26 @@ export class FrontComponentService {
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,
       resourcePath: frontComponent.builtComponentPath,
+    });
+  }
+
+  private async publishFrontComponentUpdatedEvent({
+    flatFrontComponent,
+    workspaceId,
+  }: {
+    flatFrontComponent: FlatFrontComponent;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.subscriptionService.publish({
+      channel: SubscriptionChannel.FRONT_COMPONENT_UPDATED_CHANNEL,
+      workspaceId,
+      payload: {
+        onFrontComponentUpdated: {
+          id: flatFrontComponent.id,
+          builtComponentChecksum: flatFrontComponent.builtComponentChecksum,
+          updatedAt: new Date(),
+        },
+      },
     });
   }
 }

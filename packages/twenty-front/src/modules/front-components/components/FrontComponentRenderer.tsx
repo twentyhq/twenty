@@ -1,9 +1,10 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { FrontComponentChecksumSubscriptionEffect } from '@/front-components/components/FrontComponentChecksumSubscriptionEffect';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -21,7 +22,7 @@ export const FrontComponentRenderer = ({
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
 
-  const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
+  const [checksum, setChecksum] = useState<string | null>(null);
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -41,7 +42,21 @@ export const FrontComponentRenderer = ({
   const { data, loading } = useFindOneFrontComponentQuery({
     variables: { id: frontComponentId },
     onError: handleError,
+    onCompleted: (result) => {
+      if (!isDefined(result.frontComponent)) {
+        return;
+      }
+
+      setChecksum(result.frontComponent.builtComponentChecksum);
+    },
   });
+
+  const activeChecksum =
+    checksum ?? data?.frontComponent?.builtComponentChecksum;
+
+  const componentUrl = isDefined(activeChecksum)
+    ? `${REST_API_BASE_URL}/front-components/${frontComponentId}?checksum=${activeChecksum}`
+    : `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
 
   if (
     loading ||
@@ -52,16 +67,22 @@ export const FrontComponentRenderer = ({
   }
 
   return (
-    <SharedFrontComponentRenderer
-      theme={theme}
-      componentUrl={componentUrl}
-      applicationAccessToken={
-        data.frontComponent.applicationTokenPair.applicationAccessToken.token
-      }
-      apiUrl={REACT_APP_SERVER_BASE_URL}
-      executionContext={executionContext}
-      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
-      onError={handleError}
-    />
+    <>
+      <FrontComponentChecksumSubscriptionEffect
+        frontComponentId={frontComponentId}
+        onChecksumUpdate={setChecksum}
+      />
+      <SharedFrontComponentRenderer
+        theme={theme}
+        componentUrl={componentUrl}
+        applicationAccessToken={
+          data.frontComponent.applicationTokenPair.applicationAccessToken.token
+        }
+        apiUrl={REACT_APP_SERVER_BASE_URL}
+        executionContext={executionContext}
+        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        onError={handleError}
+      />
+    </>
   );
 };

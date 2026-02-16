@@ -1,46 +1,46 @@
 import {
-  type OBJECT_RECORD_CREATED_EVENT,
-  type ObjectRecordCreatedTrackEvent,
+    type OBJECT_RECORD_CREATED_EVENT,
+    type ObjectRecordCreatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
 import {
-  type OBJECT_RECORD_DELETED_EVENT,
-  type ObjectRecordDeletedTrackEvent,
+    type OBJECT_RECORD_DELETED_EVENT,
+    type ObjectRecordDeletedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-delete';
 import {
-  type OBJECT_RECORD_UPDATED_EVENT,
-  type ObjectRecordUpdatedTrackEvent,
+    type OBJECT_RECORD_UPDATED_EVENT,
+    type ObjectRecordUpdatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
 import {
-  type OBJECT_RECORD_UPSERTED_EVENT,
-  type ObjectRecordUpsertedTrackEvent,
+    type OBJECT_RECORD_UPSERTED_EVENT,
+    type ObjectRecordUpsertedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-upserted';
 import {
-  type CUSTOM_DOMAIN_ACTIVATED_EVENT,
-  type CustomDomainActivatedTrackEvent,
+    type CUSTOM_DOMAIN_ACTIVATED_EVENT,
+    type CustomDomainActivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import {
-  type CUSTOM_DOMAIN_DEACTIVATED_EVENT,
-  type CustomDomainDeactivatedTrackEvent,
+    type CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+    type CustomDomainDeactivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import {
-  type MONITORING_EVENT,
-  type MonitoringTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
-import {
-  type LOGIC_FUNCTION_EXECUTED_EVENT,
-  type LogicFunctionExecutedTrackEvent,
+    type LOGIC_FUNCTION_EXECUTED_EVENT,
+    type LogicFunctionExecutedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import {
-  type USER_SIGNUP_EVENT,
-  type UserSignupTrackEvent,
+    type MONITORING_EVENT,
+    type MonitoringTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
+import {
+    type USER_SIGNUP_EVENT,
+    type UserSignupTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/user/user-signup';
 import {
-  type WEBHOOK_RESPONSE_EVENT,
-  type WebhookResponseTrackEvent,
+    type WEBHOOK_RESPONSE_EVENT,
+    type WebhookResponseTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import {
-  type WORKSPACE_ENTITY_CREATED_EVENT,
-  type WorkspaceEntityCreatedTrackEvent,
+    type WORKSPACE_ENTITY_CREATED_EVENT,
+    type WorkspaceEntityCreatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace-entity/workspace-entity-created';
 
 // Define all track event names
