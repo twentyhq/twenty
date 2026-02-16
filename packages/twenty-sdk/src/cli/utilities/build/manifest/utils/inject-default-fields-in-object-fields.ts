@@ -8,13 +8,13 @@ export const injectDefaultFieldsInObjectFields = (
 
   const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
 
-  const result = [...objectConfig.fields];
+  const fieldsWithDefaultFields = [...objectConfig.fields];
 
   for (const defaultField of defaultObjectFields) {
     if (!objectConfigFieldNames.includes(defaultField.name)) {
-      result.push(defaultField);
+      fieldsWithDefaultFields.push(defaultField);
     }
   }
 
-  return result;
+  return fieldsWithDefaultFields;
 };
