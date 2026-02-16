@@ -1040,6 +1040,7 @@ export type CreateLogicFunctionFromSourceInput = {
 };
 
 export type CreateNavigationMenuItemInput = {
+  color?: InputMaybe<Scalars['String']>;
   folderId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
   link?: InputMaybe<Scalars['String']>;
@@ -3202,6 +3203,7 @@ export type NativeModelCapabilities = {
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
+  color?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   folderId?: Maybe<Scalars['UUID']>;
   icon?: Maybe<Scalars['String']>;
@@ -4528,6 +4530,7 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
 };
 
 export type UpdateNavigationMenuItemInput = {
+  color?: InputMaybe<Scalars['String']>;
   folderId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
   link?: InputMaybe<Scalars['String']>;
@@ -5804,42 +5807,42 @@ export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never
 
 export type FindManyMarketplaceAppsQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null, objects: Array<{ __typename?: 'MarketplaceAppObject', universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, fields: Array<{ __typename?: 'MarketplaceAppField', universalIdentifier?: string | null, name: string, type: string, label: string, description?: string | null, icon?: string | null }> }>, fields: Array<{ __typename?: 'MarketplaceAppField', name: string, type: string, label: string, description?: string | null, icon?: string | null, objectUniversalIdentifier?: string | null }>, logicFunctions: Array<{ __typename?: 'MarketplaceAppLogicFunction', name: string, description?: string | null, timeoutSeconds?: number | null }>, frontComponents: Array<{ __typename?: 'MarketplaceAppFrontComponent', name: string, description?: string | null }>, defaultRole?: { __typename?: 'MarketplaceAppDefaultRole', id: string, label: string, description?: string | null, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canUpdateAllSettings: boolean, canAccessAllTools: boolean, permissionFlags: Array<string>, objectPermissions: Array<{ __typename?: 'MarketplaceAppRoleObjectPermission', objectUniversalIdentifier: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }>, fieldPermissions: Array<{ __typename?: 'MarketplaceAppRoleFieldPermission', objectUniversalIdentifier: string, fieldUniversalIdentifier: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null }> } | null }> };
 
-export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
 
-export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
+export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
 
 export type CreateNavigationMenuItemMutationVariables = Exact<{
   input: CreateNavigationMenuItemInput;
 }>;
 
 
-export type CreateNavigationMenuItemMutation = { __typename?: 'Mutation', createNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateNavigationMenuItemMutation = { __typename?: 'Mutation', createNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteNavigationMenuItemMutationVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type DeleteNavigationMenuItemMutation = { __typename?: 'Mutation', deleteNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type DeleteNavigationMenuItemMutation = { __typename?: 'Mutation', deleteNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateNavigationMenuItemMutationVariables = Exact<{
   input: UpdateOneNavigationMenuItemInput;
 }>;
 
 
-export type UpdateNavigationMenuItemMutation = { __typename?: 'Mutation', updateNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateNavigationMenuItemMutation = { __typename?: 'Mutation', updateNavigationMenuItem: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type FindManyNavigationMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyNavigationMenuItemsQuery = { __typename?: 'Query', navigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null }> };
+export type FindManyNavigationMenuItemsQuery = { __typename?: 'Query', navigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null }> };
 
 export type FindOneNavigationMenuItemQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type FindOneNavigationMenuItemQuery = { __typename?: 'Query', navigationMenuItem?: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null } | null };
+export type FindOneNavigationMenuItemQuery = { __typename?: 'Query', navigationMenuItem?: { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null } | null };
 
 export type ObjectMetadataFieldsFragment = { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> };
 
@@ -7312,6 +7315,7 @@ export const NavigationMenuItemFieldsFragmentDoc = gql`
   name
   link
   icon
+  color
   position
   applicationId
   createdAt
