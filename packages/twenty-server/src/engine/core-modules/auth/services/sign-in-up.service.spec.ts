@@ -25,6 +25,7 @@ const createSignInUpServiceForTests = () => {
   const mockUserRepository = {
     create: jest.fn((user) => user),
     save: jest.fn(async (user) => ({ id: 'saved-user-id', ...user })),
+    count: jest.fn(),
   };
 
   const mockWorkspaceRepository = {
@@ -122,6 +123,7 @@ describe('SignInUpService workspace-creation policy', () => {
     mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
       false;
     mockWorkspaceRepository.count.mockResolvedValue(0);
+    mockUserRepository.count.mockResolvedValue(0);
     jest
       .spyOn((service as any).userService, 'findUserByEmail')
       .mockResolvedValue(null);
@@ -150,6 +152,7 @@ describe('SignInUpService workspace-creation policy', () => {
     mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
       true;
     mockWorkspaceRepository.count.mockResolvedValue(0);
+    mockUserRepository.count.mockResolvedValue(0);
     jest
       .spyOn((service as any).userService, 'findUserByEmail')
       .mockResolvedValue(null);
@@ -178,6 +181,36 @@ describe('SignInUpService workspace-creation policy', () => {
     mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
       false;
     mockWorkspaceRepository.count.mockResolvedValue(1);
+    mockUserRepository.count.mockResolvedValue(1);
+    jest
+      .spyOn((service as any).userService, 'findUserByEmail')
+      .mockResolvedValue(null);
+
+    await service.signUpWithoutWorkspace(mockPartialUserPayload, {
+      provider: AuthProviderEnum.Google,
+    } as any);
+
+    expect(mockUserRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        canImpersonate: false,
+        canAccessFullAdminPanel: false,
+      }),
+    );
+  });
+
+  it('does not grant admin to second user signing up before any workspace exists', async () => {
+    const {
+      service,
+      mockUserRepository,
+      mockWorkspaceRepository,
+      mockConfigurationValues,
+    } = createSignInUpServiceForTests();
+
+    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
+      false;
+    mockWorkspaceRepository.count.mockResolvedValue(0);
+    mockUserRepository.count.mockResolvedValue(1);
     jest
       .spyOn((service as any).userService, 'findUserByEmail')
       .mockResolvedValue(null);

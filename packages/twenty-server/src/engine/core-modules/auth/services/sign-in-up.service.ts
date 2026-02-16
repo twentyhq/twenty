@@ -397,6 +397,14 @@ export class SignInUpService {
     }
   }
 
+  private async hasServerAdmin(): Promise<boolean> {
+    const adminCount = await this.userRepository.count({
+      where: { canAccessFullAdminPanel: true },
+    });
+
+    return adminCount > 0;
+  }
+
   private async assertWorkspaceCreationAllowed(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
   ): Promise<void> {
@@ -453,7 +461,7 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
-    const isFirstWorkspace = (await this.workspaceRepository.count()) === 0;
+    const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
@@ -510,8 +518,8 @@ export class SignInUpService {
         : await this.saveNewUser(
             userData.newUserWithPicture,
             {
-              canImpersonate: isFirstWorkspace,
-              canAccessFullAdminPanel: isFirstWorkspace,
+              canImpersonate: shouldGrantServerAdmin,
+              canAccessFullAdminPanel: shouldGrantServerAdmin,
             },
             queryRunner,
           );
@@ -573,14 +581,13 @@ export class SignInUpService {
 
     await this.assertSignUpEnabled();
 
-    const workspaceCount = await this.workspaceRepository.count();
-    const isFirstWorkspace = workspaceCount === 0;
+    const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
       {
-        canImpersonate: isFirstWorkspace,
-        canAccessFullAdminPanel: isFirstWorkspace,
+        canImpersonate: shouldGrantServerAdmin,
+        canAccessFullAdminPanel: shouldGrantServerAdmin,
       },
     );
   }
