@@ -6,7 +6,7 @@ import { IconDotsVertical } from 'twenty-ui/display';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/thinkingStepsDisplayState';
-import { keyframes, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
@@ -29,23 +29,6 @@ const StyledLoadingIconContainer = styled.div`
 const StyledLoadingIcon = styled(IconDotsVertical)`
   color: ${({ theme }) => theme.font.color.light};
   transform: rotate(90deg);
-`;
-
-const streamingDotsAnimation = keyframes`
-  0% { content: ''; }
-  33% { content: '.'; }
-  66% { content: '..'; }
-  100% { content: '...'; }
-`;
-
-const StyledStreamingIndicator = styled.div`
-  &::after {
-    display: inline-block;
-    content: '';
-    animation: ${streamingDotsAnimation} 750ms steps(3, end) infinite;
-    width: 2ch;
-    text-align: left;
-  }
 `;
 
 const InitialLoadingIndicator = () => {
@@ -123,6 +106,14 @@ export const AIChatAssistantMessageRenderer = ({
               key={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
+              hasAssistantTextResponseStarted={renderItems
+                .slice(index + 1)
+                .some(
+                  (nextRenderItem) =>
+                    nextRenderItem.type === 'part' &&
+                    nextRenderItem.part.type === 'text' &&
+                    nextRenderItem.part.text.trim().length > 0,
+                )}
             />
           ) : (
             <MessagePartRenderer
@@ -133,7 +124,6 @@ export const AIChatAssistantMessageRenderer = ({
           ),
         )}
       </StyledMessagePartsContainer>
-      {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>
   );
 };

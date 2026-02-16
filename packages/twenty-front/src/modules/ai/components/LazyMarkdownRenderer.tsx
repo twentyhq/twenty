@@ -252,6 +252,8 @@ const StyledMarkdownContainer = styled.div`
   }
 
   .markdown-block-code {
+    background-color: ${({ theme }) => theme.background.secondary};
+    border: 1px solid ${({ theme }) => theme.border.color.medium};
     border-radius: ${({ theme }) => theme.border.radius.md} !important;
   }
 

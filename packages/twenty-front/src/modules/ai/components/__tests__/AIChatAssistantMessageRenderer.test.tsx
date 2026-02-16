@@ -9,8 +9,16 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 
 jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
-  ThinkingStepsDisplay: ({ parts }: { parts: unknown[] }) => (
-    <div data-testid="thinking-steps-display">{`thinking-${parts.length}`}</div>
+  ThinkingStepsDisplay: ({
+    hasAssistantTextResponseStarted,
+    parts,
+  }: {
+    parts: unknown[];
+    hasAssistantTextResponseStarted: boolean;
+  }) => (
+    <div data-testid="thinking-steps-display">
+      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}`}
+    </div>
   ),
 }));
 
@@ -73,10 +81,37 @@ describe('AIChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-2',
+      'thinking-2-answer-started',
     );
     expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
       'Final answer',
+    );
+  });
+
+  it('should keep answer-started false for thinking blocks with no following text', () => {
+    const messageParts = [
+      {
+        type: 'text',
+        text: 'Preamble',
+      },
+      {
+        type: 'reasoning',
+        text: 'Reasoning content',
+        state: 'done',
+      },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-2-answer-pending',
     );
   });
 

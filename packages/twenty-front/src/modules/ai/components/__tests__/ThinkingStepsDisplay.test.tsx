@@ -40,11 +40,13 @@ const createToolPart = ({
   }) as ThinkingStepPart;
 
 const renderThinkingStepsDisplay = ({
+  hasAssistantTextResponseStarted = false,
   isLastMessageStreaming,
   parts,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
+  hasAssistantTextResponseStarted?: boolean;
 }) => {
   return render(
     <ThemeProvider theme={THEME_LIGHT}>
@@ -52,6 +54,7 @@ const renderThinkingStepsDisplay = ({
         <ThinkingStepsDisplay
           parts={parts}
           isLastMessageStreaming={isLastMessageStreaming}
+          hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
         />
       </ThemeContextProvider>
     </ThemeProvider>,
@@ -83,6 +86,45 @@ describe('ThinkingStepsDisplay', () => {
   it('should render done state collapsed by default', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
+
+    expect(summaryButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('Thought')).toBeNull();
+    expect(screen.queryByText('Completed reasoning content')).toBeNull();
+  });
+
+  it('should keep done state expanded while streaming before answer text starts', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      hasAssistantTextResponseStarted: false,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
+    expect(screen.getByText('Thought')).toBeInTheDocument();
+    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
+  });
+
+  it('should collapse done state once answer text starts while streaming', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      hasAssistantTextResponseStarted: true,
       parts: [
         createToolPart(),
         createReasoningPart({
@@ -102,6 +144,7 @@ describe('ThinkingStepsDisplay', () => {
   it('should render rows and full reasoning content after expanding done state', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
       parts: [
         createToolPart(),
         createReasoningPart({
@@ -121,5 +164,42 @@ describe('ThinkingStepsDisplay', () => {
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
+  });
+
+  it('should toggle tool details and display output/input tabs', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
+    await userEvent.click(summaryButton);
+
+    const toolButton = screen.getByRole('button', {
+      name: /searched the web for crm software/i,
+    });
+
+    expect(toolButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
+
+    await userEvent.click(toolButton);
+
+    expect(toolButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Output' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Input' })).toBeInTheDocument();
+
+    await userEvent.click(toolButton);
+
+    expect(toolButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
   });
 });
