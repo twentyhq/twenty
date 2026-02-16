@@ -1,3 +1,4 @@
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -28,9 +29,15 @@ export const useOpenAskAIPageInCommandMenu = () => {
             ? resetNavigationStack
             : isCommandMenuOpened;
 
+        const currentAIChatThreadTitle = snapshot
+          .getLoadable(currentAIChatThreadTitleState)
+          .getValue();
+
         const resolvedTitle = isNonEmptyString(pageTitle)
           ? pageTitle
-          : t`Ask AI`;
+          : isNonEmptyString(currentAIChatThreadTitle)
+            ? currentAIChatThreadTitle
+            : t`Ask AI`;
 
         navigateCommandMenu({
           page: CommandMenuPages.AskAI,

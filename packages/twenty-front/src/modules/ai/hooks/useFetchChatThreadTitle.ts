@@ -1,6 +1,7 @@
 import { GET_CHAT_THREAD } from '@/ai/graphql/queries/getChatThread';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { useSyncCommandMenuTitle } from '@/command-menu/hooks/useSyncCommandMenuTitle';
 import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
@@ -14,6 +15,7 @@ type GetChatThreadResult = {
 
 export const useFetchChatThreadTitle = () => {
   const apolloClient = useApolloClient();
+  const { syncCommandMenuTitle } = useSyncCommandMenuTitle();
 
   const fetchChatThreadTitle = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -39,10 +41,11 @@ export const useFetchChatThreadTitle = () => {
 
           if (isNonEmptyString(title)) {
             set(currentAIChatThreadTitleState, title);
+            syncCommandMenuTitle(title);
           }
         }, 3000);
       },
-    [apolloClient],
+    [apolloClient, syncCommandMenuTitle],
   );
 
   return { fetchChatThreadTitle };

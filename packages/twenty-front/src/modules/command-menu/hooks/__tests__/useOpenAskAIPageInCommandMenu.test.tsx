@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { type MutableSnapshot, RecoilRoot } from 'recoil';
 
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
@@ -71,6 +72,38 @@ describe('useOpenAskAIPageInCommandMenu', () => {
     expect(navigateCommandMenuMock).toHaveBeenCalledWith(
       expect.objectContaining({
         pageTitle: 'Ask AI',
+      }),
+    );
+  });
+
+  it('should fall back to currentAIChatThreadTitle when no pageTitle is provided', () => {
+    const { result } = renderWithRecoil((snapshot) => {
+      snapshot.set(currentAIChatThreadTitleState, 'Generated Title');
+    });
+
+    act(() => {
+      result.current.openAskAIPage();
+    });
+
+    expect(navigateCommandMenuMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pageTitle: 'Generated Title',
+      }),
+    );
+  });
+
+  it('should prefer explicit pageTitle over currentAIChatThreadTitle', () => {
+    const { result } = renderWithRecoil((snapshot) => {
+      snapshot.set(currentAIChatThreadTitleState, 'Generated Title');
+    });
+
+    act(() => {
+      result.current.openAskAIPage({ pageTitle: 'Explicit Title' });
+    });
+
+    expect(navigateCommandMenuMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pageTitle: 'Explicit Title',
       }),
     );
   });
