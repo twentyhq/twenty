@@ -10,7 +10,7 @@ import {
   type FrontComponentConfig,
   type LogicFunctionConfig,
 } from '@/sdk';
-import { ObjectConfig } from '@/sdk/objects/object-config';
+import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
 import { basename, extname, relative } from 'path';
