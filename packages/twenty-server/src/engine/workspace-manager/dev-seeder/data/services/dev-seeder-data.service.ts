@@ -18,8 +18,8 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import {
   ATTACHMENT_DATA_SEED_COLUMNS,
   ATTACHMENT_SAMPLE_FILES,
-  getAttachmentDataSeeds,
-  getAttachmentFileSeedMetadata,
+  type AttachmentFileSeedMetadata,
+  generateAttachmentSeedsForWorkspace,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import {
@@ -130,6 +130,7 @@ type RecordSeedConfig = {
 // Organize seeds into dependency batches for parallel insertion
 const getRecordSeedsBatches = (
   workspaceId: string,
+  attachmentSeeds: RecordSeedConfig['recordSeeds'],
   _featureFlags?: Record<FeatureFlagKey, boolean>,
 ): RecordSeedConfig[][] => {
   // Batch 1: No dependencies
@@ -278,7 +279,7 @@ const getRecordSeedsBatches = (
     {
       tableName: 'attachment',
       pgColumns: ATTACHMENT_DATA_SEED_COLUMNS,
-      recordSeeds: getAttachmentDataSeeds(workspaceId),
+      recordSeeds: attachmentSeeds,
     },
   ];
 
@@ -316,12 +317,16 @@ export class DevSeederDataService {
         },
       );
 
+    const { seeds: attachmentSeeds, fileSeedMetadata: attachmentFileMeta } =
+      generateAttachmentSeedsForWorkspace(workspaceId);
+
     await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         await this.seedRecordsInBatches({
           entityManager,
           schemaName,
           workspaceId,
+          attachmentSeeds,
           featureFlags,
           objectMetadataItems,
         });
@@ -332,7 +337,11 @@ export class DevSeederDataService {
           workspaceId,
         });
 
-        await this.seedAttachmentFiles(workspaceId, entityManager);
+        await this.seedAttachmentFiles(
+          workspaceId,
+          entityManager,
+          attachmentFileMeta,
+        );
 
         await prefillWorkflows(
           entityManager,
@@ -348,16 +357,22 @@ export class DevSeederDataService {
     entityManager,
     schemaName,
     workspaceId,
+    attachmentSeeds,
     featureFlags,
     objectMetadataItems,
   }: {
     entityManager: WorkspaceEntityManager;
     schemaName: string;
     workspaceId: string;
+    attachmentSeeds: RecordSeedConfig['recordSeeds'];
     featureFlags?: Record<FeatureFlagKey, boolean>;
     objectMetadataItems: FlatObjectMetadata[];
   }) {
-    const batches = getRecordSeedsBatches(workspaceId, featureFlags);
+    const batches = getRecordSeedsBatches(
+      workspaceId,
+      attachmentSeeds,
+      featureFlags,
+    );
 
     // Process batches sequentially (respecting dependencies)
     // but entities within each batch in parallel
@@ -414,6 +429,7 @@ export class DevSeederDataService {
   private async seedAttachmentFiles(
     workspaceId: string,
     entityManager: WorkspaceEntityManager,
+    fileSeedMetadata: AttachmentFileSeedMetadata[],
   ): Promise<void> {
     const IS_BUILT = __dirname.includes('/dist/');
     const sampleFilesDir = IS_BUILT
@@ -436,9 +452,6 @@ export class DevSeederDataService {
       STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
     const applicationUniversalIdentifier =
       TWENTY_STANDARD_APPLICATION.universalIdentifier;
-
-    // Create a FileEntity record for each attachment seed
-    const fileSeedMetadata = getAttachmentFileSeedMetadata(workspaceId);
 
     for (const metadata of fileSeedMetadata) {
       const resourcePath = `${metadata.fileId}.${metadata.extension}`;

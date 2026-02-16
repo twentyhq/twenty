@@ -138,19 +138,7 @@ export type AttachmentFileSeedMetadata = {
   extension: string;
 };
 
-export const getAttachmentDataSeeds = (
-  workspaceId: string,
-): AttachmentDataSeed[] => {
-  return generateAttachmentSeedsForWorkspace(workspaceId).seeds;
-};
-
-export const getAttachmentFileSeedMetadata = (
-  workspaceId: string,
-): AttachmentFileSeedMetadata[] => {
-  return generateAttachmentSeedsForWorkspace(workspaceId).fileSeedMetadata;
-};
-
-const generateAttachmentSeedsForWorkspace = (
+export const generateAttachmentSeedsForWorkspace = (
   workspaceId: string,
 ): {
   seeds: AttachmentDataSeed[];
