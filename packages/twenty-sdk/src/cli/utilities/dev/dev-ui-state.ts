@@ -7,12 +7,7 @@ export type UiEvent = {
   status: 'info' | 'success' | 'error' | 'warning';
 };
 
-export type SyncStatus =
-  | 'idle'
-  | 'building'
-  | 'syncing'
-  | 'synced'
-  | 'error';
+export type SyncStatus = 'idle' | 'building' | 'syncing' | 'synced' | 'error';
 
 export type StepStatus = 'idle' | 'in_progress' | 'done' | 'error';
 
