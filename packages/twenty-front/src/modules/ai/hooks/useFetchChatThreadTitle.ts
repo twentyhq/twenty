@@ -1,9 +1,9 @@
 import { GET_CHAT_THREAD } from '@/ai/graphql/queries/getChatThread';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 type GetChatThreadResult = {
   chatThread: {
@@ -14,29 +14,35 @@ type GetChatThreadResult = {
 
 export const useFetchChatThreadTitle = () => {
   const apolloClient = useApolloClient();
-  const setCurrentAIChatThreadTitle = useSetRecoilState(
-    currentAIChatThreadTitleState,
-  );
 
-  const fetchChatThreadTitle = useCallback(
-    (threadId: string) => {
-      setTimeout(async () => {
-        const result = await apolloClient
-          .query<GetChatThreadResult>({
-            query: GET_CHAT_THREAD,
-            variables: { id: threadId },
-            fetchPolicy: 'network-only',
-          })
-          .catch(() => null);
+  const fetchChatThreadTitle = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (threadId: string) => {
+        setTimeout(async () => {
+          const activeThread = snapshot
+            .getLoadable(currentAIChatThreadState)
+            .getValue();
 
-        const title = result?.data?.chatThread?.title;
+          if (activeThread !== threadId) {
+            return;
+          }
 
-        if (isNonEmptyString(title)) {
-          setCurrentAIChatThreadTitle(title);
-        }
-      }, 3000);
-    },
-    [apolloClient, setCurrentAIChatThreadTitle],
+          const result = await apolloClient
+            .query<GetChatThreadResult>({
+              query: GET_CHAT_THREAD,
+              variables: { id: threadId },
+              fetchPolicy: 'network-only',
+            })
+            .catch(() => null);
+
+          const title = result?.data?.chatThread?.title;
+
+          if (isNonEmptyString(title)) {
+            set(currentAIChatThreadTitleState, title);
+          }
+        }, 3000);
+      },
+    [apolloClient],
   );
 
   return { fetchChatThreadTitle };
