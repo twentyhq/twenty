@@ -1,20 +1,16 @@
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useApolloClient } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { type FileUIPart } from 'ai';
 import { useRecoilState } from 'recoil';
-import { buildSignedPath, isDefined } from 'twenty-shared/utils';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  FileFolder,
-  useUploadFileMutation,
-} from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { useUploadAgentChatFileMutation } from '~/generated-metadata/graphql';
 
 export const useAIChatFileUpload = () => {
-  const coreClient = useApolloCoreClient();
-  const [uploadFile] = useUploadFileMutation({ client: coreClient });
+  const apolloClient = useApolloClient();
+  const [uploadFile] = useUploadAgentChatFileMutation({ client: apolloClient });
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
@@ -27,30 +23,23 @@ export const useAIChatFileUpload = () => {
   const sendFile = async (file: File): Promise<FileUIPart | null> => {
     try {
       const result = await uploadFile({
-        variables: {
-          file,
-          fileFolder: FileFolder.AgentChat,
-        },
+        variables: { file },
       });
 
-      const response = result?.data?.uploadFile;
+      const response = result?.data?.uploadAgentChatFile;
 
       if (!isDefined(response)) {
         throw new Error(t`Couldn't upload the file.`);
       }
 
-      const signedPath = buildSignedPath({
-        path: response.path,
-        token: response.token,
-      });
-
       setAgentChatSelectedFiles(
         agentChatSelectedFiles.filter((f) => f.name !== file.name),
       );
+
       return {
         filename: file.name,
         mediaType: file.type,
-        url: `${REACT_APP_SERVER_BASE_URL}/files/${signedPath}`,
+        url: response.url,
         type: 'file',
       };
     } catch {

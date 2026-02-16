@@ -7,7 +7,7 @@ import {
   type CodeExecutionFile,
   type CodeExecutionState,
 } from 'twenty-shared/ai';
-import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -20,8 +20,7 @@ import {
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileAgentChatService } from 'src/engine/core-modules/file/file-agent-chat/file-agent-chat.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
@@ -47,8 +46,7 @@ export class CodeInterpreterTool implements Tool {
 
   constructor(
     private readonly codeInterpreterService: CodeInterpreterService,
-    private readonly fileStorageService: FileStorageService,
-    private readonly fileService: FileService,
+    private readonly fileAgentChatService: FileAgentChatService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtWrapperService: JwtWrapperService,
@@ -154,7 +152,7 @@ export class CodeInterpreterTool implements Tool {
             );
           },
           onResult: async (outputFile: OutputFile) => {
-            const uploadedFile = await this.uploadSingleFile(
+            const uploadedFile = await this.fileAgentChatService.uploadFile(
               outputFile,
               workspaceId,
               executionId,
@@ -342,56 +340,15 @@ export class CodeInterpreterTool implements Tool {
     });
   }
 
-  private async uploadSingleFile(
-    file: OutputFile,
-    workspaceId: string,
-    executionId: string,
-  ): Promise<CodeExecutionFile | null> {
-    const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
-    const folder = `workspace-${workspaceId}/${subFolder}`;
-
-    const sanitizedFilename = path.basename(file.filename);
-
-    try {
-      await this.fileStorageService.writeFileLegacy({
-        file: file.content,
-        name: sanitizedFilename,
-        mimeType: file.mimeType,
-        folder,
-      });
-
-      const filePath = `${subFolder}/${sanitizedFilename}`;
-      const signedPath = this.fileService.signFileUrl({
-        url: filePath,
-        workspaceId,
-      });
-
-      const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-      return {
-        filename: sanitizedFilename,
-        url: `${serverUrl}/files/${signedPath}`,
-        mimeType: file.mimeType,
-      };
-    } catch (error) {
-      this.logger.warn(`Failed to upload output file ${file.filename}`, error);
-
-      return null;
-    }
-  }
-
   private async uploadOutputFiles(
     files: OutputFile[],
     workspaceId: string,
     executionId: string,
     alreadyUploadedFiles: CodeExecutionFile[],
   ): Promise<CodeExecutionFile[]> {
-    const subFolder = `${FileFolder.AgentChat}/code-interpreter/${executionId}`;
-    const folder = `workspace-${workspaceId}/${subFolder}`;
-
     const outputFileUrls: CodeExecutionFile[] = [...alreadyUploadedFiles];
     const uploadedFilenames = new Set(
-      alreadyUploadedFiles.map((f) => f.filename),
+      alreadyUploadedFiles.map((file) => file.filename),
     );
 
     for (const file of files) {
@@ -401,32 +358,14 @@ export class CodeInterpreterTool implements Tool {
         continue;
       }
 
-      try {
-        await this.fileStorageService.writeFileLegacy({
-          file: file.content,
-          name: sanitizedFilename,
-          mimeType: file.mimeType,
-          folder,
-        });
+      const uploadedFile = await this.fileAgentChatService.uploadFile(
+        file,
+        workspaceId,
+        executionId,
+      );
 
-        const filePath = `${subFolder}/${sanitizedFilename}`;
-        const signedPath = this.fileService.signFileUrl({
-          url: filePath,
-          workspaceId,
-        });
-
-        const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-        outputFileUrls.push({
-          filename: sanitizedFilename,
-          url: `${serverUrl}/files/${signedPath}`,
-          mimeType: file.mimeType,
-        });
-      } catch (error) {
-        this.logger.warn(
-          `Failed to upload output file ${file.filename}`,
-          error,
-        );
+      if (isDefined(uploadedFile)) {
+        outputFileUrls.push(uploadedFile);
       }
     }
 
