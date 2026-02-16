@@ -332,7 +332,7 @@ export class DevSeederDataService {
           workspaceId,
         });
 
-        await this.seedAttachmentFiles(workspaceId);
+        await this.seedAttachmentFiles(workspaceId, entityManager);
 
         await prefillWorkflows(
           entityManager,
@@ -411,7 +411,10 @@ export class DevSeederDataService {
       .execute();
   }
 
-  private async seedAttachmentFiles(workspaceId: string): Promise<void> {
+  private async seedAttachmentFiles(
+    workspaceId: string,
+    entityManager: WorkspaceEntityManager,
+  ): Promise<void> {
     const IS_BUILT = __dirname.includes('/dist/');
     const sampleFilesDir = IS_BUILT
       ? join(
@@ -453,6 +456,7 @@ export class DevSeederDataService {
           isTemporaryFile: false,
           toDelete: false,
         },
+        queryRunner: entityManager.queryRunner,
       });
     }
   }

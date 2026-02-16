@@ -548,16 +548,22 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
       `${dryRun ? '[DRY RUN] ' : ''}Backfilling views and field metadata for workspace ${workspaceId}`,
     );
 
+    if (dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would update isSystem, labels/icons, backfill views and viewFields for workspace ${workspaceId}. Skipping.`,
+      );
+
+      return;
+    }
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    let totalAffected = 0;
-
     try {
       // Part 1: Mark fields as isSystem
-      const [systemResult] = await queryRunner.query(
+      const systemResult = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "isSystem" = true
          WHERE "workspaceId" = $1
@@ -566,20 +572,16 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
         [workspaceId, FIELDS_TO_MARK_AS_SYSTEM],
       );
 
-      const systemCount =
-        typeof systemResult === 'number'
-          ? systemResult
-          : (systemResult?.rowCount ?? 0);
+      const systemCount = systemResult?.[1] ?? 0;
 
       if (systemCount > 0) {
         this.logger.log(
           `Marked ${systemCount} field(s) as isSystem for workspace ${workspaceId}`,
         );
       }
-      totalAffected += systemCount;
 
       // Part 1b: Update morph field labels and icons to "Target"
-      const [labelResult] = await queryRunner.query(
+      const labelResult = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET label = 'Target', icon = 'IconArrowUpRight'
          WHERE "workspaceId" = $1
@@ -588,17 +590,13 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
         [workspaceId, MORPH_FIELDS_TO_RELABEL],
       );
 
-      const labelCount =
-        typeof labelResult === 'number'
-          ? labelResult
-          : (labelResult?.rowCount ?? 0);
+      const labelCount = labelResult?.[1] ?? 0;
 
       if (labelCount > 0) {
         this.logger.log(
           `Relabeled ${labelCount} morph field(s) to "Target" for workspace ${workspaceId}`,
         );
       }
-      totalAffected += labelCount;
 
       // Part 2: Resolve applicationId for twenty-standard app
       const applicationRows = await queryRunner.query(
@@ -613,10 +611,7 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
           `Twenty Standard Application not found for workspace ${workspaceId}. Skipping view backfill.`,
         );
         await queryRunner.commitTransaction();
-
-        if (totalAffected > 0) {
-          await this.invalidateCaches(workspaceId);
-        }
+        await this.invalidateCaches(workspaceId);
 
         return;
       }
@@ -659,12 +654,11 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
           this.logger.log(
             `Created view "${view.viewName}" for workspace ${workspaceId}`,
           );
-          totalAffected += viewInserted;
         }
 
         // Insert viewFields
         for (const viewField of view.viewFields) {
-          const vfInsertResult = await queryRunner.query(
+          await queryRunner.query(
             `INSERT INTO core."viewField" (
                id, "fieldMetadataId", "isVisible", size, position,
                "viewId", "workspaceId", "applicationId", "universalIdentifier"
@@ -695,22 +689,14 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
               viewField.viewFieldUI,
             ],
           );
-
-          const vfInserted = vfInsertResult?.[1] ?? 0;
-
-          totalAffected += vfInserted;
         }
       }
 
       await queryRunner.commitTransaction();
 
-      this.logger.log(
-        `${dryRun ? '[DRY RUN] ' : ''}Completed for workspace ${workspaceId}. Total affected rows: ${totalAffected}`,
-      );
+      this.logger.log(`Completed for workspace ${workspaceId}`);
 
-      if (totalAffected > 0) {
-        await this.invalidateCaches(workspaceId);
-      }
+      await this.invalidateCaches(workspaceId);
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
