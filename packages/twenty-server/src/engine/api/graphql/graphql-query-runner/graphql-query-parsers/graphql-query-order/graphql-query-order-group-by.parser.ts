@@ -388,7 +388,7 @@ export class GraphqlQueryOrderGroupByParser {
     fieldMetadata: FlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const groupByField = groupByFields.find(
-      (gbf) => gbf.fieldMetadata.id === fieldMetadata.id,
+      (groupByField) => groupByField.fieldMetadata.id === fieldMetadata.id,
     );
 
     if (!isDefined(groupByField)) {
