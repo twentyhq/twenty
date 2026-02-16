@@ -70,10 +70,10 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
 export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   Record<keyof typeof STANDARD_NAVIGATION_MENU_ITEMS, string>
 > = {
-  allCompanies: 'indigo',
-  allPeople: 'indigo',
-  allTasks: 'teal',
-  allNotes: 'teal',
+  allCompanies: 'blue',
+  allPeople: 'blue',
+  allTasks: 'turquoise',
+  allNotes: 'turquoise',
   allOpportunities: 'tomato',
   workflowsFolder: 'orange',
   allDashboards: 'gray',
