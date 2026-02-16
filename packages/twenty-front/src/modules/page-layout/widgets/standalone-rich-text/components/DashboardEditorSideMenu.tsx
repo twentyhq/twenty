@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconGripVertical } from 'twenty-ui/display';
 
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { DashboardBlockDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { isDefined } from 'twenty-shared/utils';

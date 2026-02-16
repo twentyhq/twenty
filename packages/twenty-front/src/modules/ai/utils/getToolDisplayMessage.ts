@@ -91,8 +91,8 @@ export const getToolDisplayMessage = (
 
     if (isNonEmptyString(query)) {
       return byStatus(
-        t`Searched the web for '${query}'`,
-        t`Searching the web for '${query}'`,
+        t`Searched the web for ${query}`,
+        t`Searching the web for ${query}`,
       );
     }
 

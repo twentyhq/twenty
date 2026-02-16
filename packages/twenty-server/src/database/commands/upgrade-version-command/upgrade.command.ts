@@ -21,6 +21,7 @@ import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
+import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
@@ -61,6 +62,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateAttachmentFilesCommand: MigrateAttachmentFilesCommand,
     protected readonly migrateActivityRichTextAttachmentFileIdsCommand: MigrateActivityRichTextAttachmentFileIdsCommand,
     protected readonly backfillMessageChannelThrottleRetryAfterCommand: BackfillMessageChannelThrottleRetryAfterCommand,
+    protected readonly backfillStandardViewsAndFieldMetadataCommand: BackfillStandardViewsAndFieldMetadataCommand,
   ) {
     super(
       workspaceRepository,
@@ -92,6 +94,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateActivityRichTextAttachmentFileIdsCommand,
       this.backfillFileSizeAndMimeTypeCommand,
       this.backfillMessageChannelThrottleRetryAfterCommand,
+      this.backfillStandardViewsAndFieldMetadataCommand,
     ];
 
     this.allCommands = {

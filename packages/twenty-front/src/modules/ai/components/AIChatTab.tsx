@@ -1,5 +1,5 @@
-import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
+import { EditorContent } from '@tiptap/react';
 import { IconHistory } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -17,15 +17,13 @@ import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoa
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
-import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
+import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -65,25 +63,39 @@ const StyledInputBox = styled.div`
   }
 `;
 
-const StyledTextAreaWrapper = styled.div`
+const StyledEditorWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-height: 0;
-`;
 
-const StyledChatTextArea = styled(TextArea)`
-  && {
+  .tiptap {
     background: transparent;
     border: none;
-    border-radius: 0;
     box-shadow: none;
+    color: ${({ theme }) => theme.font.color.primary};
+    font-family: inherit;
+    font-size: ${({ theme }) => theme.font.size.md};
+    font-weight: ${({ theme }) => theme.font.weight.regular};
+    line-height: 16px;
+    outline: none;
     padding: 0;
-  }
+    min-height: 48px;
+    max-height: 320px;
+    overflow-y: auto;
 
-  &&:focus {
-    border: none;
-    box-shadow: none;
+    p {
+      margin: 0;
+    }
+
+    p.is-editor-empty:first-of-type::before {
+      color: ${({ theme }) => theme.font.color.light};
+      content: attr(data-placeholder);
+      float: left;
+      font-weight: ${({ theme }) => theme.font.weight.regular};
+      height: 0;
+      pointer-events: none;
+    }
   }
 `;
 
@@ -108,14 +120,15 @@ const StyledButtonsContainer = styled.div`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const isMobile = useIsMobile();
-  const { isLoading, messages, isStreaming, error } =
+  const { isLoading, messages, isStreaming, error, handleSendMessage } =
     useAgentChatContextOrThrow();
-
-  const [agentChatInput, setAgentChatInput] =
-    useRecoilState(agentChatInputState);
 
   const { uploadFiles } = useAIChatFileUpload();
   const { navigateCommandMenu } = useCommandMenu();
+
+  const { editor, handleSendAndClear } = useAIChatEditor({
+    onSendMessage: handleSendMessage,
+  });
 
   return (
     <StyledContainer
@@ -158,7 +171,7 @@ export const AIChatTab = () => {
             </StyledScrollWrapper>
           )}
           {messages.length === 0 && !error && !isLoading && (
-            <AIChatEmptyState />
+            <AIChatEmptyState editor={editor} />
           )}
           {messages.length === 0 && error && !isLoading && (
             <AIChatStandaloneError error={error} />
@@ -168,16 +181,9 @@ export const AIChatTab = () => {
           <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />
             <StyledInputBox>
-              <StyledTextAreaWrapper>
-                <StyledChatTextArea
-                  textAreaId={AI_CHAT_INPUT_ID}
-                  placeholder={t`Ask, search or make anything...`}
-                  value={agentChatInput}
-                  onChange={(value) => setAgentChatInput(value)}
-                  minRows={3}
-                  maxRows={20}
-                />
-              </StyledTextAreaWrapper>
+              <StyledEditorWrapper>
+                <EditorContent editor={editor} />
+              </StyledEditorWrapper>
               <StyledButtonsContainer>
                 <AIChatContextUsageButton />
                 <IconButton
@@ -194,7 +200,7 @@ export const AIChatTab = () => {
                   ariaLabel={t`View Previous AI Chats`}
                 />
                 <AgentChatFileUploadButton />
-                <SendMessageButton />
+                <SendMessageButton onSend={handleSendAndClear} />
               </StyledButtonsContainer>
             </StyledInputBox>
           </StyledInputArea>

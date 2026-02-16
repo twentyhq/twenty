@@ -92,7 +92,6 @@ export type {
   Node,
   BaseOutputSchemaV2,
 } from './workflow-schema/types/base-output-schema.type';
-export { buildOutputSchemaFromValue } from './workflow-schema/utils/buildOutputSchemaFromValue';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigateOutputSchemaProperty';
 export type {
   GlobalAvailability,
