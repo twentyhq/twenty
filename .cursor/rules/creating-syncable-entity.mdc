@@ -177,9 +177,12 @@ packages/twenty-server/src/engine/metadata-modules/
 │   ├── services/
 │   └── utils/
 └── flat-entity/constant/                # Step 1 (central registries)
+    ├── all-entity-properties-configuration-by-metadata-name.constant.ts
+    ├── all-one-to-many-metadata-relations.constant.ts
+    ├── all-many-to-one-metadata-foreign-key.constant.ts
+    └── all-many-to-one-metadata-relations.constant.ts
 
 packages/twenty-server/src/engine/workspace-manager/workspace-migration/
-├── universal-flat-entity/constants/     # Step 1
 ├── workspace-migration-builder/         # Step 3
 │   ├── builders/my-entity/
 │   └── validators/services/
