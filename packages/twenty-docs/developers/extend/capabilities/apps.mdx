@@ -277,7 +277,11 @@ Key points:
 - You can scaffold new objects using `yarn twenty entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
-**Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields such as `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, and `deletedAt`. You don't need to define these in your `fields` array — only add your custom fields.
+**Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields
+  such as `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` and `deletedAt`.
+  You don't need to define these in your `fields` array — only add your custom fields.
+  You can override default fields by defining a field with the same name in your `fields` array,
+  but this is not recommended.
 </Note>
 
 
