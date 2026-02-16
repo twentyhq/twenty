@@ -124,10 +124,7 @@ export class PageLayoutUpdateService {
         },
       );
 
-    // Augment flatPageLayoutTabMaps with newly created tabs so that
-    // resolveEntityRelationUniversalIdentifiers can resolve their IDs
-    // when computing widget operations for new tabs.
-    const augmentedFlatPageLayoutTabMaps = tabsToCreate.reduce(
+    const optimisticFlatPageLayoutTabMaps = tabsToCreate.reduce(
       (maps, tab) =>
         addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: tab,
@@ -140,7 +137,7 @@ export class PageLayoutUpdateService {
       this.computeWidgetOperationsForAllTabs({
         tabs,
         flatPageLayoutWidgetMaps,
-        flatPageLayoutTabMaps: augmentedFlatPageLayoutTabMaps,
+        flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
         flatObjectMetadataMaps,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
