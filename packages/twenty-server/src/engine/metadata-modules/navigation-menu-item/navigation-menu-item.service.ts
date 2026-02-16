@@ -14,6 +14,7 @@ import { getRecordImageIdentifier } from 'src/engine/core-modules/record-crud/ut
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-create-navigation-menu-item-input-to-flat-navigation-menu-item-to-create.util';
 import { fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-delete-navigation-menu-item-input-to-flat-navigation-menu-item-or-throw.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemDto } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-flat-navigation-menu-item-to-navigation-menu-item-dto.util';
@@ -213,8 +214,9 @@ export class NavigationMenuItemService {
       );
 
     return fromFlatNavigationMenuItemToNavigationMenuItemDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatNavigationMenuItemToCreate.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          flatNavigationMenuItemToCreate.universalIdentifier,
         flatEntityMaps: recomputedFlatNavigationMenuItemMaps,
       }),
     );

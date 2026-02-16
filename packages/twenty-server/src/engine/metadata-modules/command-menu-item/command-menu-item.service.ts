@@ -17,6 +17,7 @@ import { fromFlatCommandMenuItemToCommandMenuItemDto } from 'src/engine/metadata
 import { fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-update-command-menu-item-input-to-flat-command-menu-item-to-update-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -142,8 +143,8 @@ export class CommandMenuItemService {
       );
 
     return fromFlatCommandMenuItemToCommandMenuItemDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatCommandMenuItemToCreate.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier: flatCommandMenuItemToCreate.universalIdentifier,
         flatEntityMaps: recomputedFlatCommandMenuItemMaps,
       }),
     );

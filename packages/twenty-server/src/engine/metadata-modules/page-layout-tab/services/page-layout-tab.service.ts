@@ -6,6 +6,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
 import { fromDestroyPageLayoutTabInputToFlatPageLayoutTabOrThrow } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-destroy-page-layout-tab-input-to-flat-page-layout-tab-or-throw.util';
@@ -187,13 +188,13 @@ export class PageLayoutTabService {
         },
       );
 
-    const createdTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatPageLayoutTabToCreate.id,
+    const createdTab = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: flatPageLayoutTabToCreate.universalIdentifier,
       flatEntityMaps: recomputedFlatPageLayoutTabMaps,
     });
 
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
-      tabId: flatPageLayoutTabToCreate.id,
+      tabId: createdTab.id,
       workspaceId,
       updatedAt: new Date(createdTab.updatedAt),
     });
