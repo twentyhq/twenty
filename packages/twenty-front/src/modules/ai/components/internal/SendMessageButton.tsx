@@ -1,6 +1,6 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { useRecoilValue } from 'recoil';
+import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
 
@@ -9,7 +9,7 @@ type SendMessageButtonProps = {
 };
 
 export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
-  const agentChatInput = useRecoilValue(agentChatInputState);
+  const agentChatInput = useRecoilValueV2(agentChatInputStateV2);
   const { handleStop, isLoading, isStreaming } = useAgentChatContextOrThrow();
 
   if (isStreaming) {

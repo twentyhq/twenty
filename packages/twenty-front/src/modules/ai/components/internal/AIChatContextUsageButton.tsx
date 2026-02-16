@@ -3,15 +3,15 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ProgressBar } from 'twenty-ui/feedback';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import {
-  agentChatUsageState,
+  agentChatUsageStateV2,
   type AgentChatLastMessageUsage,
-} from '@/ai/states/agentChatUsageState';
+} from '@/ai/states/agentChatUsageStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -127,7 +127,7 @@ export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
-  const agentChatUsage = useRecoilValue(agentChatUsageState);
+  const agentChatUsage = useRecoilValueV2(agentChatUsageStateV2);
 
   if (!agentChatUsage) {
     return (

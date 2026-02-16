@@ -12,11 +12,11 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
 import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
-import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
-import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
+import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
@@ -66,7 +66,7 @@ export const WorkflowEditActionAiAgent = ({
   const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
   const agentId = action.settings.input.agentId;
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
-    useRecoilState(workflowAiAgentActionAgentState);
+    useRecoilStateV2(workflowAiAgentActionAgentStateV2);
   const { loading: agentLoading, refetch: refetchAgent } = useFindOneAgentQuery(
     {
       variables: { id: agentId || '' },
@@ -217,7 +217,7 @@ export const WorkflowEditActionAiAgent = ({
   const [
     workflowAiAgentPermissionsIsAddingPermission,
     setWorkflowAiAgentPermissionsIsAddingPermission,
-  ] = useRecoilState(workflowAiAgentPermissionsIsAddingPermissionState);
+  ] = useRecoilStateV2(workflowAiAgentPermissionsIsAddingPermissionStateV2);
 
   const role = rolesData?.getRoles.find(
     (item) => item.id === workflowAiAgentActionAgent?.roleId,

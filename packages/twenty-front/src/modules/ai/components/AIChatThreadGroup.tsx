@@ -1,10 +1,11 @@
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
+import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/display';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
@@ -77,8 +78,10 @@ export const AIChatThreadGroup = ({
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const [, setCurrentAIChatThread] = useRecoilState(currentAIChatThreadState);
-  const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
+  const [, setCurrentAIChatThread] = useRecoilStateV2(
+    currentAIChatThreadStateV2,
+  );
+  const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   const handleThreadClick = (thread: AgentChatThread) => {

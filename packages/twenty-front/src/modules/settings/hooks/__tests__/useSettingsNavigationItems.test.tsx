@@ -12,7 +12,6 @@ import {
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { i18n } from '@lingui/core';
@@ -48,7 +47,6 @@ const mockBilling: Billing = {
 const initializeState = ({ set }: MutableSnapshot) => {
   set(currentUserState, mockCurrentUser);
   set(billingState, mockBilling);
-  set(labPublicFeatureFlagsState, []);
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
