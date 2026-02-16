@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -123,11 +124,23 @@ export class PageLayoutUpdateService {
         },
       );
 
+    // Augment flatPageLayoutTabMaps with newly created tabs so that
+    // resolveEntityRelationUniversalIdentifiers can resolve their IDs
+    // when computing widget operations for new tabs.
+    const augmentedFlatPageLayoutTabMaps = tabsToCreate.reduce(
+      (maps, tab) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: tab,
+          flatEntityMaps: maps,
+        }),
+      flatPageLayoutTabMaps,
+    );
+
     const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
       this.computeWidgetOperationsForAllTabs({
         tabs,
         flatPageLayoutWidgetMaps,
-        flatPageLayoutTabMaps,
+        flatPageLayoutTabMaps: augmentedFlatPageLayoutTabMaps,
         flatObjectMetadataMaps,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
