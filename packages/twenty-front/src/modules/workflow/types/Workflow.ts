@@ -120,7 +120,6 @@ export type WorkflowVersionStatus =
   | 'DEACTIVATED'
   | 'ARCHIVED';
 
-// Keep existing types that are not covered by schemas
 export type WorkflowVersion = {
   id: string;
   name: string;

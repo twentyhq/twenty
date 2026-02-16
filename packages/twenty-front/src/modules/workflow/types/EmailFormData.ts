@@ -1,5 +1,7 @@
-import { type EmailRecipients } from '@/workflow/types/EmailRecipients';
-import { type WorkflowAttachment } from '@/workflow/types/WorkflowAttachment';
+import {
+  type EmailRecipients,
+  type WorkflowAttachment,
+} from 'twenty-shared/workflow';
 
 export type EmailFormData = {
   connectedAccountId: string;

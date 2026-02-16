@@ -316,5 +316,12 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
         throw error;
       }
     }
+
+    if (!isDryRun) {
+      await this.featureFlagService.enableFeatureFlags(
+        [FeatureFlagKey.IS_CORE_PICTURE_MIGRATED],
+        workspaceId,
+      );
+    }
   }
 }

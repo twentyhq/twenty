@@ -6,7 +6,6 @@ import { Command } from 'nest-commander';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource, In, Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -125,11 +124,7 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
         continue;
       }
 
-      const updatedSteps = [...steps];
-
-      let hasChanges = false;
-
-      for (const step of updatedSteps) {
+      for (const step of steps) {
         if (step.type !== WorkflowActionType.SEND_EMAIL) {
           continue;
         }
@@ -140,8 +135,6 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
         if (!isNonEmptyArray(files)) {
           continue;
         }
-
-        const updatedFiles: WorkflowFile[] = [];
 
         for (const file of files) {
           const fileEntity = await fileRepository.findOne({
@@ -155,7 +148,6 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
             this.logger.warn(
               `File ${file.id} not found for workflow version ${workflowVersion.id}, skipping`,
             );
-            updatedFiles.push(file);
             continue;
           }
 
@@ -163,20 +155,18 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
             this.logger.log(
               `File ${file.id} already in Workflow folder, skipping copy`,
             );
-            updatedFiles.push(file);
             continue;
           }
 
-          const newFileId = v4();
-          const newResourcePath = `${newFileId}${isNonEmptyString(file.type) ? `.${file.type}` : ''}`;
+          const newResourcePath = `${fileEntity.id}${isNonEmptyString(file.type) ? `.${file.type}` : ''}`;
           const newPath = `${FileFolder.Workflow}/${newResourcePath}`;
 
           if (!isDryRun) {
             try {
               await this.fileStorageService.copyLegacy({
                 from: {
-                  folderPath: fileEntity.path,
-                  filename: file.name,
+                  folderPath: `workspace-${workspaceId}`,
+                  filename: fileEntity.path,
                 },
                 to: {
                   folderPath: `${workspaceId}/${workspaceCustomFlatApplication.universalIdentifier}`,
@@ -185,37 +175,36 @@ export class MigrateWorkflowSendEmailAttachmentsCommand extends ActiveOrSuspende
               });
             } catch (error) {
               this.logger.error(
-                `Failed to migrate file ${file.id} in workspace ${workspaceId}: ${error.message}`,
+                `Failed to migrate file ${fileEntity.id} in workspace ${workspaceId}: ${error.message}`,
               );
-              updatedFiles.push(file);
               continue;
             }
           } else {
             this.logger.log(
-              `[DRY RUN] Would migrate file ${file.id} from ${fileEntity.path} to ${newPath}`,
+              `[DRY RUN] Would migrate file ${fileEntity.id} from ${fileEntity.path} to ${newPath}`,
             );
           }
 
-          updatedFiles.push({
-            ...file,
-            id: newFileId,
-          });
-          hasChanges = true;
+          await fileRepository.update(
+            { id: fileEntity.id },
+            {
+              path: newPath,
+              applicationId: workspaceCustomFlatApplication.id,
+              settings: {
+                isTemporaryFile: true,
+                toDelete: false,
+              },
+            },
+          );
         }
-
-        sendEmailStep.settings.input.files = updatedFiles;
       }
+    }
 
-      if (hasChanges && !isDryRun) {
-        await workflowVersionRepository.update(
-          { id: workflowVersion.id },
-          { steps: updatedSteps },
-        );
-
-        this.logger.log(
-          `Updated workflow version ${workflowVersion.id} with migrated file paths`,
-        );
-      }
+    if (!isDryRun) {
+      await this.featureFlagService.enableFeatureFlags(
+        [FeatureFlagKey.IS_OTHER_FILE_MIGRATED],
+        workspaceId,
+      );
     }
 
     this.logger.log(

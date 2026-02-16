@@ -30,6 +30,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
 import { Callout, IconPlus } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
