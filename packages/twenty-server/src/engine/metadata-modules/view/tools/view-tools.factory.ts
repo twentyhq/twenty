@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
@@ -105,17 +106,19 @@ export class ViewToolsFactory {
         },
       );
 
-    const objectMetadata = Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    ).find((obj) => obj?.nameSingular === objectNameSingular);
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
 
-    if (!objectMetadata) {
+    const objectMetadataId = idByNameSingular[objectNameSingular];
+
+    if (!objectMetadataId) {
       throw new Error(
         `Object "${objectNameSingular}" not found. Use get_object_metadata to list available objects.`,
       );
     }
 
-    return objectMetadata.id;
+    return objectMetadataId;
   }
 
   private async resolveFieldMetadataId(

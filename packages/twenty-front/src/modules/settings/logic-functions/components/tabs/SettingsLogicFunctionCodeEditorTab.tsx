@@ -24,7 +24,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
 }: {
   files: File[];
   handleExecute: () => void;
-  onChange: (filePath: string, value: string) => void;
+  onChange: (value: string) => void;
   isTesting?: boolean;
 }) => {
   const activeTabId = useRecoilComponentValue(
@@ -63,9 +63,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
         <SettingsLogicFunctionCodeEditor
           files={files}
           currentFilePath={activeTabId}
-          onChange={(newCodeValue: string) =>
-            onChange(activeTabId, newCodeValue)
-          }
+          onChange={(newCodeValue: string) => onChange(newCodeValue)}
         />
       )}
     </Section>

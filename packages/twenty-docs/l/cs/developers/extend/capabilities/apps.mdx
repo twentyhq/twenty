@@ -554,6 +554,71 @@ Nové funkce můžete vytvářet dvěma způsoby:
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou logickou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
 * **Ruční**: Vytvořte nový soubor `*.logic-function.ts` a použijte `defineLogicFunction()` podle stejného vzoru.
 
+### Označení logické funkce jako nástroje
+
+Logické funkce lze zpřístupnit jako **nástroje** pro agenty AI a pracovní postupy. Když je funkce označena jako nástroj, stane se dohledatelnou funkcemi AI produktu Twenty a lze ji vybrat jako krok v automatizacích pracovních postupů.
+
+Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a poskytněte `toolInputSchema` popisující očekávané vstupní parametry pomocí [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Hlavní body:
+
+* **`isTool`** (`boolean`, výchozí: `false`): Když je nastaveno na `true`, funkce je zaregistrována jako nástroj a zpřístupní se agentům AI a automatizacím pracovních postupů.
+* **`toolInputSchema`** (`object`, volitelné): Objekt JSON Schema, který popisuje parametry, jež vaše funkce přijímá. Agenti AI používají toto schéma k pochopení toho, jaké vstupy nástroj očekává, a k ověřování volání. Pokud je vynecháno, schéma má výchozí podobu `{ type: 'object', properties: {} }` (žádné parametry).
+* Funkce s `isTool: false` (nebo není nastaveno) **nejsou** zpřístupněny jako nástroje. Stále je lze spouštět přímo nebo volat z jiných funkcí, ale neobjeví se ve vyhledávání nástrojů.
+* **Pojmenování nástrojů**: Když je funkce zpřístupněna jako nástroj, její název se automaticky normalizuje na `logic_function_<name>` (převedeno na malá písmena, nealfanumerické znaky jsou nahrazeny podtržítky). Například `enrich-company` se změní na `logic_function_enrich_company`.
+* Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) i spouštěna událostmi (cron, databázové události, routes).
+
+<Note>
+  **Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+</Note>
+
 ### Frontendové komponenty
 
 Frontendové komponenty vám umožňují vytvářet vlastní React komponenty, které se vykreslují v rozhraní Twenty. K definování komponent s vestavěnou validací použijte `defineFrontComponent()`:

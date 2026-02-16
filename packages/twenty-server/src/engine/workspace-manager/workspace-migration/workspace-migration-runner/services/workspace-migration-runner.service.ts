@@ -15,7 +15,7 @@ import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modul
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
+import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -150,10 +150,12 @@ export class WorkspaceMigrationRunnerService {
   }
 
   run = async ({
-    actions,
-    applicationUniversalIdentifier,
+    workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-  }: WorkspaceMigration): Promise<{
+  }: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
   }> => {
