@@ -1,7 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import {
+  type CreateNavigationMenuItemInput,
+  useCreateNavigationMenuItemMutation,
+} from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
@@ -82,16 +85,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
         ];
 
         for (const draftItem of idsToCreateIncludingRecreated) {
-          const input: {
-            position: number;
-            folderId?: string | null;
-            name?: string;
-            link?: string;
-            icon?: string | null;
-            viewId?: string;
-            targetObjectMetadataId?: string;
-            targetRecordId?: string;
-          } = {
+          const input: CreateNavigationMenuItemInput = {
             position: Math.max(0, Math.round(draftItem.position)),
           };
 
