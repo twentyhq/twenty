@@ -1,10 +1,11 @@
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
-import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
+import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { groupContiguousThinkingStepParts } from '@/ai/utils/thinkingStepsDisplayState';
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isToolUIPart } from 'ai';
@@ -65,13 +66,6 @@ const MessagePartRenderer = ({
   isStreaming: boolean;
 }) => {
   switch (part.type) {
-    case 'reasoning':
-      return (
-        <ReasoningSummaryDisplay
-          content={part.text}
-          isThinking={part.state === 'streaming'}
-        />
-      );
     case 'text':
       return <LazyMarkdownRenderer text={part.text} />;
     case 'data-routing-status':
@@ -114,21 +108,30 @@ export const AIChatAssistantMessageRenderer = ({
   const filteredParts = hasCodeInterpreterTool
     ? messageParts.filter((part) => part.type !== 'data-code-execution')
     : messageParts;
+  const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
-  if (!filteredParts.length && !hasError) {
+  if (!renderItems.length && !hasError) {
     return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
       <StyledMessagePartsContainer>
-        {filteredParts.map((part, index) => (
-          <MessagePartRenderer
-            key={index}
-            part={part}
-            isStreaming={isLastMessageStreaming}
-          />
-        ))}
+        {renderItems.map((renderItem, index) =>
+          renderItem.type === 'thinking-steps' ? (
+            <ThinkingStepsDisplay
+              key={index}
+              parts={renderItem.parts}
+              isLastMessageStreaming={isLastMessageStreaming}
+            />
+          ) : (
+            <MessagePartRenderer
+              key={index}
+              part={renderItem.part}
+              isStreaming={isLastMessageStreaming}
+            />
+          ),
+        )}
       </StyledMessagePartsContainer>
       {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>
