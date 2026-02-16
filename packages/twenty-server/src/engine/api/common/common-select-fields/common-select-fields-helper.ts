@@ -96,10 +96,7 @@ export class CommonSelectFieldsHelper {
         continue;
       }
 
-      if (
-        currentDepthLevelIsAJunctionTable &&
-        recurseIntoJunctionTableRelations
-      ) {
+      if (currentDepthLevelIsAJunctionTable) {
         const fieldIsJunctionRelation = getIsFlatFieldAJunctionRelationField({
           flatField,
         });
@@ -127,12 +124,12 @@ export class CommonSelectFieldsHelper {
 
       const flatFieldIsJoinColumn = getIsFlatFieldAJoinColumn({ flatField });
 
-      const isLastAllowedLevel =
+      const isFirstDepthLevel =
         depth === MAX_DEPTH &&
         isDefined(flatField.relationTargetObjectMetadataId);
 
       const shouldRecurseIntoRelation =
-        isLastAllowedLevel ||
+        isFirstDepthLevel ||
         (flatFieldIsJoinColumn && recurseIntoJunctionTableRelations);
 
       const nextLevelIsAJunctionTable = flatFieldIsJoinColumn;
@@ -147,6 +144,7 @@ export class CommonSelectFieldsHelper {
             depth: 1,
             onlyUseLabelIdentifierFieldsInRelations,
             currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,
+            recurseIntoJunctionTableRelations,
           });
 
         relationsSelectFields[flatField.name] = {
