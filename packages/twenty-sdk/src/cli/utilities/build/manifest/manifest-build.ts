@@ -27,6 +27,7 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -104,14 +105,26 @@ export const buildManifest = async (
           filePath,
         });
 
-        const { labelIdentifierFieldMetadataUniversalIdentifier, ...rest } =
-          extract.config;
+        const objectFieldsWithDefaultFields = injectDefaultFieldsInObjectFields(
+          extract.config,
+        );
+
+        const labelIdentifierFieldMetadataUniversalIdentifier =
+          extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
+          objectFieldsWithDefaultFields.find((field) => field.name === 'name')
+            ?.universalIdentifier;
+
+        if (!labelIdentifierFieldMetadataUniversalIdentifier) {
+          errors.push(
+            `No label identifier field found for object ${extract.config.nameSingular}. Please add a field with name "name" to your object.`,
+          );
+          break;
+        }
 
         const objectManifest: ObjectManifest = {
-          ...rest,
-          labelIdentifierFieldMetadataUniversalIdentifier:
-            // TODO replace by system id universal identifier once we've refactored it
-            labelIdentifierFieldMetadataUniversalIdentifier ?? '',
+          ...extract.config,
+          fields: objectFieldsWithDefaultFields,
+          labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
         objects.push(objectManifest);

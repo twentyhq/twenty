@@ -205,7 +205,10 @@ export class ApiService {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest)
+          syncApplication(manifest: $manifest) {
+            applicationUniversalIdentifier
+            actions
+          }
         }
       `;
 
