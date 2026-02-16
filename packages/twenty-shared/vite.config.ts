@@ -53,7 +53,10 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-shared' },
       rollupOptions: {
-        external: Object.keys((packageJson as any).dependencies || {}),
+        external: [
+          ...Object.keys((packageJson as any).dependencies || {}),
+          'typescript',
+        ],
         output: [
           {
             format: 'es',

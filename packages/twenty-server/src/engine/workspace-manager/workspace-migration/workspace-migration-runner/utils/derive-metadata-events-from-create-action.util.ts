@@ -1,4 +1,4 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
@@ -12,7 +12,12 @@ export const deriveMetadataEventsFromCreateAction = (
 ): MetadataEvent[] => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata': {
-      return flatAction.flatFieldMetadatas.map(
+      const flatFieldMetadatas = [
+        flatAction.flatEntity,
+        flatAction.relatedFlatFieldMetadata,
+      ].filter(isDefined);
+
+      return flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
           type: 'created',
           recordId: flatFieldMetadata.id,

@@ -123,6 +123,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       ],
       icon: 'IconNote',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000002',
       labelPlural: 'Root notes',
       labelSingular: 'Root note',
       namePlural: 'rootNotes',
@@ -199,6 +201,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       ],
       icon: 'IconMail',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        '58a0a314-d7ea-4865-9850-7fb84e72f30b',
       labelPlural: 'Post cards',
       labelSingular: 'Post card',
       namePlural: 'postCards',
@@ -259,6 +263,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
+      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -273,6 +278,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'greeting-function',
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
+      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -287,6 +293,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function-2',
       sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
+      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       cronTriggerSettings: {
         pattern: '0 0 1 1 *',
@@ -299,6 +306,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function',
       sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
+      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],

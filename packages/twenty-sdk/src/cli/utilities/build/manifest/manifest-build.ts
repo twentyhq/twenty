@@ -10,6 +10,7 @@ import {
   type FrontComponentConfig,
   type LogicFunctionConfig,
 } from '@/sdk';
+import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
 import { basename, extname, relative } from 'path';
@@ -24,6 +25,7 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
+import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
@@ -97,11 +99,23 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Objects: {
-        const extract = await extractManifestFromFile<ObjectManifest>({
+        const extract = await extractManifestFromFile<ObjectConfig>({
           appPath,
           filePath,
         });
-        objects.push(extract.config);
+
+        const { labelIdentifierFieldMetadataUniversalIdentifier, ...rest } =
+          extract.config;
+
+        const objectManifest: ObjectManifest = {
+          ...rest,
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            // TODO replace by system id universal identifier once we've refactored it
+            labelIdentifierFieldMetadataUniversalIdentifier ?? '',
+        };
+
+        objects.push(objectManifest);
+
         errors.push(...extract.errors);
         objectsFilePaths.push(relativePath);
         break;
@@ -138,8 +152,13 @@ export const buildManifest = async (
 
         const relativeFilePath = relative(appPath, filePath);
 
+        const toolInputSchema =
+          rest.toolInputSchema ??
+          (await getInputSchemaFromSourceCode(fileContent));
+
         const config: LogicFunctionManifest = {
           ...rest,
+          toolInputSchema,
           handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),

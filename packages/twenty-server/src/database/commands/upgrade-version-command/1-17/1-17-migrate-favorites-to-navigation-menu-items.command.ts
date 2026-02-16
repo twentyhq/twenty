@@ -753,7 +753,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new Error(
         `Failed to create navigation menu items: ${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );

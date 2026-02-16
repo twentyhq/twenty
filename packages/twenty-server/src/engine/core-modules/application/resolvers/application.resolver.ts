@@ -128,10 +128,12 @@ export class ApplicationResolver {
       );
 
     await this.workspaceMigrationRunnerService.run({
-      actions,
+      workspaceMigration: {
+        actions,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      },
       workspaceId,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     return true;
