@@ -70,7 +70,6 @@ export type { EmailFormData } from './types/EmailFormData';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
-export type { WorkflowEmailAction } from './types/WorkflowEmailAction';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
