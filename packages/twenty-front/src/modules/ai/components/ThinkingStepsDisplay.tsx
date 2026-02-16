@@ -104,10 +104,10 @@ const StyledRowLabel = styled.span`
 
 const StyledToolRowLabel = styled.span`
   color: inherit;
-  flex: 1;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
+  max-width: 100%;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
