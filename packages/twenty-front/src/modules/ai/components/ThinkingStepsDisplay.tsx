@@ -1,9 +1,14 @@
 import styled from '@emotion/styled';
 import { plural, t } from '@lingui/core/macro';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, IconChevronRight, IconCpu, TooltipDelay } from 'twenty-ui/display';
+import {
+  IconChevronRight,
+  IconCpu,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
+} from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { type JsonValue } from 'type-fest';
@@ -102,7 +107,7 @@ const StyledRowLabel = styled.span`
   transition: color 0.1s ease-in-out;
 `;
 
-const StyledToolRowLabel = styled.span`
+const StyledToolRowLabel = styled.div`
   color: inherit;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -246,7 +251,6 @@ const ThinkingToolStepRow = ({
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  const toolLabelTooltipAnchorId = useId().replaceAll(':', '-');
   const rawToolName = part.type.split('-')[1];
   const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
     part.input,
@@ -294,8 +298,11 @@ const ThinkingToolStepRow = ({
           <ToolIcon size={14} />
         </StyledIconContainer>
         <StyledRowLabelContainer>
-          <StyledToolRowLabel id={toolLabelTooltipAnchorId}>
-            {label}
+          <StyledToolRowLabel>
+            <OverflowingTextWithTooltip
+              text={label}
+              tooltipDelay={TooltipDelay.shortDelay}
+            />
           </StyledToolRowLabel>
           {isExpandable && (
             <StyledChevronContainer isExpanded={isExpanded}>
@@ -304,13 +311,6 @@ const ThinkingToolStepRow = ({
           )}
         </StyledRowLabelContainer>
       </StyledToolRowButton>
-      <AppTooltip
-        anchorSelect={`#${toolLabelTooltipAnchorId}`}
-        content={label}
-        delay={TooltipDelay.shortDelay}
-        noArrow
-        place="bottom"
-      />
 
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
