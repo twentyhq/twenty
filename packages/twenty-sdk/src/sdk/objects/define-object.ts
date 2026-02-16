@@ -1,7 +1,7 @@
 import { type ObjectManifest } from 'twenty-shared/application';
 
-import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 import { validateFields } from '@/sdk/fields/validate-fields';
 
 export const defineObject: DefineEntity<ObjectManifest> = (config) => {

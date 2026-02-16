@@ -1,9 +1,9 @@
-import {
-    defineFrontComponent,
-    useFrontComponentExecutionContext,
-    useUserId,
-} from '@/sdk';
 import { useState } from 'react';
+import {
+  defineFrontComponent,
+  useFrontComponentExecutionContext,
+  useUserId,
+} from '@/sdk';
 
 const CARD_STYLE = {
   padding: 24,

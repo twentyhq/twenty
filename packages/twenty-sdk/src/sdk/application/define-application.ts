@@ -1,6 +1,6 @@
-import { type ApplicationConfig } from '@/sdk/application/application-config';
-import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { type ApplicationConfig } from '@/sdk/application/application-config';
 
 export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   const errors = [];

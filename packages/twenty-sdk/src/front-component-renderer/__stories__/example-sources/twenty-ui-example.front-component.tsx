@@ -1,14 +1,14 @@
-import { defineFrontComponent } from '@/sdk';
 import { useState } from 'react';
+import { defineFrontComponent } from '@/sdk';
 import {
-    Button,
-    Chip,
-    ChipVariant,
-    H2Title,
-    Status,
-    Tag,
-    THEME_LIGHT,
-    ThemeProvider,
+  Button,
+  Chip,
+  ChipVariant,
+  H2Title,
+  Status,
+  Tag,
+  THEME_LIGHT,
+  ThemeProvider,
 } from 'twenty-sdk/ui';
 
 const CARD_STYLE = {

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-    getFrontComponentExecutionContext,
-    subscribeToFrontComponentExecutionContext,
-    unsubscribeFromFrontComponentExecutionContext,
+  getFrontComponentExecutionContext,
+  subscribeToFrontComponentExecutionContext,
+  unsubscribeFromFrontComponentExecutionContext,
 } from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
 
