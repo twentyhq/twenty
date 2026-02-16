@@ -56,7 +56,7 @@ Follow these skills in order:
 - Create TypeORM entity (extends `SyncableEntity`)
 - Define flat entity types
 - Define action types (universal + flat)
-- Register in 4 central constants
+- Register in 5 central constants
 
 **Why first:** Everything else depends on these types
 
@@ -192,7 +192,7 @@ packages/twenty-server/src/engine/workspace-manager/workspace-migration/
 Before considering complete:
 - [ ] All 6 guides completed
 - [ ] TypeORM entity extends `SyncableEntity`
-- [ ] All constants registered (4 central registries)
+- [ ] All constants registered (5 central registries)
 - [ ] Cache service with correct decorator
 - [ ] Transform utils return universal flat entities
 - [ ] Validator never throws/mutates
