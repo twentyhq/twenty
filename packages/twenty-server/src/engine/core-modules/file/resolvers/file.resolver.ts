@@ -26,7 +26,7 @@ export class FileResolver {
   constructor(private readonly fileMetadataService: FileMetadataService) {}
 
   @Mutation(() => FileDTO, {
-    deprecationReason: 'Use specfic file service instead',
+    deprecationReason: 'Use specific file service instead',
   })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async createFile(
