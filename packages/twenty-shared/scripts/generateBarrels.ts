@@ -271,6 +271,7 @@ const EXCLUDED_DIRECTORIES = [
   '**/__stories__/**',
   '**/internal/**',
 ] as const;
+const EXCLUDED_FILES = ['**/get-function-input-schema.ts'] as const;
 const getTypeScriptFiles = (
   directoryPath: string,
   includeIndex: boolean = false,
@@ -279,7 +280,11 @@ const getTypeScriptFiles = (
   const files = globSync(pattern, {
     cwd: SRC_PATH,
     nodir: true,
-    ignore: [...EXCLUDED_EXTENSIONS, ...EXCLUDED_DIRECTORIES],
+    ignore: [
+      ...EXCLUDED_EXTENSIONS,
+      ...EXCLUDED_DIRECTORIES,
+      ...EXCLUDED_FILES,
+    ],
   });
 
   return files.filter(
