@@ -1,58 +1,70 @@
-import { ON_FRONT_COMPONENT_UPDATED } from '@/front-components/graphql/subscriptions/onFrontComponentUpdated';
-import { SseClientContext } from '@/sse-db-event/contexts/SseClientContext';
-import { useContext, useEffect } from 'react';
-
-type OnFrontComponentUpdatedData = {
-  onFrontComponentUpdated: {
-    id: string;
-    builtComponentChecksum: string;
-    updatedAt: string;
-  };
-};
+import { useListenToMetadataOperationBrowserEvent } from '@/object-metadata/hooks/useListenToMetadataOperationBrowserEvent';
+import { type MetadataOperationBrowserEventDetail } from '@/object-metadata/types/MetadataOperationBrowserEventDetail';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useApolloClient } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  AllMetadataName,
+  type FindOneFrontComponentQuery,
+  FindOneFrontComponentDocument,
+} from '~/generated-metadata/graphql';
 
 type UseOnFrontComponentUpdatedArgs = {
   frontComponentId: string;
-  onData?: (data: OnFrontComponentUpdatedData) => void;
-  onError?: (err: unknown) => void;
-  onComplete?: () => void;
-  skip?: boolean;
 };
 
 export const useOnFrontComponentUpdated = ({
   frontComponentId,
-  onData,
-  onError,
-  onComplete,
-  skip = false,
 }: UseOnFrontComponentUpdatedArgs) => {
-  const sseClient = useContext(SseClientContext);
+  const queryId = `front-component-updated-${frontComponentId}`;
+  const apolloClient = useApolloClient();
 
-  useEffect(() => {
-    if (skip) {
+  useListenToEventsForQuery({
+    queryId,
+    operationSignature: {
+      objectNameSingular: AllMetadataName.frontComponent,
+      variables: {
+        filter: { id: { eq: frontComponentId } },
+      },
+    },
+  });
+
+  const handleFrontComponentUpdated = (
+    detail: MetadataOperationBrowserEventDetail,
+  ) => {
+    if (detail.operation.type !== 'update') {
       return;
     }
 
-    const next = (value: { data: OnFrontComponentUpdatedData }) =>
-      onData?.(value.data);
+    const newChecksum = detail.operation.updatedRecord.builtComponentChecksum;
 
-    const error = (error: unknown) => onError?.(error);
+    if (!isNonEmptyString(newChecksum)) {
+      return;
+    }
 
-    const complete = () => onComplete?.();
-
-    const unsubscribe = sseClient?.subscribe(
+    apolloClient.cache.updateQuery<FindOneFrontComponentQuery>(
       {
-        query: ON_FRONT_COMPONENT_UPDATED.loc?.source.body || '',
-        variables: { input: { id: frontComponentId } },
+        query: FindOneFrontComponentDocument,
+        variables: { id: frontComponentId },
       },
-      {
-        next,
-        error,
-        complete,
+      (existingData) => {
+        if (!existingData?.frontComponent) {
+          return existingData;
+        }
+
+        return {
+          ...existingData,
+          frontComponent: {
+            ...existingData.frontComponent,
+            builtComponentChecksum: newChecksum,
+          },
+        };
       },
     );
+  };
 
-    return () => {
-      unsubscribe?.();
-    };
-  }, [frontComponentId, onComplete, onData, onError, skip, sseClient]);
+  useListenToMetadataOperationBrowserEvent({
+    metadataName: AllMetadataName.frontComponent,
+    onMetadataOperationBrowserEvent: handleFrontComponentUpdated,
+  });
 };

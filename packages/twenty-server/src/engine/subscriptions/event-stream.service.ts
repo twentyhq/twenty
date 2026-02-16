@@ -1,6 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
-import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -180,7 +179,7 @@ export class EventStreamService implements OnModuleInit {
     workspaceId: string;
     eventStreamChannelId: string;
     queryId: string;
-    operationSignature: RecordGqlOperationSignature;
+    operationSignature: Record<string, unknown>;
   }): Promise<void> {
     const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
     const existing = await this.cacheStorageService.get<EventStreamData>(key);

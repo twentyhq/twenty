@@ -1,4 +1,5 @@
 import { ON_EVENT_SUBSCRIPTION } from '@/sse-db-event/graphql/subscriptions/OnEventSubscription';
+import { useDispatchMetadataEventsFromSseToBrowserEvents } from '@/sse-db-event/hooks/useDispatchMetadataEventsFromSseToBrowserEvents';
 import { useDispatchObjectRecordEventsFromSseToBrowserEvents } from '@/sse-db-event/hooks/useDispatchObjectRecordEventsFromSseToBrowserEvents';
 import { useTriggerOptimisticEffectFromSseEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseEvents';
 import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/disposeFunctionByEventStreamMapState';
@@ -22,6 +23,9 @@ export const useTriggerEventStreamCreation = () => {
   const setIsCreatingSseEventStream = useSetRecoilState(
     isCreatingSseEventStreamState,
   );
+
+  const { dispatchMetadataEventsFromSseToBrowserEvents } =
+    useDispatchMetadataEventsFromSseToBrowserEvents();
 
   const { dispatchObjectRecordEventsFromSseToBrowserEvents } =
     useDispatchObjectRecordEventsFromSseToBrowserEvents();
@@ -94,13 +98,16 @@ export const useTriggerEventStreamCreation = () => {
                 set(sseEventStreamReadyState, true);
               }
 
+              const eventSubscription = value?.data?.onEventSubscription;
+
               const objectRecordEventsWithQueryIds =
-                value?.data?.onEventSubscription?.eventWithQueryIdsList ?? [];
+                eventSubscription?.objectRecordEventsWithQueryIds ?? [];
+
+              const metadataEventsWithQueryIds =
+                eventSubscription?.metadataEventsWithQueryIds ?? [];
 
               const objectRecordEvents = objectRecordEventsWithQueryIds.map(
-                (eventWithQueryIds) => {
-                  return eventWithQueryIds.event;
-                },
+                (item) => item.objectRecordEvent,
               );
 
               triggerOptimisticEffectFromSseEvents({
@@ -109,6 +116,10 @@ export const useTriggerEventStreamCreation = () => {
 
               dispatchObjectRecordEventsFromSseToBrowserEvents(
                 objectRecordEventsWithQueryIds,
+              );
+
+              dispatchMetadataEventsFromSseToBrowserEvents(
+                metadataEventsWithQueryIds,
               );
             },
             error: (error) => {
@@ -147,9 +158,9 @@ export const useTriggerEventStreamCreation = () => {
         setIsCreatingSseEventStream(false);
       },
     [
+      dispatchMetadataEventsFromSseToBrowserEvents,
       dispatchObjectRecordEventsFromSseToBrowserEvents,
       setIsCreatingSseEventStream,
-
       triggerOptimisticEffectFromSseEvents,
     ],
   );

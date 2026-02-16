@@ -11,17 +11,18 @@ import { combineFilters, isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
@@ -154,7 +155,7 @@ export class WorkspaceEventEmitterService {
 
     const matchedEvents: {
       queryIds: string[];
-      event: ObjectRecordEvent & { objectNameSingular: string };
+      objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
 
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
@@ -209,15 +210,20 @@ export class WorkspaceEventEmitterService {
 
       matchedEvents.push({
         queryIds: matchedQueryIds,
-        event: filteredEvent,
+        objectRecordEvent: filteredEvent,
       });
     }
 
     if (matchedEvents.length > 0) {
+      const payload: EventStreamPayload = {
+        objectRecordEventsWithQueryIds: matchedEvents,
+        metadataEventsWithQueryIds: [],
+      };
+
       await this.subscriptionService.publishToEventStream({
         workspaceId: workspaceEventBatch.workspaceId,
         eventStreamChannelId: streamChannelId,
-        payload: matchedEvents,
+        payload,
       });
     }
   }
@@ -320,13 +326,7 @@ export class WorkspaceEventEmitterService {
   }
 
   private getMatchingQueryIds(
-    queries: Record<
-      string,
-      {
-        objectNameSingular: string;
-        variables?: { filter?: RecordGqlOperationFilter };
-      }
-    >,
+    queries: Record<string, Record<string, unknown>>,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
@@ -352,16 +352,16 @@ export class WorkspaceEventEmitterService {
   }
 
   private isQueryMatchingEvent(
-    operationSignature: {
-      objectNameSingular: string;
-      variables?: { filter?: RecordGqlOperationFilter };
-    },
+    operationSignature: Record<string, unknown>,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): boolean {
-    if (operationSignature.objectNameSingular !== event.objectNameSingular) {
+    if (
+      typeof operationSignature.objectNameSingular !== 'string' ||
+      operationSignature.objectNameSingular !== event.objectNameSingular
+    ) {
       return false;
     }
 
@@ -375,7 +375,11 @@ export class WorkspaceEventEmitterService {
       return false;
     }
 
-    const queryFilter = operationSignature.variables?.filter ?? {};
+    const variables = operationSignature.variables as
+      | { filter?: RecordGqlOperationFilter }
+      | undefined;
+
+    const queryFilter = variables?.filter ?? {};
 
     const filtersToApply: RecordGqlOperationFilter[] = [queryFilter];
 

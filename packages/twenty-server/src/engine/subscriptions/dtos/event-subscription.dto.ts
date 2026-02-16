@@ -1,14 +1,24 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { MetadataEventDTO } from './metadata-event.dto';
 import { ObjectRecordEventDTO } from './object-record-event.dto';
 
-@ObjectType('EventWithQueryIds')
-export class EventWithQueryIdsDTO {
+@ObjectType('ObjectRecordEventWithQueryIds')
+export class ObjectRecordEventWithQueryIdsDTO {
   @Field(() => [String])
   queryIds: string[];
 
   @Field(() => ObjectRecordEventDTO)
-  event: ObjectRecordEventDTO;
+  objectRecordEvent: ObjectRecordEventDTO;
+}
+
+@ObjectType('MetadataEventWithQueryIds')
+export class MetadataEventWithQueryIdsDTO {
+  @Field(() => [String])
+  queryIds: string[];
+
+  @Field(() => MetadataEventDTO)
+  metadataEvent: MetadataEventDTO;
 }
 
 @ObjectType('EventSubscription')
@@ -16,6 +26,9 @@ export class EventSubscriptionDTO {
   @Field(() => String)
   eventStreamId: string;
 
-  @Field(() => [EventWithQueryIdsDTO])
-  eventWithQueryIdsList: EventWithQueryIdsDTO[];
+  @Field(() => [ObjectRecordEventWithQueryIdsDTO])
+  objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIdsDTO[];
+
+  @Field(() => [MetadataEventWithQueryIdsDTO])
+  metadataEventsWithQueryIds: MetadataEventWithQueryIdsDTO[];
 }
