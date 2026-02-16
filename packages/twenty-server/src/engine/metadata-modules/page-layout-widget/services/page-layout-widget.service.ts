@@ -258,7 +258,6 @@ export class PageLayoutWidgetService {
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
         createPageLayoutWidgetInput: createInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutTabMaps,
         flatObjectMetadataMaps,

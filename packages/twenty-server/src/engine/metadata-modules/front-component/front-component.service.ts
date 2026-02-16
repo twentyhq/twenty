@@ -93,7 +93,6 @@ export class FrontComponentService {
     const flatFrontComponentToCreate =
       fromCreateFrontComponentInputToFlatFrontComponentToCreate({
         createFrontComponentInput: input,
-        workspaceId,
         flatApplication: resolvedOwnerFlatApplication,
       });
 

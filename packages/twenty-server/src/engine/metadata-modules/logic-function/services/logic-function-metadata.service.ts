@@ -97,7 +97,6 @@ export class LogicFunctionMetadataService {
     const flatLogicFunctionToCreate =
       fromCreateLogicFunctionInputToFlatLogicFunction({
         createLogicFunctionInput: input,
-        workspaceId,
         ownerFlatApplication: resolvedOwnerFlatApplication,
       });
 

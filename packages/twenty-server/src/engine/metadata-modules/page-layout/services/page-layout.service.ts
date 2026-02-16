@@ -201,7 +201,6 @@ export class PageLayoutService {
     const flatPageLayoutToCreate =
       fromCreatePageLayoutInputToFlatPageLayoutToCreate({
         createPageLayoutInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });

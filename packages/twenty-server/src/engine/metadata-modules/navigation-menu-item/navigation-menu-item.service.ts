@@ -174,7 +174,6 @@ export class NavigationMenuItemService {
     const flatNavigationMenuItemToCreate =
       fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
         createNavigationMenuItemInput: normalizedInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
         flatObjectMetadataMaps,

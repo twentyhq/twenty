@@ -110,7 +110,6 @@ export class RoleService {
   }): Promise<RoleDTO> {
     const flatRoleToCreate = fromCreateRoleInputToFlatRoleToCreate({
       createRoleInput: input,
-      workspaceId,
       flatApplication: ownerFlatApplication,
     });
 

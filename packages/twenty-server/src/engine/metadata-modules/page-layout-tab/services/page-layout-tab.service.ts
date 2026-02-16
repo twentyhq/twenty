@@ -151,7 +151,6 @@ export class PageLayoutTabService {
     const flatPageLayoutTabToCreate =
       fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate({
         createPageLayoutTabInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
       });

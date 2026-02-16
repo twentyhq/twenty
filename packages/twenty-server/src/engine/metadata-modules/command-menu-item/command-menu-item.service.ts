@@ -104,7 +104,6 @@ export class CommandMenuItemService {
     const flatCommandMenuItemToCreate =
       fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate({
         createCommandMenuItemInput: input,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatObjectMetadataMaps,
         flatFrontComponentMaps,

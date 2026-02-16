@@ -110,7 +110,6 @@ export class WebhookService {
         ...input,
         targetUrl: normalizedTargetUrl,
       },
-      workspaceId,
       flatApplication: workspaceCustomFlatApplication,
     });
 
