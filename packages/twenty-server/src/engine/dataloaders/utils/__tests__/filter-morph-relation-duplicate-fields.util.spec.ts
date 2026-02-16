@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const makeMorphField = (
   overrides: Partial<FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>> & {
@@ -16,9 +16,7 @@ const makeMorphField = (
     ...overrides,
   }) as FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 
-const makeTextField = (
-  id: string,
-): FlatFieldMetadata<FieldMetadataType.TEXT> =>
+const makeTextField = (id: string): FlatFieldMetadata<FieldMetadataType.TEXT> =>
   ({
     id,
     type: FieldMetadataType.TEXT,
@@ -57,11 +55,7 @@ describe('filterMorphRelationDuplicateFields', () => {
     });
     const text = makeTextField('t1');
 
-    const result = filterMorphRelationDuplicateFields([
-      system,
-      text,
-      standard,
-    ]);
+    const result = filterMorphRelationDuplicateFields([system, text, standard]);
 
     expect(result).toHaveLength(2);
     expect(result).toContain(text);
