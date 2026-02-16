@@ -350,7 +350,7 @@ export class FrontComponentService {
         onFrontComponentUpdated: {
           id: flatFrontComponent.id,
           builtComponentChecksum: flatFrontComponent.builtComponentChecksum,
-          updatedAt: new Date(),
+          updatedAt: new Date().toISOString(),
         },
       },
     });

@@ -17,6 +17,8 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
+import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -34,6 +36,7 @@ export class ApplicationManifestMigrationService {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionFlagService: PermissionFlagService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   async syncMetadataFromManifest({
@@ -98,6 +101,11 @@ export class ApplicationManifestMigrationService {
     this.logger.log(
       `Metadata migration completed for application ${ownerFlatApplication.universalIdentifier}`,
     );
+
+    await this.publishFrontComponentSyncedEvents({
+      applicationId: ownerFlatApplication.id,
+      workspaceId,
+    });
 
     await this.syncRolePermissionsAndDefaultRole({
       manifest,
@@ -289,5 +297,46 @@ export class ApplicationManifestMigrationService {
         },
       });
     }
+  }
+
+  private async publishFrontComponentSyncedEvents({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatFrontComponentMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFrontComponentMaps',
+      ]);
+
+    const universalIdentifiers =
+      flatFrontComponentMaps.universalIdentifiersByApplicationId[
+        applicationId
+      ] ?? [];
+
+    const updatedFlatFrontComponents = universalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          flatFrontComponentMaps.byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined);
+
+    await Promise.all(
+      updatedFlatFrontComponents.map((flatFrontComponent) =>
+        this.subscriptionService.publish({
+          channel: SubscriptionChannel.FRONT_COMPONENT_UPDATED_CHANNEL,
+          workspaceId,
+          payload: {
+            onFrontComponentUpdated: {
+              id: flatFrontComponent.id,
+              builtComponentChecksum: flatFrontComponent.builtComponentChecksum,
+              updatedAt: new Date(),
+            },
+          },
+        }),
+      ),
+    );
   }
 }

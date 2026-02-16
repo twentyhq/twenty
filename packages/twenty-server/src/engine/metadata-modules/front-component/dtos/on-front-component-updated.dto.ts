@@ -10,6 +10,6 @@ export class OnFrontComponentUpdatedDTO {
   @Field()
   builtComponentChecksum: string;
 
-  @Field()
-  updatedAt: Date;
+  @Field(() => String)
+  updatedAt: string;
 }

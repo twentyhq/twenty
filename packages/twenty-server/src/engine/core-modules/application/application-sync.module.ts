@@ -18,6 +18,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
 
@@ -36,6 +37,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     FileStorageModule,
     WorkspaceCacheModule,
     WorkspaceMigrationRunnerModule,
+    SubscriptionsModule,
   ],
   providers: [
     ApplicationResolver,
