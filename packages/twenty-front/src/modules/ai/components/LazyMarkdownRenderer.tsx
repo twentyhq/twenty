@@ -100,21 +100,12 @@ const MarkdownRenderer = lazy(async () => {
             </a>
           ),
           code: ({
-            inline,
             className,
             children,
           }: {
-            inline?: boolean;
             className?: string;
             children?: React.ReactNode;
-          }) =>
-            inline ? (
-              <code className={`markdown-inline-code ${className ?? ''}`.trim()}>
-                {children}
-              </code>
-            ) : (
-              <code className={className}>{children}</code>
-            ),
+          }) => <code className={className}>{children}</code>,
           pre: ({ children }) => (
             <div className="markdown-code-outer-container">
               <pre className="markdown-block-code">{children}</pre>
@@ -210,10 +201,6 @@ const StyledMarkdownContainer = styled.div`
     margin-top: 12px;
   }
 
-  br {
-    display: none;
-  }
-
   hr {
     background-color: ${({ theme }) => theme.border.color.light} !important;
     border: none;
@@ -239,7 +226,6 @@ const StyledMarkdownContainer = styled.div`
     padding-top: ${({ theme }) => theme.spacing(0.5)} !important;
   }
 
-  .markdown-inline-code,
   :not(pre) > code {
     background-color: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -250,14 +236,12 @@ const StyledMarkdownContainer = styled.div`
     transition: all 0.1s ease;
   }
 
-  .markdown-inline-code[style*='cursor: pointer'],
   :not(pre) > code[style*='cursor: pointer'] {
     background-color: ${({ theme }) => theme.background.secondary};
     border: ${({ theme }) => `1px solid ${theme.accent.accent10}`};
     color: ${({ theme }) => theme.accent.accent10};
   }
 
-  .markdown-inline-code[style*='cursor: pointer']:hover,
   :not(pre) > code[style*='cursor: pointer']:hover {
     background-color: ${({ theme }) => theme.background.transparent.blue};
   }
@@ -284,7 +268,7 @@ const StyledMarkdownContainer = styled.div`
 // Using div instead of p to allow RecordLink (which contains div elements) as children
 const StyledParagraph = styled.div`
   line-height: inherit;
-  margin-block: 8px;
+  margin-block: ${({ theme }) => theme.spacing(2)};
 
   &:first-child {
     margin-block-start: 0;

@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
 import { EditorContent } from '@tiptap/react';
-import { IconHistory } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { t } from '@lingui/core/macro';
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { LightButton } from 'twenty-ui/input';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
@@ -16,14 +17,14 @@ import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContext
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -112,9 +113,29 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const StyledLeftButtonsContainer = styled.div`
+  align-items: center;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(0.5)};
-  justify-content: flex-end;
+`;
+
+const StyledRightButtonsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledReadOnlyModelButton = styled(LightButton)`
+  cursor: default;
+
+  &:hover,
+  &:active {
+    background: transparent;
+  }
 `;
 
 export const AIChatTab = () => {
@@ -124,11 +145,16 @@ export const AIChatTab = () => {
     useAgentChatContextOrThrow();
 
   const { uploadFiles } = useAIChatFileUpload();
-  const { navigateCommandMenu } = useCommandMenu();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel);
 
   const { editor, handleSendAndClear } = useAIChatEditor({
     onSendMessage: handleSendMessage,
   });
+
+  const isAutoModel = currentWorkspace?.smartModel === DEFAULT_SMART_MODEL;
+  const autoButtonTitle =
+    !smartModelLabel || isAutoModel ? t`Auto` : `${t`Auto`} · ${smartModelLabel}`;
 
   return (
     <StyledContainer
@@ -185,22 +211,17 @@ export const AIChatTab = () => {
                 <EditorContent editor={editor} />
               </StyledEditorWrapper>
               <StyledButtonsContainer>
-                <AIChatContextUsageButton />
-                <IconButton
-                  Icon={IconHistory}
-                  variant="tertiary"
-                  size="small"
-                  onClick={() =>
-                    navigateCommandMenu({
-                      page: CommandMenuPages.ViewPreviousAIChats,
-                      pageTitle: t`View Previous AI Chats`,
-                      pageIcon: IconHistory,
-                    })
-                  }
-                  ariaLabel={t`View Previous AI Chats`}
-                />
-                <AgentChatFileUploadButton />
-                <SendMessageButton onSend={handleSendAndClear} />
+                <StyledLeftButtonsContainer>
+                  <AgentChatFileUploadButton />
+                  <AIChatContextUsageButton />
+                </StyledLeftButtonsContainer>
+                <StyledRightButtonsContainer>
+                  <StyledReadOnlyModelButton
+                    accent="tertiary"
+                    title={autoButtonTitle}
+                  />
+                  <SendMessageButton onSend={handleSendAndClear} />
+                </StyledRightButtonsContainer>
               </StyledButtonsContainer>
             </StyledInputBox>
           </StyledInputArea>

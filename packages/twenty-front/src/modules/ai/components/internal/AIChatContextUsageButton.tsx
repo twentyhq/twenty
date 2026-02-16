@@ -41,7 +41,7 @@ const StyledHoverCard = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   min-width: 280px;
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: calc(100% + 8px);
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
@@ -69,7 +69,7 @@ const StyledSectionTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding-bottom: 8px;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const formatTokenCount = (count: number): string => {

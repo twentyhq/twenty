@@ -35,7 +35,8 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   line-height: 1.4em;
   max-width: 100%;
-  padding: ${({ theme, isUser }) => (isUser ? theme.spacing(1, 2) : 0)};
+  padding: ${({ theme, isUser }) =>
+    isUser ? `0 ${theme.spacing(2)}` : 0};
   width: fit-content;
   word-wrap: break-word;
   overflow-wrap: break-word;
