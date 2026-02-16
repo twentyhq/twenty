@@ -88,6 +88,8 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   li {
     line-height: 1.4em;
     margin: ${({ theme }) => theme.spacing(0.5)} 0;
+    padding-bottom: ${({ theme }) => theme.spacing(0.5)};
+    padding-top: ${({ theme }) => theme.spacing(0.5)};
   }
 
   blockquote {

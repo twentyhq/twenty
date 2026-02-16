@@ -239,6 +239,8 @@ const StyledMarkdownContainer = styled.div`
     line-height: 150%;
     margin-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
     margin-top: ${({ theme }) => theme.spacing(0.5)} !important;
+    padding-bottom: ${({ theme }) => theme.spacing(0.5)} !important;
+    padding-top: ${({ theme }) => theme.spacing(0.5)} !important;
   }
 
   .markdown-inline-code,
@@ -428,7 +430,7 @@ const StyledMarkdownContainer = styled.div`
 // Using div instead of p to allow RecordLink (which contains div elements) as children
 const StyledParagraph = styled.div`
   line-height: inherit;
-  margin-block: 1em;
+  margin-block: 8px;
 
   &:first-child {
     margin-block-start: 0;
