@@ -80,7 +80,7 @@ export const StandaloneRichTextEditorContent = ({
     schema: DASHBOARD_BLOCK_SCHEMA,
     sideMenuDetection: 'editor',
     placeholders: {
-      default: t`Type '/' for commands`,
+      default: t`Enter text or type '/' for commands`,
     },
   });
 
