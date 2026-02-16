@@ -1,10 +1,13 @@
 import type { ObjectConfig } from '@/sdk/objects/object-config';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
+import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 
 export const injectDefaultFieldsInObjectFields = (
   objectConfig: ObjectConfig,
 ) => {
   const defaultObjectFields = getDefaultObjectFields(objectConfig);
+  const defaultRelationObjectFields =
+    getDefaultRelationObjectFields(objectConfig);
 
   const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
 
@@ -13,6 +16,12 @@ export const injectDefaultFieldsInObjectFields = (
   for (const defaultField of defaultObjectFields) {
     if (!objectConfigFieldNames.includes(defaultField.name)) {
       fieldsWithDefaultFields.push(defaultField);
+    }
+  }
+
+  for (const defaultRelationField of defaultRelationObjectFields) {
+    if (!objectConfigFieldNames.includes(defaultRelationField.name)) {
+      fieldsWithDefaultFields.push(defaultRelationField);
     }
   }
 

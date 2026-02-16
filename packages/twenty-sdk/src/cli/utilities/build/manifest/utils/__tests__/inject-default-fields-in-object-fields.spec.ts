@@ -2,6 +2,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
 import type { ObjectConfig } from '@/sdk/objects/object-config';
+import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
+import { type ObjectFieldManifest } from 'twenty-shared/application';
 
 const baseObjectConfig: ObjectConfig = {
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -16,12 +18,14 @@ describe('injectDefaultFieldsInObjectFields', () => {
   it('should return all default fields when objectConfig has no fields', () => {
     const result = injectDefaultFieldsInObjectFields(baseObjectConfig);
     const defaultFields = getDefaultObjectFields(baseObjectConfig);
+    const defaultRelationFields =
+      getDefaultRelationObjectFields(baseObjectConfig);
 
-    expect(result).toEqual(defaultFields);
+    expect(result).toEqual([...defaultFields, ...defaultRelationFields]);
   });
 
   it('should preserve custom fields and append missing default fields', () => {
-    const customField = {
+    const customField: ObjectFieldManifest = {
       universalIdentifier: '11111111-1111-1111-1111-111111111111',
       name: 'customField',
       label: 'Custom Field',
@@ -35,13 +39,16 @@ describe('injectDefaultFieldsInObjectFields', () => {
 
     const result = injectDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
+    const defaultRelationFields = getDefaultRelationObjectFields(objectConfig);
 
     expect(result[0]).toEqual(customField);
-    expect(result).toHaveLength(1 + defaultFields.length);
+    expect(result).toHaveLength(
+      1 + defaultFields.length + defaultRelationFields.length,
+    );
   });
 
   it('should not inject a default field when a field with the same name exists', () => {
-    const customIdField = {
+    const customIdField: ObjectFieldManifest = {
       universalIdentifier: '22222222-2222-2222-2222-222222222222',
       name: 'id',
       label: 'Custom Id',
@@ -62,7 +69,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
   });
 
   it('should skip multiple default fields when overridden by custom fields', () => {
-    const customFields = [
+    const customFields: ObjectFieldManifest[] = [
       {
         universalIdentifier: '33333333-3333-3333-3333-333333333333',
         name: 'id',
@@ -90,12 +97,16 @@ describe('injectDefaultFieldsInObjectFields', () => {
 
     const result = injectDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
+    const defaultRelationFields = getDefaultRelationObjectFields(objectConfig);
     const overriddenCount = defaultFields.filter((df) =>
       customFields.some((cf) => cf.name === df.name),
     ).length;
 
     expect(result).toHaveLength(
-      customFields.length + defaultFields.length - overriddenCount,
+      customFields.length +
+        defaultFields.length +
+        defaultRelationFields.length -
+        overriddenCount,
     );
 
     expect(result.filter((f) => f.name === 'id')).toHaveLength(1);
@@ -104,7 +115,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
   });
 
   it('should place custom fields before default fields in the result', () => {
-    const customField = {
+    const customField: ObjectFieldManifest = {
       universalIdentifier: '66666666-6666-6666-6666-666666666666',
       name: 'customField',
       label: 'Custom Field',
@@ -122,7 +133,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
   });
 
   it('should not mutate the original objectConfig fields array', () => {
-    const customField = {
+    const customField: ObjectFieldManifest = {
       universalIdentifier: '77777777-7777-7777-7777-777777777777',
       name: 'customField',
       label: 'Custom Field',

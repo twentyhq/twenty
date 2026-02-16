@@ -1,146 +1,87 @@
-import { type ObjectManifest } from 'twenty-shared/application';
 import type { ObjectConfig } from '@/sdk/objects/object-config';
+import { type ObjectFieldManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-export const getDefaultObjectFields = (
+export const getDefaultRelationObjectFields = (
   objectConfig: ObjectConfig,
-): ObjectManifest['fields'] => {
-  const idField = {
-    name: 'id',
-    label: 'Id',
-    description: 'Id',
-    icon: 'Icon123',
+): ObjectFieldManifest[] => {
+  const timelineActivities: ObjectFieldManifest = {
+    name: 'timelineActivities',
+    label: 'Timeline Activities',
+    description: `${objectConfig.labelPlural} tied to the Timeline Activity`,
+    icon: 'IconBuildingSkyscraper',
     isNullable: false,
-    defaultValue: 'uuid',
-    type: FieldMetadataType.UUID,
+    type: FieldMetadataType.RELATION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
-      fieldName: 'id',
+      fieldName: 'timelineActivities',
     }),
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,,
   };
 
-  const nameField = {
-    name: 'name',
-    label: 'Name',
-    description: 'Name',
-    icon: 'IconAbc',
-    isNullable: true,
-    defaultValue: null,
-    type: FieldMetadataType.TEXT,
-    universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
-      fieldName: 'name',
-    }),
-  };
-
-  const createdAtField = {
-    name: 'createdAt',
-    label: 'Creation date',
-    description: 'Creation date',
-    icon: 'IconCalendar',
+  const favorites: ObjectFieldManifest = {
+    name: 'favorites',
+    label: 'Favorites',
+    description: `${objectConfig.labelPlural} tied to the Favorite`,
+    icon: 'IconBuildingSkyscraper',
     isNullable: false,
-    defaultValue: 'now',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldMetadataType.RELATION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
-      fieldName: 'createdAt',
+      fieldName: 'favorites',
     }),
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.favorite.universalIdentifier,,
   };
 
-  const updatedAtField = {
-    name: 'updatedAt',
-    label: 'Last update',
-    description: 'Last time the record was changed',
-    icon: 'IconCalendarClock',
+  const attachments: ObjectFieldManifest = {
+    name: 'attachments',
+    label: 'Attachments',
+    description: `${objectConfig.labelPlural} tied to the Attachment`,
+    icon: 'IconBuildingSkyscraper',
     isNullable: false,
-    defaultValue: 'now',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldMetadataType.RELATION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
-      fieldName: 'updatedAt',
+      fieldName: 'attachments',
     }),
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.attachment.universalIdentifier,
   };
 
-  const deletedAtField = {
-    name: 'deletedAt',
-    label: 'Deleted at',
-    description: 'Deletion date',
-    icon: 'IconCalendarClock',
-    isNullable: true,
-    defaultValue: null,
-    type: FieldMetadataType.DATE_TIME,
-    universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
-      fieldName: 'deletedAt',
-    }),
-  };
-
-  const createdByField = {
-    name: 'createdBy',
-    label: 'Created by',
-    description: 'The creator of the record',
-    icon: 'IconCreativeCommonsSa',
+  const noteTargets: ObjectFieldManifest = {
+    name: 'noteTargets',
+    label: 'Note Targets',
+    description: `${objectConfig.labelPlural} tied to the Note Target`,
+    icon: 'IconBuildingSkyscraper',
     isNullable: false,
-    defaultValue: { name: "''", source: "'MANUAL'" },
-    type: FieldMetadataType.ACTOR,
+    type: FieldMetadataType.RELATION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
-      fieldName: 'createdBy',
+      fieldName: 'noteTargets',
     }),
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.noteTarget.universalIdentifier,,
   };
 
-  const updatedByField = {
-    name: 'updatedBy',
-    label: 'Updated by',
-    description: 'The workspace member who last updated the record',
-    icon: 'IconUserCircle',
+  const taskTargets: ObjectFieldManifest = {
+    name: 'taskTargets',
+    label: 'Task Targets',
+    description: `${objectConfig.labelPlural} tied to the Task Target`,
+    icon: 'IconBuildingSkyscraper',
     isNullable: false,
-    defaultValue: { name: "''", source: "'MANUAL'" },
-    type: FieldMetadataType.ACTOR,
+    type: FieldMetadataType.RELATION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
-      fieldName: 'updatedBy',
+      fieldName: 'taskTargets',
     }),
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,,
   };
 
-  const positionField = {
-    name: 'position',
-    label: 'Position',
-    description: 'Position',
-    icon: 'IconHierarchy2',
-    isNullable: false,
-    defaultValue: 0,
-    type: FieldMetadataType.POSITION,
-    universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
-      fieldName: 'position',
-    }),
-  };
-
-  const searchVectorField = {
-    name: 'searchVector',
-    label: 'Search vector',
-    icon: 'IconSearch',
-    description: 'Search vector',
-    isNullable: true,
-    defaultValue: null,
-    type: FieldMetadataType.TS_VECTOR,
-    universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
-      fieldName: 'searchVector',
-    }),
-  };
-
-  return [
-    idField,
-    nameField,
-    createdAtField,
-    updatedAtField,
-    deletedAtField,
-    createdByField,
-    updatedByField,
-    positionField,
-    searchVectorField,
-  ];
+  return [timelineActivities, favorites, attachments, noteTargets, taskTargets];
 };
