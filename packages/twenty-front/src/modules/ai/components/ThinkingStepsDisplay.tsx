@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { plural, t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, IconCpu } from 'twenty-ui/display';
+import { AppTooltip, IconChevronRight, IconCpu, TooltipDelay } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { type JsonValue } from 'type-fest';
@@ -102,6 +102,19 @@ const StyledRowLabel = styled.span`
   transition: color 0.1s ease-in-out;
 `;
 
+const StyledToolRowLabel = styled.span`
+  color: inherit;
+  flex: 1;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.1s ease-in-out;
+  white-space: nowrap;
+`;
+
 const StyledReasoningContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(3)};
 `;
@@ -130,6 +143,7 @@ const StyledIconContainer = styled.div`
 const StyledRowLabelContainer = styled.div`
   align-items: center;
   display: flex;
+  flex: 1;
   gap: ${({ theme }) => theme.spacing(1)};
   min-width: 0;
 `;
@@ -161,7 +175,7 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   padding: 0;
   text-align: left;
   transition: color 0.1s ease-in-out;
-  width: fit-content;
+  width: 100%;
 
   &:hover {
     color: ${({ theme, isExpandable }) =>
@@ -232,6 +246,7 @@ const ThinkingToolStepRow = ({
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
+  const toolLabelTooltipAnchorId = useId().replaceAll(':', '-');
   const rawToolName = part.type.split('-')[1];
   const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
     part.input,
@@ -279,7 +294,9 @@ const ThinkingToolStepRow = ({
           <ToolIcon size={14} />
         </StyledIconContainer>
         <StyledRowLabelContainer>
-          <StyledRowLabel>{label}</StyledRowLabel>
+          <StyledToolRowLabel id={toolLabelTooltipAnchorId}>
+            {label}
+          </StyledToolRowLabel>
           {isExpandable && (
             <StyledChevronContainer isExpanded={isExpanded}>
               <IconChevronRight size={14} />
@@ -287,6 +304,13 @@ const ThinkingToolStepRow = ({
           )}
         </StyledRowLabelContainer>
       </StyledToolRowButton>
+      <AppTooltip
+        anchorSelect={`#${toolLabelTooltipAnchorId}`}
+        content={label}
+        delay={TooltipDelay.shortDelay}
+        noArrow
+        place="bottom"
+      />
 
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
