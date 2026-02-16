@@ -26,7 +26,7 @@ const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   height: 24px;
   justify-content: center;
   min-width: 24px;
-  transition: background 0.1s ease;
+  transition: background ${({ theme }) => theme.animation.duration.fast}s ease;
 
   &:hover {
     background: ${({ theme, hasUsage }) =>

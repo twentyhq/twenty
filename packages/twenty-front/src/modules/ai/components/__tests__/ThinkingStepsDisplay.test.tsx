@@ -7,7 +7,7 @@ import {
 } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepsDisplayState';
+import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
 const createReasoningPart = ({
   state = 'done',

@@ -109,7 +109,8 @@ const StyledMessageFooter = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity ${({ theme }) => theme.animation.duration.normal}s
+    ease-in-out;
   width: 100%;
 `;
 

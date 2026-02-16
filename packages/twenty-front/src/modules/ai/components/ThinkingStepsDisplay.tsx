@@ -7,25 +7,23 @@ import {
   IconChevronRight,
   IconCpu,
   OverflowingTextWithTooltip,
+  ThinkingOrbitLoaderIcon,
   TooltipDelay,
 } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { type JsonValue } from 'type-fest';
 
-import { ThinkingOrbitLoaderIcon } from '@/ai/components/ThinkingOrbitLoaderIcon';
 import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import {
   getToolDisplayMessage,
   resolveToolInput,
 } from '@/ai/utils/getToolDisplayMessage';
-import {
-  getActiveReasoningContent,
-  getLastReasoningContent,
-  isThinkingStepPartActive,
-  type ThinkingStepPart,
-} from '@/ai/utils/thinkingStepsDisplayState';
+import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
+import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
+import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
+import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -50,7 +48,8 @@ const StyledSummaryText = styled.span`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
-  transition: color 0.1s ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
 `;
 
 const StyledSummaryButton = styled.button`
@@ -82,7 +81,8 @@ const StyledSummaryChevronContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
   justify-content: center;
   transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
-  transition: transform 0.1s ease-in-out;
+  transition: transform ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
 `;
 
 const StyledRowsContainer = styled.div`
@@ -104,7 +104,8 @@ const StyledRowLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
-  transition: color 0.1s ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
 `;
 
 const StyledToolRowLabel = styled.div`
@@ -116,7 +117,8 @@ const StyledToolRowLabel = styled.div`
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.1s ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
   white-space: nowrap;
 `;
 
@@ -161,7 +163,8 @@ const StyledChevronContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
   justify-content: center;
   transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
-  transition: transform 0.1s ease-in-out;
+  transition: transform ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
 `;
 
 const StyledToolRowContainer = styled.div`
@@ -181,7 +184,8 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   min-height: 24px;
   padding: 0;
   text-align: left;
-  transition: color 0.1s ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
   width: 100%;
 
   &:hover {

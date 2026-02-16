@@ -149,7 +149,7 @@ export class DatabaseToolProvider implements ToolProvider {
       if (permission.canUpdateObjectRecords) {
         descriptors.push({
           name: `create_${snakeSingular}`,
-          description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. If the object supports position ordering, omit position (or use "first") to insert at the top by default. Returns the created record with all its data.`,
+          description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
             inputSchema: z.toJSONSchema(
@@ -167,7 +167,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
         descriptors.push({
           name: `create_many_${snakePlural}`,
-          description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. If the object supports position ordering, omit position (or use "first") to insert records at the top by default. Returns the created records.`,
+          description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
             inputSchema: z.toJSONSchema(

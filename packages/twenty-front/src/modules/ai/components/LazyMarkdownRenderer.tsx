@@ -230,7 +230,7 @@ const StyledMarkdownContainer = styled.div`
     font-family: ${({ theme }) => `${theme.code.font.family}, monospace`};
     font-size: 0.9em;
     padding: 1.5px 3px;
-    transition: all 0.1s ease;
+    transition: all ${({ theme }) => theme.animation.duration.fast}s ease;
   }
 
   :not(pre) > code[style*='cursor: pointer'] {

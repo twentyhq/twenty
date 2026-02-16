@@ -5,7 +5,7 @@ import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import { groupContiguousThinkingStepParts } from '@/ai/utils/thinkingStepsDisplayState';
+import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isToolUIPart } from 'ai';

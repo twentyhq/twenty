@@ -1,12 +1,10 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import {
-  getActiveReasoningContent,
-  getLastReasoningContent,
-  groupContiguousThinkingStepParts,
-  isThinkingStepPartActive,
-  type ThinkingStepPart,
-} from '@/ai/utils/thinkingStepsDisplayState';
+import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
+import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
+import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
+import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
+import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
 const createReasoningPart = ({
   state = 'done',
