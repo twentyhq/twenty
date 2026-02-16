@@ -1,4 +1,4 @@
-export const CORE_OBJECT_NAMES = [
+const CORE_OBJECT_NAMES = [
   'approvedAccessDomain',
   'approvedAccessDomains',
   'appToken',
