@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { type Editor } from '@tiptap/react';
 import { useSetRecoilState } from 'recoil';
 import { LightButton } from 'twenty-ui/input';
 
@@ -31,14 +32,26 @@ const StyledSuggestedPromptButton = styled(LightButton)`
 const pickRandom = <T,>(items: T[]): T =>
   items[Math.floor(Math.random() * items.length)];
 
-export const AIChatSuggestedPrompts = () => {
+type AIChatSuggestedPromptsProps = {
+  editor: Editor | null;
+};
+
+export const AIChatSuggestedPrompts = ({
+  editor,
+}: AIChatSuggestedPromptsProps) => {
   const { t: resolveMessage } = useLingui();
   const setAgentChatInput = useSetRecoilState(agentChatInputState);
 
   const handleClick = (prompt: SuggestedPrompt) => {
     const picked = pickRandom(prompt.prefillPrompts);
+    const text = resolveMessage(picked);
 
-    setAgentChatInput(resolveMessage(picked));
+    setAgentChatInput(text);
+    editor?.commands.setContent({
+      type: 'doc',
+      content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+    });
+    editor?.commands.focus('end');
   };
 
   return (

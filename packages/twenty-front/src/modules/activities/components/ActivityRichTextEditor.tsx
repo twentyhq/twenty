@@ -14,7 +14,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type Note } from '@/activities/types/Note';
@@ -27,11 +27,11 @@ import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsR
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
-import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
-import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
-import { prepareBodyWithSignedUrls } from '@/ui/input/editor/utils/prepareBodyWithSignedUrls';
+import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
+import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
+import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';

@@ -5,6 +5,9 @@
   "module": "dist/index.mjs",
   "style": "./dist/style.css",
   "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
@@ -63,9 +66,6 @@
     "testing",
     "theme",
     "utilities"
-  ],
-  "sideEffects": [
-    "**/*.css"
   ],
   "exports": {
     ".": {

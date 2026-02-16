@@ -49,7 +49,6 @@ export const FrontComponentWorkerEffect = ({
       setError(workerError);
     };
 
-    // Expose host functions to the worker via stable refs to avoid recreating threads
     const stableFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
       {
         navigate: (...args) =>

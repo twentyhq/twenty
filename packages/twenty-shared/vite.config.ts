@@ -49,6 +49,7 @@ export default defineConfig(() => {
       }),
     ],
     build: {
+      emptyOutDir: false,
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-shared' },
       rollupOptions: {

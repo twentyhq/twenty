@@ -9,14 +9,13 @@ import {
   type RemoteConnection,
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { jsx, jsxs } from 'react/jsx-runtime';
-import * as TwentySharedTypes from 'twenty-shared/types';
-import * as TwentySharedUtils from 'twenty-shared/utils';
+
 import { isDefined } from 'twenty-shared/utils';
 
-import * as TwentySdk from '@/sdk';
+import { installStyleBridge } from '@/front-component-renderer/polyfills/installStyleBridge';
+import { installStylePropertyOnRemoteElements } from '@/front-component-renderer/remote/utils/installStylePropertyOnRemoteElements';
+import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
+import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
 
@@ -24,20 +23,14 @@ import { type FrontComponentExecutionContext } from '../../types/FrontComponentE
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
-import * as RemoteComponents from '../generated/remote-components';
 import { exposeGlobals } from '../utils/exposeGlobals';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
+installStylePropertyOnRemoteElements();
+patchRemoteElementSetAttribute();
+
 exposeGlobals({
-  React,
-  RemoteComponents,
-  jsx,
-  jsxs,
-  TwentySdk,
-  TwentyShared: {
-    utils: TwentySharedUtils,
-    types: TwentySharedTypes,
-  },
+  __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
 
 const render: WorkerExports['render'] = async (
@@ -46,8 +39,11 @@ const render: WorkerExports['render'] = async (
 ) => {
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
+  const renderContainer = document.createElement('remote-fragment');
   root.connect(batchedConnection);
+  root.append(renderContainer);
   document.body.append(root);
+  installStyleBridge(root);
 
   if (
     isDefined(renderContext.applicationAccessToken) &&
@@ -83,14 +79,7 @@ const render: WorkerExports['render'] = async (
     /* @vite-ignore */
     const componentModule = await import(importUrl);
 
-    const reactRoot = createRoot(root);
-    reactRoot.render(componentModule.default);
-  } catch (importError) {
-    console.error(
-      '[FrontComponentWorker] Failed to load or render component:',
-      importError,
-    );
-    throw importError;
+    componentModule.default(renderContainer);
   } finally {
     URL.revokeObjectURL(importUrl);
   }
