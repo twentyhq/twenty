@@ -1,24 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-create-page-layout-widget-input-to-flat-page-layout-widget-to-create.util';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { fromCreatePageLayoutInputToFlatPageLayoutToCreate } from 'src/engine/metadata-modules/flat-page-layout/utils/from-create-page-layout-input-to-flat-page-layout-to-create.util';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -30,6 +26,9 @@ import {
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 @Injectable()
 export class PageLayoutDuplicationService {
@@ -50,8 +49,6 @@ export class PageLayoutDuplicationService {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
     const originalFlatLayout = this.findOriginalLayoutOrThrow(
@@ -70,47 +67,30 @@ export class PageLayoutDuplicationService {
         { workspaceId },
       );
 
-    const newFlatPageLayout = fromCreatePageLayoutInputToFlatPageLayoutToCreate(
-      {
-        createPageLayoutInput: {
-          name: originalFlatLayout.name,
-          type: originalFlatLayout.type,
-          objectMetadataId: originalFlatLayout.objectMetadataId,
-        },
-        flatApplication: workspaceCustomFlatApplication,
-        flatObjectMetadataMaps,
-      },
-    );
+    const now = new Date().toISOString();
 
-    const optimisticFlatPageLayoutMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: newFlatPageLayout,
-      flatEntityMaps: createEmptyFlatEntityMaps(),
+    const newFlatPageLayout = this.buildDuplicatedPageLayout({
+      originalFlatLayout,
+      flatApplication: workspaceCustomFlatApplication,
+      now,
     });
 
-    const { newFlatTabs, originalTabIdToNewTabIdMap } =
-      this.createDuplicatedTabs({
+    const {
+      newFlatTabs,
+      originalTabUniversalIdentifierToNewTabUniversalIdentifierMap,
+    } = this.buildDuplicatedTabs({
         originalTabs: originalTabsWithWidgets.map(({ tab }) => tab),
-        newPageLayoutId: newFlatPageLayout.id,
+        newPageLayoutUniversalIdentifier:
+          newFlatPageLayout.universalIdentifier,
         flatApplication: workspaceCustomFlatApplication,
-        flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
+        now,
       });
 
-    const optimisticFlatPageLayoutTabMaps = newFlatTabs.reduce(
-      (maps, flatTab) =>
-        addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatTab,
-          flatEntityMaps: maps,
-        }),
-      createEmptyFlatEntityMaps(),
-    );
-
-    const newFlatWidgets = this.createDuplicatedWidgets({
+    const newFlatWidgets = this.buildDuplicatedWidgets({
       originalTabsWithWidgets,
-      originalTabIdToNewTabIdMap,
+      originalTabUniversalIdentifierToNewTabUniversalIdentifierMap,
       flatApplication: workspaceCustomFlatApplication,
-      flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      now,
     });
 
     const validateAndBuildResult =
@@ -155,8 +135,8 @@ export class PageLayoutDuplicationService {
 
     const newFlatLayoutWithTabsAndWidgets =
       reconstructFlatPageLayoutWithTabsAndWidgets({
-        layout: findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: newFlatPageLayout.id,
+        layout: findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: newFlatPageLayout.universalIdentifier,
           flatEntityMaps: recomputedFlatPageLayoutMaps,
         }),
         flatPageLayoutTabMaps: recomputedFlatPageLayoutTabMaps,
@@ -240,78 +220,129 @@ export class PageLayoutDuplicationService {
     }));
   }
 
-  private createDuplicatedTabs({
-    originalTabs,
-    newPageLayoutId,
+  private buildDuplicatedPageLayout({
+    originalFlatLayout,
     flatApplication,
-    flatPageLayoutMaps,
+    now,
   }: {
-    originalTabs: FlatPageLayoutTab[];
-    newPageLayoutId: string;
+    originalFlatLayout: FlatPageLayout;
     flatApplication: FlatApplication;
-    flatPageLayoutMaps: AllFlatEntityMaps['flatPageLayoutMaps'];
-  }): {
-    newFlatTabs: FlatPageLayoutTab[];
-    originalTabIdToNewTabIdMap: Map<string, string>;
-  } {
-    const originalTabIdToNewTabIdMap = new Map<string, string>();
-
-    const newFlatTabs = originalTabs.map((originalTab) => {
-      const newFlatTab =
-        fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate({
-          createPageLayoutTabInput: {
-            title: originalTab.title,
-            position: originalTab.position,
-            pageLayoutId: newPageLayoutId,
-          },
-          flatApplication,
-          flatPageLayoutMaps,
-        });
-
-      originalTabIdToNewTabIdMap.set(originalTab.id, newFlatTab.id);
-
-      return newFlatTab;
-    });
-
-    return { newFlatTabs, originalTabIdToNewTabIdMap };
+    now: string;
+  }): UniversalFlatPageLayout {
+    return {
+      name: originalFlatLayout.name,
+      type: originalFlatLayout.type,
+      objectMetadataUniversalIdentifier:
+        originalFlatLayout.objectMetadataUniversalIdentifier,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+      universalIdentifier: v4(),
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      tabUniversalIdentifiers: [],
+      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: null,
+    };
   }
 
-  private createDuplicatedWidgets({
-    originalTabsWithWidgets,
-    originalTabIdToNewTabIdMap,
+  private buildDuplicatedTabs({
+    originalTabs,
+    newPageLayoutUniversalIdentifier,
     flatApplication,
-    flatPageLayoutTabMaps,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
+    now,
+  }: {
+    originalTabs: FlatPageLayoutTab[];
+    newPageLayoutUniversalIdentifier: string;
+    flatApplication: FlatApplication;
+    now: string;
+  }): {
+    newFlatTabs: UniversalFlatPageLayoutTab[];
+    originalTabUniversalIdentifierToNewTabUniversalIdentifierMap: Map<
+      string,
+      string
+    >;
+  } {
+    const originalTabUniversalIdentifierToNewTabUniversalIdentifierMap =
+      new Map<string, string>();
+
+    const newFlatTabs = originalTabs.map((originalTab) => {
+      const newUniversalIdentifier = v4();
+
+      originalTabUniversalIdentifierToNewTabUniversalIdentifierMap.set(
+        originalTab.universalIdentifier,
+        newUniversalIdentifier,
+      );
+
+      return {
+        title: originalTab.title,
+        position: originalTab.position,
+        pageLayoutUniversalIdentifier: newPageLayoutUniversalIdentifier,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+        universalIdentifier: newUniversalIdentifier,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        widgetUniversalIdentifiers: [],
+        icon: originalTab.icon ?? null,
+        layoutMode: originalTab.layoutMode ?? PageLayoutTabLayoutMode.GRID,
+      } satisfies UniversalFlatPageLayoutTab;
+    });
+
+    return {
+      newFlatTabs,
+      originalTabUniversalIdentifierToNewTabUniversalIdentifierMap,
+    };
+  }
+
+  private buildDuplicatedWidgets({
+    originalTabsWithWidgets,
+    originalTabUniversalIdentifierToNewTabUniversalIdentifierMap,
+    flatApplication,
+    now,
   }: {
     originalTabsWithWidgets: {
       tab: FlatPageLayoutTab;
       widgets: FlatPageLayoutWidget[];
     }[];
-    originalTabIdToNewTabIdMap: Map<string, string>;
+    originalTabUniversalIdentifierToNewTabUniversalIdentifierMap: Map<
+      string,
+      string
+    >;
     flatApplication: FlatApplication;
-    flatPageLayoutTabMaps: AllFlatEntityMaps['flatPageLayoutTabMaps'];
-    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
-    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
-  }): FlatPageLayoutWidget[] {
+    now: string;
+  }): UniversalFlatPageLayoutWidget[] {
     return originalTabsWithWidgets.flatMap(({ tab, widgets }) => {
-      const newTabId = originalTabIdToNewTabIdMap.get(tab.id)!;
+      const newTabUniversalIdentifier =
+        originalTabUniversalIdentifierToNewTabUniversalIdentifierMap.get(
+          tab.universalIdentifier,
+        );
 
-      return widgets.map((originalWidget) =>
-        fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
-          createPageLayoutWidgetInput: {
+      if (!isDefined(newTabUniversalIdentifier)) {
+        throw new PageLayoutException(
+          `Could not find duplicated tab for original tab ${tab.universalIdentifier}`,
+          PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+        );
+      }
+
+      return widgets.map(
+        (originalWidget) =>
+          ({
+            pageLayoutTabUniversalIdentifier: newTabUniversalIdentifier,
+            createdAt: now,
+            updatedAt: now,
+            deletedAt: null,
+            universalIdentifier: v4(),
             title: originalWidget.title,
-            gridPosition: originalWidget.gridPosition,
             type: originalWidget.type,
-            objectMetadataId: originalWidget.objectMetadataId,
-            configuration: originalWidget.configuration,
-            pageLayoutTabId: newTabId,
-          },
-          flatApplication,
-          flatPageLayoutTabMaps,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        }),
+            objectMetadataUniversalIdentifier:
+              originalWidget.objectMetadataUniversalIdentifier,
+            gridPosition: originalWidget.gridPosition,
+            position: originalWidget.position ?? null,
+            applicationUniversalIdentifier:
+              flatApplication.universalIdentifier,
+            conditionalDisplay: null,
+            universalConfiguration:
+              originalWidget.universalConfiguration ?? null,
+          }) satisfies UniversalFlatPageLayoutWidget,
       );
     });
   }
