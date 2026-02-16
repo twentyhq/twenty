@@ -153,7 +153,6 @@ export class FieldMetadataEntity<
 
   @ManyToOne(
     () => ObjectMetadataEntity,
-    (objectMetadata) => objectMetadata.targetRelationFields,
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })

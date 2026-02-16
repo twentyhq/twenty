@@ -133,7 +133,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     relationTargetObjectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'relationTargetObjectMetadataId',
-      inverseOneToManyProperty: 'targetRelationFields',
+      inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'relationTargetObjectMetadataUniversalIdentifier',
     },

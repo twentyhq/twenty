@@ -80,12 +80,6 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'indexMetadataUniversalIdentifiers',
     },
-    targetRelationFields: {
-      metadataName: 'fieldMetadata',
-      flatEntityForeignKeyAggregator: 'targetRelationFieldIds',
-      universalFlatEntityForeignKeyAggregator:
-        'targetRelationFieldUniversalIdentifiers',
-    },
     objectPermissions: null,
     fieldPermissions: null,
     views: {
