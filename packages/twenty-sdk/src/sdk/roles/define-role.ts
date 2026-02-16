@@ -1,6 +1,6 @@
+import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import { type RoleManifest } from 'twenty-shared/application';
-import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 
 export const defineRole: DefineEntity<RoleManifest> = (config) => {
   const errors = [];

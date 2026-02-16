@@ -2,6 +2,7 @@ import {
   type UiEvent,
   type DevUiState,
   type FileStatus,
+  type StepStatus,
   type EntityInfo,
 } from '@/cli/utilities/dev/dev-ui-state';
 import { SyncableEntity } from 'twenty-shared/application';
@@ -174,7 +175,7 @@ export const renderDevUI = async (
     );
   };
 
-  const MANIFEST_STATUS_CONFIG = {
+  const SYNC_STATUS_CONFIG = {
     synced: { color: 'green', icon: '✓', text: 'Synced' },
     building: { color: 'yellow', icon: 'spinner', text: 'Building...' },
     syncing: { color: 'yellow', icon: 'spinner', text: 'Syncing...' },
@@ -188,7 +189,7 @@ export const renderDevUI = async (
     snapshot: DevUiState;
   }): React.ReactElement => {
     const spinnerFrame = useSpinner(SPINNER_FRAMES, 80);
-    const config = MANIFEST_STATUS_CONFIG[snapshot.manifestStatus];
+    const config = SYNC_STATUS_CONFIG[snapshot.syncStatus];
     const icon = config.icon === 'spinner' ? spinnerFrame : config.icon;
 
     return (
@@ -197,6 +198,38 @@ export const renderDevUI = async (
         {config.text}
         {snapshot.error && `: ${snapshot.error}`}
       </Text>
+    );
+  };
+
+  const STEP_STATUS_CONFIG: Record<
+    StepStatus,
+    { color: string; icon: string | null; text: string }
+  > = {
+    idle: { color: 'gray', icon: '○', text: 'idle' },
+    in_progress: { color: 'yellow', icon: 'spinner', text: 'in progress' },
+    done: { color: 'green', icon: '✓', text: 'done' },
+    error: { color: 'red', icon: '✗', text: 'error' },
+  };
+
+  const StepStatusLabel = ({
+    label,
+    status,
+  }: {
+    label: string;
+    status: StepStatus;
+  }): React.ReactElement => {
+    const spinnerFrame = useSpinner(SPINNER_FRAMES, 80);
+    const config = STEP_STATUS_CONFIG[status];
+    const icon = config.icon === 'spinner' ? spinnerFrame : config.icon;
+
+    return (
+      <Box>
+        <Text dimColor>{label}: </Text>
+        <Text color={config.color}>
+          {icon ? `${icon} ` : ''}
+          {config.text}
+        </Text>
+      </Box>
     );
   };
 
@@ -242,6 +275,17 @@ export const renderDevUI = async (
               </Text>
             </Box>
           )}
+        </Box>
+
+        <Box marginLeft={2} flexDirection="column" marginTop={1}>
+          <StepStatusLabel
+            label="Manifest"
+            status={snapshot.manifestStatus}
+          />
+          <StepStatusLabel
+            label="Api Client"
+            status={snapshot.apiClientStatus}
+          />
         </Box>
 
         <Box marginLeft={2} flexDirection="column">

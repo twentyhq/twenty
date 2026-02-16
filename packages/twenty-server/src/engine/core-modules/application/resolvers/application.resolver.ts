@@ -57,22 +57,6 @@ export class ApplicationResolver {
     return this.applicationService.findManyApplications(workspaceId);
   }
 
-  @Query(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
-  async checkApplicationExist(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
-    @Args('universalIdentifier', { type: () => UUIDScalarType, nullable: true })
-    universalIdentifier?: string,
-  ) {
-    return await this.applicationService.checkApplicationExist({
-      id,
-      universalIdentifier,
-      workspaceId,
-    });
-  }
-
   @Query(() => ApplicationDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)

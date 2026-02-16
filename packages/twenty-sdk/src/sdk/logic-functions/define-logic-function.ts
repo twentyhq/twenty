@@ -1,6 +1,6 @@
-import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
-import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
 
 export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   config,

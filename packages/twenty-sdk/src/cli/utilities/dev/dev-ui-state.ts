@@ -7,12 +7,14 @@ export type UiEvent = {
   status: 'info' | 'success' | 'error' | 'warning';
 };
 
-export type ManifestStatus =
+export type SyncStatus =
   | 'idle'
   | 'building'
   | 'syncing'
   | 'synced'
   | 'error';
+
+export type StepStatus = 'idle' | 'in_progress' | 'done' | 'error';
 
 export type FileStatus = 'pending' | 'building' | 'uploading' | 'success';
 
@@ -29,7 +31,9 @@ export type DevUiState = {
   appDescription: string | null;
   appUniversalIdentifier: string | null;
   frontendUrl?: string | null;
-  manifestStatus: ManifestStatus;
+  syncStatus: SyncStatus;
+  manifestStatus: StepStatus;
+  apiClientStatus: StepStatus;
   error?: string | null;
   entities: Map<string, EntityInfo>;
   events: UiEvent[];

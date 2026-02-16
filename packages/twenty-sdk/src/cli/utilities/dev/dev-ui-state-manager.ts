@@ -2,7 +2,8 @@ import { SyncableEntity } from 'twenty-shared/application';
 import {
   type FileStatus,
   type Listener,
-  type ManifestStatus,
+  type SyncStatus,
+  type StepStatus,
   type UiEvent,
   type DevUiState,
 } from '@/cli/utilities/dev/dev-ui-state';
@@ -35,7 +36,9 @@ export class DevUiStateManager {
       appName: null,
       appDescription: null,
       appUniversalIdentifier: null,
+      syncStatus: 'idle',
       manifestStatus: 'idle',
+      apiClientStatus: 'idle',
       entities: new Map(),
       events: [],
     };
@@ -79,20 +82,35 @@ export class DevUiStateManager {
     this.notify();
   }
 
-  updateManifestState({
-    manifestStatus,
+  updateSyncState({
+    syncStatus,
     appName,
     error,
   }: {
-    manifestStatus?: ManifestStatus;
+    syncStatus?: SyncStatus;
     appName?: string;
     error?: string;
   }): void {
     this.state = {
       ...this.state,
-      ...(manifestStatus ? { manifestStatus } : {}),
+      ...(syncStatus ? { syncStatus } : {}),
       ...(appName ? { appName } : {}),
       ...(error ? { error: error.slice(0, 5_000) } : { error: undefined }),
+    };
+
+    this.notify();
+  }
+
+  updateStepStatus({
+    step,
+    status,
+  }: {
+    step: 'manifestStatus' | 'apiClientStatus';
+    status: StepStatus;
+  }): void {
+    this.state = {
+      ...this.state,
+      [step]: status,
     };
 
     this.notify();
