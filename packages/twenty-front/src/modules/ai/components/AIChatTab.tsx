@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { EditorContent } from '@tiptap/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { LightButton } from 'twenty-ui/input';
@@ -17,7 +16,6 @@ import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContext
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
@@ -143,18 +141,15 @@ export const AIChatTab = () => {
   const isMobile = useIsMobile();
   const { isLoading, messages, isStreaming, error, handleSendMessage } =
     useAgentChatContextOrThrow();
+  const hasMessages = messages.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel);
+  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
   const { editor, handleSendAndClear } = useAIChatEditor({
     onSendMessage: handleSendMessage,
   });
-
-  const isAutoModel = currentWorkspace?.smartModel === DEFAULT_SMART_MODEL;
-  const autoButtonTitle =
-    !smartModelLabel || isAutoModel ? t`Auto` : `${t`Auto`} · ${smartModelLabel}`;
 
   return (
     <StyledContainer
@@ -169,7 +164,7 @@ export const AIChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          {messages.length !== 0 && (
+          {hasMessages && (
             <StyledScrollWrapper
               componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
             >
@@ -196,13 +191,13 @@ export const AIChatTab = () => {
                 )}
             </StyledScrollWrapper>
           )}
-          {messages.length === 0 && !error && !isLoading && (
+          {!hasMessages && !error && !isLoading && (
             <AIChatEmptyState editor={editor} />
           )}
-          {messages.length === 0 && error && !isLoading && (
+          {!hasMessages && error && !isLoading && (
             <AIChatStandaloneError error={error} />
           )}
-          {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
+          {isLoading && !hasMessages && <AIChatSkeletonLoader />}
 
           <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />
@@ -213,12 +208,12 @@ export const AIChatTab = () => {
               <StyledButtonsContainer>
                 <StyledLeftButtonsContainer>
                   <AgentChatFileUploadButton />
-                  <AIChatContextUsageButton />
+                  {hasMessages && <AIChatContextUsageButton />}
                 </StyledLeftButtonsContainer>
                 <StyledRightButtonsContainer>
                   <StyledReadOnlyModelButton
                     accent="tertiary"
-                    title={autoButtonTitle}
+                    title={smartModelLabel}
                   />
                   <SendMessageButton onSend={handleSendAndClear} />
                 </StyledRightButtonsContainer>

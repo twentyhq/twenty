@@ -36,6 +36,7 @@ const StyledStepsContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
