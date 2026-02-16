@@ -33,10 +33,11 @@ import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-lay
 import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
 
 type WidgetMigrationOperations = {
-  flatEntityToCreate: FlatPageLayoutWidget[];
+  flatEntityToCreate: UniversalFlatPageLayoutWidget[];
   flatEntityToUpdate: FlatPageLayoutWidget[];
   flatEntityToDelete: FlatPageLayoutWidget[];
 };

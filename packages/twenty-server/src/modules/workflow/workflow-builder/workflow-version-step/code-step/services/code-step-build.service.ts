@@ -126,7 +126,6 @@ export class CodeStepBuildService {
               | JsonbProperty<HttpRouteTriggerSettings>
               | undefined,
         },
-        workspaceId,
         ownerFlatApplication: resolvedOwnerFlatApplication,
       });
 

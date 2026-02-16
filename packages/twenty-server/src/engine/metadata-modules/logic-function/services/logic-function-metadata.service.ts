@@ -7,6 +7,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -85,7 +86,7 @@ export class LogicFunctionMetadataService {
     input: CreateLogicFunction;
     ownerFlatApplication: FlatApplication;
     workspaceId: string;
-  }) {
+  }): Promise<FlatLogicFunction> {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
       (
@@ -124,7 +125,18 @@ export class LogicFunctionMetadataService {
       );
     }
 
-    return flatLogicFunctionToCreate;
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    return findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: flatLogicFunctionToCreate.universalIdentifier,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
   }
 
   async updateOne({
