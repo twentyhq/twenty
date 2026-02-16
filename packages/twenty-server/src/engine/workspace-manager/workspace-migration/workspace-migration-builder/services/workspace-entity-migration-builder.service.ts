@@ -10,6 +10,7 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataValidationRelatedUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -166,7 +167,8 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         ...validationResult.action,
         flatEntity: deleteUniversalFlatEntityForeignKeyAggregators({
           metadataName: this.metadataName,
-          universalFlatEntity: validationResult.action.flatEntity,
+          universalFlatEntity: validationResult.action
+            .flatEntity as MetadataFlatEntity<T>,
         }),
       };
 
