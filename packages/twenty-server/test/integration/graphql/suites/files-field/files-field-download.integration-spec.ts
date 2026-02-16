@@ -296,7 +296,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     const fileId = createdRecord.filesField[0].fileId;
 
     const downloadResponse = await request(global.app.getHttpServer()).get(
-      `/files-field/${fileId}`,
+      `/file/files-field/${fileId}`,
     );
 
     expect(downloadResponse.status).toBe(403);
@@ -341,7 +341,7 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     const fileId = createdRecord.filesField[0].fileId;
 
     const downloadResponse = await request(global.app.getHttpServer())
-      .get(`/files-field/${fileId}`)
+      .get(`/file/files-field/${fileId}`)
       .query({ token: 'invalid-token-12345' });
 
     expect(downloadResponse.status).toBe(403);
