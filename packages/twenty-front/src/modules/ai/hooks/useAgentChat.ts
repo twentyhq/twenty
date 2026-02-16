@@ -1,7 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { useFetchChatThreadTitle } from '@/ai/hooks/useFetchChatThreadTitle';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -13,7 +12,6 @@ import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useChat } from '@ai-sdk/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { DefaultChatTransport } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,14 +23,13 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
 
   const { getBrowsingContext } = useGetBrowsingContext();
-  const { fetchChatThreadTitle } = useFetchChatThreadTitle();
+  const setCurrentAIChatThreadTitle = useSetRecoilState(
+    currentAIChatThreadTitleState,
+  );
 
   const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
 
   const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
-  const currentAIChatThreadTitle = useRecoilValue(
-    currentAIChatThreadTitleState,
-  );
 
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
     agentChatUploadedFilesState,
@@ -156,6 +153,14 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
           outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));
       }
+
+      const titlePart = message.parts.find(
+        (part) => part.type === 'data-thread-title',
+      );
+
+      if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
+        setCurrentAIChatThreadTitle(titlePart.data.title);
+      }
     },
   });
 
@@ -170,10 +175,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
     const content = agentChatInput.trim();
     setAgentChatInput('');
-
-    if (!isNonEmptyString(currentAIChatThreadTitle)) {
-      fetchChatThreadTitle(currentAIChatThread);
-    }
 
     const browsingContext = getBrowsingContext();
 
