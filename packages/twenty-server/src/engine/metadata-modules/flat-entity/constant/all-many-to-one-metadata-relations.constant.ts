@@ -27,6 +27,7 @@ type ManyToOneRelationValue<
         }
         ? {
             metadataName: TTargetMetadataName;
+            foreignKey: FK;
             // Should not be nullable, in the best of the world relation should always describe an inverse property
             inverseOneToManyProperty:
               | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TTargetMetadataName]
@@ -62,12 +63,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     application: null,
     availabilityObjectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'availabilityObjectMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'availabilityObjectMetadataUniversalIdentifier',
     },
     frontComponent: {
       metadataName: 'frontComponent',
+      foreignKey: 'frontComponentId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'frontComponentUniversalIdentifier',
@@ -79,18 +82,21 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     application: null,
     targetObjectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'targetObjectMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
     },
     folder: {
       metadataName: 'navigationMenuItem',
+      foreignKey: 'folderId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'folderUniversalIdentifier',
     },
     view: {
       metadataName: 'view',
+      foreignKey: 'viewId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'viewUniversalIdentifier',
@@ -99,6 +105,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   fieldMetadata: {
     object: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: 'fields',
       isNullable: false,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
@@ -107,12 +114,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     application: null,
     relationTargetFieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'relationTargetFieldMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'relationTargetFieldMetadataUniversalIdentifier',
     },
     relationTargetObjectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'relationTargetObjectMetadataId',
       inverseOneToManyProperty: 'targetRelationFields',
       isNullable: true,
       universalForeignKey: 'relationTargetObjectMetadataUniversalIdentifier',
@@ -126,6 +135,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   view: {
     objectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: 'views',
       isNullable: false,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
@@ -135,12 +145,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     application: null,
     calendarFieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'calendarFieldMetadataId',
       inverseOneToManyProperty: 'calendarViews',
       isNullable: true,
       universalForeignKey: 'calendarFieldMetadataUniversalIdentifier',
     },
     kanbanAggregateOperationFieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'kanbanAggregateOperationFieldMetadataId',
       inverseOneToManyProperty: 'kanbanAggregateOperationViews',
       isNullable: true,
       universalForeignKey:
@@ -148,6 +160,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
     mainGroupByFieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'mainGroupByFieldMetadataId',
       inverseOneToManyProperty: 'mainGroupByFieldMetadataViews',
       isNullable: true,
       universalForeignKey: 'mainGroupByFieldMetadataUniversalIdentifier',
@@ -156,18 +169,21 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   viewField: {
     fieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
       inverseOneToManyProperty: 'viewFields',
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
     view: {
       metadataName: 'view',
+      foreignKey: 'viewId',
       inverseOneToManyProperty: 'viewFields',
       isNullable: false,
       universalForeignKey: 'viewUniversalIdentifier',
     },
     viewFieldGroup: {
       metadataName: 'viewFieldGroup',
+      foreignKey: 'viewFieldGroupId',
       inverseOneToManyProperty: 'viewFields',
       isNullable: true,
       universalForeignKey: 'viewFieldGroupUniversalIdentifier',
@@ -178,6 +194,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   viewFieldGroup: {
     view: {
       metadataName: 'view',
+      foreignKey: 'viewId',
       inverseOneToManyProperty: 'viewFieldGroups',
       isNullable: false,
       universalForeignKey: 'viewUniversalIdentifier',
@@ -188,18 +205,21 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   viewFilter: {
     fieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
       inverseOneToManyProperty: 'viewFilters',
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
     view: {
       metadataName: 'view',
+      foreignKey: 'viewId',
       inverseOneToManyProperty: 'viewFilters',
       isNullable: false,
       universalForeignKey: 'viewUniversalIdentifier',
     },
     viewFilterGroup: {
       metadataName: 'viewFilterGroup',
+      foreignKey: 'viewFilterGroupId',
       inverseOneToManyProperty: 'viewFilters',
       isNullable: true,
       universalForeignKey: 'viewFilterGroupUniversalIdentifier',
@@ -210,6 +230,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   viewGroup: {
     view: {
       metadataName: 'view',
+      foreignKey: 'viewId',
       inverseOneToManyProperty: 'viewGroups',
       isNullable: false,
       universalForeignKey: 'viewUniversalIdentifier',
@@ -220,6 +241,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   index: {
     objectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: 'indexMetadatas',
       isNullable: false,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
@@ -238,6 +260,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   roleTarget: {
     role: {
       metadataName: 'role',
+      foreignKey: 'roleId',
       inverseOneToManyProperty: 'roleTargets',
       isNullable: false,
       universalForeignKey: 'roleUniversalIdentifier',
@@ -250,6 +273,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     objectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
@@ -257,6 +281,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     application: null,
     defaultTabToFocusOnMobileAndSidePanel: {
       metadataName: 'pageLayoutTab',
+      foreignKey: 'defaultTabToFocusOnMobileAndSidePanelId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey:
@@ -267,6 +292,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     pageLayout: {
       metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
       inverseOneToManyProperty: 'tabs',
       isNullable: false,
       universalForeignKey: 'pageLayoutUniversalIdentifier',
@@ -277,12 +303,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     pageLayoutTab: {
       metadataName: 'pageLayoutTab',
+      foreignKey: 'pageLayoutTabId',
       inverseOneToManyProperty: 'widgets',
       isNullable: false,
       universalForeignKey: 'pageLayoutTabUniversalIdentifier',
     },
     objectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
@@ -293,30 +321,35 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     role: {
       metadataName: 'role',
+      foreignKey: 'roleId',
       inverseOneToManyProperty: 'rowLevelPermissionPredicates',
       isNullable: false,
       universalForeignKey: 'roleUniversalIdentifier',
     },
     fieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
     workspaceMemberFieldMetadata: {
       metadataName: 'fieldMetadata',
+      foreignKey: 'workspaceMemberFieldMetadataId',
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'workspaceMemberFieldMetadataUniversalIdentifier',
     },
     objectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
     },
     rowLevelPermissionPredicateGroup: {
       metadataName: 'rowLevelPermissionPredicateGroup',
+      foreignKey: 'rowLevelPermissionPredicateGroupId',
       inverseOneToManyProperty: 'rowLevelPermissionPredicates',
       isNullable: true,
       universalForeignKey:
@@ -327,18 +360,21 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   rowLevelPermissionPredicateGroup: {
     objectMetadata: {
       metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'objectMetadataUniversalIdentifier',
     },
     role: {
       metadataName: 'role',
+      foreignKey: 'roleId',
       inverseOneToManyProperty: 'rowLevelPermissionPredicateGroups',
       isNullable: false,
       universalForeignKey: 'roleUniversalIdentifier',
     },
     parentRowLevelPermissionPredicateGroup: {
       metadataName: 'rowLevelPermissionPredicateGroup',
+      foreignKey: 'parentRowLevelPermissionPredicateGroupId',
       inverseOneToManyProperty: 'childRowLevelPermissionPredicateGroups',
       isNullable: true,
       universalForeignKey:
@@ -351,12 +387,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     application: null,
     parentViewFilterGroup: {
       metadataName: 'viewFilterGroup',
+      foreignKey: 'parentViewFilterGroupId',
       inverseOneToManyProperty: 'childViewFilterGroups',
       isNullable: true,
       universalForeignKey: 'parentViewFilterGroupUniversalIdentifier',
     },
     view: {
       metadataName: 'view',
+      foreignKey: 'viewId',
       inverseOneToManyProperty: 'viewFilterGroups',
       isNullable: false,
       universalForeignKey: 'viewUniversalIdentifier',
