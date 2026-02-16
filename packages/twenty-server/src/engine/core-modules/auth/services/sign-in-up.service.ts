@@ -453,10 +453,7 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
-    const workspaceCount = await this.workspaceRepository.count();
-    const isFirstWorkspace = workspaceCount === 0;
-    const canImpersonate = isFirstWorkspace;
-    const canAccessFullAdminPanel = isFirstWorkspace;
+    const isFirstWorkspace = (await this.workspaceRepository.count()) === 0;
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
@@ -513,8 +510,8 @@ export class SignInUpService {
         : await this.saveNewUser(
             userData.newUserWithPicture,
             {
-              canImpersonate,
-              canAccessFullAdminPanel,
+              canImpersonate: isFirstWorkspace,
+              canAccessFullAdminPanel: isFirstWorkspace,
             },
             queryRunner,
           );
