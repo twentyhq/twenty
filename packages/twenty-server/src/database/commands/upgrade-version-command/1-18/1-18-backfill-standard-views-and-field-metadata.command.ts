@@ -8,10 +8,13 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 // Fields that should be marked as isSystem: true
@@ -717,17 +720,25 @@ export class BackfillStandardViewsAndFieldMetadataCommand extends ActiveOrSuspen
   }
 
   private async invalidateCaches(workspaceId: string): Promise<void> {
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatFieldMetadataMaps',
-      'flatViewMaps',
-      'flatViewFieldMaps',
+    const modifiedMetadataNames = [
+      'fieldMetadata',
+      'view',
+      'viewField',
+    ] as const;
+
+    const cacheKeysToInvalidate: WorkspaceCacheKeyName[] = [
+      ...new Set(
+        modifiedMetadataNames
+          .flatMap((name) => [name, ...getMetadataRelatedMetadataNames(name)])
+          .map(getMetadataFlatEntityMapsKey),
+      ),
       'ORMEntityMetadatas',
-      'rolesPermissions',
-      'userWorkspaceRoleMap',
-      'flatRoleTargetMaps',
-      'apiKeyRoleMap',
-      'flatRoleTargetByAgentIdMaps',
-    ]);
+    ];
+
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      cacheKeysToInvalidate,
+    );
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
