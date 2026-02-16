@@ -2,9 +2,9 @@ import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guar
 
 describe('isFieldFullNameValue', () => {
   it('should return true for valid full name objects', () => {
-    expect(
-      isFieldFullNameValue({ firstName: 'John', lastName: 'Doe' }),
-    ).toBe(true);
+    expect(isFieldFullNameValue({ firstName: 'John', lastName: 'Doe' })).toBe(
+      true,
+    );
     expect(isFieldFullNameValue({ firstName: '', lastName: '' })).toBe(true);
   });
 

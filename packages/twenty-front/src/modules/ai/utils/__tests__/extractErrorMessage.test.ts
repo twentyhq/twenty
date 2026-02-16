@@ -14,9 +14,9 @@ describe('extractErrorMessage', () => {
   });
 
   it('should extract message from nested error object', () => {
-    expect(
-      extractErrorMessage({ error: { message: 'Nested error' } }),
-    ).toBe('Nested error');
+    expect(extractErrorMessage({ error: { message: 'Nested error' } })).toBe(
+      'Nested error',
+    );
   });
 
   it('should extract message from deeply nested error object', () => {

@@ -27,13 +27,12 @@ describe('sortRecordGroupDefinitions', () => {
   ];
 
   it('should sort alphabetically', () => {
-    const result = sortRecordGroupDefinitions(groups, RecordGroupSort.Alphabetical);
+    const result = sortRecordGroupDefinitions(
+      groups,
+      RecordGroupSort.Alphabetical,
+    );
 
-    expect(result.map((g) => g.title)).toEqual([
-      'Alpha',
-      'Bravo',
-      'Charlie',
-    ]);
+    expect(result.map((g) => g.title)).toEqual(['Alpha', 'Bravo', 'Charlie']);
   });
 
   it('should sort reverse alphabetically', () => {
@@ -42,21 +41,13 @@ describe('sortRecordGroupDefinitions', () => {
       RecordGroupSort.ReverseAlphabetical,
     );
 
-    expect(result.map((g) => g.title)).toEqual([
-      'Charlie',
-      'Bravo',
-      'Alpha',
-    ]);
+    expect(result.map((g) => g.title)).toEqual(['Charlie', 'Bravo', 'Alpha']);
   });
 
   it('should sort by position for Manual sort', () => {
     const result = sortRecordGroupDefinitions(groups, RecordGroupSort.Manual);
 
-    expect(result.map((g) => g.title)).toEqual([
-      'Alpha',
-      'Bravo',
-      'Charlie',
-    ]);
+    expect(result.map((g) => g.title)).toEqual(['Alpha', 'Bravo', 'Charlie']);
   });
 
   it('should filter out hidden groups', () => {

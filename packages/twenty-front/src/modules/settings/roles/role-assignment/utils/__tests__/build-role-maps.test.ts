@@ -6,10 +6,7 @@ describe('buildRoleMaps', () => {
       {
         id: 'role-1',
         label: 'Admin',
-        workspaceMembers: [
-          { id: 'member-1' },
-          { id: 'member-2' },
-        ],
+        workspaceMembers: [{ id: 'member-1' }, { id: 'member-2' }],
       },
     ] as any;
 

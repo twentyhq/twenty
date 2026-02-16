@@ -14,9 +14,7 @@ describe('filterAvailableTableColumns', () => {
       filterAvailableTableColumns(createColumnDefinition('activities')),
     ).toBe(false);
     expect(
-      filterAvailableTableColumns(
-        createColumnDefinition('timelineActivities'),
-      ),
+      filterAvailableTableColumns(createColumnDefinition('timelineActivities')),
     ).toBe(false);
   });
 
