@@ -1,7 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 
-import { type ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
+import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
+import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import { type AddSuffixToEntityManyToOneProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-many-to-one-properties.type';
 import { type AddSuffixToEntityOneToManyProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-one-to-many-properties.type';
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
@@ -46,8 +47,8 @@ export type UniversalFlatEntityFrom<
   | 'applicationId'
   | 'workspaceId'
   | 'id'
-  | keyof (typeof ALL_METADATA_RELATIONS)[TMetadataName]['manyToOne']
-  | keyof (typeof ALL_METADATA_RELATIONS)[TMetadataName]['oneToMany']
+  | keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]
+  | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
   | AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName>
