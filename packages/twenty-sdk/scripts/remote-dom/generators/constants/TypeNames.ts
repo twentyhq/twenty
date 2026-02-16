@@ -1,7 +1,0 @@
-export const TYPE_NAMES = {
-  COMMON_PROPERTIES: 'HtmlCommonProperties',
-  COMMON_EVENTS: 'HtmlCommonEvents',
-  COMMON_PROPERTIES_CONFIG: 'HTML_COMMON_PROPERTIES_CONFIG',
-  COMMON_EVENTS_ARRAY: 'HTML_COMMON_EVENTS_ARRAY',
-  EMPTY_RECORD: 'Record<string, never>',
-} as const;

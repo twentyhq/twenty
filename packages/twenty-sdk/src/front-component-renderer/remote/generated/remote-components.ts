@@ -1,12 +1,3 @@
-/*
- * _____                    _
- *|_   _|_      _____ _ __ | |_ _   _
- *  | | \ \ /\ / / _ \ '_ \| __| | | | Auto-generated file
- *  | |  \ V  V /  __/ | | | |_| |_| | Any edits to this will be overridden
- *  |_|   \_/\_/ \___|_| |_|\__|\__, |
- *                              |___/
- */
-
 import { createRemoteComponent } from '@remote-dom/react';
 import {
   HtmlDivElement,
@@ -52,6 +43,7 @@ import {
   HtmlTdElement,
   HtmlBrElement,
   HtmlHrElement,
+  RemoteStyleElement,
 } from './remote-elements';
 
 export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
@@ -1126,3 +1118,7 @@ export const HtmlHr = createRemoteComponent('html-hr', HtmlHrElement, {
     onDrag: { event: 'drag' },
   },
 });
+export const RemoteStyle = createRemoteComponent(
+  'remote-style',
+  RemoteStyleElement,
+);

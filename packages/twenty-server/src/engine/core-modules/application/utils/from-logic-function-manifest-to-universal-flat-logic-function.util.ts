@@ -28,7 +28,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
-    toolInputSchema: logicFunctionManifest.toolInputSchema ?? null,
+    toolInputSchema: logicFunctionManifest.toolInputSchema,
     isTool: logicFunctionManifest.isTool ?? false,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
     databaseEventTriggerSettings:

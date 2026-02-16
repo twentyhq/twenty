@@ -8,7 +8,7 @@ import { getBuiltStoryComponentPathForRender } from './utils/getBuiltStoryCompon
 const errorHandler = fn();
 
 const meta: Meta<typeof FrontComponentRenderer> = {
-  title: 'FrontComponent/FrontComponentRenderer',
+  title: 'FrontComponent/Feature',
   component: FrontComponentRenderer,
   parameters: {
     layout: 'centered',
@@ -25,10 +25,21 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-export const Static: Story = {
+const createComponentStory = (
+  name: string,
+  options?: { runtime?: 'preact'; play?: Story['play'] },
+): Story => ({
   args: {
-    componentUrl: getBuiltStoryComponentPathForRender('static.front-component'),
+    componentUrl: getBuiltStoryComponentPathForRender(
+      `${name}.front-component`,
+      options?.runtime,
+    ),
   },
+  ...(options?.play ? { play: options.play } : {}),
+});
+
+export const Static: Story = {
+  ...createComponentStory('static'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -54,9 +65,7 @@ export const Static: Story = {
 };
 
 export const Interactive: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender('interactive.front-component'),
-  },
+  ...createComponentStory('interactive'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -74,9 +83,7 @@ export const Interactive: Story = {
 };
 
 export const Lifecycle: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender('lifecycle.front-component'),
-  },
+  ...createComponentStory('lifecycle'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -94,66 +101,8 @@ export const Lifecycle: Story = {
   },
 };
 
-export const ChakraExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'chakra-example.front-component',
-    ),
-  },
-};
-
-export const TailwindExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'tailwind-example.front-component',
-    ),
-  },
-};
-
-export const EmotionExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'emotion-example.front-component',
-    ),
-  },
-};
-
-export const StyledComponentsExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'styled-components-example.front-component',
-    ),
-  },
-};
-
-export const ShadcnExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'shadcn-example.front-component',
-    ),
-  },
-};
-
-export const MuiExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'mui-example.front-component',
-    ),
-  },
-};
-
-export const TwentyUiExample: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      'twenty-ui-example.front-component',
-    ),
-  },
-};
-
 export const ErrorHandling: Story = {
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender('nonexistent.front-component'),
-  },
+  ...createComponentStory('nonexistent'),
   play: async () => {
     await waitFor(
       () => {
@@ -161,5 +110,39 @@ export const ErrorHandling: Story = {
       },
       { timeout: 10000 },
     );
+  },
+};
+
+export const SdkContext: Story = {
+  ...createComponentStory('sdk-context-example'),
+  args: {
+    ...createComponentStory('sdk-context-example').args,
+    executionContext: { userId: 'test-user-abc-123' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'sdk-context-component',
+      {},
+      { timeout: 30000 },
+    );
+
+    const userIdElement = await canvas.findByTestId('sdk-context-user-id');
+    expect(userIdElement).toBeVisible();
+    expect(userIdElement).toHaveTextContent('test-user-abc-123');
+
+    const jsonElement = await canvas.findByTestId('sdk-context-json');
+    expect(jsonElement).toHaveTextContent('"userId": "test-user-abc-123"');
+
+    const button = await canvas.findByTestId('sdk-context-button');
+    await userEvent.click(button);
+
+    const renderCount = await canvas.findByTestId(
+      'sdk-context-render-count',
+    );
+    expect(renderCount).toHaveTextContent('Renders: 1');
+
+    expect(userIdElement).toHaveTextContent('test-user-abc-123');
   },
 };

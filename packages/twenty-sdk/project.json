@@ -116,6 +116,23 @@
         }
       ]
     },
+    "build:sdk": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "{projectRoot}/src/sdk/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/sdk"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vite build -c vite.config.sdk.ts"
+      }
+    },
     "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -146,7 +163,16 @@
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": [
-        "generate-remote-dom-elements"
+        "generate-remote-dom-elements",
+        "build:sdk",
+        {
+          "target": "build:individual",
+          "projects": "twenty-ui"
+        },
+        {
+          "target": "build:individual",
+          "projects": "twenty-shared"
+        }
       ],
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",
