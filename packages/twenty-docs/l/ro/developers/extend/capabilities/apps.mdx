@@ -279,7 +279,11 @@ Puncte cheie:
 * Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
-  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
+  precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`.
+  Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+  Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
+  dar acest lucru nu este recomandat.
 </Note>
 
 ### Configurația aplicației (application-config.ts)
@@ -553,6 +557,71 @@ Puteți crea funcții noi în două moduri:
 
 * **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o funcție logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
 * **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
+
+### Marcarea unei funcții logice drept instrument
+
+Funcțiile logice pot fi expuse ca **instrumente** pentru agenți de IA și fluxuri de lucru. Când o funcție este marcată ca instrument, poate fi descoperită de funcționalitățile de IA ale Twenty și poate fi selectată ca pas în automatizări ale fluxurilor de lucru.
+
+Pentru a marca o funcție logică drept instrument, setați `isTool: true` și furnizați un `toolInputSchema` care descrie parametrii de intrare așteptați folosind [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Puncte cheie:
+
+* **`isTool`** (`boolean`, implicit: `false`): Când este setat la `true`, funcția este înregistrată ca instrument și devine disponibilă pentru agenții AI și automatizările de fluxuri de lucru.
+* **`toolInputSchema`** (`object`, opțional): Un obiect JSON Schema care descrie parametrii pe care îi acceptă funcția dvs. Agenții AI folosesc această schemă pentru a înțelege ce intrări așteaptă instrumentul și pentru a valida apelurile. Dacă este omisă, schema are implicit valoarea `{ type: 'object', properties: {} }` (fără parametri).
+* Funcțiile cu `isTool: false` (sau nedefinit) **nu** sunt expuse ca instrumente. Pot totuși fi executate direct sau apelate de alte funcții, dar nu vor apărea în descoperirea instrumentelor.
+* **Denumierea instrumentelor**: Când este expusă ca instrument, denumirea funcției este normalizată automat la `logic_function_<name>` (convertită la litere mici, iar caracterele non-alfanumerice sunt înlocuite cu caractere de subliniere). De exemplu, `enrich-company` devine `logic_function_enrich_company`.
+* Puteți combina `isTool` cu declanșatoare — o funcție poate fi atât un instrument (apelabilă de agenții AI), cât și declanșată de evenimente (cron, evenimente de bază de date, rute) în același timp.
+
+<Note>
+  **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+</Note>
 
 ### Componente Front
 

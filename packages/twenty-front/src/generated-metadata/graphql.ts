@@ -419,6 +419,7 @@ export type BarChartConfiguration = {
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
+  splitMultiValueFields?: Maybe<Scalars['Boolean']>;
   timezone?: Maybe<Scalars['String']>;
 };
 
@@ -1936,6 +1937,7 @@ export type LineChartConfiguration = {
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
+  splitMultiValueFields?: Maybe<Scalars['Boolean']>;
   timezone?: Maybe<Scalars['String']>;
 };
 
@@ -2269,7 +2271,7 @@ export type Mutation = {
   startChannelSync: ChannelSyncSuccess;
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: Scalars['Boolean'];
+  syncApplication: WorkspaceMigrationDto;
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
@@ -3540,6 +3542,7 @@ export type PieChartConfiguration = {
   manualSortOrder?: Maybe<Array<Scalars['String']>>;
   orderBy?: Maybe<GraphOrderBy>;
   showCenterMetric?: Maybe<Scalars['Boolean']>;
+  splitMultiValueFields?: Maybe<Scalars['Boolean']>;
   timezone?: Maybe<Scalars['String']>;
 };
 
@@ -5173,6 +5176,12 @@ export enum WorkspaceMigrationActionType {
   delete = 'delete',
   update = 'update'
 }
+
+export type WorkspaceMigrationDto = {
+  __typename?: 'WorkspaceMigrationDTO';
+  actions: Scalars['JSON'];
+  applicationUniversalIdentifier: Scalars['String'];
+};
 
 export type WorkspaceMigrationDeleteActionInput = {
   metadataName: AllMetadataName;

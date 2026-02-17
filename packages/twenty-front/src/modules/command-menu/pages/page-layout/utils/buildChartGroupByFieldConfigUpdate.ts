@@ -4,7 +4,7 @@ import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataArrayKind } from 'twenty-shared/utils';
 import { BarChartGroupMode, GraphOrderBy } from '~/generated-metadata/graphql';
 
 type BuildChartGroupByFieldConfigUpdateArgs<T extends ChartConfiguration> = {
@@ -60,6 +60,23 @@ export const buildChartGroupByFieldConfigUpdate = <
     ? getChartDefaultOrderByForFieldType(fieldMetadataItem?.type)
     : GraphOrderBy.FIELD_ASC;
 
+  const isArrayFieldMetadataId = (
+    fieldMetadataId: string | null | undefined,
+  ): boolean => {
+    if (!isDefined(fieldMetadataId)) {
+      return false;
+    }
+
+    const candidateFieldMetadataItem = objectMetadataItem?.fields?.find(
+      (field) => field.id === fieldMetadataId,
+    );
+
+    return (
+      isDefined(candidateFieldMetadataItem) &&
+      isFieldMetadataArrayKind(candidateFieldMetadataItem.type)
+    );
+  };
+
   if (isPrimaryAxis) {
     const existingDateGranularity =
       isBarChart || isLineChart
@@ -79,6 +96,11 @@ export const buildChartGroupByFieldConfigUpdate = <
       !isNewFieldDateType &&
       (isBarChart || isLineChart);
 
+    const shouldDisableSplitMultiValueFields =
+      (isBarChart || isLineChart) &&
+      isArrayFieldMetadataId(fieldId) &&
+      isArrayFieldMetadataId(configuration.secondaryAxisGroupByFieldMetadataId);
+
     return {
       ...baseConfig,
       primaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : null,
@@ -86,6 +108,9 @@ export const buildChartGroupByFieldConfigUpdate = <
         ? (existingDateGranularity ?? ObjectRecordGroupByDateGranularity.DAY)
         : null,
       ...(shouldResetCumulative ? { isCumulative: false } : {}),
+      ...(shouldDisableSplitMultiValueFields
+        ? { splitMultiValueFields: false }
+        : {}),
     };
   }
 
@@ -108,6 +133,10 @@ export const buildChartGroupByFieldConfigUpdate = <
   }
 
   if (isBarChart) {
+    const shouldDisableSplitMultiValueFields =
+      isArrayFieldMetadataId(configuration.primaryAxisGroupByFieldMetadataId) &&
+      isArrayFieldMetadataId(fieldId);
+
     return {
       ...baseConfig,
       secondaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : null,
@@ -118,10 +147,17 @@ export const buildChartGroupByFieldConfigUpdate = <
       groupMode: isDefined(fieldId)
         ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
         : null,
+      ...(shouldDisableSplitMultiValueFields
+        ? { splitMultiValueFields: false }
+        : {}),
     };
   }
 
   if (isLineChart) {
+    const shouldDisableSplitMultiValueFields =
+      isArrayFieldMetadataId(configuration.primaryAxisGroupByFieldMetadataId) &&
+      isArrayFieldMetadataId(fieldId);
+
     return {
       ...baseConfig,
       secondaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : null,
@@ -130,6 +166,9 @@ export const buildChartGroupByFieldConfigUpdate = <
           ObjectRecordGroupByDateGranularity.DAY)
         : null,
       isStacked: isDefined(fieldId) ? (configuration.isStacked ?? true) : null,
+      ...(shouldDisableSplitMultiValueFields
+        ? { splitMultiValueFields: false }
+        : {}),
     };
   }
 

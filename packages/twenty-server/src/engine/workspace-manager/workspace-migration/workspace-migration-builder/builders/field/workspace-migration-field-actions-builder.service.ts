@@ -44,7 +44,7 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
-        universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
+        flatEntity: flatFieldMetadataToValidate,
       },
     };
   }

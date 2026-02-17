@@ -1,20 +1,19 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { type UniversalCreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
-import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
+import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 export type IdByUniversalIdentifierByMetadataName = {
   [P in AllMetadataName]?: Record<string, string>;
 };
 
-const buildFieldIdByUniversalIdentifier = ({
+const buildFieldIdByUniversalIdentifierForObjectAction = ({
   action,
   fieldMetadataIdByUniversalIdentifier,
 }: {
-  action: UniversalCreateObjectAction | UniversalCreateFieldAction;
+  action: UniversalCreateObjectAction;
   fieldMetadataIdByUniversalIdentifier: Record<string, string>;
 }): Record<string, string> | undefined => {
   const fieldIdByUniversalIdentifier = {
@@ -96,7 +95,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
         const fieldIdByUniversalIdentifier = isDefined(
           fieldMetadataIdByUniversalIdentifier,
         )
-          ? buildFieldIdByUniversalIdentifier({
+          ? buildFieldIdByUniversalIdentifierForObjectAction({
               action,
               fieldMetadataIdByUniversalIdentifier,
             })
@@ -113,12 +112,20 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
           return action;
         }
 
+        const relatedFieldId = isDefined(
+          action.relatedUniversalFlatFieldMetadata,
+        )
+          ? fieldMetadataIdByUniversalIdentifier[
+              action.relatedUniversalFlatFieldMetadata.universalIdentifier
+            ]
+          : undefined;
+
         return {
           ...action,
-          fieldIdByUniversalIdentifier: buildFieldIdByUniversalIdentifier({
-            action,
-            fieldMetadataIdByUniversalIdentifier,
-          }),
+          id: fieldMetadataIdByUniversalIdentifier[
+            action.flatEntity.universalIdentifier
+          ],
+          relatedFieldId,
         };
       }
       case 'pageLayout': {

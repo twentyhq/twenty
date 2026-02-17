@@ -93,6 +93,20 @@ export const parseGroupByArgs = (
         }
       }
 
+      // Handle array unnest fields
+      if (
+        typeof fieldNames[fieldName] === 'object' &&
+        fieldNames[fieldName] !== null &&
+        'unnest' in fieldNames[fieldName]
+      ) {
+        groupByFields.push({
+          fieldMetadata,
+          subFieldName: undefined,
+          shouldUnnest: true,
+        });
+        continue;
+      }
+
       // Handle regular fields and composite fields
       if (fieldNames[fieldName] === true) {
         groupByFields.push({

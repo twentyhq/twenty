@@ -23,6 +23,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
@@ -43,7 +44,7 @@ export class ApplicationSyncService {
     manifest,
   }: ApplicationInput & {
     workspaceId: string;
-  }) {
+  }): Promise<WorkspaceMigration> {
     const application = await this.syncApplication({
       workspaceId,
       manifest,
@@ -51,13 +52,16 @@ export class ApplicationSyncService {
 
     const ownerFlatApplication: FlatApplication = application;
 
-    await this.applicationManifestMigrationService.syncMetadataFromManifest({
-      manifest,
-      workspaceId,
-      ownerFlatApplication,
-    });
+    const workspaceMigration =
+      await this.applicationManifestMigrationService.syncMetadataFromManifest({
+        manifest,
+        workspaceId,
+        ownerFlatApplication,
+      });
 
     this.logger.log('✅ Application sync from manifest completed');
+
+    return workspaceMigration;
   }
 
   private async syncApplication({
@@ -129,7 +133,7 @@ export class ApplicationSyncService {
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-  }) {
+  }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findByUniversalIdentifier(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
@@ -180,7 +184,7 @@ export class ApplicationSyncService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Validation errors occurred while uninstalling application',
@@ -191,5 +195,7 @@ export class ApplicationSyncService {
       applicationUniversalIdentifier,
       workspaceId,
     );
+
+    return validateAndBuildResult.workspaceMigration;
   }
 }

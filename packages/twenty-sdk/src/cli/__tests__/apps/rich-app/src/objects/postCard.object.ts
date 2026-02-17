@@ -20,6 +20,8 @@ export default defineObject({
   labelPlural: 'Post cards',
   description: 'A post card object',
   icon: 'IconMail',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
       universalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
