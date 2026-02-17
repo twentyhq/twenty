@@ -189,6 +189,7 @@ export class MessagingMessagesImportService {
           },
           {
             throttleFailureCount: 0,
+            throttleRetryAfter: null,
             syncStageStartedAt: null,
           },
         );

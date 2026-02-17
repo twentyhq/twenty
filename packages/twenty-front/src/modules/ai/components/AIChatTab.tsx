@@ -1,12 +1,12 @@
-import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
-import { IconHistory } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { EditorContent } from '@tiptap/react';
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { LightButton } from 'twenty-ui/input';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
@@ -17,15 +17,12 @@ import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoa
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
-import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
+import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -65,25 +62,39 @@ const StyledInputBox = styled.div`
   }
 `;
 
-const StyledTextAreaWrapper = styled.div`
+const StyledEditorWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   min-height: 0;
-`;
 
-const StyledChatTextArea = styled(TextArea)`
-  && {
+  .tiptap {
     background: transparent;
     border: none;
-    border-radius: 0;
     box-shadow: none;
+    color: ${({ theme }) => theme.font.color.primary};
+    font-family: inherit;
+    font-size: ${({ theme }) => theme.font.size.md};
+    font-weight: ${({ theme }) => theme.font.weight.regular};
+    line-height: 16px;
+    outline: none;
     padding: 0;
-  }
+    min-height: 48px;
+    max-height: 320px;
+    overflow-y: auto;
 
-  &&:focus {
-    border: none;
-    box-shadow: none;
+    p {
+      margin: 0;
+    }
+
+    p.is-editor-empty:first-of-type::before {
+      color: ${({ theme }) => theme.font.color.light};
+      content: attr(data-placeholder);
+      float: left;
+      font-weight: ${({ theme }) => theme.font.weight.regular};
+      height: 0;
+      pointer-events: none;
+    }
   }
 `;
 
@@ -91,7 +102,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(5)};
+  gap: ${({ theme }) => theme.spacing(2)};
   overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(3)};
   width: calc(100% - 24px);
@@ -100,22 +111,45 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const StyledLeftButtonsContainer = styled.div`
+  align-items: center;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(0.5)};
-  justify-content: flex-end;
+`;
+
+const StyledRightButtonsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledReadOnlyModelButton = styled(LightButton)`
+  cursor: default;
+
+  &:hover,
+  &:active {
+    background: transparent;
+  }
 `;
 
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const isMobile = useIsMobile();
-  const { isLoading, messages, isStreaming, error } =
+  const { isLoading, messages, isStreaming, error, handleSendMessage } =
     useAgentChatContextOrThrow();
-
-  const [agentChatInput, setAgentChatInput] =
-    useRecoilState(agentChatInputState);
+  const hasMessages = messages.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
-  const { navigateCommandMenu } = useCommandMenu();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
+
+  const { editor, handleSendAndClear } = useAIChatEditor({
+    onSendMessage: handleSendMessage,
+  });
 
   return (
     <StyledContainer
@@ -130,7 +164,7 @@ export const AIChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          {messages.length !== 0 && (
+          {hasMessages && (
             <StyledScrollWrapper
               componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
             >
@@ -157,44 +191,32 @@ export const AIChatTab = () => {
                 )}
             </StyledScrollWrapper>
           )}
-          {messages.length === 0 && !error && !isLoading && (
-            <AIChatEmptyState />
+          {!hasMessages && !error && !isLoading && (
+            <AIChatEmptyState editor={editor} />
           )}
-          {messages.length === 0 && error && !isLoading && (
+          {!hasMessages && error && !isLoading && (
             <AIChatStandaloneError error={error} />
           )}
-          {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
+          {isLoading && !hasMessages && <AIChatSkeletonLoader />}
 
           <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />
             <StyledInputBox>
-              <StyledTextAreaWrapper>
-                <StyledChatTextArea
-                  textAreaId={AI_CHAT_INPUT_ID}
-                  placeholder={t`Ask, search or make anything...`}
-                  value={agentChatInput}
-                  onChange={(value) => setAgentChatInput(value)}
-                  minRows={3}
-                  maxRows={20}
-                />
-              </StyledTextAreaWrapper>
+              <StyledEditorWrapper>
+                <EditorContent editor={editor} />
+              </StyledEditorWrapper>
               <StyledButtonsContainer>
-                <AIChatContextUsageButton />
-                <IconButton
-                  Icon={IconHistory}
-                  variant="tertiary"
-                  size="small"
-                  onClick={() =>
-                    navigateCommandMenu({
-                      page: CommandMenuPages.ViewPreviousAIChats,
-                      pageTitle: t`View Previous AI Chats`,
-                      pageIcon: IconHistory,
-                    })
-                  }
-                  ariaLabel={t`View Previous AI Chats`}
-                />
-                <AgentChatFileUploadButton />
-                <SendMessageButton />
+                <StyledLeftButtonsContainer>
+                  <AgentChatFileUploadButton />
+                  {hasMessages && <AIChatContextUsageButton />}
+                </StyledLeftButtonsContainer>
+                <StyledRightButtonsContainer>
+                  <StyledReadOnlyModelButton
+                    accent="tertiary"
+                    title={smartModelLabel}
+                  />
+                  <SendMessageButton onSend={handleSendAndClear} />
+                </StyledRightButtonsContainer>
               </StyledButtonsContainer>
             </StyledInputBox>
           </StyledInputArea>

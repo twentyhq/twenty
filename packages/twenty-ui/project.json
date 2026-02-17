@@ -55,6 +55,24 @@
         "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
+    "build:individual": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/individual"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vite build -c vite.config.individual.ts"
+      }
+    },
     "clean": {
       "executor": "nx:run-commands",
       "options": {

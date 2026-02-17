@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { userEvent, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -174,6 +175,54 @@ print(df.head())`,
   },
 };
 
+const mockThinkingStepsStreaming: ExtendedUIMessage = {
+  id: 'msg-thinking-streaming',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-web_search',
+      toolCallId: 'tool-web-search-streaming',
+      input: { query: 'top leads status' },
+      output: { result: { ok: true } },
+      state: 'output-available',
+    },
+    {
+      type: 'reasoning',
+      text: 'I need to evaluate the latest lead activity and pipeline stage changes before I can answer accurately.',
+      state: 'streaming',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
+  },
+};
+
+const mockThinkingStepsDone: ExtendedUIMessage = {
+  id: 'msg-thinking-done',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-web_search',
+      toolCallId: 'tool-web-search-done',
+      input: { query: 'top leads status' },
+      output: { result: { ok: true } },
+      state: 'output-available',
+    },
+    {
+      type: 'reasoning',
+      text: 'I filtered the most engaged leads and checked the latest interactions to determine which opportunities are moving forward.',
+      state: 'done',
+    },
+    {
+      type: 'text',
+      text: 'You currently have 5 top leads in active stages. Two are in proposal review and three are in scheduled demo follow-up.',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
+  },
+};
+
 const meta: Meta<typeof AIChatMessage> = {
   title: 'Modules/AI/AIChatMessage',
   component: AIChatMessage,
@@ -231,5 +280,34 @@ export const CodeExecutionWithError: Story = {
   args: {
     message: mockCodeExecutionError,
     isLastMessageStreaming: false,
+  },
+};
+
+export const ThinkingStepsThinkingState: Story = {
+  args: {
+    message: mockThinkingStepsStreaming,
+    isLastMessageStreaming: true,
+  },
+};
+
+export const ThinkingStepsDoneCollapsed: Story = {
+  args: {
+    message: mockThinkingStepsDone,
+    isLastMessageStreaming: false,
+  },
+};
+
+export const ThinkingStepsDoneExpanded: Story = {
+  args: {
+    message: mockThinkingStepsDone,
+    isLastMessageStreaming: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const summaryButton = await canvas.findByRole('button', {
+      name: /2 steps/i,
+    });
+
+    await userEvent.click(summaryButton);
   },
 };

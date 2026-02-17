@@ -9,14 +9,17 @@ import {
 } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-type-validator.type';
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { rejectWidgetType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/reject-widget-type.util';
+import { validateFieldsFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util';
 import { validateFrontComponentFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util';
 import { validateFrontComponentFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-update.util';
 import { validateGraphFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util';
 import { validateGraphFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-update.util';
 import { validateIframeFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util';
 import { validateIframeFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-update.util';
+import { validateSimpleRecordPageWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
@@ -52,64 +55,40 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         'Widget type FIELD is not supported yet.',
         msg`Widget type FIELD is not supported yet.`,
       ),
-      FIELDS: rejectWidgetType(
-        WidgetType.FIELDS,
-        'Widget type FIELDS is not supported yet.',
-        msg`Widget type FIELDS is not supported yet.`,
-      ),
+      FIELDS: validateFieldsFlatPageLayoutWidgetForCreation,
       GRAPH: validateGraphFlatPageLayoutWidgetForCreation,
       STANDALONE_RICH_TEXT:
         validateStandaloneRichTextFlatPageLayoutWidgetForCreation,
       FRONT_COMPONENT: validateFrontComponentFlatPageLayoutWidgetForCreation,
-      TIMELINE: rejectWidgetType(
-        WidgetType.TIMELINE,
-        'Widget type TIMELINE is not supported yet.',
-        msg`Widget type TIMELINE is not supported yet.`,
+      TIMELINE: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.TIMELINE,
       ),
-      TASKS: rejectWidgetType(
-        WidgetType.TASKS,
-        'Widget type TASKS is not supported yet.',
-        msg`Widget type TASKS is not supported yet.`,
+      TASKS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.TASKS,
       ),
-      NOTES: rejectWidgetType(
-        WidgetType.NOTES,
-        'Widget type NOTES is not supported yet.',
-        msg`Widget type NOTES is not supported yet.`,
+      NOTES: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.NOTES,
       ),
-      FILES: rejectWidgetType(
-        WidgetType.FILES,
-        'Widget type FILES is not supported yet.',
-        msg`Widget type FILES is not supported yet.`,
+      FILES: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FILES,
       ),
-      EMAILS: rejectWidgetType(
-        WidgetType.EMAILS,
-        'Widget type EMAILS is not supported yet.',
-        msg`Widget type EMAILS is not supported yet.`,
+      EMAILS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.EMAILS,
       ),
-      CALENDAR: rejectWidgetType(
-        WidgetType.CALENDAR,
-        'Widget type CALENDAR is not supported yet.',
-        msg`Widget type CALENDAR is not supported yet.`,
+      CALENDAR: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.CALENDAR,
       ),
-      FIELD_RICH_TEXT: rejectWidgetType(
-        WidgetType.FIELD_RICH_TEXT,
-        'Widget type FIELD_RICH_TEXT is not supported yet.',
-        msg`Widget type FIELD_RICH_TEXT is not supported yet.`,
+      FIELD_RICH_TEXT: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FIELD_RICH_TEXT,
       ),
-      WORKFLOW: rejectWidgetType(
-        WidgetType.WORKFLOW,
-        'Widget type WORKFLOW is not supported yet.',
-        msg`Widget type WORKFLOW is not supported yet.`,
+      WORKFLOW: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.WORKFLOW,
       ),
-      WORKFLOW_VERSION: rejectWidgetType(
-        WidgetType.WORKFLOW_VERSION,
-        'Widget type WORKFLOW_VERSION is not supported yet.',
-        msg`Widget type WORKFLOW_VERSION is not supported yet.`,
+      WORKFLOW_VERSION: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.WORKFLOW_VERSION,
       ),
-      WORKFLOW_RUN: rejectWidgetType(
-        WidgetType.WORKFLOW_RUN,
-        'Widget type WORKFLOW_RUN is not supported yet.',
-        msg`Widget type WORKFLOW_RUN is not supported yet.`,
+      WORKFLOW_RUN: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.WORKFLOW_RUN,
       ),
     };
 
@@ -126,11 +105,7 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         'Widget type FIELD is not supported yet.',
         msg`Widget type FIELD is not supported yet.`,
       ),
-      FIELDS: rejectWidgetType(
-        WidgetType.FIELDS,
-        'Widget type FIELDS is not supported yet.',
-        msg`Widget type FIELDS is not supported yet.`,
-      ),
+      FIELDS: () => [],
       GRAPH: validateGraphFlatPageLayoutWidgetForUpdate,
       STANDALONE_RICH_TEXT:
         validateStandaloneRichTextFlatPageLayoutWidgetForUpdate,

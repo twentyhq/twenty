@@ -3,6 +3,7 @@ import { workflowAiAgentActionSchema } from './ai-agent-action-schema';
 import { workflowCodeActionSchema } from './code-action-schema';
 import { workflowCreateRecordActionSchema } from './create-record-action-schema';
 import { workflowDeleteRecordActionSchema } from './delete-record-action-schema';
+import { workflowDraftEmailActionSchema } from './draft-email-action-schema';
 import { workflowEmptyActionSchema } from './empty-action-schema';
 import { workflowFilterActionSchema } from './filter-action-schema';
 import { workflowFindRecordsActionSchema } from './find-records-action-schema';
@@ -20,6 +21,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
   workflowLogicFunctionActionSchema,
   workflowSendEmailActionSchema,
+  workflowDraftEmailActionSchema,
   workflowCreateRecordActionSchema,
   workflowUpdateRecordActionSchema,
   workflowDeleteRecordActionSchema,

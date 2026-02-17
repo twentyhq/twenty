@@ -2,10 +2,7 @@ import IllustrationIconCalendarEventRaw from '@assets/icons/illustration-calenda
 import { useTheme } from '@emotion/react';
 import { IllustrationIconWrapper } from '@ui/display/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
-export type IllustrationIconCalendarEventProps = Pick<
-  IconComponentProps,
-  'size'
->;
+type IllustrationIconCalendarEventProps = Pick<IconComponentProps, 'size'>;
 
 export const IllustrationIconCalendarEvent = (
   props: IllustrationIconCalendarEventProps,

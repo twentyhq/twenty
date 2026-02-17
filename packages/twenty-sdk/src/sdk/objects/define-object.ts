@@ -1,10 +1,10 @@
-import { type ObjectManifest } from 'twenty-shared/application';
-
-import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import { validateFields } from '@/sdk/fields/validate-fields';
+import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { isDefined } from 'twenty-shared/utils';
 
-export const defineObject: DefineEntity<ObjectManifest> = (config) => {
+export const defineObject: DefineEntity<ObjectConfig> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {
@@ -30,6 +30,19 @@ export const defineObject: DefineEntity<ObjectManifest> = (config) => {
   const fieldErrors = validateFields(config.fields);
 
   errors.push(...fieldErrors);
+
+  if (
+    isDefined(config.labelIdentifierFieldMetadataUniversalIdentifier) &&
+    !config.fields.some(
+      (field) =>
+        field.universalIdentifier ===
+        config.labelIdentifierFieldMetadataUniversalIdentifier,
+    )
+  ) {
+    errors.push(
+      'labelIdentifierFieldMetadataUniversalIdentifier must reference a field defined in the fields array',
+    );
+  }
 
   return createValidationResult({
     config,

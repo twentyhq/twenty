@@ -244,6 +244,7 @@ describe('WorkspaceEntityManager', () => {
         IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false,
         IS_MARKETPLACE_ENABLED: false,
         IS_FILES_FIELD_MIGRATED: false,
+        IS_DRAFT_EMAIL_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
