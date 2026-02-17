@@ -158,6 +158,8 @@ export class LocalDriver implements StorageDriver {
     rootFolderPath: string;
     localPath: string;
   }): Promise<void> {
+    await this.createFolder(params.localPath);
+
     const resources = await fs.readdir(params.rootFolderPath);
 
     for (const resource of resources) {

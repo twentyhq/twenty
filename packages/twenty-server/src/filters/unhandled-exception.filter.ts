@@ -26,6 +26,7 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
 
     if (origin) {
       response.header('Access-Control-Allow-Origin', origin);
+      response.header('Vary', 'Origin');
       response.header(
         'Access-Control-Allow-Methods',
         'GET,HEAD,PUT,PATCH,POST,DELETE',
