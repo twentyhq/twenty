@@ -8,13 +8,9 @@ type GraphWidgetRendererProps = {
 };
 
 export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
-  if (!isDefined(widget.configuration)) {
+  if (!isDefined(widget.configuration) || !isDefined(widget.objectMetadataId)) {
     return <PageLayoutWidgetNoDataDisplay />;
   }
 
-  if (!isDefined(widget.objectMetadataId)) {
-    return <PageLayoutWidgetNoDataDisplay />;
-  }
-
-  return <GraphWidget objectMetadataId={widget.objectMetadataId} />;
+  return <GraphWidget />;
 };

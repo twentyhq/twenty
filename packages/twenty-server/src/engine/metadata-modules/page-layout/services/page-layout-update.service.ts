@@ -459,10 +459,7 @@ export class PageLayoutUpdateService {
             pageLayoutTabId: widgetInput.pageLayoutTabId,
             objectMetadataId: widgetInput.objectMetadataId,
           },
-          flatEntityMaps: {
-            flatPageLayoutTabMaps,
-            flatObjectMetadataMaps,
-          },
+          flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
         });
 
         return {
@@ -505,12 +502,26 @@ export class PageLayoutUpdateService {
 
         const updatedConfiguration = widgetInput.configuration ?? null;
 
+        const {
+          pageLayoutTabUniversalIdentifier,
+          objectMetadataUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: widgetInput.pageLayoutTabId,
+            objectMetadataId: widgetInput.objectMetadataId,
+          },
+          flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
+        });
+
         return {
           ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
+          pageLayoutTabUniversalIdentifier,
           title: widgetInput.title,
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
+          objectMetadataUniversalIdentifier,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
           configuration: updatedConfiguration,
@@ -536,12 +547,26 @@ export class PageLayoutUpdateService {
 
         const restoredConfiguration = widgetInput.configuration ?? null;
 
+        const {
+          pageLayoutTabUniversalIdentifier,
+          objectMetadataUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: widgetInput.pageLayoutTabId,
+            objectMetadataId: widgetInput.objectMetadataId,
+          },
+          flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
+        });
+
         return {
           ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
+          pageLayoutTabUniversalIdentifier,
           title: widgetInput.title,
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
+          objectMetadataUniversalIdentifier,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
           configuration: restoredConfiguration,
