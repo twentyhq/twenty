@@ -174,7 +174,7 @@ export class ApplicationSyncService {
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
           buildOptions: {
-            isSystemBuild: false,
+            isSystemBuild: true,
             inferDeletionFromMissingEntities: true,
             applicationUniversalIdentifier,
           },
