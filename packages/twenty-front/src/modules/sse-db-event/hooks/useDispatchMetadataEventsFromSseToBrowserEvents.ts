@@ -2,25 +2,30 @@ import { dispatchMetadataOperationBrowserEvent } from '@/object-metadata/utils/d
 import { turnSseMetadataEventsToMetadataOperationBrowserEvents } from '@/sse-db-event/utils/turnSseMetadataEventsToMetadataOperationBrowserEvents';
 import { useCallback } from 'react';
 import {
+  type AllMetadataName,
   type MetadataEvent,
   type MetadataEventWithQueryIds,
 } from '~/generated-metadata/graphql';
 
 const groupSseMetadataEventsByMetadataName = (
   sseMetadataEvents: MetadataEvent[],
-): Map<string, MetadataEvent[]> => {
-  const eventsByMetadataName = new Map<string, MetadataEvent[]>();
+): Map<AllMetadataName, MetadataEvent[]> => {
+  const eventsByMetadataName = new Map<AllMetadataName, MetadataEvent[]>();
 
   for (const event of sseMetadataEvents) {
-    const existing = eventsByMetadataName.get(event.metadataName) ?? [];
+    const metadataName = event.metadataName as AllMetadataName;
 
-    eventsByMetadataName.set(event.metadataName, [...existing, event]);
+    const existing = eventsByMetadataName.get(metadataName) ?? [];
+
+    eventsByMetadataName.set(metadataName, [...existing, event]);
   }
 
   return eventsByMetadataName;
 };
 
-export const useDispatchMetadataEventsFromSseToBrowserEvents = () => {
+export const useDispatchMetadataEventsFromSseToBrowserEvents = <
+  T extends Record<string, unknown>,
+>() => {
   const dispatchMetadataEventsFromSseToBrowserEvents = useCallback(
     (metadataEventsWithQueryIds: MetadataEventWithQueryIds[]) => {
       const sseMetadataEvents = metadataEventsWithQueryIds.map(
@@ -32,7 +37,7 @@ export const useDispatchMetadataEventsFromSseToBrowserEvents = () => {
 
       for (const [metadataName, events] of eventsByMetadataName) {
         const metadataOperationBrowserEvents =
-          turnSseMetadataEventsToMetadataOperationBrowserEvents({
+          turnSseMetadataEventsToMetadataOperationBrowserEvents<T>({
             metadataName,
             sseMetadataEvents: events,
           });

@@ -2,18 +2,21 @@ import { type MetadataOperationBrowserEventDetail } from '@/object-metadata/type
 import { isDefined } from 'twenty-shared/utils';
 import {
   MetadataEventAction,
+  type AllMetadataName,
   type MetadataEvent,
 } from '~/generated-metadata/graphql';
 
-export const turnSseMetadataEventsToMetadataOperationBrowserEvents = ({
+export const turnSseMetadataEventsToMetadataOperationBrowserEvents = <
+  T extends Record<string, unknown>,
+>({
   metadataName,
   sseMetadataEvents,
 }: {
-  metadataName: string;
+  metadataName: AllMetadataName;
   sseMetadataEvents: MetadataEvent[];
-}): MetadataOperationBrowserEventDetail[] => {
+}): MetadataOperationBrowserEventDetail<T>[] => {
   return sseMetadataEvents
-    .map((event): MetadataOperationBrowserEventDetail | null => {
+    .map((event): MetadataOperationBrowserEventDetail<T> | null => {
       switch (event.type) {
         case MetadataEventAction.CREATED: {
           const createdRecord = event.properties.after;

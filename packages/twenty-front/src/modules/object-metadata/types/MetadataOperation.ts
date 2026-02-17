@@ -1,11 +1,11 @@
-export type MetadataOperation =
+export type MetadataOperation<T extends Record<string, unknown>> =
   | {
       type: 'create';
-      createdRecord: Record<string, unknown>;
+      createdRecord: T;
     }
   | {
       type: 'update';
-      updatedRecord: Record<string, unknown>;
+      updatedRecord: T;
       updatedFields?: string[];
     }
   | {

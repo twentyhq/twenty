@@ -2,23 +2,27 @@ import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/object-metadata/constan
 import { type MetadataOperation } from '@/object-metadata/types/MetadataOperation';
 import { type MetadataOperationBrowserEventDetail } from '@/object-metadata/types/MetadataOperationBrowserEventDetail';
 import { useEffect } from 'react';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-export const useListenToMetadataOperationBrowserEvent = ({
+export const useListenToMetadataOperationBrowserEvent = <
+  T extends Record<string, unknown>,
+>({
   onMetadataOperationBrowserEvent,
   metadataName,
   operationTypes,
 }: {
   onMetadataOperationBrowserEvent: (
-    detail: MetadataOperationBrowserEventDetail,
+    detail: MetadataOperationBrowserEventDetail<T>,
   ) => void;
-  metadataName?: string;
-  operationTypes?: MetadataOperation['type'][];
+  metadataName?: AllMetadataName;
+  operationTypes?: MetadataOperation<T>['type'][];
 }) => {
   useEffect(() => {
-    const handleMetadataOperationEvent = (event: Event) => {
-      const detail = (event as CustomEvent<MetadataOperationBrowserEventDetail>)
-        .detail;
+    const handleMetadataOperationEvent = (
+      event: CustomEvent<MetadataOperationBrowserEventDetail<T>>,
+    ) => {
+      const detail = event.detail;
 
       if (isDefined(metadataName) && detail.metadataName !== metadataName) {
         return;
@@ -36,13 +40,13 @@ export const useListenToMetadataOperationBrowserEvent = ({
 
     window.addEventListener(
       METADATA_OPERATION_BROWSER_EVENT_NAME,
-      handleMetadataOperationEvent,
+      handleMetadataOperationEvent as EventListener,
     );
 
     return () => {
       window.removeEventListener(
         METADATA_OPERATION_BROWSER_EVENT_NAME,
-        handleMetadataOperationEvent,
+        handleMetadataOperationEvent as EventListener,
       );
     };
   }, [metadataName, onMetadataOperationBrowserEvent, operationTypes]);
