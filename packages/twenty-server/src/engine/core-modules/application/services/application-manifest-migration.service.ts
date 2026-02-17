@@ -78,7 +78,7 @@ export class ApplicationManifestMigrationService {
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
           buildOptions: {
-            isSystemBuild: true,
+            isSystemBuild: false,
             inferDeletionFromMissingEntities: true,
           },
           fromToAllFlatEntityMaps,

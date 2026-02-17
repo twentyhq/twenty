@@ -75,6 +75,17 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
     };
 
+    if (
+      !buildOptions.isSystemBuild &&
+      existingFlatFieldMetadataToUpdate.isSystem
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        message: 'System fields cannot be updated',
+        userFriendlyMessage: msg`System fields cannot be updated`,
+      });
+    }
+
     const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
@@ -205,6 +216,7 @@ export class FlatFieldMetadataValidatorService {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'delete'> {
@@ -237,6 +249,14 @@ export class FlatFieldMetadataValidatorService {
       objectMetadataUniversalIdentifier:
         flatFieldMetadataToDelete.objectMetadataUniversalIdentifier,
     };
+
+    if (!buildOptions.isSystemBuild && flatFieldMetadataToDelete.isSystem) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        message: 'System fields cannot be deleted',
+        userFriendlyMessage: msg`System fields cannot be deleted`,
+      });
+    }
 
     const relatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
