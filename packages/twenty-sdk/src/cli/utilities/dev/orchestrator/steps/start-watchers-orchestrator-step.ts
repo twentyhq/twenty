@@ -6,26 +6,15 @@ import {
 import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watcher';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
-import {
-  type OrchestratorState,
-  type OrchestratorStateStepStatus,
-} from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import type { Location } from 'esbuild';
 import { type EventName } from 'chokidar/handler.js';
 import { ASSETS_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
-export type StartWatchersOrchestratorStepInput = Record<string, never>;
-
 export type StartWatchersOrchestratorStepOutput = {
   watchersStarted: boolean;
-};
-
-export type StartWatchersOrchestratorStepState = {
-  input: StartWatchersOrchestratorStepInput;
-  output: StartWatchersOrchestratorStepOutput;
-  status: OrchestratorStateStepStatus;
 };
 
 export class StartWatchersOrchestratorStep {
@@ -53,6 +42,9 @@ export class StartWatchersOrchestratorStep {
   }
 
   async start(): Promise<void> {
+    this.state.steps.startWatchers.status = 'in_progress';
+    this.notify();
+
     this.manifestWatcher = new ManifestWatcher({
       appPath: this.state.appPath,
       handleChangeDetected: this.handleChangeDetected.bind(this),
@@ -149,12 +141,7 @@ export class StartWatchersOrchestratorStep {
     });
 
     if (this.state.steps.uploadFiles.output.fileUploader) {
-      this.uploadFilesStep.uploadFile(
-        this.state,
-        builtPath,
-        sourcePath,
-        fileFolder,
-      );
+      this.uploadFilesStep.uploadFile(builtPath, sourcePath, fileFolder);
     }
 
     this.notify();

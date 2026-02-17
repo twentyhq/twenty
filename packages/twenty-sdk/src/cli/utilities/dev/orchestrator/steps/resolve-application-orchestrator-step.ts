@@ -1,62 +1,66 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import {
-  type OrchestratorStateStepEvent,
-  type OrchestratorStateStepStatus,
-} from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
-
-export type ResolveApplicationOrchestratorStepInput = Record<string, never>;
 
 export type ResolveApplicationOrchestratorStepOutput = {
   applicationId: string | null;
   universalIdentifier: string | null;
 };
 
-export type ResolveApplicationOrchestratorStepState = {
-  input: ResolveApplicationOrchestratorStepInput;
-  output: ResolveApplicationOrchestratorStepOutput;
-  status: OrchestratorStateStepStatus;
-};
-
 export class ResolveApplicationOrchestratorStep {
   private apiService: ApiService;
+  private state: OrchestratorState;
+  private notify: () => void;
 
-  constructor({ apiService }: { apiService: ApiService }) {
+  constructor({
+    apiService,
+    state,
+    notify,
+  }: {
+    apiService: ApiService;
+    state: OrchestratorState;
+    notify: () => void;
+  }) {
     this.apiService = apiService;
+    this.state = state;
+    this.notify = notify;
   }
 
-  async execute(
-    stepOutput: Readonly<ResolveApplicationOrchestratorStepOutput>,
-    input: { manifest: Manifest },
-  ): Promise<{
-    output: ResolveApplicationOrchestratorStepOutput;
-    events: OrchestratorStateStepEvent[];
-  }> {
+  async execute(input: {
+    manifest: Manifest;
+  }): Promise<ResolveApplicationOrchestratorStepOutput> {
+    const step = this.state.steps.resolveApplication;
+
+    step.status = 'in_progress';
+    this.notify();
+
     const universalIdentifier = input.manifest.application.universalIdentifier;
 
     const findResult =
       await this.apiService.findOneApplication(universalIdentifier);
 
     if (!findResult.success) {
-      return {
-        output: { ...stepOutput },
-        events: [
-          {
-            message: `Failed to find application ${universalIdentifier}`,
-            status: 'error',
-          },
-        ],
-      };
+      this.state.applyStepEvents([
+        {
+          message: `Failed to find application ${universalIdentifier}`,
+          status: 'error',
+        },
+      ]);
+      step.status = 'error';
+      this.state.updatePipeline({ status: 'error' });
+
+      return step.output;
     }
 
     if (findResult.data) {
-      return {
-        output: {
-          applicationId: findResult.data.id,
-          universalIdentifier: findResult.data.universalIdentifier,
-        },
-        events: [],
+      step.output = {
+        applicationId: findResult.data.id,
+        universalIdentifier: findResult.data.universalIdentifier,
       };
+      step.status = 'done';
+      this.notify();
+
+      return step.output;
     }
 
     const createResult = await this.apiService.createApplication(
@@ -64,26 +68,30 @@ export class ResolveApplicationOrchestratorStep {
     );
 
     if (!createResult.success) {
-      const errorMessage = `Application creation failed with error ${JSON.stringify(createResult.error, null, 2)}`;
+      this.state.applyStepEvents([
+        { message: 'Creating application', status: 'info' },
+        {
+          message: `Application creation failed with error ${JSON.stringify(createResult.error, null, 2)}`,
+          status: 'error',
+        },
+      ]);
+      step.status = 'error';
+      this.state.updatePipeline({ status: 'error' });
 
-      return {
-        output: { ...stepOutput },
-        events: [
-          { message: 'Creating application', status: 'info' },
-          { message: errorMessage, status: 'error' },
-        ],
-      };
+      return step.output;
     }
 
-    return {
-      output: {
-        applicationId: createResult.data!.id,
-        universalIdentifier: createResult.data!.universalIdentifier,
-      },
-      events: [
-        { message: 'Creating application', status: 'info' },
-        { message: 'Application created', status: 'success' },
-      ],
+    step.output = {
+      applicationId: createResult.data!.id,
+      universalIdentifier: createResult.data!.universalIdentifier,
     };
+    this.state.applyStepEvents([
+      { message: 'Creating application', status: 'info' },
+      { message: 'Application created', status: 'success' },
+    ]);
+    step.status = 'done';
+    this.notify();
+
+    return step.output;
   }
 }

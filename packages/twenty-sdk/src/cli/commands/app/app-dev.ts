@@ -27,13 +27,14 @@ export class AppDevCommand {
 
     const uiStateManager = new DevUiStateManager(orchestratorState);
 
+    orchestratorState.onChange = () => uiStateManager.notify();
+
     const { unmount } = await renderDevUI(uiStateManager);
 
     this.unmountUI = unmount;
 
     this.orchestrator = new DevModeOrchestrator({
       state: orchestratorState,
-      uiStateManager,
     });
 
     await this.orchestrator.start();

@@ -1,14 +1,12 @@
-import { type SyncableEntity } from 'twenty-shared/application';
+import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import { type BuildManifestOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step';
+import { type CheckServerOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
+import { type ResolveApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
+import { type StartWatchersOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
+import { type SyncApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
+import { type UploadFilesOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { type Manifest, SyncableEntity } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-
-import { type BuildManifestOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step';
-import { type CheckServerOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
-import { type EnsureValidTokensOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/ensure-valid-tokens-orchestrator-step';
-import { type GenerateApiClientOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
-import { type ResolveApplicationOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
-import { type StartWatchersOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
-import { type SyncApplicationOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
-import { type UploadFilesOrchestratorStepState } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 
 export type OrchestratorStateStepEvent = {
   message: string;
@@ -32,6 +30,11 @@ export type OrchestratorStateStepStatus =
   | 'in_progress'
   | 'done'
   | 'error';
+
+export type OrchestratorStepState<TOutput> = {
+  output: TOutput;
+  status: OrchestratorStateStepStatus;
+};
 
 export type OrchestratorStateFileStatus =
   | 'pending'
@@ -60,6 +63,14 @@ export type OrchestratorStatePipeline = {
   appName: string | null;
 };
 
+const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
+  objects: SyncableEntity.Object,
+  fields: SyncableEntity.Field,
+  logicFunctions: SyncableEntity.LogicFunction,
+  frontComponents: SyncableEntity.FrontComponent,
+  roles: SyncableEntity.Role,
+};
+
 const MAX_EVENT_COUNT = 200;
 
 const FILE_STATUS_TRANSITION_MATRIX: Record<
@@ -77,15 +88,17 @@ export class OrchestratorState {
   frontendUrl?: string;
 
   steps: {
-    checkServer: CheckServerOrchestratorStepState;
-    ensureValidTokens: EnsureValidTokensOrchestratorStepState;
-    resolveApplication: ResolveApplicationOrchestratorStepState;
-    buildManifest: BuildManifestOrchestratorStepState;
-    uploadFiles: UploadFilesOrchestratorStepState;
-    generateApiClient: GenerateApiClientOrchestratorStepState;
-    syncApplication: SyncApplicationOrchestratorStepState;
-    startWatchers: StartWatchersOrchestratorStepState;
+    checkServer: OrchestratorStepState<CheckServerOrchestratorStepOutput>;
+    ensureValidTokens: OrchestratorStepState<Record<string, never>>;
+    resolveApplication: OrchestratorStepState<ResolveApplicationOrchestratorStepOutput>;
+    buildManifest: OrchestratorStepState<BuildManifestOrchestratorStepOutput>;
+    uploadFiles: OrchestratorStepState<UploadFilesOrchestratorStepOutput>;
+    generateApiClient: OrchestratorStepState<Record<string, never>>;
+    syncApplication: OrchestratorStepState<SyncApplicationOrchestratorStepOutput>;
+    startWatchers: OrchestratorStepState<StartWatchersOrchestratorStepOutput>;
   };
+
+  previousObjectsFieldsFingerprint: string | null;
 
   pipeline: OrchestratorStatePipeline;
 
@@ -93,34 +106,32 @@ export class OrchestratorState {
   events: OrchestratorStateEvent[];
 
   private eventIdCounter = 0;
+  onChange?: () => void;
 
   constructor(options: { appPath: string; frontendUrl?: string }) {
     this.appPath = options.appPath;
     this.frontendUrl = options.frontendUrl;
 
+    this.previousObjectsFieldsFingerprint = null;
+
     this.steps = {
       checkServer: {
-        input: {},
         output: { isReady: false, errorLogged: false },
         status: 'idle',
       },
       ensureValidTokens: {
-        input: {},
         output: {},
         status: 'idle',
       },
       resolveApplication: {
-        input: {},
         output: { applicationId: null, universalIdentifier: null },
         status: 'idle',
       },
       buildManifest: {
-        input: {},
-        output: { result: null, previousObjectsFieldsFingerprint: null },
+        output: { result: null },
         status: 'idle',
       },
       uploadFiles: {
-        input: {},
         output: {
           fileUploader: null,
           builtFileInfos: new Map(),
@@ -129,17 +140,14 @@ export class OrchestratorState {
         status: 'idle',
       },
       generateApiClient: {
-        input: {},
         output: {},
         status: 'idle',
       },
       syncApplication: {
-        input: {},
         output: { syncStatus: 'idle', error: null },
         status: 'idle',
       },
       startWatchers: {
-        input: {},
         output: { watchersStarted: false },
         status: 'idle',
       },
@@ -154,6 +162,15 @@ export class OrchestratorState {
 
     this.entities = new Map();
     this.events = [];
+  }
+
+  notify(): void {
+    this.onChange?.();
+  }
+
+  updatePipeline(update: Partial<OrchestratorStatePipeline>): void {
+    Object.assign(this.pipeline, update);
+    this.notify();
   }
 
   applyStepEvents(stepEvents: OrchestratorStateStepEvent[]): void {
@@ -219,5 +236,45 @@ export class OrchestratorState {
     }
 
     this.entities = entities;
+  }
+
+  updateEntitiesFromManifest(manifestFilePaths: EntityFilePaths): void {
+    const entityTypeMap = new Map<string, SyncableEntity>();
+
+    for (const [entityType, filePaths] of Object.entries(manifestFilePaths)) {
+      const syncableEntity = ENTITY_TYPE_TO_SYNCABLE[entityType];
+
+      if (!syncableEntity) {
+        continue;
+      }
+
+      for (const filePath of filePaths as string[]) {
+        entityTypeMap.set(filePath, syncableEntity);
+      }
+    }
+
+    const entities = new Map(this.entities);
+
+    for (const [filePath, entity] of entities) {
+      entities.set(filePath, {
+        ...entity,
+        type: entityTypeMap.get(filePath),
+      });
+    }
+
+    this.entities = entities;
+  }
+
+  hasObjectsOrFieldsChanged(manifest: Manifest): boolean {
+    const fingerprint = JSON.stringify({
+      objects: manifest.objects,
+      fields: manifest.fields,
+    });
+
+    const changed = fingerprint !== this.previousObjectsFieldsFingerprint;
+
+    this.previousObjectsFieldsFingerprint = fingerprint;
+
+    return changed;
   }
 }

@@ -2,42 +2,47 @@ import { type ApiService } from '@/cli/utilities/api/api-service';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import {
+  type OrchestratorState,
   type OrchestratorStateBuiltFileInfo,
   type OrchestratorStateStepEvent,
-  type OrchestratorStateStepStatus,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
-
-export type SyncApplicationOrchestratorStepInput = Record<string, never>;
 
 export type SyncApplicationOrchestratorStepOutput = {
   syncStatus: OrchestratorStateSyncStatus;
   error: string | null;
 };
 
-export type SyncApplicationOrchestratorStepState = {
-  input: SyncApplicationOrchestratorStepInput;
-  output: SyncApplicationOrchestratorStepOutput;
-  status: OrchestratorStateStepStatus;
-};
-
 export class SyncApplicationOrchestratorStep {
   private apiService: ApiService;
+  private state: OrchestratorState;
+  private notify: () => void;
 
-  constructor({ apiService }: { apiService: ApiService }) {
+  constructor({
+    apiService,
+    state,
+    notify,
+  }: {
+    apiService: ApiService;
+    state: OrchestratorState;
+    notify: () => void;
+  }) {
     this.apiService = apiService;
+    this.state = state;
+    this.notify = notify;
   }
 
   async execute(input: {
     manifest: Manifest;
     builtFileInfos: Map<string, OrchestratorStateBuiltFileInfo>;
     appPath: string;
-  }): Promise<{
-    output: SyncApplicationOrchestratorStepOutput;
-    status: OrchestratorStateStepStatus;
-    events: OrchestratorStateStepEvent[];
-  }> {
+  }): Promise<void> {
+    const step = this.state.steps.syncApplication;
+
+    step.status = 'in_progress';
+    this.state.updatePipeline({ status: 'syncing' });
+
     const events: OrchestratorStateStepEvent[] = [];
 
     const manifest = manifestUpdateChecksums({
@@ -59,22 +64,21 @@ export class SyncApplicationOrchestratorStep {
 
     if (syncResult.success) {
       events.push({ message: '✓ Synced', status: 'success' });
+      step.output = { syncStatus: 'synced', error: null };
+      step.status = 'done';
+      this.state.updatePipeline({ status: 'synced', error: null });
+      this.state.updateAllEntitiesStatus('success');
+      this.state.applyStepEvents(events);
 
-      return {
-        output: { syncStatus: 'synced', error: null },
-        status: 'done',
-        events,
-      };
+      return;
     }
 
     const errorMessage = `Sync failed with error ${JSON.stringify(syncResult.error, null, 2)}`;
 
     events.push({ message: errorMessage, status: 'error' });
-
-    return {
-      output: { syncStatus: 'error', error: errorMessage },
-      status: 'error',
-      events,
-    };
+    step.output = { syncStatus: 'error', error: errorMessage };
+    step.status = 'error';
+    this.state.updatePipeline({ status: 'error', error: errorMessage });
+    this.state.applyStepEvents(events);
   }
 }

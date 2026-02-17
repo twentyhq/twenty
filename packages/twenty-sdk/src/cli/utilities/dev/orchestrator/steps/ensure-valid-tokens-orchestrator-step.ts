@@ -1,41 +1,39 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
-import {
-  type OrchestratorStateStepEvent,
-  type OrchestratorStateStepStatus,
-} from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-
-export type EnsureValidTokensOrchestratorStepInput = Record<string, never>;
-
-export type EnsureValidTokensOrchestratorStepOutput = Record<string, never>;
-
-export type EnsureValidTokensOrchestratorStepState = {
-  input: EnsureValidTokensOrchestratorStepInput;
-  output: EnsureValidTokensOrchestratorStepOutput;
-  status: OrchestratorStateStepStatus;
-};
+import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 
 export class EnsureValidTokensOrchestratorStep {
   private apiService: ApiService;
   private configService: ConfigService;
+  private state: OrchestratorState;
+  private notify: () => void;
 
   constructor({
     apiService,
     configService,
+    state,
+    notify,
   }: {
     apiService: ApiService;
     configService: ConfigService;
+    state: OrchestratorState;
+    notify: () => void;
   }) {
     this.apiService = apiService;
     this.configService = configService;
+    this.state = state;
+    this.notify = notify;
   }
 
-  async execute(input: {
-    applicationId: string | null;
-  }): Promise<OrchestratorStateStepEvent[]> {
+  async execute(input: { applicationId: string | null }): Promise<void> {
     if (!input.applicationId) {
-      return [];
+      return;
     }
+
+    const step = this.state.steps.ensureValidTokens;
+
+    step.status = 'in_progress';
+    this.notify();
 
     const config = await this.configService.getConfig();
 
@@ -43,7 +41,10 @@ export class EnsureValidTokensOrchestratorStep {
       config.applicationAccessToken &&
       !this.isTokenExpired(config.applicationAccessToken)
     ) {
-      return [];
+      step.status = 'done';
+      this.notify();
+
+      return;
     }
 
     if (
@@ -61,46 +62,49 @@ export class EnsureValidTokensOrchestratorStep {
             renewResult.data.applicationRefreshToken.token,
         });
 
-        return [
+        this.state.applyStepEvents([
           { message: 'Renewing application tokens', status: 'info' },
           { message: 'Application tokens renewed', status: 'success' },
-        ];
+        ]);
+        step.status = 'done';
+        this.notify();
+
+        return;
       }
 
-      const exchangeEvents = await this.exchangeTokens({
-        applicationId: input.applicationId,
-      });
-
-      return [
+      this.state.applyStepEvents([
         { message: 'Renewing application tokens', status: 'info' },
         {
           message: `Failed to renew application tokens: ${JSON.stringify(renewResult.error, null, 2)}`,
           status: 'error',
         },
-        ...exchangeEvents,
-      ];
+      ]);
+
+      await this.exchangeTokens({ applicationId: input.applicationId });
+
+      return;
     }
 
-    return this.exchangeTokens({
-      applicationId: input.applicationId,
-    });
+    await this.exchangeTokens({ applicationId: input.applicationId });
   }
 
-  async exchangeTokens(input: {
-    applicationId: string;
-  }): Promise<OrchestratorStateStepEvent[]> {
+  async exchangeTokens(input: { applicationId: string }): Promise<void> {
     const tokenResult = await this.apiService.generateApplicationToken(
       input.applicationId,
     );
 
     if (!tokenResult.success) {
-      return [
+      this.state.applyStepEvents([
         { message: 'Generating application tokens', status: 'info' },
         {
           message: `Failed to generate application tokens: ${JSON.stringify(tokenResult.error, null, 2)}`,
           status: 'error',
         },
-      ];
+      ]);
+      this.state.steps.ensureValidTokens.status = 'error';
+      this.notify();
+
+      return;
     }
 
     await this.configService.setConfig({
@@ -108,10 +112,12 @@ export class EnsureValidTokensOrchestratorStep {
       applicationRefreshToken: tokenResult.data.applicationRefreshToken.token,
     });
 
-    return [
+    this.state.applyStepEvents([
       { message: 'Generating application tokens', status: 'info' },
       { message: 'Application tokens stored in config', status: 'success' },
-    ];
+    ]);
+    this.state.steps.ensureValidTokens.status = 'done';
+    this.notify();
   }
 
   private isTokenExpired(token: string): boolean {

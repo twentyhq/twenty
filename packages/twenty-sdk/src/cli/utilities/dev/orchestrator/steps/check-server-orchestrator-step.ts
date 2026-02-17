@@ -1,62 +1,64 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import {
-  type OrchestratorStateStepEvent,
-  type OrchestratorStateStepStatus,
-} from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-
-export type CheckServerOrchestratorStepInput = Record<string, never>;
+import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 
 export type CheckServerOrchestratorStepOutput = {
   isReady: boolean;
   errorLogged: boolean;
 };
 
-export type CheckServerOrchestratorStepState = {
-  input: CheckServerOrchestratorStepInput;
-  output: CheckServerOrchestratorStepOutput;
-  status: OrchestratorStateStepStatus;
-};
-
 export class CheckServerOrchestratorStep {
   private apiService: ApiService;
+  private state: OrchestratorState;
+  private notify: () => void;
 
-  constructor({ apiService }: { apiService: ApiService }) {
+  constructor({
+    apiService,
+    state,
+    notify,
+  }: {
+    apiService: ApiService;
+    state: OrchestratorState;
+    notify: () => void;
+  }) {
     this.apiService = apiService;
+    this.state = state;
+    this.notify = notify;
   }
 
-  async execute(
-    stepState: Readonly<CheckServerOrchestratorStepOutput>,
-  ): Promise<{
-    output: CheckServerOrchestratorStepOutput;
-    events: OrchestratorStateStepEvent[];
-  }> {
+  async execute(): Promise<boolean> {
+    const step = this.state.steps.checkServer;
     const validateAuth = await this.apiService.validateAuth();
 
     if (!validateAuth.serverUp) {
-      if (!stepState.errorLogged) {
-        return {
-          output: { isReady: false, errorLogged: true },
-          events: [{ message: 'Cannot reach server', status: 'error' }],
-        };
+      if (!step.output.errorLogged) {
+        step.output = { isReady: false, errorLogged: true };
+        step.status = 'error';
+        this.state.updatePipeline({ status: 'error' });
+        this.state.applyStepEvents([
+          { message: 'Cannot reach server', status: 'error' },
+        ]);
       }
 
-      return { output: { ...stepState }, events: [] };
+      return false;
     }
 
     if (!validateAuth.authValid) {
-      if (!stepState.errorLogged) {
-        return {
-          output: { isReady: false, errorLogged: true },
-          events: [{ message: 'Authentication failed', status: 'error' }],
-        };
+      if (!step.output.errorLogged) {
+        step.output = { isReady: false, errorLogged: true };
+        step.status = 'error';
+        this.state.updatePipeline({ status: 'error' });
+        this.state.applyStepEvents([
+          { message: 'Authentication failed', status: 'error' },
+        ]);
       }
 
-      return { output: { ...stepState }, events: [] };
+      return false;
     }
 
-    return {
-      output: { isReady: true, errorLogged: false },
-      events: [],
-    };
+    step.output = { isReady: true, errorLogged: false };
+    step.status = 'done';
+    this.notify();
+
+    return true;
   }
 }

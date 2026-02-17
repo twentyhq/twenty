@@ -271,14 +271,6 @@ export type AppToken = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type AppTokenEdge = {
-  __typename?: 'AppTokenEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the AppToken */
-  node: AppToken;
-};
-
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -655,11 +647,6 @@ export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
-
-export enum CalendarChannelVisibility {
-  METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
-}
 
 export type CalendarConfiguration = {
   __typename?: 'CalendarConfiguration';
@@ -1983,19 +1970,6 @@ export type LineChartSeries = {
   label: Scalars['String'];
 };
 
-export type LinkMetadata = {
-  __typename?: 'LinkMetadata';
-  label: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type LinksMetadata = {
-  __typename?: 'LinksMetadata';
-  primaryLinkLabel: Scalars['String'];
-  primaryLinkUrl: Scalars['String'];
-  secondaryLinks?: Maybe<Array<LinkMetadata>>;
-};
-
 export type Location = {
   __typename?: 'Location';
   lat?: Maybe<Scalars['Float']>;
@@ -2157,12 +2131,6 @@ export type MarketplaceAppRoleObjectPermission = {
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
   objectUniversalIdentifier: Scalars['String'];
 };
-
-export enum MessageChannelVisibility {
-  METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
-  SUBJECT = 'SUBJECT'
-}
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
@@ -4276,29 +4244,6 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive'
 }
 
-export type SearchRecord = {
-  __typename?: 'SearchRecord';
-  imageUrl?: Maybe<Scalars['String']>;
-  label: Scalars['String'];
-  objectLabelSingular: Scalars['String'];
-  objectNameSingular: Scalars['String'];
-  recordId: Scalars['UUID'];
-  tsRank: Scalars['Float'];
-  tsRankCD: Scalars['Float'];
-};
-
-export type SearchResultEdge = {
-  __typename?: 'SearchResultEdge';
-  cursor: Scalars['String'];
-  node: SearchRecord;
-};
-
-export type SearchResultPageInfo = {
-  __typename?: 'SearchResultPageInfo';
-  endCursor?: Maybe<Scalars['String']>;
-  hasNextPage: Scalars['Boolean'];
-};
-
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
@@ -4446,61 +4391,9 @@ export type TasksConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export type TimelineCalendarEvent = {
-  __typename?: 'TimelineCalendarEvent';
-  conferenceLink: LinksMetadata;
-  conferenceSolution: Scalars['String'];
-  description: Scalars['String'];
-  endsAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  isCanceled: Scalars['Boolean'];
-  isFullDay: Scalars['Boolean'];
-  location: Scalars['String'];
-  participants: Array<TimelineCalendarEventParticipant>;
-  startsAt: Scalars['DateTime'];
-  title: Scalars['String'];
-  visibility: CalendarChannelVisibility;
-};
-
-export type TimelineCalendarEventParticipant = {
-  __typename?: 'TimelineCalendarEventParticipant';
-  avatarUrl: Scalars['String'];
-  displayName: Scalars['String'];
-  firstName: Scalars['String'];
-  handle: Scalars['String'];
-  lastName: Scalars['String'];
-  personId?: Maybe<Scalars['UUID']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']>;
-};
-
 export type TimelineConfiguration = {
   __typename?: 'TimelineConfiguration';
   configurationType: WidgetConfigurationType;
-};
-
-export type TimelineThread = {
-  __typename?: 'TimelineThread';
-  firstParticipant: TimelineThreadParticipant;
-  id: Scalars['UUID'];
-  lastMessageBody: Scalars['String'];
-  lastMessageReceivedAt: Scalars['DateTime'];
-  lastTwoParticipants: Array<TimelineThreadParticipant>;
-  numberOfMessagesInThread: Scalars['Float'];
-  participantCount: Scalars['Float'];
-  read: Scalars['Boolean'];
-  subject: Scalars['String'];
-  visibility: MessageChannelVisibility;
-};
-
-export type TimelineThreadParticipant = {
-  __typename?: 'TimelineThreadParticipant';
-  avatarUrl: Scalars['String'];
-  displayName: Scalars['String'];
-  firstName: Scalars['String'];
-  handle: Scalars['String'];
-  lastName: Scalars['String'];
-  personId?: Maybe<Scalars['UUID']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']>;
 };
 
 export type ToolIndexEntry = {
@@ -4933,14 +4826,6 @@ export type User = {
   workspaces: Array<UserWorkspace>;
 };
 
-export type UserEdge = {
-  __typename?: 'UserEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the User */
-  node: User;
-};
-
 export type UserInfo = {
   __typename?: 'UserInfo';
   email: Scalars['String'];
@@ -5150,12 +5035,6 @@ export type WorkflowRunConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export type WorkflowStepPosition = {
-  __typename?: 'WorkflowStepPosition';
-  x: Scalars['Float'];
-  y: Scalars['Float'];
-};
-
 export type WorkflowVersionConfiguration = {
   __typename?: 'WorkflowVersionConfiguration';
   configurationType: WidgetConfigurationType;
@@ -5219,14 +5098,6 @@ export enum WorkspaceActivationStatus {
   PENDING_CREATION = 'PENDING_CREATION',
   SUSPENDED = 'SUSPENDED'
 }
-
-export type WorkspaceEdge = {
-  __typename?: 'WorkspaceEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the Workspace */
-  node: Workspace;
-};
 
 export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
