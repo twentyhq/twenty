@@ -2372,6 +2372,11 @@ msgstr "Calendar View"
 msgid "Calendars"
 msgstr "Calendars"
 
+#. js-lingui-id: qIlodj
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Calling Code"
+msgstr "Calling Code"
+
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
@@ -3314,11 +3319,6 @@ msgstr "Count unique values"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Country"
 msgstr "Country"
-
-#. js-lingui-id: j2OqfX
-#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
-msgid "Country Code"
-msgstr "Country Code"
 
 #. js-lingui-id: gJdfqX
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -8696,6 +8696,11 @@ msgstr "No available fields to select"
 msgid "No body"
 msgstr "No body"
 
+#. js-lingui-id: c3+z7H
+#: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
+msgid "No calling code"
+msgstr "No calling code"
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
@@ -8726,7 +8731,6 @@ msgstr "No context was provided for this request"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCountrySelectInput.tsx
-#: src/modules/object-record/record-field/ui/form-types/components/FormCountryCodeSelectInput.tsx
 msgid "No country"
 msgstr "No country"
 

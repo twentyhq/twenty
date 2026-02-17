@@ -2377,6 +2377,11 @@ msgstr "Kalendářní zobrazení"
 msgid "Calendars"
 msgstr "Kalendáře"
 
+#. js-lingui-id: qIlodj
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Calling Code"
+msgstr ""
+
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
@@ -3319,11 +3324,6 @@ msgstr "Počet unikátních hodnot"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Country"
 msgstr "Země"
-
-#. js-lingui-id: j2OqfX
-#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
-msgid "Country Code"
-msgstr "Kód země"
 
 #. js-lingui-id: gJdfqX
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -8701,6 +8701,11 @@ msgstr "Žádná dostupná pole k výběru"
 msgid "No body"
 msgstr "Žádné tělo"
 
+#. js-lingui-id: c3+z7H
+#: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
+msgid "No calling code"
+msgstr ""
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
@@ -8731,7 +8736,6 @@ msgstr "Pro tento požadavek nebyl poskytnut žádný kontext"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCountrySelectInput.tsx
-#: src/modules/object-record/record-field/ui/form-types/components/FormCountryCodeSelectInput.tsx
 msgid "No country"
 msgstr "Žádná země"
 
