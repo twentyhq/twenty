@@ -1,17 +1,7 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ObjectRecordEventPropertiesDTO } from 'src/engine/subscriptions/dtos/object-record-event-properties.dto';
-
-export enum MetadataEventAction {
-  CREATED = 'created',
-  UPDATED = 'updated',
-  DELETED = 'deleted',
-}
-
-registerEnumType(MetadataEventAction, {
-  name: 'MetadataEventAction',
-  description: 'Metadata Event Action',
-});
+import { MetadataEventAction } from 'src/engine/subscriptions/enums/metadata-event-action.enum';
 
 @ObjectType('MetadataEvent')
 export class MetadataEventDTO {
