@@ -53,5 +53,7 @@ export const isFieldCellSupported = (
     }
   }
 
-  return !isHiddenSystemField(fieldMetadataItem) && !!fieldMetadataItem.isActive;
+  return (
+    !isHiddenSystemField(fieldMetadataItem) && !!fieldMetadataItem.isActive
+  );
 };
