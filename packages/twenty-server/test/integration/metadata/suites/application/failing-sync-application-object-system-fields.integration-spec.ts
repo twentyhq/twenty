@@ -1,3 +1,7 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { type Manifest, type ObjectManifest } from 'twenty-shared/application';
 import {
   type EachTestingContext,
@@ -5,11 +9,6 @@ import {
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { createOneApplication } from 'test/integration/metadata/suites/application/utils/create-one-application.util';
-import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -97,7 +96,6 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
     {
       title:
         'when object is created without any system fields (missing all 8 system fields)',
-      only: true,
       context: {
         manifest: buildBaseManifest(
           buildObjectWithLabelField({
@@ -190,34 +188,14 @@ describe('Sync application should fail due to object system fields integrity', (
   let appCreated = false;
 
   beforeAll(async () => {
-    await createOneApplication({
-      universalIdentifier: TEST_APP_ID,
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Test System Fields App',
       description: 'App for testing system field validation',
-      version: '1.0.0',
       sourcePath: 'test-system-fields',
-      expectToFail: false,
     });
 
     appCreated = true;
-
-    jest.useRealTimers();
-
-    const packageJson = JSON.stringify({
-      name: 'test-system-fields-app',
-      version: '1.0.0',
-    });
-
-    await uploadApplicationFile({
-      applicationUniversalIdentifier: TEST_APP_ID,
-      fileFolder: 'Dependencies',
-      filePath: 'package.json',
-      fileBuffer: Buffer.from(packageJson),
-      filename: 'package.json',
-      expectToFail: false,
-    });
-
-    jest.useFakeTimers();
   }, 60000);
 
   afterAll(async () => {
