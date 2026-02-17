@@ -63,7 +63,7 @@ export const validateDateTimeFieldOrThrow = (
   const inspectedValue = inspect(value);
 
   throw new CommonQueryRunnerException(
-    `Invalid value ${inspectedValue} for date-time field "${fieldName}. Expected format: 'YYYY-MM-DDTHH:mm:ssZ'`,
+    `Invalid value ${inspectedValue} for date-time field "${fieldName}". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'`,
     CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
     {
       userFriendlyMessage: msg`Invalid value for date-time: "${inspectedValue}". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'`,
