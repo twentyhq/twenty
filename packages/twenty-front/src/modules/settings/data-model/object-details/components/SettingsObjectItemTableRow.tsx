@@ -85,7 +85,11 @@ export const SettingsObjectMetadataItemTableRow = ({
         <SettingsItemTypeTag item={objectMetadataItem} />
       </TableCell>
       <TableCell align="right">
-        {objectMetadataItem.fields.filter((field) => !isHiddenSystemField(field)).length}
+        {
+          objectMetadataItem.fields.filter(
+            (field) => !isHiddenSystemField(field),
+          ).length
+        }
       </TableCell>
       <TableCell align="right">{totalObjectCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
