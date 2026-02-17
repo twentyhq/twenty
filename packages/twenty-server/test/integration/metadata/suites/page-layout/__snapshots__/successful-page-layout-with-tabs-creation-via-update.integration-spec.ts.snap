@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Page layout with tabs creation via update should succeed should create a new tab with a widget via page layout update 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "name": "Layout With New Tab",
+  "objectMetadataId": null,
+  "tabs": [
+    {
+      "createdAt": Any<String>,
+      "deletedAt": null,
+      "id": Any<String>,
+      "pageLayoutId": Any<String>,
+      "position": 0,
+      "title": "Existing Tab",
+      "updatedAt": Any<String>,
+      "widgets": [
+        {
+          "configuration": {
+            "aggregateFieldMetadataId": Any<String>,
+            "aggregateOperation": "COUNT",
+            "color": null,
+            "configurationType": "PIE_CHART",
+            "dateGranularity": "DAY",
+            "description": null,
+            "displayDataLabel": false,
+            "displayLegend": true,
+            "filter": null,
+            "firstDayOfTheWeek": 1,
+            "groupByFieldMetadataId": Any<String>,
+            "groupBySubFieldName": null,
+            "manualSortOrder": null,
+            "orderBy": "VALUE_DESC",
+            "showCenterMetric": true,
+            "timezone": "UTC",
+          },
+          "createdAt": Any<String>,
+          "deletedAt": null,
+          "gridPosition": {
+            "column": 0,
+            "columnSpan": 1,
+            "row": 0,
+            "rowSpan": 1,
+          },
+          "id": Any<String>,
+          "objectMetadataId": Any<String>,
+          "pageLayoutTabId": Any<String>,
+          "title": "Existing Tab Widget",
+          "type": "GRAPH",
+          "updatedAt": Any<String>,
+        },
+      ],
+    },
+    {
+      "createdAt": Any<String>,
+      "deletedAt": null,
+      "id": Any<String>,
+      "pageLayoutId": Any<String>,
+      "position": 1,
+      "title": "New Tab Created Via Update",
+      "updatedAt": Any<String>,
+      "widgets": [
+        {
+          "configuration": {
+            "configurationType": "IFRAME",
+            "url": "https://example.com",
+          },
+          "createdAt": Any<String>,
+          "deletedAt": null,
+          "gridPosition": {
+            "column": 0,
+            "columnSpan": 1,
+            "row": 0,
+            "rowSpan": 1,
+          },
+          "id": Any<String>,
+          "objectMetadataId": null,
+          "pageLayoutTabId": Any<String>,
+          "title": "New Tab Iframe Widget",
+          "type": "IFRAME",
+          "updatedAt": Any<String>,
+        },
+      ],
+    },
+  ],
+  "type": "RECORD_PAGE",
+  "updatedAt": Any<String>,
+}
+`;

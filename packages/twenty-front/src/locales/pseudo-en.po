@@ -2712,6 +2712,11 @@ msgstr ""
 msgid "Client Settings"
 msgstr ""
 
+#. js-lingui-id: mekEJ5
+#: src/hooks/useCopyToClipboard.tsx
+msgid "Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying."
+msgstr ""
+
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Close"
