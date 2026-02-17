@@ -106,6 +106,7 @@ msgstr "(seleccionado: {selectedIconKey})"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "[empty string]"
@@ -380,6 +381,11 @@ msgstr "{selectedCount} tipos de origen"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 msgid "{serviceLabel} service is unreachable"
 msgstr "El servicio {serviceLabel} no es accesible"
+
+#. js-lingui-id: 8vJ+2V
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr ""
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -2752,6 +2758,7 @@ msgstr "Codificar su función"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Collapse"
@@ -4882,6 +4889,7 @@ msgstr "Vacío"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Array"
@@ -4902,6 +4910,7 @@ msgstr "Bandeja de entrada vacía"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Object"
@@ -5493,6 +5502,7 @@ msgstr "Salir de Configuración"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Expand"
@@ -6902,6 +6912,7 @@ msgstr "Información"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Input"
 msgstr "Entrada"
 
@@ -9570,6 +9581,7 @@ msgstr "Interrupción"
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/TerminalOutput.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Output"
@@ -12615,6 +12627,11 @@ msgstr "No hay actividad asociada con este registro."
 msgid "There was an error while updating password."
 msgstr "Hubo un error al actualizar la contraseña."
 
+#. js-lingui-id: AUV+TY
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+msgid "Thinking"
+msgstr ""
+
 #. js-lingui-id: Ed99mE
 #: src/modules/ai/components/ReasoningSummaryDisplay.tsx
 msgid "Thinking..."
@@ -12803,6 +12820,11 @@ msgstr "Esto eliminará permanentemente tu método de autenticación de dos fact
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Esto revertirá el valor de la base de datos al valor de entorno/predeterminado. Se eliminará la anulación de la base de datos y el sistema utilizará la configuración del entorno."
+
+#. js-lingui-id: f8HOUp
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+msgid "Thought"
+msgstr ""
 
 #. js-lingui-id: 5g/sE8
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -13760,8 +13782,6 @@ msgid "View Logs"
 msgstr ""
 
 #. js-lingui-id: ecVcAx
-#: src/modules/ai/components/AIChatTab.tsx
-#: src/modules/ai/components/AIChatTab.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "View Previous AI Chats"
