@@ -44,10 +44,7 @@ describe('turnJSDateToPlainDate', () => {
 describe('turnPlainDateIntoUserTimeZoneInstantString', () => {
   it('should convert a PlainDate to an instant string in the given timezone', () => {
     const plainDate = Temporal.PlainDate.from('2024-03-15');
-    const result = turnPlainDateIntoUserTimeZoneInstantString(
-      plainDate,
-      'UTC',
-    );
+    const result = turnPlainDateIntoUserTimeZoneInstantString(plainDate, 'UTC');
 
     expect(result).toBe('2024-03-15T00:00:00Z');
   });
