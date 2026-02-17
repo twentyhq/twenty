@@ -5,6 +5,7 @@ import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFile
 import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
 import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
 import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
 
 import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
@@ -26,6 +27,9 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
 
   const { getBrowsingContext } = useGetBrowsingContext();
+  const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
+    currentAIChatThreadTitleStateV2,
+  );
 
   const agentChatSelectedFiles = useRecoilValueV2(
     agentChatSelectedFilesStateV2,
@@ -155,6 +159,14 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
           inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
           outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));
+      }
+
+      const titlePart = message.parts.find(
+        (part) => part.type === 'data-thread-title',
+      );
+
+      if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
+        setCurrentAIChatThreadTitle(titlePart.data.title);
       }
     },
   });

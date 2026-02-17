@@ -4,6 +4,7 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageStateV2';
 import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
 import { isCreatingChatThreadStateV2 } from '@/ai/states/isCreatingChatThreadStateV2';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
@@ -44,6 +45,9 @@ export const useAgentChatData = () => {
     currentAIChatThreadStateV2,
   );
   const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
+  const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
+    currentAIChatThreadTitleStateV2,
+  );
   const [isCreatingChatThread, setIsCreatingChatThread] = useRecoilStateV2(
     isCreatingChatThreadStateV2,
   );
@@ -54,6 +58,7 @@ export const useAgentChatData = () => {
     onCompleted: (data) => {
       setIsCreatingChatThread(false);
       setCurrentAIChatThread(data.createChatThread.id);
+      setCurrentAIChatThreadTitle(null);
       setAgentChatUsage(null);
     },
     onError: () => {
@@ -68,6 +73,7 @@ export const useAgentChatData = () => {
         const firstThread = data.chatThreads[0];
 
         setCurrentAIChatThread(firstThread.id);
+        setCurrentAIChatThreadTitle(firstThread.title ?? null);
         setUsageFromThread(firstThread, setAgentChatUsage);
       } else if (!isCreatingChatThread) {
         setIsCreatingChatThread(true);
