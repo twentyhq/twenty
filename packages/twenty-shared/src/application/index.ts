@@ -33,6 +33,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
+export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
@@ -41,3 +42,17 @@ export type {
   RoleManifest,
 } from './roleManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export type {
+  ViewManifestType,
+  ViewManifestVisibility,
+  ViewManifestOpenRecordIn,
+  ViewManifestAggregateOperation,
+  ViewManifestFilterGroupLogicalOperator,
+  ViewManifestFilterValue,
+  ViewFieldManifest,
+  ViewFilterManifest,
+  ViewFilterGroupManifest,
+  ViewGroupManifest,
+  ViewFieldGroupManifest,
+  ViewManifest,
+} from './viewManifestType';

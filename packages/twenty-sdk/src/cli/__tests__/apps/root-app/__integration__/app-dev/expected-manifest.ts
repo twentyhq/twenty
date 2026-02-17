@@ -139,6 +139,8 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtComponentChecksum: '[checksum]',
     },
   ],
+  views: [],
+  navigationMenuItems: [],
   roles: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',
