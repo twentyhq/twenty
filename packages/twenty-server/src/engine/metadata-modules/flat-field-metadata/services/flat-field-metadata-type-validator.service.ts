@@ -14,6 +14,8 @@ import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules
 import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
 import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
+import { validatePositionFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util';
+import { validateTsVectorFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util';
 
 const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
 
@@ -67,12 +69,12 @@ export class FlatFieldMetadataTypeValidatorService {
         msg`Field type NUMERIC is not supported. Use Number instead.`,
       ),
       PHONES: DEFAULT_NO_VALIDATION,
-      POSITION: DEFAULT_NO_VALIDATION,
+      POSITION: validatePositionFlatFieldMetadata,
       RAW_JSON: DEFAULT_NO_VALIDATION,
       RICH_TEXT: DEFAULT_NO_VALIDATION,
       RICH_TEXT_V2: DEFAULT_NO_VALIDATION,
       TEXT: DEFAULT_NO_VALIDATION,
-      TS_VECTOR: DEFAULT_NO_VALIDATION,
+      TS_VECTOR: validateTsVectorFlatFieldMetadata,
       UUID: DEFAULT_NO_VALIDATION,
       MORPH_RELATION: validateMorphRelationFlatFieldMetadata,
       MULTI_SELECT: validateEnumSelectFlatFieldMetadata,
