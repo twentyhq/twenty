@@ -16,9 +16,7 @@ describe('splitFieldNameIntoBaseAndSubField', () => {
   });
 
   it('should preserve nested sub-fields joined with dots', () => {
-    expect(
-      splitFieldNameIntoBaseAndSubField('address.street.number'),
-    ).toEqual({
+    expect(splitFieldNameIntoBaseAndSubField('address.street.number')).toEqual({
       baseFieldName: 'address',
       subFieldName: 'street.number',
     });
