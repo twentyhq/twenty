@@ -35,7 +35,7 @@ export const useUpdateFrontComponentApolloCache = ({
         variables: { id: frontComponentId },
       },
       (existingData) => {
-        if (!existingData?.frontComponent) {
+        if (!isDefined(existingData?.frontComponent)) {
           return existingData;
         }
 
@@ -43,7 +43,7 @@ export const useUpdateFrontComponentApolloCache = ({
           ...existingData,
           frontComponent: {
             ...existingData.frontComponent,
-            builtComponentChecksum: updatedRecord.builtComponentChecksum,
+            ...updatedRecord,
           },
         };
       },
