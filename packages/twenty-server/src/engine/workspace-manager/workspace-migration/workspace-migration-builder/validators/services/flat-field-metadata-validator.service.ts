@@ -166,7 +166,7 @@ export class FlatFieldMetadataValidatorService {
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
       !isFlatFieldMetadataNameSyncedWithLabel({
         flatFieldMetadata: flatFieldMetadataToValidate,
-        isSystemBuild: buildOptions.isSystemBuild,
+        buildOptions,
       })
     ) {
       validationResult.errors.push({
@@ -385,7 +385,7 @@ export class FlatFieldMetadataValidatorService {
       flatFieldMetadataToValidate.isLabelSyncedWithName &&
       !isFlatFieldMetadataNameSyncedWithLabel({
         flatFieldMetadata: flatFieldMetadataToValidate,
-        isSystemBuild: buildOptions.isSystemBuild,
+        buildOptions,
       })
     ) {
       validationResult.errors.push({
