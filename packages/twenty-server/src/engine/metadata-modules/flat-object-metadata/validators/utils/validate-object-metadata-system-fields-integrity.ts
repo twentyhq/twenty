@@ -123,6 +123,19 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
     });
 
   for (const createdObjectMetadata of createdObjectMetadatas) {
+    const createdFailedFlatEntityValidations: FailedFlatEntityValidation<
+      'objectMetadata',
+      'create'
+    > = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        universalIdentifier: createdObjectMetadata.universalIdentifier,
+        namePlural: createdObjectMetadata.namePlural,
+        nameSingular: createdObjectMetadata.nameSingular,
+      },
+      metadataName: 'objectMetadata',
+      type: 'create',
+    });
+
     const { fieldUniversalIdentifierByName } =
       buildUniversalFlatObjectFieldByNameAndJoinColumnMaps({
         flatFieldMetadataMaps:
@@ -131,19 +144,6 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
       });
 
     for (const expectedSystemField of EXPECTED_SYSTEM_FIELDS) {
-      const createdFailedFlatEntityValidations: FailedFlatEntityValidation<
-        'objectMetadata',
-        'create'
-      > = getEmptyFlatEntityValidationError({
-        flatEntityMinimalInformation: {
-          universalIdentifier: createdObjectMetadata.universalIdentifier,
-          namePlural: createdObjectMetadata.namePlural,
-          nameSingular: createdObjectMetadata.nameSingular,
-        },
-        metadataName: 'objectMetadata',
-        type: 'create',
-      });
-
       const matchingFieldUniversalIdentifier =
         fieldUniversalIdentifierByName[expectedSystemField.name];
       if (!isDefined(matchingFieldUniversalIdentifier)) {
@@ -179,12 +179,12 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
           }
         }
       }
+    }
 
-      if (createdFailedFlatEntityValidations.errors.length > 0) {
-        metadataValidationErrors.objectMetadata.push(
-          createdFailedFlatEntityValidations,
-        );
-      }
+    if (createdFailedFlatEntityValidations.errors.length > 0) {
+      metadataValidationErrors.objectMetadata.push(
+        createdFailedFlatEntityValidations,
+      );
     }
   }
 
