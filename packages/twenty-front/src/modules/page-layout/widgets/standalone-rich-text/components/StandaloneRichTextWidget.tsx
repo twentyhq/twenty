@@ -91,7 +91,6 @@ export const StandaloneRichTextWidget = ({
         <StandaloneRichTextEditorContent
           key={isEditable ? 'editing' : 'readonly'}
           widget={widget}
-          dashboardId={dashboardId}
           currentBody={currentBody}
           attachments={attachments}
           isEditable={isEditable}

@@ -8,4 +8,5 @@ export type PieChartConvertibleFields = {
   groupBySubFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   orderBy?: GraphOrderBy | null;
+  splitMultiValueFields?: boolean | null;
 };

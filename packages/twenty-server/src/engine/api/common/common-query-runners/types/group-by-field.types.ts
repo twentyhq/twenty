@@ -6,6 +6,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export type GroupByRegularField = {
   fieldMetadata: FlatFieldMetadata;
   subFieldName?: string;
+  shouldUnnest?: boolean;
 };
 
 export type GroupByDateField = {

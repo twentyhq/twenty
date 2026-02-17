@@ -7,6 +7,11 @@
  *                              |___/
  */
 
+export { checkIfFieldIsImageIdentifier } from './check-if-field-is-image-identifier.util';
+export {
+  DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+  checkIfFieldIsLabelIdentifier,
+} from './check-if-field-is-label-identifier.util';
 export { ALL_METADATA_NAME } from './constants/all-metadata-name.constant';
 export { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from './constants/default-relations-object-standard-ids.constant';
 export { RESERVED_METADATA_NAME_KEYWORDS } from './constants/reserved-metadata-name-keywords.constant';

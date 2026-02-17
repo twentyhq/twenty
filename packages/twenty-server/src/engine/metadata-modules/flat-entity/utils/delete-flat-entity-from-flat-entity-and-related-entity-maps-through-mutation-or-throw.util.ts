@@ -1,7 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
+import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
+import { ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -38,28 +39,45 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
       },
     );
 
-    const idBasedManyToOneRelations = Object.values(
-      ALL_METADATA_RELATIONS[metadataName].manyToOne,
-    ) as Array<{
-      metadataName: AllMetadataName;
-      flatEntityForeignKeyAggregator: keyof MetadataFlatEntity<AllMetadataName>;
-      foreignKey: keyof MetadataFlatEntity<T>;
-    } | null>;
+    const manyToOneRelations = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
 
-    for (const idBasedRelation of idBasedManyToOneRelations) {
-      if (!isDefined(idBasedRelation)) {
+    for (const relationPropertyName of Object.keys(manyToOneRelations)) {
+      const relation = manyToOneRelations[
+        relationPropertyName as keyof typeof manyToOneRelations
+      ] as {
+        metadataName: AllMetadataName;
+        foreignKey: string;
+        inverseOneToManyProperty: string | null;
+      } | null;
+
+      if (!isDefined(relation)) {
         continue;
       }
 
       const {
         metadataName: relatedMetadataName,
-        flatEntityForeignKeyAggregator,
         foreignKey,
-      } = idBasedRelation;
+        inverseOneToManyProperty,
+      } = relation;
 
-      if (!isDefined(flatEntityForeignKeyAggregator)) {
+      if (!isDefined(inverseOneToManyProperty)) {
         continue;
       }
+
+      const oneToManyRelations =
+        ALL_ONE_TO_MANY_METADATA_RELATIONS[relatedMetadataName];
+
+      const inverseRelation = oneToManyRelations[
+        inverseOneToManyProperty as keyof typeof oneToManyRelations
+      ] as {
+        flatEntityForeignKeyAggregator: string;
+      } | null;
+
+      if (!isDefined(inverseRelation)) {
+        continue;
+      }
+
+      const { flatEntityForeignKeyAggregator } = inverseRelation;
 
       const relatedFlatEntityMapsKey =
         getMetadataFlatEntityMapsKey(relatedMetadataName);
@@ -68,9 +86,9 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         relatedFlatEntityMapsKey as MetadataRelatedFlatEntityMapsKeys<T>
       ] as FlatEntityMaps<MetadataFlatEntity<typeof relatedMetadataName>>;
 
-      const flatEntityRelatedEntityForeignKeyValue = flatEntity[foreignKey] as
-        | string
-        | undefined;
+      const flatEntityRelatedEntityForeignKeyValue = (
+        flatEntity as unknown as Record<string, string | undefined>
+      )[foreignKey];
 
       if (!isDefined(flatEntityRelatedEntityForeignKeyValue)) {
         continue;
@@ -100,9 +118,9 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
       const updatedRelatedEntity = {
         ...relatedFlatEntity,
         [flatEntityForeignKeyAggregator]: (
-          relatedFlatEntity[
+          (relatedFlatEntity as unknown as Record<string, string[]>)[
             flatEntityForeignKeyAggregator
-          ] as unknown as string[]
+          ] ?? []
         ).filter((id) => id !== flatEntity.id),
       };
 

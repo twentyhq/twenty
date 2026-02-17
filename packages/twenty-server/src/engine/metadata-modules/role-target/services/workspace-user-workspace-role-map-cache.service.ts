@@ -7,9 +7,8 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-
-export type UserWorkspaceRoleMap = Record<string, string>;
 
 @Injectable()
 @WorkspaceCache('userWorkspaceRoleMap')

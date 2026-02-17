@@ -1,4 +1,8 @@
 import {
+  checkIfFieldIsImageIdentifier,
+  checkIfFieldIsLabelIdentifier,
+} from 'twenty-shared/metadata';
+import {
   FieldMetadataType,
   RelationType,
   type RestrictedFieldsPermissions,
@@ -22,10 +26,12 @@ export const getAllSelectableFields = ({
   restrictedFields,
   flatObjectMetadata,
   flatFieldMetadataMaps,
+  onlyUseLabelIdentifierFieldsInRelations = false,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  onlyUseLabelIdentifierFieldsInRelations?: boolean;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
@@ -36,6 +42,26 @@ export const getAllSelectableFields = ({
     });
 
     if (restrictedFields[flatField.id]?.canRead === false) continue;
+
+    if (onlyUseLabelIdentifierFieldsInRelations) {
+      const fieldIsLabelIdentifier = checkIfFieldIsLabelIdentifier(
+        flatField,
+        flatObjectMetadata,
+      );
+      const fieldIsImageIdentifier = checkIfFieldIsImageIdentifier(
+        flatField,
+        flatObjectMetadata,
+      );
+      const fieldIsIdField = flatField.name === 'id';
+
+      if (
+        !fieldIsLabelIdentifier &&
+        !fieldIsImageIdentifier &&
+        !fieldIsIdField
+      ) {
+        continue;
+      }
+    }
 
     if (isCompositeFieldMetadataType(flatField.type)) {
       const compositeType = compositeTypeDefinitions.get(flatField.type);

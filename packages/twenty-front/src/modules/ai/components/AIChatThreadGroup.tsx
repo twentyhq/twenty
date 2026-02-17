@@ -1,5 +1,6 @@
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -78,11 +79,15 @@ export const AIChatThreadGroup = ({
   const { t } = useLingui();
   const theme = useTheme();
   const [, setCurrentAIChatThread] = useRecoilState(currentAIChatThreadState);
+  const setCurrentAIChatThreadTitle = useSetRecoilState(
+    currentAIChatThreadTitleState,
+  );
   const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setCurrentAIChatThread(thread.id);
+    setCurrentAIChatThreadTitle(thread.title ?? null);
 
     const hasUsageData =
       (thread.conversationSize ?? 0) > 0 &&
@@ -103,7 +108,6 @@ export const AIChatThreadGroup = ({
     );
 
     openAskAIPage({
-      pageTitle: thread.title,
       resetNavigationStack: false,
     });
   };

@@ -3,7 +3,10 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 
-import { type GroupByDateField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import {
+  type GroupByDateField,
+  type GroupByRegularField,
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { getGroupByExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-expression.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -20,6 +23,16 @@ const buildGroupByDateField = (
   fieldMetadata: buildDateTimeFieldMetadata(),
   dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
   timeZone: 'America/New_York',
+  ...overrides,
+});
+
+const buildGroupByRegularField = (
+  overrides: Partial<GroupByRegularField> = {},
+): GroupByRegularField => ({
+  fieldMetadata: {
+    type: FieldMetadataType.MULTI_SELECT,
+    name: 'tags',
+  } as FlatFieldMetadata,
   ...overrides,
 });
 
@@ -124,6 +137,38 @@ describe('getGroupByExpression', () => {
 
       expect(result).toContain('TMDay');
       expect(result).not.toContain('AT TIME ZONE');
+    });
+  });
+
+  describe('array unnest handling', () => {
+    const arrayColumnNameWithQuotes = '"company"."tags"';
+
+    it('should unnest array fields when split mode is enabled', () => {
+      const groupByField = buildGroupByRegularField({
+        shouldUnnest: true,
+      });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes: arrayColumnNameWithQuotes,
+      });
+
+      expect(result).toBe(
+        `UNNEST(CASE WHEN CARDINALITY(${arrayColumnNameWithQuotes}) > 0 THEN ${arrayColumnNameWithQuotes} ELSE ARRAY[${arrayColumnNameWithQuotes}[1]] END)`,
+      );
+    });
+
+    it('should keep plain column expression when split mode is disabled', () => {
+      const groupByField = buildGroupByRegularField({
+        shouldUnnest: false,
+      });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes: arrayColumnNameWithQuotes,
+      });
+
+      expect(result).toBe(arrayColumnNameWithQuotes);
     });
   });
 });

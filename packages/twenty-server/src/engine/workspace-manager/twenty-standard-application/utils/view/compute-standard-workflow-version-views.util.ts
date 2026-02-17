@@ -22,5 +22,17 @@ export const computeStandardWorkflowVersionViews = (
         icon: 'IconRestore',
       },
     }),
+    workflowVersionRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'workflowVersion',
+      context: {
+        viewName: 'workflowVersionRecordPageFields',
+        name: 'Workflow Version Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };
