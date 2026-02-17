@@ -24,7 +24,6 @@ export const NavigationMenuItemIcon = ({
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const useIconBackgrounds = isNavigationMenuItemEditingEnabled;
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular || '',
@@ -68,7 +67,7 @@ export const NavigationMenuItemIcon = ({
 
   const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
   const iconColors = getNavigationMenuItemIconColors(theme);
-  const iconBackgroundColor = useIconBackgrounds
+  const iconBackgroundColor = isNavigationMenuItemEditingEnabled
     ? isRecord
       ? undefined
       : isLink
