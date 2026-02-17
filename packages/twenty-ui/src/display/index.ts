@@ -472,6 +472,7 @@ export {
   IconWorld,
   IconX,
 } from './icon/components/TablerIcons';
+export { ThinkingOrbitLoaderIcon } from './icon/components/ThinkingOrbitLoaderIcon';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';
 export { iconsState } from './icon/states/iconsState';
