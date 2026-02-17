@@ -28,7 +28,10 @@ type ValidateObjectMetadataSystemFieldsIntegrityArgs = {
 export const validateObjectMetadataSystemFieldsIntegrity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
-}: ValidateObjectMetadataSystemFieldsIntegrityArgs): Pick<OrchestratorFailureReport, 'objectMetadata'> => {
+}: ValidateObjectMetadataSystemFieldsIntegrityArgs): Pick<
+  OrchestratorFailureReport,
+  'objectMetadata'
+> => {
   const metadataValidationErrors: Pick<
     OrchestratorFailureReport,
     'objectMetadata'
