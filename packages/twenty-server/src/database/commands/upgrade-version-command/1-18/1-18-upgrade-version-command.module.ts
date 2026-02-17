@@ -71,8 +71,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     BackfillMessageChannelThrottleRetryAfterCommand,
     BackfillStandardViewsAndFieldMetadataCommand,
     MigrateWorkspacePicturesCommand,
-    BackfillFileSizeAndMimeTypeCommand,
     MigrateWorkflowSendEmailAttachmentsCommand,
+    BackfillFileSizeAndMimeTypeCommand,
   ],
 })
 export class V1_18_UpgradeVersionCommandModule {}

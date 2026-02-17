@@ -16,6 +16,7 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -205,97 +206,103 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepository<PersonWorkspaceEntity>(
-        workspaceId,
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
+    const systemAuthContext: SystemWorkspaceAuthContext = {
+      type: 'system',
+      workspace: { id: workspaceId } as SystemWorkspaceAuthContext['workspace'],
+    };
 
-    const personsWithAvatars = await personRepository.find({
-      where: {
-        avatarUrl: ILike(`%${FileFolder.PersonPicture}%`),
-        avatarFile: Or(IsNull(), Equal([])),
-      },
-      select: ['id', 'avatarUrl'],
-    });
-
-    if (personsWithAvatars.length === 0) {
-      this.logger.log(
-        `No persons with avatarUrl found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    this.logger.log(
-      `Found ${personsWithAvatars.length} person(s) with avatarUrl containing 'people' folder in workspace ${workspaceId}`,
-    );
-
-    const fileRepository = this.coreDataSource.getRepository(FileEntity);
-
-    for (const person of personsWithAvatars) {
-      assertIsDefinedOrThrow(person.avatarUrl);
-
-      try {
-        const { type: fileExtension } = extractFolderPathFilenameAndTypeOrThrow(
-          person.avatarUrl,
+    await this.twentyORMGlobalManager.executeInWorkspaceContext(async () => {
+      const personRepository =
+        await this.twentyORMGlobalManager.getRepository<PersonWorkspaceEntity>(
+          workspaceId,
+          'person',
+          { shouldBypassPermissionChecks: true },
         );
 
-        const fileId = v4();
-        const newFileName = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
-        const newResourcePath = `${FileFolder.FilesField}/${avatarFileFieldMetadata.universalIdentifier}/${newFileName}`;
+      const personsWithAvatars = await personRepository.find({
+        where: {
+          avatarUrl: ILike(`%${FileFolder.PersonPicture}%`),
+          avatarFile: Or(IsNull(), Equal([])),
+        },
+        select: ['id', 'avatarUrl'],
+      });
 
-        if (!isDryRun) {
-          await this.fileStorageService.copyLegacy({
-            from: {
-              folderPath: `workspace-${workspaceId}`,
-              filename: person.avatarUrl,
-            },
-            to: {
-              folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
-              filename: newResourcePath,
-            },
-          });
-
-          const fileEntity = fileRepository.create({
-            id: fileId,
-            path: newResourcePath,
-            workspaceId,
-            applicationId: twentyStandardFlatApplication.id,
-            size: -1,
-            settings: {
-              isTemporaryFile: true,
-              toDelete: false,
-            },
-          });
-
-          await fileRepository.save(fileEntity);
-
-          await personRepository.update(
-            { id: person.id },
-            {
-              avatarFile: [
-                {
-                  fileId: fileEntity.id,
-                  label: newFileName,
-                },
-              ],
-            },
-          );
-        }
-
-        this.logger.log(`Migrated avatar for person ${person.id}`);
-      } catch (error) {
-        this.logger.error(
-          `Failed to migrate avatar for person ${person.id} in workspace ${workspaceId}: ${error.message}`,
+      if (personsWithAvatars.length === 0) {
+        this.logger.log(
+          `No persons with avatarUrl found in workspace ${workspaceId}`,
         );
-        throw error;
+
+        return;
       }
-    }
 
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Completed person avatar files migration for workspace ${workspaceId}`,
-    );
+      this.logger.log(
+        `Found ${personsWithAvatars.length} person(s) with avatarUrl containing 'people' folder in workspace ${workspaceId}`,
+      );
+
+      const fileRepository = this.coreDataSource.getRepository(FileEntity);
+
+      for (const person of personsWithAvatars) {
+        assertIsDefinedOrThrow(person.avatarUrl);
+
+        try {
+          const { type: fileExtension } =
+            extractFolderPathFilenameAndTypeOrThrow(person.avatarUrl);
+
+          const fileId = v4();
+          const newFileName = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
+          const newResourcePath = `${FileFolder.FilesField}/${avatarFileFieldMetadata.universalIdentifier}/${newFileName}`;
+
+          if (!isDryRun) {
+            await this.fileStorageService.copyLegacy({
+              from: {
+                folderPath: `workspace-${workspaceId}`,
+                filename: person.avatarUrl,
+              },
+              to: {
+                folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
+                filename: newResourcePath,
+              },
+            });
+
+            const fileEntity = fileRepository.create({
+              id: fileId,
+              path: newResourcePath,
+              workspaceId,
+              applicationId: twentyStandardFlatApplication.id,
+              size: -1,
+              settings: {
+                isTemporaryFile: true,
+                toDelete: false,
+              },
+            });
+
+            await fileRepository.save(fileEntity);
+
+            await personRepository.update(
+              { id: person.id },
+              {
+                avatarFile: [
+                  {
+                    fileId: fileEntity.id,
+                    label: newFileName,
+                  },
+                ],
+              },
+            );
+          }
+
+          this.logger.log(`Migrated avatar for person ${person.id}`);
+        } catch (error) {
+          this.logger.error(
+            `Failed to migrate avatar for person ${person.id} in workspace ${workspaceId}: ${error.message}`,
+          );
+          throw error;
+        }
+      }
+
+      this.logger.log(
+        `${isDryRun ? '[DRY RUN] ' : ''}Completed person avatar files migration for workspace ${workspaceId}`,
+      );
+    }, systemAuthContext);
   }
 }
