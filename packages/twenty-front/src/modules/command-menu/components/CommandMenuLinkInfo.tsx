@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { IconLink } from 'twenty-ui/display';
@@ -6,17 +5,15 @@ import { IconLink } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 
 export const CommandMenuLinkInfo = () => {
-  const theme = useTheme();
   const { t } = useLingui();
   const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
@@ -62,15 +59,10 @@ export const CommandMenuLinkInfo = () => {
   return (
     <CommandMenuPageInfoLayout
       icon={
-        <StyledNavigationMenuItemIconContainer
-          $backgroundColor={getNavigationMenuItemIconColors(theme).link}
-        >
-          <IconLink
-            size={theme.spacing(3.5)}
-            color={theme.grayScale.gray1}
-            stroke={theme.icon.stroke.md}
-          />
-        </StyledNavigationMenuItemIconContainer>
+        <NavigationMenuItemStyleIcon
+          Icon={IconLink}
+          color={selectedItem.color}
+        />
       }
       title={
         <TitleInput

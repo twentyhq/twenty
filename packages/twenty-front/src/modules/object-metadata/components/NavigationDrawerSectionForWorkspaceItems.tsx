@@ -19,7 +19,6 @@ import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
@@ -232,7 +231,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 
                 if (type === 'link') {
                   const linkItem = item as ProcessedNavigationMenuItem;
-                  const iconColors = getNavigationMenuItemIconColors(theme);
                   return (
                     <NavigationItemDropTarget
                       key={item.id}
@@ -260,7 +258,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                                 : undefined
                             }
                             Icon={IconLink}
-                            iconBackgroundColor={iconColors.link}
+                            iconColor={linkItem.color}
                             active={false}
                             isSelectedInEditMode={
                               editModeProps.isSelectedInEditMode

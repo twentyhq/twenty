@@ -1,3 +1,4 @@
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -43,7 +44,7 @@ export type NavigationDrawerItemProps = {
   to?: string;
   onClick?: () => void;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
-  iconBackgroundColor?: string;
+  iconColor?: string | null;
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
@@ -216,7 +217,10 @@ const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
 
-const StyledIcon = styled.div<{ $backgroundColor?: string }>`
+const StyledIcon = styled.div<{
+  $backgroundColor?: string;
+  $borderColor?: string;
+}>`
   align-items: center;
   display: flex;
   flex-grow: 0;
@@ -224,13 +228,15 @@ const StyledIcon = styled.div<{ $backgroundColor?: string }>`
   justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(2)};
 
-  ${({ theme, $backgroundColor }) =>
+  ${({ theme, $backgroundColor, $borderColor }) =>
     $backgroundColor &&
     css`
       background-color: ${$backgroundColor};
-      border-radius: ${theme.border.radius.xs};
-      height: ${theme.spacing(4.5)};
-      width: ${theme.spacing(4.5)};
+      border-radius: 4px;
+      box-sizing: border-box;
+      height: ${theme.spacing(4)};
+      width: ${theme.spacing(4)};
+      ${$borderColor ? `border: 1px solid ${$borderColor};` : ''}
     `}
 `;
 
@@ -283,7 +289,7 @@ export const NavigationDrawerItem = ({
   secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
-  iconBackgroundColor,
+  iconColor,
   to,
   onClick,
   active,
@@ -374,30 +380,29 @@ export const NavigationDrawerItem = ({
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {Icon && (
-            <StyledIcon $backgroundColor={iconBackgroundColor}>
-              <Icon
-                style={{
-                  minWidth: iconBackgroundColor
-                    ? theme.spacing(3.5)
-                    : theme.icon.size.md,
-                }}
-                size={
-                  iconBackgroundColor ? theme.spacing(3.5) : theme.icon.size.md
-                }
-                stroke={theme.icon.stroke.md}
-                color={
-                  iconBackgroundColor
-                    ? theme.grayScale.gray1
-                    : showBreadcrumb &&
-                        !isSettingsPage &&
-                        !isNavigationDrawerExpanded
+          {Icon &&
+            (iconColor != null && iconColor !== '' ? (
+              <StyledIcon>
+                <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
+              </StyledIcon>
+            ) : (
+              <StyledIcon>
+                <Icon
+                  style={{
+                    minWidth: theme.icon.size.md,
+                  }}
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.md}
+                  color={
+                    showBreadcrumb &&
+                    !isSettingsPage &&
+                    !isNavigationDrawerExpanded
                       ? theme.font.color.light
                       : 'currentColor'
-                }
-              />
-            </StyledIcon>
-          )}
+                  }
+                />
+              </StyledIcon>
+            ))}
 
           <StyledLabelParent>
             <OverflowingTextWithTooltip

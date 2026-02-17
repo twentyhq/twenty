@@ -21,7 +21,6 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
@@ -89,7 +88,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 }: WorkspaceNavigationMenuItemsFolderProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const iconColors = getNavigationMenuItemIconColors(theme);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const coreViews = useRecoilValue(coreViewsState);
@@ -156,7 +154,6 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           <NavigationDrawerItem
             label={folderName}
             Icon={FolderIcon}
-            iconBackgroundColor={iconColors.folder}
             onClick={handleClick}
             className="navigation-drawer-item"
             triggerEvent="CLICK"

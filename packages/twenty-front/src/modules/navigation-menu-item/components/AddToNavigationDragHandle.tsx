@@ -5,8 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
-import { getIconBackgroundColorForPayload } from '@/navigation-menu-item/utils/getIconBackgroundColorForPayload';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 
 const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
   align-items: center;
@@ -15,11 +17,11 @@ const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
   flex-shrink: 0;
   justify-content: center;
 
-  ${({ theme, $hasFixedSize }) =>
+  ${({ $hasFixedSize }) =>
     $hasFixedSize &&
     css`
-      height: ${theme.spacing(4.5)};
-      width: ${theme.spacing(4.5)};
+      height: 16px;
+      width: 16px;
     `}
 
   &:active {
@@ -30,11 +32,13 @@ const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
 type AddToNavigationDragHandleIconProps = {
   icon?: IconComponent;
   customIconContent?: ReactNode;
+  iconColor?: string;
 };
 
 const AddToNavigationDragHandleIcon = ({
   icon,
   customIconContent,
+  iconColor,
 }: AddToNavigationDragHandleIconProps) => {
   const theme = useTheme();
   const iconSize = theme.icon.size.md;
@@ -47,7 +51,11 @@ const AddToNavigationDragHandleIcon = ({
   if (isDefined(icon)) {
     const Icon = icon;
     return (
-      <Icon size={iconSize} stroke={iconStroke} color={theme.grayScale.gray1} />
+      <Icon
+        size={iconSize}
+        stroke={iconStroke}
+        color={iconColor ?? theme.grayScale.gray1}
+      />
     );
   }
 };
@@ -66,35 +74,38 @@ export const AddToNavigationDragHandle = ({
   isHovered,
 }: AddToNavigationDragHandleProps) => {
   const theme = useTheme();
-  const iconBackgroundColor = getIconBackgroundColorForPayload(payload, theme);
-  const hasBackgroundColor = !!iconBackgroundColor && !isHovered;
-  const payloadHasBackgroundColor = !!iconBackgroundColor;
-  const iconSize = theme.icon.size.md;
-  const iconStroke = theme.icon.stroke.sm;
-
+  const iconStyle =
+    payload.type === NavigationMenuItemType.RECORD
+      ? null
+      : getNavigationMenuItemIconStyleFromColor(theme, undefined);
+  const hasBackgroundColor = !!iconStyle && !isHovered;
   const showCustomContentWithoutWrapper = isDefined(customIconContent);
 
   return (
     <StyledIconSlot
       $hasFixedSize={
-        payloadHasBackgroundColor || showCustomContentWithoutWrapper
+        !!iconStyle?.backgroundColor || showCustomContentWithoutWrapper
       }
     >
       {isHovered ? (
         <IconGripVertical
-          size={iconSize}
-          stroke={iconStroke}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
           color={theme.font.color.tertiary}
         />
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
-      ) : hasBackgroundColor ? (
+      ) : hasBackgroundColor && icon && !isDefined(customIconContent) ? (
+        <NavigationMenuItemStyleIcon Icon={icon} />
+      ) : hasBackgroundColor && iconStyle ? (
         <StyledNavigationMenuItemIconContainer
-          $backgroundColor={iconBackgroundColor}
+          $backgroundColor={iconStyle.backgroundColor}
+          $borderColor={iconStyle.borderColor}
         >
           <AddToNavigationDragHandleIcon
             icon={icon}
             customIconContent={customIconContent}
+            iconColor={iconStyle.iconColor}
           />
         </StyledNavigationMenuItemIconContainer>
       ) : (

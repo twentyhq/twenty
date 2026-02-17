@@ -6,7 +6,7 @@ import { Avatar, useIcons } from 'twenty-ui/display';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -26,7 +26,6 @@ export const NavigationMenuItemIcon = ({
 
   const isRecord =
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD;
-  const isLink = navigationMenuItem.itemType === NavigationMenuItemType.LINK;
   const isObjectIndexView =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
     navigationMenuItem.viewKey === ViewKey.Index;
@@ -52,6 +51,7 @@ export const NavigationMenuItemIcon = ({
       <ObjectIconWithViewOverlay
         ObjectIcon={ObjectIconForView}
         ViewIcon={ViewIcon}
+        objectColor={navigationMenuItem.color}
       />
     );
   }
@@ -61,20 +61,17 @@ export const NavigationMenuItemIcon = ({
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
 
   const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
-  const iconColors = getNavigationMenuItemIconColors(theme);
-  const iconBackgroundColor = isRecord
-    ? undefined
-    : isLink
-      ? iconColors.link
-      : isViewWithOverlay
-        ? iconColors.view
-        : iconColors.object;
 
-  const iconColorToUse = iconBackgroundColor
-    ? theme.grayScale.gray1
+  const iconStyle = isRecord
+    ? null
+    : getNavigationMenuItemIconStyleFromColor(theme, navigationMenuItem.color);
+  const iconBackgroundColor = iconStyle?.backgroundColor;
+  const iconColorToUse = iconStyle
+    ? iconStyle.iconColor
     : StandardIcon
       ? IconColor
       : theme.font.color.secondary;
+  const iconBorderColor = iconStyle?.borderColor;
 
   const avatar = (
     <Avatar
@@ -95,6 +92,7 @@ export const NavigationMenuItemIcon = ({
   return (
     <StyledNavigationMenuItemIconContainer
       $backgroundColor={iconBackgroundColor}
+      $borderColor={iconBorderColor}
     >
       {avatar}
     </StyledNavigationMenuItemIconContainer>

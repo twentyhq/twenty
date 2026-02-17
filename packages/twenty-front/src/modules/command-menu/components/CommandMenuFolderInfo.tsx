@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -7,13 +6,12 @@ import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
-import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateFolderInDraft } from '@/navigation-menu-item/hooks/useUpdateFolderInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -23,7 +21,6 @@ const StyledClickableIconWrapper = styled.div`
 `;
 
 export const CommandMenuFolderInfo = () => {
-  const theme = useTheme();
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
@@ -81,15 +78,10 @@ export const CommandMenuFolderInfo = () => {
           }
           clickableComponent={
             <StyledClickableIconWrapper>
-              <StyledNavigationMenuItemIconContainer
-                $backgroundColor={getNavigationMenuItemIconColors(theme).folder}
-              >
-                <FolderIconComponent
-                  size={theme.spacing(3.5)}
-                  color={theme.grayScale.gray1}
-                  stroke={theme.icon.stroke.md}
-                />
-              </StyledNavigationMenuItemIconContainer>
+              <NavigationMenuItemStyleIcon
+                Icon={FolderIconComponent}
+                color={selectedItem.color}
+              />
             </StyledClickableIconWrapper>
           }
         />

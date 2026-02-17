@@ -1,13 +1,11 @@
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { ViewKey } from '@/views/types/ViewKey';
-import { useTheme } from '@emotion/react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -33,8 +31,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
-  const theme = useTheme();
-  const iconColors = getNavigationMenuItemIconColors(theme);
   const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -116,15 +112,12 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
           <ObjectIconWithViewOverlay
             ObjectIcon={getIcon(objectMetadataItem.icon)}
             ViewIcon={getIcon(navigationMenuItem!.Icon!)}
+            objectColor={navigationMenuItem?.color}
           />
         )
       : getIcon(objectMetadataItem.icon);
 
-  const iconBackgroundColor = isRecord
-    ? undefined
-    : isViewWithCustomName
-      ? undefined
-      : iconColors.object;
+  const iconThemeColor = isRecord ? undefined : navigationMenuItem?.color;
 
   const secondaryLabel =
     isRecord || isViewWithCustomName
@@ -144,7 +137,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       }
       onClick={handleClick}
       Icon={Icon}
-      iconBackgroundColor={iconBackgroundColor}
+      iconColor={iconThemeColor}
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
