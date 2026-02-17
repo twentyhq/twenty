@@ -80,10 +80,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     universalSettings: fieldManifest.universalSettings ?? null,
     isCustom: true,
     isActive: true,
-    isSystem: Object.prototype.hasOwnProperty.call(
-      PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
-      fieldManifest.name,
-    ),
+    isSystem: fieldManifest.name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
     isUIReadOnly: false,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: false,

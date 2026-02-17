@@ -50,7 +50,7 @@ const buildUniversalFlatObjectFieldByNameAndJoinColumnMaps = ({
   };
 };
 
-type PrastoinArgs = {
+type ValidateObjectMetadataSystemFieldsIntegrityArgs = {
   orchestratorActionsReport: Pick<
     OrchestratorActionsReport,
     'fieldMetadata' | 'objectMetadata'
@@ -63,7 +63,7 @@ type PrastoinArgs = {
 export const validateObjectMetadataSystemFieldsIntegrity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
-}: PrastoinArgs): Pick<OrchestratorFailureReport, 'objectMetadata'> => {
+}: ValidateObjectMetadataSystemFieldsIntegrityArgs): Pick<OrchestratorFailureReport, 'objectMetadata'> => {
   const metadataValidationErrors: Pick<
     OrchestratorFailureReport,
     'objectMetadata'
