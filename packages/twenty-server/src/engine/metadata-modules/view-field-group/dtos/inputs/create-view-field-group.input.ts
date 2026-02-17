@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -36,4 +36,10 @@ export class CreateViewFieldGroupInput {
   @IsBoolean()
   @Field({ nullable: true, defaultValue: true })
   isVisible?: boolean;
+
+  @HideField()
+  universalIdentifier?: string;
+
+  @HideField()
+  applicationId?: string;
 }
