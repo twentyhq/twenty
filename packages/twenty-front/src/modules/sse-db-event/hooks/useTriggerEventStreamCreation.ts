@@ -129,25 +129,61 @@ export const useTriggerEventStreamCreation = () => {
           },
           {
             message: ({ data, event }) => {
-              if (event === 'next') {
-                if (isDefined(data?.errors)) {
-                  const subCode = data.errors[0]?.extensions?.subCode;
+              const result = data as ExecutionResult<{
+                onEventSubscription: EventSubscription;
+              }>;
 
-                  switch (subCode) {
-                    case 'EVENT_STREAM_ALREADY_EXISTS': {
-                      set(shouldDestroyEventStreamState, true);
-                      break;
+              try {
+                if (event === 'next') {
+                  if (isDefined(result?.errors)) {
+                    const subCode = result.errors[0]?.extensions?.subCode;
+
+                    switch (subCode) {
+                      case 'EVENT_STREAM_ALREADY_EXISTS': {
+                        set(shouldDestroyEventStreamState, true);
+                        break;
+                      }
+                      default: {
+                        for (const error of result.errors) {
+                          captureException(error);
+                        }
+                      }
                     }
-                    default: {
-                      captureException(
-                        new Error(
-                          `Unhandled SSE message error: ${data.errors[0]?.message}`,
-                        ),
+
+                    set(shouldDestroyEventStreamState, true);
+                  } else {
+                    if (!hasReceivedFirstEvent) {
+                      hasReceivedFirstEvent = true;
+                      set(sseEventStreamReadyState, true);
+                    }
+
+                    const objectRecordEventsWithQueryIds =
+                      result?.data?.onEventSubscription
+                        ?.objectRecordEventsWithQueryIds ?? [];
+
+                    const objectRecordEvents =
+                      objectRecordEventsWithQueryIds.map(
+                        (objectRecordEventWithQueryIds) => {
+                          return objectRecordEventWithQueryIds.objectRecordEvent;
+                        },
                       );
-                      break;
-                    }
+
+                    triggerOptimisticEffectFromSseEvents({
+                      objectRecordEvents,
+                    });
+
+                    dispatchObjectRecordEventsFromSseToBrowserEvents(
+                      objectRecordEventsWithQueryIds,
+                    );
                   }
                 }
+              } catch (error) {
+                const errorProcessingSSEMessage = new Error(
+                  'Error while processing SSE message',
+                  { cause: error instanceof Error ? error : undefined },
+                );
+
+                captureException(errorProcessingSSEMessage);
               }
             },
           },

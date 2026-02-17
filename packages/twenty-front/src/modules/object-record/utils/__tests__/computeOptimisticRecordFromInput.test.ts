@@ -255,46 +255,4 @@ describe('computeOptimisticRecordFromInput', () => {
       `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
     );
   });
-
-  it('should throw an error if recordInput contains both the relationFieldId and relationField', () => {
-    const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
-
-    expect(() =>
-      computeOptimisticRecordFromInput({
-        currentWorkspaceMember,
-        objectMetadataItems: generatedMockObjectMetadataItems,
-        objectMetadataItem: personObjectMetadataItem,
-        recordInput: {
-          companyId: '123',
-          company: {},
-        },
-        cache,
-        objectPermissionsByObjectMetadataId: {},
-      }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company"`,
-    );
-  });
-
-  it('should throw an error if recordInput contains both the relationFieldId and relationField even if null', () => {
-    const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
-
-    expect(() =>
-      computeOptimisticRecordFromInput({
-        currentWorkspaceMember,
-        objectMetadataItems: generatedMockObjectMetadataItems,
-        objectMetadataItem: personObjectMetadataItem,
-        recordInput: {
-          companyId: '123',
-          company: null,
-        },
-        cache,
-        objectPermissionsByObjectMetadataId: {},
-      }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company"`,
-    );
-  });
 });

@@ -2136,6 +2136,46 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
+      workflowRunRecordPageFields: {
+        universalIdentifier: '20202020-a011-4a11-8a11-a0bcf10abcf1',
+        viewFields: {
+          name: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf5',
+          },
+          status: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf6',
+          },
+          workflow: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf7',
+          },
+          workflowVersion: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf8',
+          },
+          startedAt: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf9',
+          },
+          endedAt: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfa',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfb',
+          },
+          createdBy: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfc',
+          },
+        },
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: '20202020-a011-4a11-8a11-a0bcf10abcf2',
+          },
+          additional: {
+            universalIdentifier: '20202020-a011-4a11-8a11-a0bcf10abcf3',
+          },
+          other: {
+            universalIdentifier: '20202020-a011-4a11-8a11-a0bcf10abcf4',
+          },
+        },
+      },
     },
   },
   workflowVersion: {
@@ -2202,6 +2242,37 @@ export const STANDARD_OBJECTS = {
           },
           runs: {
             universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaeb3',
+          },
+        },
+      },
+      workflowVersionRecordPageFields: {
+        universalIdentifier: '20202020-a010-4a10-8a10-a0bcf10aaef1',
+        viewFields: {
+          name: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef5',
+          },
+          status: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef6',
+          },
+          workflow: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef7',
+          },
+          trigger: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef8',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef9',
+          },
+        },
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: '20202020-a010-4a10-8a10-a0bcf10aaef2',
+          },
+          additional: {
+            universalIdentifier: '20202020-a010-4a10-8a10-a0bcf10aaef3',
+          },
+          other: {
+            universalIdentifier: '20202020-a010-4a10-8a10-a0bcf10aaef4',
           },
         },
       },
