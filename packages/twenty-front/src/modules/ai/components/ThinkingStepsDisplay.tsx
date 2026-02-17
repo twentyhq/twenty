@@ -32,6 +32,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  font-family: ${({ theme }) => theme.font.family};
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -59,6 +60,7 @@ const StyledSummaryButton = styled.button`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
+  font-family: inherit;
   gap: ${({ theme }) => theme.spacing(2)};
   min-height: 24px;
   padding: 0;
@@ -177,6 +179,7 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
   display: flex;
+  font-family: inherit;
   gap: ${({ theme }) => theme.spacing(2)};
   min-height: 24px;
   padding: 0;

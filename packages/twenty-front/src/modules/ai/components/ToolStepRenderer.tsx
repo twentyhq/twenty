@@ -24,6 +24,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  font-family: ${({ theme }) => theme.font.family};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
