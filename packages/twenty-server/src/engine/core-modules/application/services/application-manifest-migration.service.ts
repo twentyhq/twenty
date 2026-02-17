@@ -22,6 +22,7 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -47,7 +48,7 @@ export class ApplicationManifestMigrationService {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
-  }) {
+  }): Promise<WorkspaceMigration> {
     const now = new Date().toISOString();
 
     const toAllUniversalFlatEntityMaps =
@@ -91,7 +92,7 @@ export class ApplicationManifestMigrationService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Validation errors occurred while syncing application manifest metadata',
@@ -112,6 +113,8 @@ export class ApplicationManifestMigrationService {
       workspaceId,
       ownerFlatApplication,
     });
+
+    return validateAndBuildResult.workspaceMigration;
   }
 
   /**
