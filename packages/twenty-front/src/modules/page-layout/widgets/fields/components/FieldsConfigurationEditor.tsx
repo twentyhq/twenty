@@ -89,10 +89,6 @@ export const FieldsConfigurationEditor = ({
     _destinationIndex: number,
   ) => {
     // TODO: Implement field move via ViewField mutations
-    console.log('Field move not yet implemented', {
-      sourceGroupId,
-      destinationGroupId,
-    });
   };
 
   const handleAddGroup = async () => {
