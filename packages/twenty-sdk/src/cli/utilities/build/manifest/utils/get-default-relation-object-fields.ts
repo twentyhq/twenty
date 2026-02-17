@@ -1,12 +1,15 @@
 import type { ObjectConfig } from '@/sdk/objects/object-config';
-import { type ObjectFieldManifest } from 'twenty-shared/application';
+import {
+  type FieldManifest,
+  type ObjectFieldManifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 export const getDefaultRelationObjectFields = (
   objectConfig: ObjectConfig,
-): ObjectFieldManifest[] => {
+): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
   const timelineActivities: ObjectFieldManifest = {
     name: 'timelineActivities',
     label: 'Timeline Activities',
@@ -92,5 +95,13 @@ export const getDefaultRelationObjectFields = (
       STANDARD_OBJECTS.taskTarget.universalIdentifier,
   };
 
-  return [timelineActivities, favorites, attachments, noteTargets, taskTargets];
+  return {
+    objectFields: [
+      timelineActivities,
+      favorites,
+      attachments,
+      noteTargets,
+      taskTargets,
+    ],
+  };
 };
