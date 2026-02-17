@@ -5,7 +5,6 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -15,6 +14,7 @@ import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -69,7 +69,7 @@ const StyledCopySetupKeyLink = styled.button`
 export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useRecoilValueV2(qrCodeState);
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
@@ -82,14 +82,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
-      await navigator.clipboard.writeText(secret);
-      enqueueSuccessSnackBar({
-        message: t`Setup key copied to clipboard`,
-        options: {
-          icon: <IconCopy size={theme.icon.size.md} />,
-          duration: 2000,
-        },
-      });
+      await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };
 
