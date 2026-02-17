@@ -33,8 +33,9 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   color: ${({ theme, isUser }) =>
     isUser ? theme.font.color.secondary : theme.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
+  line-height: 1.4em;
   max-width: 100%;
-  padding: ${({ theme, isUser }) => (isUser ? theme.spacing(1, 2) : 0)};
+  padding: ${({ theme, isUser }) => (isUser ? `0 ${theme.spacing(2)}` : 0)};
   width: fit-content;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -48,7 +49,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.4;
-    padding: ${({ theme }) => theme.spacing(1)};
+    padding: ${({ theme }) => `${theme.spacing(0.25)} ${theme.spacing(0.75)}`};
     border-radius: ${({ theme }) => theme.border.radius.sm};
     background: ${({ theme }) => theme.background.tertiary};
   }
@@ -70,17 +71,25 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   p {
     margin-block: ${({ isUser, theme }) =>
       isUser ? '0' : `${theme.spacing(1)}`};
-    line-height: 1.5;
+    line-height: 1.4em;
   }
 
   ul,
   ol {
+    line-height: 1.4em;
     margin: ${({ theme }) => theme.spacing(1)} 0;
     padding-left: ${({ theme }) => theme.spacing(4)};
   }
 
+  ul {
+    list-style-type: disc;
+  }
+
   li {
+    line-height: 1.4em;
     margin: ${({ theme }) => theme.spacing(0.5)} 0;
+    padding-bottom: ${({ theme }) => theme.spacing(0.5)};
+    padding-top: ${({ theme }) => theme.spacing(0.5)};
   }
 
   blockquote {
@@ -100,8 +109,13 @@ const StyledMessageFooter = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity ${({ theme }) => theme.animation.duration.normal}s
+    ease-in-out;
   width: 100%;
+`;
+
+const StyledMessageTimestamp = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
 `;
 
 const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
@@ -156,12 +170,12 @@ export const AIChatMessage = ({
       </StyledMessageContainer>
       {message.parts.length > 0 && message.metadata?.createdAt && (
         <StyledMessageFooter className="message-footer">
-          <span>
+          <StyledMessageTimestamp>
             {beautifyPastDateRelativeToNow(
               message.metadata?.createdAt,
               localeCatalog,
             )}
-          </span>
+          </StyledMessageTimestamp>
           <LightCopyIconButton
             copyText={
               message.parts.find((part) => part.type === 'text')?.text ?? ''

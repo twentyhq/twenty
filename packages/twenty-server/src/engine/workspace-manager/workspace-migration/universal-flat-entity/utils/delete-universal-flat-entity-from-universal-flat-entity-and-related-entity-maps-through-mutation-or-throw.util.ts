@@ -1,6 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
+import { ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -10,7 +12,6 @@ import { type MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps } fro
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { ALL_UNIVERSAL_METADATA_RELATIONS } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/replace-universal-flat-entity-in-universal-flat-entity-maps-through-mutation-or-throw.util';
@@ -41,28 +42,45 @@ export const deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMap
         >,
     });
 
-    const universalManyToOneRelations = Object.values(
-      ALL_UNIVERSAL_METADATA_RELATIONS[metadataName].manyToOne,
-    ) as Array<{
-      metadataName: AllMetadataName;
-      universalFlatEntityForeignKeyAggregator: string | null;
-      universalForeignKey: string;
-    } | null>;
+    const manyToOneRelations = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
 
-    for (const universalRelation of universalManyToOneRelations) {
-      if (!isDefined(universalRelation)) {
+    for (const relationPropertyName of Object.keys(manyToOneRelations)) {
+      const relation = manyToOneRelations[
+        relationPropertyName as keyof typeof manyToOneRelations
+      ] as {
+        metadataName: AllMetadataName;
+        inverseOneToManyProperty: string | null;
+        universalForeignKey: string;
+      } | null;
+
+      if (!isDefined(relation)) {
         continue;
       }
 
       const {
         metadataName: relatedMetadataName,
-        universalFlatEntityForeignKeyAggregator,
+        inverseOneToManyProperty,
         universalForeignKey,
-      } = universalRelation;
+      } = relation;
 
-      if (!isDefined(universalFlatEntityForeignKeyAggregator)) {
+      if (!isDefined(inverseOneToManyProperty)) {
         continue;
       }
+
+      const oneToManyRelations =
+        ALL_ONE_TO_MANY_METADATA_RELATIONS[relatedMetadataName];
+
+      const inverseRelation = oneToManyRelations[
+        inverseOneToManyProperty as keyof typeof oneToManyRelations
+      ] as {
+        universalFlatEntityForeignKeyAggregator: string;
+      } | null;
+
+      if (!isDefined(inverseRelation)) {
+        continue;
+      }
+
+      const { universalFlatEntityForeignKeyAggregator } = inverseRelation;
 
       const relatedFlatEntityMapsKey =
         getMetadataFlatEntityMapsKey(relatedMetadataName);

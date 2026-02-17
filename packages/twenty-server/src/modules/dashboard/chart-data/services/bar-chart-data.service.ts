@@ -9,8 +9,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -166,6 +166,7 @@ export class BarChartDataService {
         secondaryDateGranularity:
           configuration.secondaryAxisGroupByDateGranularity,
         secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
@@ -249,6 +250,7 @@ export class BarChartDataService {
         omitNullValues: configuration.omitNullValues ?? false,
         isDescOrder,
         isTwoDimensional: false,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
@@ -389,6 +391,7 @@ export class BarChartDataService {
         omitNullValues: configuration.omitNullValues ?? false,
         isDescOrder,
         isTwoDimensional: true,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
     const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);

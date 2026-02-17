@@ -8,8 +8,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -130,6 +130,7 @@ export class PieChartDataService {
           CalendarStartDay.MONDAY,
         limit,
         primaryAxisOrderBy: configuration.orderBy,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
       return this.transformToPieChartData({
