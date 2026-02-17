@@ -36,7 +36,6 @@ export const buildDefaultObjectManifest = ({
         type: FieldMetadataType.UUID,
         name: 'id',
         label: 'Id',
-        isSystem: true,
       },
       {
         universalIdentifier: uuidv4(),
@@ -73,14 +72,12 @@ export const buildDefaultObjectManifest = ({
         type: FieldMetadataType.POSITION,
         name: 'position',
         label: 'Position',
-        isSystem: true,
       },
       {
         universalIdentifier: uuidv4(),
         type: FieldMetadataType.TS_VECTOR,
         name: 'searchVector',
         label: 'Search vector',
-        isSystem: true,
       },
       ...additionalFields,
     ],
