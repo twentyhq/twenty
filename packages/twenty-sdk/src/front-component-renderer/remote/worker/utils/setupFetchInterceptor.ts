@@ -78,7 +78,11 @@ export const setupFetchInterceptor = ({
         });
     }
 
-    const newToken = await refreshPromise;
+    const newToken = await refreshPromise.catch(() => null);
+
+    if (!newToken) {
+      return response;
+    }
 
     // Retry once with new token
     const retryHeaders = new Headers(

@@ -1,5 +1,4 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
@@ -52,34 +51,23 @@ export const FrontComponentRenderer = ({
   });
 
   const [renewApplicationToken] = useRenewApplicationTokenMutation();
-  const [applicationTokenPair, setApplicationTokenPair] =
-    useState<ApplicationTokenPair | null>(null);
+
+  // Refreshed token override, tagged with the component it belongs to
+  const [refreshedTokenOverride, setRefreshedTokenOverride] = useState<{
+    frontComponentId: string;
+    applicationTokenPair: ApplicationTokenPair;
+  } | null>(null);
 
   const queriedApplicationTokenPair =
     data?.frontComponent?.applicationTokenPair;
 
-  const handleApplicationTokenPairChange = useCallback(
-    (nextApplicationTokenPair: ApplicationTokenPair | null) => {
-      if (!isDefined(nextApplicationTokenPair)) {
-        setApplicationTokenPair(null);
-        return;
-      }
-
-      setApplicationTokenPair((currentApplicationTokenPair) => {
-        if (
-          currentApplicationTokenPair?.applicationAccessToken.token ===
-            nextApplicationTokenPair.applicationAccessToken.token &&
-          currentApplicationTokenPair?.applicationRefreshToken.token ===
-            nextApplicationTokenPair.applicationRefreshToken.token
-        ) {
-          return currentApplicationTokenPair;
-        }
-
-        return nextApplicationTokenPair;
-      });
-    },
-    [],
-  );
+  // Derive current token: refreshed override for this component > queried > null
+  // When frontComponentId changes, override doesn't match → falls through to
+  // query token (identity-safe via Apollo variables) → no stale-token window.
+  const applicationTokenPair =
+    refreshedTokenOverride?.frontComponentId === frontComponentId
+      ? refreshedTokenOverride.applicationTokenPair
+      : (queriedApplicationTokenPair ?? null);
 
   const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
     if (!isDefined(applicationTokenPair)) {
@@ -99,10 +87,13 @@ export const FrontComponentRenderer = ({
       throw new Error('Failed to renew application token');
     }
 
-    setApplicationTokenPair(renewedApplicationTokenPair);
+    setRefreshedTokenOverride({
+      frontComponentId,
+      applicationTokenPair: renewedApplicationTokenPair,
+    });
 
     return renewedApplicationTokenPair.applicationAccessToken.token;
-  }, [applicationTokenPair, renewApplicationToken]);
+  }, [applicationTokenPair, frontComponentId, renewApplicationToken]);
 
   const composedFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     useMemo(
@@ -115,11 +106,6 @@ export const FrontComponentRenderer = ({
 
   return (
     <>
-      <FrontComponentApplicationTokenPairEffect
-        frontComponentId={frontComponentId}
-        queriedApplicationTokenPair={queriedApplicationTokenPair}
-        onApplicationTokenPairChange={handleApplicationTokenPairChange}
-      />
       {!loading &&
         isDefined(data?.frontComponent) &&
         isDefined(applicationTokenPair) && (

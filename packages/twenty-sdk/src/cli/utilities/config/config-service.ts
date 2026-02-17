@@ -60,29 +60,12 @@ export class ConfigService {
   }
 
   async getConfigForWorkspace(workspaceName: string): Promise<TwentyConfig> {
-    const defaultConfig = this.getDefaultConfig();
     try {
       const raw = await this.readRawConfig();
 
-      const profileConfig =
-        workspaceName === DEFAULT_WORKSPACE_NAME &&
-        !raw.profiles?.[DEFAULT_WORKSPACE_NAME]
-          ? raw
-          : raw.profiles?.[workspaceName];
-
-      // Fallback to legacy top-level values if profile value is missing
-      const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;
-      const apiKey = profileConfig?.apiKey;
-      const applicationTokenPairsByApplicationUniversalIdentifier =
-        profileConfig?.applicationTokenPairsByApplicationUniversalIdentifier;
-
-      return {
-        apiUrl,
-        apiKey,
-        applicationTokenPairsByApplicationUniversalIdentifier,
-      };
+      return this.resolveEffectiveProfile(raw, workspaceName);
     } catch {
-      return defaultConfig;
+      return this.getDefaultConfig();
     }
   }
 
@@ -95,7 +78,7 @@ export class ConfigService {
       raw.profiles = {};
     }
 
-    const currentProfile = raw.profiles[profile] || { apiUrl: '' };
+    const currentProfile = this.resolveEffectiveProfile(raw, profile);
 
     raw.profiles[profile] = { ...currentProfile, ...config };
 
@@ -151,15 +134,13 @@ export class ConfigService {
       raw.profiles = {};
     }
 
-    const currentProfile = raw.profiles[profile] || { apiUrl: '' };
-    const currentApplicationTokenPairs =
-      currentProfile.applicationTokenPairsByApplicationUniversalIdentifier ??
-      {};
+    const currentProfile = this.resolveEffectiveProfile(raw, profile);
 
     raw.profiles[profile] = {
       ...currentProfile,
       applicationTokenPairsByApplicationUniversalIdentifier: {
-        ...currentApplicationTokenPairs,
+        ...(currentProfile.applicationTokenPairsByApplicationUniversalIdentifier ??
+          {}),
         [applicationUniversalIdentifier]: applicationTokenPair,
       },
     };
@@ -193,6 +174,28 @@ export class ConfigService {
 
     await fs.ensureDir(path.dirname(this.configPath));
     await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
+  }
+
+  // Resolves the effective config for a workspace, handling legacy top-level
+  // values for the default workspace. Used by both read (getConfigForWorkspace)
+  // and write (setConfig, setApplicationTokenPair) paths so first-write to a
+  // legacy config preserves apiUrl/apiKey instead of clobbering them.
+  private resolveEffectiveProfile(
+    raw: PersistedConfig,
+    workspaceName: string,
+  ): TwentyConfig {
+    if (raw.profiles?.[workspaceName]) {
+      return raw.profiles[workspaceName];
+    }
+
+    if (workspaceName === DEFAULT_WORKSPACE_NAME) {
+      return {
+        apiUrl: raw.apiUrl ?? this.getDefaultConfig().apiUrl,
+        apiKey: raw.apiKey,
+      };
+    }
+
+    return this.getDefaultConfig();
   }
 
   private getDefaultConfig(): TwentyConfig {

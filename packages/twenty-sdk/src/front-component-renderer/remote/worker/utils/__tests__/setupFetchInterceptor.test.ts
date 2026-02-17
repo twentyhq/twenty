@@ -185,6 +185,28 @@ describe('setupFetchInterceptor', () => {
     expect(retryRequestHeaders.get('Authorization')).toBe('Bearer new-token');
   });
 
+  it('should return original 401 when refresh rejects', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }));
+    const requestRefresh = vi
+      .fn()
+      .mockRejectedValue(new Error('No refresh token available'));
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch('https://api.example.com/resource');
+
+    expect(response.status).toBe(401);
+    expect(requestRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('should not trust lookalike hostnames', async () => {
     const fetchMock = vi
       .fn()
