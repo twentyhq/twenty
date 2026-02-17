@@ -55,10 +55,7 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('http');
 
       expect(() => {
-        agent.createConnection(
-          { host: '127.0.0.1' } as any,
-          jest.fn() as any,
-        );
+        agent.createConnection({ host: '127.0.0.1' } as any, jest.fn() as any);
       }).toThrow('Request to internal IP address 127.0.0.1 is not allowed.');
     });
 
@@ -66,10 +63,7 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('http');
 
       expect(() => {
-        agent.createConnection(
-          { host: '10.0.0.1' } as any,
-          jest.fn() as any,
-        );
+        agent.createConnection({ host: '10.0.0.1' } as any, jest.fn() as any);
       }).toThrow('Request to internal IP address 10.0.0.1 is not allowed.');
     });
 
@@ -88,10 +82,7 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('http');
 
       expect(() => {
-        agent.createConnection(
-          { host: '172.16.0.1' } as any,
-          jest.fn() as any,
-        );
+        agent.createConnection({ host: '172.16.0.1' } as any, jest.fn() as any);
       }).toThrow('Request to internal IP address 172.16.0.1 is not allowed.');
     });
 
@@ -122,10 +113,7 @@ describe('createSsrfSafeAgent', () => {
     it('should allow hostnames (validated later via DNS lookup)', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'example.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'example.com' } as any, jest.fn() as any);
 
       expect(createConnectionSpy).toHaveBeenCalled();
     });
@@ -135,10 +123,7 @@ describe('createSsrfSafeAgent', () => {
     it('should destroy socket when DNS resolves to loopback IP', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'evil.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'evil.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, '127.0.0.1', 4, 'evil.com');
 
@@ -152,10 +137,7 @@ describe('createSsrfSafeAgent', () => {
     it('should destroy socket when DNS resolves to 10.x.x.x', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'evil.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'evil.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, '10.0.0.1', 4, 'evil.com');
 
@@ -169,10 +151,7 @@ describe('createSsrfSafeAgent', () => {
     it('should destroy socket when DNS resolves to 192.168.x.x', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'evil.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'evil.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, '192.168.1.1', 4, 'evil.com');
 
@@ -191,7 +170,13 @@ describe('createSsrfSafeAgent', () => {
         jest.fn() as any,
       );
 
-      mockSocket.emit('lookup', null, '169.254.169.254', 4, 'metadata.internal');
+      mockSocket.emit(
+        'lookup',
+        null,
+        '169.254.169.254',
+        4,
+        'metadata.internal',
+      );
 
       expect(mockSocket.destroy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -203,10 +188,7 @@ describe('createSsrfSafeAgent', () => {
     it('should not destroy socket when DNS resolves to public IP', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'example.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'example.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, '93.184.216.34', 4, 'example.com');
 
@@ -221,7 +203,13 @@ describe('createSsrfSafeAgent', () => {
         jest.fn() as any,
       );
 
-      mockSocket.emit('lookup', new Error('ENOTFOUND'), '', 4, 'nonexistent.example');
+      mockSocket.emit(
+        'lookup',
+        new Error('ENOTFOUND'),
+        '',
+        4,
+        'nonexistent.example',
+      );
 
       expect(mockSocket.destroy).not.toHaveBeenCalled();
     });
@@ -232,20 +220,14 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('https');
 
       expect(() => {
-        agent.createConnection(
-          { host: '127.0.0.1' } as any,
-          jest.fn() as any,
-        );
+        agent.createConnection({ host: '127.0.0.1' } as any, jest.fn() as any);
       }).toThrow('Request to internal IP address 127.0.0.1 is not allowed.');
     });
 
     it('should validate DNS lookups for HTTPS connections', () => {
       const agent = createSsrfSafeAgent('https');
 
-      agent.createConnection(
-        { host: 'evil.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'evil.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, '10.0.0.1', 4, 'evil.com');
 
@@ -262,20 +244,14 @@ describe('createSsrfSafeAgent', () => {
       const agent = createSsrfSafeAgent('http');
 
       expect(() => {
-        agent.createConnection(
-          { host: '::1' } as any,
-          jest.fn() as any,
-        );
+        agent.createConnection({ host: '::1' } as any, jest.fn() as any);
       }).toThrow('Request to internal IP address ::1 is not allowed.');
     });
 
     it('should destroy socket when DNS resolves to IPv6 private address', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'evil.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'evil.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, 'fe80::1', 6, 'evil.com');
 
@@ -289,10 +265,7 @@ describe('createSsrfSafeAgent', () => {
     it('should allow public IPv6 addresses', () => {
       const agent = createSsrfSafeAgent('http');
 
-      agent.createConnection(
-        { host: 'example.com' } as any,
-        jest.fn() as any,
-      );
+      agent.createConnection({ host: 'example.com' } as any, jest.fn() as any);
 
       mockSocket.emit('lookup', null, '2001:4860:4860::8888', 6, 'example.com');
 

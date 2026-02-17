@@ -1,19 +1,9 @@
 import * as http from 'http';
 import * as https from 'https';
 import { type Socket } from 'net';
+import { type Duplex } from 'stream';
 
 import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
-
-type CreateConnectionOptions = {
-  host?: string;
-  port?: number;
-  localAddress?: string;
-};
-
-type CreateConnectionCallback = (
-  error: Error | null,
-  socket: Socket,
-) => void;
 
 // Checks whether a hostname is a private IP literal.
 // Returns false for domain names — those are validated after DNS
@@ -26,71 +16,72 @@ const isHostnamePrivateIp = (hostname: string): boolean => {
   }
 };
 
-// Validates a resolved IP and destroys the socket if it's private.
-// Fails closed: if the IP cannot be parsed, the socket is destroyed.
-const onSocketLookup = (
-  socket: Socket,
-  error: Error | null,
-  address: string,
-) => {
-  if (error) {
-    return;
-  }
-
-  try {
-    if (isPrivateIp(address)) {
-      socket.destroy(
-        new Error(
-          `Request to internal IP address ${address} is not allowed.`,
-        ),
-      );
-    }
-  } catch {
-    socket.destroy(
-      new Error(
-        `Request to unvalidatable IP address ${address} is not allowed.`,
-      ),
-    );
+const validateHost = (host?: string) => {
+  if (host && isHostnamePrivateIp(host)) {
+    throw new Error(`Request to internal IP address ${host} is not allowed.`);
   }
 };
 
-// Creates an http or https Agent that blocks connections to private IPs.
-// Validation happens at the connection level (createConnection + socket
-// 'lookup' event), which means every connection is checked — including
-// those created by automatic redirect following.
-export const createSsrfSafeAgent = (
-  protocol: 'http' | 'https',
-): http.Agent => {
-  const agent =
-    protocol === 'https' ? new https.Agent() : new http.Agent();
+// Validates a resolved IP and destroys the socket if it's private.
+// Fails closed: if the IP cannot be parsed, the socket is destroyed.
+const attachLookupValidation = (duplex: Duplex): Socket => {
+  // createConnection returns a net.Socket at runtime; the Duplex
+  // return type in @types/node is overly broad.
+  const socket = duplex as Socket;
 
-  const originalCreateConnection = agent.createConnection;
-
-  (agent as any).createConnection = function (
-    this: http.Agent,
-    options: CreateConnectionOptions,
-    oncreate: CreateConnectionCallback,
-  ) {
-    if (options.host && isHostnamePrivateIp(options.host)) {
-      throw new Error(
-        `Request to internal IP address ${options.host} is not allowed.`,
-      );
+  socket.on('lookup', (error: Error | null, address: string) => {
+    if (error) {
+      return;
     }
 
-    const socket: Socket = originalCreateConnection.call(
-      this,
-      options,
-      oncreate,
-    );
+    try {
+      if (isPrivateIp(address)) {
+        socket.destroy(
+          new Error(
+            `Request to internal IP address ${address} is not allowed.`,
+          ),
+        );
+      }
+    } catch {
+      socket.destroy(
+        new Error(
+          `Request to unvalidatable IP address ${address} is not allowed.`,
+        ),
+      );
+    }
+  });
 
-    socket.on(
-      'lookup',
-      (error: Error | null, address: string) =>
-        onSocketLookup(socket, error, address),
-    );
+  return socket;
+};
 
-    return socket;
-  };
+// Agents that block connections to private IPs. Validation happens at
+// the connection level (createConnection + socket 'lookup' event),
+// which means every connection is checked — including those created
+// by automatic redirect following.
+class SsrfSafeHttpAgent extends http.Agent {
+  createConnection(
+    options: http.ClientRequestArgs,
+    callback?: (err: Error, stream: Duplex) => void,
+  ): Duplex {
+    validateHost(options.host ?? undefined);
 
-  return agent;
+    return attachLookupValidation(super.createConnection(options, callback));
+  }
+}
+
+class SsrfSafeHttpsAgent extends https.Agent {
+  createConnection(
+    options: http.ClientRequestArgs,
+    callback?: (err: Error, stream: Duplex) => void,
+  ): Duplex {
+    validateHost(options.host ?? undefined);
+
+    return attachLookupValidation(super.createConnection(options, callback));
+  }
+}
+
+export const createSsrfSafeAgent = (protocol: 'http' | 'https'): http.Agent => {
+  return protocol === 'https'
+    ? new SsrfSafeHttpsAgent()
+    : new SsrfSafeHttpAgent();
 };

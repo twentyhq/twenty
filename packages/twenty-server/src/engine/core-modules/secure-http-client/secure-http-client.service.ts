@@ -7,7 +7,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 import { type OutboundRequestContext } from './outbound-request-context.type';
 
-const MAX_REDIRECTS = 10;
+const MAX_REDIRECTS = 5;
 
 @Injectable()
 export class SecureHttpClientService {
@@ -33,7 +33,10 @@ export class SecureHttpClientService {
           ...config,
           httpAgent: createSsrfSafeAgent('http'),
           httpsAgent: createSsrfSafeAgent('https'),
-          maxRedirects: MAX_REDIRECTS,
+          maxRedirects: Math.min(
+            config?.maxRedirects ?? MAX_REDIRECTS,
+            MAX_REDIRECTS,
+          ),
         })
       : axios.create(config);
 

@@ -39,13 +39,31 @@ describe('SecureHttpClientService', () => {
       expect(client.defaults.httpsAgent).toBeInstanceOf(https.Agent);
     });
 
-    it('should cap maxRedirects when safe mode is on', () => {
+    it('should default maxRedirects to 5 when safe mode is on', () => {
       const service = new SecureHttpClientService(
         createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
       );
       const client = service.getHttpClient();
 
-      expect(client.defaults.maxRedirects).toBe(10);
+      expect(client.defaults.maxRedirects).toBe(5);
+    });
+
+    it('should cap maxRedirects when caller requests more', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient({ maxRedirects: 100 });
+
+      expect(client.defaults.maxRedirects).toBe(5);
+    });
+
+    it('should respect caller maxRedirects when lower than cap', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient({ maxRedirects: 2 });
+
+      expect(client.defaults.maxRedirects).toBe(2);
     });
 
     it('should not set maxRedirects when safe mode is off', () => {
