@@ -18,8 +18,10 @@ export const getDefaultRelationObjectFields = (
       objectConfig,
       fieldName: 'timelineActivities',
     }),
-    relationTargetFieldMetadataUniversalIdentifier: null,
-    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,,
+    relationTargetFieldMetadataUniversalIdentifier:
+      '05558842-1442-49ae-a9ea-7cbd1f132edc',
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.timelineActivity.universalIdentifier,
   };
 
   const favorites: ObjectFieldManifest = {
@@ -33,8 +35,10 @@ export const getDefaultRelationObjectFields = (
       objectConfig,
       fieldName: 'favorites',
     }),
-    relationTargetFieldMetadataUniversalIdentifier: null,
-    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.favorite.universalIdentifier,,
+    relationTargetFieldMetadataUniversalIdentifier:
+      '64804f30-e355-40f1-a07f-c4acacf22a8a',
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.favorite.universalIdentifier,
   };
 
   const attachments: ObjectFieldManifest = {
@@ -48,7 +52,8 @@ export const getDefaultRelationObjectFields = (
       objectConfig,
       fieldName: 'attachments',
     }),
-    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier:
+      'b1020698-088e-4fcd-84b5-5d1dacd6f019',
     relationTargetObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.attachment.universalIdentifier,
   };
@@ -64,8 +69,10 @@ export const getDefaultRelationObjectFields = (
       objectConfig,
       fieldName: 'noteTargets',
     }),
-    relationTargetFieldMetadataUniversalIdentifier: null,
-    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.noteTarget.universalIdentifier,,
+    relationTargetFieldMetadataUniversalIdentifier:
+      '382991cb-fdbc-4ff3-bc43-cbc0470f3073',
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.noteTarget.universalIdentifier,
   };
 
   const taskTargets: ObjectFieldManifest = {
@@ -79,8 +86,10 @@ export const getDefaultRelationObjectFields = (
       objectConfig,
       fieldName: 'taskTargets',
     }),
-    relationTargetFieldMetadataUniversalIdentifier: null,
-    relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,,
+    relationTargetFieldMetadataUniversalIdentifier:
+      'f5a92df0-a2db-4629-8bb8-ae7387765e22',
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.taskTarget.universalIdentifier,
   };
 
   return [timelineActivities, favorites, attachments, noteTargets, taskTargets];
