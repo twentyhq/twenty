@@ -1,10 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { OrderByDirection } from 'twenty-shared/types';
+import {
+  OrderByDirection,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';

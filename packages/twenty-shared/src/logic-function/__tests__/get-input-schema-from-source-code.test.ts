@@ -1,5 +1,5 @@
 import { getInputSchemaFromSourceCode } from '@/logic-function/get-input-schema-from-source-code';
-import { DEFAULT_TOOL_INPUT_SCHEMA } from '@/logic-function/constants/default-tool-input-schema';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from '@/logic-function/constants/DefaultToolInputSchema';
 
 describe('getInputSchemaFromSourceCode', () => {
   it('should return empty input if not parameter', async () => {

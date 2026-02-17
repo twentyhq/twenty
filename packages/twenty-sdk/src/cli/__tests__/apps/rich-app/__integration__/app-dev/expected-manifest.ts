@@ -409,6 +409,8 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],
+  views: [],
+  navigationMenuItems: [],
   logicFunctions: [
     {
       builtHandlerChecksum: '[checksum]',

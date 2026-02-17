@@ -8,10 +8,10 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { ViewType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 type TestSetup = {
   createdViewId: string;

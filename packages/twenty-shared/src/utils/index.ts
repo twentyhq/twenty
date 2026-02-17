@@ -56,7 +56,7 @@ export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
 export { addUnitToZonedDateTime } from './filter/dates/utils/addUnitToZonedDateTime';
 export { convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek } from './filter/dates/utils/convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek';
 export { convertFirstDayOfTheWeekToCalendarStartDayNumber } from './filter/dates/utils/convertFirstDayOfTheWeekToCalendarStartDayNumber';
-export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
+export type { FirstDayOfTheWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
 export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
 export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
 export { getFirstDayOfTheWeekAsISONumber } from './filter/dates/utils/getFirstDayOfTheWeekAsISONumber';
