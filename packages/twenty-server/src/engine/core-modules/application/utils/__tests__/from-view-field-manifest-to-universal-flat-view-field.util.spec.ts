@@ -1,3 +1,5 @@
+import { AggregateOperations } from 'twenty-shared/types';
+
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/utils/from-view-field-manifest-to-universal-flat-view-field.util';
 
 describe('fromViewFieldManifestToUniversalFlatViewField', () => {
@@ -35,7 +37,7 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
         position: 5,
         isVisible: false,
         size: 200,
-        aggregateOperation: 'COUNT',
+        aggregateOperation: AggregateOperations.COUNT,
         viewFieldGroupUniversalIdentifier: 'vfg-uuid-1',
       },
       viewUniversalIdentifier,
@@ -46,7 +48,7 @@ describe('fromViewFieldManifestToUniversalFlatViewField', () => {
     expect(result.isVisible).toBe(false);
     expect(result.size).toBe(200);
     expect(result.position).toBe(5);
-    expect(result.aggregateOperation).toBe('COUNT');
+    expect(result.aggregateOperation).toBe(AggregateOperations.COUNT);
     expect(result.viewFieldGroupUniversalIdentifier).toBe('vfg-uuid-1');
   });
 });

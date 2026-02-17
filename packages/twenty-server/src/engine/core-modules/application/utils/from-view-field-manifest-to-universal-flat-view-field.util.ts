@@ -1,6 +1,5 @@
 import { type ViewFieldManifest } from 'twenty-shared/application';
 
-import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 export const fromViewFieldManifestToUniversalFlatViewField = ({
@@ -25,8 +24,7 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     isVisible: viewFieldManifest.isVisible ?? true,
     size: viewFieldManifest.size ?? 0,
     position: viewFieldManifest.position,
-    aggregateOperation:
-      (viewFieldManifest.aggregateOperation as AggregateOperations) ?? null,
+    aggregateOperation: viewFieldManifest.aggregateOperation ?? null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

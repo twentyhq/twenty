@@ -1,27 +1,12 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
-import { type ViewFilterOperand } from '@/types';
-
-export type ViewManifestType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'FIELDS_WIDGET';
-
-export type ViewManifestVisibility = 'WORKSPACE' | 'UNLISTED';
-
-export type ViewManifestOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE';
-
-export type ViewManifestAggregateOperation =
-  | 'MIN'
-  | 'MAX'
-  | 'AVG'
-  | 'SUM'
-  | 'COUNT'
-  | 'COUNT_UNIQUE_VALUES'
-  | 'COUNT_EMPTY'
-  | 'COUNT_NOT_EMPTY'
-  | 'COUNT_TRUE'
-  | 'COUNT_FALSE'
-  | 'PERCENTAGE_EMPTY'
-  | 'PERCENTAGE_NOT_EMPTY';
-
-export type ViewManifestFilterGroupLogicalOperator = 'AND' | 'OR' | 'NOT';
+import {
+  type AggregateOperations,
+  type ViewFilterGroupLogicalOperator,
+  type ViewFilterOperand,
+  type ViewOpenRecordIn,
+  type ViewType,
+  type ViewVisibility,
+} from '@/types';
 
 export type ViewManifestFilterValue =
   | string
@@ -35,7 +20,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   isVisible?: boolean;
   size?: number;
   position: number;
-  aggregateOperation?: ViewManifestAggregateOperation;
+  aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
 };
 
@@ -49,7 +34,7 @@ export type ViewFilterManifest = SyncableEntityOptions & {
 };
 
 export type ViewFilterGroupManifest = SyncableEntityOptions & {
-  logicalOperator: ViewManifestFilterGroupLogicalOperator;
+  logicalOperator: ViewFilterGroupLogicalOperator;
   parentViewFilterGroupUniversalIdentifier?: string;
   positionInViewFilterGroup?: number;
 };
@@ -69,12 +54,12 @@ export type ViewFieldGroupManifest = SyncableEntityOptions & {
 export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
-  type?: ViewManifestType;
+  type?: ViewType;
   icon?: string;
   position?: number;
   isCompact?: boolean;
-  visibility?: ViewManifestVisibility;
-  openRecordIn?: ViewManifestOpenRecordIn;
+  visibility?: ViewVisibility;
+  openRecordIn?: ViewOpenRecordIn;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];

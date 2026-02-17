@@ -1,6 +1,5 @@
 import { type ViewFilterGroupManifest } from 'twenty-shared/application';
 
-import { type ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
 
 export const fromViewFilterGroupManifestToUniversalFlatViewFilterGroup = ({
@@ -20,8 +19,7 @@ export const fromViewFilterGroupManifestToUniversalFlatViewFilterGroup = ({
     viewUniversalIdentifier,
     parentViewFilterGroupUniversalIdentifier:
       viewFilterGroupManifest.parentViewFilterGroupUniversalIdentifier ?? null,
-    logicalOperator:
-      viewFilterGroupManifest.logicalOperator as ViewFilterGroupLogicalOperator,
+    logicalOperator: viewFilterGroupManifest.logicalOperator,
     positionInViewFilterGroup:
       viewFilterGroupManifest.positionInViewFilterGroup ?? null,
     childViewFilterGroupUniversalIdentifiers: [],

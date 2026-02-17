@@ -1,3 +1,9 @@
+import {
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
+
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/utils/from-view-manifest-to-universal-flat-view.util';
 
 describe('fromViewManifestToUniversalFlatView', () => {
@@ -21,13 +27,13 @@ describe('fromViewManifestToUniversalFlatView', () => {
     );
     expect(result.name).toBe('All Records');
     expect(result.objectMetadataUniversalIdentifier).toBe('object-uuid-1');
-    expect(result.type).toBe('TABLE');
+    expect(result.type).toBe(ViewType.TABLE);
     expect(result.icon).toBe('IconList');
     expect(result.position).toBe(0);
     expect(result.isCompact).toBe(false);
     expect(result.isCustom).toBe(true);
-    expect(result.visibility).toBe('WORKSPACE');
-    expect(result.openRecordIn).toBe('SIDE_PANEL');
+    expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
+    expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
     expect(result.key).toBeNull();
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
@@ -39,22 +45,22 @@ describe('fromViewManifestToUniversalFlatView', () => {
         universalIdentifier: 'view-uuid-2',
         name: 'Kanban Board',
         objectUniversalIdentifier: 'object-uuid-1',
-        type: 'KANBAN',
+        type: ViewType.KANBAN,
         icon: 'IconLayoutKanban',
         position: 3,
         isCompact: true,
-        visibility: 'UNLISTED',
-        openRecordIn: 'RECORD_PAGE',
+        visibility: ViewVisibility.UNLISTED,
+        openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
       },
       applicationUniversalIdentifier,
       now,
     });
 
-    expect(result.type).toBe('KANBAN');
+    expect(result.type).toBe(ViewType.KANBAN);
     expect(result.icon).toBe('IconLayoutKanban');
     expect(result.position).toBe(3);
     expect(result.isCompact).toBe(true);
-    expect(result.visibility).toBe('UNLISTED');
-    expect(result.openRecordIn).toBe('RECORD_PAGE');
+    expect(result.visibility).toBe(ViewVisibility.UNLISTED);
+    expect(result.openRecordIn).toBe(ViewOpenRecordIn.RECORD_PAGE);
   });
 });

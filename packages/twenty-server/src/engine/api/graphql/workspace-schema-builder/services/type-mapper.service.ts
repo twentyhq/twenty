@@ -16,14 +16,13 @@ import {
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
+  AggregateOperations,
   type FieldMetadataSettings,
   FieldMetadataType,
   NumberDataType,
   type FieldMetadataDefaultValue,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
   ArrayFilterType,

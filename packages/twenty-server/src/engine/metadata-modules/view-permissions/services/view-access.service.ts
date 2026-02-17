@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
+import { ViewVisibility } from 'twenty-shared/types';
 import {
   ViewException,
   ViewExceptionCode,

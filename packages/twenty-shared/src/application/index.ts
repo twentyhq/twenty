@@ -43,11 +43,6 @@ export type {
 } from './roleManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
-  ViewManifestType,
-  ViewManifestVisibility,
-  ViewManifestOpenRecordIn,
-  ViewManifestAggregateOperation,
-  ViewManifestFilterGroupLogicalOperator,
   ViewManifestFilterValue,
   ViewFieldManifest,
   ViewFilterManifest,

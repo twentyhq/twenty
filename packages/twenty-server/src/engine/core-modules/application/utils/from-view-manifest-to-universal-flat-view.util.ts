@@ -1,8 +1,6 @@
 import { type ViewManifest } from 'twenty-shared/application';
+import { ViewOpenRecordIn, ViewType, ViewVisibility } from 'twenty-shared/types';
 
-import { type ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { type ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { type ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 export const fromViewManifestToUniversalFlatView = ({
@@ -19,14 +17,13 @@ export const fromViewManifestToUniversalFlatView = ({
     applicationUniversalIdentifier,
     name: viewManifest.name,
     objectMetadataUniversalIdentifier: viewManifest.objectUniversalIdentifier,
-    type: (viewManifest.type ?? 'TABLE') as ViewType,
+    type: viewManifest.type ?? ViewType.TABLE,
     icon: viewManifest.icon ?? 'IconList',
     position: viewManifest.position ?? 0,
     isCompact: viewManifest.isCompact ?? false,
     isCustom: true,
-    visibility: (viewManifest.visibility ?? 'WORKSPACE') as ViewVisibility,
-    openRecordIn: (viewManifest.openRecordIn ??
-      'SIDE_PANEL') as ViewOpenRecordIn,
+    visibility: viewManifest.visibility ?? ViewVisibility.WORKSPACE,
+    openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     key: null,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,

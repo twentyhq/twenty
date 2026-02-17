@@ -1,6 +1,6 @@
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewType } from 'twenty-shared/types';
 import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
