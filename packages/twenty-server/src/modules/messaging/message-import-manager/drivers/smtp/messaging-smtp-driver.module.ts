@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { HostnameGuardModule } from 'src/engine/core-modules/hostname-guard/hostname-guard.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 
 import { SmtpClientProvider } from './providers/smtp-client.provider';
 
 @Module({
-  imports: [HostnameGuardModule],
+  imports: [SecureHttpClientModule],
   providers: [SmtpClientProvider],
   exports: [SmtpClientProvider],
 })

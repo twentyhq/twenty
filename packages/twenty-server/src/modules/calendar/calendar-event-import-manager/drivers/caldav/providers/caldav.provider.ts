@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { HostnameGuardService } from 'src/engine/core-modules/hostname-guard/hostname-guard.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class CalDavClientProvider {
-  constructor(private readonly hostnameGuardService: HostnameGuardService) {}
+  constructor(
+    private readonly secureHttpClientService: SecureHttpClientService,
+  ) {}
 
   public async getCalDavCalendarClient(
     connectedAccount: Pick<
@@ -24,7 +26,7 @@ export class CalDavClientProvider {
       throw new Error('Missing required CalDAV connection parameters');
     }
 
-    const serverUrl = await this.hostnameGuardService.getValidatedUrl(
+    const serverUrl = await this.secureHttpClientService.getValidatedUrl(
       connectedAccount.connectionParameters.CALDAV.host,
     );
 

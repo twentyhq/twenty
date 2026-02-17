@@ -5,12 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
 
-import { HostnameGuardService } from 'src/engine/core-modules/hostname-guard/hostname-guard.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class SmtpClientProvider {
-  constructor(private readonly hostnameGuardService: HostnameGuardService) {}
+  constructor(
+    private readonly secureHttpClientService: SecureHttpClientService,
+  ) {}
 
   public async getSmtpClient(
     connectedAccount: Pick<
@@ -24,9 +26,8 @@ export class SmtpClientProvider {
       throw new Error('SMTP settings not configured for this account');
     }
 
-    const validatedSmtpHost = await this.hostnameGuardService.getValidatedHost(
-      smtpParams.host,
-    );
+    const validatedSmtpHost =
+      await this.secureHttpClientService.getValidatedHost(smtpParams.host);
 
     const options: SMTPConnection.Options = {
       host: validatedSmtpHost,
