@@ -30,7 +30,7 @@ export class GmailEmailAliasErrorHandlerService {
     }
 
     throw new MessageImportDriverException(
-      'Unknown error',
+      `Google email alias error: ${error instanceof Error ? error.message : String(error)}`,
       MessageImportDriverExceptionCode.UNKNOWN,
     );
   }
