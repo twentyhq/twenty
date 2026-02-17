@@ -65,7 +65,7 @@ export class FileWorkflowService {
       url: this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
-        fileFolder: FileFolder.FilesField,
+        fileFolder: FileFolder.Workflow,
       }),
     };
   }
