@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
   type OrchestratorActionsReport,
@@ -49,49 +49,6 @@ const buildUniversalFlatObjectFieldByNameAndJoinColumnMaps = ({
     fieldUniversalIdentifierByJoinColumnName,
   };
 };
-
-const EXPECTED_SYSTEM_FIELDS = [
-  {
-    name: 'id',
-    type: FieldMetadataType.UUID,
-    isSystem: true,
-  },
-  {
-    name: 'createdAt',
-    type: FieldMetadataType.DATE_TIME,
-    isSystem: false,
-  },
-  {
-    name: 'updatedAt',
-    type: FieldMetadataType.DATE_TIME,
-    isSystem: false,
-  },
-  {
-    name: 'deletedAt',
-    type: FieldMetadataType.DATE_TIME,
-    isSystem: false,
-  },
-  {
-    name: 'createdBy',
-    type: FieldMetadataType.ACTOR,
-    isSystem: false,
-  },
-  {
-    name: 'updatedBy',
-    type: FieldMetadataType.ACTOR,
-    isSystem: false,
-  },
-  {
-    name: 'position',
-    type: FieldMetadataType.POSITION,
-    isSystem: true,
-  },
-  {
-    name: 'searchVector',
-    type: FieldMetadataType.TS_VECTOR,
-    isSystem: true,
-  },
-] as const satisfies Partial<UniversalFlatFieldMetadata>[];
 
 type PrastoinArgs = {
   orchestratorActionsReport: Pick<
@@ -144,7 +101,9 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
         flatObjectMetadata: createdObjectMetadata,
       });
 
-    for (const expectedSystemField of EXPECTED_SYSTEM_FIELDS) {
+    for (const expectedSystemField of Object.values(
+      PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
+    )) {
       const matchingFieldUniversalIdentifier =
         fieldUniversalIdentifierByName[expectedSystemField.name];
 
