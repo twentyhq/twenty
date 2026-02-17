@@ -13,8 +13,10 @@ import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMe
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
-import { PermissionFlagType } from '~/generated/graphql';
+import {
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
   position: relative;
