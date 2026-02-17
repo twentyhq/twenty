@@ -2513,11 +2513,6 @@ msgstr "Change node type"
 msgid "Change Password"
 msgstr "Change Password"
 
-#. js-lingui-id: wRtBJP
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "Change Plan"
-msgstr "Change Plan"
-
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
@@ -9552,6 +9547,11 @@ msgstr "Ordered List"
 msgid "Organization"
 msgstr "Organization"
 
+#. js-lingui-id: zi/p7n
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Organization plan"
+msgstr "Organization plan"
+
 #. js-lingui-id: nV6twc
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
 msgid "Organize"
@@ -10111,6 +10111,11 @@ msgstr "Privacy Policy"
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "Pro"
+
+#. js-lingui-id: r5je1s
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Pro plan"
+msgstr "Pro plan"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx

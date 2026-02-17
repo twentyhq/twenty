@@ -2518,11 +2518,6 @@ msgstr "ノードの種類を変更"
 msgid "Change Password"
 msgstr "パスワードを変更"
 
-#. js-lingui-id: wRtBJP
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "Change Plan"
-msgstr "プランを変更"
-
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
@@ -9557,6 +9552,11 @@ msgstr ""
 msgid "Organization"
 msgstr "組織"
 
+#. js-lingui-id: zi/p7n
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Organization plan"
+msgstr ""
+
 #. js-lingui-id: nV6twc
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
 msgid "Organize"
@@ -10116,6 +10116,11 @@ msgstr "プライバシーポリシー"
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "プロ"
+
+#. js-lingui-id: r5je1s
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Pro plan"
+msgstr ""
 
 #. js-lingui-id: k1ifdL
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
