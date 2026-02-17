@@ -3405,17 +3405,6 @@ export type OnDbEventInput = {
   recordId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type OnFrontComponentUpdated = {
-  __typename?: 'OnFrontComponentUpdated';
-  builtComponentChecksum: Scalars['String'];
-  id: Scalars['UUID'];
-  updatedAt: Scalars['String'];
-};
-
-export type OnFrontComponentUpdatedInput = {
-  id?: InputMaybe<Scalars['UUID']>;
-};
-
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_ONBOARDING = 'BOOK_ONBOARDING',
@@ -4370,7 +4359,6 @@ export type Subscription = {
   logicFunctionLogs: LogicFunctionLogs;
   onDbEvent: OnDbEvent;
   onEventSubscription?: Maybe<EventSubscription>;
-  onFrontComponentUpdated: OnFrontComponentUpdated;
 };
 
 
@@ -4386,11 +4374,6 @@ export type SubscriptionOnDbEventArgs = {
 
 export type SubscriptionOnEventSubscriptionArgs = {
   eventStreamId: Scalars['String'];
-};
-
-
-export type SubscriptionOnFrontComponentUpdatedArgs = {
-  input: OnFrontComponentUpdatedInput;
 };
 
 export enum SubscriptionInterval {
@@ -5785,13 +5768,6 @@ export type FindOneFrontComponentQueryVariables = Exact<{
 
 
 export type FindOneFrontComponentQuery = { __typename?: 'Query', frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, applicationId: string, builtComponentChecksum: string, applicationTokenPair?: { __typename?: 'ApplicationTokenPair', applicationAccessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, applicationRefreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } | null } | null };
-
-export type OnFrontComponentUpdatedSubscriptionVariables = Exact<{
-  input: OnFrontComponentUpdatedInput;
-}>;
-
-
-export type OnFrontComponentUpdatedSubscription = { __typename?: 'Subscription', onFrontComponentUpdated: { __typename?: 'OnFrontComponentUpdated', id: string, builtComponentChecksum: string, updatedAt: string } };
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -10565,38 +10541,6 @@ export function useFindOneFrontComponentLazyQuery(baseOptions?: Apollo.LazyQuery
 export type FindOneFrontComponentQueryHookResult = ReturnType<typeof useFindOneFrontComponentQuery>;
 export type FindOneFrontComponentLazyQueryHookResult = ReturnType<typeof useFindOneFrontComponentLazyQuery>;
 export type FindOneFrontComponentQueryResult = Apollo.QueryResult<FindOneFrontComponentQuery, FindOneFrontComponentQueryVariables>;
-export const OnFrontComponentUpdatedDocument = gql`
-    subscription OnFrontComponentUpdated($input: OnFrontComponentUpdatedInput!) {
-  onFrontComponentUpdated(input: $input) {
-    id
-    builtComponentChecksum
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useOnFrontComponentUpdatedSubscription__
- *
- * To run a query within a React component, call `useOnFrontComponentUpdatedSubscription` and pass it any options that fit your needs.
- * When your component renders, `useOnFrontComponentUpdatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOnFrontComponentUpdatedSubscription({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useOnFrontComponentUpdatedSubscription(baseOptions: Apollo.SubscriptionHookOptions<OnFrontComponentUpdatedSubscription, OnFrontComponentUpdatedSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<OnFrontComponentUpdatedSubscription, OnFrontComponentUpdatedSubscriptionVariables>(OnFrontComponentUpdatedDocument, options);
-      }
-export type OnFrontComponentUpdatedSubscriptionHookResult = ReturnType<typeof useOnFrontComponentUpdatedSubscription>;
-export type OnFrontComponentUpdatedSubscriptionResult = Apollo.SubscriptionResult<OnFrontComponentUpdatedSubscription>;
 export const CreateOneLogicFunctionDocument = gql`
     mutation CreateOneLogicFunction($input: CreateLogicFunctionFromSourceInput!) {
   createOneLogicFunction(input: $input) {

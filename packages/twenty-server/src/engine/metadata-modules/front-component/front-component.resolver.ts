@@ -1,8 +1,7 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -19,13 +18,9 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
-import { OnFrontComponentUpdatedDTO } from 'src/engine/metadata-modules/front-component/dtos/on-front-component-updated.dto';
-import { OnFrontComponentUpdatedInput } from 'src/engine/metadata-modules/front-component/dtos/on-front-component-updated.input';
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
-import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -40,7 +35,6 @@ export class FrontComponentResolver {
     private readonly frontComponentService: FrontComponentService,
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   @Query(() => [FrontComponentDTO])
@@ -120,29 +114,5 @@ export class FrontComponentResolver {
     });
 
     return fromFlatFrontComponentToFrontComponentDto(flatFrontComponent);
-  }
-
-  @Subscription(() => OnFrontComponentUpdatedDTO, {
-    filter: (
-      payload: {
-        onFrontComponentUpdated: OnFrontComponentUpdatedDTO;
-      },
-      variables: { input: OnFrontComponentUpdatedInput },
-    ) => {
-      return (
-        !isDefined(variables.input.id) ||
-        payload.onFrontComponentUpdated.id === variables.input.id
-      );
-    },
-  })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  onFrontComponentUpdated(
-    @Args('input') _: OnFrontComponentUpdatedInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ) {
-    return this.subscriptionService.subscribe({
-      channel: SubscriptionChannel.FRONT_COMPONENT_UPDATED_CHANNEL,
-      workspaceId: workspace.id,
-    });
   }
 }
