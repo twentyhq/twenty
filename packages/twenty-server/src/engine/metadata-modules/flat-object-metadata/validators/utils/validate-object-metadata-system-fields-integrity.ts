@@ -148,12 +148,14 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
       const matchingFieldUniversalIdentifier =
         fieldUniversalIdentifierByName[expectedSystemField.name];
 
+      const expectedFieldName = expectedSystemField.name;
+
       if (!isDefined(matchingFieldUniversalIdentifier)) {
         createdFailedFlatEntityValidations.errors.push({
           code: ObjectMetadataExceptionCode.MISSING_SYSTEM_FIELD,
-          message: `System field ${expectedSystemField.name} is missing`,
-          userFriendlyMessage: msg`System field ${expectedSystemField.name} is missing`,
-          value: expectedSystemField.name,
+          message: `System field ${expectedFieldName} is missing`,
+          userFriendlyMessage: msg`System field ${expectedFieldName} is missing`,
+          value: expectedFieldName,
         });
       } else {
         const universalFlatFieldMetadata =
@@ -174,8 +176,8 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
           if (actualValue !== expectedValue) {
             createdFailedFlatEntityValidations.errors.push({
               code: ObjectMetadataExceptionCode.INVALID_SYSTEM_FIELD,
-              message: `System field ${expectedSystemField.name} has invalid ${property}: expected ${String(expectedValue)}, got ${String(actualValue)}`,
-              userFriendlyMessage: msg`System field ${expectedSystemField.name} has invalid ${property}`,
+              message: `System field ${expectedFieldName} has invalid ${property}: expected ${String(expectedValue)}, got ${String(actualValue)}`,
+              userFriendlyMessage: msg`System field ${expectedFieldName} has invalid ${property}`,
               value: actualValue,
             });
           }
