@@ -45,10 +45,13 @@ export type {
   ObjectRecordUpsertEvent,
 } from './logic-functions/triggers/database-event-payload-type';
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
+export { defineNavigationMenuItem } from './navigation-menu-items/define-navigation-menu-item';
 export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
+export { defineView } from './views/define-view';
+export type { ViewConfig } from './views/view-config';
 
 // Front Component API exports
 export {

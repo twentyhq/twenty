@@ -4,6 +4,8 @@ import {
   OrderByDirection,
   RecordFilterGroupLogicalOperator,
   type RecordGqlOperationFilter,
+  ViewFilterGroupLogicalOperator,
+  ViewType,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -17,9 +19,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 export type ViewQueryParams = {

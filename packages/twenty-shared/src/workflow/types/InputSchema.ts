@@ -1,5 +1,5 @@
-import { type LeafType, type NodeType } from 'twenty-shared/workflow';
-import { type FieldMetadataType } from '~/generated-metadata/graphql';
+import { type LeafType, type NodeType } from '@/workflow';
+import { type FieldMetadataType } from '@/types';
 
 export type InputSchemaPropertyType = LeafType | NodeType | FieldMetadataType;
 
