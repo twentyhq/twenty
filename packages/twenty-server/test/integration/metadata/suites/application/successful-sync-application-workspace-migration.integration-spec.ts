@@ -105,6 +105,8 @@ describe('syncApplication', () => {
       logicFunctions: [],
       frontComponents: [],
       publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
     };
 
     const { data: firstSyncData } = await syncApplication({

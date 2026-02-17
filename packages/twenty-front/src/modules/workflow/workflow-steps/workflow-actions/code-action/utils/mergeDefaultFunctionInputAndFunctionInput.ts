@@ -1,4 +1,4 @@
-import { type FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
+import { type FunctionInput } from 'twenty-shared/workflow';
 import { isObject } from '@sniptt/guards';
 
 export const mergeDefaultFunctionInputAndFunctionInput = ({

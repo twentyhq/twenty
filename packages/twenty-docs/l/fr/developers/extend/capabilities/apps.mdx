@@ -52,9 +52,6 @@ yarn app:dev
 # Ajouter une nouvelle entité à votre application (assisté)
 yarn entity:add
 
-# Générer un client Twenty typé et les types d'entité de l'espace de travail
-yarn app:generate
-
 # Surveiller les journaux des fonctions de votre application
 yarn function:logs
 
@@ -157,7 +154,7 @@ src/
 
 Dans les grandes lignes :
 
-* **package.json** : Déclare le nom de l’application, la version, les moteurs (Node 24+, Yarn 4), et ajoute `twenty-sdk` ainsi que des scripts comme `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` et `auth:login` qui délèguent à la CLI locale `twenty`.
+* **package.json** : Déclare le nom de l’application, la version, les moteurs (Node 24+, Yarn 4), et ajoute `twenty-sdk` ainsi que des scripts comme `app:dev`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` et `auth:login` qui délèguent à la CLI locale `twenty`.
 * **.gitignore** : Ignore les artefacts courants tels que `node_modules`, `.yarn`, `generated/` (client typé), `dist/`, `build/`, les dossiers de couverture, les fichiers journaux et les fichiers `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/** : Verrouillent et configurent la chaîne d’outils Yarn 4 utilisée par le projet.
 * **.nvmrc** : Fige la version de Node.js attendue par le projet.
@@ -173,7 +170,7 @@ Dans les grandes lignes :
 
 Des commandes ultérieures ajouteront d’autres fichiers et dossiers :
 
-* `yarn app:generate` créera un dossier `generated/` (client Twenty typé + types de l’espace de travail).
+* `yarn app:dev` génère automatiquement le client Twenty typé dans `node_modules/twenty-sdk/generated`.
 * `yarn entity:add` ajoutera des fichiers de définition d’entité sous `src/` pour vos objets, fonctions, composants front-end ou rôles personnalisés.
 
 ## Authentification
@@ -585,7 +582,7 @@ Vous pouvez créer de nouvelles fonctions de deux façons :
 
 ### Client typé généré
 
-Exécutez yarn app:generate pour créer un client typé local dans generated/ basé sur le schéma de votre espace de travail. Utilisez-le dans vos fonctions :
+`yarn app:dev` génère automatiquement le client Twenty typé dans `node_modules/twenty-sdk/generated`. Utilisez-le dans vos fonctions :
 
 ```typescript
 import Twenty from '~/generated';
@@ -594,7 +591,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Le client est régénéré par `yarn app:generate`. Relancez après avoir modifié vos objets ou lors de l’intégration à un nouvel espace de travail.
+Le client est régénéré automatiquement pendant l'exécution de `app:dev`. Redémarrez `app:dev` après avoir modifié vos objets ou lors de l’intégration à un nouvel espace de travail.
 
 #### Identifiants d’exécution dans les fonctions logiques
 
@@ -632,7 +629,6 @@ Ajoutez ensuite des scripts comme ceux-ci :
     "auth:switch": "twenty auth:switch",
     "auth:list": "twenty auth:list",
     "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
     "app:uninstall": "twenty app:uninstall",
     "entity:add": "twenty entity:add",
     "function:logs": "twenty function:logs",
@@ -642,13 +638,13 @@ Ajoutez ensuite des scripts comme ceux-ci :
 }
 ```
 
-Vous pouvez désormais exécuter les mêmes commandes via Yarn, par exemple `yarn app:dev`, `yarn app:generate`, etc.
+Vous pouvez désormais exécuter les mêmes commandes via Yarn, par exemple `yarn app:dev`, etc.
 
 ## Résolution des problèmes
 
 * Erreurs d’authentification : exécutez `yarn auth:login` et assurez-vous que votre clé API dispose des autorisations requises.
 * Impossible de se connecter au serveur : vérifiez l’URL de l’API et que le serveur Twenty est accessible.
-* Types ou client manquants/obsolètes : exécutez `yarn app:generate`.
+* Types ou client manquants/obsolètes : redémarrez `yarn app:dev`.
 * Le mode dev ne se synchronise pas : assurez-vous que `yarn app:dev` est en cours d’exécution et que les modifications ne sont pas ignorées par votre environnement.
 
 Canal d’aide Discord : https://discord.com/channels/1130383047699738754/1130386664812982322

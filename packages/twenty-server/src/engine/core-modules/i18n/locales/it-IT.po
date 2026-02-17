@@ -493,6 +493,11 @@ msgstr ""
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr ""
 
+#. js-lingui-id: AjVXBS
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Calendar"
+msgstr ""
+
 #. js-lingui-id: bQS4UN
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar channel is misconfigured."
@@ -1093,6 +1098,11 @@ msgstr "La verifica dell'email non è richiesta."
 msgid "Email verification not required."
 msgstr "Verifica email non richiesta."
 
+#. js-lingui-id: BXEcos
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Emails"
+msgstr ""
+
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
@@ -1156,7 +1166,7 @@ msgid "Failed to create record."
 msgstr "Impossibile creare il record."
 
 #. js-lingui-id: mWj8el
-#: src/engine/core-modules/file/files-field/files-field.service.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr ""
 
@@ -1396,11 +1406,6 @@ msgstr "FieldMetadataId è necessario per creare un ordinamento di visualizzazio
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr ""
 
-#. js-lingui-id: pFq+yh
-#: src/engine/core-modules/file/files-field/files-field.service.ts
-msgid "File {fileId} is not associated with a files field. It can't be downloaded."
-msgstr ""
-
 #. js-lingui-id: v+527c
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} was not uploaded for this field. Please re-upload the file."
@@ -1413,9 +1418,19 @@ msgstr ""
 msgid "File not found."
 msgstr "File non trovato."
 
+#. js-lingui-id: sER+bs
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Files"
+msgstr ""
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
+msgstr ""
+
+#. js-lingui-id: ylQd2j
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Flow"
 msgstr ""
 
 #. js-lingui-id: 9110hD
@@ -1535,6 +1550,11 @@ msgstr ""
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "Sono richiesti gli alias dell'handle."
+
+#. js-lingui-id: i0qMbr
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Home"
+msgstr ""
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -1775,6 +1795,11 @@ msgstr "Chiave del feature flag non valida."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Invalid field input."
 msgstr "Input del campo non valido."
+
+#. js-lingui-id: dqt3x1
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Invalid file folder."
+msgstr ""
 
 #. js-lingui-id: d6DMa/
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -2731,6 +2756,16 @@ msgstr "Nessun contesto di autenticazione valido trovato."
 msgid "Not Set"
 msgstr ""
 
+#. js-lingui-id: KiJn9B
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Note"
+msgstr ""
+
+#. js-lingui-id: 1DBGsz
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Notes"
+msgstr ""
+
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
@@ -3639,6 +3674,16 @@ msgstr ""
 msgid "targetRecordId is required when targetObjectMetadataId is provided"
 msgstr ""
 
+#. js-lingui-id: GtycJ/
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Tasks"
+msgstr ""
+
+#. js-lingui-id: 2kFzQB
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Temporary file cannot be downloaded."
+msgstr ""
+
 #. js-lingui-id: M10it4
 #: src/utils/__test__/custom-exception.spec.ts
 #: src/utils/__test__/custom-exception.spec.ts
@@ -3982,6 +4027,11 @@ msgstr "Questa variabile può essere impostata solo tramite l'ambiente."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Giovedì"
+
+#. js-lingui-id: cklVjM
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Timeline"
+msgstr ""
 
 #. js-lingui-id: /ObxXq
 #: src/engine/metadata-modules/permissions/permissions.exception.ts

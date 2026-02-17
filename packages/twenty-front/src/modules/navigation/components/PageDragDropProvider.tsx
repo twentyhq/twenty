@@ -20,11 +20,11 @@ import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/hooks/useHa
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
 import { getDropTargetIdFromDestination } from '@/navigation-menu-item/utils/getDropTargetIdFromDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -80,7 +80,7 @@ export const PageDragDropProvider = ({
   };
 
   const handleDragUpdate = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ((update: Parameters<OnDragUpdateResponder>[0]) => {
         const { source, destination } = update;
         if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
@@ -95,9 +95,9 @@ export const PageDragDropProvider = ({
           setActiveDropTargetId(dropTargetId);
 
           const payload =
-            getSnapshotValue(snapshot, addToNavPayloadRegistryState).get(
-              update.draggableId,
-            ) ?? null;
+            jotaiStore
+              .get(addToNavPayloadRegistryStateV2.atom)
+              .get(update.draggableId) ?? null;
           const folderId = validateAndExtractWorkspaceFolderId(
             destination.droppableId,
           );

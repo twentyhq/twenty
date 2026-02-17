@@ -8,10 +8,10 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
-import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -44,8 +44,8 @@ export const WorkflowStepFooter = ({
   } = useWorkflowCommandMenu();
   const { deleteStep } = useDeleteStep();
   const navigateSettings = useNavigateSettings();
-  const workflowAiAgentActionAgent = useRecoilValue(
-    workflowAiAgentActionAgentState,
+  const workflowAiAgentActionAgent = useRecoilValueV2(
+    workflowAiAgentActionAgentStateV2,
   );
   const shouldPinDeleteButton =
     !isDefined(additionalActions) || additionalActions.length === 0;

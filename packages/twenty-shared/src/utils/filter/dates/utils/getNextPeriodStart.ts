@@ -1,7 +1,7 @@
 import { type Nullable } from '@/types';
 import { assertUnreachable } from '@/utils/assertUnreachable';
 import { type DateTimePeriod } from '@/utils/filter/dates/types/DateTimePeriod';
-import { type FirstDayOfTheWeek } from '@/utils/filter/dates/utils/firstDayOfWeekSchema';
+import { type FirstDayOfTheWeekSchema } from '@/utils/filter/dates/utils/firstDayOfWeekSchema';
 import { getPeriodStart } from '@/utils/filter/dates/utils/getPeriodStart';
 import { type Temporal } from 'temporal-polyfill';
 
@@ -10,7 +10,7 @@ export const FIRST_DAY_OF_WEEK_ISO_8601_MONDAY = 1;
 export const getNextPeriodStart = (
   dateTime: Temporal.ZonedDateTime,
   unit: DateTimePeriod,
-  firstDayOfTheWeek?: Nullable<FirstDayOfTheWeek>,
+  firstDayOfTheWeek?: Nullable<FirstDayOfTheWeekSchema>,
 ) => {
   switch (unit) {
     case 'DAY':
