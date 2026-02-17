@@ -3,11 +3,7 @@ import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import * as fs from 'fs';
 import { createClient } from 'graphql-sse';
-import {
-  buildClientSchema,
-  getIntrospectionQuery,
-  printSchema,
-} from 'graphql/index';
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
 import * as path from 'path';
 import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';

@@ -48,6 +48,6 @@ vi.mock('@/cli/utilities/file/file-uploader', () => ({
   },
 }));
 
-vi.mock('@/cli/utilities/dev/dev-ui', () => ({
+vi.mock('@/cli/utilities/dev/ui/components/dev-ui', () => ({
   renderDevUI: vi.fn().mockResolvedValue({ unmount: vi.fn() }),
 }));
