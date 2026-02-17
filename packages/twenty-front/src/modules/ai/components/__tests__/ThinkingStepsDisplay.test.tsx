@@ -9,6 +9,41 @@ import {
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
+jest.mock('~/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({
+    copyToClipboard: jest.fn(),
+  }),
+}));
+
+jest.mock(
+  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  () => ({
+    useRecoilComponentValue: () => 'output',
+  }),
+);
+
+jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
+  TabList: ({
+    tabs,
+    onTabChange,
+  }: {
+    tabs: Array<{ id: string; title: string }>;
+    onTabChange?: (tabId: string) => void;
+  }) => (
+    <div>
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => onTabChange?.(tab.id)}
+        >
+          {tab.title}
+        </button>
+      ))}
+    </div>
+  ),
+}));
+
 const createReasoningPart = ({
   state = 'done',
   text = 'Reasoning content',
