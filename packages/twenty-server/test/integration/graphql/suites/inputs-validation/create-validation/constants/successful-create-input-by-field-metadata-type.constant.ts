@@ -471,7 +471,9 @@ export const successfulCreateInputByFieldMetadataType: {
         const date = new Date(record.dateTimeField);
 
         return (
-          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getUTCFullYear() === 2025 &&
+          date.getUTCMonth() === 0 &&
+          date.getUTCDate() === 13 &&
           date.getUTCHours() === 10 &&
           date.getUTCMinutes() === 30 &&
           date.getUTCSeconds() === 0
