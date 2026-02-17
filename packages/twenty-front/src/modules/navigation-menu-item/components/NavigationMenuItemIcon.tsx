@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
@@ -11,6 +12,7 @@ import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/s
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ViewKey } from '@/views/types/ViewKey';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
@@ -19,6 +21,10 @@ export const NavigationMenuItemIcon = ({
 }) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+  );
+  const useIconBackgrounds = isNavigationMenuItemEditingEnabled;
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular || '',
@@ -62,13 +68,15 @@ export const NavigationMenuItemIcon = ({
 
   const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
   const iconColors = getNavigationMenuItemIconColors(theme);
-  const iconBackgroundColor = isRecord
-    ? undefined
-    : isLink
-      ? iconColors.link
-      : isViewWithOverlay
-        ? iconColors.view
-        : iconColors.object;
+  const iconBackgroundColor = useIconBackgrounds
+    ? isRecord
+      ? undefined
+      : isLink
+        ? iconColors.link
+        : isViewWithOverlay
+          ? iconColors.view
+          : iconColors.object
+    : undefined;
 
   const iconColorToUse = iconBackgroundColor
     ? theme.grayScale.gray1
