@@ -1,5 +1,7 @@
 import { FrontComponentErrorEffect } from '@/front-component-renderer/remote/components/FrontComponentErrorEffect';
 import { FrontComponentHostCommunicationApiEffect } from '@/front-component-renderer/remote/components/FrontComponentHostCommunicationApiEffect';
+import { FrontComponentRenderEffect } from '@/front-component-renderer/remote/components/FrontComponentRenderEffect';
+import { FrontComponentUpdateAccessTokenEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateAccessTokenEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateContextEffect';
 import { type FrontComponentExecutionContext } from '@/front-component-renderer/types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
@@ -47,7 +49,6 @@ export const FrontComponentRenderer = ({
     <>
       <FrontComponentWorkerEffect
         componentUrl={componentUrl}
-        applicationAccessToken={applicationAccessToken}
         apiUrl={apiUrl}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
@@ -81,6 +82,22 @@ export const FrontComponentRenderer = ({
       {isDefined(thread) && (
         <>
           <FrontComponentHostCommunicationApiEffect thread={thread} />
+          {isDefined(applicationAccessToken) && (
+            <FrontComponentUpdateAccessTokenEffect
+              thread={thread}
+              applicationAccessToken={applicationAccessToken}
+            />
+          )}
+          {isDefined(receiver) && (
+            <FrontComponentRenderEffect
+              thread={thread}
+              receiver={receiver}
+              componentUrl={componentUrl}
+              apiUrl={apiUrl}
+              applicationAccessToken={applicationAccessToken}
+              setError={setError}
+            />
+          )}
           <FrontComponentUpdateContextEffect
             thread={thread}
             executionContext={executionContext}

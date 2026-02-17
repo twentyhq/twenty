@@ -52,7 +52,6 @@ export const FrontComponentRenderer = ({
 
   const [renewApplicationToken] = useRenewApplicationTokenMutation();
 
-  // Refreshed token override, tagged with the component it belongs to
   const [refreshedTokenOverride, setRefreshedTokenOverride] = useState<{
     frontComponentId: string;
     applicationTokenPair: ApplicationTokenPair;
@@ -61,9 +60,6 @@ export const FrontComponentRenderer = ({
   const queriedApplicationTokenPair =
     data?.frontComponent?.applicationTokenPair;
 
-  // Derive current token: refreshed override for this component > queried > null
-  // When frontComponentId changes, override doesn't match → falls through to
-  // query token (identity-safe via Apollo variables) → no stale-token window.
   const applicationTokenPair =
     refreshedTokenOverride?.frontComponentId === frontComponentId
       ? refreshedTokenOverride.applicationTokenPair

@@ -38,7 +38,6 @@ const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
-  // Register fetch interceptor before any network calls
   const hostApi =
     ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
 
@@ -57,19 +56,21 @@ const render: WorkerExports['render'] = async (
   document.body.append(root);
   installStyleBridge(root);
 
-  if (
-    isDefined(renderContext.applicationAccessToken) &&
-    isDefined(renderContext.apiUrl)
-  ) {
+  if (isDefined(renderContext.apiUrl)) {
     setWorkerEnv({
-      TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
       TWENTY_API_URL: renderContext.apiUrl,
     });
   }
 
+  const processObject = (globalThis as Record<string, unknown>)['process'] as {
+    env?: Record<string, string | undefined>;
+  };
+  const applicationAccessToken =
+    processObject?.env?.['TWENTY_APP_ACCESS_TOKEN'];
+
   const response = await fetch(renderContext.componentUrl, {
-    headers: isDefined(renderContext.applicationAccessToken)
-      ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
+    headers: isDefined(applicationAccessToken)
+      ? { Authorization: `Bearer ${applicationAccessToken}` }
       : undefined,
   });
 
@@ -104,6 +105,12 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
     setNavigate(hostApi.navigate);
   };
 
+const updateAccessToken: WorkerExports['updateAccessToken'] = async (
+  accessToken: string,
+) => {
+  setWorkerEnv({ TWENTY_APP_ACCESS_TOKEN: accessToken });
+};
+
 const updateContext: WorkerExports['updateContext'] = async (
   context: FrontComponentExecutionContext,
 ) => {
@@ -113,5 +120,6 @@ const updateContext: WorkerExports['updateContext'] = async (
 ThreadWebWorker.self.export({
   render,
   initializeHostCommunicationApi,
+  updateAccessToken,
   updateContext,
 });
