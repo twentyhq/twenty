@@ -1,6 +1,6 @@
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -46,11 +46,10 @@ export const FrontComponentRenderer = ({
     frontComponentId,
   });
 
-  const activeChecksum = data?.frontComponent?.builtComponentChecksum;
-
-  const componentUrl = isDefined(activeChecksum)
-    ? `${REST_API_BASE_URL}/front-components/${frontComponentId}?checksum=${activeChecksum}`
-    : `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data?.frontComponent?.builtComponentChecksum,
+  });
 
   if (
     loading ||
