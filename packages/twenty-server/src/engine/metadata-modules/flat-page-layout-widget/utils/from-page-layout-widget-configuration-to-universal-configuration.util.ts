@@ -42,10 +42,12 @@ const getFieldMetadataUniversalIdentifier = ({
 export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
+  viewFieldGroupUniversalIdentifierById = {},
   shouldThrowOnMissingIdentifier = false,
 }: {
   configuration: PageLayoutWidgetConfiguration;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalPageLayoutWidgetConfiguration => {
   switch (configuration.configurationType) {
@@ -200,9 +202,43 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FIELDS: {
+      const { newFieldDefaultConfiguration, ...rest } = configuration;
+
+      if (
+        !isDefined(newFieldDefaultConfiguration) ||
+        !isDefined(newFieldDefaultConfiguration.viewFieldGroupId)
+      ) {
+        return configuration;
+      }
+
+      const viewFieldGroupUniversalIdentifier =
+        viewFieldGroupUniversalIdentifierById[
+          newFieldDefaultConfiguration.viewFieldGroupId
+        ];
+
+      if (!isDefined(viewFieldGroupUniversalIdentifier)) {
+        if (shouldThrowOnMissingIdentifier) {
+          throw new FlatEntityMapsException(
+            `View field group universal identifier not found for id: ${newFieldDefaultConfiguration.viewFieldGroupId}`,
+            FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+          );
+        }
+
+        return configuration;
+      }
+
+      return {
+        ...rest,
+        newFieldDefaultConfiguration: {
+          isVisible: newFieldDefaultConfiguration.isVisible,
+          viewFieldGroupId: viewFieldGroupUniversalIdentifier,
+        },
+      };
+    }
+
     case WidgetConfigurationType.VIEW:
     case WidgetConfigurationType.FIELD:
-    case WidgetConfigurationType.FIELDS:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:
