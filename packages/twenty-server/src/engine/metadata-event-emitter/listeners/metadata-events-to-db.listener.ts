@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isMetadataGqlOperationSignature,
+} from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -11,6 +14,7 @@ import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types
 import { CallWebhookJobsForMetadataJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs-for-metadata.job';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { type RecordOrMetadataGqlOperationSignature } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { type AllMetadataEventType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
@@ -128,13 +132,14 @@ export class MetadataEventsToDbListener {
   }
 
   private getMatchingQueryIds(
-    queries: Record<string, Record<string, unknown>>,
+    queries: Record<string, RecordOrMetadataGqlOperationSignature>,
     metadataName: string,
   ): string[] {
     return Object.entries(queries)
       .filter(
         ([, operationSignature]) =>
-          operationSignature.objectNameSingular === metadataName,
+          isMetadataGqlOperationSignature(operationSignature) &&
+          operationSignature.metadataName === metadataName,
       )
       .map(([queryId]) => queryId);
   }

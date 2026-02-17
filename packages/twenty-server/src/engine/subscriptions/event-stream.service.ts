@@ -14,7 +14,10 @@ import {
   EventStreamException,
   EventStreamExceptionCode,
 } from 'src/engine/subscriptions/event-stream.exception';
-import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import {
+  type EventStreamData,
+  type RecordOrMetadataGqlOperationSignature,
+} from 'src/engine/subscriptions/types/event-stream-data.type';
 
 @Injectable()
 export class EventStreamService implements OnModuleInit {
@@ -179,7 +182,7 @@ export class EventStreamService implements OnModuleInit {
     workspaceId: string;
     eventStreamChannelId: string;
     queryId: string;
-    operationSignature: Record<string, unknown>;
+    operationSignature: RecordOrMetadataGqlOperationSignature;
   }): Promise<void> {
     const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
     const existing = await this.cacheStorageService.get<EventStreamData>(key);

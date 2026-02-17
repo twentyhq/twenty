@@ -2,13 +2,19 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
+import {
+  type MetadataGqlOperationSignature,
+  type RecordGqlOperationSignature,
+} from 'twenty-shared/types';
 
 export const useListenToEventsForQuery = ({
   queryId,
   operationSignature,
 }: {
   queryId: string;
-  operationSignature: Record<string, unknown>;
+  operationSignature:
+    | RecordGqlOperationSignature
+    | MetadataGqlOperationSignature;
 }) => {
   const changeQueryIdListenState = useRecoilCallback(
     ({ set, snapshot }) =>

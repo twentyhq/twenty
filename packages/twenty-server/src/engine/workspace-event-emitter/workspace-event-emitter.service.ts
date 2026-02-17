@@ -6,7 +6,11 @@ import {
   type RecordGqlOperationFilter,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { combineFilters, isDefined } from 'twenty-shared/utils';
+import {
+  combineFilters,
+  isDefined,
+  isRecordGqlOperationSignature,
+} from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -21,7 +25,10 @@ import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhoo
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import {
+  type EventStreamData,
+  type RecordOrMetadataGqlOperationSignature,
+} from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
@@ -326,7 +333,7 @@ export class WorkspaceEventEmitterService {
   }
 
   private getMatchingQueryIds(
-    queries: Record<string, Record<string, unknown>>,
+    queries: Record<string, RecordOrMetadataGqlOperationSignature>,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
@@ -352,16 +359,17 @@ export class WorkspaceEventEmitterService {
   }
 
   private isQueryMatchingEvent(
-    operationSignature: Record<string, unknown>,
+    operationSignature: RecordOrMetadataGqlOperationSignature,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): boolean {
-    if (
-      typeof operationSignature.objectNameSingular !== 'string' ||
-      operationSignature.objectNameSingular !== event.objectNameSingular
-    ) {
+    if (!isRecordGqlOperationSignature(operationSignature)) {
+      return false;
+    }
+
+    if (operationSignature.objectNameSingular !== event.objectNameSingular) {
       return false;
     }
 
@@ -375,11 +383,7 @@ export class WorkspaceEventEmitterService {
       return false;
     }
 
-    const variables = operationSignature.variables as
-      | { filter?: RecordGqlOperationFilter }
-      | undefined;
-
-    const queryFilter = variables?.filter ?? {};
+    const queryFilter = operationSignature.variables?.filter ?? {};
 
     const filtersToApply: RecordGqlOperationFilter[] = [queryFilter];
 

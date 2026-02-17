@@ -5,8 +5,8 @@ import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   AllMetadataName,
-  type FindOneFrontComponentQuery,
   FindOneFrontComponentDocument,
+  type FindOneFrontComponentQuery,
 } from '~/generated-metadata/graphql';
 
 type UseOnFrontComponentUpdatedArgs = {
@@ -22,7 +22,7 @@ export const useOnFrontComponentUpdated = ({
   useListenToEventsForQuery({
     queryId,
     operationSignature: {
-      objectNameSingular: AllMetadataName.frontComponent,
+      metadataName: AllMetadataName.frontComponent,
       variables: {
         filter: { id: { eq: frontComponentId } },
       },
