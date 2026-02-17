@@ -554,11 +554,11 @@ Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 * **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir mantık fonksiyonu ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
 * **Manuel**: Yeni bir `*.logic-function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineLogicFunction()` kullanın.
 
-### Marking a logic function as a tool
+### Bir mantık işlevini araç olarak işaretleme
 
-Logic functions can be exposed as **tools** for AI agents and workflows. When a function is marked as a tool, it becomes discoverable by Twenty's AI features and can be selected as a step in workflow automations.
+Mantık işlevleri, yapay zeka ajanları ve iş akışları için **araçlar** olarak sunulabilir. Bir işlev bir araç olarak işaretlendiğinde, Twenty'nin yapay zeka özellikleri tarafından keşfedilebilir hâle gelir ve iş akışı otomasyonlarında bir adım olarak seçilebilir.
 
-To mark a logic function as a tool, set `isTool: true` and provide a `toolInputSchema` describing the expected input parameters using [JSON Schema](https://json-schema.org/):
+Bir mantık işlevini bir araç olarak işaretlemek için `isTool: true` olarak ayarlayın ve beklenen giriş parametrelerini açıklayan bir `toolInputSchema`yı [JSON Şeması](https://json-schema.org/) kullanarak sağlayın:
 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
@@ -609,14 +609,14 @@ export default defineLogicFunction({
 
 Önemli noktalar:
 
-* **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
-* **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
-* Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
-* **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+* **`isTool`** (`boolean`, varsayılan: `false`): `true` olarak ayarlandığında, işlev bir araç olarak kaydedilir ve AI ajanları ile iş akışı otomasyonları tarafından kullanılabilir hale gelir.
+* **`toolInputSchema`** (`object`, isteğe bağlı): İşlevinizin kabul ettiği parametreleri tanımlayan bir JSON Schema nesnesi. AI ajanları, aracın hangi girdileri beklediğini anlamak ve çağrıları doğrulamak için bu şemayı kullanır. Atlanırsa, şema varsayılan olarak `{ type: 'object', properties: {} }` olur (parametre yok).
+* `isTool: false` (veya ayarlanmamış) olan işlevler araç olarak **sunulmaz**. Yine de doğrudan yürütülebilir veya diğer işlevler tarafından çağrılabilirler, ancak araç keşfinde görünmezler.
+* **Araç adlandırma**: Bir araç olarak sunulduğunda, işlev adı otomatik olarak `logic_function_<name>` biçimine dönüştürülür (küçük harfe çevrilir, alfasayısal olmayan karakterler alt çizgi ile değiştirilir). Örneğin, `enrich-company` `logic_function_enrich_company` haline gelir.
+* `isTool` özelliğini tetikleyicilerle birleştirebilirsiniz — bir işlev aynı anda hem bir araç (AI ajanları tarafından çağrılabilir) olabilir hem de olaylar tarafından tetiklenebilir (cron, veritabanı olayları, routes).
 
 <Note>
-  **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
 </Note>
 
 ### Ön uç bileşenleri

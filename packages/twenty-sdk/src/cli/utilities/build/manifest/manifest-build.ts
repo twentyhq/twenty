@@ -10,6 +10,7 @@ import {
   type FrontComponentConfig,
   type LogicFunctionConfig,
 } from '@/sdk';
+import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
 import { basename, extname, relative } from 'path';
@@ -24,8 +25,9 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { assertUnreachable } from 'twenty-shared/utils';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -98,11 +100,35 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Objects: {
-        const extract = await extractManifestFromFile<ObjectManifest>({
+        const extract = await extractManifestFromFile<ObjectConfig>({
           appPath,
           filePath,
         });
-        objects.push(extract.config);
+
+        const objectFieldsWithDefaultFields = injectDefaultFieldsInObjectFields(
+          extract.config,
+        );
+
+        const labelIdentifierFieldMetadataUniversalIdentifier =
+          extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
+          objectFieldsWithDefaultFields.find((field) => field.name === 'name')
+            ?.universalIdentifier;
+
+        if (!labelIdentifierFieldMetadataUniversalIdentifier) {
+          errors.push(
+            `No label identifier field found for object ${extract.config.nameSingular}. Please add a field with name "name" to your object.`,
+          );
+          break;
+        }
+
+        const objectManifest: ObjectManifest = {
+          ...extract.config,
+          fields: objectFieldsWithDefaultFields,
+          labelIdentifierFieldMetadataUniversalIdentifier,
+        };
+
+        objects.push(objectManifest);
+
         errors.push(...extract.errors);
         objectsFilePaths.push(relativePath);
         break;

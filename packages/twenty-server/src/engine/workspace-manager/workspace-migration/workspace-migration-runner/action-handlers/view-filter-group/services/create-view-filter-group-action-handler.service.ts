@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   type FlatCreateViewFilterGroupAction,
@@ -32,6 +33,11 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
         universalForeignKeyValues: action.flatEntity,
       });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'viewFilterGroup',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -43,6 +49,7 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
         workspaceId,
         childViewFilterGroupIds: [],
         viewFilterIds: [],
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

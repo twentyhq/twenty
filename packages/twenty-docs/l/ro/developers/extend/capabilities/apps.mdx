@@ -609,14 +609,14 @@ export default defineLogicFunction({
 
 Puncte cheie:
 
-* **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
-* **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
-* Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
-* **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+* **`isTool`** (`boolean`, implicit: `false`): Când este setat la `true`, funcția este înregistrată ca instrument și devine disponibilă pentru agenții AI și automatizările de fluxuri de lucru.
+* **`toolInputSchema`** (`object`, opțional): Un obiect JSON Schema care descrie parametrii pe care îi acceptă funcția dvs. Agenții AI folosesc această schemă pentru a înțelege ce intrări așteaptă instrumentul și pentru a valida apelurile. Dacă este omisă, schema are implicit valoarea `{ type: 'object', properties: {} }` (fără parametri).
+* Funcțiile cu `isTool: false` (sau nedefinit) **nu** sunt expuse ca instrumente. Pot totuși fi executate direct sau apelate de alte funcții, dar nu vor apărea în descoperirea instrumentelor.
+* **Denumierea instrumentelor**: Când este expusă ca instrument, denumirea funcției este normalizată automat la `logic_function_<name>` (convertită la litere mici, iar caracterele non-alfanumerice sunt înlocuite cu caractere de subliniere). De exemplu, `enrich-company` devine `logic_function_enrich_company`.
+* Puteți combina `isTool` cu declanșatoare — o funcție poate fi atât un instrument (apelabilă de agenții AI), cât și declanșată de evenimente (cron, evenimente de bază de date, rute) în același timp.
 
 <Note>
-  **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
 </Note>
 
 ### Componente Front

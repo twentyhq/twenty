@@ -554,11 +554,11 @@ const handler = async (event: RoutePayload) => {
 * **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
 * **手动**：创建一个新的 `*.logic-function.ts` 文件，并使用 `defineLogicFunction()`，遵循相同的模式。
 
-### Marking a logic function as a tool
+### 将逻辑函数标记为工具
 
-Logic functions can be exposed as **tools** for AI agents and workflows. When a function is marked as a tool, it becomes discoverable by Twenty's AI features and can be selected as a step in workflow automations.
+逻辑函数可以作为供 AI 智能体和工作流使用的**工具**对外提供。 当函数被标记为工具时，Twenty 的 AI 功能即可发现它，并可在工作流自动化中将其选作一个步骤。
 
-To mark a logic function as a tool, set `isTool: true` and provide a `toolInputSchema` describing the expected input parameters using [JSON Schema](https://json-schema.org/):
+要将逻辑函数标记为工具，请设置 `isTool: true`，并提供 `toolInputSchema`，使用 [JSON Schema](https://json-schema.org/) 描述预期的输入参数:
 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
@@ -609,14 +609,14 @@ export default defineLogicFunction({
 
 关键点：
 
-* **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
-* **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
-* Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
-* **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+* **`isTool`** (`boolean`, 默认: `false`): 当设置为 `true` 时，该函数会被注册为工具，并可供 AI 代理和工作流自动化使用。
+* **`toolInputSchema`** (`object`, 可选): 描述函数可接受参数的 JSON Schema 对象。 AI 代理使用此架构来理解该工具期望的输入并验证调用。 如果省略，架构将默认为 `{ type: 'object', properties: {} }`（无参数）。
+* 设置为 `isTool: false`（或未设置）的函数**不会**被暴露为工具。 它们仍可直接执行或被其他函数调用，但不会出现在工具发现中。
+* **工具命名**: 当作为工具对外暴露时，函数名会被自动规范化为 `logic_function_<name>`（转换为小写，非字母数字字符替换为下划线）。 例如，`enrich-company` 将变为 `logic_function_enrich_company`。
+* 你可以将 `isTool` 与触发器结合使用——一个函数既可以作为工具（由 AI 代理调用），也可以同时由事件（cron、数据库事件、路由）触发。
 
 <Note>
-  **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **写一个好的 `description`。** AI 代理会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
 </Note>
 
 ### 前端组件
