@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateRoleAction,
   UniversalCreateRoleAction,
@@ -27,6 +28,11 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRoleAction>): Promise<FlatCreateRoleAction> {
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'role',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -40,6 +46,7 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
         objectPermissionIds: [],
         permissionFlagIds: [],
         fieldPermissionIds: [],
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

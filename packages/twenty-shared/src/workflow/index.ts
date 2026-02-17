@@ -24,6 +24,7 @@ export { workflowCronTriggerSchema } from './schemas/cron-trigger-schema';
 export { workflowDatabaseEventTriggerSchema } from './schemas/database-event-trigger-schema';
 export { workflowDeleteRecordActionSchema } from './schemas/delete-record-action-schema';
 export { workflowDeleteRecordActionSettingsSchema } from './schemas/delete-record-action-settings-schema';
+export { workflowDraftEmailActionSchema } from './schemas/draft-email-action-schema';
 export { workflowEmptyActionSchema } from './schemas/empty-action-schema';
 export { workflowEmptyActionSettingsSchema } from './schemas/empty-action-settings-schema';
 export { workflowFilterActionSchema } from './schemas/filter-action-schema';
@@ -91,7 +92,6 @@ export type {
   Node,
   BaseOutputSchemaV2,
 } from './workflow-schema/types/base-output-schema.type';
-export { buildOutputSchemaFromValue } from './workflow-schema/utils/buildOutputSchemaFromValue';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigateOutputSchemaProperty';
 export type {
   GlobalAvailability,

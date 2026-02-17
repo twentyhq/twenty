@@ -1,12 +1,12 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -23,6 +23,9 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
 
   const { getBrowsingContext } = useGetBrowsingContext();
+  const setCurrentAIChatThreadTitle = useSetRecoilState(
+    currentAIChatThreadTitleState,
+  );
 
   const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
 
@@ -149,6 +152,14 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
           inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
           outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));
+      }
+
+      const titlePart = message.parts.find(
+        (part) => part.type === 'data-thread-title',
+      );
+
+      if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
+        setCurrentAIChatThreadTitle(titlePart.data.title);
       }
     },
   });

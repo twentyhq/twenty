@@ -45,22 +45,22 @@ yarn twenty app:dev
 A partir daqui você pode:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adicionar uma nova entidade à sua aplicação (assistido)
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Gerar um cliente Twenty tipado e tipos de entidades do espaço de trabalho
 yarn twenty app:generate
 
-# Watch your application's function logs
+# Acompanhar os logs das funções da sua aplicação
 yarn twenty function:logs
 
-# Execute a function by name
+# Executar uma função pelo nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Desinstalar a aplicação do espaço de trabalho atual
 yarn twenty app:uninstall
 
-# Display commands' help
+# Exibir a ajuda dos comandos
 yarn twenty help
 ```
 
@@ -102,7 +102,7 @@ my-twenty-app/
 
 Em alto nível:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
+* **package.json**: Declara o nome do app, versão, engines (Node 24+, Yarn 4), e adiciona `twenty-sdk` além de um script `twenty` que delega para a CLI `twenty` local. Execute `yarn twenty help` para listar todos os comandos disponíveis.
 * **.gitignore**: Ignora artefatos comuns como `node_modules`, `.yarn`, `generated/` (cliente tipado), `dist/`, `build/`, pastas de cobertura, arquivos de log e arquivos `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloqueiam e configuram a ferramenta Yarn 4 usada pelo projeto.
 * **.nvmrc**: Fixa a versão do Node.js esperada pelo projeto.
@@ -142,12 +142,12 @@ export default defineObject({
 
 Comandos posteriores adicionarão mais arquivos e pastas:
 
-* `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn twenty app:generate` criará uma pasta `generated/` (cliente tipado do Twenty + tipos do espaço de trabalho).
+* `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end ou papéis personalizados.
 
 ## Autenticação
 
-The first time you run `yarn twenty auth:login`, you'll be prompted for:
+Na primeira vez que você executar `yarn twenty auth:login`, será solicitado o seguinte:
 
 * URL da API (padrão: http://localhost:3000 ou o perfil do seu espaço de trabalho atual)
 * Chave de API
@@ -157,26 +157,26 @@ Suas credenciais são armazenadas por usuário em `~/.twenty/config.json`. Você
 ### Gerenciando espaços de trabalho
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
+# Fazer login interativamente (recomendado)
 yarn twenty auth:login
 
-# Login to a specific workspace profile
+# Fazer login em um perfil de espaço de trabalho específico
 yarn twenty auth:login --workspace my-custom-workspace
 
-# List all configured workspaces
+# Listar todos os espaços de trabalho configurados
 yarn twenty auth:list
 
-# Switch the default workspace (interactive)
+# Alterar o espaço de trabalho padrão (interativo)
 yarn twenty auth:switch
 
-# Switch to a specific workspace
+# Alternar para um espaço de trabalho específico
 yarn twenty auth:switch production
 
-# Check current authentication status
+# Verificar o status atual da autenticação
 yarn twenty auth:status
 ```
 
-Once you've switched workspaces with `yarn twenty auth:switch`, all subsequent commands will use that workspace by default. Você ainda pode substituí-lo temporariamente com `--workspace <name>`.
+Depois que você alternar os espaços de trabalho com `yarn twenty auth:switch`, todos os comandos subsequentes usarão esse espaço de trabalho por padrão. Você ainda pode substituí-lo temporariamente com `--workspace <name>`.
 
 ## Use os recursos do SDK (tipos e configuração)
 
@@ -276,10 +276,14 @@ Pontos-chave:
 * O `universalIdentifier` deve ser exclusivo e estável entre implantações.
 * Cada campo requer `name`, `type`, `label` e seu próprio `universalIdentifier` estável.
 * O array `fields` é opcional — você pode definir objetos sem campos personalizados.
-* You can scaffold new objects using `yarn twenty entity:add`, which guides you through naming, fields, and relationships.
+* Você pode criar novos objetos usando `yarn twenty entity:add`, que orienta você sobre nomeação, campos e relacionamentos.
 
 <Note>
-  **Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão como `name`, `createdAt`, `updatedAt`, `createdBy`, `position` e `deletedAt`. Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
+  **Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão
+  como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+  Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
+  Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
+  mas isso não é recomendado.
 </Note>
 
 ### Configuração do aplicativo (application-config.ts)
@@ -551,8 +555,73 @@ const handler = async (event: RoutePayload) => {
 
 Você pode criar novas funções de duas formas:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new logic function. Isso gera um arquivo inicial com um handler e configuração.
+* **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova função de lógica. Isso gera um arquivo inicial com um handler e configuração.
 * **Manual**: Crie um novo arquivo `*.logic-function.ts` e use `defineLogicFunction()`, seguindo o mesmo padrão.
+
+### Marcar uma função lógica como ferramenta
+
+Funções lógicas podem ser expostas como **ferramentas** para agentes de IA e fluxos de trabalho. Quando uma função é marcada como ferramenta, ela fica disponível para os recursos de IA do Twenty e pode ser selecionada como uma etapa em automações de fluxos de trabalho.
+
+Para marcar uma função lógica como ferramenta, defina `isTool: true` e forneça um `toolInputSchema` descrevendo os parâmetros de entrada esperados usando [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Pontos-chave:
+
+* **`isTool`** (`boolean`, padrão: `false`): Quando definido como `true`, a função é registrada como uma ferramenta e fica disponível para agentes de IA e automações de fluxos de trabalho.
+* **`toolInputSchema`** (`object`, opcional): Um objeto JSON Schema que descreve os parâmetros que sua função aceita. Os agentes de IA usam esse esquema para entender quais entradas a ferramenta espera e para validar as chamadas. Se omitido, o esquema tem como padrão `{ type: 'object', properties: {} }` (sem parâmetros).
+* Funções com `isTool: false` (ou não definido) **não** são expostas como ferramentas. Elas ainda podem ser executadas diretamente ou chamadas por outras funções, mas não aparecerão na descoberta de ferramentas.
+* **Nomenclatura de ferramentas**: Quando exposta como uma ferramenta, o nome da função é automaticamente normalizado para `logic_function_<name>` (em minúsculas, caracteres não alfanuméricos substituídos por sublinhados). Por exemplo, `enrich-company` torna-se `logic_function_enrich_company`.
+* Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos (cron, eventos de banco de dados, rotas) simultaneamente.
+
+<Note>
+  **Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
+</Note>
 
 ### Componentes de front-end
 
@@ -584,16 +653,16 @@ Pontos-chave:
 * Componentes de front-end são componentes React que renderizam em contextos isolados dentro do Twenty.
 * Use o sufixo de arquivo `*.front-component.tsx` para detecção automática.
 * O campo `component` faz referência ao seu componente React.
-* Components are built and synced automatically during `yarn twenty app:dev`.
+* Os componentes são compilados e sincronizados automaticamente durante `yarn twenty app:dev`.
 
 Você pode criar novos componentes de front-end de duas formas:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
+* **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar um novo componente de front-end.
 * **Manual**: Crie um novo arquivo `*.front-component.tsx` e use `defineFrontComponent()`.
 
 ### Cliente tipado gerado
 
-Run `yarn twenty app:generate` to create a local typed client in `generated/` based on your workspace schema. Use-o em suas funções:
+Execute `yarn twenty app:generate` para criar um cliente tipado local em `generated/` com base no esquema do seu espaço de trabalho. Use-o em suas funções:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +671,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn twenty app:generate`. Execute novamente após alterar seus objetos ou ao ingressar em um novo workspace.
+O cliente é regenerado pelo `yarn twenty app:generate`. Execute novamente após alterar seus objetos ou ao ingressar em um novo workspace.
 
 #### Credenciais em tempo de execução em funções de lógica
 
@@ -623,13 +692,13 @@ Explore um exemplo mínimo de ponta a ponta que demonstra objetos, funções de 
 
 ## Configuração manual (sem o gerador)
 
-Embora recomendemos usar `create-twenty-app` para a melhor experiência inicial, você também pode configurar um projeto manualmente. Não instale a CLI globalmente. Instead, add `twenty-sdk` as a local dependency and wire a single script in your package.json:
+Embora recomendemos usar `create-twenty-app` para a melhor experiência inicial, você também pode configurar um projeto manualmente. Não instale a CLI globalmente. Em vez disso, adicione `twenty-sdk` como uma dependência local e configure um único script no seu package.json:
 
 ```bash filename="Terminal"
 yarn add -D twenty-sdk
 ```
 
-Then add a `twenty` script:
+Em seguida, adicione um script `twenty`:
 
 ```json filename="package.json"
 {
@@ -639,13 +708,13 @@ Then add a `twenty` script:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
+Agora você pode executar todos os comandos via `yarn twenty <command>`, por exemplo, `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
 
 ## Resolução de Problemas
 
-* Authentication errors: run `yarn twenty auth:login` and ensure your API key has the required permissions.
+* Erros de autenticação: execute `yarn twenty auth:login` e certifique-se de que sua chave de API tenha as permissões necessárias.
 * Não é possível conectar ao servidor: verifique a URL da API e se o servidor do Twenty está acessível.
-* Types or client missing/outdated: run `yarn twenty app:generate`.
-* Dev mode not syncing: ensure `yarn twenty app:dev` is running and that changes are not ignored by your environment.
+* Tipos ou cliente ausentes/desatualizados: execute `yarn twenty app:generate`.
+* Modo de desenvolvimento não sincronizando: certifique-se de que `yarn twenty app:dev` esteja em execução e de que as alterações não estejam sendo ignoradas pelo seu ambiente.
 
 Canal de ajuda no Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

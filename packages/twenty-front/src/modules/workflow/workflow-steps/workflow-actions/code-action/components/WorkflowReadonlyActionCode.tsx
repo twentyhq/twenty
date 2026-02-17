@@ -29,7 +29,7 @@ export const WorkflowReadonlyActionCode = ({
     id: logicFunctionId,
   });
 
-  const { code, loading } = useGetLogicFunctionSourceCode({
+  const { sourceHandlerCode, loading } = useGetLogicFunctionSourceCode({
     logicFunctionId,
   });
 
@@ -60,7 +60,7 @@ export const WorkflowReadonlyActionCode = ({
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={code ?? undefined}
+            value={sourceHandlerCode ?? undefined}
             language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}

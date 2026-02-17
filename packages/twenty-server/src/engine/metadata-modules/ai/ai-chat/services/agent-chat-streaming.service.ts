@@ -82,6 +82,14 @@ export class AgentChatStreamingService {
     // surfaces when awaited in onFinish.
     userMessagePromise.catch(() => {});
 
+    // Title generation runs in parallel with AI streaming so it's
+    // typically ready by the time onFinish fires
+    const titlePromise = thread.title
+      ? Promise.resolve(null)
+      : this.agentChatService
+          .generateTitleIfNeeded(thread.id, lastUserText)
+          .catch(() => null);
+
     try {
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
@@ -214,6 +222,16 @@ export class AgentChatStreamingService {
                   contextWindowTokens: modelConfig.contextWindowTokens,
                   conversationSize: lastStepConversationSize,
                 });
+
+                const generatedTitle = await titlePromise;
+
+                if (generatedTitle) {
+                  writer.write({
+                    type: 'data-thread-title' as const,
+                    id: `thread-title-${thread.id}`,
+                    data: { title: generatedTitle },
+                  });
+                }
               },
               sendReasoning: true,
             }),

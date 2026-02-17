@@ -1,8 +1,12 @@
 import styled from '@emotion/styled';
-import { type ThemeColor } from '@ui/theme';
-import { themeColorSchema } from '@ui/theme/utils/themeColorSchema';
+import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
 
 import { Loader } from '@ui/feedback/loader/components/Loader';
+
+const parseThemeColor = (color: string): ThemeColor =>
+  (MAIN_COLOR_NAMES as string[]).includes(color)
+    ? (color as ThemeColor)
+    : 'gray';
 
 const StyledStatus = styled.h3<{
   color: ThemeColor;
@@ -62,7 +66,7 @@ export const Status = ({
 }: StatusProps) => (
   <StyledStatus
     className={className}
-    color={themeColorSchema.catch('gray').parse(color)}
+    color={parseThemeColor(color)}
     onClick={onClick}
     weight={weight}
     isLoaderVisible={isLoaderVisible}

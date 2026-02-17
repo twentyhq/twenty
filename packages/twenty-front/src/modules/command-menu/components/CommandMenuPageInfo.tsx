@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
+import { CommandMenuAskAIInfo } from '@/command-menu/components/CommandMenuAskAIInfo';
 import { CommandMenuFolderInfo } from '@/command-menu/components/CommandMenuFolderInfo';
 import { CommandMenuLinkInfo } from '@/command-menu/components/CommandMenuLinkInfo';
 import { CommandMenuMultipleRecordsInfo } from '@/command-menu/components/CommandMenuMultipleRecordsInfo';
@@ -112,6 +113,12 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
         commandMenuPageInstanceId={pageChip.page.pageId}
       />
     );
+  }
+
+  const isAskAIPage = pageChip.page?.page === CommandMenuPages.AskAI;
+
+  if (isAskAIPage) {
+    return <CommandMenuAskAIInfo />;
   }
 
   return (

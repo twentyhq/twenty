@@ -112,6 +112,11 @@ export class BarChartConfigurationDTO
   @IsOptional()
   omitNullValues?: boolean;
 
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  splitMultiValueFields?: boolean;
+
   @Field(() => AxisNameDisplay, {
     nullable: true,
     defaultValue: AxisNameDisplay.NONE,
