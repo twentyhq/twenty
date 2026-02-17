@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
-import { validateObjectMetadataSystemFieldsIntegrity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity';
+import { postAtomicEntityValidationTransversalEntityValidation } from 'src/engine/workspace-manager/workspace-migration/utils/post-atomic-entity-validation-transversal-entity-validation.util';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -995,15 +995,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    // Lets create a specific abstraction well named
-    // That will mutate the passed orchestrator failure
-    const { objectMetadata } = validateObjectMetadataSystemFieldsIntegrity({
-      optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
-      orchestratorActionsReport,
-    });
+    const { objectMetadata } =
+      postAtomicEntityValidationTransversalEntityValidation({
+        optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
+        orchestratorActionsReport,
+      });
 
     orchestratorFailureReport.objectMetadata.push(...objectMetadata);
-    ///
 
     const allErrors = Object.values(orchestratorFailureReport);
 
