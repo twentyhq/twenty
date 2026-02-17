@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
-import { postAtomicEntityValidationTransversalEntityValidation } from 'src/engine/workspace-manager/workspace-migration/utils/post-atomic-entity-validation-transversal-entity-validation.util';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -15,6 +14,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
+import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/post-atomic-entity-validation-transversal-entity-validation.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
@@ -996,7 +996,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     const { objectMetadata } =
-      postAtomicEntityValidationTransversalEntityValidation({
+      crossEntityTransversalValidation({
         optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
         orchestratorActionsReport,
       });

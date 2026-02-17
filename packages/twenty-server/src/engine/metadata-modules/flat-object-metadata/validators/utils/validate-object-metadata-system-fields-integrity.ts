@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
-import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
@@ -12,43 +11,9 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-
-const buildUniversalFlatObjectFieldByNameAndJoinColumnMaps = ({
-  flatFieldMetadataMaps,
-  flatObjectMetadata,
-}: {
-  flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
-  flatObjectMetadata: UniversalFlatObjectMetadata;
-}) => {
-  const fieldUniversalIdentifierByName: Record<string, string> = {};
-  const fieldUniversalIdentifierByJoinColumnName: Record<string, string> = {};
-
-  const objectFields =
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-      universalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-  for (const field of objectFields) {
-    fieldUniversalIdentifierByName[field.name] = field.universalIdentifier;
-
-    if (isMorphOrRelationUniversalFlatFieldMetadata(field)) {
-      if (isDefined(field.universalSettings.joinColumnName)) {
-        fieldUniversalIdentifierByJoinColumnName[
-          field.universalSettings.joinColumnName
-        ] = field.universalIdentifier;
-      }
-    }
-  }
-
-  return {
-    fieldUniversalIdentifierByName,
-    fieldUniversalIdentifierByJoinColumnName,
-  };
-};
+import { buildUniversalFlatObjectFieldByNameAndJoinColumnMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/build-universal-flat-object-field-by-name-and-join-column-maps.util';
 
 type ValidateObjectMetadataSystemFieldsIntegrityArgs = {
   orchestratorActionsReport: Pick<
