@@ -13,6 +13,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
@@ -26,6 +27,7 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
@@ -72,9 +74,21 @@ export class WorkspaceEntity {
   @Column({ nullable: true })
   displayName?: string;
 
+  //deprecated
   @Field({ nullable: true })
   @Column({ nullable: true })
   logo?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @Column({ nullable: true, type: 'uuid' })
+  logoFileId: string | null;
+
+  @OneToOne(() => FileEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'logoFileId' })
+  logoFile: Relation<FileEntity>;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

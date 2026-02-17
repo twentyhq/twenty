@@ -16,7 +16,7 @@ import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/works
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -42,7 +42,7 @@ export class CommonResultGettersService {
 
   constructor(
     private readonly fileService: FileService,
-    private readonly filesFieldService: FilesFieldService,
+    private readonly fileUrlService: FileUrlService,
     private readonly featureFlagService: FeatureFlagService,
   ) {
     this.initializeObjectHandlers();
@@ -55,7 +55,11 @@ export class CommonResultGettersService {
       ['person', new PersonQueryResultGetterHandler(this.fileService)],
       [
         'workspaceMember',
-        new WorkspaceMemberQueryResultGetterHandler(this.fileService),
+        new WorkspaceMemberQueryResultGetterHandler(
+          this.fileService,
+          this.featureFlagService,
+          this.fileUrlService,
+        ),
       ],
     ]);
   }
@@ -67,13 +71,13 @@ export class CommonResultGettersService {
     >([
       [
         FieldMetadataType.FILES,
-        new FilesFieldQueryResultGetterHandler(this.filesFieldService),
+        new FilesFieldQueryResultGetterHandler(this.fileUrlService),
       ],
       [
         FieldMetadataType.RICH_TEXT_V2,
         new RichTextV2FieldQueryResultGetterHandler(
           this.fileService,
-          this.filesFieldService,
+          this.fileUrlService,
           this.featureFlagService,
         ),
       ],

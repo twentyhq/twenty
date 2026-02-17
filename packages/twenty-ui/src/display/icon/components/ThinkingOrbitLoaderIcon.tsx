@@ -1,6 +1,9 @@
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type ThinkingOrbitLoaderIconProps = Pick<IconComponentProps, 'className' | 'size'>;
+type ThinkingOrbitLoaderIconProps = Pick<
+  IconComponentProps,
+  'className' | 'size'
+>;
 
 export const ThinkingOrbitLoaderIcon = ({
   className,

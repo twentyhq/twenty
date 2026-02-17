@@ -14,7 +14,8 @@ describe('relativeDateFilterStringifiedSchema', () => {
   });
 
   it('should parse a valid NEXT filter string', () => {
-    const result = relativeDateFilterStringifiedSchema.safeParse('NEXT_30_MINUTE');
+    const result =
+      relativeDateFilterStringifiedSchema.safeParse('NEXT_30_MINUTE');
 
     expect(result.success).toBe(true);
 
@@ -26,7 +27,8 @@ describe('relativeDateFilterStringifiedSchema', () => {
   });
 
   it('should parse a THIS filter string', () => {
-    const result = relativeDateFilterStringifiedSchema.safeParse('THIS_1_MONTH');
+    const result =
+      relativeDateFilterStringifiedSchema.safeParse('THIS_1_MONTH');
 
     expect(result.success).toBe(true);
 

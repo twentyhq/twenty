@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -19,6 +20,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     MessagingImportManagerModule,
     MessagingSendManagerModule,
     TypeOrmModule.forFeature([FileEntity]),
+    FeatureFlagModule,
     FileModule,
     JwtModule,
     SecureHttpClientModule,

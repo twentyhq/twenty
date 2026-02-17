@@ -41,9 +41,11 @@ const resolveFieldMetadataIdOrThrow = ({
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,
   flatFieldMetadataMaps,
+  flatViewMaps,
 }: {
   universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+  flatViewMaps: MetadataFlatEntityMaps<'view'>;
 }): FlatPageLayoutWidget['configuration'] => {
   switch (universalConfiguration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART: {
@@ -195,9 +197,31 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FIELDS: {
+      const { viewId: viewUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      if (!isDefined(viewUniversalIdentifier)) {
+        return { ...rest, viewId: null };
+      }
+
+      const flatView = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatViewMaps,
+        universalIdentifier: viewUniversalIdentifier,
+      });
+
+      if (!isDefined(flatView)) {
+        throw new FlatEntityMapsException(
+          `View not found for universal identifier: ${viewUniversalIdentifier}`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      return { ...rest, viewId: flatView.id };
+    }
+
     case WidgetConfigurationType.VIEW:
     case WidgetConfigurationType.FIELD:
-    case WidgetConfigurationType.FIELDS:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:
