@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -33,9 +35,9 @@ export const computeWhereConditionParts = ({
   fieldMetadataType: FieldMetadataType;
   useDirectTableReference?: boolean;
 }): WhereConditionParts => {
-  const uuid = Math.random().toString(36).slice(2, 7);
+  const uuid = randomBytes(5).toString('hex');
 
-  const secondUuid = Math.random().toString(36).slice(2, 7);
+  const secondUuid = randomBytes(5).toString('hex');
 
   const fieldReference = useDirectTableReference
     ? `"${key}"`
