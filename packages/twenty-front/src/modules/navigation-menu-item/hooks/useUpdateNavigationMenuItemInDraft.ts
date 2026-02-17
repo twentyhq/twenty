@@ -1,32 +1,31 @@
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
-export type UpdateFolderInDraftUpdates = {
+export type UpdateNavigationMenuItemInDraftUpdates = {
+  color?: string;
   name?: string;
   icon?: string;
+  link?: string;
 };
 
-export const useUpdateFolderInDraft = () => {
+export const useUpdateNavigationMenuItemInDraft = () => {
   const setNavigationMenuItemsDraft = useSetRecoilStateV2(
     navigationMenuItemsDraftStateV2,
   );
 
-  const updateFolderInDraft = (
-    folderId: string,
-    updates: UpdateFolderInDraftUpdates,
+  const updateNavigationMenuItemInDraft = (
+    navigationMenuItemId: string,
+    updates: UpdateNavigationMenuItemInDraftUpdates,
   ) => {
     setNavigationMenuItemsDraft((draft) => {
       if (!draft) return draft;
 
       return draft.map((item) => {
-        if (!isNavigationMenuItemFolder(item) || item.id !== folderId) {
-          return item;
-        }
+        if (item.id !== navigationMenuItemId) return item;
         return { ...item, ...updates };
       });
     });
   };
 
-  return { updateFolderInDraft };
+  return { updateNavigationMenuItemInDraft };
 };
