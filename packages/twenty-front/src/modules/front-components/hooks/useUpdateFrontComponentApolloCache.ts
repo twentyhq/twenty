@@ -25,7 +25,7 @@ export const useUpdateFrontComponentApolloCache = ({
 
     const { updatedRecord } = detail.operation;
 
-    if (!isDefined(updatedRecord)) {
+    if (!isDefined(updatedRecord) || updatedRecord.id !== frontComponentId) {
       return;
     }
 
