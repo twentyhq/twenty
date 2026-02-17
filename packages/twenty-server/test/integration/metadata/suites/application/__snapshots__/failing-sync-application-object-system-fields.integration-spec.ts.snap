@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Sync application should fail due to object system fields integrity when object is created without any system fields (missing all 8 system fields) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field id is missing",
+              "userFriendlyMessage": "System field id is missing",
+              "value": "id",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdAt is missing",
+              "userFriendlyMessage": "System field createdAt is missing",
+              "value": "createdAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedAt is missing",
+              "userFriendlyMessage": "System field updatedAt is missing",
+              "value": "updatedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field deletedAt is missing",
+              "userFriendlyMessage": "System field deletedAt is missing",
+              "value": "deletedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdBy is missing",
+              "userFriendlyMessage": "System field createdBy is missing",
+              "value": "createdBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedBy is missing",
+              "userFriendlyMessage": "System field updatedBy is missing",
+              "value": "updatedBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field position is missing",
+              "userFriendlyMessage": "System field position is missing",
+              "value": "position",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field searchVector is missing",
+              "userFriendlyMessage": "System field searchVector is missing",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "noSystemFieldsObjects",
+            "nameSingular": "noSystemFieldsObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 objectMetadata",
+    "summary": {
+      "objectMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
