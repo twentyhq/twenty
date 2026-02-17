@@ -9,6 +9,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
+import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -79,7 +80,10 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     universalSettings: fieldManifest.universalSettings ?? null,
     isCustom: true,
     isActive: true,
-    isSystem: fieldManifest.isSystem ?? false,
+    isSystem: Object.prototype.hasOwnProperty.call(
+      PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
+      fieldManifest.name,
+    ),
     isUIReadOnly: false,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: false,
