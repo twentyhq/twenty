@@ -34,6 +34,7 @@ import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/comp
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS } from '@/page-layout/constants/StandardPageLayoutTabTitleTranslations';
+import { useIsCurrentObjectCustom } from '@/page-layout/hooks/useIsCurrentObjectCustom';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
@@ -97,13 +98,18 @@ export const PageLayoutTabList = ({
 }: PageLayoutTabListProps) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
+  const { isCustom } = useIsCurrentObjectCustom();
+
+  const shouldTranslateTabTitles = !isCustom;
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
     // TODO: drop once the configuration of all record page layouts has been migrated to the backend.
-    title: STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title]
-      ? t(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
-      : tab.title,
+    title:
+      shouldTranslateTabTitles &&
+      STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title]
+        ? t(STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS[tab.title])
+        : tab.title,
     Icon: tab.icon ? getIcon(tab.icon) : undefined,
   }));
 

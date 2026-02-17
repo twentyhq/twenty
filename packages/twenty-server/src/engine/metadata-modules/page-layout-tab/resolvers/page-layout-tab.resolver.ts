@@ -50,7 +50,11 @@ export class PageLayoutTabResolver {
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
 
-    return resolvePageLayoutTabTitle(tab.title, i18n);
+    return resolvePageLayoutTabTitle({
+      title: tab.title,
+      applicationId: tab.applicationId,
+      i18nInstance: i18n,
+    });
   }
 
   @Query(() => [PageLayoutTabDTO])
