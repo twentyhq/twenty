@@ -118,6 +118,7 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.mjs",
+        "silent": true,
         "coverage": true,
         "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"

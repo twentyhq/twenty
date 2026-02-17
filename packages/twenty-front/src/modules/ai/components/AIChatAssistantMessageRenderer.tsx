@@ -85,12 +85,15 @@ export const AIChatAssistantMessageRenderer = ({
 }) => {
   // Filter out data-code-execution parts when tool-code_interpreter exists
   // (the tool part contains the final result, data-code-execution is for streaming updates)
+  // Also filter out data-thread-title (consumed by useAgentChat, not rendered)
   const hasCodeInterpreterTool = messageParts.some(
     (part) => part.type === 'tool-code_interpreter',
   );
-  const filteredParts = hasCodeInterpreterTool
-    ? messageParts.filter((part) => part.type !== 'data-code-execution')
-    : messageParts;
+  const filteredParts = messageParts.filter(
+    (part) =>
+      part.type !== 'data-thread-title' &&
+      (!hasCodeInterpreterTool || part.type !== 'data-code-execution'),
+  );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
   if (!renderItems.length && !hasError) {

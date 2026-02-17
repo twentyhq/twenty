@@ -40,7 +40,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 const WORKSPACE_LEVEL = 'workspace-level';
 
 @Command({
-  name: 'upgrade:1-17:migrate-favorites-to-navigation-menu-items',
+  name: 'upgrade:1-18:migrate-favorites-to-navigation-menu-items',
   description: 'Migrate favorites and favoriteFolders to navigationMenuItems',
 })
 export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
