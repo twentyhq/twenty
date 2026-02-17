@@ -60,13 +60,11 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
       objectPermissionsByObjectMetadataId,
     });
 
-    if (!cachedTargetRecord) {
-      throw new Error('Could not find cached related record');
-    }
-
     const previousRecordId = cachedTargetRecord?.[`${targetGQLFieldName}Id`];
 
-    if (isDefined(previousRecordId)) {
+    // Relation picker results can include records that are not in Apollo cache yet.
+    // In that case we skip optimistic cache rewiring and rely on the mutation response.
+    if (isDefined(previousRecordId) && isDefined(cachedTargetRecord)) {
       const previousRecord = getRecordFromCache({
         objectMetadataItem: sourceObjectMetadataItem,
         recordId: previousRecordId,
