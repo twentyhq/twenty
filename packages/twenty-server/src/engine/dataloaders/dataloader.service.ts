@@ -10,6 +10,7 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { pickMorphGroupSurvivor } from 'src/engine/dataloaders/utils/pick-morph-group-survivor.util';
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
@@ -188,14 +189,18 @@ export class DataloaderService {
                 flatFieldMetadataMaps,
                 flatObjectMetadata: targetFlatObjectMetadata,
               }),
-            ].sort((a, b) => (a.id > b.id ? 1 : -1));
+            ];
+
+            const survivorMorphField = pickMorphGroupSurvivor(
+              allMorphFlatFieldMetadatas,
+            );
 
             relationDtos.push(
               fromMorphOrRelationFlatFieldMetadataToRelationDto({
                 sourceFlatFieldMetadata,
                 sourceFlatObjectMetadata,
                 targetFlatFieldMetadata: {
-                  ...allMorphFlatFieldMetadatas[0],
+                  ...survivorMorphField,
                   name: morphNameFromMorphFieldMetadataName,
                 },
                 targetFlatObjectMetadata,
