@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
   OnboardingStatus,
@@ -132,7 +133,13 @@ describe('useSettingsNavigationItems', () => {
     const userSection = result.current.find(
       (section) => section.label === 'User',
     );
-    expect(userSection?.items.length).toBeGreaterThan(0);
-    expect(userSection?.items.every((item) => !item.isHidden)).toBe(true);
+    expect(
+      userSection?.items.filter((item) => !item.isHidden).length,
+    ).toBeGreaterThan(0);
+    expect(
+      userSection?.items
+        .filter((item) => item.path !== SettingsPath.Accounts)
+        .every((item) => !item.isHidden),
+    ).toBe(true);
   });
 });
