@@ -4,6 +4,17 @@ import { type Socket } from 'net';
 
 import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
 
+type CreateConnectionOptions = {
+  host?: string;
+  port?: number;
+  localAddress?: string;
+};
+
+type CreateConnectionCallback = (
+  error: Error | null,
+  socket: Socket,
+) => void;
+
 // Checks whether a hostname is a private IP literal.
 // Returns false for domain names — those are validated after DNS
 // resolution in the socket 'lookup' event handler.
@@ -57,8 +68,8 @@ export const createSsrfSafeAgent = (
 
   (agent as any).createConnection = function (
     this: http.Agent,
-    options: any,
-    oncreate: any,
+    options: CreateConnectionOptions,
+    oncreate: CreateConnectionCallback,
   ) {
     if (options.host && isHostnamePrivateIp(options.host)) {
       throw new Error(

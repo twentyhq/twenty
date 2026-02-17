@@ -32,6 +32,25 @@ describe('isPrivateIp', () => {
     });
   });
 
+  describe('this-host addresses (0.0.0.0/8)', () => {
+    it('should detect 0.0.0.0 as private', () => {
+      expect(isPrivateIp('0.0.0.0')).toBe(true);
+    });
+
+    it('should detect 0.x.x.x range as private', () => {
+      expect(isPrivateIp('0.0.0.1')).toBe(true);
+      expect(isPrivateIp('0.255.255.255')).toBe(true);
+    });
+
+    it('should detect decimal 0 (shorthand for 0.0.0.0) as private', () => {
+      expect(isPrivateIp('0')).toBe(true);
+    });
+
+    it('should detect IPv4-mapped 0.0.0.0 as private', () => {
+      expect(isPrivateIp('::ffff:0.0.0.0')).toBe(true);
+    });
+  });
+
   describe('private IPv4 ranges', () => {
     it('should detect 10.x.x.x range as private', () => {
       expect(isPrivateIp('10.0.0.1')).toBe(true);
