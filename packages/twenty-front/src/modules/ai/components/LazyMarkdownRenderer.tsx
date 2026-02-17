@@ -94,8 +94,14 @@ const MarkdownRenderer = lazy(async () => {
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
           ),
-          a: ({ children, node: _node, ...props }) => (
-            <a className="markdown-link" {...props}>
+          a: ({ children, href, title, target, rel, node: _node }) => (
+            <a
+              className="markdown-link"
+              href={href}
+              title={title}
+              target={target}
+              rel={rel}
+            >
               {processChildrenForRecordLinks(children)}
             </a>
           ),

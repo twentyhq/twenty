@@ -48,8 +48,7 @@ const StyledSummaryText = styled.span`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
-  transition: color ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
 `;
 
 const StyledSummaryButton = styled.button`
@@ -104,8 +103,7 @@ const StyledRowLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
-  transition: color ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
 `;
 
 const StyledToolRowLabel = styled.div`
@@ -117,8 +115,7 @@ const StyledToolRowLabel = styled.div`
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
   white-space: nowrap;
 `;
 
@@ -184,8 +181,7 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   min-height: 24px;
   padding: 0;
   text-align: left;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
   width: 100%;
 
   &:hover {
@@ -284,7 +280,10 @@ const ThinkingToolStepRow = ({
   );
   const activeTab: ToolDetailsTab =
     activeToolTabId === 'input' ? 'input' : 'output';
-  const toolTabs = [{ id: 'output', title: t`Output` }, { id: 'input', title: t`Input` }];
+  const toolTabs = [
+    { id: 'output', title: t`Output` },
+    { id: 'input', title: t`Input` },
+  ];
 
   return (
     <StyledToolRowContainer>
@@ -334,7 +333,9 @@ const ThinkingToolStepRow = ({
                   <StyledJsonTreeContainer>
                     <JsonTree
                       value={
-                        (activeTab === 'output' ? toolOutput : toolInput) as JsonValue
+                        (activeTab === 'output'
+                          ? toolOutput
+                          : toolInput) as JsonValue
                       }
                       shouldExpandNodeInitially={() => false}
                       emptyArrayLabel={t`Empty Array`}
@@ -365,7 +366,13 @@ const ThinkingStepRow = ({
   rowIndex: number;
 }) => {
   if (part.type !== 'reasoning') {
-    return <ThinkingToolStepRow part={part} isActive={isActive} rowIndex={rowIndex} />;
+    return (
+      <ThinkingToolStepRow
+        part={part}
+        isActive={isActive}
+        rowIndex={rowIndex}
+      />
+    );
   }
 
   return (

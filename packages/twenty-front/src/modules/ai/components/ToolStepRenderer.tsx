@@ -52,8 +52,7 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)} 0;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
   justify-content: space-between;
   width: 100%;
 
@@ -114,8 +113,7 @@ const StyledTab = styled.div<{ isActive: boolean }>`
   font-weight: ${({ theme, isActive }) =>
     isActive ? theme.font.weight.medium : theme.font.weight.regular};
   cursor: pointer;
-  transition: color ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 
   &:hover {

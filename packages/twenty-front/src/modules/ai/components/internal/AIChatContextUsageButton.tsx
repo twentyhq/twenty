@@ -150,7 +150,9 @@ export const AIChatContextUsageButton = () => {
           <StyledSection>
             <StyledSectionTitle>{t`Context window`}</StyledSectionTitle>
             <StyledRow>
-              <StyledContextWindowValue>{formattedPercentage}%</StyledContextWindowValue>
+              <StyledContextWindowValue>
+                {formattedPercentage}%
+              </StyledContextWindowValue>
               <StyledContextWindowValue>
                 {formatTokenCount(agentChatUsage.conversationSize)} /{' '}
                 {formatTokenCount(agentChatUsage.contextWindowTokens)}{' '}
