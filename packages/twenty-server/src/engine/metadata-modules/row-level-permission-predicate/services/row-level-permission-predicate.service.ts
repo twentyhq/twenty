@@ -360,6 +360,8 @@ export class RowLevelPermissionPredicateService {
           fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroup(
             {
               input: { ...inputGroup, id: groupId },
+              roleId,
+              workspaceId,
               roleUniversalIdentifier,
               flatApplication,
               flatObjectMetadataMaps,
@@ -462,6 +464,9 @@ export class RowLevelPermissionPredicateService {
           fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionPredicate(
             {
               input: { ...inputPredicate, id: predicateId },
+              roleId,
+              objectMetadataId,
+              workspaceId,
               roleUniversalIdentifier,
               objectMetadataUniversalIdentifier,
               flatApplication,

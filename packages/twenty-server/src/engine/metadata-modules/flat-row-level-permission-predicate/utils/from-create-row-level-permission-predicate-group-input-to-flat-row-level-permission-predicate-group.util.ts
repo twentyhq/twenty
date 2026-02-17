@@ -6,22 +6,26 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type RowLevelPermissionPredicateGroupInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 
 export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermissionPredicateGroup =
   ({
     input,
+    roleId,
+    workspaceId,
     roleUniversalIdentifier,
     flatApplication,
     flatObjectMetadataMaps,
     flatRowLevelPermissionPredicateGroupMaps,
   }: {
     input: RowLevelPermissionPredicateGroupInput;
+    roleId: string;
+    workspaceId: string;
     roleUniversalIdentifier: string;
     flatApplication: FlatApplication;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'> & {
       flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
-    }): UniversalFlatRowLevelPermissionPredicateGroup => {
+    }): FlatRowLevelPermissionPredicateGroup => {
+    const groupId = input.id ?? v4();
     const createdAt = new Date().toISOString();
 
     const {
@@ -41,18 +45,27 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
     });
 
     return {
+      id: groupId,
+      workspaceId,
+      roleId,
       roleUniversalIdentifier,
+      objectMetadataId: input.objectMetadataId,
       objectMetadataUniversalIdentifier,
       logicalOperator: input.logicalOperator,
+      parentRowLevelPermissionPredicateGroupId:
+        input.parentRowLevelPermissionPredicateGroupId ?? null,
       parentRowLevelPermissionPredicateGroupUniversalIdentifier,
       positionInRowLevelPermissionPredicateGroup:
         input.positionInRowLevelPermissionPredicateGroup ?? null,
+      childRowLevelPermissionPredicateGroupIds: [],
       childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+      rowLevelPermissionPredicateIds: [],
       rowLevelPermissionPredicateUniversalIdentifiers: [],
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
-      universalIdentifier: v4(),
+      universalIdentifier: groupId,
+      applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     };
   };
