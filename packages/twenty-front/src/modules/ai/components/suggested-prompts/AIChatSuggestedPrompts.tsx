@@ -19,14 +19,17 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitle = styled.div`
+  align-content: center;
   color: ${({ theme }) => theme.font.color.primary};
+  display: grid;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 24px;
   padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
 const StyledSuggestedPromptButton = styled(LightButton)`
-  width: 100%;
+  align-self: flex-start;
 `;
 
 const pickRandom = <T,>(items: T[]): T =>

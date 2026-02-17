@@ -90,6 +90,7 @@ export {
   IconArrowRight,
   IconArrowsDiagonal,
   IconArrowsSort,
+  IconArrowsSplit2,
   IconArrowsVertical,
   IconArrowUp,
   IconArrowUpRight,
@@ -381,13 +382,13 @@ export {
   IconReload,
   IconReorder,
   IconRepeat,
-  IconRowInsertBottom,
-  IconRowInsertTop,
   IconRestore,
   IconRobot,
   IconRocket,
   IconRotate,
   IconRotate2,
+  IconRowInsertBottom,
+  IconRowInsertTop,
   IconSearch,
   IconSend,
   IconServer,
@@ -471,6 +472,7 @@ export {
   IconWorld,
   IconX,
 } from './icon/components/TablerIcons';
+export { ThinkingOrbitLoaderIcon } from './icon/components/ThinkingOrbitLoaderIcon';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';
 export { iconsState } from './icon/states/iconsState';

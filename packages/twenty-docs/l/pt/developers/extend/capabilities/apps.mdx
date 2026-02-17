@@ -279,7 +279,11 @@ Pontos-chave:
 * Você pode criar novos objetos usando `yarn twenty entity:add`, que orienta você sobre nomeação, campos e relacionamentos.
 
 <Note>
-  **Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão como `name`, `createdAt`, `updatedAt`, `createdBy`, `position` e `deletedAt`. Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
+  **Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão
+  como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+  Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
+  Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
+  mas isso não é recomendado.
 </Note>
 
 ### Configuração do aplicativo (application-config.ts)
