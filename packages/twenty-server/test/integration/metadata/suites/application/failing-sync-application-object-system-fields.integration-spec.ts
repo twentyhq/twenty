@@ -5,7 +5,6 @@ import {
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
-
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneApplication } from 'test/integration/metadata/suites/application/utils/create-one-application.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
