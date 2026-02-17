@@ -65,7 +65,10 @@ const normalizeToLong = (addr: string) => {
   return val >>> 0;
 };
 
-const isIpV6 = (hostname: string) => ipv6Regex.test(hostname);
+// IPv6 addresses always contain colons; the colon check prevents the
+// loose regex from false-positiving on bare decimal/hex IPv4 like '0'.
+const isIpV6 = (hostname: string) =>
+  hostname.includes(':') && ipv6Regex.test(hostname);
 
 export const isPrivateIp = (addr: string) => {
   if (isLoopback(addr)) {
@@ -82,6 +85,8 @@ export const isPrivateIp = (addr: string) => {
   }
 
   return (
+    // 0.0.0.0/8 — "this host on this network" (RFC 1122), reaches localhost
+    /^(::f{4}:)?0\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
     /^(::f{4}:)?10\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
     /^(::f{4}:)?192\.168\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(addr) ||
     /^(::f{4}:)?172\.(1[6-9]|2\d|30|31)\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(

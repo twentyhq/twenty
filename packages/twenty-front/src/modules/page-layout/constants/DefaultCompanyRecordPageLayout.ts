@@ -19,6 +19,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -56,6 +57,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
@@ -93,6 +95,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-tasks',
       title: 'Tasks',
       icon: 'IconCheckbox',
@@ -130,6 +133,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-notes',
       title: 'Notes',
       icon: 'IconNotes',
@@ -167,6 +171,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',
@@ -204,6 +209,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-emails',
       title: 'Emails',
       icon: 'IconMail',
@@ -241,6 +247,7 @@ export const DEFAULT_COMPANY_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'company-tab-calendar',
       title: 'Calendar',
       icon: 'IconCalendarEvent',

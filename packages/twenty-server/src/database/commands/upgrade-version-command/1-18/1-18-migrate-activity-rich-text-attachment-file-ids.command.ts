@@ -18,7 +18,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -48,7 +48,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly filesFieldService: FilesFieldService,
+    private readonly fileUrlService: FileUrlService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -237,7 +237,10 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
         const props = (block.props as Record<string, unknown>) || {};
         const url = props.url as string | undefined;
 
-        return isDefined(url) && !isDefined(extractFileIdFromUrl(url));
+        return (
+          isDefined(url) &&
+          !isDefined(extractFileIdFromUrl(url, FileFolder.FilesField))
+        );
       });
 
       if (!needsMigration) {
@@ -259,7 +262,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
 
         if (
           !isDefined(url) ||
-          isDefined(extractFileIdFromUrl(url)) ||
+          isDefined(extractFileIdFromUrl(url, FileFolder.FilesField)) ||
           !url.includes('/files/attachment/')
         ) {
           enrichedBlocknote.push(block);
@@ -292,9 +295,10 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
           );
           hasChanges = true;
 
-          const signedUrl = this.filesFieldService.signFileUrl({
+          const signedUrl = this.fileUrlService.signFileByIdUrl({
             fileId,
             workspaceId,
+            fileFolder: FileFolder.FilesField,
           });
 
           enrichedBlocknote.push({

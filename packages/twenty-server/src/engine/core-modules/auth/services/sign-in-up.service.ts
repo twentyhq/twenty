@@ -504,13 +504,14 @@ export class SignInUpService {
         workspaceToCreate,
       );
 
-      await this.applicationService.createWorkspaceCustomApplication(
-        {
-          workspaceId,
-          applicationId: workspaceCustomApplicationId,
-        },
-        queryRunner,
-      );
+      const customApplication =
+        await this.applicationService.createWorkspaceCustomApplication(
+          {
+            workspaceId,
+            applicationId: workspaceCustomApplicationId,
+          },
+          queryRunner,
+        );
 
       const isExistingUser = userData.type === 'existingUser';
       const user = isExistingUser
@@ -532,6 +533,7 @@ export class SignInUpService {
           pictureUrl: isExistingUser
             ? undefined
             : userData.newUserWithPicture.picture,
+          applicationUniversalIdentifier: customApplication.universalIdentifier,
         },
         queryRunner,
       );
