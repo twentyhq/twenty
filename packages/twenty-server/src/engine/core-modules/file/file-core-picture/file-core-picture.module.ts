@@ -9,6 +9,7 @@ import { FileCorePictureResolver } from 'src/engine/core-modules/file/file-core-
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -20,6 +21,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     FileStorageModule,
     ApplicationModule,
     FileUrlModule,
+    SecureHttpClientModule,
   ],
   providers: [FileCorePictureService, FileCorePictureResolver],
   exports: [FileCorePictureService],

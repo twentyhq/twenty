@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

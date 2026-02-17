@@ -44,7 +44,7 @@ describe('extractFileIdFromUrl', () => {
   });
 
   it('should work with query params', () => {
-    const url = `https://example.com/file/${FileFolder.FilesField}/${validUuid}?param=value`;
+    const url = `http://localhost:3000/file/${FileFolder.FilesField}/${validUuid}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3Jrc3BhY2VJZCI6IjNmZWNhYzJkLWMbOWEtNGExOC1hZjVlLTk0NjYwMTNhODFkMSIsImZpbGVJZCI6IjVlYmJjODQ0LTAzYTUtNGEyNS05NDliLWE2NWNmMjkzMWExOSIsInN1YiI6IjNmZWNhYzJkLWMwOWEtNGExOC1hZjVlLTk0NjYwMTNhODFkMSIsInR5cGUiOiJGSUxFIiwiaWF0IjoxNzcxMjYzNjEwLCJleHAiOjE3NzEzNTAwMTB9.qBy0SvkAuaq-KwWIALasRVJwSkN9Llu15LXUnVZMy-Y`;
 
     expect(extractFileIdFromUrl(url, FileFolder.FilesField)).toBe(validUuid);
   });

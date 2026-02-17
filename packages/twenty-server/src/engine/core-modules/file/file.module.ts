@@ -57,6 +57,7 @@ import { FileService } from './services/file.service';
     FilesFieldModule,
     FileCorePictureModule,
     FileWorkflowModule,
+    FileUploadService,
   ],
   controllers: [FileController, FileByIdController],
 })
