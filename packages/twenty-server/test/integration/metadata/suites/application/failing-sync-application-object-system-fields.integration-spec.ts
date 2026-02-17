@@ -1,4 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
@@ -198,7 +199,7 @@ describe('Sync application should fail due to object system fields integrity', (
     appCreated = true;
   }, 60000);
 
-  afterAll(async () => {
+  afterEach(async () => {
     if (!appCreated) {
       return;
     }
@@ -223,4 +224,82 @@ describe('Sync application should fail due to object system fields integrity', (
     },
     60000,
   );
+
+  it('should fail when trying to delete a system field after a successful sync', async () => {
+    const testObject = buildDefaultObjectManifest({
+      nameSingular: 'deleteSystemFieldObject',
+      namePlural: 'deleteSystemFieldObjects',
+      labelSingular: 'Delete System Field Object',
+      labelPlural: 'Delete System Field Objects',
+      description: 'Object for testing system field deletion',
+    });
+
+    const validManifest = buildBaseManifest({
+      objects: [testObject],
+      fields: [],
+    });
+
+    await syncApplication({
+      manifest: validManifest,
+      expectToFail: false,
+    });
+
+    const manifestWithDeletedIdField = buildBaseManifest({
+      objects: [
+        {
+          ...testObject,
+          fields: testObject.fields.filter((field) => field.name !== 'id'),
+        },
+      ],
+      fields: [],
+    });
+
+    const { errors } = await syncApplication({
+      manifest: manifestWithDeletedIdField,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
+
+  it('should fail when trying to update a system field after a successful sync', async () => {
+    const testObject = buildDefaultObjectManifest({
+      nameSingular: 'updateSystemFieldObject',
+      namePlural: 'updateSystemFieldObjects',
+      labelSingular: 'Update System Field Object',
+      labelPlural: 'Update System Field Objects',
+      description: 'Object for testing system field update',
+    });
+
+    const validManifest = buildBaseManifest({
+      objects: [testObject],
+      fields: [],
+    });
+
+    await syncApplication({
+      manifest: validManifest,
+      expectToFail: false,
+    });
+
+    const manifestWithUpdatedIdField = buildBaseManifest({
+      objects: [
+        {
+          ...testObject,
+          fields: testObject.fields.map((field) =>
+            field.name === 'id'
+              ? { ...field, label: 'Modified Id Label' }
+              : field,
+          ),
+        },
+      ],
+      fields: [],
+    });
+
+    const { errors } = await syncApplication({
+      manifest: manifestWithUpdatedIdField,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
 });

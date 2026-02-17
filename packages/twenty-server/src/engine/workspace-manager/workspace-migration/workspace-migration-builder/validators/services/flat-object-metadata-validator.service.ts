@@ -61,6 +61,14 @@ export class FlatObjectMetadataValidatorService {
       nameSingular: existingFlatObjectMetadata.nameSingular,
     };
 
+    if (!buildOptions.isSystemBuild && existingFlatObjectMetadata.isSystem) {
+      validationResult.errors.push({
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: t`System objects cannot be updated`,
+        userFriendlyMessage: msg`System objects cannot be updated`,
+      });
+    }
+
     validationResult.errors.push(
       ...validateFlatObjectMetadataNameAndLabels({
         optimisticUniversalFlatObjectMetadataMaps:
@@ -136,6 +144,14 @@ export class FlatObjectMetadataValidatorService {
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Remote objects are not supported yet`,
           userFriendlyMessage: msg`Remote objects are not supported yet`,
+        });
+      }
+
+      if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isSystem) {
+        validationResult.errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          message: t`System objects cannot be deleted`,
+          userFriendlyMessage: msg`System objects cannot be deleted`,
         });
       }
 
