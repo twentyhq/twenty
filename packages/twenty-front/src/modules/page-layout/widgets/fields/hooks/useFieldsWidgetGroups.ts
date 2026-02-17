@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
 import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
@@ -23,9 +24,8 @@ export const useFieldsWidgetGroups = ({
     objectNameSingular,
   });
 
-  console.log('in useFieldsWidgetGroups', {
-    viewId,
-    view,
+  const { inlineFieldMetadataItems } = useFieldsWidgetFieldMetadataItems({
+    objectNameSingular,
   });
 
   const groups = useMemo<FieldsWidgetGroup[]>(() => {
@@ -85,7 +85,7 @@ export const useFieldsWidgetGroups = ({
     }
 
     // Fallback: generate temporary groups from object metadata
-    const fieldsToDisplay = objectMetadataItem.fields;
+    const fieldsToDisplay = inlineFieldMetadataItems;
 
     if (fieldsToDisplay.length === 0) {
       return [];
@@ -151,7 +151,13 @@ export const useFieldsWidgetGroups = ({
     }
 
     return groups;
-  }, [objectMetadataItem, objectNameSingular, t, view]);
+  }, [
+    objectMetadataItem,
+    objectNameSingular,
+    t,
+    view,
+    inlineFieldMetadataItems,
+  ]);
 
   return {
     groups,
