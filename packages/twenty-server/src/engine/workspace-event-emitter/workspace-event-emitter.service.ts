@@ -48,7 +48,9 @@ import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { isMetadataRecordMatchingFilter } from 'src/engine/workspace-event-emitter/utils/is-metadata-record-matching-filter.util';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
 export class WorkspaceEventEmitterService {
@@ -177,21 +179,30 @@ export class WorkspaceEventEmitterService {
     streamData: EventStreamData,
     metadataEventBatch: MetadataEventBatch,
   ): Promise<void> {
-    const matchedQueryIds = this.getMatchingMetadataQueryIds(
-      streamData.queries,
-      metadataEventBatch.metadataName,
-    );
+    const metadataEventsWithQueryIds: {
+      queryIds: string[];
+      metadataEvent: MetadataEvent;
+    }[] = [];
 
-    if (matchedQueryIds.length === 0) {
-      return;
-    }
+    for (const metadataEvent of metadataEventBatch.events) {
+      const matchedQueryIds = this.getMatchingMetadataQueryIds(
+        streamData.queries,
+        metadataEvent,
+      );
 
-    const metadataEventsWithQueryIds = metadataEventBatch.events.map(
-      (metadataEvent) => ({
+      if (matchedQueryIds.length === 0) {
+        continue;
+      }
+
+      metadataEventsWithQueryIds.push({
         queryIds: matchedQueryIds,
         metadataEvent,
-      }),
-    );
+      });
+    }
+
+    if (metadataEventsWithQueryIds.length === 0) {
+      return;
+    }
 
     const payload: EventStreamPayload = {
       objectRecordEventsWithQueryIds: [],
@@ -207,14 +218,44 @@ export class WorkspaceEventEmitterService {
 
   private getMatchingMetadataQueryIds(
     queries: Record<string, RecordOrMetadataGqlOperationSignature>,
-    metadataName: string,
+    metadataEvent: MetadataEvent,
   ): string[] {
+    const properties = metadataEvent.properties as {
+      after?: Record<string, unknown>;
+      before?: Record<string, unknown>;
+    };
+
+    const record = properties?.after ?? properties?.before;
+
     return Object.entries(queries)
-      .filter(
-        ([, operationSignature]) =>
-          isMetadataGqlOperationSignature(operationSignature) &&
-          operationSignature.metadataName === metadataName,
-      )
+      .filter(([, operationSignature]) => {
+        if (!isMetadataGqlOperationSignature(operationSignature)) {
+          return false;
+        }
+
+        if (operationSignature.metadataName !== metadataEvent.metadataName) {
+          return false;
+        }
+
+        const queryFilter = (
+          operationSignature.variables as {
+            filter?: Record<string, unknown>;
+          }
+        )?.filter;
+
+        if (!isDefined(queryFilter) || Object.keys(queryFilter).length === 0) {
+          return true;
+        }
+
+        if (!isDefined(record)) {
+          return false;
+        }
+
+        return isMetadataRecordMatchingFilter({
+          record,
+          filter: queryFilter,
+        });
+      })
       .map(([queryId]) => queryId);
   }
 
@@ -570,6 +611,7 @@ export class WorkspaceEventEmitterService {
       after?: object;
       before?: object;
     };
+
     const record = properties?.after ?? properties?.before;
 
     if (!isDefined(record)) {
