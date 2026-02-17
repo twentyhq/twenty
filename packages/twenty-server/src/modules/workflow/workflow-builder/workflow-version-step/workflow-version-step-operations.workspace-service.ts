@@ -182,10 +182,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionInput:
-                  getFunctionInputFromInputSchema([
-                    newLogicFunction.toolInputSchema,
-                  ])[0] ?? {},
+                logicFunctionInput: isDefined(newLogicFunction.toolInputSchema)
+                  ? (getFunctionInputFromInputSchema([
+                      newLogicFunction.toolInputSchema,
+                    ])[0] ?? {})
+                  : {},
               },
             },
           },
