@@ -7,9 +7,9 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest-to-common-args-handlers/selected-fields-handler';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -66,7 +66,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
-  protected readonly restToCommonSelectedFieldsHandler: RestToCommonSelectedFieldsHandler;
+  protected readonly commonSelectFieldsHelper: CommonSelectFieldsHelper;
   @Inject()
   protected readonly userRoleService: UserRoleService;
   @Inject()
@@ -137,7 +137,7 @@ export abstract class RestApiBaseHandler {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
-    return this.restToCommonSelectedFieldsHandler.computeFromDepth({
+    return this.commonSelectFieldsHelper.computeFromDepth({
       objectsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

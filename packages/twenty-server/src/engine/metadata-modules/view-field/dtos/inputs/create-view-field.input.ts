@@ -7,8 +7,8 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
+import { AggregateOperations } from 'twenty-shared/types';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
