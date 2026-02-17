@@ -296,6 +296,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       buildOptions: {
         isSystemBuild,
         inferDeletionFromMissingEntities,
+        applicationUniversalIdentifier,
       },
       fromToAllFlatEntityMaps,
       workspaceId,

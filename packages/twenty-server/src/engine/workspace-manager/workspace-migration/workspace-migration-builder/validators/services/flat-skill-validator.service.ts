@@ -8,6 +8,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
 import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -90,7 +91,7 @@ export class FlatSkillValidatorService {
     }
 
     if (
-      !buildOptions.isSystemBuild &&
+      !isCallerTwentyStandardApp(buildOptions) &&
       belongsToTwentyStandardApp({
         universalIdentifier: existingSkill.universalIdentifier,
         applicationUniversalIdentifier:
@@ -153,7 +154,7 @@ export class FlatSkillValidatorService {
     });
 
     if (
-      !buildOptions.isSystemBuild &&
+      !isCallerTwentyStandardApp(buildOptions) &&
       isTwentyStandardSkill &&
       hasNonIsActiveUpdates
     ) {

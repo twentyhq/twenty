@@ -80,6 +80,8 @@ export class ApplicationManifestMigrationService {
           buildOptions: {
             isSystemBuild: false,
             inferDeletionFromMissingEntities: true,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
