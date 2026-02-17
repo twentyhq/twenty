@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
   THEME_LIGHT,
@@ -234,7 +234,9 @@ describe('ThinkingStepsDisplay', () => {
     await userEvent.click(toolButton);
 
     expect(toolButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
+    });
   });
 });

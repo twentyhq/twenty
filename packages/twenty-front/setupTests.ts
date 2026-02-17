@@ -17,11 +17,7 @@ import { messages as enMessages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 
-const globalWithWebStreams = globalThis as typeof globalThis & {
-  TransformStream?: typeof NodeTransformStream;
-  ReadableStream?: typeof NodeReadableStream;
-  WritableStream?: typeof NodeWritableStream;
-};
+const globalWithWebStreams = globalThis as Record<string, unknown>;
 
 if (globalWithWebStreams.TransformStream === undefined) {
   globalWithWebStreams.TransformStream = NodeTransformStream;
@@ -33,6 +29,13 @@ if (globalWithWebStreams.ReadableStream === undefined) {
 
 if (globalWithWebStreams.WritableStream === undefined) {
   globalWithWebStreams.WritableStream = NodeWritableStream;
+}
+
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'scrollTo', {
+    value: () => {},
+    writable: true,
+  });
 }
 
 // Add Jest matchers for toThrowError and other missing methods
