@@ -5,10 +5,11 @@ import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphq
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 
 export const useSaveNavigationMenuItemsDraft = () => {
@@ -22,9 +23,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
   const saveDraft = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const draft = snapshot
-          .getLoadable(navigationMenuItemsDraftState)
-          .getValue();
+        const draft = jotaiStore.get(navigationMenuItemsDraftStateV2.atom);
         const prefetch = snapshot
           .getLoadable(prefetchNavigationMenuItemsState)
           .getValue();

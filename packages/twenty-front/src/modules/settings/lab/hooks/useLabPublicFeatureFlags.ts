@@ -1,8 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFeatureFlagsStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type FeatureFlagKey,
@@ -14,7 +15,7 @@ export const useLabPublicFeatureFlags = () => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
+  const labPublicFeatureFlags = useRecoilValueV2(labPublicFeatureFlagsStateV2);
 
   const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation({
     onCompleted: (data) => {

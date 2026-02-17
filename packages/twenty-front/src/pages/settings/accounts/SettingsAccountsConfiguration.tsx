@@ -1,14 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
+import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -30,8 +30,8 @@ export const SettingsAccountsConfiguration = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [startChannelSyncMutation, { loading: isSubmitting }] =
     useStartChannelSyncMutation();
-  const setSelectedMessageChannel = useSetRecoilState(
-    settingsAccountsSelectedMessageChannelState,
+  const setSelectedMessageChannel = useSetRecoilStateV2(
+    settingsAccountsSelectedMessageChannelStateV2,
   );
 
   const [currentStep, setCurrentStep] =

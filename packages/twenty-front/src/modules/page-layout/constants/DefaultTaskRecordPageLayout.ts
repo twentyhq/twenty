@@ -18,6 +18,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -85,6 +86,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-note',
       title: 'Note',
       icon: 'IconNotes',
@@ -129,6 +131,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
@@ -166,6 +169,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',

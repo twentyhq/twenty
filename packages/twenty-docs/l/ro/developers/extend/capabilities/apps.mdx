@@ -48,9 +48,6 @@ De aici puteți:
 # Adaugă o entitate nouă în aplicația ta (ghidat)
 yarn twenty entity:add
 
-# Generează un client Twenty tipizat și tipurile de entități ale spațiului de lucru
-yarn twenty app:generate
-
 # Urmărește jurnalele funcțiilor aplicației tale
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn twenty app:generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
+* `yarn twenty app:dev` va genera automat un client API tipizat în `node_modules/twenty-sdk/generated` (client Twenty tipizat + tipuri ale spațiului de lucru).
 * `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end sau rolurile personalizate.
 
 ## Autentificare
@@ -662,7 +659,7 @@ Puteți crea componente Front noi în două moduri:
 
 ### Client tipizat generat
 
-Rulați `yarn twenty app:generate` pentru a crea un client tipizat local în `generated/`, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
+Clientul tipizat este generat automat de `yarn twenty app:dev` și stocat în `node_modules/twenty-sdk/generated`, pe baza schemei spațiului tău de lucru. Folosiți-l în funcțiile dvs.:
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Clientul este regenerat de `yarn twenty app:generate`. Rulați din nou după ce vă modificați obiectele sau când vă integrați într-un spațiu de lucru nou.
+Clientul este regenerat automat de `yarn twenty app:dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
 
 #### Acreditări la runtime în funcțiile de logică
 
@@ -708,13 +705,13 @@ Apoi adăugați un script `twenty`:
 }
 ```
 
-Acum puteți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
+Acum poți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty help`, etc.
 
 ## Depanare
 
 * Erori de autentificare: rulați `yarn twenty auth:login` și asigurați-vă că cheia API are permisiunile necesare.
 * Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Tipuri sau client lipsă/învechite: rulați `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Modul dev nu sincronizează: asigurați-vă că `yarn twenty app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
 
 Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

@@ -2324,6 +2324,7 @@ msgstr "caldav.example.com"
 #. js-lingui-id: AjVXBS
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Calendar"
 msgstr "Ημερολόγιο"
@@ -2375,6 +2376,11 @@ msgstr "Προβολή Ημερολογίου"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Calendars"
 msgstr "Ημερολόγια"
+
+#. js-lingui-id: qIlodj
+#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
+msgid "Calling Code"
+msgstr ""
 
 #. js-lingui-id: msssZq
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -2511,11 +2517,6 @@ msgstr "Αλλαγή τύπου κόμβου"
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Change Password"
 msgstr "Αλλαγή Κωδικού"
-
-#. js-lingui-id: wRtBJP
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "Change Plan"
-msgstr "Αλλαγή σχεδίου"
 
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/domains/SettingsDomain.tsx
@@ -3318,11 +3319,6 @@ msgstr "Καταμέτρηση μοναδικών τιμών"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 msgid "Country"
 msgstr "Χώρα"
-
-#. js-lingui-id: j2OqfX
-#: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
-msgid "Country Code"
-msgstr "Κωδικός χώρας"
 
 #. js-lingui-id: gJdfqX
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -4844,6 +4840,7 @@ msgstr "Περιοχές Email"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Emails"
 msgstr "Ηλεκτρονικά ταχυδρομεία"
 
@@ -6044,6 +6041,11 @@ msgstr ""
 msgid "File URL is not defined"
 msgstr ""
 
+#. js-lingui-id: sER+bs
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
+msgid "Files"
+msgstr ""
+
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/ai/components/SettingsSkillsTable.tsx
@@ -6147,6 +6149,7 @@ msgstr "Το μικρό όνομα δεν μπορεί να είναι κενό"
 
 #. js-lingui-id: ylQd2j
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Flow"
 msgstr "Ροή"
@@ -6611,6 +6614,11 @@ msgstr "Απόκρυψη ομάδας {groupValue}"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Hide hidden groups"
 msgstr "Απόκρυψη κρυφών ομάδων"
+
+#. js-lingui-id: i0qMbr
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
+msgid "Home"
+msgstr ""
 
 #. js-lingui-id: Xkd22/
 #: src/modules/page-layout/utils/getWidgetTitle.ts
@@ -8688,6 +8696,11 @@ msgstr "Δεν υπάρχουν διαθέσιμα πεδία για επιλο�
 msgid "No body"
 msgstr "Χωρίς σώμα"
 
+#. js-lingui-id: c3+z7H
+#: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
+msgid "No calling code"
+msgstr ""
+
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
@@ -8718,7 +8731,6 @@ msgstr "Δεν παρέχεται πλαίσιο για αυτό το αίτημ
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCountrySelectInput.tsx
-#: src/modules/object-record/record-field/ui/form-types/components/FormCountryCodeSelectInput.tsx
 msgid "No country"
 msgstr "Χωρίς χώρα"
 
@@ -9156,7 +9168,13 @@ msgstr "Δεν κοινοποιήθηκε από τον/την {notSharedByFullN
 msgid "Not synced"
 msgstr "Δεν συγχρονίζεται"
 
+#. js-lingui-id: KiJn9B
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
+msgid "Note"
+msgstr ""
+
 #. js-lingui-id: 1DBGsz
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Notes"
 msgstr "Σημειώματα"
@@ -9533,6 +9551,11 @@ msgstr ""
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "Οργανωτικός"
+
+#. js-lingui-id: zi/p7n
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Organization plan"
+msgstr ""
 
 #. js-lingui-id: nV6twc
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
@@ -10093,6 +10116,11 @@ msgstr "Πολιτική Απορρήτου"
 #: src/modules/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "Pro"
+
+#. js-lingui-id: r5je1s
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Pro plan"
+msgstr ""
 
 #. js-lingui-id: k1ifdL
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
@@ -12441,6 +12469,7 @@ msgid "Task Title"
 msgstr "Τίτλος εργασίας"
 
 #. js-lingui-id: GtycJ/
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
 msgstr "Εργασίες"
@@ -12870,6 +12899,7 @@ msgid "Time zone"
 msgstr "Ζώνη ώρας"
 
 #. js-lingui-id: cklVjM
+#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "Χρονολόγιο"

@@ -4,7 +4,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
+import { type ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 
 export const generateApplicationToken = async ({
   applicationId,
@@ -15,7 +15,7 @@ export const generateApplicationToken = async ({
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  generateApplicationToken: AuthToken;
+  generateApplicationToken: ApplicationTokenPairDTO;
 }> => {
   const graphqlOperation = generateApplicationTokenQueryFactory({
     applicationId,

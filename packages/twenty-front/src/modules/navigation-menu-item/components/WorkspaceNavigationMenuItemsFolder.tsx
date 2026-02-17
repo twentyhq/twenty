@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconFolder, IconFolderOpen } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -19,7 +19,8 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
@@ -30,7 +31,8 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
+import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -93,10 +95,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const isMobile = useIsMobile();
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
-    useRecoilState(openNavigationMenuItemFolderIdsState);
+    useRecoilStateV2(openNavigationMenuItemFolderIdsStateV2);
 
-  const setCurrentFolderId = useSetRecoilState(
-    currentNavigationMenuItemFolderIdState,
+  const setCurrentFolderId = useSetRecoilStateV2(
+    currentNavigationMenuItemFolderIdStateV2,
   );
 
   const isOpen = openNavigationMenuItemFolderIds.includes(folderId);

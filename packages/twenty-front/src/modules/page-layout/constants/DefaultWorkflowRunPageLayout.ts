@@ -24,6 +24,7 @@ export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
     // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'workflow-run-tab-fields',
       title: 'Home',
       position: 100,
@@ -62,6 +63,7 @@ export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
     // Flow tab (position 200)
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'workflow-run-tab-flow',
       title: 'Flow',
       position: 200,
