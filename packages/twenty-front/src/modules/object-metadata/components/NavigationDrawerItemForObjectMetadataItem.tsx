@@ -13,6 +13,9 @@ import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -34,6 +37,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const theme = useTheme();
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+  );
   const iconColors = getNavigationMenuItemIconColors(theme);
   const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
     lastVisitedViewPerObjectMetadataItemState,
@@ -120,11 +126,10 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : getIcon(objectMetadataItem.icon);
 
-  const iconBackgroundColor = isRecord
-    ? undefined
-    : isViewWithCustomName
-      ? undefined
-      : iconColors.object;
+  const iconBackgroundColor =
+    isNavigationMenuItemEditingEnabled && !isRecord && !isViewWithCustomName
+      ? iconColors.object
+      : undefined;
 
   const secondaryLabel =
     isRecord || isViewWithCustomName
