@@ -9,27 +9,27 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findFieldRelatedIndexes } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-field-related-index.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-many-to-one-target-morph-relation-flat-field-metadatas-or-throw.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type UpdateMorphFlatFieldNameArgs = FromTo<
   FlatObjectMetadata,
   'relationTargetFlatObjectMetadata'
 > & {
-  fromMorphFlatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+  fromMorphFlatFieldMetadata: UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 };
 const updateMorphFlatFieldName = ({
   fromMorphFlatFieldMetadata,
   fromRelationTargetFlatObjectMetadata,
   toRelationTargetFlatObjectMetadata,
-}: UpdateMorphFlatFieldNameArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION> => {
+}: UpdateMorphFlatFieldNameArgs): UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION> => {
   const isManyToOneRelationType =
-    fromMorphFlatFieldMetadata.settings.relationType ===
+    fromMorphFlatFieldMetadata.universalSettings.relationType ===
     RelationType.MANY_TO_ONE;
   const initialMorphRelationFieldName = getMorphNameFromMorphFieldMetadataName({
     morphRelationFlatFieldMetadata: fromMorphFlatFieldMetadata,
@@ -39,7 +39,7 @@ const updateMorphFlatFieldName = ({
 
   const newMorphFieldName = computeMorphRelationFieldName({
     fieldName: initialMorphRelationFieldName,
-    relationType: fromMorphFlatFieldMetadata.settings.relationType,
+    relationType: fromMorphFlatFieldMetadata.universalSettings.relationType,
     targetObjectMetadataNameSingular:
       toRelationTargetFlatObjectMetadata.nameSingular,
     targetObjectMetadataNamePlural:
@@ -55,8 +55,8 @@ const updateMorphFlatFieldName = ({
   return {
     ...fromMorphFlatFieldMetadata,
     name: newMorphFieldName,
-    settings: {
-      ...fromMorphFlatFieldMetadata.settings,
+    universalSettings: {
+      ...fromMorphFlatFieldMetadata.universalSettings,
       joinColumnName: newJoinColumnName,
     },
   };
@@ -72,8 +72,8 @@ type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
   >;
 
 type RenameRelatedMorphFieldOnObjectNamesUpdateReturnType = {
-  morphFlatFieldMetadatasToUpdate: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[];
-  morphRelatedFlatIndexesToUpdate: FlatIndexMetadata[];
+  morphFlatFieldMetadatasToUpdate: UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[];
+  morphRelatedFlatIndexesToUpdate: UniversalFlatIndexMetadata[];
 };
 export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   fromFlatObjectMetadata,

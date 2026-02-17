@@ -10,6 +10,7 @@ import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWe
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
+import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 
 const mockNavigateSettings = jest.fn();
 const mockEnqueueSuccessSnackBar = jest.fn();
@@ -146,7 +147,7 @@ describe('useWebhookForm', () => {
       expect(result.current.formConfig.getValues()).toEqual({
         targetUrl: '',
         description: '',
-        operations: [{ object: '*', action: '*' }],
+        operations: [{ object: '*', action: '*' }, WEBHOOK_EMPTY_OPERATION],
         secret: '',
       });
     });

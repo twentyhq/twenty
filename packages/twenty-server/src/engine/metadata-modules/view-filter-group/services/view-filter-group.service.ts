@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
 import { fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-delete-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
 import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
@@ -59,7 +59,6 @@ export class ViewFilterGroupService {
     const flatViewFilterGroupToCreate =
       fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate({
         createViewFilterGroupInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatViewMaps: existingFlatViewMaps,
         flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
@@ -82,7 +81,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(buildAndRunResult)) {
+    if (buildAndRunResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         buildAndRunResult,
         'Multiple validation errors occurred while creating view filter group',
@@ -154,7 +153,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view filter group',
@@ -172,8 +171,9 @@ export class ViewFilterGroupService {
       );
 
     return fromFlatViewFilterGroupToViewFilterGroupDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewFilterGroup.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewFilterGroup.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewFilterGroupMaps,
       }),
     );
@@ -226,7 +226,7 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view filter group',
@@ -244,8 +244,9 @@ export class ViewFilterGroupService {
       );
 
     return fromFlatViewFilterGroupToViewFilterGroupDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewFilterGroupWithDeletedAt.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewFilterGroupMaps,
       }),
     );
@@ -279,6 +280,13 @@ export class ViewFilterGroupService {
         flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
       });
 
+    const existingFlatViewFilterGroup =
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          existingViewFilterGroupToDelete.universalIdentifier,
+        flatEntityMaps: existingFlatViewFilterGroupMaps,
+      });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -296,16 +304,17 @@ export class ViewFilterGroupService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view filter group',
       );
     }
 
-    return fromFlatViewFilterGroupToViewFilterGroupDto(
-      existingViewFilterGroupToDelete,
-    );
+    return fromFlatViewFilterGroupToViewFilterGroupDto({
+      ...existingFlatViewFilterGroup,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(

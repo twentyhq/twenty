@@ -13,7 +13,7 @@ import {
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
-import { OnboardingStatus, PermissionFlagType } from '~/generated/graphql';
+import { OnboardingStatus, PermissionFlagType } from '~/generated-metadata/graphql';
 
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;

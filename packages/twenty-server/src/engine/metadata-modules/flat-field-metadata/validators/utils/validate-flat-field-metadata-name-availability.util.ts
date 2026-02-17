@@ -5,56 +5,59 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getObjectFieldNamesAndJoinColumnNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-object-field-names-and-join-column-names.util';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 const getReservedCompositeFieldNames = (
-  objectFlatFieldMetadatas: FlatFieldMetadata[],
+  objectUniversalFlatFieldMetadatas: UniversalFlatFieldMetadata[],
 ): string[] => {
-  return objectFlatFieldMetadatas.flatMap((flatFieldMetadata) => {
-    if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
-      const base = flatFieldMetadata.name;
-      const compositeType = compositeTypeDefinitions.get(
-        flatFieldMetadata.type,
-      );
+  return objectUniversalFlatFieldMetadatas.flatMap(
+    (universalFlatFieldMetadata) => {
+      if (isCompositeFieldMetadataType(universalFlatFieldMetadata.type)) {
+        const base = universalFlatFieldMetadata.name;
+        const compositeType = compositeTypeDefinitions.get(
+          universalFlatFieldMetadata.type,
+        );
 
-      if (!isDefined(compositeType)) {
-        return [];
+        if (!isDefined(compositeType)) {
+          return [];
+        }
+
+        return compositeType.properties.map((property) =>
+          computeCompositeColumnName(base, property),
+        );
       }
 
-      return compositeType.properties.map((property) =>
-        computeCompositeColumnName(base, property),
-      );
-    }
-
-    return [];
-  });
+      return [];
+    },
+  );
 };
 
 export const validateFlatFieldMetadataNameAvailability = ({
   name,
-  flatFieldMetadataMaps,
-  flatObjectMetadata,
+  universalFlatFieldMetadataMaps,
+  universalFlatObjectMetadata,
   buildOptions,
 }: {
   buildOptions: WorkspaceMigrationBuilderOptions;
   name: string;
-  flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  universalFlatObjectMetadata: UniversalFlatObjectMetadata;
+  universalFlatFieldMetadataMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
-  const objectFlatFieldMetadatas =
-    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldIds,
+  const objectUniversalFlatFieldMetadatas =
+    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
+      flatEntityMaps: universalFlatFieldMetadataMaps,
+      universalIdentifiers:
+        universalFlatObjectMetadata.fieldUniversalIdentifiers,
     });
   const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
-    objectFlatFieldMetadatas,
+    objectUniversalFlatFieldMetadatas,
   );
 
   if (
@@ -71,8 +74,8 @@ export const validateFlatFieldMetadataNameAvailability = ({
 
   const { objectFieldNamesAndJoinColumnNames } =
     getObjectFieldNamesAndJoinColumnNames({
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
+      universalFlatFieldMetadataMaps,
+      universalFlatObjectMetadata,
     });
 
   if (objectFieldNamesAndJoinColumnNames.fieldNames.includes(name)) {

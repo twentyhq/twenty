@@ -5,21 +5,17 @@ import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
+import {
+  FlatFieldMetadataTypeValidationArgs,
+  type FlatFieldMetadataTypeValidator,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
 import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
 import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 
 const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
-
-export type GenericValidateFlatFieldMetadataTypeSpecificitiesArgs =
-  FlatEntityValidationArgs<'fieldMetadata'> & {
-    update?: FlatEntityUpdate<'fieldMetadata'>;
-  };
 
 const rejectUserCreation = (
   fieldType: FieldMetadataType,
@@ -27,7 +23,7 @@ const rejectUserCreation = (
   userFriendlyMessage: ReturnType<typeof msg>,
 ) => {
   return (
-    args: GenericValidateFlatFieldMetadataTypeSpecificitiesArgs,
+    args: FlatFieldMetadataTypeValidationArgs<FieldMetadataType>,
   ): FlatFieldMetadataValidationError[] => {
     const isCreation = !isDefined(args.update);
     const isCustomField = args.flatEntityToValidate.isCustom;
@@ -94,7 +90,7 @@ export class FlatFieldMetadataTypeValidatorService {
     };
 
   public validateFlatFieldMetadataTypeSpecificities(
-    args: GenericValidateFlatFieldMetadataTypeSpecificitiesArgs,
+    args: FlatFieldMetadataTypeValidationArgs<FieldMetadataType>,
   ): FlatFieldMetadataValidationError[] {
     const { flatEntityToValidate } = args;
     const fieldType = flatEntityToValidate.type;

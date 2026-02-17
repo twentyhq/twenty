@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
-export const LOAD_SKILL_TOOL_NAME = 'load_skill';
+export const LOAD_SKILL_TOOL_NAME = 'load_skills';
 
 export const loadSkillInputSchema = z.object({
   skillNames: z
@@ -47,7 +47,7 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
         label: skill.label,
         content: skill.content,
       })),
-      message: `Loaded ${skills.length} skill(s). Follow the instructions in the skill content.`,
+      message: `Loaded ${skills.map((skill) => skill.label).join(', ')}`,
     };
   },
 });

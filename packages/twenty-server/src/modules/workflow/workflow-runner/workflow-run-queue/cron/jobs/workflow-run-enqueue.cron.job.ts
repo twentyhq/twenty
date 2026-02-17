@@ -5,6 +5,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -32,6 +33,7 @@ export class WorkflowRunEnqueueCronJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(WorkflowRunEnqueueCronJob.name)
@@ -52,17 +54,25 @@ export class WorkflowRunEnqueueCronJob {
     let enqueuedCount = 0;
 
     for (const workspace of activeWorkspaces) {
-      const hasNotStartedRuns = await this.hasNotStartedRuns(workspace.id);
+      try {
+        const hasNotStartedRuns = await this.hasNotStartedRuns(workspace.id);
 
-      if (hasNotStartedRuns) {
-        await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
-          WorkflowRunEnqueueJob.name,
-          {
-            workspaceId: workspace.id,
-            isCacheMode: false,
+        if (hasNotStartedRuns) {
+          await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
+            WorkflowRunEnqueueJob.name,
+            {
+              workspaceId: workspace.id,
+              isCacheMode: false,
+            },
+          );
+          enqueuedCount++;
+        }
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: workspace.id,
           },
-        );
-        enqueuedCount++;
+        });
       }
     }
 

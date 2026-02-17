@@ -29,7 +29,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext } from 'react';
-import { type PageLayoutType } from '~/generated/graphql';
+import { type PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;

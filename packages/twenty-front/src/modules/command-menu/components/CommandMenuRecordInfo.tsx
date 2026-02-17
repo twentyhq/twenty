@@ -1,3 +1,4 @@
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
@@ -11,15 +12,18 @@ import { recordStoreIdentifierFamilySelector } from '@/object-record/record-stor
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui/display';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const CommandMenuRecordInfo = ({
   commandMenuPageInstanceId,
@@ -51,10 +55,15 @@ export const CommandMenuRecordInfo = ({
     }),
   );
 
+  const isFilesFieldMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+  );
+
   const recordIdentifier = useRecoilValue(
     recordStoreIdentifierFamilySelector({
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,
+      isFilesFieldMigrated,
     }),
   );
 
@@ -80,7 +89,6 @@ export const CommandMenuRecordInfo = ({
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
-    objectRecordId,
   });
 
   const fieldDefinition = {

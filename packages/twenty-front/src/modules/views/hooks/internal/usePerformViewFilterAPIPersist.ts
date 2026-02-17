@@ -17,7 +17,7 @@ import {
   useDeleteCoreViewFilterMutation,
   useDestroyCoreViewFilterMutation,
   useUpdateCoreViewFilterMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const usePerformViewFilterAPIPersist = () => {
   const { triggerViewFilterOptimisticEffect } =

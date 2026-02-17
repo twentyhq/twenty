@@ -48,6 +48,14 @@ export type { MenuItemSuggestionProps } from './menu/menu-item/components/MenuIt
 export { MenuItemSuggestion } from './menu/menu-item/components/MenuItemSuggestion';
 export type { MenuItemToggleProps } from './menu/menu-item/components/MenuItemToggle';
 export { MenuItemToggle } from './menu/menu-item/components/MenuItemToggle';
+export type { MenuItemIconProps } from './menu/menu-item/internals/components/MenuItemIcon';
+export { MenuItemIcon } from './menu/menu-item/internals/components/MenuItemIcon';
+export {
+  StyledIconContainer,
+  MenuItemIconBoxContainer,
+} from './menu/menu-item/internals/components/MenuItemIconBoxContainer';
+export type { MenuItemIconWithGripSwapProps } from './menu/menu-item/internals/components/MenuItemIconWithGripSwap';
+export { MenuItemIconWithGripSwap } from './menu/menu-item/internals/components/MenuItemIconWithGripSwap';
 export { MenuItemLeftContent } from './menu/menu-item/internals/components/MenuItemLeftContent';
 export type { MenuItemBaseProps } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export {
@@ -64,6 +72,7 @@ export {
   StyledRightMenuItemContextualText,
 } from './menu/menu-item/internals/components/StyledMenuItemBase';
 export type { MenuItemAccent } from './menu/menu-item/types/MenuItemAccent';
+export type { MenuItemDraggableGripMode } from './menu/menu-item/types/MenuItemDraggableGripMode';
 export { NavigationBar } from './navigation-bar/components/NavigationBar';
 export { NavigationBarItem } from './navigation-bar/components/NavigationBarItem';
 export { NotificationCounter } from './notification-counter/components/NotificationCounter';

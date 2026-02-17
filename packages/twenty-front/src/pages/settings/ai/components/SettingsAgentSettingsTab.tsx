@@ -11,17 +11,17 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { type Agent } from '~/generated/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -66,7 +66,7 @@ export const SettingsAgentSettingsTab = ({
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
   const activeModelOptions = useAiModelOptions();
   const currentModelLabel = useAiModelLabel(formValues.modelId);
 

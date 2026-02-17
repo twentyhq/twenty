@@ -1,42 +1,36 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import {
   type CircularDependencyValidationResult,
   validateFlatEntityCircularDependency,
 } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 
-type TestFlatEntity = SyncableFlatEntity & {
-  parentId: string | null;
+type TestFlatEntity = UniversalSyncableFlatEntity & {
+  parentUniversalIdentifier: string | null;
 };
 
-const createFlatEntityMaps = (
+const createUniversalFlatEntityMaps = (
   entities: TestFlatEntity[],
-): FlatEntityMaps<TestFlatEntity> => ({
+): UniversalFlatEntityMaps<TestFlatEntity> => ({
   byUniversalIdentifier: Object.fromEntries(
     entities.map((entity) => [entity.universalIdentifier, entity]),
   ),
-  universalIdentifierById: Object.fromEntries(
-    entities.map((entity) => [entity.id, entity.universalIdentifier]),
-  ),
-  universalIdentifiersByApplicationId: {},
 });
 
 const createTestEntity = (
-  id: string,
-  parentId: string | null = null,
+  universalIdentifier: string,
+  parentUniversalIdentifier: string | null = null,
 ): TestFlatEntity => ({
-  id,
-  parentId,
-  universalIdentifier: id,
-  applicationId: 'test-app',
-  workspaceId: 'test-workspace',
+  parentUniversalIdentifier,
+  universalIdentifier,
+  applicationUniversalIdentifier: 'test-app',
 });
 
 type TestContext = {
-  flatEntityId: string;
-  flatEntityParentId: string;
+  flatEntityUniversalIdentifier: string;
+  flatEntityParentUniversalIdentifier: string;
   maxDepth?: number;
   entities: TestFlatEntity[];
   expected: CircularDependencyValidationResult;
@@ -48,8 +42,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should fail with self_reference when entity is its own parent',
     context: {
-      flatEntityId: 'entity-1',
-      flatEntityParentId: 'entity-1',
+      flatEntityUniversalIdentifier: 'entity-1',
+      flatEntityParentUniversalIdentifier: 'entity-1',
       entities: [],
       expected: {
         status: 'fail',
@@ -60,8 +54,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should succeed with depth 2 when parent has no parent',
     context: {
-      flatEntityId: 'entity-child',
-      flatEntityParentId: 'entity-parent',
+      flatEntityUniversalIdentifier: 'entity-child',
+      flatEntityParentUniversalIdentifier: 'entity-parent',
       entities: [createTestEntity('entity-parent', null)],
       expected: {
         status: 'success',
@@ -72,8 +66,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should succeed with depth 3 when parent has a grandparent',
     context: {
-      flatEntityId: 'entity-child',
-      flatEntityParentId: 'entity-parent',
+      flatEntityUniversalIdentifier: 'entity-child',
+      flatEntityParentUniversalIdentifier: 'entity-parent',
       entities: [
         createTestEntity('entity-grandparent', null),
         createTestEntity('entity-parent', 'entity-grandparent'),
@@ -88,8 +82,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
     title:
       'should fail with circular_dependency when parent points back to entity',
     context: {
-      flatEntityId: 'entity-a',
-      flatEntityParentId: 'entity-b',
+      flatEntityUniversalIdentifier: 'entity-a',
+      flatEntityParentUniversalIdentifier: 'entity-b',
       entities: [createTestEntity('entity-b', 'entity-a')],
       expected: {
         status: 'fail',
@@ -102,8 +96,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
     title:
       'should fail with circular_dependency when chain creates a cycle (A -> B -> C -> A)',
     context: {
-      flatEntityId: 'entity-a',
-      flatEntityParentId: 'entity-b',
+      flatEntityUniversalIdentifier: 'entity-a',
+      flatEntityParentUniversalIdentifier: 'entity-b',
       entities: [
         createTestEntity('entity-b', 'entity-c'),
         createTestEntity('entity-c', 'entity-a'),
@@ -119,8 +113,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
     title:
       'should fail with circular_dependency when ancestors form a cycle among themselves',
     context: {
-      flatEntityId: 'entity-new',
-      flatEntityParentId: 'entity-a',
+      flatEntityUniversalIdentifier: 'entity-new',
+      flatEntityParentUniversalIdentifier: 'entity-a',
       entities: [
         createTestEntity('entity-a', 'entity-b'),
         createTestEntity('entity-b', 'entity-a'),
@@ -135,8 +129,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should succeed when parent does not exist in maps',
     context: {
-      flatEntityId: 'entity-child',
-      flatEntityParentId: 'non-existent-parent',
+      flatEntityUniversalIdentifier: 'entity-child',
+      flatEntityParentUniversalIdentifier: 'non-existent-parent',
       entities: [],
       expected: {
         status: 'success',
@@ -147,8 +141,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should fail with max_depth_exceeded when depth exceeds maxDepth',
     context: {
-      flatEntityId: 'entity-child',
-      flatEntityParentId: 'entity-parent',
+      flatEntityUniversalIdentifier: 'entity-child',
+      flatEntityParentUniversalIdentifier: 'entity-parent',
       maxDepth: 2,
       entities: [
         createTestEntity('entity-grandparent', null),
@@ -164,8 +158,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should succeed when depth equals maxDepth',
     context: {
-      flatEntityId: 'entity-child',
-      flatEntityParentId: 'entity-parent',
+      flatEntityUniversalIdentifier: 'entity-child',
+      flatEntityParentUniversalIdentifier: 'entity-parent',
       maxDepth: 3,
       entities: [
         createTestEntity('entity-grandparent', null),
@@ -180,8 +174,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should succeed with depth 2 when maxDepth is 2 and parent is root',
     context: {
-      flatEntityId: 'entity-child',
-      flatEntityParentId: 'entity-parent',
+      flatEntityUniversalIdentifier: 'entity-child',
+      flatEntityParentUniversalIdentifier: 'entity-parent',
       maxDepth: 2,
       entities: [createTestEntity('entity-parent', null)],
       expected: {
@@ -194,8 +188,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
     title:
       'should check max depth before circular dependency to prevent infinite loop',
     context: {
-      flatEntityId: 'entity-new',
-      flatEntityParentId: 'entity-a',
+      flatEntityUniversalIdentifier: 'entity-new',
+      flatEntityParentUniversalIdentifier: 'entity-a',
       maxDepth: 2,
       entities: [
         createTestEntity('entity-a', 'entity-b'),
@@ -213,8 +207,8 @@ const testCases: ValidateCircularDependencyTestCase[] = [
   {
     title: 'should handle deep valid hierarchy without maxDepth',
     context: {
-      flatEntityId: 'entity-new',
-      flatEntityParentId: 'entity-1',
+      flatEntityUniversalIdentifier: 'entity-new',
+      flatEntityParentUniversalIdentifier: 'entity-1',
       entities: [
         createTestEntity('entity-5', null),
         createTestEntity('entity-4', 'entity-5'),
@@ -232,13 +226,14 @@ const testCases: ValidateCircularDependencyTestCase[] = [
 
 describe('validateFlatEntityCircularDependency', () => {
   test.each(testCases)('$title', ({ context }) => {
-    const flatEntityMaps = createFlatEntityMaps(context.entities);
+    const flatEntityMaps = createUniversalFlatEntityMaps(context.entities);
 
     const result = validateFlatEntityCircularDependency({
-      flatEntityId: context.flatEntityId,
-      flatEntityParentId: context.flatEntityParentId,
+      flatEntityUniversalIdentifier: context.flatEntityUniversalIdentifier,
+      flatEntityParentUniversalIdentifier:
+        context.flatEntityParentUniversalIdentifier,
       maxDepth: context.maxDepth,
-      parentIdKey: 'parentId',
+      parentUniversalIdentifierKey: 'parentUniversalIdentifier',
       flatEntityMaps,
     });
 

@@ -23,6 +23,8 @@ const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
     case 'createdAt':
     case 'updatedAt':
     case 'deletedAt':
+    case 'createdBy':
+    case 'updatedBy':
       return false;
     default:
       return true;
@@ -253,7 +255,17 @@ export const generateRecordPropertiesZodSchema = (
         break;
     }
 
-    if (field.description) {
+    if (field.name === 'position') {
+      fieldSchema = z.union([
+        z.number(),
+        z.literal('first'),
+        z.literal('last'),
+      ]);
+
+      fieldSchema = fieldSchema.describe(
+        'Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).',
+      );
+    } else if (field.description) {
       fieldSchema = fieldSchema.describe(field.description);
     }
 

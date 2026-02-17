@@ -7,6 +7,9 @@ test('Create workflow', async ({ page }) => {
 
   await page.goto(process.env.LINK);
 
+  const workflowsFolder = page.getByRole('button', { name: 'Workflows' });
+  await workflowsFolder.click();
+
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
 

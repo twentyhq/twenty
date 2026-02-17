@@ -10,12 +10,12 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
+import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
@@ -29,7 +29,7 @@ export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
 } & Pick<
   AllFlatEntityMaps,
   'flatFieldMetadataMaps' | 'flatViewFilterGroupMaps'
->): FlatViewFilter => {
+>): UniversalFlatViewFilter => {
   const { id: viewFilterToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateViewFilterInput,

@@ -11,6 +11,7 @@ type MetadataRequiredForValidation = {
   };
 };
 
+// TODO deprecate in favor of ALL_METADATA_SERIALIZED_RELATION
 export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   fieldMetadata: {
     objectMetadata: true,
@@ -26,6 +27,10 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     view: true,
     fieldMetadata: true,
     objectMetadata: true,
+    viewFieldGroup: true,
+  },
+  viewFieldGroup: {
+    view: true,
   },
   index: {
     objectMetadata: true,

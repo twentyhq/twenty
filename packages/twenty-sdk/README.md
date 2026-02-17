@@ -15,7 +15,7 @@
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
 - Type‑safe client and workspace entity typings
-- Built‑in CLI for auth, dev mode (watch & sync), generate, uninstall, and function management
+- Built‑in CLI for auth, dev mode (watch & sync), uninstall, and function management
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
 ## Documentation
@@ -52,13 +52,14 @@ Commands:
   auth:switch          Switch the default workspace
   auth:list            List all configured workspaces
   app:dev              Watch and sync local application changes
-  app:generate         Generate Twenty client
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
   function:logs        Watch application function logs
   function:execute     Execute a logic function with a JSON payload
   help [command]       display help for command
 ```
+
+In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty app:dev`, etc.
 
 ## Global Options
 
@@ -125,8 +126,6 @@ Application development commands.
 
 - `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
 
-- `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
-
 ### Entity
 
 - `twenty entity:add [entityType]` — Add a new entity to your application.
@@ -170,9 +169,6 @@ twenty entity:add function
 
 # Add a new front component
 twenty entity:add front-component
-
-# Generate client types
-twenty app:generate
 
 # Uninstall the app from the workspace
 twenty app:uninstall
@@ -229,7 +225,7 @@ Notes:
 
 ## Troubleshooting
 - Auth errors: run `twenty auth:login` again and ensure the API key has the required permissions.
-- Typings out of date: run `twenty app:generate` to refresh the client and types.
+- Typings out of date: restart `twenty app:dev` to refresh the client and types.
 - Not seeing changes in dev: make sure dev mode is running (`twenty app:dev`).
 
 ## Contributing

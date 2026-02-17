@@ -1,8 +1,9 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -36,7 +37,7 @@ import { WorkspaceEventEmitterExceptionFilter } from 'src/engine/workspace-event
 
 import { eventStreamIdToChannelId } from './utils/get-channel-id-from-event-stream-id';
 
-@Resolver()
+@MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -141,6 +142,7 @@ export class WorkspaceEventEmitterResolver {
     }
 
     return wrapAsyncIteratorWithLifecycle(iterator, {
+      initialValue: [],
       onHeartbeat: () =>
         this.eventStreamService.refreshEventStreamTTL({
           workspaceId: workspace.id,

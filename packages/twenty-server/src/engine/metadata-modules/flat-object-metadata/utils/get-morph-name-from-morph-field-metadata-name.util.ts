@@ -1,8 +1,8 @@
 import { type FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { searchAndReplaceLast } from 'src/engine/metadata-modules/flat-object-metadata/utils/search-and-replace-last.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export const getMorphNameFromMorphFieldMetadataName = ({
   morphRelationFlatFieldMetadata,
@@ -10,14 +10,14 @@ export const getMorphNameFromMorphFieldMetadataName = ({
   namePlural,
 }: {
   morphRelationFlatFieldMetadata: Pick<
-    FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
-    'name' | 'settings'
+    UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
+    'name' | 'universalSettings'
   >;
   nameSingular: string;
   namePlural: string;
 }): string => {
   const isManyToOneRelationType =
-    morphRelationFlatFieldMetadata.settings.relationType ===
+    morphRelationFlatFieldMetadata.universalSettings.relationType ===
     RelationType.MANY_TO_ONE;
 
   return searchAndReplaceLast({

@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
@@ -25,19 +24,13 @@ export default defineConfig({
       configPath: path.resolve(__dirname, './lingui.config.ts'),
     }),
     tsconfigPaths({
-      root: __dirname
-    }),
-    dts({
-      entryRoot: 'src',
-      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+      root: __dirname,
     }),
   ],
 
-  // Configuration for building your library.
-  // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
     outDir: './dist',
-    reportCompressedSize: true,
+    reportCompressedSize: false,
     commonjsOptions: {
       transformMixedEsModules: true,
     },

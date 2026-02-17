@@ -59,6 +59,7 @@ export const USER_QUERY_FRAGMENT = gql`
       isMicrosoftAuthBypassEnabled
       isPasswordAuthBypassEnabled
       subdomain
+      customDomain
       hasValidEnterpriseKey
       workspaceCustomApplication {
         id
@@ -88,6 +89,7 @@ export const USER_QUERY_FRAGMENT = gql`
       }
       fastModel
       smartModel
+      aiAdditionalInstructions
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

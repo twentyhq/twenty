@@ -13,7 +13,7 @@ import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/l
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application-layer/utils/copy-yarn-engine-and-build-dependencies';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 export interface LocalDriverOptions {
@@ -76,6 +76,7 @@ export class LocalDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier,
     payload,
     env,
+    timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build({
       flatApplication,
@@ -89,17 +90,13 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const inMemoryBuiltHandlerPath = join(
-        sourceTemporaryDir,
-        flatLogicFunction.builtHandlerPath,
-      );
-
-      await this.logicFunctionResourceService.copyBuiltCodeInMemory({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        builtHandlerPath: flatLogicFunction.builtHandlerPath,
-        inMemoryDestinationPath: inMemoryBuiltHandlerPath,
-      });
+      const inMemoryBuiltHandlerPath =
+        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          inMemoryDestinationPath: sourceTemporaryDir,
+        });
 
       try {
         await fs.symlink(
@@ -161,7 +158,7 @@ export class LocalDriver implements LogicFunctionDriver {
             runnerPath,
             env: env ?? {},
             payload,
-            timeoutMs: 900_000, // timeout is handled by the logic function service
+            timeoutMs,
           });
 
         if (stdout)

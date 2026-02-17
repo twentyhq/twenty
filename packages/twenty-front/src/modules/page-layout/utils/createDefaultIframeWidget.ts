@@ -3,7 +3,7 @@ import {
   type PageLayoutWidget,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const createDefaultIframeWidget = (
   id: string,

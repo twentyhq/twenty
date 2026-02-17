@@ -82,6 +82,7 @@ export class MessagingMessagesImportJob {
         isThrottled(
           messageChannel.syncStageStartedAt,
           messageChannel.throttleFailureCount,
+          messageChannel.throttleRetryAfter,
         )
       ) {
         await this.messageChannelSyncStatusService.markAsMessagesImportPending(

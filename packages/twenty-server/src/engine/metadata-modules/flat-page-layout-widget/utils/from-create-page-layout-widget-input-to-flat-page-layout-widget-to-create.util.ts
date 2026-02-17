@@ -5,6 +5,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
@@ -15,7 +16,7 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
     flatApplication: FlatApplication;
   } & Pick<
     AllFlatEntityMaps,
-    'flatPageLayoutTabMaps' | 'flatObjectMetadataMaps'
+    'flatPageLayoutTabMaps' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   >;
 
 export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
@@ -24,6 +25,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   flatApplication,
   flatPageLayoutTabMaps,
   flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
 }: FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs): FlatPageLayoutWidget => {
   const { pageLayoutTabId, ...createPageLayoutWidgetInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -69,5 +71,12 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     conditionalDisplay: null,
+    universalConfiguration:
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: createPageLayoutWidgetInput.configuration,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        shouldThrowOnMissingIdentifier: true,
+      }),
   };
 };

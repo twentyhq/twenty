@@ -1,6 +1,10 @@
 import { DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPersonRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -14,11 +18,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-fields',
       title: 'Home',
       icon: 'IconHome',
       position: 100,
-      layoutMode: 'vertical-list',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -51,11 +56,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
       position: 200,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -88,11 +94,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-tasks',
       title: 'Tasks',
       icon: 'IconCheckbox',
       position: 300,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -125,11 +132,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-notes',
       title: 'Notes',
       icon: 'IconNotes',
       position: 400,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -162,11 +170,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',
       position: 500,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -199,11 +208,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-emails',
       title: 'Emails',
       icon: 'IconMail',
       position: 600,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -236,11 +246,12 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-calendar',
       title: 'Calendar',
       icon: 'IconCalendarEvent',
       position: 700,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

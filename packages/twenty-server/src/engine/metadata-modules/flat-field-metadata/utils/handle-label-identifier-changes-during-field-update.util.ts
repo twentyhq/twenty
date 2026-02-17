@@ -58,8 +58,8 @@ export const handleLabelIdentifierChangesDuringFieldUpdate = ({
 
     return {
       ...searchVectorField,
-      settings: {
-        ...searchVectorField.settings,
+      universalSettings: {
+        ...searchVectorField.universalSettings,
         asExpression: newAsExpression,
       },
     };

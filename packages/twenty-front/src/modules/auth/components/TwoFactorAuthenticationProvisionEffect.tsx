@@ -5,10 +5,12 @@ import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-f
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
@@ -18,8 +20,8 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
   const loginToken = useRecoilValue(loginTokenState);
-  const qrCode = useRecoilValue(qrCodeState);
-  const setQrCodeState = useSetRecoilState(qrCodeState);
+  const qrCode = useRecoilValueV2(qrCodeState);
+  const setQrCodeState = useSetRecoilStateV2(qrCodeState);
 
   const { t } = useLingui();
 

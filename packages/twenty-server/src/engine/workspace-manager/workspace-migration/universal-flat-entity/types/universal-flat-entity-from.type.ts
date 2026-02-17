@@ -1,14 +1,15 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 
+import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
+import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import { type AddSuffixToEntityManyToOneProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-many-to-one-properties.type';
 import { type AddSuffixToEntityOneToManyProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-one-to-many-properties.type';
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
-import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
-import { type FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 
 export type UniversalSyncableFlatEntity = Omit<
   SyncableEntity,
@@ -46,7 +47,8 @@ export type UniversalFlatEntityFrom<
   | 'applicationId'
   | 'workspaceId'
   | 'id'
-  | ExtractEntityRelatedEntityProperties<TEntity>
+  | keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]
+  | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
   | AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName>

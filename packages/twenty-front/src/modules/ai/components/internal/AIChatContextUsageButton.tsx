@@ -1,12 +1,19 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
+import {
+  agentChatUsageStateV2,
+  type AgentChatLastMessageUsage,
+} from '@/ai/states/agentChatUsageStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -14,15 +21,12 @@ const StyledContainer = styled.div`
 
 const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   align-items: center;
-  background: transparent;
-  border: 1px solid ${({ theme }) => theme.background.transparent.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: ${({ hasUsage }) => (hasUsage ? 'pointer' : 'default')};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
   height: 24px;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  transition: background 0.1s ease;
+  justify-content: center;
+  min-width: 24px;
+  transition: background ${({ theme }) => theme.animation.duration.fast}s ease;
 
   &:hover {
     background: ${({ theme, hasUsage }) =>
@@ -30,25 +34,19 @@ const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   }
 `;
 
-const StyledPercentage = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
 const StyledHoverCard = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  min-width: 240px;
+  min-width: 280px;
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: calc(100% + 8px);
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-const StyledHeader = styled.div`
+const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -61,33 +59,17 @@ const StyledRow = styled.div`
   justify-content: space-between;
 `;
 
-const StyledBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
-  padding-top: 0;
-`;
-
-const StyledLabel = styled.span`
+const StyledContextWindowValue = styled.span`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledValue = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledFooter = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 0 0 ${({ theme }) => theme.border.radius.md}
-    ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(3)};
+const StyledSectionTitle = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const formatTokenCount = (count: number): string => {
@@ -103,32 +85,56 @@ const formatTokenCount = (count: number): string => {
   return count.toString();
 };
 
+const formatCredits = (credits: number): string => {
+  // Credits are already in display units from the API (internal / 1000)
+  // Show up to 1 decimal for fractional values, none for whole numbers
+  if (Number.isInteger(credits)) {
+    return credits.toLocaleString();
+  }
+
+  return credits.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+  });
+};
+
+const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
+  if (lastMessage.cachedInputTokens <= 0 || lastMessage.inputTokens <= 0) {
+    return '';
+  }
+
+  const cachedPercent = Math.round(
+    (lastMessage.cachedInputTokens / lastMessage.inputTokens) * 100,
+  );
+
+  return ` (${t`${cachedPercent}% cached`})`;
+};
+
 export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
-  const agentChatUsage = useRecoilValue(agentChatUsageState);
+  const agentChatUsage = useRecoilValueV2(agentChatUsageStateV2);
 
   if (!agentChatUsage) {
     return (
       <StyledContainer>
         <StyledTrigger hasUsage={false}>
           <ContextUsageProgressRing percentage={0} />
-          <StyledPercentage>0%</StyledPercentage>
         </StyledTrigger>
       </StyledContainer>
     );
   }
 
   const percentage = Math.min(
-    (agentChatUsage.totalTokens / agentChatUsage.contextWindowTokens) * 100,
+    (agentChatUsage.conversationSize / agentChatUsage.contextWindowTokens) *
+      100,
     100,
   );
   const formattedPercentage = percentage.toFixed(1);
   const totalCredits =
     agentChatUsage.inputCredits + agentChatUsage.outputCredits;
-  const inputCredits = agentChatUsage.inputCredits.toLocaleString();
-  const outputCredits = agentChatUsage.outputCredits.toLocaleString();
+  const lastMessage = agentChatUsage.lastMessage;
 
   return (
     <StyledContainer
@@ -137,18 +143,21 @@ export const AIChatContextUsageButton = () => {
     >
       <StyledTrigger hasUsage={true}>
         <ContextUsageProgressRing percentage={percentage} />
-        <StyledPercentage>{formattedPercentage}%</StyledPercentage>
       </StyledTrigger>
 
       {isHovered && (
         <StyledHoverCard>
-          <StyledHeader>
+          <StyledSection>
+            <StyledSectionTitle>{t`Context window`}</StyledSectionTitle>
             <StyledRow>
-              <StyledPercentage>{formattedPercentage}%</StyledPercentage>
-              <StyledValue>
-                {formatTokenCount(agentChatUsage.totalTokens)} /{' '}
-                {formatTokenCount(agentChatUsage.contextWindowTokens)}
-              </StyledValue>
+              <StyledContextWindowValue>
+                {formattedPercentage}%
+              </StyledContextWindowValue>
+              <StyledContextWindowValue>
+                {formatTokenCount(agentChatUsage.conversationSize)} /{' '}
+                {formatTokenCount(agentChatUsage.contextWindowTokens)}{' '}
+                {t`tokens`}
+              </StyledContextWindowValue>
             </StyledRow>
             <ProgressBar
               value={percentage}
@@ -159,32 +168,48 @@ export const AIChatContextUsageButton = () => {
                     ? theme.color.orange
                     : theme.color.blue
               }
-              backgroundColor={theme.background.quaternary}
+              backgroundColor={theme.background.tertiary}
               withBorderRadius
             />
-          </StyledHeader>
+          </StyledSection>
 
-          <StyledBody>
-            <StyledRow>
-              <StyledLabel>{t`Input`}</StyledLabel>
-              <StyledValue>
-                {formatTokenCount(agentChatUsage.inputTokens)} •{' '}
-                {t`${inputCredits} credits`}
-              </StyledValue>
-            </StyledRow>
-            <StyledRow>
-              <StyledLabel>{t`Output`}</StyledLabel>
-              <StyledValue>
-                {formatTokenCount(agentChatUsage.outputTokens)} •{' '}
-                {t`${outputCredits} credits`}
-              </StyledValue>
-            </StyledRow>
-          </StyledBody>
+          {isDefined(lastMessage) && (
+            <>
+              <HorizontalSeparator noMargin color={theme.background.tertiary} />
+              <StyledSection>
+                <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
+                <SettingsBillingLabelValueItem
+                  label={t`Input tokens`}
+                  value={`${formatTokenCount(lastMessage.inputTokens)}${getCachedLabel(lastMessage)}`}
+                />
+                <SettingsBillingLabelValueItem
+                  label={t`Output tokens`}
+                  value={formatTokenCount(lastMessage.outputTokens)}
+                />
+                <SettingsBillingLabelValueItem
+                  label={t`Cost`}
+                  value={`${formatCredits(lastMessage.inputCredits + lastMessage.outputCredits)} ${t`credits`}`}
+                />
+              </StyledSection>
+            </>
+          )}
 
-          <StyledFooter>
-            <StyledLabel>{t`Total credits`}</StyledLabel>
-            <StyledPercentage>{totalCredits.toLocaleString()}</StyledPercentage>
-          </StyledFooter>
+          <HorizontalSeparator noMargin color={theme.background.tertiary} />
+          <StyledSection>
+            <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
+            <SettingsBillingLabelValueItem
+              label={t`Input tokens`}
+              value={formatTokenCount(agentChatUsage.inputTokens)}
+            />
+            <SettingsBillingLabelValueItem
+              label={t`Output tokens`}
+              value={formatTokenCount(agentChatUsage.outputTokens)}
+            />
+            <SettingsBillingLabelValueItem
+              label={t`Total cost`}
+              value={`${formatCredits(totalCredits)} ${t`credits`}`}
+            />
+          </StyledSection>
         </StyledHoverCard>
       )}
     </StyledContainer>

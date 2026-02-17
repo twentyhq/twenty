@@ -28,6 +28,7 @@ export enum SettingsPath {
   EmailingDomainDetail = 'domains/emailing-domain/:domainId',
   Updates = 'updates',
   AI = 'ai',
+  AIPrompts = 'ai/prompts',
   AINewAgent = 'ai/new-agent',
   AIAgentDetail = 'ai/agents/:agentId',
   AIAgentTurnDetail = 'ai/agents/:agentId/turns/:turnId',

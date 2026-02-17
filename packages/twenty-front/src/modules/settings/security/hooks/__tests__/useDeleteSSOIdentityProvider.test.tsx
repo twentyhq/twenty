@@ -8,6 +8,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const mutationDeleteSSOIDPCallSpy = jest.fn();
 
 jest.mock('~/generated-metadata/graphql', () => ({
+  ...jest.requireActual('~/generated-metadata/graphql'),
   useDeleteSsoIdentityProviderMutation: () => [mutationDeleteSSOIDPCallSpy],
 }));
 

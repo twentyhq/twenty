@@ -70,3 +70,14 @@ export const VIEW_FILTER_GROUP_GQL_FIELDS = `
     updatedAt
     deletedAt
 `;
+
+export const VIEW_FIELD_GROUP_GQL_FIELDS = `
+    id
+    name
+    position
+    isVisible
+    viewId
+    createdAt
+    updatedAt
+    deletedAt
+`;

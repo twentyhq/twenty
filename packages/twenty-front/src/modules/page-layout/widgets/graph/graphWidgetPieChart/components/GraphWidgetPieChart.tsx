@@ -31,7 +31,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type PieChartConfiguration,
   type PieChartDataItem,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];

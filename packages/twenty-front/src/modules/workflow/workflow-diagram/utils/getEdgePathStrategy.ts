@@ -12,8 +12,9 @@ export const getEdgePathStrategy = ({
   steps: WorkflowStep[];
 }) => {
   const nextStep = steps.find((s) => s.id === nextStepId);
+
   if (!isDefined(nextStep)) {
-    throw new Error('Expected to find step defined in nextStepIds');
+    return undefined;
   }
 
   const useLoopBackToIteratorStyle =

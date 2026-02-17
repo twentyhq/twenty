@@ -34,7 +34,7 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.cronTriggerSettings.pattern).toBeDefined();
+    expect(result.config.cronTriggerSettings?.pattern).toBeDefined();
   });
 
   it('should accept databaseEventTriggerSettings', () => {
@@ -49,7 +49,7 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.databaseEventTriggerSettings.eventName).toBeDefined();
+    expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
   });
 
   it('should pass through optional fields', () => {

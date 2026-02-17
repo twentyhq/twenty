@@ -1,11 +1,14 @@
-import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
+import {
+  type FirstDayOfTheWeek,
+  type ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export type GroupByRegularField = {
   fieldMetadata: FlatFieldMetadata;
   subFieldName?: string;
+  shouldUnnest?: boolean;
 };
 
 export type GroupByDateField = {

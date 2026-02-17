@@ -1,33 +1,36 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const createFlatEntityToValidate = (
-  overrides: Partial<FlatFieldMetadata<FieldMetadataType.FILES>> = {},
-): FlatFieldMetadata<FieldMetadataType.FILES> =>
+  overrides: Partial<UniversalFlatFieldMetadata<FieldMetadataType.FILES>> = {},
+): UniversalFlatFieldMetadata<FieldMetadataType.FILES> =>
   ({
     type: FieldMetadataType.FILES,
     name: 'testFilesField',
     label: 'Test Files Field',
-    settings: { maxNumberOfValues: 5 },
+    universalSettings: { maxNumberOfValues: 5 },
     isUnique: false,
     ...overrides,
-  }) as FlatFieldMetadata<FieldMetadataType.FILES>;
+  }) as UniversalFlatFieldMetadata<FieldMetadataType.FILES>;
 
 const callValidator = (
-  flatEntityToValidate: FlatFieldMetadata<FieldMetadataType.FILES>,
+  flatEntityToValidate: UniversalFlatFieldMetadata<FieldMetadataType.FILES>,
 ) =>
   validateFilesFlatFieldMetadata({
     flatEntityToValidate,
   } as Parameters<typeof validateFilesFlatFieldMetadata>[0]);
 
+const stripUserFriendlyMessage = (errors: FlatFieldMetadataValidationError[]) =>
+  errors.map(({ userFriendlyMessage: _, ...rest }) => rest);
+
 describe('validateFilesFlatFieldMetadata', () => {
   it('should return no errors for a valid files field', () => {
     const errors = callValidator(createFlatEntityToValidate());
 
-    expect(errors).toHaveLength(0);
+    expect(errors).toMatchInlineSnapshot('[]');
   });
 
   it('should return error when isUnique is true', () => {
@@ -35,40 +38,62 @@ describe('validateFilesFlatFieldMetadata', () => {
       createFlatEntityToValidate({ isUnique: true }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
-    expect(errors[0].message).toContain(
-      'Files field is not supported for unique fields',
-    );
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "Files field is not supported for unique fields",
+  },
+]
+`);
   });
 
-  it('should return error when settings is undefined', () => {
+  it('should return error when universalSettings is undefined', () => {
     const errors = callValidator(
-      createFlatEntityToValidate({ settings: undefined }),
+      createFlatEntityToValidate({ universalSettings: undefined }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
-    expect(errors[0].message).toContain(
-      'maxNumberOfValues must be defined in settings',
-    );
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  },
+]
+`);
   });
 
   it('should return error when maxNumberOfValues is 0', () => {
     const errors = callValidator(
-      createFlatEntityToValidate({ settings: { maxNumberOfValues: 0 } }),
+      createFlatEntityToValidate({
+        universalSettings: { maxNumberOfValues: 0 },
+      }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  },
+]
+`);
   });
 
   it('should return error when maxNumberOfValues exceeds max (11)', () => {
     const errors = callValidator(
-      createFlatEntityToValidate({ settings: { maxNumberOfValues: 11 } }),
+      createFlatEntityToValidate({
+        universalSettings: { maxNumberOfValues: 11 },
+      }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  },
+]
+`);
   });
 });

@@ -18,11 +18,11 @@ import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-func
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-import { ApplicationLayerModule } from 'src/engine/core-modules/application-layer/application-layer.module';
 
 @Module({
   imports: [
@@ -31,7 +31,6 @@ import { ApplicationLayerModule } from 'src/engine/core-modules/application-laye
     TypeOrmModule.forFeature([ApplicationEntity, FeatureFlagEntity]),
     ThrottlerModule,
     ApplicationModule,
-    ApplicationLayerModule,
     AuditModule,
     FeatureFlagModule,
     PermissionsModule,
@@ -45,9 +44,10 @@ import { ApplicationLayerModule } from 'src/engine/core-modules/application-laye
   ],
   providers: [
     LogicFunctionMetadataService,
+    LogicFunctionFromSourceService,
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
-  exports: [LogicFunctionMetadataService],
+  exports: [LogicFunctionMetadataService, LogicFunctionFromSourceService],
 })
 export class LogicFunctionModule {}

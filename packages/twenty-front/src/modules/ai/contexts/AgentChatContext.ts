@@ -8,7 +8,7 @@ export type AgentChatContextValue = {
   error?: Error;
 
   handleSendMessage: () => Promise<void>;
-
+  handleStop: () => void;
   handleRetry: () => void;
 };
 

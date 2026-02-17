@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -61,7 +61,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 
@@ -256,7 +257,7 @@ export const WorkflowDiagramCanvasBase = ({
     return { nodes, edges };
   }, [workflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (

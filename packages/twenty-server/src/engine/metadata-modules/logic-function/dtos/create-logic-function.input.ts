@@ -1,4 +1,4 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -7,6 +7,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator';
@@ -17,10 +18,23 @@ import {
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
+import type { InputJsonSchema } from 'twenty-shared/logic-function';
+
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class CreateLogicFunctionInput {
+export class CreateLogicFunction {
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
   @IsString()
   @IsNotEmpty()
   @Field()
@@ -38,17 +52,23 @@ export class CreateLogicFunctionInput {
   @IsOptional()
   timeoutSeconds?: number;
 
-  @HideField()
-  applicationId: string;
+  @Field(() => graphqlTypeJson, { nullable: false })
+  @IsObject()
+  toolInputSchema: InputJsonSchema;
 
-  @HideField()
-  universalIdentifier?: string;
+  @IsBoolean()
+  @Field({ nullable: true })
+  @IsOptional()
+  isTool?: boolean;
 
-  @HideField()
-  id: string;
+  @IsBoolean()
+  @Field({ nullable: false })
+  isBuildUpToDate: boolean;
 
-  @HideField()
-  checksum: string;
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  checksum?: string;
 
   @IsString()
   @Field({ nullable: false })
@@ -61,16 +81,6 @@ export class CreateLogicFunctionInput {
   @IsString()
   @Field({ nullable: false })
   builtHandlerPath: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  toolInputSchema?: object;
-
-  @IsBoolean()
-  @Field({ nullable: true })
-  @IsOptional()
-  isTool?: boolean;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

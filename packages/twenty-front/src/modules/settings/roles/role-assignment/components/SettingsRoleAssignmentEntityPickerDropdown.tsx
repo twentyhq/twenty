@@ -10,8 +10,8 @@ import {
   type Agent,
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
+  type ApiKeyForRole,
 } from '~/generated-metadata/graphql';
-import { type ApiKeyForRole } from '~/generated/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledLoadingContainer = styled.div`

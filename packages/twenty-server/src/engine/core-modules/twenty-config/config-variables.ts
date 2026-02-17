@@ -1263,6 +1263,15 @@ export class ConfigVariables {
   XAI_API_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Groq integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  GROQ_API_KEY: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,

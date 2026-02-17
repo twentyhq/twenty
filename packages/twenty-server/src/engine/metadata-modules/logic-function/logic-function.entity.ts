@@ -13,6 +13,7 @@ import {
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
+import { type InputJsonSchema } from 'twenty-shared/logic-function';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -23,10 +24,6 @@ export enum LogicFunctionRuntime {
   NODE18 = 'nodejs18.x',
   NODE22 = 'nodejs22.x',
 }
-
-export const DEFAULT_SOURCE_HANDLER_PATH = 'src/index.ts';
-export const DEFAULT_BUILT_HANDLER_PATH = 'src/index.mjs';
-export const DEFAULT_HANDLER_NAME = 'main';
 
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -40,13 +37,13 @@ export class LogicFunctionEntity
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false, default: DEFAULT_SOURCE_HANDLER_PATH })
+  @Column({ nullable: false })
   sourceHandlerPath: string;
 
-  @Column({ nullable: false, default: DEFAULT_BUILT_HANDLER_PATH })
+  @Column({ nullable: false })
   builtHandlerPath: string;
 
-  @Column({ nullable: false, default: DEFAULT_HANDLER_NAME })
+  @Column({ nullable: false })
   handlerName: string;
 
   @Column({ nullable: true, type: 'varchar' })
@@ -63,10 +60,13 @@ export class LogicFunctionEntity
   checksum: string | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  toolInputSchema: JsonbProperty<object> | null;
+  toolInputSchema: JsonbProperty<InputJsonSchema> | null;
 
   @Column({ nullable: false, default: false })
   isTool: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: true })
+  isBuildUpToDate: boolean;
 
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;

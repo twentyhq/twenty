@@ -1,10 +1,11 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useSetRecoilState } from 'recoil';
 
-import { ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
-import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { FOLDER_DROPPABLE_IDS } from '@/ui/layout/draggable-list/utils/folderDroppableIds';
 import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
@@ -15,8 +16,8 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilState(
-    openNavigationMenuItemFolderIdsState,
+  const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
+    openNavigationMenuItemFolderIdsStateV2,
   );
 
   const openDestinationFolder = (folderId: string | null) => {
@@ -48,6 +49,10 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
       return;
     }
 
+    if (isWorkspaceDroppableId(destination.droppableId)) {
+      return;
+    }
+
     const draggedNavigationMenuItem = navigationMenuItems.find(
       (item) => item.id === draggableId,
     );
@@ -57,11 +62,13 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
 
     const destinationFolderId = validateAndExtractFolderId({
       droppableId: destination.droppableId,
-      orphanDroppableId: ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID,
+      orphanDroppableId:
+        NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS,
     });
     const sourceFolderId = validateAndExtractFolderId({
       droppableId: source.droppableId,
-      orphanDroppableId: ORPHAN_NAVIGATION_MENU_ITEMS_DROPPABLE_ID,
+      orphanDroppableId:
+        NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS,
     });
 
     if (

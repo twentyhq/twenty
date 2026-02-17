@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { FlatUpdateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import { UniversalUpdateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatAgentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service';
 
 @Injectable()
@@ -20,8 +20,11 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'create'> {
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.agent,
+    'create'
+  > {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentCreation(args);
 
@@ -45,8 +48,11 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'delete'> {
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.agent,
+    'delete'
+  > {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentDeletion(args);
 
@@ -71,7 +77,10 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'update'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.agent,
+    'update'
+  > {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentUpdate(args);
 
@@ -82,12 +91,12 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateAgentAction: FlatUpdateAgentAction = {
+    const updateAgentAction: UniversalUpdateAgentAction = {
       type: 'update',
       metadataName: 'agent',
-      entityId: flatEntityId,
+      universalIdentifier,
       update: flatEntityUpdate,
     };
 

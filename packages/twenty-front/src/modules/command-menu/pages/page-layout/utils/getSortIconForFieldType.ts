@@ -12,7 +12,7 @@ import {
   IconSortDescendingLetters,
   IconSortDescendingNumbers,
 } from 'twenty-ui/display';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const getSortIconForFieldType = ({
   fieldType,

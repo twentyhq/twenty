@@ -5,14 +5,7 @@ import {
   UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import assert from 'assert';
 
@@ -23,9 +16,10 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -39,6 +33,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -88,7 +83,7 @@ const OriginHeader = createParamDecorator(
   },
 );
 
-@Resolver(() => WorkspaceEntity)
+@MetadataResolver(() => WorkspaceEntity)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -102,6 +97,7 @@ export class WorkspaceResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
+    private readonly fileUrlService: FileUrlService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
@@ -165,7 +161,7 @@ export class WorkspaceResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
-  async uploadWorkspaceLogo(
+  async uploadWorkspaceLogoLegacy(
     @AuthWorkspace() { id }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
@@ -307,6 +303,23 @@ export class WorkspaceResolver {
 
   @ResolveField(() => String)
   async logo(@Parent() workspace: WorkspaceEntity): Promise<string> {
+    if (
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
+        workspace.id,
+      )
+    ) {
+      if (!isDefined(workspace.logoFileId)) {
+        return '';
+      }
+
+      return this.fileUrlService.signFileByIdUrl({
+        fileId: workspace.logoFileId,
+        workspaceId: workspace.id,
+        fileFolder: FileFolder.CorePicture,
+      });
+    }
+
     if (workspace.logo) {
       try {
         return this.fileService.signFileUrl({

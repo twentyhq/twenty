@@ -161,6 +161,15 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 
+  &:hover {
+    & .grip-swap-default-icon {
+      opacity: 0;
+    }
+    & .grip-swap-hover-icon {
+      opacity: 1;
+    }
+  }
+
   cursor: ${({ cursor, disabled }) => {
     if (!isUndefined(disabled) && disabled !== false) {
       return 'default';

@@ -9,6 +9,7 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export { AggregateOperations } from './AggregateOperations';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
@@ -94,6 +95,7 @@ export type {
 } from './FieldMetadataSettings';
 export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
+export type { FieldMetadataUniversalSettings } from './FieldMetadataUniversalSettings';
 export type { FieldRatingValue } from './FieldRatingValue';
 export type { FileCategory } from './FileCategory';
 export { FILE_CATEGORIES } from './FileCategory';
@@ -104,6 +106,7 @@ export type {
 } from './FilterableFieldType';
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
+export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties.type';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IsEmptyObject } from './IsEmptyObject.type';
@@ -114,6 +117,7 @@ export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
+export type { NavigateOptions } from './NavigateOptions';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
@@ -189,6 +193,7 @@ export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';
 export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
+export type { RemoveSuffix } from './RemoveSuffix.type';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
@@ -211,5 +216,9 @@ export type {
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
+export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
+export { ViewOpenRecordIn } from './ViewOpenRecordIn';
+export { ViewType } from './ViewType';
+export { ViewVisibility } from './ViewVisibility';

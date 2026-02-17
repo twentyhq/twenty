@@ -3,7 +3,7 @@ import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const computeBarChartCategoryTickValues = ({
   axisSize,

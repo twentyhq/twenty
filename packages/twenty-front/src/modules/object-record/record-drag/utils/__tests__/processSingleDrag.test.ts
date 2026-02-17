@@ -86,6 +86,6 @@ describe('processSingleDrag', () => {
         recordsWithPosition: [],
         isDroppedAfterList: false,
       }),
-    ).toThrowError('Cannot find item to move for id : record-1');
+    ).toThrow('Cannot find item to move for id : record-1');
   });
 });

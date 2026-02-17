@@ -17,7 +17,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const { toggleCommandMenu } = useCommandMenu();
@@ -86,6 +86,9 @@ export const useCommandMenuHotKeys = () => {
     },
     focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [goBackFromCommandMenu],
+    options: {
+      enableOnFormTags: false,
+    },
   });
 
   useHotkeysOnFocusedElement({
@@ -119,6 +122,7 @@ export const useCommandMenuHotKeys = () => {
     ],
     options: {
       preventDefault: false,
+      enableOnFormTags: false,
     },
   });
 };

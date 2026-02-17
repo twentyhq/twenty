@@ -307,9 +307,9 @@ function evaluateCurrencyFilter(filter: ResolvedFilter): boolean {
   if (filter.compositeFieldSubFieldName === 'currencyCode') {
     switch (filter.operand) {
       case ViewFilterOperand.IS:
-        return filter.leftOperand === filter.rightOperand;
+        return contains(filter.leftOperand, filter.rightOperand);
       case ViewFilterOperand.IS_NOT:
-        return filter.leftOperand !== filter.rightOperand;
+        return !contains(filter.leftOperand, filter.rightOperand);
       case ViewFilterOperand.IS_EMPTY:
         return !isNonEmptyString(filter.leftOperand);
       case ViewFilterOperand.IS_NOT_EMPTY:

@@ -20,7 +20,7 @@ export default defineConfig({
     },
     projects: [
       {
-        extends: './vite.config.ts',
+        extends: './vite.config.browser.ts',
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
@@ -37,6 +37,7 @@ export default defineConfig({
           },
           setupFiles: ['./.storybook/vitest.setup.ts'],
           testTimeout: 5 * MINUTES_IN_MS,
+          retry: 2,
         },
       },
     ],

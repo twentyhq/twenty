@@ -118,6 +118,7 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.mjs",
+        "silent": true,
         "coverage": true,
         "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
@@ -271,9 +272,6 @@
       "cache": true,
       "inputs": ["default", "^default"]
     }
-  },
-  "installation": {
-    "version": "22.3.3"
   },
   "generators": {
     "@nx/react": {

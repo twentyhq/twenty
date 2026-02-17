@@ -10,7 +10,7 @@ import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const companiesMock = getCompaniesMock();
 
@@ -28,8 +28,6 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
           },
           layoutType: PageLayoutType.RECORD_PAGE,
           isInRightDrawer: false,
-          // TODO: Remove once the traditional record show page is removed.
-          isLegacyRecordShowPage: true,
         }}
       >
         <Story />

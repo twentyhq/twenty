@@ -1,4 +1,4 @@
-import { type BarChartConfiguration } from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 
 type BarChartStyleFields =
   | 'displayDataLabel'

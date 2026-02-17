@@ -1,8 +1,9 @@
 import { UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { EmailingDomainDto } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
@@ -17,7 +18,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
 @UsePipes(ResolverValidationPipe)
-@Resolver(() => EmailingDomainDto)
+@MetadataResolver(() => EmailingDomainDto)
 export class EmailingDomainResolver {
   constructor(private readonly emailingDomainService: EmailingDomainService) {}
 

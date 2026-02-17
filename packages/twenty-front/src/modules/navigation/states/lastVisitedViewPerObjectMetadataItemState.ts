@@ -1,5 +1,5 @@
 import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export const lastVisitedViewPerObjectMetadataItemState = createState<Record<
   string,

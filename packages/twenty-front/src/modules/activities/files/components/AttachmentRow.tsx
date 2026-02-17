@@ -15,15 +15,16 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+import {
+  PermissionFlagType,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
@@ -105,10 +106,8 @@ export const AttachmentRow = ({
     : attachment.fileCategory;
 
   const fileUrl = isFilesFieldMigrated
-    ? attachment.file?.[0]?.url
+    ? (attachment.file?.[0]?.url as string) // TODO : fix attachment.file type after Files field migration
     : attachment.fullPath;
-
-  assertIsDefinedOrThrow(fileUrl, new Error(t`File URL is not defined`));
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,

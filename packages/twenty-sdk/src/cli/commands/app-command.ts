@@ -2,7 +2,6 @@ import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppDevCommand } from './app/app-dev';
-import { AppGenerateCommand } from './app/app-generate';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
@@ -63,7 +62,6 @@ export const registerCommands = (program: Command): void => {
   const devCommand = new AppDevCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
-  const generateCommand = new AppGenerateCommand();
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
 
@@ -79,11 +77,12 @@ export const registerCommands = (program: Command): void => {
   program
     .command('app:uninstall [appPath]')
     .description('Uninstall application from Twenty')
-    .action(async (appPath?: string) => {
+    .option('-y, --yes', 'Skip confirmation prompt')
+    .action(async (appPath?: string, options?: { yes?: boolean }) => {
       try {
         const result = await uninstallCommand.execute({
           appPath: formatPath(appPath),
-          askForConfirmation: true,
+          askForConfirmation: !options?.yes,
         });
         process.exit(result.success ? 0 : 1);
       } catch {
@@ -99,13 +98,6 @@ export const registerCommands = (program: Command): void => {
     )
     .action(async (entityType?: string, options?: { path?: string }) => {
       await addCommand.execute(entityType as SyncableEntity, options?.path);
-    });
-
-  program
-    .command('app:generate [appPath]')
-    .description('Generate Twenty client')
-    .action(async (appPath?: string) => {
-      await generateCommand.execute(formatPath(appPath));
     });
 
   // Function commands

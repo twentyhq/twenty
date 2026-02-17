@@ -2,7 +2,7 @@ import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMembe
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { WorkspaceMemberDateFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberDateFormatEnum } from '~/generated-metadata/graphql';
 
 export const getDateFormatFromWorkspaceMember = (
   workspaceMember: WorkspaceMember | CurrentWorkspaceMember,

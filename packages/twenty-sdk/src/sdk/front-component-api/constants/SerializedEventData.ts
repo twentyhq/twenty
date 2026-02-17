@@ -1,0 +1,26 @@
+export type SerializedEventData = {
+  type: string;
+  altKey?: boolean;
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+  shiftKey?: boolean;
+  clientX?: number;
+  clientY?: number;
+  pageX?: number;
+  pageY?: number;
+  screenX?: number;
+  screenY?: number;
+  button?: number;
+  buttons?: number;
+  key?: string;
+  code?: string;
+  repeat?: boolean;
+  value?: string;
+  checked?: boolean;
+  scrollTop?: number;
+  scrollLeft?: number;
+  deltaX?: number;
+  deltaY?: number;
+  deltaZ?: number;
+  deltaMode?: number;
+};

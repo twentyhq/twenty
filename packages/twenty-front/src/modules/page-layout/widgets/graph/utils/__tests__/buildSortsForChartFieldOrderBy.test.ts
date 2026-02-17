@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { buildSortsForChartFieldOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartFieldOrderBy';
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { GraphOrderBy } from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('buildSortsForChartFieldOrderBy', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

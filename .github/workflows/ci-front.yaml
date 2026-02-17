@@ -28,11 +28,14 @@ jobs:
         packages/twenty-ui/**
         packages/twenty-shared/**
         packages/twenty-sdk/**
+        !packages/twenty-sdk/package.json
   changed-files-check-e2e:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
         packages/**
+        !packages/create-twenty-app/package.json
+        !packages/twenty-sdk/package.json
         playwright.config.ts
         .github/workflows/ci-front.yaml
   front-sb-build:
@@ -194,10 +197,19 @@ jobs:
           tag: scope:frontend
           tasks: reset:env
       - name: Run ${{ matrix.task }} task
+        id: run-task
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
+      - name: Check for coverage threshold failure
+        if: always() && steps.run-task.outcome == 'failure' && matrix.task == 'test'
+        shell: bash
+        run: |
+          echo "::error::The test task failed. If no individual test is failing, this is likely a coverage threshold not being met."
+          echo ""
+          echo "To debug locally, run: npx nx run twenty-front:test:ci"
+          exit 1
       - name: Save ${{ matrix.task }} cache
         uses: ./.github/actions/save-cache
         with:

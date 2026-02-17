@@ -66,6 +66,7 @@ export type { LightIconButtonGroupProps } from './button/components/LightIconBut
 export { LightIconButtonGroup } from './button/components/LightIconButtonGroup';
 export type { MainButtonVariant } from './button/components/MainButton';
 export { MainButton } from './button/components/MainButton';
+export type { RoundedIconButtonSize } from './button/components/RoundedIconButton';
 export { RoundedIconButton } from './button/components/RoundedIconButton';
 export {
   StyledTabButton,

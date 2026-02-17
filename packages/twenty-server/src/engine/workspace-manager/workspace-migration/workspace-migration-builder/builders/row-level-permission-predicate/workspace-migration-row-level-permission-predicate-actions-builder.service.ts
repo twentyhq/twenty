@@ -4,11 +4,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { FlatUpdateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
+import { UniversalUpdateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
 
 @Injectable()
@@ -22,10 +22,10 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<
+    args: UniversalFlatEntityValidationArgs<
       typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
     'create'
   > {
@@ -54,10 +54,10 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<
+    args: UniversalFlatEntityValidationArgs<
       typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
     'delete'
   > {
@@ -93,7 +93,7 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate,
     'update'
   > {
@@ -109,12 +109,12 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateAction: FlatUpdateRowLevelPermissionPredicateAction = {
+    const updateAction: UniversalUpdateRowLevelPermissionPredicateAction = {
       type: 'update',
       metadataName: 'rowLevelPermissionPredicate',
-      entityId: flatEntityId,
+      universalIdentifier,
       update: flatEntityUpdate,
     };
 

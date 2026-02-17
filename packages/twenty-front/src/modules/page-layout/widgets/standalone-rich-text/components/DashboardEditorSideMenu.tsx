@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconGripVertical } from 'twenty-ui/display';
 
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { DashboardBlockDragHandleMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu';
+import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { isDefined } from 'twenty-shared/utils';
 
 type DashboardEditorSideMenuProps = {
-  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
+  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   boundaryElement?: HTMLElement | null;
 };
 

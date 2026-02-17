@@ -1,8 +1,8 @@
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { createState } from 'twenty-ui/utilities';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 export const configVariableSourceFilterState =
-  createState<ConfigVariableSourceFilter>({
+  createStateV2<ConfigVariableSourceFilter>({
     key: 'configVariableSourceFilterState',
     defaultValue: 'all',
   });

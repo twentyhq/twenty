@@ -52,15 +52,17 @@ export class BullMQDriver
   ) {}
 
   onModuleInit() {
-    this.metricsService.createObservableGauge(
-      'twenty_queue_jobs_waiting_total',
-      { description: 'Current number of jobs waiting in queue' },
-      async (observableResult) => {
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_queue_jobs_waiting_total',
+      options: { description: 'Current number of jobs waiting in queue' },
+      callback: async () => {
+        let totalWaiting = 0;
+
         for (const [queueName, queue] of Object.entries(this.queueMap)) {
           try {
             const waitingCount = await queue.count();
 
-            observableResult.observe(waitingCount, { queue: queueName });
+            totalWaiting += waitingCount;
           } catch (error) {
             this.logger.error(
               `Failed to collect waiting jobs metrics for queue ${queueName}`,
@@ -68,8 +70,10 @@ export class BullMQDriver
             );
           }
         }
+
+        return totalWaiting;
       },
-    );
+    });
   }
 
   register(queueName: MessageQueue): void {

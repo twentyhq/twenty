@@ -16,9 +16,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "toto",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -35,9 +34,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "tata",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -55,7 +53,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_4a59b92546a3dbf54abee51283a",
             "universalIdentifier": Any<String>,
           },
@@ -72,7 +69,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_247f630f4f88242063a98b01371",
             "universalIdentifier": Any<String>,
           },
@@ -111,9 +107,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "fieldNamePersonForMorphRelationSecondId",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -143,27 +138,66 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
         {
           "errors": [
             {
-              "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Morph relation creation payloads must not target source object metadata",
-              "userFriendlyMessage": "An error occurred.",
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Source object cannot be the target object",
+              "userFriendlyMessage": "Source object cannot be the target object",
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
+            "name": "fieldNameCompaniesForMorphRelationSecond",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "tata",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_7cde21773589fbdb09355f3444c",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
           "type": "create",
         },
       ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 2 fieldMetadatas, 1 index",
     "summary": {
-      "fieldMetadata": 1,
-      "totalErrors": 1,
+      "fieldMetadata": 2,
+      "index": 1,
+      "totalErrors": 3,
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -224,9 +258,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -244,7 +277,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_c1add8eb2b51d67721916a3e5a9",
             "universalIdentifier": Any<String>,
           },
@@ -283,9 +315,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -303,7 +334,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_c84138bdf8bc3889ef56273281e",
             "universalIdentifier": Any<String>,
           },
@@ -342,9 +372,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "name",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -362,7 +391,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_e07d8240883043fcb1ad1ba0324",
             "universalIdentifier": Any<String>,
           },
@@ -407,9 +435,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -427,7 +454,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_c1add8eb2b51d67721916a3e5a9",
             "universalIdentifier": Any<String>,
           },

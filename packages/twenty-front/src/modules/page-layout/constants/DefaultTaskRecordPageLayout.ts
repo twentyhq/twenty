@@ -1,6 +1,10 @@
 import { DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultTaskRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -14,11 +18,12 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-fields',
       title: 'Home',
       icon: 'IconHome',
       position: 100,
-      layoutMode: 'vertical-list',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -81,11 +86,12 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-note',
       title: 'Note',
       icon: 'IconNotes',
       position: 150,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -125,11 +131,12 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
       position: 200,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -162,11 +169,12 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'task-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',
       position: 300,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

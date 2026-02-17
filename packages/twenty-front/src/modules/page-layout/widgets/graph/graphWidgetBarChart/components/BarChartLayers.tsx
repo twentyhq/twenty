@@ -8,7 +8,7 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import styled from '@emotion/styled';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 const StyledNoDataOverlay = styled.svg`
   height: 100%;

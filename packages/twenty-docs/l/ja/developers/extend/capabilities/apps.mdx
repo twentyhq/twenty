@@ -52,9 +52,6 @@ yarn app:dev
 # アプリケーションに新しいエンティティを追加（ガイド付き）
 yarn entity:add
 
-# 型付きの Twenty クライアントとワークスペースのエンティティ型を生成
-yarn app:generate
-
 # アプリケーションの関数のログを監視
 yarn function:logs
 
@@ -156,7 +153,7 @@ src/
 
 概要：
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
 * **.gitignore**: `node_modules`、`.yarn`、`generated/`（型付きクライアント）、`dist/`、`build/`、カバレッジ用フォルダー、ログファイル、`.env*` ファイルなどの一般的な生成物を無視します。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**: プロジェクトで使用する Yarn 4 ツールチェーンをロックおよび構成します。
 * **.nvmrc**: プロジェクトで想定する Node.js バージョンを固定します。
@@ -171,7 +168,7 @@ src/
 
 後続のコマンドにより、さらにファイルやフォルダーが追加されます：
 
-* `yarn app:generate` は `generated/` フォルダー（型付きの Twenty クライアント + ワークスペースの型）を作成します。
+* `yarn app:dev` は `node_modules/twenty-sdk/generated` に型付き Twenty クライアントを自動生成します。
 * `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## 認証
@@ -583,7 +580,7 @@ const handler = async (event: RoutePayload) => {
 
 ### 生成された型付きクライアント
 
-ワークスペースのスキーマに基づき、generated/ にローカルの型付きクライアントを作成するには yarn app:generate を実行します。 関数内で使用します：
+`yarn app:dev` は `node_modules/twenty-sdk/generated` に型付き Twenty クライアントを自動生成します。 関数内で使用します：
 
 ```typescript
 import Twenty from '~/generated';
@@ -592,7 +589,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-このクライアントは `yarn app:generate` によって再生成されます。 Re-run after changing your objects or when onboarding to a new workspace.
+このクライアントは `app:dev` 実行中に自動的に再生成されます。 オブジェクトを変更した後、または新しいワークスペースにオンボーディングする際は、`app:dev` を再起動してください。
 
 #### Runtime credentials in logic functions
 
@@ -630,7 +627,6 @@ yarn add -D twenty-sdk
     "auth:switch": "twenty auth:switch",
     "auth:list": "twenty auth:list",
     "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
     "app:uninstall": "twenty app:uninstall",
     "entity:add": "twenty entity:add",
     "function:logs": "twenty function:logs",
@@ -640,13 +636,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, etc.
 
 ## トラブルシューティング
 
 * 認証エラー: `yarn auth:login` を実行し、API キーに必要な権限があることを確認してください。
 * サーバーに接続できません: API URL と、Twenty サーバーに到達可能であることを確認してください。
-* Types or client missing/outdated: run `yarn app:generate`.
+* Types or client missing/outdated: restart `yarn app:dev`.
 * 開発モードで同期されない: `yarn app:dev` が実行中であり、環境によって変更が無視されていないことを確認してください。
 
 Discord ヘルプチャンネル: https://discord.com/channels/1130383047699738754/1130386664812982322

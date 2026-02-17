@@ -11,7 +11,7 @@ import {
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionStatus,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,

@@ -13,13 +13,25 @@ const StyledWidgetCardContent = styled.div<{
   height: 100%;
   overflow: hidden;
 
-  ${({ theme, hasHeader }) =>
-    hasHeader &&
-    css`
-      :not(:empty) {
+  ${({ theme, variant, isEditable, hasHeader }) => {
+    if (!hasHeader) {
+      return;
+    }
+
+    if (variant === 'side-column' && !isEditable) {
+      return css`
         margin-top: ${theme.spacing(2)};
-      }
-    `}
+
+        :empty {
+          margin-top: 0;
+        }
+      `;
+    }
+
+    return css`
+      margin-top: ${theme.spacing(2)};
+    `;
+  }}
 
   ${({ theme, variant, isEditable }) => {
     if (variant === 'dashboard') {

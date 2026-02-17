@@ -1,13 +1,13 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
@@ -108,7 +108,7 @@ const AnimatedIcon = ({
 
 export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
 
   const isMobile = useIsMobile();
 
