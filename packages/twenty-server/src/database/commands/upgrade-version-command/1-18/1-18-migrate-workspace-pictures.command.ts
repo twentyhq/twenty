@@ -8,7 +8,7 @@ import {
   extractFolderPathFilenameAndTypeOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
-import { And, DataSource, IsNull, Like, Not, Or, Repository } from 'typeorm';
+import { And, DataSource, IsNull, Like, Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -123,7 +123,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
       where: {
         id: workspaceId,
         logo: Not(IsNull()),
-        logoFileId: Or(IsNull(), Not(Like(`%${FileFolder.CorePicture}%`))),
+        logoFileId: IsNull(),
       },
     });
 
