@@ -57,7 +57,11 @@ describe('LocalDriver security hardening', () => {
     const outsideFilePath = path.join(outsidePath, 'outside.txt');
     const symlinkFolderPath = path.join(storagePath, 'workspace', 'app');
     const symlinkFilePath = path.join(symlinkFolderPath, 'target.txt');
-    const downloadDestinationPath = path.join(storagePath, 'download', 'file.txt');
+    const downloadDestinationPath = path.join(
+      storagePath,
+      'download',
+      'file.txt',
+    );
 
     await mkdir(symlinkFolderPath, { recursive: true });
     await writeFile(outsideFilePath, 'outside');
