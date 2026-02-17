@@ -263,6 +263,26 @@ export const failingCreateInputByFieldMetadataType: {
         dateField: 1,
       },
     },
+    {
+      input: {
+        dateField: '2024',
+      },
+    },
+    {
+      input: {
+        dateField: '2024-01',
+      },
+    },
+    {
+      input: {
+        dateField: '2024-13-01',
+      },
+    },
+    {
+      input: {
+        dateField: '2024-02-31',
+      },
+    },
   ],
   [FieldMetadataType.DATE_TIME]: [
     {
@@ -288,6 +308,26 @@ export const failingCreateInputByFieldMetadataType: {
     {
       input: {
         dateTimeField: 1,
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2024',
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2024-01',
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2024-13-01T10:30:00Z',
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2024-01-15T25:30:00Z',
       },
     },
   ],

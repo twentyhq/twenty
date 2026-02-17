@@ -355,7 +355,7 @@ export const buildRecordFromImportedStructuredRow = ({
           isDefined(importedFieldValue) &&
           isNonEmptyString(importedFieldValue)
         ) {
-          recordToBuild[field.name] = importedFieldValue;
+          recordToBuild[field.name] = new Date(importedFieldValue);
         }
         break;
       case FieldMetadataType.SELECT:

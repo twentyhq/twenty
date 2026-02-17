@@ -279,6 +279,14 @@ export const successfulCreateInputByFieldMetadataType: {
   [FieldMetadataType.DATE]: [
     {
       input: {
+        dateField: null,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.dateField === null;
+      },
+    },
+    {
+      input: {
         dateField: '2025-01-13',
       },
       validateInput: (record: Record<string, any>) => {
@@ -287,34 +295,419 @@ export const successfulCreateInputByFieldMetadataType: {
     },
     {
       input: {
-        dateField: null,
+        dateField: '20250113',
       },
       validateInput: (record: Record<string, any>) => {
-        return record.dateField === null;
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025.01.13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025/01/13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '01-13-2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '01/13/2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '01.13.2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: 'January 13, 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: 'Jan 13, 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '13 January 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '13 Jan 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '13-Jan-2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-Jan-13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-01-13T10:30:00.000Z',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-01-13T10:30:00Z',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-01-13T10:30:00.000',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-01-13T10:30:00',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-01-13 10:30:00',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateField: '2025-01-13 10:30:00.000',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return new Date(record.dateField).toDateString() === 'Mon Jan 13 2025';
       },
     },
   ],
   [FieldMetadataType.DATE_TIME]: [
     {
       input: {
-        dateTimeField: '2025-01-13 00:00:00',
+        dateTimeField: null,
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.dateTimeField === null;
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13T10:30:00.000Z',
       },
       validateInput: (record: Record<string, any>) => {
         const date = new Date(record.dateTimeField);
 
         return (
           date.toDateString() === 'Mon Jan 13 2025' &&
-          date.getMinutes() === 0 &&
+          date.getUTCHours() === 10 &&
+          date.getUTCMinutes() === 30 &&
+          date.getUTCSeconds() === 0 &&
+          date.getUTCMilliseconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13T10:30:00Z',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getUTCHours() === 10 &&
+          date.getUTCMinutes() === 30 &&
+          date.getUTCSeconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13T10:30:00.000+02:00',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.getUTCHours() === 8 &&
+          date.getUTCMinutes() === 30 &&
+          date.getUTCSeconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13T10:30:00+02:00',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.getUTCHours() === 8 &&
+          date.getUTCMinutes() === 30 &&
+          date.getUTCSeconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13T10:30:00.000',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getHours() === 10 &&
+          date.getMinutes() === 30 &&
           date.getSeconds() === 0
         );
       },
     },
     {
       input: {
-        dateTimeField: null,
+        dateTimeField: '2025-01-13T10:30:00',
       },
       validateInput: (record: Record<string, any>) => {
-        return record.dateTimeField === null;
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getHours() === 10 &&
+          date.getMinutes() === 30 &&
+          date.getSeconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13 10:30:00.000',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getHours() === 10 &&
+          date.getMinutes() === 30 &&
+          date.getSeconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13 10:30:00',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getHours() === 10 &&
+          date.getMinutes() === 30 &&
+          date.getSeconds() === 0
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13 10:30',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return (
+          date.toDateString() === 'Mon Jan 13 2025' &&
+          date.getHours() === 10 &&
+          date.getMinutes() === 30
+        );
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-01-13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '20250113',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025.01.13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025/01/13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '01-13-2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '01/13/2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '01.13.2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: 'January 13, 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: 'Jan 13, 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '13 January 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '13 Jan 2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '13-Jan-2025',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
+      },
+    },
+    {
+      input: {
+        dateTimeField: '2025-Jan-13',
+      },
+      validateInput: (record: Record<string, any>) => {
+        const date = new Date(record.dateTimeField);
+
+        return date.toDateString() === 'Mon Jan 13 2025';
       },
     },
   ],
