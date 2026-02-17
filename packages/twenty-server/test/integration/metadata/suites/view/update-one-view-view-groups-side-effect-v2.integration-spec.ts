@@ -10,13 +10,13 @@ import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/u
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
+  ViewType,
 } from 'twenty-shared/types';
 
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 

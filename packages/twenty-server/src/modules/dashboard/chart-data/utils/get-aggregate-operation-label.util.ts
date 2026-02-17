@@ -1,4 +1,4 @@
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'twenty-shared/types';
 
 export const getAggregateOperationLabel = (
   operation: AggregateOperations,
