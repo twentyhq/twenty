@@ -1,3 +1,6 @@
+import * as http from 'http';
+import * as https from 'https';
+
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -25,14 +28,31 @@ describe('SecureHttpClientService', () => {
       expect(client.defaults.httpsAgent).toBeUndefined();
     });
 
-    it('should return an axios instance with secure adapter when safe mode is on', () => {
+    it('should return an axios instance with SSRF-safe agents when safe mode is on', () => {
       const service = new SecureHttpClientService(
         createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
       );
       const client = service.getHttpClient();
 
       expect(client).toBeDefined();
-      expect(typeof client.defaults.adapter).toBe('function');
+      expect(client.defaults.httpAgent).toBeInstanceOf(http.Agent);
+      expect(client.defaults.httpsAgent).toBeInstanceOf(https.Agent);
+    });
+
+    it('should cap maxRedirects when safe mode is on', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      expect(client.defaults.maxRedirects).toBe(10);
+    });
+
+    it('should not set maxRedirects when safe mode is off', () => {
+      const service = new SecureHttpClientService(createMockConfigService());
+      const client = service.getHttpClient();
+
+      expect(client.defaults.maxRedirects).toBeUndefined();
     });
 
     it('should pass through axios config like baseURL', () => {
