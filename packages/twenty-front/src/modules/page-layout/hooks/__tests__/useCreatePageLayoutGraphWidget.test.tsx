@@ -9,9 +9,9 @@ import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  WidgetType,
   PageLayoutType,
   WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -73,6 +73,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         tabs: [
           {
             id: 'tab-1',
+            applicationId: '',
             title: 'Tab 1',
             position: 0,
             pageLayoutId: '',
@@ -152,6 +153,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         tabs: [
           {
             id: 'tab-1',
+            applicationId: '',
             title: 'Tab 1',
             position: 0,
             pageLayoutId: '',
