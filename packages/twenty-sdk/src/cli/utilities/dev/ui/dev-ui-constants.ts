@@ -178,16 +178,18 @@ export const getPipelineRows = (
 ): DevUiPipelineRow[] => {
   const entities = [...state.entities.values()];
 
-  const resourcesBuildStatus: OrchestratorStateStepStatus =
-    entities.some((entity) => entity.status === 'building')
-      ? 'in_progress'
-      : entities.length > 0 &&
-          entities.every(
-            (entity) =>
-              entity.status === 'uploading' || entity.status === 'success',
-          )
-        ? 'done'
-        : 'idle';
+  const isBuilding = entities.some((entity) => entity.status === 'building');
+  const allUploaded =
+    entities.length > 0 &&
+    entities.every(
+      (entity) => entity.status === 'uploading' || entity.status === 'success',
+    );
+
+  const resourcesBuildStatus: OrchestratorStateStepStatus = isBuilding
+    ? 'in_progress'
+    : allUploaded
+      ? 'done'
+      : 'idle';
 
   return [
     {
