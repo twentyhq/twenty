@@ -1,4 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -50,7 +51,7 @@ export const WorkflowFormFieldSettingsSelect = ({
           .filter(
             (field) =>
               field.isActive &&
-              !field.isSystem &&
+              !isHiddenSystemField(field) &&
               field.type === FieldMetadataType.SELECT,
           )
           .map((field) => ({

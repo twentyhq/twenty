@@ -7,6 +7,7 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -83,7 +84,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         searchQuery,
         getSearchableValues: (item) => [item.label, item.name],
       }).filter((field) => {
-        if (field.isSystem === true) {
+        if (isHiddenSystemField(field)) {
           return false;
         }
         if (isFieldRelation(field)) {
