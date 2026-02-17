@@ -15,6 +15,9 @@ export class PageLayoutTabDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
+  @Field(() => UUIDScalarType, { nullable: false })
+  applicationId: string;
+
   @Field({ nullable: false })
   title: string;
 

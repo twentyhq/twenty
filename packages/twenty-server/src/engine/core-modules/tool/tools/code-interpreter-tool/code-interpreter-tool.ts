@@ -7,8 +7,8 @@ import {
   type CodeExecutionFile,
   type CodeExecutionState,
 } from 'twenty-shared/ai';
-import { v4 } from 'uuid';
 import { FileFolder } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import {
   type InputFile,

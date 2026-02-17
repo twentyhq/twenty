@@ -1,4 +1,4 @@
-import { getFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getFunctionInputFromInputSchema';
+import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';

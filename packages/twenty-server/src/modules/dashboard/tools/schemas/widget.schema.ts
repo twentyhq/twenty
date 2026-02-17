@@ -1,8 +1,10 @@
 import { isNumber } from '@sniptt/guards';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';

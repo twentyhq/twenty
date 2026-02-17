@@ -3,9 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 import { resolveRelativeDateTimeFilter } from '@/utils/filter/dates/utils/resolveRelativeDateTimeFilter';
 
 describe('resolveRelativeDateTimeFilter', () => {
-  const referenceZdt = Temporal.ZonedDateTime.from(
-    '2024-03-15T12:00:00[UTC]',
-  );
+  const referenceZdt = Temporal.ZonedDateTime.from('2024-03-15T12:00:00[UTC]');
 
   describe('NEXT direction', () => {
     it('should compute for sub-day unit (HOUR)', () => {

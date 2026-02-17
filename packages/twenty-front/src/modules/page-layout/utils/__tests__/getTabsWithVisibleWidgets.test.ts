@@ -36,6 +36,7 @@ describe('getTabsWithVisibleWidgets', () => {
     widgets: PageLayoutTab['widgets'],
   ): PageLayoutTab => ({
     __typename: 'PageLayoutTab',
+    applicationId: '',
     id,
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,

@@ -5,8 +5,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/update-one-core-view.util';
-
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewType } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-4000-8000-000000000000';
 
