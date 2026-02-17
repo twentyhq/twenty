@@ -11,8 +11,8 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
-
 import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
+
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';

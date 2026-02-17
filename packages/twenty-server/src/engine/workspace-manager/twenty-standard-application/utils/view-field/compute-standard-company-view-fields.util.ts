@@ -1,4 +1,5 @@
 import { AggregateOperations } from 'twenty-shared/types';
+
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import {
   createStandardViewFieldFlatMetadata,

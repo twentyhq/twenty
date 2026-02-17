@@ -1,9 +1,9 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 registerEnumType(ViewFilterGroupLogicalOperator, {
   name: 'ViewFilterGroupLogicalOperator',

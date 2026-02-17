@@ -23,7 +23,6 @@ export type RegularFieldManifest<
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isNullable?: boolean;
   objectUniversalIdentifier: string;
-  isSystem?: boolean;
 };
 
 // Both sides of a relation must be declared explicitly in the manifest.

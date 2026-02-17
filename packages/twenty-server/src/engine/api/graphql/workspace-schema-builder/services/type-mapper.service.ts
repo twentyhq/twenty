@@ -23,6 +23,7 @@ import {
   type FieldMetadataDefaultValue,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
   ArrayFilterType,

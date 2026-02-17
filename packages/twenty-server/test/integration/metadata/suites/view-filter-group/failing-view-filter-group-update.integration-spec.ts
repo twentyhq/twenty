@@ -11,12 +11,9 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { v4 } from 'uuid';
+import { ViewFilterGroupLogicalOperator, ViewType } from 'twenty-shared/types';
 
 import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
-import {
-  ViewFilterGroupLogicalOperator,
-  ViewType,
-} from 'twenty-shared/types';
 
 type TestContext = {
   id: string;

@@ -1,13 +1,14 @@
-import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewFilterGroupLogicalOperator,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+
+import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   name: 'Test View',

@@ -1,5 +1,6 @@
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
+
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type BuildAggregateFieldKeyParams = {

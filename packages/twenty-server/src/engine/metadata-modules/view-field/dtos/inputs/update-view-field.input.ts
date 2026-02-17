@@ -10,8 +10,8 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-
 import { AggregateOperations } from 'twenty-shared/types';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()

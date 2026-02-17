@@ -4,6 +4,7 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import { z } from 'zod';
+
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';

@@ -1,5 +1,9 @@
 import { type ViewManifest } from 'twenty-shared/application';
-import { ViewOpenRecordIn, ViewType, ViewVisibility } from 'twenty-shared/types';
+import {
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
