@@ -54,6 +54,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Creation date',
       description: 'Creation date',
       icon: 'IconCalendar',
+      isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
@@ -75,6 +76,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Last update',
       description: 'Last time the record was changed',
       icon: 'IconCalendarClock',
+      isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
@@ -96,6 +98,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Deleted at',
       description: 'Date when the record was deleted',
       icon: 'IconCalendarMinus',
+      isSystem: true,
       isNullable: true,
       isUIReadOnly: true,
       settings: {
@@ -219,6 +222,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Created by',
       description: 'The creator of the record',
       icon: 'IconCreativeCommonsSa',
+      isSystem: true,
       isUIReadOnly: true,
       isNullable: false,
       defaultValue: {
@@ -241,6 +245,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Updated by',
       description: 'The workspace member who last updated the record',
       icon: 'IconUserCircle',
+      isSystem: true,
       isUIReadOnly: true,
       isNullable: false,
       defaultValue: {

@@ -113,6 +113,8 @@ export class TwentyStandardApplicationService {
           buildOptions: {
             isSystemBuild: true,
             inferDeletionFromMissingEntities: true,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
