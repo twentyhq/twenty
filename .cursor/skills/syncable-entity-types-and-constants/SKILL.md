@@ -1,6 +1,6 @@
 ---
 name: syncable-entity-types-and-constants
-description: Define types, entities, and central constant registrations for syncable entities in Twenty's workspace migration system. Use when creating new syncable entities, defining TypeORM entities, flat entity types, or registering in central constants (ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME, ALL_METADATA_RELATIONS, ALL_UNIVERSAL_METADATA_RELATIONS).
+description: Define types, entities, and central constant registrations for syncable entities in Twenty's workspace migration system. Use when creating new syncable entities, defining TypeORM entities, flat entity types, or registering in central constants (ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME, ALL_ONE_TO_MANY_METADATA_RELATIONS, ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY, ALL_MANY_TO_ONE_METADATA_RELATIONS).
 ---
 
 # Syncable Entity: Types & Constants (Step 1/6)
@@ -18,7 +18,7 @@ This step creates:
 2. TypeORM entity (extends `SyncableEntity`)
 3. Flat entity types
 4. Action types (universal + flat)
-5. Central constant registrations (4 constants)
+5. Central constant registrations (5 constants)
 
 ---
 
@@ -225,60 +225,90 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
 - `toStringify: true` → JSONB/object property (needs JSON serialization)
 - `universalProperty` → Maps to universal version (for foreign keys & JSONB with `SerializedRelation`)
 
-### 6c. ALL_METADATA_RELATIONS
+### 6c. ALL_ONE_TO_MANY_METADATA_RELATIONS
 
-**File**: `src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant.ts`
+**File**: `src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant.ts`
+
+This constant is **type-checked** — values for `metadataName`, `flatEntityForeignKeyAggregator`, and `universalFlatEntityForeignKeyAggregator` are derived from entity type definitions. The aggregator names follow the pattern: remove trailing `'s'` from the relation property name, then append `Ids` or `UniversalIdentifiers`.
 
 ```typescript
-export const ALL_METADATA_RELATIONS = {
+export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   // ... existing entries
   myEntity: {
-    manyToOne: {
-      workspace: null,
-      application: null,
-      parentEntity: {
-        metadataName: 'parentEntity',
-        flatEntityForeignKeyAggregator: 'myEntityIds',
-        foreignKey: 'parentEntityId',
-        isNullable: false,
-      },
+    // If myEntity has a `childEntities: ChildEntityEntity[]` property:
+    childEntities: {
+      metadataName: 'childEntity',
+      flatEntityForeignKeyAggregator: 'childEntityIds',
+      universalFlatEntityForeignKeyAggregator: 'childEntityUniversalIdentifiers',
     },
-    oneToMany: {
-      childEntities: { metadataName: 'childEntity' },
-    },
-    // Only if JSONB contains SerializedRelation fields
-    serializedRelations: {
-      fieldMetadata: true,
+    // null for relations to non-syncable entities
+    someNonSyncableRelation: null,
+  },
+} as const;
+```
+
+### 6d. ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY
+
+**File**: `src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-foreign-key.constant.ts`
+
+Low-level primitive constant. Only contains `foreignKey` — the column name ending in `Id` that stores the foreign key. Type-checked against entity properties.
+
+```typescript
+export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
+  // ... existing entries
+  myEntity: {
+    workspace: null,
+    application: null,
+    parentEntity: {
+      foreignKey: 'parentEntityId',
     },
   },
 } as const;
 ```
 
-### 6d. ALL_UNIVERSAL_METADATA_RELATIONS
+### 6e. ALL_MANY_TO_ONE_METADATA_RELATIONS
 
-**File**: `src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant.ts`
+**File**: `src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant.ts`
+
+Derived from both `ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY` (for `foreignKey` type and `universalForeignKey` derivation) and `ALL_ONE_TO_MANY_METADATA_RELATIONS` (for `inverseOneToManyProperty` key constraint). This is the main constant consumed by utils and optimistic tooling.
 
 ```typescript
-export const ALL_UNIVERSAL_METADATA_RELATIONS = {
+export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   // ... existing entries
   myEntity: {
-    manyToOne: {
-      workspace: null,
-      application: null,
-      parentEntity: {
-        metadataName: 'parentEntity',
-        foreignKey: 'parentEntityId',
-        universalForeignKey: 'parentEntityUniversalIdentifier',
-        universalFlatEntityForeignKeyAggregator: 'myEntityUniversalIdentifiers',
-        isNullable: false,
-      },
-    },
-    oneToMany: {
-      childEntities: { metadataName: 'childEntity' },
+    workspace: null,
+    application: null,
+    parentEntity: {
+      metadataName: 'parentEntity',
+      foreignKey: 'parentEntityId',
+      inverseOneToManyProperty: 'myEntities',  // key in ALL_ONE_TO_MANY_METADATA_RELATIONS['parentEntity'], or null if no inverse
+      isNullable: false,
+      universalForeignKey: 'parentEntityUniversalIdentifier',
     },
   },
 } as const;
 ```
+
+**Derivation dependency graph**:
+
+```
+ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY     ALL_ONE_TO_MANY_METADATA_RELATIONS
+(foreignKey only)                        (metadataName, aggregators)
+  │                                        │
+  │ FK type + universalFK derivation       │ inverseOneToManyProperty keys
+  │                                        │
+  └────────────────┬───────────────────────┘
+                   ▼
+    ALL_MANY_TO_ONE_METADATA_RELATIONS
+    (metadataName, foreignKey, inverseOneToManyProperty,
+     isNullable, universalForeignKey)
+```
+
+**Rules**:
+- `workspace: null`, `application: null` — always present, always null (non-syncable relations)
+- `inverseOneToManyProperty` — must be a key in `ALL_ONE_TO_MANY_METADATA_RELATIONS[targetMetadataName]`, or `null` if the target entity doesn't expose an inverse one-to-many relation
+- `universalForeignKey` — derived from `foreignKey` by replacing the `Id` suffix with `UniversalIdentifier`
+- Optimistic utils resolve `flatEntityForeignKeyAggregator` / `universalFlatEntityForeignKeyAggregator` at runtime by looking up `inverseOneToManyProperty` in `ALL_ONE_TO_MANY_METADATA_RELATIONS`
 
 ---
 
@@ -295,8 +325,9 @@ Before moving to Step 2:
 - [ ] Universal and flat action types defined
 - [ ] Registered in `AllFlatEntityTypesByMetadataName`
 - [ ] Registered in `ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME`
-- [ ] Registered in `ALL_METADATA_RELATIONS`
-- [ ] Registered in `ALL_UNIVERSAL_METADATA_RELATIONS`
+- [ ] Registered in `ALL_ONE_TO_MANY_METADATA_RELATIONS` (if entity has one-to-many relations)
+- [ ] Registered in `ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY`
+- [ ] Registered in `ALL_MANY_TO_ONE_METADATA_RELATIONS`
 - [ ] TypeScript compiles without errors
 
 ---

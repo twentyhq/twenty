@@ -97,6 +97,11 @@ export class PieChartConfigurationDTO
   @IsOptional()
   hideEmptyCategory?: boolean;
 
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  splitMultiValueFields?: boolean;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

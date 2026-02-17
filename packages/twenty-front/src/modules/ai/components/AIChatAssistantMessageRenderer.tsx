@@ -1,11 +1,12 @@
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
-import { ReasoningSummaryDisplay } from '@/ai/components/ReasoningSummaryDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
+import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import { keyframes, useTheme } from '@emotion/react';
+import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
@@ -30,23 +31,6 @@ const StyledLoadingIcon = styled(IconDotsVertical)`
   transform: rotate(90deg);
 `;
 
-const streamingDotsAnimation = keyframes`
-  0% { content: ''; }
-  33% { content: '.'; }
-  66% { content: '..'; }
-  100% { content: '...'; }
-`;
-
-const StyledStreamingIndicator = styled.div`
-  &::after {
-    display: inline-block;
-    content: '';
-    animation: ${streamingDotsAnimation} 750ms steps(3, end) infinite;
-    width: 2ch;
-    text-align: left;
-  }
-`;
-
 const InitialLoadingIndicator = () => {
   const theme = useTheme();
 
@@ -65,13 +49,6 @@ const MessagePartRenderer = ({
   isStreaming: boolean;
 }) => {
   switch (part.type) {
-    case 'reasoning':
-      return (
-        <ReasoningSummaryDisplay
-          content={part.text}
-          isThinking={part.state === 'streaming'}
-        />
-      );
     case 'text':
       return <LazyMarkdownRenderer text={part.text} />;
     case 'data-routing-status':
@@ -114,23 +91,39 @@ export const AIChatAssistantMessageRenderer = ({
   const filteredParts = hasCodeInterpreterTool
     ? messageParts.filter((part) => part.type !== 'data-code-execution')
     : messageParts;
+  const renderItems = groupContiguousThinkingStepParts(filteredParts);
 
-  if (!filteredParts.length && !hasError) {
+  if (!renderItems.length && !hasError) {
     return <InitialLoadingIndicator />;
   }
 
   return (
     <div>
       <StyledMessagePartsContainer>
-        {filteredParts.map((part, index) => (
-          <MessagePartRenderer
-            key={index}
-            part={part}
-            isStreaming={isLastMessageStreaming}
-          />
-        ))}
+        {renderItems.map((renderItem, index) =>
+          renderItem.type === 'thinking-steps' ? (
+            <ThinkingStepsDisplay
+              key={index}
+              parts={renderItem.parts}
+              isLastMessageStreaming={isLastMessageStreaming}
+              hasAssistantTextResponseStarted={renderItems
+                .slice(index + 1)
+                .some(
+                  (nextRenderItem) =>
+                    nextRenderItem.type === 'part' &&
+                    nextRenderItem.part.type === 'text' &&
+                    nextRenderItem.part.text.trim().length > 0,
+                )}
+            />
+          ) : (
+            <MessagePartRenderer
+              key={index}
+              part={renderItem.part}
+              isStreaming={isLastMessageStreaming}
+            />
+          ),
+        )}
       </StyledMessagePartsContainer>
-      {isLastMessageStreaming && !hasError && <StyledStreamingIndicator />}
     </div>
   );
 };

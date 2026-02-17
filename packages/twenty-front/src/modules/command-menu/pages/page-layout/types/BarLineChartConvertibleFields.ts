@@ -8,4 +8,5 @@ export type BarLineChartConvertibleFields = {
   primaryAxisGroupBySubFieldName?: string | null;
   primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null;
   primaryAxisOrderBy?: GraphOrderBy | null;
+  splitMultiValueFields?: boolean | null;
 };

@@ -279,7 +279,11 @@ export default defineObject({
 * 你可以使用 `yarn twenty entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
 
 <Note>
-  **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+  **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加标准字段
+  例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。
+  你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+  你可以通过在你的 `fields` 数组中定义一个同名字段来覆盖默认字段，
+  但不建议这样做。
 </Note>
 
 ### 应用配置（application-config.ts）

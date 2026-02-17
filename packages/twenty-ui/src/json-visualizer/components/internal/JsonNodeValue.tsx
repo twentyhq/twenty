@@ -15,6 +15,7 @@ const StyledText = styled.span<{
         : theme.font.color.tertiary};
   display: inline-flex;
   height: 24px;
+  line-height: 1;
 `;
 
 export const JsonNodeValue = ({

@@ -257,6 +257,11 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
+      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_X:
+      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_Y:
+        return isBarOrLineChart || isPieChart
+          ? (configuration.splitMultiValueFields ?? true)
+          : true;
       case CHART_CONFIGURATION_SETTING_IDS.HIDE_EMPTY_CATEGORY:
         return isPieChart ? (configuration.hideEmptyCategory ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
