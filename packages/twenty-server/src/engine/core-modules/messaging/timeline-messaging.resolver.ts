@@ -24,9 +24,9 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
@@ -158,7 +158,11 @@ export class TimelineMessagingResolver {
     return timelineThreads;
   }
 
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
+  )
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
     @AuthUser() user: UserEntity,

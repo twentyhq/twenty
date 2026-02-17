@@ -23,7 +23,6 @@ import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services
 @Resolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
-@UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
 export class ImapSmtpCaldavResolver {
   constructor(
     private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,

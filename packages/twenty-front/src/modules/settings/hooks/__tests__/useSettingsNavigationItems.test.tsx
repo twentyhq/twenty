@@ -80,6 +80,7 @@ describe('useSettingsNavigationItems', () => {
       [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
       [PermissionFlagType.ROLES]: false,
       [PermissionFlagType.SECURITY]: false,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -116,6 +117,16 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show user section items regardless of permissions', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.WORKSPACE]: false,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: false,
+      [PermissionFlagType.DATA_MODEL]: false,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
+      [PermissionFlagType.ROLES]: false,
+      [PermissionFlagType.SECURITY]: false,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
+    }));
+
     const { result } = renderHook(() => useSettingsNavigationItems(), {
       wrapper: Wrapper,
     });

@@ -3,19 +3,25 @@ import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
+
+import {
+  OnboardingStatus,
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
+  permissionFlags = mockedUserData.currentUserWorkspace.permissionFlags,
 ) => {
   const { result } = renderHook(
     () => {
@@ -39,7 +45,10 @@ const renderHooks = (
   );
   act(() => {
     result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
-    result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
+    result.current.setCurrentUserWorkspace({
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags,
+    });
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,
       currentBillingSubscription: withCurrentBillingSubscription
@@ -76,6 +85,16 @@ describe('useSetNextOnboardingStatus', () => {
       false,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+  });
+
+  it('should skip SyncEmail when account sync is disabled', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      false,
+      true,
+      [PermissionFlagType.WORKSPACE_MEMBERS],
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
   });
 
   it('should set next onboarding status for SyncEmail', () => {

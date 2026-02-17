@@ -1,5 +1,7 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   type CurrentUser,
   currentUserState,
@@ -9,16 +11,23 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import { isDefined } from 'twenty-shared/utils';
-import { OnboardingStatus, PermissionFlagType } from '~/generated/graphql';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
-const getNextOnboardingStatus = (
-  currentUser: CurrentUser | null,
-  currentWorkspace: CurrentWorkspace | null,
-  calendarBookingPageId: string | null,
-  isAccountSyncEnabled: boolean,
-) => {
+import { OnboardingStatus, PermissionFlagType } from '~/generated/graphql';
+
+type GetNextOnboardingStatusArgs = {
+  currentUser: CurrentUser | null;
+  currentWorkspace: CurrentWorkspace | null;
+  calendarBookingPageId: string | null;
+  isAccountSyncEnabled: boolean;
+};
+
+const getNextOnboardingStatus = ({
+  currentUser,
+  currentWorkspace,
+  calendarBookingPageId,
+  isAccountSyncEnabled,
+}: GetNextOnboardingStatusArgs) => {
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.PROFILE_CREATION;
   }
@@ -60,12 +69,12 @@ export const useSetNextOnboardingStatus = () => {
   return useRecoilCallback(
     ({ set }) =>
       () => {
-        const nextOnboardingStatus = getNextOnboardingStatus(
+        const nextOnboardingStatus = getNextOnboardingStatus({
           currentUser,
           currentWorkspace,
           calendarBookingPageId,
           isAccountSyncEnabled,
-        );
+        });
         set(currentUserState, (current) => {
           if (isDefined(current)) {
             return {
