@@ -112,13 +112,14 @@ export const buildManifest = async (
           filePath,
         });
 
-        const objectFieldsWithDefaultFields = injectDefaultFieldsInObjectFields(
-          extract.config,
-        );
+        const {
+          objectFields: objectFieldsWithDefaults,
+          fields: reverseRelationFields,
+        } = injectDefaultFieldsInObjectFields(extract.config);
 
         const labelIdentifierFieldMetadataUniversalIdentifier =
           extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
-          objectFieldsWithDefaultFields.find((field) => field.name === 'name')
+          objectFieldsWithDefaults.find((field) => field.name === 'name')
             ?.universalIdentifier;
 
         if (!labelIdentifierFieldMetadataUniversalIdentifier) {
@@ -130,11 +131,12 @@ export const buildManifest = async (
 
         const objectManifest: ObjectManifest = {
           ...extract.config,
-          fields: objectFieldsWithDefaultFields,
+          fields: objectFieldsWithDefaults,
           labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
         objects.push(objectManifest);
+        fields.push(...reverseRelationFields);
 
         errors.push(...extract.errors);
         objectsFilePaths.push(relativePath);

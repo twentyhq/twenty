@@ -10,24 +10,24 @@ export const injectDefaultFieldsInObjectFields = (
   objectConfig: ObjectConfig,
 ): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
   const defaultObjectFields = getDefaultObjectFields(objectConfig);
-  const defaultRelationObjectFields =
+  const { objectFields: defaultRelationObjectFields, fields: reverseFields } =
     getDefaultRelationObjectFields(objectConfig);
 
   const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
 
-  const fieldsWithDefaultFields = [...objectConfig.fields];
+  const objectFieldsWithDefaults = [...objectConfig.fields];
 
   for (const defaultField of defaultObjectFields) {
     if (!objectConfigFieldNames.includes(defaultField.name)) {
-      fieldsWithDefaultFields.push(defaultField);
+      objectFieldsWithDefaults.push(defaultField);
     }
   }
 
   for (const defaultRelationField of defaultRelationObjectFields) {
     if (!objectConfigFieldNames.includes(defaultRelationField.name)) {
-      fieldsWithDefaultFields.push(defaultRelationField);
+      objectFieldsWithDefaults.push(defaultRelationField);
     }
   }
 
-  return { objectFields: fieldsWithDefaultFields, fields: [] };
+  return { objectFields: objectFieldsWithDefaults, fields: reverseFields };
 };

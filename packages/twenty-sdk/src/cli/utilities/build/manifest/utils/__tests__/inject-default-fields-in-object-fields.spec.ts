@@ -16,12 +16,19 @@ const baseObjectConfig: ObjectConfig = {
 
 describe('injectDefaultFieldsInObjectFields', () => {
   it('should return all default fields when objectConfig has no fields', () => {
-    const result = injectDefaultFieldsInObjectFields(baseObjectConfig);
+    const { objectFields, fields } =
+      injectDefaultFieldsInObjectFields(baseObjectConfig);
     const defaultFields = getDefaultObjectFields(baseObjectConfig);
-    const defaultRelationFields =
-      getDefaultRelationObjectFields(baseObjectConfig);
+    const {
+      objectFields: defaultRelationObjectFields,
+      fields: expectedReverseFields,
+    } = getDefaultRelationObjectFields(baseObjectConfig);
 
-    expect(result).toEqual([...defaultFields, ...defaultRelationFields]);
+    expect(objectFields).toEqual([
+      ...defaultFields,
+      ...defaultRelationObjectFields,
+    ]);
+    expect(fields).toEqual(expectedReverseFields);
   });
 
   it('should preserve custom fields and append missing default fields', () => {
@@ -37,13 +44,14 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: [customField],
     };
 
-    const result = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
-    const defaultRelationFields = getDefaultRelationObjectFields(objectConfig);
+    const { objectFields: defaultRelationObjectFields } =
+      getDefaultRelationObjectFields(objectConfig);
 
-    expect(result[0]).toEqual(customField);
-    expect(result).toHaveLength(
-      1 + defaultFields.length + defaultRelationFields.length,
+    expect(objectFields[0]).toEqual(customField);
+    expect(objectFields).toHaveLength(
+      1 + defaultFields.length + defaultRelationObjectFields.length,
     );
   });
 
@@ -60,9 +68,9 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: [customIdField],
     };
 
-    const result = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
 
-    const idFields = result.filter((f) => f.name === 'id');
+    const idFields = objectFields.filter((f) => f.name === 'id');
 
     expect(idFields).toHaveLength(1);
     expect(idFields[0]).toEqual(customIdField);
@@ -95,23 +103,24 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: customFields,
     };
 
-    const result = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
-    const defaultRelationFields = getDefaultRelationObjectFields(objectConfig);
+    const { objectFields: defaultRelationObjectFields } =
+      getDefaultRelationObjectFields(objectConfig);
     const overriddenCount = defaultFields.filter((df) =>
       customFields.some((cf) => cf.name === df.name),
     ).length;
 
-    expect(result).toHaveLength(
+    expect(objectFields).toHaveLength(
       customFields.length +
         defaultFields.length +
-        defaultRelationFields.length -
+        defaultRelationObjectFields.length -
         overriddenCount,
     );
 
-    expect(result.filter((f) => f.name === 'id')).toHaveLength(1);
-    expect(result.filter((f) => f.name === 'name')).toHaveLength(1);
-    expect(result.filter((f) => f.name === 'position')).toHaveLength(1);
+    expect(objectFields.filter((f) => f.name === 'id')).toHaveLength(1);
+    expect(objectFields.filter((f) => f.name === 'name')).toHaveLength(1);
+    expect(objectFields.filter((f) => f.name === 'position')).toHaveLength(1);
   });
 
   it('should place custom fields before default fields in the result', () => {
@@ -127,9 +136,9 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: [customField],
     };
 
-    const result = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
 
-    expect(result[0]).toEqual(customField);
+    expect(objectFields[0]).toEqual(customField);
   });
 
   it('should not mutate the original objectConfig fields array', () => {
@@ -150,5 +159,16 @@ describe('injectDefaultFieldsInObjectFields', () => {
     injectDefaultFieldsInObjectFields(objectConfig);
 
     expect(objectConfig.fields).toHaveLength(originalLength);
+  });
+
+  it('should return reverse relation fields for each default relation', () => {
+    const { fields } = injectDefaultFieldsInObjectFields(baseObjectConfig);
+
+    expect(fields).toHaveLength(5);
+
+    const fieldNames = fields.map((f) => f.name);
+
+    expect(fieldNames).toContain('targetTestObject');
+    expect(fieldNames).toContain('testObject');
   });
 });
