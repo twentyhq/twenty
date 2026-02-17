@@ -23,7 +23,7 @@ export const SSEProvider = ({ children }: SSEProviderProps) => {
     const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
     const sseClient = createClient({
-      url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
+      url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
       headers: {
         Authorization: token ? `Bearer ${token}` : '',
       },

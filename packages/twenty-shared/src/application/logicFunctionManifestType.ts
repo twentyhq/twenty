@@ -1,23 +1,6 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type HTTPMethod } from '@/types';
-
-// Standard JSON Schema type for tool input/output definitions
-export type InputJsonSchema = {
-  type?:
-    | 'string'
-    | 'number'
-    | 'boolean'
-    | 'object'
-    | 'array'
-    | 'integer'
-    | 'null';
-  description?: string;
-  enum?: unknown[];
-  items?: InputJsonSchema;
-  properties?: Record<string, InputJsonSchema>;
-  required?: string[];
-  additionalProperties?: boolean | InputJsonSchema;
-};
+import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 
 export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
@@ -30,7 +13,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   builtHandlerPath: string;
   builtHandlerChecksum: string;
   handlerName: string;
-  toolInputSchema?: InputJsonSchema;
+  toolInputSchema: InputJsonSchema;
   isTool?: boolean;
 };
 

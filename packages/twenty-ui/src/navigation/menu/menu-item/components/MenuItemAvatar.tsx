@@ -1,14 +1,7 @@
-import { useTheme } from '@emotion/react';
-import { Avatar, type AvatarProps, IconChevronRight } from '@ui/display';
-import { LightIconButtonGroup } from '@ui/input';
-import { type MenuItemIconButton } from '@ui/navigation/menu/menu-item/components/MenuItem';
-import { MenuItemLeftContent } from '@ui/navigation/menu/menu-item/internals/components/MenuItemLeftContent';
+import { Avatar, type AvatarProps } from '@ui/display';
+import { type MenuItemIconButton, MenuItem } from '@ui/navigation/menu/menu-item/components/MenuItem';
 import { type MouseEvent, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  StyledHoverableMenuItemBase,
-  StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
 import { type MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemAvatarProps = {
@@ -30,12 +23,12 @@ export type MenuItemAvatarProps = {
   contextualText?: ReactNode;
 };
 
-// TODO: merge with MenuItem
 export const MenuItemAvatar = ({
   accent = 'default',
   className,
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
+  isTooltipOpen,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -45,56 +38,31 @@ export const MenuItemAvatar = ({
   text,
   contextualText,
 }: MenuItemAvatarProps) => {
-  const theme = useTheme();
-  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-
-  const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (!onClick) return;
-    event.preventDefault();
-    event.stopPropagation();
-
-    onClick?.(event);
-  };
-
   return (
-    <StyledHoverableMenuItemBase
-      data-testid={testId ?? undefined}
-      onClick={handleMenuItemClick}
-      className={className}
+    <MenuItem
       accent={accent}
+      className={className}
+      iconButtons={iconButtons}
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
+      isTooltipOpen={isTooltipOpen}
+      LeftComponent={
+        isDefined(avatar) ? (
+          <Avatar
+            placeholder={avatar.placeholder}
+            avatarUrl={avatar.avatarUrl}
+            placeholderColorSeed={avatar.placeholderColorSeed}
+            size={avatar.size}
+            type={avatar.type}
+          />
+        ) : undefined
+      }
+      onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-    >
-      <StyledMenuItemLeftContent>
-        <MenuItemLeftContent
-          LeftIcon={undefined}
-          LeftComponent={
-            isDefined(avatar) ? (
-              <Avatar
-                placeholder={avatar.placeholder}
-                avatarUrl={avatar.avatarUrl}
-                placeholderColorSeed={avatar.placeholderColorSeed}
-                size={avatar.size}
-                type={avatar.type}
-              />
-            ) : undefined
-          }
-          text={text}
-          contextualText={contextualText}
-        />
-      </StyledMenuItemLeftContent>
-      <div className="hoverable-buttons">
-        {showIconButtons && (
-          <LightIconButtonGroup iconButtons={iconButtons} size="small" />
-        )}
-      </div>
-      {hasSubMenu && (
-        <IconChevronRight
-          size={theme.icon.size.sm}
-          color={theme.font.color.tertiary}
-        />
-      )}
-    </StyledHoverableMenuItemBase>
+      testId={testId}
+      text={text}
+      contextualText={contextualText}
+      hasSubMenu={hasSubMenu}
+    />
   );
 };

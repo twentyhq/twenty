@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateViewFieldAction,
@@ -36,6 +37,11 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         universalForeignKeyValues: action.flatEntity,
       });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'viewField',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -46,6 +52,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

@@ -51,6 +51,11 @@ export type WorkflowSendEmailAction = BaseWorkflowAction & {
   settings: WorkflowSendEmailActionSettings;
 };
 
+export type WorkflowDraftEmailAction = BaseWorkflowAction & {
+  type: WorkflowActionType.DRAFT_EMAIL;
+  settings: WorkflowSendEmailActionSettings;
+};
+
 export type WorkflowCreateRecordAction = BaseWorkflowAction & {
   type: WorkflowActionType.CREATE_RECORD;
   settings: WorkflowCreateRecordActionSettings;
@@ -119,6 +124,7 @@ export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction
+  | WorkflowDraftEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import { iconsState } from '@ui/display/icon/states/iconsState';
 
-export type IconsProviderProps = {
+type IconsProviderProps = {
   children: JSX.Element;
 };
 

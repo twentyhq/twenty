@@ -9,6 +9,7 @@ import {
   type workflowDatabaseEventTriggerSchema,
   type workflowDelayActionSchema,
   type workflowDeleteRecordActionSchema,
+  type workflowDraftEmailActionSchema,
   type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
   type workflowFindRecordsActionSchema,
@@ -36,6 +37,9 @@ export type WorkflowLogicFunctionAction = z.infer<
 >;
 export type WorkflowSendEmailAction = z.infer<
   typeof workflowSendEmailActionSchema
+>;
+export type WorkflowDraftEmailAction = z.infer<
+  typeof workflowDraftEmailActionSchema
 >;
 export type WorkflowCreateRecordAction = z.infer<
   typeof workflowCreateRecordActionSchema
@@ -69,6 +73,7 @@ export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction
+  | WorkflowDraftEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction

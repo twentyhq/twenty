@@ -38,6 +38,7 @@ export class MessagingCursorService {
           },
           {
             throttleFailureCount: 0,
+            throttleRetryAfter: null,
             syncStageStartedAt: null,
             syncCursor:
               !messageChannel.syncCursor ||
@@ -61,6 +62,7 @@ export class MessagingCursorService {
           },
           {
             throttleFailureCount: 0,
+            throttleRetryAfter: null,
             syncStageStartedAt: null,
           },
         );

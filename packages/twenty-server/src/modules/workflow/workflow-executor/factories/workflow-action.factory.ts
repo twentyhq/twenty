@@ -51,6 +51,8 @@ export class WorkflowActionFactory {
         return this.logicFunctionWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
         return this.toolExecutorWorkflowAction;
+      case WorkflowActionType.DRAFT_EMAIL:
+        return this.toolExecutorWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:
         return this.createRecordWorkflowAction;
       case WorkflowActionType.UPSERT_RECORD:

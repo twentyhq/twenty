@@ -11,16 +11,26 @@ const dirname =
 const sdkRoot = path.resolve(dirname, '..');
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: [
+    '../src/front-component-renderer/**/*.stories.@(js|jsx|ts|tsx)',
+  ],
 
   addons: ['@storybook/addon-vitest'],
 
   framework: '@storybook/react-vite',
 
+  refs: {
+    '@chakra-ui/react': { disable: true },
+  },
+
   staticDirs: [
     {
       from: '../src/front-component-renderer/__stories__/example-sources-built',
       to: '/built',
+    },
+    {
+      from: '../src/front-component-renderer/__stories__/example-sources-built-preact',
+      to: '/built-preact',
     },
   ],
 

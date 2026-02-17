@@ -1,7 +1,7 @@
 import { type ReactElement, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-export type StyledTextProps = {
+type StyledTextProps = {
   PrefixComponent?: ReactElement;
   text: ReactNode;
   color?: string;

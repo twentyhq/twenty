@@ -13,7 +13,7 @@ import { createPortal } from 'react-dom';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { DashboardBlockColorPicker } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockColorPicker';
 import { DRAG_HANDLE_MENU_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/DragHandleMenuFloatingConfig';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

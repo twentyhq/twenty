@@ -23,7 +23,7 @@ const StyledRadioContainer = styled.div`
   top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export type CardPickerProps = {
+type CardPickerProps = {
   children: React.ReactNode;
   handleChange?: () => void;
   checked?: boolean;

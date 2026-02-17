@@ -9,9 +9,17 @@ import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/wo
 import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 
 describe('aggregateNonRelationFieldsIntoObjectActions', () => {
-  it('should merge non-relation fields into matching create-object actions', () => {
+  it('should merge non-relation field into matching create-object action', () => {
     const objectUniversalId = 'object-1';
     const fieldUniversalId = 'field-1';
+
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: fieldUniversalId,
+      objectMetadataId: 'object-metadata-id',
+      objectMetadataUniversalIdentifier: objectUniversalId,
+      type: FieldMetadataType.TEXT,
+      name: 'testField',
+    });
 
     const input: OrchestratorActionsReport = {
       ...createEmptyOrchestratorActionsReport(),
@@ -36,18 +44,8 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'fieldMetadata',
-            universalFlatFieldMetadatas: [
-              getFlatFieldMetadataMock({
-                universalIdentifier: fieldUniversalId,
-                objectMetadataId: 'object-metadata-id',
-                objectMetadataUniversalIdentifier: objectUniversalId,
-                type: FieldMetadataType.TEXT,
-                name: 'testField',
-              }),
-            ],
-            fieldIdByUniversalIdentifier: {
-              [fieldUniversalId]: 'generated-field-id',
-            },
+            flatEntity: flatFieldMetadata,
+            id: 'generated-field-id',
           } satisfies UniversalCreateFieldAction,
         ],
         update: [],
@@ -75,10 +73,20 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
     expect(result.fieldMetadata.create).toHaveLength(0);
   });
 
-  it('should keep relation fields in separate create-field actions', () => {
+  it('should keep relation field in separate create-field action', () => {
     const objectUniversalId = 'object-1';
     const relationFieldUniversalId = 'relation-field-1';
     const targetFieldUniversalId = 'target-field-1';
+
+    const flatRelationFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: relationFieldUniversalId,
+      objectMetadataId: 'object-metadata-id',
+      objectMetadataUniversalIdentifier: objectUniversalId,
+      type: FieldMetadataType.RELATION,
+      name: 'relationField',
+      relationTargetFieldMetadataUniversalIdentifier: targetFieldUniversalId,
+      relationTargetObjectMetadataUniversalIdentifier: 'other-object',
+    });
 
     const input: OrchestratorActionsReport = {
       ...createEmptyOrchestratorActionsReport(),
@@ -103,21 +111,8 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'fieldMetadata',
-            universalFlatFieldMetadatas: [
-              getFlatFieldMetadataMock({
-                universalIdentifier: relationFieldUniversalId,
-                objectMetadataId: 'object-metadata-id',
-                objectMetadataUniversalIdentifier: objectUniversalId,
-                type: FieldMetadataType.RELATION,
-                name: 'relationField',
-                relationTargetFieldMetadataUniversalIdentifier:
-                  targetFieldUniversalId,
-                relationTargetObjectMetadataUniversalIdentifier: 'other-object',
-              }),
-            ],
-            fieldIdByUniversalIdentifier: {
-              [relationFieldUniversalId]: 'generated-relation-field-id',
-            },
+            flatEntity: flatRelationFieldMetadata,
+            id: 'generated-relation-field-id',
           } satisfies UniversalCreateFieldAction,
         ],
         update: [],
@@ -137,16 +132,22 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
     // Relation field should remain in field actions
     expect(result.fieldMetadata.create).toMatchObject([
       {
-        universalFlatFieldMetadatas: [
-          { universalIdentifier: relationFieldUniversalId },
-        ],
+        flatEntity: { universalIdentifier: relationFieldUniversalId },
       },
     ]);
   });
 
-  it('should keep fields for existing objects in separate create-field actions', () => {
+  it('should keep field for existing object in separate create-field action', () => {
     const existingObjectUniversalId = 'existing-object';
     const fieldUniversalId = 'field-for-existing-object';
+
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: fieldUniversalId,
+      objectMetadataId: 'existing-object-metadata-id',
+      objectMetadataUniversalIdentifier: existingObjectUniversalId,
+      type: FieldMetadataType.TEXT,
+      name: 'fieldForExistingObject',
+    });
 
     const input: OrchestratorActionsReport = {
       ...createEmptyOrchestratorActionsReport(),
@@ -160,18 +161,8 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'fieldMetadata',
-            universalFlatFieldMetadatas: [
-              getFlatFieldMetadataMock({
-                universalIdentifier: fieldUniversalId,
-                objectMetadataId: 'existing-object-metadata-id',
-                objectMetadataUniversalIdentifier: existingObjectUniversalId,
-                type: FieldMetadataType.TEXT,
-                name: 'fieldForExistingObject',
-              }),
-            ],
-            fieldIdByUniversalIdentifier: {
-              [fieldUniversalId]: 'generated-field-id',
-            },
+            flatEntity: flatFieldMetadata,
+            id: 'generated-field-id',
           } satisfies UniversalCreateFieldAction,
         ],
         update: [],
@@ -189,17 +180,33 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
     // Field should remain in field actions (no matching object to merge into)
     expect(result.fieldMetadata.create).toMatchObject([
       {
-        universalFlatFieldMetadatas: [
-          { universalIdentifier: fieldUniversalId },
-        ],
+        flatEntity: { universalIdentifier: fieldUniversalId },
       },
     ]);
   });
 
-  it('should handle mixed relation and non-relation fields', () => {
+  it('should handle mixed relation and non-relation fields as separate actions', () => {
     const objectUniversalId = 'object-1';
     const textFieldUniversalId = 'text-field';
     const relationFieldUniversalId = 'relation-field';
+
+    const flatTextFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: textFieldUniversalId,
+      objectMetadataId: 'object-metadata-id',
+      objectMetadataUniversalIdentifier: objectUniversalId,
+      type: FieldMetadataType.TEXT,
+      name: 'textField',
+    });
+
+    const flatRelationFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: relationFieldUniversalId,
+      objectMetadataId: 'object-metadata-id',
+      objectMetadataUniversalIdentifier: objectUniversalId,
+      type: FieldMetadataType.RELATION,
+      name: 'relationField',
+      relationTargetFieldMetadataUniversalIdentifier: 'target-field',
+      relationTargetObjectMetadataUniversalIdentifier: 'other-object',
+    });
 
     const input: OrchestratorActionsReport = {
       ...createEmptyOrchestratorActionsReport(),
@@ -224,28 +231,14 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'fieldMetadata',
-            universalFlatFieldMetadatas: [
-              getFlatFieldMetadataMock({
-                universalIdentifier: textFieldUniversalId,
-                objectMetadataId: 'object-metadata-id',
-                objectMetadataUniversalIdentifier: objectUniversalId,
-                type: FieldMetadataType.TEXT,
-                name: 'textField',
-              }),
-              getFlatFieldMetadataMock({
-                universalIdentifier: relationFieldUniversalId,
-                objectMetadataId: 'object-metadata-id',
-                objectMetadataUniversalIdentifier: objectUniversalId,
-                type: FieldMetadataType.RELATION,
-                name: 'relationField',
-                relationTargetFieldMetadataUniversalIdentifier: 'target-field',
-                relationTargetObjectMetadataUniversalIdentifier: 'other-object',
-              }),
-            ],
-            fieldIdByUniversalIdentifier: {
-              [textFieldUniversalId]: 'text-field-id',
-              [relationFieldUniversalId]: 'relation-field-id',
-            },
+            flatEntity: flatTextFieldMetadata,
+            id: 'text-field-id',
+          } satisfies UniversalCreateFieldAction,
+          {
+            type: 'create',
+            metadataName: 'fieldMetadata',
+            flatEntity: flatRelationFieldMetadata,
+            id: 'relation-field-id',
           } satisfies UniversalCreateFieldAction,
         ],
         update: [],
@@ -269,9 +262,7 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
     // Relation field should remain in field actions
     expect(result.fieldMetadata.create).toMatchObject([
       {
-        universalFlatFieldMetadatas: [
-          { universalIdentifier: relationFieldUniversalId },
-        ],
+        flatEntity: { universalIdentifier: relationFieldUniversalId },
       },
     ]);
   });

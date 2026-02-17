@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import createCache from '@emotion/cache';
-import { CacheProvider } from '@emotion/react';
+import { CacheProvider, ThemeProvider } from '@emotion/react';
 import { useServerInsertedHTML } from 'next/navigation';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 export default function RootStyleRegistry({
   children,
@@ -47,5 +48,12 @@ export default function RootStyleRegistry({
     );
   });
 
-  return <CacheProvider value={cache}>{children}</CacheProvider>;
+  return (
+    <CacheProvider value={cache}>
+      <ThemeProvider theme={THEME_LIGHT}>
+        {/* Cast for ReactNode type compatibility between Next and Emotion's @types/react */}
+        {children as any}
+      </ThemeProvider>
+    </CacheProvider>
+  );
 }

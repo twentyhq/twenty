@@ -167,6 +167,7 @@ export class LineChartDataService {
         secondaryDateGranularity:
           configuration.secondaryAxisGroupByDateGranularity,
         secondaryAxisOrderBy: configuration.secondaryAxisOrderBy,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
       const seriesIdPrefix = buildLineChartSeriesIdPrefix(
@@ -256,6 +257,7 @@ export class LineChartDataService {
         omitNullValues: configuration.omitNullValues ?? false,
         isDescOrder,
         isTwoDimensional: false,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
@@ -385,6 +387,7 @@ export class LineChartDataService {
         omitNullValues: configuration.omitNullValues ?? false,
         isDescOrder,
         isTwoDimensional: true,
+        splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
     const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);

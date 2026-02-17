@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FONT_COMMON, THEME_COMMON, ThemeContext } from '@ui/theme';
 import { type MouseEvent, useContext } from 'react';
 
-export type RoundedLinkProps = {
+type RoundedLinkProps = {
   href: string;
   label?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
