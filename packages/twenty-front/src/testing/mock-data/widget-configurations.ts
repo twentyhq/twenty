@@ -9,6 +9,7 @@ import {
   AggregateOperations,
   AxisNameDisplay,
   BarChartLayout,
+  type FieldsConfiguration,
   GraphOrderBy,
   type IframeConfiguration,
   type StandaloneRichTextConfiguration,
@@ -94,9 +95,9 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIGURATION: StandaloneRichTextConfigur
     body: { markdown: 'Hello world' },
   };
 
-export const TEST_FIELDS_CONFIGURATION = {
-  __typename: 'FieldsConfiguration' as const,
-  configurationType: 'FIELDS' as const,
+export const TEST_FIELDS_CONFIGURATION: FieldsConfiguration = {
+  __typename: 'FieldsConfiguration',
+  configurationType: WidgetConfigurationType.FIELDS,
   viewId: null,
 };
 
