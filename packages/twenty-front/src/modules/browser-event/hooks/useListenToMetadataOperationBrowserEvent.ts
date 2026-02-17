@@ -1,6 +1,6 @@
-import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/object-metadata/constants/MetadataOperationBrowserEventName';
-import { type MetadataOperation } from '@/object-metadata/types/MetadataOperation';
-import { type MetadataOperationBrowserEventDetail } from '@/object-metadata/types/MetadataOperationBrowserEventDetail';
+import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/browser-event/constants/MetadataOperationBrowserEventName';
+import { type MetadataOperation } from '@/browser-event/types/MetadataOperation';
+import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { useEffect } from 'react';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';

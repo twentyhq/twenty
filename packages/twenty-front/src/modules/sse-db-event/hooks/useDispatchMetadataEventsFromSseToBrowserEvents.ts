@@ -1,4 +1,4 @@
-import { dispatchMetadataOperationBrowserEvent } from '@/object-metadata/utils/dispatchMetadataOperationBrowserEvent';
+import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { turnSseMetadataEventsToMetadataOperationBrowserEvents } from '@/sse-db-event/utils/turnSseMetadataEventsToMetadataOperationBrowserEvents';
 import { useCallback } from 'react';
 import {

@@ -1,5 +1,5 @@
-import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/object-metadata/constants/MetadataOperationBrowserEventName';
-import { type MetadataOperationBrowserEventDetail } from '@/object-metadata/types/MetadataOperationBrowserEventDetail';
+import { METADATA_OPERATION_BROWSER_EVENT_NAME } from '@/browser-event/constants/MetadataOperationBrowserEventName';
+import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 
 export const dispatchMetadataOperationBrowserEvent = <
   T extends Record<string, unknown>,

@@ -1,4 +1,4 @@
-import { type MetadataOperation } from '@/object-metadata/types/MetadataOperation';
+import { type MetadataOperation } from '@/browser-event/types/MetadataOperation';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 export type MetadataOperationBrowserEventDetail<

@@ -1,4 +1,4 @@
-import { type MetadataOperationBrowserEventDetail } from '@/object-metadata/types/MetadataOperationBrowserEventDetail';
+import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
