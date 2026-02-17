@@ -3427,6 +3427,7 @@ export type PageLayout = {
 
 export type PageLayoutTab = {
   __typename?: 'PageLayoutTab';
+  applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon?: Maybe<Scalars['String']>;
