@@ -149,6 +149,9 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             updateCurrentViewParams.mainGroupByFieldMetadataId = null;
             return await updateCurrentView(updateCurrentViewParams);
           }
+          case ViewType.FieldsWidget: {
+            return;
+          }
           default: {
             return assertUnreachable(viewType);
           }

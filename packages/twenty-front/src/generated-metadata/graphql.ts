@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -6624,10 +6624,19 @@ export type UpdateCoreViewSortMutationVariables = Exact<{
 
 export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string } };
 
-export type FindAllCoreViewsQueryVariables = Exact<{ [key: string]: never; }>;
+export type FindAllCoreViewsQueryVariables = Exact<{
+  viewTypes?: InputMaybe<Array<ViewType> | ViewType>;
+}>;
 
 
 export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+
+export type FindFieldsWidgetCoreViewsQueryVariables = Exact<{
+  viewTypes?: InputMaybe<Array<ViewType> | ViewType>;
+}>;
+
+
+export type FindFieldsWidgetCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'CoreViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindManyCoreViewFieldsQueryVariables = Exact<{
   viewId: Scalars['String'];
@@ -6666,6 +6675,7 @@ export type FindManyCoreViewSortsQuery = { __typename?: 'Query', getCoreViewSort
 
 export type FindManyCoreViewsQueryVariables = Exact<{
   objectMetadataId?: InputMaybe<Scalars['String']>;
+  viewTypes?: InputMaybe<Array<ViewType> | ViewType>;
 }>;
 
 
@@ -14990,8 +15000,8 @@ export type UpdateCoreViewSortMutationHookResult = ReturnType<typeof useUpdateCo
 export type UpdateCoreViewSortMutationResult = Apollo.MutationResult<UpdateCoreViewSortMutation>;
 export type UpdateCoreViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>;
 export const FindAllCoreViewsDocument = gql`
-    query FindAllCoreViews {
-  getCoreViews {
+    query FindAllCoreViews($viewTypes: [ViewType!]) {
+  getCoreViews(viewTypes: $viewTypes) {
     ...ViewFragment
   }
 }
@@ -15009,6 +15019,7 @@ export const FindAllCoreViewsDocument = gql`
  * @example
  * const { data, loading, error } = useFindAllCoreViewsQuery({
  *   variables: {
+ *      viewTypes: // value for 'viewTypes'
  *   },
  * });
  */
@@ -15023,6 +15034,41 @@ export function useFindAllCoreViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type FindAllCoreViewsQueryHookResult = ReturnType<typeof useFindAllCoreViewsQuery>;
 export type FindAllCoreViewsLazyQueryHookResult = ReturnType<typeof useFindAllCoreViewsLazyQuery>;
 export type FindAllCoreViewsQueryResult = Apollo.QueryResult<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>;
+export const FindFieldsWidgetCoreViewsDocument = gql`
+    query FindFieldsWidgetCoreViews($viewTypes: [ViewType!]) {
+  getCoreViews(viewTypes: $viewTypes) {
+    ...ViewFragment
+  }
+}
+    ${ViewFragmentFragmentDoc}`;
+
+/**
+ * __useFindFieldsWidgetCoreViewsQuery__
+ *
+ * To run a query within a React component, call `useFindFieldsWidgetCoreViewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindFieldsWidgetCoreViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindFieldsWidgetCoreViewsQuery({
+ *   variables: {
+ *      viewTypes: // value for 'viewTypes'
+ *   },
+ * });
+ */
+export function useFindFieldsWidgetCoreViewsQuery(baseOptions?: Apollo.QueryHookOptions<FindFieldsWidgetCoreViewsQuery, FindFieldsWidgetCoreViewsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindFieldsWidgetCoreViewsQuery, FindFieldsWidgetCoreViewsQueryVariables>(FindFieldsWidgetCoreViewsDocument, options);
+      }
+export function useFindFieldsWidgetCoreViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindFieldsWidgetCoreViewsQuery, FindFieldsWidgetCoreViewsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindFieldsWidgetCoreViewsQuery, FindFieldsWidgetCoreViewsQueryVariables>(FindFieldsWidgetCoreViewsDocument, options);
+        }
+export type FindFieldsWidgetCoreViewsQueryHookResult = ReturnType<typeof useFindFieldsWidgetCoreViewsQuery>;
+export type FindFieldsWidgetCoreViewsLazyQueryHookResult = ReturnType<typeof useFindFieldsWidgetCoreViewsLazyQuery>;
+export type FindFieldsWidgetCoreViewsQueryResult = Apollo.QueryResult<FindFieldsWidgetCoreViewsQuery, FindFieldsWidgetCoreViewsQueryVariables>;
 export const FindManyCoreViewFieldsDocument = gql`
     query FindManyCoreViewFields($viewId: String!) {
   getCoreViewFields(viewId: $viewId) {
@@ -15199,8 +15245,8 @@ export type FindManyCoreViewSortsQueryHookResult = ReturnType<typeof useFindMany
 export type FindManyCoreViewSortsLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewSortsLazyQuery>;
 export type FindManyCoreViewSortsQueryResult = Apollo.QueryResult<FindManyCoreViewSortsQuery, FindManyCoreViewSortsQueryVariables>;
 export const FindManyCoreViewsDocument = gql`
-    query FindManyCoreViews($objectMetadataId: String) {
-  getCoreViews(objectMetadataId: $objectMetadataId) {
+    query FindManyCoreViews($objectMetadataId: String, $viewTypes: [ViewType!]) {
+  getCoreViews(objectMetadataId: $objectMetadataId, viewTypes: $viewTypes) {
     ...ViewFragment
   }
 }
@@ -15219,6 +15265,7 @@ export const FindManyCoreViewsDocument = gql`
  * const { data, loading, error } = useFindManyCoreViewsQuery({
  *   variables: {
  *      objectMetadataId: // value for 'objectMetadataId'
+ *      viewTypes: // value for 'viewTypes'
  *   },
  * });
  */
