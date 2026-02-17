@@ -41,7 +41,7 @@ const StyledSettingsCardToggleCover = styled.span`
 type SettingsOptionCardContentToggleProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: string;
+  description?: string | React.ReactNode;
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
@@ -81,7 +81,11 @@ export const SettingsOptionCardContentToggle = ({
           </StyledSettingsCardTitle>
           {description && (
             <StyledSettingsCardDescription>
-              <OverflowingTextWithTooltip text={description} />
+              {typeof description === 'string' ? (
+                <OverflowingTextWithTooltip text={description} />
+              ) : (
+                description
+              )}
             </StyledSettingsCardDescription>
           )}
         </StyledSettingsCardTextContainer>
