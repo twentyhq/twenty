@@ -995,11 +995,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    const { objectMetadata } =
-      crossEntityTransversalValidation({
-        optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
-        orchestratorActionsReport,
-      });
+    const { objectMetadata } = crossEntityTransversalValidation({
+      optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
+      orchestratorActionsReport,
+    });
 
     orchestratorFailureReport.objectMetadata.push(...objectMetadata);
 
