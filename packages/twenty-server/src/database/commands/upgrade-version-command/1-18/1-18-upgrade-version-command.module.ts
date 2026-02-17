@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
+import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-system-fields-is-system.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
@@ -62,6 +63,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     BackfillMessageChannelThrottleRetryAfterCommand,
     BackfillStandardViewsAndFieldMetadataCommand,
     MigrateWorkflowSendEmailAttachmentsCommand,
+    BackfillSystemFieldsIsSystemCommand,
   ],
   exports: [
     MigratePersonAvatarFilesCommand,
@@ -73,6 +75,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     MigrateWorkspacePicturesCommand,
     BackfillFileSizeAndMimeTypeCommand,
     MigrateWorkflowSendEmailAttachmentsCommand,
+    BackfillSystemFieldsIsSystemCommand,
   ],
 })
 export class V1_18_UpgradeVersionCommandModule {}
