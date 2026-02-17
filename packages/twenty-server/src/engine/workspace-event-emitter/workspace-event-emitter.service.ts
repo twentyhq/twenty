@@ -9,12 +9,14 @@ import {
 import {
   combineFilters,
   isDefined,
+  isMetadataGqlOperationSignature,
   isRecordGqlOperationSignature,
 } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -46,13 +48,29 @@ export class WorkspaceEventEmitterService {
   ) {}
 
   async publish(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
   ): Promise<void> {
-    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
+    if (!this.isMetadataEventBatch(eventBatch)) {
+      await this.publishToLegacyChannel(eventBatch);
+    }
 
-    for (const eventData of workspaceEventBatch.events) {
+    await this.publishToEventStreams(eventBatch);
+  }
+
+  private isMetadataEventBatch(
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
+  ): eventBatch is MetadataEventBatch {
+    return 'metadataName' in eventBatch;
+  }
+
+  private async publishToLegacyChannel(
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+  ): Promise<void> {
+    const [nameSingular, operation] = eventBatch.name.split('.');
+
+    for (const eventData of eventBatch.events) {
       const { record, updatedFields } = transformEventToWebhookEvent({
-        eventName: workspaceEventBatch.name,
+        eventName: eventBatch.name,
         event: eventData,
       });
 
@@ -64,21 +82,19 @@ export class WorkspaceEventEmitterService {
         ...(updatedFields && { updatedFields }),
       };
 
-      // Publish individual events to legacy channel (onDbEvent)
       await this.subscriptionService.publish({
         channel: SubscriptionChannel.DATABASE_EVENT_CHANNEL,
-        workspaceId: workspaceEventBatch.workspaceId,
+        workspaceId: eventBatch.workspaceId,
         payload: { onDbEvent: event },
       });
     }
-
-    await this.publishToEventStreams(workspaceEventBatch);
   }
 
   private async publishToEventStreams(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
   ): Promise<void> {
-    const workspaceId = workspaceEventBatch.workspaceId;
+    const workspaceId = eventBatch.workspaceId;
+    const isMetadata = this.isMetadataEventBatch(eventBatch);
 
     const activeStreamIds =
       await this.eventStreamService.getActiveStreamIds(workspaceId);
@@ -92,12 +108,9 @@ export class WorkspaceEventEmitterService {
       activeStreamIds,
     );
 
-    const permissionsContext = await this.fetchPermissionsContext(workspaceId);
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
+    const objectRecordContext = isMetadata
+      ? undefined
+      : await this.fetchObjectRecordStreamContext(workspaceId);
 
     const streamIdsToRemove: string[] = [];
 
@@ -111,13 +124,21 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      await this.processStreamEvents(
-        streamChannelId,
-        streamData,
-        workspaceEventBatch,
-        permissionsContext,
-        flatWorkspaceMemberMaps,
-      );
+      if (isMetadata) {
+        await this.processMetadataStreamEvents(
+          streamChannelId,
+          streamData,
+          eventBatch as MetadataEventBatch,
+        );
+      } else if (isDefined(objectRecordContext)) {
+        await this.processObjectRecordStreamEvents(
+          streamChannelId,
+          streamData,
+          eventBatch as WorkspaceEventBatch<ObjectRecordEvent>,
+          objectRecordContext.permissionsContext,
+          objectRecordContext.flatWorkspaceMemberMaps,
+        );
+      }
     }
 
     await this.eventStreamService.removeFromActiveStreams(
@@ -126,7 +147,63 @@ export class WorkspaceEventEmitterService {
     );
   }
 
-  private async processStreamEvents(
+  private async fetchObjectRecordStreamContext(workspaceId: string) {
+    const permissionsContext = await this.fetchPermissionsContext(workspaceId);
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return { permissionsContext, flatWorkspaceMemberMaps };
+  }
+
+  private async processMetadataStreamEvents(
+    streamChannelId: string,
+    streamData: EventStreamData,
+    metadataEventBatch: MetadataEventBatch,
+  ): Promise<void> {
+    const matchedQueryIds = this.getMatchingMetadataQueryIds(
+      streamData.queries,
+      metadataEventBatch.metadataName,
+    );
+
+    if (matchedQueryIds.length === 0) {
+      return;
+    }
+
+    const metadataEventsWithQueryIds = metadataEventBatch.events.map(
+      (metadataEvent) => ({
+        queryIds: matchedQueryIds,
+        metadataEvent,
+      }),
+    );
+
+    const payload: EventStreamPayload = {
+      objectRecordEventsWithQueryIds: [],
+      metadataEventsWithQueryIds,
+    };
+
+    await this.subscriptionService.publishToEventStream({
+      workspaceId: metadataEventBatch.workspaceId,
+      eventStreamChannelId: streamChannelId,
+      payload,
+    });
+  }
+
+  private getMatchingMetadataQueryIds(
+    queries: Record<string, RecordOrMetadataGqlOperationSignature>,
+    metadataName: string,
+  ): string[] {
+    return Object.entries(queries)
+      .filter(
+        ([, operationSignature]) =>
+          isMetadataGqlOperationSignature(operationSignature) &&
+          operationSignature.metadataName === metadataName,
+      )
+      .map(([queryId]) => queryId);
+  }
+
+  private async processObjectRecordStreamEvents(
     streamChannelId: string,
     streamData: EventStreamData,
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,

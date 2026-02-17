@@ -21,6 +21,7 @@ import {
   type AllFlatWorkspaceMigrationAction,
   type AllUniversalWorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { shouldEmitMetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/should-emit-metadata-event-by-metadata-name.constant';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
   WorkspaceMigrationRunnerException,
@@ -276,10 +277,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       });
     }
 
-    const metadataEvents = this.deriveMetadataEventsFromFlatAction({
-      flatAction,
-      allFlatEntityMaps: context.allFlatEntityMaps,
-    });
+    const metadataEvents = shouldEmitMetadataEvent(this.metadataName)
+      ? this.deriveMetadataEventsFromFlatAction({
+          flatAction,
+          allFlatEntityMaps: context.allFlatEntityMaps,
+        })
+      : [];
 
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
