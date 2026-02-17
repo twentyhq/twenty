@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -9,7 +10,8 @@ export const spreadsheetImportFilterAvailableFieldMetadataItems = (
     .filter(
       (fieldMetadataItem) =>
         fieldMetadataItem.isActive &&
-        (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
+        (!isHiddenSystemField(fieldMetadataItem) ||
+          fieldMetadataItem.name === 'id') &&
         fieldMetadataItem.name !== 'deletedAt' &&
         (![
           FieldMetadataType.RELATION,

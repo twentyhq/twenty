@@ -3,6 +3,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -69,7 +70,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
     // TODO: remove the relation filter once group by is supported for relation fields
-  }).filter((field) => !isFieldRelation(field) && !field.isSystem);
+  }).filter((field) => !isFieldRelation(field) && !isHiddenSystemField(field));
 
   const { getIcon } = useIcons();
 

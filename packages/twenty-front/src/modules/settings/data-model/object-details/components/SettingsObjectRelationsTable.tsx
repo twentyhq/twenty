@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -89,7 +90,7 @@ export const SettingsObjectRelationsTable = ({
   const relationFields = useMemo(() => {
     return objectMetadataItem.fields.filter(
       (field) =>
-        (showSystemRelations || !field.isSystem) &&
+        (showSystemRelations || !isHiddenSystemField(field)) &&
         (field.type === FieldMetadataType.RELATION ||
           field.type === FieldMetadataType.MORPH_RELATION),
     );

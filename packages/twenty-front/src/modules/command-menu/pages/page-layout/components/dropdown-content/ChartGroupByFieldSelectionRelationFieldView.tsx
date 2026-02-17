@@ -1,6 +1,7 @@
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -70,7 +71,7 @@ export const ChartGroupByFieldSelectionRelationFieldView = ({
 
     return filterBySearchQuery({
       items: targetObjectMetadataItem.fields.filter(
-        (field) => !field.isSystem && !isFieldRelation(field),
+        (field) => !isHiddenSystemField(field) && !isFieldRelation(field),
       ),
       searchQuery,
       getSearchableValues: (field) => [field.label, field.name],
