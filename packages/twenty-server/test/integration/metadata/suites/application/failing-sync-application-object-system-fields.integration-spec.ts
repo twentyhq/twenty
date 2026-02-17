@@ -43,6 +43,8 @@ const buildBaseManifest = (
   logicFunctions: [],
   frontComponents: [],
   publicAssets: [],
+  views: [],
+  navigationMenuItems: [],
   ...overrides,
 });
 
