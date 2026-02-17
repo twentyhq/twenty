@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
@@ -14,7 +15,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const buildUniversalFlatObjectFieldByNameAndJoinColumnMaps = ({
+const buildUniversalFlatObjectFieldByNameAndJoinColumnMaps = ({
   flatFieldMetadataMaps,
   flatObjectMetadata,
 }: {
@@ -122,12 +123,12 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
     });
 
   for (const createdObjectMetadata of createdObjectMetadatas) {
-    const {
-      fieldUniversalIdentifierByName,
-    } = buildUniversalFlatObjectFieldByNameAndJoinColumnMaps({
-      flatFieldMetadataMaps: optimisticUniversalFlatMaps.flatFieldMetadataMaps,
-      flatObjectMetadata: createdObjectMetadata,
-    });
+    const { fieldUniversalIdentifierByName } =
+      buildUniversalFlatObjectFieldByNameAndJoinColumnMaps({
+        flatFieldMetadataMaps:
+          optimisticUniversalFlatMaps.flatFieldMetadataMaps,
+        flatObjectMetadata: createdObjectMetadata,
+      });
 
     for (const expectedSystemField of EXPECTED_SYSTEM_FIELDS) {
       const createdFailedFlatEntityValidations: FailedFlatEntityValidation<
@@ -143,9 +144,9 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
         type: 'create',
       });
 
-      const matchingField =
+      const matchingFieldUniversalIdentifier =
         fieldUniversalIdentifierByName[expectedSystemField.name];
-      if (!isDefined(matchingField)) {
+      if (!isDefined(matchingFieldUniversalIdentifier)) {
         createdFailedFlatEntityValidations.errors.push({
           code: ObjectMetadataExceptionCode.MISSING_SYSTEM_FIELD,
           message: `System field ${expectedSystemField.name} is missing`,
@@ -153,8 +154,30 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
           value: expectedSystemField.name,
         });
       } else {
-        // TODO should validate remaining expected system properties
-        // Just like a jest to match object
+        const universalFlatFieldMetadata =
+          findFlatEntityByUniversalIdentifierOrThrow({
+            flatEntityMaps: optimisticUniversalFlatMaps.flatFieldMetadataMaps,
+            universalIdentifier: matchingFieldUniversalIdentifier,
+          });
+
+        const propertiesToValidate = [
+          'type',
+          'isSystem',
+        ] as const satisfies (keyof UniversalFlatFieldMetadata)[];
+
+        for (const property of propertiesToValidate) {
+          const expectedValue = expectedSystemField[property];
+          const actualValue = universalFlatFieldMetadata[property];
+
+          if (actualValue !== expectedValue) {
+            createdFailedFlatEntityValidations.errors.push({
+              code: ObjectMetadataExceptionCode.INVALID_SYSTEM_FIELD,
+              message: `System field ${expectedSystemField.name} has invalid ${property}: expected ${String(expectedValue)}, got ${String(actualValue)}`,
+              userFriendlyMessage: msg`System field ${expectedSystemField.name} has invalid ${property}`,
+              value: actualValue,
+            });
+          }
+        }
       }
 
       if (createdFailedFlatEntityValidations.errors.length > 0) {
