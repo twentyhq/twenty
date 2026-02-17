@@ -38,6 +38,8 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
   border: ${({ theme, $isSelectedInEditMode }) =>
@@ -91,6 +93,9 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 }: WorkspaceNavigationMenuItemsFolderProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+  );
   const iconColors = getNavigationMenuItemIconColors(theme);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -158,7 +163,9 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           <NavigationDrawerItem
             label={folderName}
             Icon={FolderIcon}
-            iconBackgroundColor={iconColors.folder}
+            iconBackgroundColor={
+              isNavigationMenuItemEditingEnabled ? iconColors.folder : undefined
+            }
             onClick={handleClick}
             className="navigation-drawer-item"
             triggerEvent="CLICK"
