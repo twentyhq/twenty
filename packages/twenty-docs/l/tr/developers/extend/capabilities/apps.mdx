@@ -279,7 +279,11 @@ export default defineObject({
 * `yarn twenty entity:add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
-  **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, `name`, `createdAt`, `updatedAt`, `createdBy`, `position` ve `deletedAt` gibi standart alanları otomatik olarak ekler. Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
+  **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, standart alanları otomatik olarak ekler
+  örneğin `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt`.
+  Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
+  `fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları geçersiz kılabilirsiniz,
+  ancak bu önerilmez.
 </Note>
 
 ### Uygulama yapılandırması (application-config.ts)

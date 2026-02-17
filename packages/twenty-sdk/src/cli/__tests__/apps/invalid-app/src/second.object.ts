@@ -10,6 +10,8 @@ export default defineObject({
   labelPlural: 'Second objects',
   description: 'Second object with duplicate ID',
   icon: 'IconBox',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    'second-field-0000-0000-000000000001',
   fields: [
     {
       universalIdentifier: 'second-field-0000-0000-000000000001',

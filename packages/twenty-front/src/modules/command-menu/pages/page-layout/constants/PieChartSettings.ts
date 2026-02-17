@@ -10,6 +10,7 @@ import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/setti
 import { HIDE_EMPTY_CATEGORY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/HideEmptyCategorySetting';
 import { PRIMARY_SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/PrimarySortBySetting';
 import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
+import { SPLIT_MULTI_VALUE_FIELDS_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SplitMultiValueFieldsXSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
 export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
@@ -23,6 +24,7 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
       EACH_SLICE_REPRESENTS_SETTING,
       PRIMARY_SORT_BY_SETTING,
       HIDE_EMPTY_CATEGORY_SETTING,
+      SPLIT_MULTI_VALUE_FIELDS_X_SETTING,
     ],
   },
   {

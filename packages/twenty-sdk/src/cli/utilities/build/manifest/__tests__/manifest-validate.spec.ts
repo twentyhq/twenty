@@ -157,6 +157,7 @@ describe('manifestValidate', () => {
             namePlural: 'myObjects',
             labelSingular: 'My Object',
             labelPlural: 'My Objects',
+            labelIdentifierFieldMetadataUniversalIdentifier: sharedId,
             fields: [
               {
                 universalIdentifier: sharedId,
