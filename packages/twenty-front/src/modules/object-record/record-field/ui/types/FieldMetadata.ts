@@ -267,8 +267,8 @@ export type FieldAddressValue = {
   addressState: string | null;
   addressPostcode: string | null;
   addressCountry: string | null;
-  addressLat: number | null;
-  addressLng: number | null;
+  addressLat: number | string | null;
+  addressLng: number | string | null;
 };
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
