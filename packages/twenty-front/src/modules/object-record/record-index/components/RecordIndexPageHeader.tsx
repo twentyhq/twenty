@@ -3,6 +3,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
@@ -42,7 +44,19 @@ export const RecordIndexPageHeader = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { getIcon } = useIcons();
-  const Icon = getIcon(objectMetadataItem?.icon);
+  const ObjectIcon = getIcon(objectMetadataItem?.icon);
+  const iconColor = objectMetadataItem
+    ? getStandardObjectIconColor(objectMetadataItem.nameSingular)
+    : undefined;
+
+  const PageHeaderIcon = ObjectIcon
+    ? () => (
+        <NavigationMenuItemStyleIcon
+          Icon={ObjectIcon}
+          color={iconColor ?? undefined}
+        />
+      )
+    : undefined;
 
   const label = objectMetadataItem?.labelPlural ?? objectNamePlural;
 
@@ -65,7 +79,7 @@ export const RecordIndexPageHeader = () => {
   );
 
   return (
-    <PageHeader title={pageHeaderTitle} Icon={Icon}>
+    <PageHeader title={pageHeaderTitle} Icon={PageHeaderIcon}>
       {isDefined(contextStoreCurrentViewId) && (
         <>
           <RecordIndexActionMenu />
