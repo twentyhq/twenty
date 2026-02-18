@@ -129,6 +129,10 @@ export class WorkspaceEventEmitterService {
 
     const streamIdsToRemove: string[] = [];
 
+    const objectRecordStreamContext = !isMetadata
+      ? await this.fetchObjectRecordStreamContext(workspaceId)
+      : undefined;
+
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
         streamIdsToRemove.push(streamChannelId);
@@ -146,11 +150,16 @@ export class WorkspaceEventEmitterService {
           eventBatch as MetadataEventBatch,
         );
       } else {
+        if (!isDefined(objectRecordStreamContext)) {
+          continue;
+        }
+
         await this.processObjectRecordStreamEvents(
           streamChannelId,
           streamData,
           eventBatch as WorkspaceEventBatch<ObjectRecordEvent>,
-          workspaceId,
+          objectRecordStreamContext.permissionsContext,
+          objectRecordStreamContext.flatWorkspaceMemberMaps,
         );
       }
     }
@@ -260,11 +269,15 @@ export class WorkspaceEventEmitterService {
     streamChannelId: string,
     streamData: EventStreamData,
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
-    workspaceId: string,
+    permissionsContext: {
+      flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
+      flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+      flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+      userWorkspaceRoleMap: Record<string, string>;
+      rolesPermissions: ObjectsPermissionsByRoleId;
+    },
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
   ): Promise<void> {
-    const { permissionsContext, flatWorkspaceMemberMaps } =
-      await this.fetchObjectRecordStreamContext(workspaceId);
-
     const { userWorkspaceId } = streamData.authContext;
 
     if (!isDefined(userWorkspaceId)) {
