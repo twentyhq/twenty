@@ -4,6 +4,7 @@ import { useIcons } from 'twenty-ui/display';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuObjectMenuItem } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuObjectMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
@@ -39,6 +40,9 @@ export const CommandMenuObjectPickerItem = ({
           Icon={() => (
             <NavigationMenuItemStyleIcon
               Icon={getIcon(objectMetadataItem.icon)}
+              color={getStandardObjectIconColor(
+                objectMetadataItem.nameSingular,
+              )}
             />
           )}
           label={objectMetadataItem.labelPlural}

@@ -6,6 +6,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
@@ -56,11 +57,19 @@ export const CommandMenuObjectMenuItem = ({
             objectMetadataId: objectMetadataItem.id,
             defaultViewId: defaultViewId ?? '',
             label: objectMetadataItem.labelPlural,
+            iconColor: getStandardObjectIconColor(
+              objectMetadataItem.nameSingular,
+            ),
           }}
         />
       ) : (
         <CommandMenuItem
-          Icon={() => <NavigationMenuItemStyleIcon Icon={Icon} />}
+          Icon={() => (
+            <NavigationMenuItemStyleIcon
+              Icon={Icon}
+              color={getStandardObjectIconColor(objectMetadataItem.nameSingular)}
+            />
+          )}
           label={objectMetadataItem.labelPlural}
           id={objectMetadataItem.id}
           onClick={handleClick}

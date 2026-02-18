@@ -7,6 +7,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
@@ -66,6 +67,9 @@ export const CommandMenuNewSidebarItemViewSystemSubView = ({
                 Icon={() => (
                   <NavigationMenuItemStyleIcon
                     Icon={getIcon(objectMetadataItem.icon)}
+                    color={getStandardObjectIconColor(
+                      objectMetadataItem.nameSingular,
+                    )}
                   />
                 )}
                 label={objectMetadataItem.labelPlural}
