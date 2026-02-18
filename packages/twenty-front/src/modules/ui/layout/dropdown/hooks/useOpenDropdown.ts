@@ -41,9 +41,7 @@ export const useOpenDropdown = () => {
         true,
       );
 
-      setActiveDropdownFocusIdAndMemorizePrevious(
-        dropdownComponentInstanceId,
-      );
+      setActiveDropdownFocusIdAndMemorizePrevious(dropdownComponentInstanceId);
 
       pushFocusItemToFocusStack({
         focusId: dropdownComponentInstanceId,
