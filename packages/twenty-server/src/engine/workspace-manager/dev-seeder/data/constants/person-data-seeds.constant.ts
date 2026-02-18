@@ -13,12 +13,12 @@ type PersonDataSeed = {
   linkedinLinkPrimaryLinkUrl: string;
   jobTitle: string;
   companyId: string;
-  createdBySource: string;
-  createdByWorkspaceMemberId: string;
-  createdByName: string;
   phonesPrimaryPhoneNumber: string;
   phonesPrimaryPhoneCountryCode: string;
   phonesPrimaryPhoneCallingCode: string;
+  createdBySource: string;
+  createdByWorkspaceMemberId: string;
+  createdByName: string;
   updatedBySource: string;
   updatedByWorkspaceMemberId: string;
   updatedByName: string;
@@ -35,12 +35,12 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'linkedinLinkPrimaryLinkUrl',
   'jobTitle',
   'companyId',
-  'createdBySource',
-  'createdByWorkspaceMemberId',
-  'createdByName',
   'phonesPrimaryPhoneNumber',
   'phonesPrimaryPhoneCountryCode',
   'phonesPrimaryPhoneCallingCode',
+  'createdBySource',
+  'createdByWorkspaceMemberId',
+  'createdByName',
   'updatedBySource',
   'updatedByWorkspaceMemberId',
   'updatedByName',
@@ -21661,15 +21661,23 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = PERSON_DATA_SEEDS_RAW.map(
     const workspaceMember = WORKSPACE_MEMBER_DATA_SEEDS.find((workspaceMember) => workspaceMember.id === workspaceMemberId);
     const workspaceMemberName = isDefined(workspaceMember) ? `${workspaceMember?.nameFirstName} ${workspaceMember?.nameLastName}` : "Unkonwn"
 
-    return {
+    const dataSeed: PersonDataSeed = {
       ...person,
-      position: index + 1,
+      createdBySource: person.createdBySource,
       createdByWorkspaceMemberId: workspaceMemberId,
       createdByName: workspaceMemberName,
       updatedBySource: person.createdBySource,
-      updatedByWorkspaceMemberId: workspaceMemberName,
+      updatedByWorkspaceMemberId: workspaceMemberId,
       updatedByName: workspaceMemberName,
+      position: index + 1
     }
+
+
+    const personDataSeedWithSQLColumnOrder: PersonDataSeed = Object.fromEntries(
+      PERSON_DATA_SEED_COLUMNS.map((column) => [column, dataSeed[column as keyof PersonDataSeed]]),
+    ) as PersonDataSeed
+
+    return personDataSeedWithSQLColumnOrder
   },
 );
 
