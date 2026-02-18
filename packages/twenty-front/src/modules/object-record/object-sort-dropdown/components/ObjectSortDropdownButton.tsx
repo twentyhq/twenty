@@ -27,6 +27,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -138,7 +139,7 @@ export const ObjectSortDropdownButton = () => {
     setIsRecordSortDirectionMenuUnfolded(false);
   };
 
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );

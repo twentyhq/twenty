@@ -20,7 +20,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -128,7 +128,7 @@ export const FormArrayFieldInput = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const dropdownId = `dropdown-${instanceId}`;
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     dropdownId,
   );

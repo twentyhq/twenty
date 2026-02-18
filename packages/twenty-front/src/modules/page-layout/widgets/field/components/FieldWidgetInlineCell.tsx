@@ -24,7 +24,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { FieldWidgetInlineCellContainer } from '@/page-layout/widgets/field/components/FieldWidgetInlineCellContainer';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 type FieldWidgetInlineCellProps = {
   loading?: boolean;
@@ -132,37 +132,36 @@ export const FieldWidgetInlineCell = ({
     closeInlineCell();
   };
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        event,
-        newValue,
-        skipPersist,
-      }: Parameters<FieldInputClickOutsideEvent>[0]) => {
-        const currentDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
+  const handleClickOutside = useCallback(
+    ({
+      event,
+      newValue,
+      skipPersist,
+    }: Parameters<FieldInputClickOutsideEvent>[0]) => {
+      const currentDropdownFocusId = jotaiStore.get(
+        activeDropdownFocusIdState.atom,
+      );
 
-        const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
-          recordId,
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
-          componentType: 'inline-cell',
-          instanceId: scopeInstanceId,
-        });
+      const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
+        recordId,
+        fieldMetadataId: fieldDefinition.fieldMetadataId,
+        componentType: 'inline-cell',
+        instanceId: scopeInstanceId,
+      });
 
-        if (currentDropdownFocusId !== expectedDropdownFocusId) {
-          return;
-        }
+      if (currentDropdownFocusId !== expectedDropdownFocusId) {
+        return;
+      }
 
-        event?.preventDefault();
-        event?.stopImmediatePropagation();
+      event?.preventDefault();
+      event?.stopImmediatePropagation();
 
-        if (skipPersist !== true) {
-          persistFieldFromFieldInputContext(newValue);
-        }
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
 
-        closeInlineCell();
-      },
+      closeInlineCell();
+    },
     [
       closeInlineCell,
       recordId,
