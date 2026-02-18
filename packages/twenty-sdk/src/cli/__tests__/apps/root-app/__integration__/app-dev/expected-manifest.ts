@@ -9,7 +9,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     description: 'An app with all entities at root level',
     icon: 'IconFolder',
     defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
-    packageJsonChecksum: '351460efb13a6c1bee63e27cf87f6ece',
+    packageJsonChecksum: '93ae1e2eb3db18351d06f43550700dcc',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
   },
   publicAssets: [],
@@ -139,6 +139,8 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtComponentChecksum: '[checksum]',
     },
   ],
+  views: [],
+  navigationMenuItems: [],
   roles: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',

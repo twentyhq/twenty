@@ -52,9 +52,6 @@ Desde aquí usted puede:
 # Añade una nueva entidad a tu aplicación (guiado)
 yarn entity:add
 
-# Genera un cliente tipado de Twenty y tipos de entidad del espacio de trabajo
-yarn app:generate
-
 # Supervisa los registros de funciones de tu aplicación
 yarn function:logs
 
@@ -157,7 +154,7 @@ src/
 
 A grandes rasgos:
 
-* **package.json**: Declara el nombre de la aplicación, la versión, los entornos (Node 24+, Yarn 4) y agrega `twenty-sdk` además de scripts como `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` y `auth:login` que delegan en la CLI local `twenty`.
+* **package.json**: Declara el nombre de la aplicación, la versión, los entornos (Node 24+, Yarn 4) y agrega `twenty-sdk` además de scripts como `app:dev`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` y `auth:login` que delegan en la CLI local `twenty`.
 * **.gitignore**: Ignora artefactos comunes como `node_modules`, `.yarn`, `generated/` (cliente tipado), `dist/`, `build/`, carpetas de cobertura, archivos de registro y archivos `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloquean y configuran la cadena de herramientas Yarn 4 utilizada por el proyecto.
 * **.nvmrc**: Fija la versión de Node.js esperada por el proyecto.
@@ -173,7 +170,7 @@ A grandes rasgos:
 
 Comandos posteriores añadirán más archivos y carpetas:
 
-* `yarn app:generate` creará una carpeta `generated/` (cliente tipado de Twenty + tipos del espacio de trabajo).
+* `yarn app:dev` genera automáticamente el cliente Twenty tipado en `node_modules/twenty-sdk/generated`.
 * `yarn entity:add` añadirá archivos de definición de entidades en `src/` para tus objetos, funciones, componentes de interfaz o roles personalizados.
 
 ## Autenticación
@@ -585,7 +582,7 @@ Puedes crear funciones nuevas de dos maneras:
 
 ### Cliente tipado generado
 
-Ejecuta yarn app:generate para crear un cliente tipado local en generated/ basado en el esquema de tu espacio de trabajo. Úsalo en tus funciones:
+`yarn app:dev` genera automáticamente el cliente Twenty tipado en `node_modules/twenty-sdk/generated`. Úsalo en tus funciones:
 
 ```typescript
 import Twenty from '~/generated';
@@ -594,7 +591,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-El cliente se vuelve a generar con `yarn app:generate`. Vuelve a ejecutarlo después de cambiar tus objetos o al incorporarte a un nuevo espacio de trabajo.
+El cliente se regenera automáticamente durante la ejecución de `app:dev`. Reinicia `app:dev` después de cambiar tus objetos o al incorporarte a un nuevo espacio de trabajo.
 
 #### Credenciales en tiempo de ejecución en funciones de lógica
 
@@ -632,7 +629,6 @@ Luego agrega scripts como estos:
     "auth:switch": "twenty auth:switch",
     "auth:list": "twenty auth:list",
     "app:dev": "twenty app:dev",
-    "app:generate": "twenty app:generate",
     "app:uninstall": "twenty app:uninstall",
     "entity:add": "twenty entity:add",
     "function:logs": "twenty function:logs",
@@ -642,13 +638,13 @@ Luego agrega scripts como estos:
 }
 ```
 
-Ahora puedes ejecutar los mismos comandos mediante Yarn, p. ej., `yarn app:dev`, `yarn app:generate`, etc.
+Ahora puedes ejecutar los mismos comandos mediante Yarn, p. ej., `yarn app:dev`, etc.
 
 ## Solución de problemas
 
 * Errores de autenticación: ejecuta `yarn auth:login` y asegúrate de que tu clave de API tenga los permisos necesarios.
 * No se puede conectar al servidor: verifica la URL de la API y que el servidor de Twenty sea accesible.
-* Tipos o cliente faltantes/obsoletos: ejecuta `yarn app:generate`.
+* Tipos o cliente faltantes/obsoletos: reinicia `yarn app:dev`.
 * El modo de desarrollo no sincroniza: asegúrate de que `yarn app:dev` esté ejecutándose y de que los cambios no sean ignorados por tu entorno.
 
 Canal de ayuda en Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

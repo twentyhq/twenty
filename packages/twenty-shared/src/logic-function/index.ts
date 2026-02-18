@@ -7,8 +7,8 @@
  *                              |___/
  */
 
-export { DEFAULT_TOOL_INPUT_SCHEMA } from './constants/default-tool-input-schema';
-export { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from './constants/seed-logic-function-input-schema';
+export { DEFAULT_TOOL_INPUT_SCHEMA } from './constants/DefaultToolInputSchema';
+export { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from './constants/SeedLogicFunctionInputSchema';
 export { getInputSchemaFromSourceCode } from './get-input-schema-from-source-code';
 export { getOutputSchemaFromValue } from './get-output-schema-from-value';
 export type { InputJsonSchema } from './input-json-schema.type';

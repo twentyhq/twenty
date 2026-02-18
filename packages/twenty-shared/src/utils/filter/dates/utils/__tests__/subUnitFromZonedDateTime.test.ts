@@ -3,9 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 import { subUnitFromZonedDateTime } from '@/utils/filter/dates/utils/subUnitFromZonedDateTime';
 
 describe('subUnitFromZonedDateTime', () => {
-  const baseZdt = Temporal.ZonedDateTime.from(
-    '2024-03-15T12:00:00[UTC]',
-  );
+  const baseZdt = Temporal.ZonedDateTime.from('2024-03-15T12:00:00[UTC]');
 
   it('should subtract days', () => {
     const result = subUnitFromZonedDateTime(baseZdt, 'DAY', 3);

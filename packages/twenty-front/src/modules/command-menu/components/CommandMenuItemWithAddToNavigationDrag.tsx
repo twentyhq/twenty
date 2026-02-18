@@ -2,12 +2,12 @@ import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { type IconComponent } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { AddToNavigationDragHandle } from '@/navigation-menu-item/components/AddToNavigationDragHandle';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
 
 type CommandMenuItemWithAddToNavigationDragProps = {
@@ -41,7 +41,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   dragIndex,
 }: CommandMenuItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
-  const setRegistry = useSetRecoilState(addToNavPayloadRegistryState);
+  const setRegistry = useSetRecoilStateV2(addToNavPayloadRegistryStateV2);
   const [isHovered, setIsHovered] = useState(false);
 
   const contextualDescription = isHovered

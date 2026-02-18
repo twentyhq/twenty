@@ -18,6 +18,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -55,6 +56,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
@@ -92,6 +94,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-tasks',
       title: 'Tasks',
       icon: 'IconCheckbox',
@@ -129,6 +132,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-notes',
       title: 'Notes',
       icon: 'IconNotes',
@@ -166,6 +170,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',
@@ -203,6 +208,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-emails',
       title: 'Emails',
       icon: 'IconMail',
@@ -240,6 +246,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'person-tab-calendar',
       title: 'Calendar',
       icon: 'IconCalendarEvent',

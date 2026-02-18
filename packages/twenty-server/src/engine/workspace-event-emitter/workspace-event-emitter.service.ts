@@ -1,28 +1,39 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  Nullable,
+  ObjectRecord,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { combineFilters, isDefined } from 'twenty-shared/utils';
+import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -35,6 +46,10 @@ export class WorkspaceEventEmitterService {
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
   ) {}
 
   async publish(
@@ -214,12 +229,113 @@ export class WorkspaceEventEmitterService {
     }
 
     if (matchedEvents.length > 0) {
+      await this.enrichEventBatchWithNestedRelations({
+        objectMetadata: workspaceEventBatch.objectMetadata,
+        events: matchedEvents.map((e) => e.event),
+        streamData,
+        permissionsContext,
+        workspaceId: workspaceEventBatch.workspaceId,
+        roleId,
+      });
+
       await this.subscriptionService.publishToEventStream({
         workspaceId: workspaceEventBatch.workspaceId,
         eventStreamChannelId: streamChannelId,
         payload: matchedEvents,
       });
     }
+  }
+
+  private async enrichEventBatchWithNestedRelations({
+    streamData,
+    objectMetadata,
+    events,
+    workspaceId,
+    permissionsContext,
+    roleId,
+  }: {
+    streamData: EventStreamData;
+    objectMetadata: FlatObjectMetadata;
+    events: ObjectRecordEvent[];
+    workspaceId: string;
+    roleId: string;
+    permissionsContext: {
+      flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
+      flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+      flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+      userWorkspaceRoleMap: UserWorkspaceRoleMap;
+      rolesPermissions: ObjectsPermissionsByRoleId;
+    };
+  }) {
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    const allRecords: ObjectRecord[] = [];
+
+    for (const event of events) {
+      if ('before' in event.properties) {
+        const recordBefore = event.properties.before as Nullable<ObjectRecord>;
+
+        if (isDefined(recordBefore)) {
+          allRecords.push(recordBefore);
+        }
+      }
+
+      if ('after' in event.properties) {
+        const recordAfter = event.properties.after as Nullable<ObjectRecord>;
+
+        if (isDefined(recordAfter)) {
+          allRecords.push(recordAfter);
+        }
+      }
+    }
+
+    const rolePermissionConfig: RolePermissionConfig = {
+      intersectionOf: [roleId],
+    };
+
+    const globalWorkspaceDataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica();
+
+    const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
+      depth: 1,
+      flatObjectMetadata: objectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectsPermissions: permissionsContext.rolesPermissions[roleId],
+      onlyUseLabelIdentifierFieldsInRelations: true,
+      recurseIntoJunctionTableRelations: true,
+    });
+
+    const commonQueryParser = new GraphqlQueryParser(
+      objectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    const selectedFieldsResult =
+      commonQueryParser.parseSelectedFields(selectedFields);
+
+    await this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem: objectMetadata,
+      parentObjectRecords: allRecords,
+      authContext: streamData.authContext,
+      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      rolePermissionConfig,
+      workspaceDataSource: globalWorkspaceDataSource,
+      relations: selectedFieldsResult.relations as Record<
+        string,
+        FindOptionsRelations<ObjectLiteral>
+      >,
+      selectedFields: selectedFieldsResult.select,
+    });
   }
 
   private buildSubscriberRLSFilter(

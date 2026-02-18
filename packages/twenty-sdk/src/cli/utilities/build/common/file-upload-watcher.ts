@@ -48,7 +48,6 @@ export class FileUploadWatcher {
         stabilityThreshold: 100,
         pollInterval: 50,
       },
-      usePolling: true,
     });
 
     this.watcher.on('all', (event, filePath) => {

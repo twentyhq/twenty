@@ -45,13 +45,10 @@ yarn twenty app:dev
 Von hier aus können Sie:
 
 ```bash filename="Terminal"
-# Eine neue Entität zu deiner Anwendung hinzufügen (geführt)
+# Eine neue Entität zu Ihrer Anwendung hinzufügen (geführt)
 yarn twenty entity:add
 
-# Einen typisierten Twenty-Client und Entitätstypen für den Arbeitsbereich generieren
-yarn twenty app:generate
-
-# Die Funktionsprotokolle deiner Anwendung überwachen
+# Die Funktionsprotokolle Ihrer Anwendung überwachen
 yarn twenty function:logs
 
 # Eine Funktion anhand ihres Namens ausführen
@@ -142,7 +139,7 @@ export default defineObject({
 
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
-* `yarn twenty app:generate` erstellt einen `generated/`-Ordner (typisierter Twenty-Client + Workspace-Typen).
+* `yarn twenty app:dev` generiert automatisch einen typisierten API-Client in `node_modules/twenty-sdk/generated` (typisierter Twenty-Client + Arbeitsbereichs-Typen).
 * `yarn twenty entity:add` fügt unter `src/` Entitätsdefinitionsdateien für benutzerdefinierte Objekte, Funktionen, Frontend-Komponenten oder Rollen hinzu.
 
 ## Authentifizierung
@@ -662,7 +659,7 @@ Sie können neue Frontend-Komponenten auf zwei Arten erstellen:
 
 ### Generierter typisierter Client
 
-Führen Sie `yarn twenty app:generate` aus, um einen lokalen typisierten Client in `generated/` basierend auf Ihrem Arbeitsbereichs-Schema zu erstellen. Verwenden Sie ihn in Ihren Funktionen:
+Der typisierte Client wird von `yarn twenty app:dev` automatisch generiert und basierend auf Ihrem Arbeitsbereichs-Schema in `node_modules/twenty-sdk/generated` gespeichert. Verwenden Sie ihn in Ihren Funktionen:
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Der Client wird durch `yarn twenty app:generate` erneut generiert. Führen Sie ihn nach Änderungen an Ihren Objekten oder beim Onboarding in einen neuen Workspace erneut aus.
+Der Client wird von `yarn twenty app:dev` automatisch neu generiert, sobald sich Ihre Objekte oder Felder ändern.
 
 #### Laufzeit-Anmeldedaten in Logikfunktionen
 
@@ -708,13 +705,13 @@ Fügen Sie dann ein `twenty`-Skript hinzu:
 }
 ```
 
-Jetzt können Sie alle Befehle über `yarn twenty <command>` ausführen, z. B. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` usw.
+Jetzt können Sie alle Befehle über `yarn twenty <command>` ausführen, z. B. `yarn twenty app:dev`, `yarn twenty help` usw.
 
 ## Fehlerbehebung
 
 * Authentifizierungsfehler: Führen Sie `yarn twenty auth:login` aus und stellen Sie sicher, dass Ihr API-Schlüssel die erforderlichen Berechtigungen hat.
 * Verbindung zum Server nicht möglich: Überprüfen Sie die API-URL und dass der Twenty-Server erreichbar ist.
-* Typen oder Client fehlen/veraltet: Führen Sie `yarn twenty app:generate` aus.
+* Typen oder Client fehlen/veraltet: Starten Sie `yarn twenty app:dev` neu — der typisierte Client wird automatisch generiert.
 * Dev-Modus synchronisiert nicht: Stellen Sie sicher, dass `yarn twenty app:dev` läuft und dass Änderungen von Ihrer Umgebung nicht ignoriert werden.
 
 Discord-Hilfekanal: https://discord.com/channels/1130383047699738754/1130386664812982322

@@ -1,20 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { basename, dirname, extname } from 'path';
 import { type Readable } from 'stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FileFolder } from 'twenty-shared/types';
 import {
   buildSignedPath,
   extractFolderPathFilenameAndTypeOrThrow,
 } from 'twenty-shared/utils';
+import { Like, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  type FileTokenJwtPayload,
+  type FileTokenJwtPayloadLegacy,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -24,6 +30,10 @@ export class FileService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   async getFileStream(
@@ -36,6 +46,40 @@ export class FileService {
     return await this.fileStorageService.readFileLegacy({
       filePath: `${workspaceFolderPath}/${filename}`,
     });
+  }
+
+  async getFileStreamById({
+    fileId,
+    workspaceId,
+    fileFolder,
+  }: {
+    fileId: string;
+    workspaceId: string;
+    fileFolder: FileFolder;
+  }): Promise<Readable> {
+    {
+      const file = await this.fileRepository.findOneOrFail({
+        where: {
+          id: fileId,
+          workspaceId,
+          path: Like(`${fileFolder}/%`),
+        },
+      });
+
+      const application = await this.applicationRepository.findOneOrFail({
+        where: {
+          id: file.applicationId,
+          workspaceId,
+        },
+      });
+
+      return this.fileStorageService.readFile({
+        resourcePath: removeFileFolderFromFileEntityPath(file.path),
+        fileFolder,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+      });
+    }
   }
 
   signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {
@@ -52,12 +96,14 @@ export class FileService {
     });
   }
 
-  encodeFileToken(payloadToEncode: Omit<FileTokenJwtPayload, 'type' | 'sub'>) {
+  encodeFileToken(
+    payloadToEncode: Omit<FileTokenJwtPayloadLegacy, 'type' | 'sub'>,
+  ) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
 
-    const payload: FileTokenJwtPayload = {
+    const payload: FileTokenJwtPayloadLegacy = {
       ...payloadToEncode,
       sub: payloadToEncode.workspaceId,
       type: JwtTokenTypeEnum.FILE,

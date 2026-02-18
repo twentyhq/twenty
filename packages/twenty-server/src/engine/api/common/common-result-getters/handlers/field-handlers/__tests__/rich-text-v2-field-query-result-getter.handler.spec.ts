@@ -2,7 +2,7 @@ import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { RichTextV2FieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-v2-field-query-result-getter.handler';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -24,9 +24,9 @@ const mockFileService = {
   signFileUrl: jest.fn().mockReturnValue('signed-path'),
 } as unknown as FileService;
 
-const mockFilesFieldService = {
+const mockFileUrlService = {
   signFileUrl: jest.fn().mockReturnValue('signed-path'),
-} as unknown as FilesFieldService;
+} as unknown as FileUrlService;
 
 const mockFeatureFlagService = {
   isFeatureEnabled: jest.fn().mockReturnValue(true),
@@ -39,7 +39,7 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
     process.env.SERVER_URL = 'https://my-domain.twenty.com';
     handler = new RichTextV2FieldQueryResultGetterHandler(
       mockFileService,
-      mockFilesFieldService,
+      mockFileUrlService,
       mockFeatureFlagService,
     );
   });
