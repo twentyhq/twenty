@@ -52,7 +52,7 @@ exports[`Sync application should fail due to object system fields integrity shou
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields cannot be updated",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: label",
               "userFriendlyMessage": "System fields cannot be updated",
             },
           ],
