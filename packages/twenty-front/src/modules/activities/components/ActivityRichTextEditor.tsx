@@ -229,6 +229,8 @@ export const ActivityRichTextEditor = ({
       default: t`Type '/' for commands, '@' for mentions`,
     },
     _tiptapOptions: {
+      // Uses BlockNote's internal TipTap escape hatch to fix Backspace
+      // before atom inline nodes (e.g. mention chips) in contenteditable.
       editorProps: {
         handleKeyDown: handleBackspaceBeforeAtomNode,
       },
