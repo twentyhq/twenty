@@ -7,6 +7,7 @@ import {
   type EmailsConfiguration,
   type FieldRichTextConfiguration,
   type FilesConfiguration,
+  type FrontComponentConfiguration,
   type GaugeChartConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
@@ -21,7 +22,7 @@ import {
   type WorkflowConfiguration,
   type WorkflowRunConfiguration,
   type WorkflowVersionConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type WidgetConfigurationTypenameMap = {
   AggregateChartConfiguration: Omit<
@@ -35,6 +36,12 @@ type WidgetConfigurationTypenameMap = {
   };
   CalendarConfiguration: Omit<CalendarConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.CALENDAR;
+  };
+  FrontComponentConfiguration: Omit<
+    FrontComponentConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.FRONT_COMPONENT;
   };
   EmailsConfiguration: Omit<EmailsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.EMAILS;

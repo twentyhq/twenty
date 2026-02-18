@@ -2,7 +2,10 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { renderHook } from '@testing-library/react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
+import {
+  BillingPlanKey,
+  SubscriptionInterval,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('react-router-dom', () => ({

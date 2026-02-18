@@ -1,21 +1,7 @@
-export const DEFAULT_LANGUAGE = 'en' as const;
-
-export const SUPPORTED_LANGUAGES = [
-  DEFAULT_LANGUAGE,
-  'fr',
-  'ar',
-  'cs',
-  'de',
-  'es',
-  'it',
-  'ja',
-  'ko',
-  'pt',
-  'ro',
-  'ru',
-  'tr',
-  'zh',
-] as const;
-
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
-
+// Re-export from twenty-shared (source of truth)
+// Using relative path because these scripts run via tsx from workspace root
+export { DOCUMENTATION_DEFAULT_LANGUAGE as DEFAULT_LANGUAGE } from '../../twenty-shared/src/constants/DocumentationDefaultLanguage';
+export {
+  DOCUMENTATION_SUPPORTED_LANGUAGES as SUPPORTED_LANGUAGES,
+  type DocumentationSupportedLanguage as SupportedLanguage,
+} from '../../twenty-shared/src/constants/DocumentationSupportedLanguages';

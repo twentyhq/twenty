@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLObjectType, isInputObjectType } from 'graphql';
 import { FieldMetadataType, type CompositeType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
@@ -12,7 +12,6 @@ import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspa
 import { computeCompositeFieldObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-object-type-key.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class CompositeFieldMetadataGqlObjectTypeGenerator {
@@ -71,7 +70,10 @@ export class CompositeFieldMetadataGqlObjectTypeGenerator {
 
       const type = isEnumFieldMetadataType(property.type)
         ? this.gqlTypesStorage.getGqlTypeByKey(key)
-        : this.typeMapperService.mapToScalarType(property.type, typeOptions);
+        : this.typeMapperService.mapToPreBuiltGraphQLOutputType({
+            fieldMetadataType: property.type,
+            typeOptions,
+          });
 
       if (!isDefined(type) || isInputObjectType(type)) {
         const message = `Could not find a GraphQL object type for ${compositeType.type} ${property.name}`;

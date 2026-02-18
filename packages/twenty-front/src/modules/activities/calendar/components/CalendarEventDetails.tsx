@@ -121,15 +121,14 @@ export const CalendarEventDetails = ({
 
   const { calendarEventParticipants } = calendarEvent;
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const [isUpdating, setIsUpdating] = useState(false);
   const updateEntity = useCallback(
     ({ variables }: RecordUpdateHookParams) => {
       setIsUpdating(true);
       void updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.CalendarEvent,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       }).finally(() => setIsUpdating(false));

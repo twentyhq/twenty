@@ -4,8 +4,8 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 type AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<
   T extends SyncableFlatEntity,
@@ -20,18 +20,24 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
   flatEntity,
   flatEntityMapsToMutate,
 }: AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  if (isDefined(flatEntityMapsToMutate.byId[flatEntity.id])) {
+  if (
+    isDefined(
+      flatEntityMapsToMutate.byUniversalIdentifier[
+        flatEntity.universalIdentifier
+      ],
+    )
+  ) {
     throw new FlatEntityMapsException(
       'addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists',
       FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
     );
   }
 
-  flatEntityMapsToMutate.byId[flatEntity.id] = flatEntity;
+  flatEntityMapsToMutate.byUniversalIdentifier[flatEntity.universalIdentifier] =
+    flatEntity;
 
-  flatEntityMapsToMutate.idByUniversalIdentifier[
-    flatEntity.universalIdentifier
-  ] = flatEntity.id;
+  flatEntityMapsToMutate.universalIdentifierById[flatEntity.id] =
+    flatEntity.universalIdentifier;
 
   if (isDefined(flatEntity.applicationId)) {
     const existingUniversalIdentifiers =

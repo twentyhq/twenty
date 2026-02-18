@@ -1,8 +1,10 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataDefaultValue,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
@@ -23,6 +25,7 @@ import {
   computeViewIdParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -103,8 +106,10 @@ const getSchemaComponentsRelationProperties = (
     let itemProperty = {} as Property;
 
     if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
-      const targetObjectMetadata =
-        flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: field.relationTargetObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
 
       if (!targetObjectMetadata) {
         return node;
@@ -236,7 +241,7 @@ export const computeSchemaComponents = (
       const flatFieldMetadatas =
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityIds: item.fieldMetadataIds,
+          flatEntityIds: item.fieldIds,
         });
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({

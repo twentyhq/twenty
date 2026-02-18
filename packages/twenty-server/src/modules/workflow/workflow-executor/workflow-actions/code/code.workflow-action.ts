@@ -4,7 +4,6 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -14,11 +13,12 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/guards/is-workflow-code-action.guard';
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class CodeWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
 
   async execute({
@@ -47,13 +47,11 @@ export class CodeWorkflowAction implements WorkflowAction {
     try {
       const { workspaceId } = runInfo;
 
-      const result =
-        await this.serverlessFunctionService.executeOneServerlessFunction({
-          id: workflowActionInput.serverlessFunctionId,
-          workspaceId,
-          payload: workflowActionInput.serverlessFunctionInput,
-          version: workflowActionInput.serverlessFunctionVersion,
-        });
+      const result = await this.logicFunctionExecutorService.execute({
+        logicFunctionId: workflowActionInput.logicFunctionId,
+        workspaceId,
+        payload: workflowActionInput.logicFunctionInput,
+      });
 
       if (result.error) {
         return { error: result.error.errorMessage };

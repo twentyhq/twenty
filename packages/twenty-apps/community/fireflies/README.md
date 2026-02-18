@@ -230,7 +230,7 @@ npm run test -- --watch
 npx twenty-cli app dev
 
 # Type checking
-npx tsc --noEmit
+npx tsgo --noEmit
 ```
 
 ## Testing

@@ -1,6 +1,6 @@
 ---
 title: İzinler
-description: Control access to objects, fields, and settings with role-based permissions.
+description: Rol tabanlı izinlerle nesnelere, alanlara ve ayarlara erişimi kontrol edin.
 image: /images/user-guide/permissions/permissions.png
 ---
 
@@ -17,10 +17,10 @@ Yeni bir rol oluşturmak için:
 1. **Ayarlar → Roller** bölümüne gidin
 2. **Tüm Roller** altında, **+ Rol Oluştur** seçeneğine tıklayın
 3. Bir rol adı girin
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+4. Varsayılan **İzinler** sekmesinde, [izinleri yapılandırın](#customize-permissions)
 5. Bitirmek için **Kaydet**'e tıklayın
 
-## Delete a Role
+## Bir Rolü Sil
 
 Bir rolü silmek için:
 
@@ -30,7 +30,7 @@ Bir rolü silmek için:
 4. Modalde **Onayla**'ya tıklayın
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. **Yönetici** rolü hariç tüm roller silinebilir. Her zaman **Yönetici** rolüne atanmış en az bir üye olmalıdır.
+  Bir rol silinirse, ona atanmış olan herhangi bir çalışma alanı üyesi otomatik olarak varsayılan role yeniden atanır. **Yönetici** rolü hariç tüm roller silinebilir. Her zaman **Yönetici** rolüne atanmış en az bir üye olmalıdır.
 </Note>
 
 ## Üyelere Rol Atama
@@ -58,82 +58,82 @@ Bir rolü silmek için:
 4. Yeni çalışma alanı üyeleri katıldığında bu role atanacaklardır
 
 <Note>
-  You can only assign roles to existing workspace members. Yeni üyeleri davet etmek için, [Üye Yönetimi](/l/tr/user-guide/settings/capabilities/member-management) kullanın.
+  Yalnızca mevcut çalışma alanı üyelerine roller atayabilirsiniz. Yeni üyeleri davet etmek için, [Üye Yönetimi](/l/tr/user-guide/settings/capabilities/member-management) kullanın.
 </Note>
 
 ## İzinleri Özelleştirin
 
 İzinler, her rolün çalışma alanınızda hangi alanlara erişip neleri değiştirebileceğini belirler, bu çalışma alanı obje kayıtları, ayarlar ve aksiyonlar dahil.
 
-### Object Permissions
+### Nesne İzinleri
 
-The **Objects** section controls what this role can do with records across your workspace.
+**Nesneler** bölümü, bu rolün çalışma alanınız genelinde kayıtlarla neler yapabileceğini denetler.
 
-#### Set Default Permissions (All Objects)
+#### Varsayılan İzinleri Ayarlayın (Tüm Nesneler)
 
-First, configure the baseline permissions that apply to **all objects** by default:
+Önce, varsayılan olarak **tüm nesnelere** uygulanan temel izinleri yapılandırın:
 
-| Permission                               | Açıklama                               |
-| ---------------------------------------- | -------------------------------------- |
-| **Tüm Nesnelerdeki Kayıtları Görüntüle** | View records in lists and detail pages |
-| **Tüm Nesnelerdeki Kayıtları Düzenle**   | Modify existing records                |
-| **Tüm Nesnelerde Kayıtları Silin**       | Soft-delete records (can be restored)  |
-| **Tüm Nesnelerde Kayıtları Yok Edin**    | Permanently delete records             |
+| İzin                                     | Açıklama                                                  |
+| ---------------------------------------- | --------------------------------------------------------- |
+| **Tüm Nesnelerdeki Kayıtları Görüntüle** | Kayıtları listelerde ve ayrıntı sayfalarında görüntüleyin |
+| **Tüm Nesnelerdeki Kayıtları Düzenle**   | Mevcut kayıtları düzenleyin                               |
+| **Tüm Nesnelerde Kayıtları Silin**       | Kayıtları geçici olarak silin (geri yüklenebilir)         |
+| **Tüm Nesnelerde Kayıtları Yok Edin**    | Kayıtları kalıcı olarak silin                             |
 
-Select or unselect based on what should be the default behavior for this role.
+Bu rol için varsayılan davranış ne olmalıysa buna göre seçin veya seçimi kaldırın.
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **Örnek — Stajyer rolü**: Bir stajyer varsayılan olarak tüm nesneleri görebilmeli, ancak düzenleyememelidir. "Tüm Nesnelerde Kayıtları Gör" özelliğini etkinleştirin, ancak "Tüm Nesnelerde Kayıtları Düzenle" seçeneğini işaretlemeden bırakın.
 </Note>
 
-#### Add Object-Level Exceptions
+#### Nesne Düzeyi İstisnaları Ekleyin
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+Varsayılanları ayarladıktan sonra, belirli nesneler için varsayılanları geçersiz kılacak kurallar eklemek üzere **Nesne Düzeyi** alt bölümünü kullanın.
 
-Click **+ Add rule** and select an object to create an exception.
+**+ Kural ekle**'ye tıklayın ve bir istisna oluşturmak için bir nesne seçin.
 
-**Example rules for an Intern role:**
+**Bir Stajyer rolü için örnek kurallar:**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| Kural                                           | Etkisi                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| Fırsatlar → "Kayıtları Gör"ü devre dışı bırakın | Stajyer Fırsatlar nesnesini hiç göremez                                         |
+| Kişiler → "Kayıtları Düzenle"yi etkinleştirin   | Stajyer Kişiler kayıtlarını düzenleyebilir (ancak diğer nesneleri düzenleyemez) |
 
-### Field Permissions
+### Alan İzinleri
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+Her nesne düzeyi kuralın içinde, belirli alanlara erişimi denetlemek için **alan düzeyi izinlerini** yapılandırabilirsiniz.
 
-| Permission     | Açıklama                   |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| İzin              | Açıklama                   |
+| ----------------- | -------------------------- |
+| **Alanı Gör**     | Alan değerini görüntüleyin |
+| **Alanı Düzenle** | Alan değerini düzenleyin   |
+| **Erişim Yok**    | Alan tamamen gizlidir      |
 
-**Example — Restrict sensitive fields:**
+**Örnek — Hassas alanları kısıtlayın:**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+Kişiler düzenleme erişimi olan Stajyer rolü için, bazı alanları kısıtlamak isteyebilirsiniz:
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* Kişiler → E-posta → yalnızca **Alanı Gör** (düzenleyemez)
+* Kişiler → Adres → **Erişim Yok** (tamamen gizlidir)
 
-This allows the intern to edit most People fields while protecting sensitive information.
+Bu, stajyerin Kişiler kayıtlarındaki alanların çoğunu düzenlemesine izin verirken hassas bilgileri korur.
 
-### How Permission Inheritance Works
+### İzin Devralma Nasıl Çalışır
 
-Permissions cascade from general to specific:
+İzinler genelden özele doğru kademeli olarak uygulanır:
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **Tüm Nesneler** → tüm nesneler için temel düzeyi belirler
+2. **Nesne Düzeyi kuralları** → belirli nesneler için temel düzeyi geçersiz kılar
+3. **Alan Düzeyi kuralları** → belirli alanlar için nesne ayarını geçersiz kılar
 
-More specific settings always take precedence.
+Daha özel ayarlar her zaman önceliklidir.
 
 ### İzin Geçersiz Kılmalarını Yönetme
 
-To override inherited permissions:
+Devralınan izinleri geçersiz kılmak için:
 
 1. Miras alınan kuralı kaldırmak için **X**'e tıklayın
-2. Select the specific permissions you want
+2. İstediğiniz belirli izinleri seçin
 3. Değişiklikleri geri almak için turuncu **Geri Al** simgesine (daire ok) tıklayın
 
 Tamamlandığında, **Bitir**'e tıklayın, ardından rol sayfasına yönlendirildiğinizde **Kaydet**'e tıklayın.
@@ -146,7 +146,7 @@ Tamamlandığında, **Bitir**'e tıklayın, ardından rol sayfasına yönlendiri
 * Veya spesifik izinleri etkinleştirin (örneğin, API anahtarı oluşturma, çalışma alanı tercihleri, rol atama, veri modeli yapılandırma, güvenlik ayarları ve iş akışı yönetimi)
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **Mevcut sınırlama**: İş akışlarını elle tetiklemek için şu anda iş akışı yönetimine erişim gereklidir. Bu davranış gelecekteki sürümlerde değişebilir.
 </Note>
 
 ### Çalışma Alanı Aksiyon İzinleri
@@ -156,43 +156,43 @@ Genel çalışma alanı aksiyonlarına erişimi kontrol edin:
 * Tam izin vermek için **Uygulama Tüm Erişim**'i değiştirin
 * Veya **E-posta Gönder**, **CSV İthal Et**, **CSV İhraç Et** gibi bireysel aksiyonları etkinleştirin
 
-## Assigning Roles to API Keys and AI Agents
+## API Anahtarlarına ve Yapay Zeka Ajanlarına Roller Atama
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+Çalışma alanı üyelerinin ötesinde, roller **API Anahtarları** ve **Yapay Zeka Ajanları**na da atanabilir. Bu, otomatikleştirilmiş süreçler ve entegrasyonlar dahil olmak üzere çalışma alanlarında tam olarak "kimin" ne yapabileceğini kontrol etmek isteyen ekipler için özellikle yararlıdır.
 
-### Why Assign Roles to API Keys and AI Agents?
+### Neden API Anahtarlarına ve Yapay Zeka Ajanlarına Roller Atanmalı?
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **Güvenlik**: Otomatik süreçlerin erişebileceği veya değiştirebileceği şeyleri sınırlayın
+* **Uyumluluk**: Entegrasyonların yalnızca ihtiyaç duydukları verilere erişmesini sağlayın
+* **Denetim**: Hatalı yapılandırılmış otomasyonlardan kaynaklanan kazara veri değişikliklerini önleyin
+* **Denetlenebilirlik**: Hangi işlemlerin hangi entegrasyon veya ajan tarafından gerçekleştirildiğini izleyin
 
-### Assign a Role to an API Key
+### Bir API Anahtarına Rol Atama
 
 1. **Ayarlar → Roller** bölümüne gidin
 2. Atamak istediğiniz role tıklayın
 3. **Atama** sekmesini açın
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
+4. **API Anahtarları** altında, **+ API anahtarına ata**'ya tıklayın
+5. Listeden API anahtarını seçin
 6. Atamayı onaylayın
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+API anahtarı artık o rol tarafından tanımlanan tüm izinleri devralır. Bu anahtarla yapılan tüm API çağrıları buna göre kısıtlanır.
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  Atanmış rolü olmayan API anahtarları varsayılan izinleri kullanır. Daha sıkı güvenlik için, üretim API anahtarlarına her zaman belirli bir rol atayın.
 </Note>
 
-### Assign a Role to an AI Agent
+### Bir Yapay Zeka Ajanına Rol Atama
 
 1. **Ayarlar → Roller** bölümüne gidin
 2. Atamak istediğiniz role tıklayın
 3. **Atama** sekmesini açın
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
+4. **Yapay Zeka Ajanları** altında, **+ Yapay zeka ajanına ata**'ya tıklayın
+5. Listeden yapay zeka ajanını seçin
 6. Atamayı onaylayın
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+Yapay zeka ajanı yalnızca atandığı rolün izin verdiği verilere erişebilir ve eylemleri gerçekleştirebilir.
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  İş akışları içinde çalışan yapay zeka ajanları için bu, iş akışının daha geniş izinleri olsa bile, ajanın amaçlanan kapsamı dışındaki verilere erişememesini veya onları değiştirememesini sağlar.
 </Note>

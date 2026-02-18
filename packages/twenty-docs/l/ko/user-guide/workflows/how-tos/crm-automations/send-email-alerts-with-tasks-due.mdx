@@ -1,56 +1,56 @@
 ---
-title: Send Email Alerts with Tasks Due
-description: Automatically notify team members about their upcoming or overdue tasks.
+title: 마감 예정 작업에 대한 이메일 알림 보내기
+description: 예정되었거나 기한이 지난 작업에 대해 팀 구성원에게 자동으로 알립니다.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
 
-Send daily email reminders to each team member about their tasks due today.
+오늘 마감인 작업에 대해 각 팀원에게 매일 이메일 알림을 보냅니다.
 
-## Overview
+## 개요
 
-This workflow runs on a schedule and:
+이 워크플로우는 일정에 따라 실행되며 다음을 수행합니다:
 
-1. Fetches all workspace members
-2. Loops through each member
-3. Finds their tasks due today
-4. Formats and sends a personalized email
+1. 모든 워크스페이스 구성원을 가져옵니다
+2. 각 구성원을 순회합니다
+3. 각 구성원의 오늘 마감 작업을 찾습니다
+4. 개인화된 이메일을 작성해 전송합니다
 
-## Step-by-Step Setup
+## 단계별 설정
 
-<VimeoEmbed videoId="1147463514" title="Video demonstration" />
+<VimeoEmbed videoId="1147463514" title="동영상 시연" />
 
-### Step 1: Configure the Trigger
+### 1단계: 트리거 구성
 
-1. Go to **Settings → Workflows** and create a new workflow
-2. Select **On a Schedule** as the trigger
-3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
+1. **Settings → Workflows**로 이동해 새 워크플로우를 생성합니다
+2. 트리거로 **On a Schedule**를 선택합니다
+3. 매일 오전 8시에 실행되도록 다음 cron 표현식을 사용하세요: `0 8 * * *`
 
-### Step 2: Search for All Workspace Members
+### 2단계: 모든 워크스페이스 구성원 검색
 
-1. Add a **Search Records** action
-2. Select **Workspace Members** (under advanced objects)
-3. No filters needed — this returns all members
+1. **레코드 검색** 액션을 추가합니다
+2. 고급 객체(advanced objects) 아래의 **Workspace Members**를 선택합니다
+3. 필터는 필요 없습니다 — 모든 구성원이 반환됩니다
 
-### Step 3: Add an Iterator
+### 3단계: 이터레이터 추가
 
-1. Add an **Iterator** action
-2. Set the input array to the workspace members from the previous step
-3. All actions inside the iterator will run once per member
+1. **Iterator** 액션을 추가합니다
+2. 입력 배열을 이전 단계의 워크스페이스 구성원으로 설정합니다
+3. 이터레이터 내부의 모든 액션은 구성원당 한 번씩 실행됩니다
 
-### Step 4: Search for Tasks Due Today (Inside Iterator)
+### 4단계: 오늘 마감 작업 검색(이터레이터 내부)
 
-1. Inside the iterator, add a **Search Records** action
-2. Select **Tasks** as the object
-3. Add filters:
-   * **Assignee** = current workspace member (from the iterator)
-   * **Due Date** = today
+1. 이터레이터 내부에 **레코드 검색** 액션을 추가합니다
+2. 객체로 **Tasks**를 선택합니다
+3. 필터 추가:
+   * **Assignee** = 현재 워크스페이스 구성원(이터레이터에서 가져옴)
+   * **Due Date** = 오늘
 
-### Step 5: Format Tasks into Email Body (Inside Iterator)
+### 5단계: 작업을 이메일 본문 형식으로 정리(이터레이터 내부)
 
-Add a **Code** action to format the tasks into a readable list with links:
+작업을 링크가 포함된 읽기 쉬운 목록으로 형식화하기 위해 **Code** 액션을 추가합니다:
 
 ```javascript
 export const main = async (params: {
@@ -79,28 +79,28 @@ export const main = async (params: {
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  `yourSubDomain`을 실제 Twenty 워크스페이스 서브도메인으로 바꾸세요.
 </Note>
 
-### Step 6: Send Email (Inside Iterator)
+### 6단계: 이메일 보내기(이터레이터 내부)
 
-1. Add a **Send Email** action (still inside the iterator)
-2. Configure:
+1. **Send Email** 액션을 추가합니다(여전히 이터레이터 내부)
+2. 구성:
 
-| Field       | Value                                                           |
-| ----------- | --------------------------------------------------------------- |
-| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today                                            |
-| **Body**    | `{{code.formattedTasks}}`                                       |
+| 필드        | 값                                                      |
+| --------- | ------------------------------------------------------ |
+| **받는 사람** | `{{iterator.currentItem.userEmail}}` (워크스페이스 구성원의 이메일) |
+| **제목**    | 오늘 마감인 작업                                              |
+| **본문**    | `{{code.formattedTasks}}`                              |
 
-### Step 7: Test and Activate
+### 7단계: 테스트 및 활성화
 
-1. Click **Test** to run the workflow manually
-2. Check inboxes for the emails
-3. Activate the workflow
+1. 워크플로우를 수동으로 실행하려면 **Test**를 클릭합니다
+2. 이메일이 도착했는지 받은편지함을 확인하세요
+3. 워크플로우를 활성화합니다
 
-## Related
+## 관련 항목
 
-* [Workflow Actions](/l/ko/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ko/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Handle Arrays in Code Actions](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [워크플로우에서 이메일 보내기](/l/ko/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

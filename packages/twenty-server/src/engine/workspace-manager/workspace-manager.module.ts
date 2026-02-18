@@ -14,7 +14,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
@@ -43,7 +43,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
       FieldMetadataEntity,
       RoleTargetEntity,
       RoleEntity,
-      ServerlessFunctionEntity,
+      LogicFunctionEntity,
     ]),
   ],
   exports: [WorkspaceManagerService],

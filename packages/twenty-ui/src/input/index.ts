@@ -66,6 +66,7 @@ export type { LightIconButtonGroupProps } from './button/components/LightIconBut
 export { LightIconButtonGroup } from './button/components/LightIconButtonGroup';
 export type { MainButtonVariant } from './button/components/MainButton';
 export { MainButton } from './button/components/MainButton';
+export type { RoundedIconButtonSize } from './button/components/RoundedIconButton';
 export { RoundedIconButton } from './button/components/RoundedIconButton';
 export {
   StyledTabButton,
@@ -99,6 +100,8 @@ export { IconListViewGrip } from './components/IconListViewGrip';
 export type { RadioProps } from './components/Radio';
 export { RadioSize, LabelPosition, Radio } from './components/Radio';
 export { RadioGroup } from './components/RadioGroup';
+export type { SearchInputProps } from './components/SearchInput';
+export { SearchInput } from './components/SearchInput';
 export type { ToggleSize, ToggleProps } from './components/Toggle';
 export { Toggle } from './components/Toggle';
 export type { ColorScheme } from './types/ColorScheme';

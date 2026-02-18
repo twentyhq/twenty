@@ -1,6 +1,10 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
+  PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
+import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -20,6 +24,7 @@ import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -28,6 +33,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   ['workspaceId', 'pageLayoutTabId'],
   { where: '"deletedAt" IS NULL' },
 )
+@Index('IDX_PAGE_LAYOUT_WIDGET_OBJECT_METADATA_ID', ['objectMetadataId'])
 export class PageLayoutWidgetEntity<
     TWidgetConfigurationType extends
       WidgetConfigurationType = WidgetConfigurationType,
@@ -68,11 +74,19 @@ export class PageLayoutWidgetEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
-  @Column({ type: 'jsonb', nullable: false })
-  gridPosition: GridPosition;
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
 
   @Column({ type: 'jsonb', nullable: false })
-  configuration: PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>;
+  gridPosition: JsonbProperty<GridPosition>;
+
+  @Column({ type: 'jsonb', nullable: true })
+  position: JsonbProperty<PageLayoutWidgetPosition | null>;
+
+  @Column({ type: 'jsonb', nullable: false })
+  configuration: JsonbProperty<
+    PageLayoutWidgetConfigurationTypeSettings<TWidgetConfigurationType>
+  >;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

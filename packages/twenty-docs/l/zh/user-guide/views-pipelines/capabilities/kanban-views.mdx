@@ -1,99 +1,99 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: 看板视图
+description: 了解如何使用看板视图来可视化并管理您的工作流。
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Kanban Views
+## 关于看板视图
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+看板视图以视觉方式映射出处理流程，其中每个列代表一个不同阶段，每个卡片代表一个记录。
 
-## Move Cards between Stages
+## 在阶段间移动卡片
 
-You can move each card between stages as it goes through your workflow by dragging and dropping. To proceed, hold your click on a card and move it to the next stage.
+您可以通过拖动来在工作流程中将卡片在阶段之间移动。 要继续，请在卡片上按住鼠标，将其移到下一个阶段。
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="视频演示" />
 
-## Add and Delete Stages
+## 添加和删除阶段
 
-You can tailor your workflow to suit your needs using stages, which represent a value in a Select Field:
+您可以使用阶段来定制工作流以满足您的需求，这些阶段对应于选择字段中的一个值：
 
-### Add Stages
+### 添加阶段
 
-To add a stage, access the Select field settings by navigating to Settings > Data Model, selecting your object, and then the field your Kanban board depends on.
+要添加阶段，请通过导航到 设置 > 数据模型，选择您的对象，然后选择您的看板所依赖的字段，进入选择字段设置。
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="视频演示" />
 
-### Remove Stages
+### 移除阶段
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+要删除阶段，悬停在阶段名称或 `⋮` 图标上，单击选择字段设置中的 `从设置编辑`，然后在相关阶段旁边单击 **删除**。
 
-## Display Fields
+## 显示字段
 
-You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+您可以配置看板板以显示一些字段并隐藏其他字段。 要隐藏字段，请点击右上角的 **选项**，然后点击 **字段** 以打开选项列表。 在隐藏字段部分找到所需字段，然后点击眼睛图标以显示该字段。
 
-You can also rearrange the order of fields by holding down the field name and dragging it to where you want it.
+您还可以通过按住字段名称并将其拖到所需位置来重新排列字段顺序。
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-## Compact View
+## 紧凑视图
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+您可以隐藏所有字段，从而一目了然地总览所有记录。 启用方法：
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. 单击右上角的 **选项**
+2. 打开 **紧凑视图** 开关
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## 列聚合
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+看板视图中的每一列都可以在顶部显示聚合值，帮助您一目了然地了解数据。
 
-### Available Aggregations
+### 可用的聚合
 
-| Aggregation | Description                                   |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| 聚合     | 描述               |
+| ------ | ---------------- |
+| **计数** | 该列中的记录数量         |
+| **总和** | 数值字段的总计（例如，交易金额） |
+| **平均** | 数值字段的平均值         |
+| **最小** | 最小值              |
+| **最大** | 最大值              |
 
-### Configuring Aggregations
+### 配置聚合
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. 单击列顶部显示在阶段值旁边的数字
+2. 选择聚合类型
+3. 选择要聚合的字段
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**示例：** 通过对 Amount 字段进行求和，显示每个阶段的交易总金额。
 
-## When to Use Kanban Views
+## 何时使用看板视图
 
-Kanban views are ideal for:
+看板视图非常适用于：
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **销售管道**：从线索到成交，按阶段跟踪交易
+* **项目管理**：按工作流状态监控任务
+* **招聘**：按招聘阶段跟踪候选人
+* **任何分阶段的流程**：以可视化方式呈现具有已定义阶段的任何工作流
 
-## Best Practices
+## 最佳实践
 
-### Organize Your Stages
+### 组织您的阶段
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **限制阶段数量**：以 5–7 个阶段为宜
+* **命名清晰**：使用具有描述性的阶段名称
+* **逻辑顺序**：按流程顺序排列阶段
 
-### Optimize Card Display
+### 优化卡片显示
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **显示关键字段**：只显示最重要的信息
+* **使用紧凑视图**：用于高层级概览
+* **颜色编码**：使用阶段颜色快速识别状态
 
-### Maintain Data Quality
+### 保持数据质量
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **定期更新**：让卡片在各阶段持续流转
+* **归档已完成项**：将已关闭的条目移出活动视图
+* **检查滞留卡片**：跟进停留在某个阶段的卡片

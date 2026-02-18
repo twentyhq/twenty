@@ -11,6 +11,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -25,6 +26,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 export class RunWorkflowJob {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly metricsService: MetricsService,
@@ -39,32 +41,29 @@ export class RunWorkflowJob {
   }: RunWorkflowJobData): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        try {
-          if (lastExecutedStepId) {
-            await this.resumeWorkflowExecution({
-              workspaceId,
-              workflowRunId,
-              lastExecutedStepId,
-            });
-          } else {
-            await this.startWorkflowExecution({
-              workflowRunId,
-              workspaceId,
-            });
-          }
-        } catch (error) {
-          await this.workflowRunWorkspaceService.endWorkflowRun({
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      try {
+        if (lastExecutedStepId) {
+          await this.resumeWorkflowExecution({
             workspaceId,
             workflowRunId,
-            status: WorkflowRunStatus.FAILED,
-            error: error.message,
+            lastExecutedStepId,
+          });
+        } else {
+          await this.startWorkflowExecution({
+            workflowRunId,
+            workspaceId,
           });
         }
-      },
-    );
+      } catch (error) {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workspaceId,
+          workflowRunId,
+          status: WorkflowRunStatus.FAILED,
+          error: error.message,
+        });
+      }
+    }, authContext);
   }
 
   private async startWorkflowExecution({
@@ -80,6 +79,13 @@ export class RunWorkflowJob {
         workspaceId,
       });
 
+    if (
+      workflowRun.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRun.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
+      return;
+    }
+
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
         workspaceId,
@@ -92,6 +98,11 @@ export class RunWorkflowJob {
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }
+
+    await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
+      workspaceId,
+      steps: workflowVersion.steps,
+    });
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
@@ -145,7 +156,7 @@ export class RunWorkflowJob {
     const lastExecutedStepOutput =
       workflowRun.state?.stepInfos[lastExecutedStepId];
 
-    const nextStepIdsToExecute =
+    const { nextStepIdsToExecute } =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
         executedStepOutput: lastExecutedStepOutput,

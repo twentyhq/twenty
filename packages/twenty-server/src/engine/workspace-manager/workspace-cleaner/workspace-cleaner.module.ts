@@ -13,10 +13,8 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { CleanOnboardingWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
-import { HardDeleteSoftDeletedSuspendedWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-soft-deleted-suspended-workspaces.command';
 import { CleanSuspendedWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
-import { DeleteWorkspacesCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/delete-workspaces.command';
 import { DestroyWorkspaceCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/destroy-workspace.command';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
@@ -36,11 +34,9 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
     MetricsModule,
   ],
   providers: [
-    DeleteWorkspacesCommand,
     DestroyWorkspaceCommand,
     CleanSuspendedWorkspacesCronCommand,
     CleanSuspendedWorkspacesCommand,
-    HardDeleteSoftDeletedSuspendedWorkspacesCommand,
     CleanOnboardingWorkspacesCommand,
     CleanOnboardingWorkspacesCronCommand,
     CleanerWorkspaceService,

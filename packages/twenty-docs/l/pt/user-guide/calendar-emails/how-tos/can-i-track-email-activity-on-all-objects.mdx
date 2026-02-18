@@ -1,35 +1,35 @@
 ---
-title: Can I Track Email Activity on All Objects?
-description: Understanding email activity tracking across different objects.
+title: Posso acompanhar a atividade de email em todos os objetos?
+description: Compreender o acompanhamento da atividade de email em diferentes objetos.
 ---
 
-## Supported Objects
+## Objetos suportados
 
-Email activity is currently available on **three standard objects**:
+A atividade de email está atualmente disponível em **três objetos padrão**:
 
-| Object            | What You See                                                     |
-| ----------------- | ---------------------------------------------------------------- |
-| **People**        | All emails exchanged with that specific contact                  |
-| **Companies**     | All emails with anyone from that company (based on email domain) |
-| **Opportunities** | Emails related to the company linked to the opportunity          |
+| Objeto            | O que vê                                                                         |
+| ----------------- | -------------------------------------------------------------------------------- |
+| **Pessoas**       | Todos os emails trocados com esse contacto específico                            |
+| **Empresas**      | Todos os emails com qualquer pessoa dessa empresa (com base no domínio de email) |
+| **Oportunidades** | Emails relacionados com a empresa associada à oportunidade                       |
 
-## Why Only These Objects?
+## Porque é que apenas estes objetos?
 
-People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+Pessoas, Empresas e Oportunidades são os objetos de relação principais onde o contexto de email acrescenta mais valor. As conversas de email são associadas automaticamente com base em:
 
-* **Email address** → matched to People records
-* **Email domain** → matched to Company records
-* **Company relation** → linked to Opportunities
+* **Endereço de email** → associado a registos de Pessoas
+* **Domínio de email** → associado a registos de Empresas
+* **Relação com a empresa** → ligada a Oportunidades
 
-## Custom Objects
+## Objetos personalizados
 
-**Email tracking is not available on custom objects** at this time.
+**O acompanhamento de email não está disponível em objetos personalizados** neste momento.
 
-If you need email context on a custom object, consider:
+Se precisar de contexto de email num objeto personalizado, considere:
 
-* Using a relation field to link your custom object to People or Companies
-* Viewing email history on the linked People/Company record
+* Usar um campo de relação para ligar o seu objeto personalizado a Pessoas ou Empresas
+* Ver o histórico de email no registo de Pessoa/Empresa ligado
 
-## Future Plans
+## Planos futuros
 
-Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.
+Está a ser considerada a extensão da visibilidade do email a objetos personalizados. Partilhe o seu caso de uso nas nossas [discussões no GitHub](https://github.com/twentyhq/twenty/discussions) para ajudar a priorizar esta funcionalidade.

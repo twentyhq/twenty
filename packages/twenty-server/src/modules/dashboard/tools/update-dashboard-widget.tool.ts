@@ -1,10 +1,11 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
   gridPositionSchema,
-  widgetConfigurationSchema,
+  widgetConfigurationSchemaWithoutDefaults,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
 import {
@@ -24,7 +25,7 @@ const updateDashboardWidgetSchema = z.object({
     .uuid()
     .optional()
     .describe('New object metadata ID'),
-  configuration: widgetConfigurationSchema,
+  configuration: widgetConfigurationSchemaWithoutDefaults.optional(),
 });
 
 export const createUpdateDashboardWidgetTool = (
@@ -49,12 +50,21 @@ Only provide fields you want to change - others remain unchanged.`,
       columnSpan: number;
     };
     objectMetadataId?: string;
-    configuration?: Record<string, unknown>;
+    configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
       const { widgetId, ...updates } = parameters;
       const updateData = Object.fromEntries(
-        Object.entries(updates).filter(([, value]) => isDefined(value)),
+        Object.entries(updates).filter(([key, value]) => {
+          if (!isDefined(value)) {
+            return false;
+          }
+          if (key === 'configuration' && isEmptyObject(value)) {
+            return false;
+          }
+
+          return true;
+        }),
       );
 
       const widget = await deps.pageLayoutWidgetService.update({

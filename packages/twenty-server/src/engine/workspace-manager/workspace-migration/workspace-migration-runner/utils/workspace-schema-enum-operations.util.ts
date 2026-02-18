@@ -12,9 +12,9 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 
 export interface CreateEnumOperationSpec {
   operation: EnumOperation.CREATE;
@@ -246,9 +246,9 @@ export const executeBatchEnumOperations = async ({
 
     await Promise.all(enumPromises);
   } catch (error) {
-    throw new WorkspaceMigrationRunnerException(
-      `Failed to execute batch enum operations: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      WorkspaceMigrationRunnerExceptionCode.ENUM_OPERATION_FAILED,
-    );
+    throw new WorkspaceMigrationActionExecutionException({
+      message: `Failed to execute batch enum operations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      code: WorkspaceMigrationActionExecutionExceptionCode.ENUM_OPERATION_FAILED,
+    });
   }
 };

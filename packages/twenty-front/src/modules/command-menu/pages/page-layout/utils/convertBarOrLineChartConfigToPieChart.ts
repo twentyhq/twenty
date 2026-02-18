@@ -2,7 +2,7 @@ import { type PieChartConvertibleFields } from '@/command-menu/pages/page-layout
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const convertBarOrLineChartConfigToPieChart = (
   configuration: BarChartConfiguration | LineChartConfiguration,
@@ -15,9 +15,11 @@ export const convertBarOrLineChartConfigToPieChart = (
   }
 
   return {
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
     groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
     groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
     dateGranularity: configuration.primaryAxisDateGranularity,
     orderBy: configuration.primaryAxisOrderBy,
+    splitMultiValueFields: configuration.splitMultiValueFields,
   };
 };

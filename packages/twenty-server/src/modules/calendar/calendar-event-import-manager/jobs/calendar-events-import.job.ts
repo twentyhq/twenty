@@ -35,54 +35,51 @@ export class CalendarEventsImportJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
-        const calendarChannel = await calendarChannelRepository.findOne({
-          where: {
-            id: calendarChannelId,
-            isSyncEnabled: true,
-          },
-          relations: ['connectedAccount'],
-        });
-
-        if (!calendarChannel?.isSyncEnabled) {
-          return;
-        }
-
-        if (
-          calendarChannel.syncStage !==
-          CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED
-        ) {
-          return;
-        }
-
-        if (
-          isThrottled(
-            calendarChannel.syncStageStartedAt,
-            calendarChannel.throttleFailureCount,
-          )
-        ) {
-          await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
-            [calendarChannel.id],
-            workspaceId,
-            true,
-          );
-
-          return;
-        }
-
-        await this.calendarEventsImportService.processCalendarEventsImport(
-          calendarChannel,
-          calendarChannel.connectedAccount,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
           workspaceId,
+          'calendarChannel',
         );
-      },
-    );
+      const calendarChannel = await calendarChannelRepository.findOne({
+        where: {
+          id: calendarChannelId,
+          isSyncEnabled: true,
+        },
+        relations: ['connectedAccount'],
+      });
+
+      if (!calendarChannel?.isSyncEnabled) {
+        return;
+      }
+
+      if (
+        calendarChannel.syncStage !==
+        CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED
+      ) {
+        return;
+      }
+
+      if (
+        isThrottled(
+          calendarChannel.syncStageStartedAt,
+          calendarChannel.throttleFailureCount,
+        )
+      ) {
+        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
+          [calendarChannel.id],
+          workspaceId,
+          true,
+        );
+
+        return;
+      }
+
+      await this.calendarEventsImportService.processCalendarEventsImport(
+        calendarChannel,
+        calendarChannel.connectedAccount,
+        workspaceId,
+      );
+    }, authContext);
   }
 }

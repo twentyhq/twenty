@@ -1,16 +1,16 @@
 ---
-title: Navigation Bar
+title: 내비게이션 바
 image: /images/user-guide/table-views/table.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+  <img src="/images/user-guide/table-views/table.png" alt="헤더" />
 </Frame>
 
-Renders a navigation bar that contains multiple `NavigationBarItem` components.
+여러 `NavigationBarItem` 구성 요소를 포함하는 탐색 막대를 렌더링합니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
     import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
@@ -40,10 +40,10 @@ Renders a navigation bar that contains multiple `NavigationBarItem` components.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type   | Description                                                                                                                                                                                          |
-    | -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | activeItemName | string | The name of the currently active navigation item                                                                                                                                                     |
-    | items          | array  | An array of objects representing each navigation item. Each object contains the `name` of the item, the `Icon` component to display, and an `onClick` function to be called when the item is clicked |
+  <Tab title="프로퍼티">
+    | 프로퍼티           | 유형  | 설명                                                                                                |
+    | -------------- | --- | ------------------------------------------------------------------------------------------------- |
+    | activeItemName | 문자열 | 현재 활성화된 탐색 항목의 이름                                                                                 |
+    | 항목             | 배열  | 각 탐색 항목을 나타내는 객체 배열입니다. 각 객체에는 항목의 `name`, 표시할 `Icon` 구성 요소 및 항목이 클릭될 때 호출되는 `onClick` 함수가 포함됩니다. |
   </Tab>
 </Tabs>

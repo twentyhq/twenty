@@ -1,99 +1,99 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: Visualizações do quadro Kanban
+description: Aprenda a usar as visualizações Kanban para visualizar e gerenciar seus fluxos de trabalho.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Kanban Views
+## Sobre Visualizações Kanban
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+As visualizações Kanban mapeiam visualmente os fluxos de processos, onde cada coluna representa um estágio distinto e cada cartão representa um registro.
 
-## Move Cards between Stages
+## Mover Cartões entre Estágios
 
-You can move each card between stages as it goes through your workflow by dragging and dropping. To proceed, hold your click on a card and move it to the next stage.
+Você pode mover cada cartão entre as etapas à medida que avança no seu fluxo de trabalho, arrastando e soltando. Para prosseguir, mantenha o clique em um cartão e mova-o para o próximo estágio.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Demonstração em vídeo" />
 
-## Add and Delete Stages
+## Adicionar e excluir etapas
 
-You can tailor your workflow to suit your needs using stages, which represent a value in a Select Field:
+Você pode personalizar seu fluxo de trabalho para atender às suas necessidades usando estágios, que representam um valor em um Campo de Seleção:
 
-### Add Stages
+### Adicionar etapas
 
-To add a stage, access the Select field settings by navigating to Settings > Data Model, selecting your object, and then the field your Kanban board depends on.
+Para adicionar um estágio, acesse as configurações do campo de Seleção navegando para Configurações > Modelo de Dados, selecionando seu objeto e depois o campo do qual seu quadro Kanban depende.
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="Demonstração em vídeo" />
 
-### Remove Stages
+### Remover Estágios
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+Para remover uma etapa, passe o mouse sobre o nome da etapa ou o ícone `⋮`, clique em `Editar das configurações` nas configurações do campo de seleção e, em seguida, clique em **Excluir** ao lado da etapa relevante.
 
-## Display Fields
+## Exibir campos
 
-You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+Você pode configurar seu quadro Kanban para exibir alguns campos e ocultar outros. Para ocultar um campo, clique em **Opções** no canto superior direito, depois em **Campos** para abrir a lista de opções. Procure o campo necessário na seção Campos ocultos e clique no ícone de olho para exibir o campo.
 
-You can also rearrange the order of fields by holding down the field name and dragging it to where you want it.
+Você também pode reorganizar a ordem dos campos mantendo pressionado o nome do campo e arrastando-o para onde quiser.
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-## Compact View
+## Vista Compacta
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+Você pode ocultar todos os campos e obter uma visão geral de todos os registros em um relance. Para ativar:
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. Clique em **Opções** no canto superior direito
+2. Ative a opção **Visualização compacta**
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## Agregações por coluna
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+Cada coluna em uma visualização Kanban pode exibir valores agregados na parte superior, ajudando você a entender seus dados em um relance.
 
-### Available Aggregations
+### Agregações disponíveis
 
-| Aggregation | Description                                   |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| Agregação    | Descrição                                                     |
+| ------------ | ------------------------------------------------------------- |
+| **Contagem** | Número de registros na coluna                                 |
+| **Soma**     | Total de um campo numérico (por exemplo, valores de negócios) |
+| **Média**    | Valor médio de um campo numérico                              |
+| **Mínimo**   | Menor valor                                                   |
+| **Máximo**   | Maior valor                                                   |
 
-### Configuring Aggregations
+### Configurando agregações
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. Clique no número exibido ao lado do valor da etapa, na parte superior de uma coluna
+2. Selecione o tipo de agregação
+3. Escolha o campo a agregar
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**Exemplo:** Mostre o valor total dos negócios por etapa agregando o campo Valor com Soma.
 
-## When to Use Kanban Views
+## Quando usar visualizações Kanban
 
-Kanban views are ideal for:
+As visualizações Kanban são ideais para:
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **Funis de vendas**: Acompanhe os negócios pelas etapas, do lead ao fechamento
+* **Gestão de projetos**: Monitore tarefas por meio dos estados do fluxo de trabalho
+* **Recrutamento**: Acompanhe candidatos pelas etapas de contratação
+* **Qualquer processo em etapas**: Visualize qualquer fluxo de trabalho com etapas definidas
 
-## Best Practices
+## Melhores Práticas
 
-### Organize Your Stages
+### Organize suas etapas
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **Limite as etapas**: 5–7 etapas são ideais para visibilidade
+* **Nomenclatura clara**: Use nomes descritivos para as etapas
+* **Ordem lógica**: Organize as etapas na ordem do processo
 
-### Optimize Card Display
+### Otimize a exibição dos cartões
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **Mostre campos-chave**: Exiba apenas as informações mais importantes
+* **Use a visualização compacta**: Para visões gerais de alto nível
+* **Codificação por cores**: Use cores de etapa para identificar rapidamente o status
 
-### Maintain Data Quality
+### Mantenha a qualidade dos dados
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **Atualize regularmente**: Mantenha os cartões avançando pelas etapas
+* **Arquive os concluídos**: Mova os itens fechados para fora da visualização ativa
+* **Revise cartões parados**: Faça acompanhamento de cartões presos nas etapas

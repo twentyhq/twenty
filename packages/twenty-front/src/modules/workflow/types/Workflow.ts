@@ -7,7 +7,9 @@ import {
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
+  type workflowDelayActionSchema,
   type workflowDeleteRecordActionSchema,
+  type workflowDraftEmailActionSchema,
   type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
   type workflowFindRecordsActionSchema,
@@ -15,6 +17,7 @@ import {
   type workflowHttpRequestActionSchema,
   type workflowIfElseActionSchema,
   type workflowIteratorActionSchema,
+  type workflowLogicFunctionActionSchema,
   type workflowManualTriggerSchema,
   type workflowRunSchema,
   type workflowRunStateSchema,
@@ -25,13 +28,18 @@ import {
   type workflowUpdateRecordActionSchema,
   type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
-  type workflowDelayActionSchema,
 } from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
+export type WorkflowLogicFunctionAction = z.infer<
+  typeof workflowLogicFunctionActionSchema
+>;
 export type WorkflowSendEmailAction = z.infer<
   typeof workflowSendEmailActionSchema
+>;
+export type WorkflowDraftEmailAction = z.infer<
+  typeof workflowDraftEmailActionSchema
 >;
 export type WorkflowCreateRecordAction = z.infer<
   typeof workflowCreateRecordActionSchema
@@ -63,7 +71,9 @@ export type WorkflowEmptyAction = z.infer<typeof workflowEmptyActionSchema>;
 
 export type WorkflowAction =
   | WorkflowCodeAction
+  | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction
+  | WorkflowDraftEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction
@@ -110,7 +120,6 @@ export type WorkflowVersionStatus =
   | 'DEACTIVATED'
   | 'ARCHIVED';
 
-// Keep existing types that are not covered by schemas
 export type WorkflowVersion = {
   id: string;
   name: string;

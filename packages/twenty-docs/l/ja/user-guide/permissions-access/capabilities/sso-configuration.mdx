@@ -1,125 +1,125 @@
 ---
-title: SSO Configuration
-description: Configure Single Sign-On for secure enterprise authentication.
+title: SSO構成
+description: 安全なエンタープライズ認証のためにシングルサインオンを構成します。
 ---
 
-## About SSO
+## SSO について
 
-Single Sign-On (SSO) allows your team members to log into Twenty using your organization's identity provider. This provides:
+シングルサインオン（SSO）により、組織の ID プロバイダーを使用してチームメンバーが Twenty にログインできます。 これにより、次のことが可能になります:
 
-* **Centralized access control**: Manage access from one place
-* **Enhanced security**: Leverage your existing security policies
-* **Better user experience**: One set of credentials for all tools
+* **一元的なアクセス制御**: 1 か所からアクセスを管理
+* **強化されたセキュリティ**: 既存のセキュリティポリシーを活用
+* **優れたユーザー体験**: すべてのツールで 1 組の認証情報を使用
 
-## Supported Providers
+## サポート対象のプロバイダー
 
-Twenty supports SSO with:
+Twenty は次の SSO をサポートしています:
 
-* **SAML 2.0**: Works with most enterprise identity providers
-* **Google Workspace**: For organizations using Google
-* **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+* **SAML 2.0**: ほとんどのエンタープライズ ID プロバイダーで動作
+* **Google Workspace**: Google を利用する組織向け
+* **Microsoft Entra ID**: （旧称 Azure AD）Microsoft 環境向け
 
-## Setting Up SSO
+## SSO のセットアップ
 
-### Prerequisites
+### 前提条件
 
-* Organization plan (cloud and self-hosted workspaces)
-* Admin access to your identity provider
-* Admin access to Twenty workspace
+* Organization プラン（クラウドおよびセルフホストのワークスペース）
+* ID プロバイダーへの管理者アクセス権
+* Twenty ワークスペースへの管理者アクセス権
 
 <Note>
-  **For self-hosting users willing to set up SSO**, reach out to contact@twenty.com
+  **SSO をセットアップしたいセルフホストユーザーの方は**、contact@twenty.com までご連絡ください
 </Note>
 
-### Configuration Steps
+### 構成手順
 
-#### 1. Access SSO Settings
+#### 1. SSO 設定にアクセス
 
-1. Go to **Settings → Security**
-2. Find the **SSO Configuration** section
-3. Click **Configure SSO**
+1. **設定 → セキュリティ** に移動します
+2. **SSO 構成** セクションを見つけます
+3. **SSO を構成** をクリック
 
-#### 2) Choose Your Provider
+#### 2) プロバイダーを選択
 
-Select your identity provider from the list or choose "Custom SAML" for other providers.
+一覧から ID プロバイダーを選択するか、その他のプロバイダーの場合は「Custom SAML」を選択します。
 
-#### 3. Configure Your Identity Provider
+#### 3. ID プロバイダーを構成
 
-You'll need to configure your identity provider with:
+ID プロバイダーで次を設定する必要があります:
 
-* **Entity ID**: Provided by Twenty
-* **ACS URL**: The callback URL for authentication
-* **Certificate**: For secure communication
+* **エンティティ ID**: Twenty が提供
+* **ACS URL**: 認証用のコールバック URL
+* **証明書**: セキュアな通信のため
 
-#### 4. Enter Provider Details in Twenty
+#### 4. Twenty にプロバイダーの詳細を入力
 
-* **SSO URL**: Login URL from your provider
-* **Entity ID**: Your provider's identifier
-* **Certificate**: X.509 certificate from your provider
+* **SSO URL**: プロバイダーのログイン URL
+* **エンティティ ID**: プロバイダーの識別子
+* **証明書**: プロバイダーの X.509 証明書
 
-#### 5. Test and Enable
+#### 5. テストして有効化
 
-1. Click **Test Configuration** to verify setup
-2. Enable SSO when testing is successful
-3. Configure user provisioning preferences
+1. セットアップを確認するには **構成をテスト** をクリック
+2. テストが成功したら SSO を有効化します
+3. ユーザー プロビジョニングの設定を行います
 
-## User Provisioning
+## ユーザー プロビジョニング
 
-### Just-in-Time (JIT) Provisioning
+### ジャストインタイム（JIT）プロビジョニング
 
-* Users are created automatically on first login
-* Assigned default role automatically
-* No manual user creation needed
+* 初回ログイン時にユーザーが自動作成されます
+* デフォルトのロールが自動的に割り当てられます
+* 手動でユーザーを作成する必要はありません
 
-### Manual Provisioning
+### 手動プロビジョニング
 
-* Invite users before they can log in
-* Pre-assign specific roles
-* More control over who can access
+* ログイン可能になる前にユーザーを招待します
+* 特定のロールを事前に割り当てます
+* アクセス可能なユーザーをより詳細に制御できます
 
-## Managing SSO Users
+## SSO ユーザーの管理
 
-### Role Assignment
+### ロールの割り当て
 
-SSO users can be assigned roles like regular users:
+SSO ユーザーには、通常のユーザーと同様にロールを割り当てられます:
 
-1. Go to **Settings → Members**
-2. Find the user
-3. Change their role as needed
+1. **設定 → メンバー** に移動
+2. ユーザーを見つけます
+3. 必要に応じてロールを変更します
 
-### Access Revocation
+### アクセスの取り消し
 
-To remove access for SSO users:
+SSO ユーザーのアクセスを削除するには:
 
-* Remove them from your identity provider, or
-* Remove them from the Twenty workspace
+* ID プロバイダーから削除する、または
+* Twenty のワークスペースから削除します
 
-## Best Practices
+## ベストプラクティス
 
-### Security
+### セキュリティ
 
-* **Require SSO**: Disable password login for SSO users
-* **Regular audits**: Review access periodically
-* **Strong IdP policies**: Enforce MFA at the identity provider
+* **SSO を必須にする**: SSO ユーザーのパスワードログインを無効化
+* **定期的な監査**: 定期的にアクセスを見直す
+* **強力な IdP ポリシー**: ID プロバイダーで MFA を強制
 
-### User Management
+### ユーザー管理
 
-* **Clear naming**: Use consistent naming from your directory
-* **Group mapping**: Map IdP groups to Twenty roles (if available)
-* **Offboarding process**: Include Twenty in your deprovisioning workflow
+* **明確な命名**: ディレクトリで一貫した命名を使用
+* **グループ マッピング**: IdP のグループを Twenty のロールにマッピング（可能な場合）
+* **オフボーディング プロセス**: デプロビジョニングのワークフローに Twenty を含める
 
-## Troubleshooting
+## トラブルシューティング
 
-### Common Issues
+### 一般的な問題
 
-* **Certificate errors**: Ensure certificate hasn't expired
-* **URL mismatches**: Verify ACS URL matches exactly
-* **User not found**: Check JIT provisioning settings
+* **証明書エラー**: 証明書の有効期限が切れていないことを確認
+* **URL の不一致**: ACS URL が完全に一致していることを確認
+* **ユーザーが見つからない**: JIT プロビジョニングの設定を確認
 
-### Getting Help
+### サポートを受ける
 
-If you encounter issues, contact support with:
+問題が発生した場合は、次の情報を添えてサポートにお問い合わせください:
 
-* Error messages received
-* Identity provider being used
-* Configuration details (without sensitive data)
+* 受信したエラーメッセージ
+* 使用している ID プロバイダー
+* 構成の詳細（機微なデータを除く）

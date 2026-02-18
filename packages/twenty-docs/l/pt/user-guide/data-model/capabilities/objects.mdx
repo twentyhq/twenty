@@ -1,91 +1,91 @@
 ---
-title: Objects
-description: Learn about standard and custom objects in Twenty.
+title: Objetos
+description: Saiba mais sobre objetos padrão e personalizados no Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Standard Objects
+## Objetos Padrão
 
-Standard objects are predefined entities in your workspace to help you get started. They're part of a shared data model accessible to all users of Twenty. You can use them as-is, customize them or deactivate them.
+Objetos padrão são entidades predefinidas no seu espaço de trabalho para ajudar você a começar. Eles fazem parte de um modelo de dados compartilhado acessível a todos os usuários do Twenty. Você pode usá-los como estão, personalizá-los ou desativá-los.
 
 <img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
 
-### People
+### Pessoas
 
-The `People` object stores your contacts. It includes contact details and interaction history, so you can see all your customer interactions in one place.
+O objeto `Pessoas` armazena seus contatos. Inclui detalhes de contato e histórico de interação, para que você possa ver todas as interações com seus clientes em um só lugar.
 
-### Company
+### Empresa
 
-The `Companies` object stores your business accounts. It includes details like industry, size and location. Companies connect to both `People` and `Opportunities` objects.
+O objeto `Empresas` armazena suas contas comerciais. Inclui detalhes como setor, tamanho e localização. Empresas conectam-se tanto aos objetos `Pessoas` quanto `Oportunidades`.
 
-### Opportunities
+### Oportunidades
 
-The `Opportunities` object stores deal-related data. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. You can view your sales pipeline in a kanban layout.
+O objeto `Oportunidades` armazena dados relacionados a negócios. Acompanha o progresso das vendas potenciais, da prospecção ao fechamento, registrando etapas, tamanhos de negócios, conta associada e data prevista de fechamento. Você pode visualizar seu pipeline de vendas em um layout kanban.
 
-### Notes
+### Notas
 
-The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+O objeto `Notes` armazena anotações em formato livre que podem ser anexadas a Pessoas, Empresas, Oportunidades e outros registros. Use anotações para registrar resumos de reuniões, detalhes importantes ou qualquer informação contextual.
 
-### Tasks
+### Tarefas
 
-The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+O objeto `Tasks` armazena tarefas e itens de ação. As tarefas podem ser vinculadas a Pessoas, Empresas, Oportunidades e outros registros. Acompanhe prazos, responsáveis e status de conclusão para manter o controle dos seus acompanhamentos.
 
-## Custom Objects
+## Objetos personalizados
 
-Custom objects let you store information that's unique to your organization and that standard objects can't handle. For example, if you're SpaceX, you may want to create a custom object for Rockets and Launches.
+Objetos personalizados permitem armazenar informações únicas para sua organização que os objetos padrão não podem acomodar. Por exemplo, se você é a SpaceX, pode querer criar um objeto personalizado para Foguetes e Lançamentos.
 
 <img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
 
-### Creating a New Custom Object
+### Criando um novo objeto personalizado
 
-To create a new custom object:
+Para criar um novo objeto personalizado:
 
-1. Go to Settings in the sidebar on the left.
-2. Under Workspace, go to Data model. Here you'll be able to see an overview of all your existing Standard and Custom objects (both active and disabled).
+1. Vá para Configurações na barra lateral esquerda.
+2. Em Espaço de Trabalho, vá para Modelo de Dados. Aqui você poderá ver uma visão geral de todos os seus objetos Padrão e Personalizados (ativos e desativados).
 
-<VimeoEmbed videoId="926288174" title="Video demonstration" />
+<VimeoEmbed videoId="926288174" title="Demonstração em vídeo" />
 
-3. Click on `+ New object` at the top. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+3. Clique em `+ Novo objeto` no topo. Digite o nome (tanto no singular quanto no plural), escolha um ícone e adicione uma descrição para o seu objeto personalizado e clique em Salvar (no canto superior direito). Usando Listagem como exemplo de objeto personalizado, o singular seria "listagem" e o plural seria "listagens", juntamente com uma descrição como "Listagens que anfitriões criaram para exibir sua propriedade."
 
-4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+4. Seu objeto personalizado foi criado e aparecerá na sua barra lateral. Você já pode começar a adicionar registros a ele.
 
-## Managing Objects
+## Gerenciando objetos
 
-### Deactivating Objects
+### Desativando objetos
 
-If you don't need a standard or custom object:
+Se você não precisar de um objeto padrão ou personalizado:
 
-1. Go to Settings → Data Model
-2. Find the object you want to deactivate
-3. Click the toggle to deactivate it
-4. The object will be hidden from your workspace but data is preserved
+1. Vá para Configurações → Modelo de Dados
+2. Encontre o objeto que você deseja desativar
+3. Clique no botão de alternância para desativá-lo
+4. O objeto ficará oculto no seu espaço de trabalho, mas os dados serão preservados
 
-### Reactivating Objects
+### Reativando objetos
 
-To bring back a deactivated object:
+Para restaurar um objeto desativado:
 
-1. Go to Settings → Data Model
-2. Look for deactivated objects (they'll be grayed out)
-3. Click the toggle to reactivate it
-4. The object and all its data will be restored
+1. Vá para Configurações → Modelo de Dados
+2. Procure por objetos desativados (eles aparecerão acinzentados)
+3. Clique no botão de alternância para reativá-lo
+4. O objeto e todos os seus dados serão restaurados
 
-## Best Practices
+## Melhores Práticas
 
-### When to Create Custom Objects
+### Quando criar objetos personalizados
 
-* **Unique business entities**: Things specific to your industry or process
-* **Complex relationships**: When you need to track connections between multiple entities
-* **Scalable data**: When you might have many instances of something
+* **Entidades de negócio exclusivas**: Itens específicos do seu setor ou processo
+* **Relações complexas**: Quando você precisa acompanhar conexões entre várias entidades
+* **Dados escaláveis**: Quando você pode ter muitas instâncias de algo
 
-### When to Use Fields Instead
+### Quando usar campos em vez de objetos
 
-* **Simple attributes**: Properties that describe existing objects
-* **Categories or labels**: Ways to classify existing records
-* **Single values**: Information that doesn't need its own lifecycle
+* **Atributos simples**: Propriedades que descrevem objetos existentes
+* **Categorias ou rótulos**: Formas de classificar registros existentes
+* **Valores únicos**: Informações que não precisam de um ciclo de vida próprio
 
-### Object Naming
+### Nomenclatura de objetos
 
-* **Use clear, descriptive names**: Make it obvious what the object represents
-* **Follow conventions**: Use singular for the object name, plural for the collection
-* **Consider your team**: Choose names everyone will understand
+* **Use nomes claros e descritivos**: Torne óbvio o que o objeto representa
+* **Siga convenções**: Use singular para o nome do objeto e plural para a coleção
+* **Considere sua equipe**: Escolha nomes que todos entendam

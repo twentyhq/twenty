@@ -1,92 +1,96 @@
 ---
-title: Relation Fields
-description: Connect records across different objects using relation fields.
+title: リレーションフィールド
+description: リレーションフィールドを使用して、異なるオブジェクト間でレコードをリンクします。
 ---
 
-## Types of Relations
+## リレーションの種類
 
-### One-to-Many
+### 1対多
 
-One record in Object A can be linked to many records in Object B.
+オブジェクトAの1件のレコードは、オブジェクトBの複数のレコードにリンクできます。
 
-**Example:** One Company can have many People (employees).
+**例:** 1つの会社には多数の連絡先（従業員）がいます。
 
-### Many-to-One
+### 多対1
 
-Many records in Object A can be linked to one record in Object B.
+オブジェクトAの複数のレコードは、オブジェクトBの1件のレコードにリンクできます。
 
-**Example:** Many People can belong to one Company.
+**例:** 多数の連絡先は1社に所属できます。
 
-### Relations to Multiple Object Types
+### 複数のオブジェクトタイプへのリレーション
 
-Some objects can link to multiple object types on one side of the relation.
+一部のオブジェクトは、リレーションの片側で複数のオブジェクトタイプにリンクできます。
 
-**Example:** A Note can be attached to one Person AND one Company AND one Opportunity simultaneously. The Note is on the "many" side, connecting to multiple "one" sides.
+**例:** メモは、連絡先1件、会社1社、商談1件に同時にリンクできます。 メモは"多"の側にあり、複数の"1"の側にリンクしています。
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-Similarly, a Project (on the "one" side) could receive links from multiple People, multiple Companies, and multiple Notes.
+同様に、プロジェクト（"1"の側）は、複数の連絡先、複数の会社、複数のメモからリンクを受け取ることができます。
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations pointing to multiple object types are not yet supported for CSV import/export. This is on our roadmap.
+  **インポート/エクスポートの制限**: 複数のオブジェクトタイプを指すリレーションは、CSV のインポート/エクスポートにはまだ対応していません。 これはロードマップに含まれています。
 </Warning>
 
-### Many-to-Many
+### 多対多
 
-Many records in Object A can be linked to many records in Object B.
+オブジェクトAの複数のレコードは、オブジェクトBの複数のレコードにリンクできます。
 
-**Example:** Many People can be linked to many Projects, and vice versa.
+**例:** 多数の連絡先は多数のプロジェクトにリンクでき、その逆も可能です。
+
+多対多のリレーションでは、両側を接続する中間オブジェクトを用いる**ジャンクションオブジェクト**パターンを使用します。 ジャンクションリレーション機能により、Twenty は最終的にリンクされたレコードを直接表示し、中間オブジェクトを UI から隠します。
+
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
 
 <Warning>
-  **Many-to-Many is not yet supported.**
-
-  This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+  **ラボ機能**: 使用前に **Settings → Updates → Lab** でジャンクションリレーションを有効化する必要があります。
 </Warning>
 
-## Creating a Relation Field
+完全なステップバイステップのガイドについては、[多対多リレーションの作成方法](/l/ja/user-guide/data-model/how-tos/create-many-to-many-relations) を参照してください。
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want to add the relation
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the target object(s) to relate to
-6. Configure the relation settings:
-   * **Field name on source object**: The name of the relation field on the object you're editing
-   * **Field name on destination object**: The name of the relation field that will appear on the target object
-   * Relation type (one-to-many, many-to-one)
-7. Click **Save**
+## リレーションフィールドの作成
 
-## Standard Relations
+1. **設定 → データモデル** に移動
+2. リレーションを追加したいオブジェクトを選択します
+3. **+ Add Field** をクリック
+4. フィールドタイプとして **Relation** を選択
+5. 関連付け先のオブジェクトを選択します
+6. リレーションの設定を行います:
+   * **ソースオブジェクト上のフィールド名**: 編集しているオブジェクト上のリレーションフィールドの名前
+   * **対象オブジェクト上のフィールド名**: 対象オブジェクトに表示されるリレーションフィールドの名前
+   * リレーションタイプ（1対多、多対1）
+7. **保存**をクリック
 
-Twenty comes with pre-built relations between standard objects:
+## 標準リレーション
 
-| From Object   | To Object | Relation Type |
-| ------------- | --------- | ------------- |
-| People        | Companies | Many-to-One   |
-| Opportunities | Companies | Many-to-One   |
-| Opportunities | People    | Many-to-One   |
+Twenty には標準オブジェクト間のあらかじめ用意されたリレーションがあります:
 
-## Best Practices
+| 元オブジェクト | 宛先オブジェクト | リレーションタイプ |
+| ------- | -------- | --------- |
+| 人物      | 会社       | 多対1       |
+| 商談      | 会社       | 多対1       |
+| 商談      | 人物       | 多対1       |
 
-### Planning Relations
+## ベストプラクティス
 
-* **Map your data model**: Plan relations before creating them
-* **Consider direction**: Think about which object "owns" the relationship
-* **Avoid circular dependencies**: Keep your data model clean
+### リレーションの計画
 
-### Naming Relations
+* **データモデルをマッピング**: 作成前にリレーションを計画する
+* **方向性を検討**: どのオブジェクトがそのリレーションを"所有"するかを考える
+* **循環依存を避ける**: データモデルをクリーンに保つ
 
-* **Use clear names**: Make it obvious what the relation represents
-* **Be consistent**: Use similar naming patterns across relations
-* **Consider both sides**: Name both sides of the relation appropriately
+### リレーションの命名
 
-### Performance
+* **明確な名前を使う**: リレーションが何を表すかが一目でわかるようにする
+* **一貫性を保つ**: リレーション全体で似た命名パターンを使用する
+* **両側を考慮する**: リレーションの両側に適切な名前を付ける
 
-* **Don't over-relate**: Too many relations can slow down your workspace
+### パフォーマンス
 
-## Limitations
+* **リレーションの作りすぎに注意**: リレーションが多すぎるとワークスペースが遅くなる可能性があります
 
-* **Deleting relations** removes the link but not the related records
-* **Circular relations** should be avoided for data integrity
+## 制限事項
+
+* **リレーションを削除**するとリンクは削除されますが、関連レコード自体は削除されません。
+* **循環リレーション**はデータの整合性のため避けるべきです

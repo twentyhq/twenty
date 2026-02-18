@@ -18,7 +18,7 @@ type RecordBoardColumnHeaderAggregateDropdownProps = {
 };
 
 const StyledContainer = styled.div`
-  overflow: hidden;
+  flex-shrink: 0;
 `;
 
 export const RecordBoardColumnHeaderAggregateDropdown = ({

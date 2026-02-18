@@ -126,7 +126,9 @@ describe('SyncMessageFoldersService', () => {
           useValue: {
             executeInWorkspaceContext: jest
               .fn()
-              .mockImplementation((_, callback) => callback()),
+              .mockImplementation((callback: () => any, _authContext?: any) =>
+                callback(),
+              ),
             getRepository: jest.fn().mockResolvedValue(mockRepository),
             getDataSourceForWorkspace: jest
               .fn()

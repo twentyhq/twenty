@@ -7,7 +7,7 @@ import { detectNumberFormat } from '@/localization/utils/detection/detectNumberF
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { createState } from 'twenty-ui/utilities';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export type WorkspaceMemberFormatPreferences = {
   timeZone: string;

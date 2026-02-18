@@ -1,6 +1,6 @@
-import { createState } from 'twenty-ui/utilities';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const appVersionState = createState<string | undefined>({
+export const appVersionState = createStateV2<string | undefined>({
   key: 'appVersion',
   defaultValue: undefined,
 });

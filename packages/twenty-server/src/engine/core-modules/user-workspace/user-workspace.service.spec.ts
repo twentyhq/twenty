@@ -1,16 +1,17 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { FileFolder } from 'twenty-shared/types';
 import { type DataSource, type Repository } from 'typeorm';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileUploadService,
   type SignedFilesResult,
@@ -107,7 +108,9 @@ describe('UserWorkspaceService', () => {
           useValue: {
             executeInWorkspaceContext: jest
               .fn()
-              .mockImplementation(async (_authContext, callback) => callback()),
+              .mockImplementation(
+                async (callback: () => any, _authContext?: any) => callback(),
+              ),
             getRepository: jest.fn(),
           },
         },
@@ -116,6 +119,10 @@ describe('UserWorkspaceService', () => {
           useValue: {
             assignRoleToManyUserWorkspace: jest.fn(),
           },
+        },
+        {
+          provide: FileCorePictureService,
+          useValue: {},
         },
         {
           provide: FileStorageService,
@@ -143,6 +150,12 @@ describe('UserWorkspaceService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingCreateProfilePending: jest.fn(),
+          },
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {
+            isFeatureEnabled: jest.fn(),
           },
         },
       ],

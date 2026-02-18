@@ -25,13 +25,11 @@ export const useMetadataErrorHandler = () => {
     fieldMetadata: t`field`,
     view: t`view`,
     viewField: t`view field`,
+    viewFieldGroup: t`view field group`,
     viewGroup: t`view group`,
     viewFilter: t`view filter`,
     index: t`index`,
-    serverlessFunction: t`serverless function`,
-    cronTrigger: t`cron trigger`,
-    databaseEventTrigger: t`database trigger`,
-    routeTrigger: t`route trigger`,
+    logicFunction: t`logic function`,
     role: t`role`,
     roleTarget: t`role target`,
     agent: t`agent`,
@@ -42,6 +40,10 @@ export const useMetadataErrorHandler = () => {
     rowLevelPermissionPredicate: t`row level permission predicate`,
     rowLevelPermissionPredicateGroup: t`row level permission predicate group`,
     viewFilterGroup: t`view filter group`,
+    commandMenuItem: t`command menu item`,
+    frontComponent: t`front component`,
+    navigationMenuItem: t`navigation menu item`,
+    webhook: t`webhook`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

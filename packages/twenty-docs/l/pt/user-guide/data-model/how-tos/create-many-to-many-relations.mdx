@@ -1,0 +1,180 @@
+---
+title: Criar Relações Muitos-para-muitos
+description: Conecte registros em que muitos itens de ambos os lados podem ser vinculados usando objetos de junção.
+---
+
+Relações muitos-para-muitos permitem conectar vários registros em ambos os lados. Por exemplo: muitas Pessoas podem trabalhar em muitos Projetos, e cada Projeto pode ter muitas Pessoas.
+
+<Warning>
+  **Recurso de Laboratório**: As relações de junção estão atualmente no Lab. Ative-as em **Settings → Updates → Lab** antes de seguir este guia.
+</Warning>
+
+<Note>
+  Este recurso também requer que o **Modo Avançado** esteja ativado (alternador no canto inferior direito de Settings).
+</Note>
+
+## Quando Usar Muitos-para-Muitos
+
+Use muitos-para-muitos quando ambos os lados de uma relação podem ter múltiplas conexões:
+
+| Relação              | Exemplo                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| Pessoas ↔ Projetos   | Uma pessoa trabalha em vários projetos; um projeto tem vários membros da equipe       |
+| Empresas ↔ Etiquetas | Uma empresa pode ter várias etiquetas; uma etiqueta pode se aplicar a várias empresas |
+| Produtos ↔ Pedidos   | Um produto pode estar em vários pedidos; um pedido contém vários produtos             |
+
+## Como Funciona
+
+A Twenty usa um padrão de **objeto de junção** para relações muitos-para-muitos. Um objeto de junção fica entre dois objetos e mantém as conexões:
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+O objeto **Atribuições de Projeto** (junção) tem:
+
+* Uma relação com Pessoas (muitos-para-um)
+* Uma relação com Projetos (muitos-para-um)
+
+Ao ativar o alternador de relação de junção, a Twenty exibe os registros vinculados diretamente em vez de mostrar os registros intermediários de junção.
+
+## Pré-requisitos
+
+1. **Ative Relações de Junção no Lab**: Vá para **Settings → Updates → Lab** e ative **Junction Relations**
+2. **Ative o Modo Avançado**: Ative o **Modo Avançado** no canto inferior direito da barra lateral de Settings
+3. Planeje seu modelo de dados:
+   * Quais dois objetos você está conectando?
+   * Qual deve ser o nome do objeto de junção?
+
+## Etapa 1: Criar o Objeto de Junção
+
+Primeiro, crie o objeto intermediário que manterá as conexões.
+
+1. Vá a **Definições → Modelo de Dados**
+2. Clique em **+ Novo objeto**
+3. Dê um nome descritivo (por exemplo, "Atribuição de Projeto", "Membro da Equipe", "Pedido de Produto")
+4. Clique em **Salvar**
+
+<Tip>
+  **Convenção de nomenclatura**: Use um nome que descreva a relação, como "Atribuição de Projeto" ou "Participação na Equipe". Isso torna o modelo de dados mais fácil de entender.
+</Tip>
+
+## Etapa 2: Criar Relações a partir do Objeto de Junção
+
+Adicione campos de relação do objeto de junção para ambos os objetos que deseja conectar.
+
+### Primeira Relação (Junção → Objeto A)
+
+1. Selecione seu objeto de junção em **Settings → Data Model**
+2. Clique em **+ Adicionar campo**
+3. Escolha **Relação** como o tipo de campo
+4. Selecione o primeiro objeto (por exemplo, "Pessoas")
+5. Defina o tipo de relação como **Muitos-para-um** (muitas atribuições podem se vincular a uma pessoa)
+6. Nomeie os campos:
+   * Campo na junção: por exemplo, "Pessoa"
+   * Campo em Pessoas: por exemplo, "Atribuições de Projeto"
+7. Clique em **Salvar**
+
+### Segunda Relação (Junção → Objeto B)
+
+1. Ainda no objeto de junção, clique em **+ Add Field**
+2. Escolha **Relação** como o tipo de campo
+3. Selecione o segundo objeto (por exemplo, "Projetos")
+4. Defina o tipo de relação como **Muitos-para-um**
+5. Nomeie os campos:
+   * Campo na junção: por exemplo, "Projeto"
+   * Campo em Projetos: por exemplo, "Membros da Equipe"
+6. Clique em **Salvar**
+
+## Etapa 3: Configurar a Exibição da Relação de Junção
+
+Agora configure os objetos de origem para exibir diretamente os registros vinculados, ignorando o objeto de junção intermediário.
+
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o primeiro objeto (por exemplo, "Pessoas")
+3. Encontre o campo de relação apontando para o objeto de junção (por exemplo, "Atribuições de Projeto")
+4. Clique para editar o campo
+5. Ative **"Esta é uma relação com um objeto de junção"**
+6. Selecione a **Relação de destino** (por exemplo, "Projeto" — o campo na junção que aponta para o outro lado)
+7. Clique em **Salvar**
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+Repita para o outro objeto:
+
+1. Selecione "Projetos" em Data Model
+2. Edite o campo de relação "Membros da Equipe"
+3. Ative o alternador de junção
+4. Selecione "Pessoa" como a relação de destino
+5. Salvar
+
+## Resultado
+
+Após a configuração:
+
+* Em um registro de **Pessoa**, o campo "Atribuições de Projeto" exibe **Projetos** diretamente (não registros de atribuição)
+* Em um registro de **Projeto**, o campo "Membros da Equipe" exibe **Pessoas** diretamente
+
+O objeto de junção ainda existe e armazena as conexões, mas a interface apresenta uma visualização muitos-para-muitos mais limpa.
+
+## Exemplo: Pessoas ↔ Projetos
+
+Aqui está um passo a passo completo:
+
+### Criar o Objeto de Junção
+
+* Nome: **Atribuição de Projeto**
+* Descrição: "Vincula pessoas aos projetos em que trabalham"
+
+### Adicionar Relações
+
+1. **Atribuição de Projeto → Pessoas**
+   * Tipo: Muitos-para-um
+   * Campo em Atribuição: "Pessoa"
+   * Campo em Pessoas: "Atribuições de Projeto"
+
+2. **Atribuição de Projeto → Projetos**
+   * Tipo: Muitos-para-um
+   * Campo em Atribuição: "Projeto"
+   * Campo em Projetos: "Membros da Equipe"
+
+### Configurar Exibição de Junção
+
+1. No objeto **Pessoas**:
+   * Edite o campo "Atribuições de Projeto"
+   * Ative o alternador de junção
+   * Destino: "Projeto"
+
+2. No objeto **Projetos**:
+   * Edite o campo "Membros da Equipe"
+   * Ative o alternador de junção
+   * Destino: "Pessoa"
+
+### Use
+
+* Abra um registro de Pessoa → Veja seus Projetos diretamente
+* Abra um registro de Projeto → Veja os membros da equipe diretamente
+* Crie novas conexões de qualquer um dos lados
+
+## Adicionando Dados Extras às Conexões
+
+Como o objeto de junção é um objeto real, você pode adicionar campos personalizados para armazenar informações sobre a relação:
+
+* **Função**: "Desenvolvedor", "Designer", "Gerente"
+* **Data de Início**: Quando começaram no projeto
+* **Horas Alocadas**: Horas semanais neste projeto
+
+Para acessar esses dados, navegue diretamente até o objeto de junção ou consulte-o via API.
+
+## Limitações
+
+* **Importação/Exportação CSV**: A importação de relações muitos-para-muitos diretamente não é suportada. Em vez disso, importe registros para o objeto de junção.
+* **Filtros**: A filtragem por relações muitos-para-muitos pode ter opções limitadas.
+
+## Relacionados
+
+* [Campos de Relação](/l/pt/user-guide/data-model/capabilities/relation-fields) — tipos de relação explicados
+* [Criar Objetos Personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-objects) — como criar objetos
+* [Criar Campos de Relação](/l/pt/user-guide/data-model/how-tos/create-relation-fields) — configuração básica de relação

@@ -3,16 +3,16 @@ title: 1-Tıklama ile Docker Compose
 ---
 
 <Warning>
-  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/tr/developers/contribute/capabilities/local-setup).
+  Docker konteynerleri, üretim ortamında veya kendi sunucunuzda barındırma içindir; katkıda bulunmak için [Yerel Kurulum](/l/tr/developers/contribute/capabilities/local-setup) sayfasına bakın.
 </Warning>
 
 ## Genel Bakış
 
-This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
+Bu kılavuz, Docker Compose kullanarak Twenty uygulamasını kurmak ve yapılandırmak için adım adım yönergeler sunar. Amaç, süreci sadeleştirmek ve kurulumunuzu bozabilecek yaygın sorunları önlemektir.
 
-**Important:** Only modify settings explicitly mentioned in this guide. Diğer yapılandırmaları değiştirmek sorunlara yol açabilir.
+**Önemli:** Yalnızca bu kılavuzda açıkça belirtilen ayarları değiştirin. Diğer yapılandırmaları değiştirmek sorunlara yol açabilir.
 
-See docs [Setup Environment Variables](/l/tr/developers/self-host/capabilities/setup) for advanced configuration. Tüm ortam değişkenleri, sunucu ve / veya işçi düzeyine bağlı olarak docker-compose.yml dosyasında ilan edilmelidir.
+İleri düzey yapılandırma için belgelerdeki [Ortam Değişkenlerini Ayarlama](/l/tr/developers/self-host/capabilities/setup) bölümüne bakın. Tüm ortam değişkenleri, sunucu ve / veya işçi düzeyine bağlı olarak docker-compose.yml dosyasında ilan edilmelidir.
 
 ## Sistem Gereksinimleri
 
@@ -52,7 +52,7 @@ Manuel kurulum için bu adımları uygulayın.
 
 2. **Gizli Jetonlar Oluşturun**
 
-   Run the following command to generate a unique random string:
+   Benzersiz bir rastgele karakter dizisi oluşturmak için aşağıdaki komutu çalıştırın:
 
    ```bash
    openssl rand -base64 32
@@ -94,7 +94,7 @@ docker compose up -d
 
 ### Adım 4: Uygulamaya Erişin
 
-If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+Eğer twentyCRM'i kendi bilgisayarınızda barındırıyorsanız, tarayıcınızı açın ve [http://localhost:3000](http://localhost:3000) adresine gidin.
 
 Bir sunucuda barındırıyorsanız, sunucunun çalıştığını ve her şeyin yolunda olduğunu kontrol edin
 
@@ -172,18 +172,18 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
 
 3. **Uygulamayı Yeniden Başlatın**
 
-   For changes to take effect, restart the Docker containers:
+   Değişikliklerin etkili olması için Docker konteynerlerini yeniden başlatın:
 
    ```bash
    docker compose down
    docker compose up -d
    ```
 
-#### Considerations
+#### Dikkat Edilmesi Gerekenler
 
-* **Reverse Proxy Configuration:**
+* **Ters Proxy Yapılandırması:**
 
-  Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
+  Ters proxy'nin istekleri doğru iç bağlantı noktasına ilettiğinden emin olun (`3000` varsayılan olarak). SSL sonlandırmasını ve gerekli tüm başlıkları yapılandırın.
 
 * **Güvenlik Duvarı Ayarları:**
 
@@ -203,50 +203,50 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
 
   Eğer durumsuz bir ortama (örneğin, bazı bulut hizmetleri) dağıtım yapıyorsanız, verilerin kalıcılığını sağlamak için harici depolama yapılandırın.
 
-## Backup and Restore
+## Yedekleme ve Geri Yükleme
 
-Regular backups protect your CRM data from loss.
+Düzenli yedeklemeler CRM verilerinizi kayıptan korur.
 
-### Create a Database Backup
+### Veritabanı Yedeği Oluşturun
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### Günlük Yedeklemeleri Otomatikleştirin
 
-Add to your crontab (`crontab -e`):
+crontab'ınıza ekleyin (`crontab -e`):
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### Yedekten Geri Yükleyin
 
-1. Stop the application:
+1. Uygulamayı durdurun:
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. Veritabanını geri yükleyin:
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. Servisleri yeniden başlatın:
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### Yedekleme En İyi Uygulamaları
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **Geri yüklemeleri düzenli olarak test edin** — yedeklerin gerçekten çalıştığını doğrulayın
+* **Yedekleri farklı bir konumda saklayın** — bulut depolama kullanın (S3, GCS, vb.)
+* **Hassas verileri şifreleyin** — yedekleri şifreleme ile koruyun
+* **Birden fazla kopya saklayın** — günlük, haftalık ve aylık yedekleri tutun
 
 ## Sorun Giderme
 

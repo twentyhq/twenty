@@ -11,7 +11,7 @@ export type { AvatarProps } from './avatar/components/Avatar';
 export { Avatar } from './avatar/components/Avatar';
 export type { AvatarGroupProps } from './avatar/components/AvatarGroup';
 export { AvatarGroup } from './avatar/components/AvatarGroup';
-export { invalidAvatarUrlsState } from './avatar/components/states/isInvalidAvatarUrlState';
+export { invalidAvatarUrlsAtomV2 } from './avatar/components/states/invalidAvatarUrlsAtomV2';
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
@@ -19,6 +19,8 @@ export type { BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
 export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
+export type { CalloutVariant, CalloutProps } from './callout/Callout';
+export { Callout } from './callout/Callout';
 export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedCheckmark';
 export { AnimatedCheckmark } from './checkmark/components/AnimatedCheckmark';
 export type { CheckmarkProps } from './checkmark/components/Checkmark';
@@ -29,6 +31,8 @@ export type {
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
 export { CommandBlock } from './command-block/components/CommandBlock';
+export type { IconProps } from './icon/components/Icon';
+export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
@@ -46,6 +50,7 @@ export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
 export { IllustrationIconCalendarEvent } from './icon/components/IllustrationIconCalendarEvent';
 export { IllustrationIconCalendarTime } from './icon/components/IllustrationIconCalendarTime';
 export { IllustrationIconCurrency } from './icon/components/IllustrationIconCurrency';
+export { IllustrationIconFile } from './icon/components/IllustrationIconFile';
 export { IllustrationIconJson } from './icon/components/IllustrationIconJson';
 export { IllustrationIconLink } from './icon/components/IllustrationIconLink';
 export { IllustrationIconMail } from './icon/components/IllustrationIconMail';
@@ -85,6 +90,7 @@ export {
   IconArrowRight,
   IconArrowsDiagonal,
   IconArrowsSort,
+  IconArrowsSplit2,
   IconArrowsVertical,
   IconArrowUp,
   IconArrowUpRight,
@@ -155,6 +161,8 @@ export {
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
+  IconColumns,
+  IconCommand,
   IconComment,
   IconCopy,
   IconCopyPlus,
@@ -250,6 +258,7 @@ export {
   IconFolderOpen,
   IconFolderPlus,
   IconFolderRoot,
+  IconFolderSymlink,
   IconForbid,
   IconFrame,
   IconFunction,
@@ -267,6 +276,7 @@ export {
   IconHeart,
   IconHeartOff,
   IconHeartRateMonitor,
+  IconHelp,
   IconHelpCircle,
   IconHierarchy,
   IconHierarchy2,
@@ -287,6 +297,7 @@ export {
   IconLayersLinked,
   IconLayout,
   IconLayoutDashboard,
+  IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutList,
   IconLayoutNavbar,
@@ -325,6 +336,7 @@ export {
   IconMoon,
   IconMouse2,
   IconNorthStar,
+  IconNewSection,
   IconNoteOff,
   IconNotes,
   IconNumber,
@@ -375,6 +387,8 @@ export {
   IconRocket,
   IconRotate,
   IconRotate2,
+  IconRowInsertBottom,
+  IconRowInsertTop,
   IconSearch,
   IconSend,
   IconServer,
@@ -458,6 +472,7 @@ export {
   IconWorld,
   IconX,
 } from './icon/components/TablerIcons';
+export { ThinkingOrbitLoaderIcon } from './icon/components/ThinkingOrbitLoaderIcon';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';
 export { iconsState } from './icon/states/iconsState';

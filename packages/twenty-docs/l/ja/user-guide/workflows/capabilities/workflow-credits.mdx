@@ -1,76 +1,76 @@
 ---
-title: Workflow Credits
-description: Understand workflow credit consumption and management.
+title: ワークフロークレジット
+description: ワークフロークレジットの消費と管理を理解する。
 ---
 
-Workflow credits power your automations in Twenty. Understanding how they work helps you optimize costs and manage your automation budget effectively.
+ワークフロークレジットは、Twentyでの自動化をサポートします。 その仕組みを理解することで、コストを最適化し、自動化予算を効果的に管理できます。 その仕組みを理解することで、コストを最適化し、自動化予算を効果的に管理できます。
 
-## Credit Allocation
+## クレジット配分
 
-Workflow credits are allocated based on your billing cycle, not your plan tier:
+ワークフロークレジットは、プランの種類ではなく、請求サイクルに基づいて割り当てられます:
 
-| Billing Cycle            | Credits                     |
-| ------------------------ | --------------------------- |
-| **Monthly subscription** | 5 million credits per month |
-| **Yearly subscription**  | 50 million credits per year |
+| 請求サイクル          | クレジット           |
+| --------------- | --------------- |
+| **月額サブスクリプション** | 月あたり500万クレジット   |
+| **年額サブスクリプション** | 年あたり5,000万クレジット |
 
 <Note>
-  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+  標準的な自動化には、月間500万クレジットで十分に余裕があります。 一般的なワークフローの利用で、この上限を超えるチームはほとんどありません。 追加のクレジットが主に必要になるのは、高度な Code アクションや AI 搭載ワークフローの場合です。
 </Note>
 
-## How Credit Consumption Works
+## クレジット消費の仕組み
 
-Credits are consumed when workflows execute, not when you create them. Each workflow action consumes credits based on its complexity:
+ワークフローは実行時にクレジットを消費し、それを作成する際には消費されません。 各ワークフローアクションはその複雑さに応じてクレジットを消費します。 各ワークフローアクションはその複雑さに応じてクレジットを消費します。 各ワークフローアクションはその複雑さに応じてクレジットを消費します。
 
-### Credit Consumption by Action Type
+### アクションタイプ別クレジット消費
 
-* **Basic internal operations**: Very low credit consumption
-  * Search Records
-  * Create Record
-  * Update Record
-  * Delete Record
-  * Form actions
+* **基本的な内部操作**: 非常に低いクレジット消費
+  * レコードを検索
+  * レコードを作成
+  * レコードを更新
+  * レコードを削除
+  * フォームアクション
 
-* **Complex operations**: Higher credit consumption
-  * Code actions (JavaScript execution)
-  * HTTP Requests to external services
+* **複雑な操作**: 高いクレジット消費
+  * コードアクション (JavaScript実行)
+  * 外部サービスへの HTTP リクエスト
 
-* **AI features**: Higher credit consumption
-  * AI Agent actions consume credits based on the AI model used
-  * More complex prompts and longer outputs use more credits
+* **AI 機能**: 高いクレジット消費
+  * AI エージェントのアクションは、使用する AI モデルに応じてクレジットを消費します
+  * より複雑なプロンプトや長い出力ほど、より多くのクレジットを使用します
 
-* **Delay actions**: Minimal credit consumption
-  * The Delay node consumes **1 credit** when it executes
-  * **No credits are consumed** during the wait period
-  * A 5-minute delay costs the same as a 5-day delay
+* **Delay アクション**: クレジット消費は最小限
+  * Delay ノードは実行時に**1クレジット**を消費します
+  * **待機期間中はクレジットは消費されません**
+  * 5分の遅延も5日の遅延もコストは同じです
 
-### Real-Time Deduction
+### リアルタイム控除
 
-Credits are deducted in real-time as workflows execute. This means:
+ワークフローが実行されると、クレジットはリアルタイムで控除されます。 つまり： つまり： つまり：
 
-* Draft workflows don't consume credits
-* Only active, running workflows use your credit allocation
-* Failed workflows still consume credits for completed steps
+* ドラフトのワークフローはクレジットを消費しません
+* アクティブで実行中のワークフローだけがクレジット配分を使用します
+* 失敗したワークフローでも、完了したステップに対してはクレジットが消費されます
 
-## Managing Credits
+## クレジットの管理
 
-### Check Credit Usage
+### クレジット使用の確認
 
-1. Go to **Settings → Billing**
-2. View your current credit consumption and remaining balance
-3. Monitor usage patterns to optimize your workflows
+1. **設定 → 請求** へ移動
+2. 現在のクレジット消費と残高を確認
+3. 消費パターンを監視してワークフローを最適化
 
-### Purchasing Additional Credits
+### 追加クレジットの購入
 
-If you need more credits beyond your plan allocation:
+プランのクレジット割り当てを超える場合は：
 
-1. Go to **Settings → Billing**
-2. Click on the option to purchase additional credits. Packages of different sizes are available.
-3. Credits are added to your current balance
+1. **設定 → 請求** へ移動
+2. 追加クレジットを購入するオプションをクリックします。 さまざまなサイズのパッケージが用意されています。 さまざまなサイズのパッケージが用意されています。
+3. クレジットは現在の残高に追加されます
 
-## Best Practices
+## ベストプラクティス
 
-* **Batch Processing**: Use bulk operations and Iterator actions efficiently
-* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
-* Optimize Code actions for efficiency
-* Batch operations to reduce individual action calls
+* **バッチ処理**: 効率的に一括操作やイテレータアクションを利用
+* **手動トリガーの最適化**: 手動トリガーでは、単一のワークフロー実行で複数のレコードを処理するために、`Bulk` の可用性を選択してください
+* 効率性のためにコードアクションを最適化
+* 個々のアクションコールを減らすためのバッチ操作

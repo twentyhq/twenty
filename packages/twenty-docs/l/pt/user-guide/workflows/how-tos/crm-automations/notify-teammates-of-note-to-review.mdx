@@ -1,0 +1,127 @@
+---
+title: Notificar colegas de equipe sobre uma nota para revisão
+description: Envie notificações automáticas por e-mail ao atribuir um colega para revisar uma nota.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **Marcar colegas diretamente nas notas ainda não é suportado.** Esse recurso está planejado para o segundo semestre de 2026. Enquanto isso, este fluxo de trabalho oferece uma solução alternativa prática.
+</Note>
+
+## O desafio
+
+Você quer marcar um colega em uma nota para que receba uma notificação para revisá-la. Hoje, a Twenty não oferece suporte a @mentions em notas ou tarefas.
+
+## A solução alternativa
+
+Em vez de marcar no texto da nota, você pode:
+
+1. Crie um campo de relação **Revisor** no objeto Notas
+2. Atribua o revisor ao criar ou editar a nota
+3. Um fluxo de trabalho envia automaticamente um e-mail ao revisor com um link para a nota
+
+<Warning>
+  **Limitação**: Esta abordagem permite atribuir um revisor por campo. Se você precisar notificar várias pessoas, crie campos de relação adicionais (por exemplo, Revisor 1, Revisor 2). Isso não escala bem se você precisar marcar muitos colaboradores de uma só vez.
+</Warning>
+
+## Configuração passo a passo
+
+### Etapa 1: Criar o campo Revisor
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. Vá para **Configurações → Modelo de Dados → Notas**
+2. Clique em **Adicionar campo**
+3. Configurar:
+
+| Configuração           | Valor                                          |
+| ---------------------- | ---------------------------------------------- |
+| **Nome**               | Revisor                                        |
+| **Tipo**               | Relação                                        |
+| **Objeto Relacionado** | Membro do Workspace                            |
+| **Tipo de Relação**    | Muitas Notas → Um Membro do Espaço de Trabalho |
+
+4. Salve o campo
+
+### Etapa 2: Criar o fluxo de trabalho
+
+<VimeoEmbed videoId="1151897168" title="Demonstração em vídeo" />
+
+#### Criar o gatilho do fluxo de trabalho
+
+1. Vá para a visualização principal e crie um novo fluxo de trabalho
+2. Selecione **Registro atualizado** como o gatilho
+3. Escolha **Nota** como o objeto e especifique o campo Revisor.
+4. Isso será acionado sempre que o revisor de uma nota for atualizado.
+
+#### Adicione um filtro para verificar se o revisor acabou de ser atribuído
+
+Adicione uma ação de **Filtro** para garantir que o fluxo de trabalho só continue quando um revisor for atribuído:
+
+| Condição    | Valor          |
+| ----------- | -------------- |
+| **Revisor** | não está vazio |
+
+#### Pesquisar o Membro do Espaço de Trabalho
+
+1. Adicione uma ação **Pesquisar Registros**
+2. Selecione **Membro do Espaço de Trabalho** (em Objetos Avançados)
+3. Adicione um filtro:
+
+| Condição | Valor                           |
+| -------- | ------------------------------- |
+| **ID**   | é igual a `{{note.reviewerId}}` |
+
+Isso recupera o registro completo do membro do espaço de trabalho, incluindo seu endereço de e-mail e nome.
+
+#### Enviar o e-mail de notificação
+
+1. Adicione uma ação **Enviar e-mail**
+2. Configurar:
+
+| Campo       | Valor                                                                            |
+| ----------- | -------------------------------------------------------------------------------- |
+| **Para**    | Registro de pesquisa → Primeiro Membro do Espaço de Trabalho → E-mail do usuário |
+| **Assunto** | Uma nota precisa da sua revisão                                                  |
+| **Corpo**   | Veja o exemplo abaixo                                                            |
+
+**Exemplo de corpo do e-mail:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  Substitua `yourSubDomain` pelo subdomínio real do seu espaço de trabalho Twenty.
+</Note>
+
+#### Testar e ativar
+
+1. Clique em **Testar** para executar o fluxo de trabalho manualmente
+2. Crie ou edite uma nota e atribua um revisor
+3. Verifique a caixa de entrada do revisor para o e-mail de notificação
+4. Ative o fluxo de trabalho
+
+## Uso
+
+Depois de configurado, sua equipe pode usar este fluxo de trabalho:
+
+1. Criando uma nova nota (ou editando uma existente)
+2. Selecionando um colega no campo **Revisor**
+3. O colega recebe automaticamente um e-mail com um link direto para a nota
+
+## Relacionados
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields)
+* [Criar campos de relação](/l/pt/user-guide/data-model/how-tos/create-relation-fields)

@@ -40,7 +40,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       updatedAt: new Date().toISOString(),
       icon: 'Icon123',
       universalIdentifier: 'test-object-metadata',
-      fieldMetadataIds: [],
+      fieldIds: [],
       indexMetadataIds: [],
       viewIds: [],
       applicationId: null,
@@ -52,7 +52,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       getRepository: jest.fn().mockResolvedValue(mockRepository),
       executeInWorkspaceContext: jest
         .fn()
-        .mockImplementation((_authContext: any, fn: () => any) => fn()),
+        .mockImplementation((fn: () => any, _authContext?: any) => fn()),
     } as any;
 
     messageQueueService = {

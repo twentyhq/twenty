@@ -1,8 +1,7 @@
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
 export type AggregateOrchestratorActionsReportArgs = {
   orchestratorActionsReport: OrchestratorActionsReport;
-  flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
 };

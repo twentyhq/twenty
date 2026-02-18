@@ -1,53 +1,53 @@
 ---
-title: I Don't See Emails on Records
-description: Troubleshooting missing emails on records.
+title: Je ne vois pas les emails sur les enregistrements.
+description: Dépannage des emails manquants sur les enregistrements.
 ---
 
-## Common Reasons
+## Causes courantes
 
-### 1. Initial Sync Still in Progress
+### 1. Synchronisation initiale toujours en cours
 
-Email sync takes time, especially for large mailboxes.
+La synchronisation des emails prend du temps, surtout pour les boîtes aux lettres volumineuses. Twenty importe des emails à environ **400 messages par minute** (soumis aux limites de débit de l'API Gmail).
 
-* **Calendar sync**: Completes in minutes
-* **Email sync**: Can take several hours for large mailboxes
+* **Synchronisation du calendrier** : se termine en quelques minutes
+* **Synchronisation des emails** : dépend de la taille de la boîte aux lettres (par exemple, 10 000 emails ≈ 25 minutes, 50 000 emails ≈ 2 heures)
 
-**Solution**: Wait up to a few hours for the initial import to complete.
+**Solution** : Attendez la fin de l'importation initiale. Vous pouvez estimer la durée en fonction de la taille de votre boîte aux lettres.
 
-### 2. Contact Doesn't Exist in Twenty
+### 2. Le contact n'existe pas dans Twenty
 
-Emails only appear on existing People records. If the contact wasn't created yet:
+Les emails n'apparaissent que sur les enregistrements de personnes existants. Si le contact n'a pas encore été créé :
 
-* Enable **Contact Auto-Creation** in your mailbox settings
-* Or manually create the Person record first
+* Activez la **création automatique de contacts** dans les paramètres de votre boîte aux lettres
+* Ou créez d'abord manuellement l'enregistrement de la personne
 
-**Solution**: Go to **Settings → Accounts**, select your mailbox, and enable contact auto-creation.
+**Solution** : Accédez à **Paramètres → Comptes**, sélectionnez votre boîte aux lettres et activez la création automatique de contacts.
 
-### 3. Internal Emails Are Excluded
+### 3. Les emails internes sont exclus
 
-Emails between colleagues (same email domain) are never synced to maintain privacy.
+Les emails entre collègues (même domaine de messagerie) ne sont jamais synchronisés afin de préserver la confidentialité.
 
-**Solution**: This is expected behavior. Only external emails are synced.
+**Solution** : Il s'agit du fonctionnement attendu. Seuls les emails externes sont synchronisés.
 
-### 4. Email Is from a Group or Distribution List
+### 4. L'email provient d'un groupe ou d'une liste de distribution
 
-Group emails and distribution lists are excluded from sync.
+Les emails de groupe et les listes de distribution sont exclus de la synchronisation.
 
-**Solution**: This is expected behavior.
+**Solution** : Il s'agit du fonctionnement attendu.
 
-### 5. Folder Not Selected for Sync
+### 5. Dossier non sélectionné pour la synchronisation
 
-If you're using the Message Folder feature, some folders might be excluded.
+Si vous utilisez la fonctionnalité Dossier de messages, certains dossiers peuvent être exclus.
 
-**Solution**: Go to **Settings → Accounts**, select your mailbox, and check folder sync settings.
+**Solution** : Accédez à **Paramètres → Comptes**, sélectionnez votre boîte aux lettres et vérifiez les paramètres de synchronisation des dossiers.
 
-### 6. Wrong Email Address on Record
+### 6. Mauvaise adresse email dans l'enregistrement
 
-The Person record might have a different email address than the one used in the email.
+L'enregistrement de la personne peut avoir une adresse email différente de celle utilisée dans l'email.
 
-**Solution**: Add the correct email address to the Person record.
+**Solution** : Ajoutez la bonne adresse email à l'enregistrement de la personne.
 
-## Still Not Working?
+## Ça ne fonctionne toujours pas ?
 
-1. Try disconnecting and reconnecting your mailbox
-2. Contact support if issues persist
+1. Essayez de déconnecter puis de reconnecter votre boîte aux lettres
+2. Contactez l'assistance si le problème persiste

@@ -1,39 +1,39 @@
 ---
-title: Custom Objects
+title: Objetos personalizados
 ---
 
-Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.
+Los objetos son estructuras que te permiten almacenar datos (registros, atributos y valores) específicos de una organización. Twenty proporciona tanto objetos estándar como personalizados.
 
-Standard objects are in-built objects with a set of attributes available for all users. Examples of standard objects in Twenty include Company and Person. Standard objects have standard fields that are also available for all Twenty users, like Company.displayName.
+Los objetos estándar son objetos incorporados con un conjunto de atributos disponibles para todos los usuarios. Ejemplos de objetos estándar en Twenty incluyen Empresa y Persona. Los objetos estándar tienen campos estándar que también están disponibles para todos los usuarios de Twenty, como Company.displayName.
 
-Custom objects are objects that you can create to store information that is unique to your organization. They are not built-in; members of your workspace can create and customize custom objects to hold information that standard objects aren't suitable for.
+Los objetos personalizados son objetos que puedes crear para almacenar información que es única para tu organización. No están incorporados; los miembros de tu espacio de trabajo pueden crear y personalizar objetos personalizados para albergar información para la cual los objetos estándar no son aptos.
 
-## High-level schema
+## Esquema de alto nivel
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+  <img src="/images/docs/server/custom-object-schema.png" alt="Esquema de alto nivel" />
 </div>
 
 <br />
 
-## How it works
+## Cómo funciona
 
-Custom objects come from metadata tables that determine the shape, name, and type of the objects. All this information is present in the metadata schema database, consisting of tables:
+Los objetos personalizados provienen de tablas de metadatos que determinan la forma, el nombre y el tipo de los objetos. Toda esta información está presente en la base de datos del esquema de metadatos, que consta de tablas:
 
-* **DataSource**: Details where the data is present.
-* **Object**: Describes the object and links to a DataSource.
-* **Field**: Outlines an Object's fields and connects to the Object.
+* **DataSource**: Detalles de dónde se encuentra la información.
+* **Object**: Describe el objeto y lo vincula a un DataSource.
+* **Field**: Describe los campos de un objeto y lo conecta al objeto.
 
-To add a custom object, the workspaceMember will query the /metadata API. This updates the metadata accordingly and computes a GraphQL schema based on the metadata, storing it in a GQL cache for later use.
+Para añadir un objeto personalizado, el workspaceMember consultará la API de /metadata. Esto actualiza los metadatos de acuerdo y calcula un esquema GraphQL basado en los metadatos, almacenándolo en un caché de GQL para su uso posterior.
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Consultando la API de /metadata para añadir objetos personalizados" />
 </div>
 
 <br />
 
-To fetch data, the process involves making queries through the /graphql endpoint and passing them through the Query Resolver.
+Para obtener datos, el proceso implica hacer consultas a través del endpoint /graphql y pasarlos a través del Query Resolver.
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+  <img src="/images/docs/server/custom-object-schema.png" alt="Consulta el endpoint /graphql para obtener datos" />
 </div>

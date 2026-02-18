@@ -77,24 +77,21 @@ export class ConnectedAccountRefreshTokensService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        await connectedAccountRepository.update(
-          { id: connectedAccount.id },
-          {
-            ...connectedAccountTokens,
-            lastCredentialsRefreshedAt: new Date(),
-          },
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
         );
-      },
-    );
+
+      await connectedAccountRepository.update(
+        { id: connectedAccount.id },
+        {
+          ...connectedAccountTokens,
+          lastCredentialsRefreshedAt: new Date(),
+        },
+      );
+    }, authContext);
 
     return connectedAccountTokens;
   }

@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
@@ -48,7 +49,7 @@ export class PageLayoutTabService {
     const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
       await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
-    return Object.values(flatPageLayoutTabMaps.byId)
+    return Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (tab) => tab.pageLayoutId === pageLayoutId && !isDefined(tab.deletedAt),
@@ -74,7 +75,10 @@ export class PageLayoutTabService {
     const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
       await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
-    const flatTab = flatPageLayoutTabMaps.byId[id];
+    const flatTab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    });
 
     if (!isDefined(flatTab) || isDefined(flatTab.deletedAt)) {
       throw new PageLayoutTabException(
@@ -136,11 +140,20 @@ export class PageLayoutTabService {
         { workspaceId },
       );
 
+    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutMaps'],
+        },
+      );
+
     const flatPageLayoutTabToCreate =
       fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate({
         createPageLayoutTabInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
       });
 
     const validateAndBuildResult =
@@ -155,10 +168,12 @@ export class PageLayoutTabService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating page layout tab',
@@ -196,6 +211,11 @@ export class PageLayoutTabService {
     workspaceId: string;
     updateData: UpdatePageLayoutTabInput;
   }): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -227,10 +247,12 @@ export class PageLayoutTabService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating page layout tab',
@@ -266,6 +288,11 @@ export class PageLayoutTabService {
     id: string;
     workspaceId: string;
   }): Promise<boolean> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -292,10 +319,12 @@ export class PageLayoutTabService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying page layout tab',

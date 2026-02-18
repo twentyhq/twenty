@@ -1,66 +1,66 @@
 ---
-title: Workflow Branches
-description: Create parallel paths and conditional logic in your workflows.
+title: Ramificações de Fluxo de Trabalho
+description: Crie caminhos paralelos e lógica condicional em seus fluxos de trabalho.
 ---
 
-Branches allow you to split your workflow into multiple paths that can run simultaneously or conditionally based on your data.
+As ramificações permitem dividir seu fluxo de trabalho em vários caminhos que podem ser executados simultaneamente ou condicionalmente com base em seus dados.
 
 <img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
 
-## How Branches Work
+## Como as Ramificações Funcionam
 
-When you create multiple connections from a single node, each path becomes a branch. By default, **all branches execute in parallel**—they don't wait for each other.
+Quando você cria várias conexões a partir de um único nó, cada caminho se torna uma ramificação. Por padrão, **todas as ramificações são executadas em paralelo**—elas não esperam umas pelas outras.
 
-## Creating Branches
+## Criando Ramificações
 
-### Add a New Branch
+### Adicionar uma Nova Ramificação
 
-1. **Right-click on the main canvas** of the workflow (not on an existing node)
-2. Click **Add node**
-3. Choose the node type for your new branch
-4. Drag an arrow from the bottom of the previous step to the top of this new action
-5. Repeat to add more branches from the same node
-
-<Note>
-  Each branch is independent. Adding a branch doesn't affect other existing paths from that node.
-</Note>
-
-### Visual Layout
-
-Branches appear as parallel paths in the workflow editor. You can drag nodes to rearrange the visual layout without affecting execution.
-
-## Conditional Branches
-
-Since all branches run by default, use **Filter** nodes to control which paths actually execute:
-
-| Branch | Filter Condition      | Action                     |
-| ------ | --------------------- | -------------------------- |
-| A      | Stage = "Won"         | Send congratulations email |
-| B      | Stage = "Lost"        | Create follow-up task      |
-| C      | Stage = "Negotiation" | Notify manager             |
-
-1. Create branches from your trigger or action
-2. Add a **Filter** node as the first step of each branch
-3. Configure each filter with mutually exclusive conditions
-4. Add your actions after each filter
-
-Only the branch(es) where the filter condition is met will continue executing.
-
-## Merging Branches
-
-**Branches don't automatically merge.** Each branch runs independently until it ends. You have full flexibility in how you handle this:
-
-* **Option 1: Keep branches separate**
-  Each branch handles its own follow-up actions independently. This is the simplest approach when branches don't need to converge.
-
-* **Option 2: Merge branches manually**
-  When creating your workflow, you can manually connect multiple branches to the same downstream action. Simply drag arrows from the end of each branch to a common node.
+1. **Clique com o botão direito na tela principal** do fluxo de trabalho (não em um nó existente)
+2. Clique em **Adicionar nó**
+3. Escolha o tipo de nó para sua nova ramificação
+4. Arraste uma seta da parte inferior da etapa anterior para o topo desta nova ação
+5. Repita para adicionar mais ramificações a partir do mesmo nó
 
 <Note>
-  While you can use a [Delay](/l/pt/user-guide/workflows/capabilities/workflow-actions#delay) node to pause execution, it's not currently configurable to wait "until another branch ends."
+  Cada ramificação é independente. Adicionar uma ramificação não afeta outros caminhos existentes desse nó.
 </Note>
 
-## Related
+### Layout Visual
 
-* [How to Use Branches in Workflows](/l/pt/user-guide/workflows/capabilities/use-branches-in-workflows) - Step-by-step guide
-* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions) - Available actions including Filter
+As ramificações aparecem como caminhos paralelos no editor de fluxo de trabalho. Você pode arrastar nós para reorganizar o layout visual sem afetar a execução.
+
+## Ramificações Condicionais
+
+Como todas as ramificações são executadas por padrão, use nós **Filtro** para controlar quais caminhos realmente serão executados:
+
+| Ramificação | Condição de Filtro   | Ação                           |
+| ----------- | -------------------- | ------------------------------ |
+| A           | Etapa = "Ganha"      | Enviar e-mail de parabéns      |
+| B           | Etapa = "Perdida"    | Criar tarefa de acompanhamento |
+| C           | Etapa = "Negociação" | Notificar o gerente            |
+
+1. Crie ramificações a partir do seu gatilho ou ação
+2. Adicione um nó **Filtro** como a primeira etapa de cada ramificação
+3. Configure cada filtro com condições mutuamente exclusivas
+4. Adicione suas ações após cada filtro
+
+Apenas as ramificações em que a condição do filtro for atendida continuarão a ser executadas.
+
+## Mesclando Ramificações
+
+**As ramificações não se mesclam automaticamente.** Cada ramificação é executada de forma independente até terminar. Você tem total flexibilidade em como lidar com isso:
+
+* **Opção 1: Manter ramificações separadas**
+  Cada ramificação lida com suas próprias ações de acompanhamento de forma independente. Esta é a abordagem mais simples quando as ramificações não precisam convergir.
+
+* **Opção 2: Mesclar ramificações manualmente**
+  Ao criar seu fluxo de trabalho, você pode conectar manualmente várias ramificações à mesma ação subsequente. Basta arrastar setas do final de cada ramificação para um nó comum.
+
+<Note>
+  Embora você possa usar um nó [Atraso](/l/pt/user-guide/workflows/capabilities/workflow-actions#delay) para pausar a execução, atualmente não é possível configurá-lo para esperar "até que outra ramificação termine".
+</Note>
+
+## Relacionados
+
+* [Como usar ramificações em Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/use-branches-in-workflows) - Guia passo a passo
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions) - Ações disponíveis, incluindo Filtro

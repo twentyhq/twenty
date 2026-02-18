@@ -1,49 +1,40 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
-type UpdateAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['actions']['update'];
-
-export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs<
-  TMetadataName extends AllMetadataName,
-> = {
-  action: UpdateAction<TMetadataName>;
+export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs = {
+  flatAction: AllFlatWorkspaceMigrationAction<'update'>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
-  TMetadataName extends AllMetadataName,
->({
-  action,
+export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
+  flatAction,
   allFlatEntityMaps,
-}: OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
-  switch (action.metadataName) {
+}: OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs): AllFlatEntityMaps => {
+  switch (flatAction.metadataName) {
     case 'index': {
       const flatIndex = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: action.entityId,
+        flatEntityId: flatAction.entityId,
         flatEntityMaps: allFlatEntityMaps['flatIndexMaps'],
       });
 
       deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatIndex,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
+        metadataName: flatAction.metadataName,
       });
 
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: action.updatedFlatEntity,
+        flatEntity: flatAction.updatedFlatIndex,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
+        metadataName: flatAction.metadataName,
       });
 
       return allFlatEntityMaps;
@@ -53,13 +44,11 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'view':
     case 'viewField':
     case 'viewGroup':
+    case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
-    case 'serverlessFunction':
-    case 'cronTrigger':
-    case 'databaseEventTrigger':
-    case 'routeTrigger':
+    case 'logicFunction':
     case 'viewFilter':
     case 'role':
     case 'roleTarget':
@@ -67,20 +56,24 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'skill':
     case 'pageLayout':
     case 'pageLayoutWidget':
-    case 'pageLayoutTab': {
+    case 'pageLayoutTab':
+    case 'commandMenuItem':
+    case 'frontComponent':
+    case 'navigationMenuItem':
+    case 'webhook': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
-        action.metadataName,
+        flatAction.metadataName,
       );
       const fromFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow<
-        MetadataFlatEntity<typeof action.metadataName>
+        MetadataFlatEntity<typeof flatAction.metadataName>
       >({
-        flatEntityId: action.entityId,
+        flatEntityId: flatAction.entityId,
         flatEntityMaps: allFlatEntityMaps[flatEntityMapsKey],
       });
 
       const toFlatEntity = {
         ...fromFlatEntity,
-        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+        ...flatAction.update,
       };
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -91,7 +84,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
       return allFlatEntityMaps;
     }
     default: {
-      assertUnreachable(action);
+      assertUnreachable(flatAction);
     }
   }
 };

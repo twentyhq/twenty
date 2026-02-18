@@ -16,6 +16,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getRecordChipGenerators = (
   objectMetadataItems: ObjectMetadataItem[],
+  allowRequestsToTwentyIcons?: boolean,
+  isFilesFieldMigrated?: boolean,
 ) => {
   const chipGeneratorPerObjectPerField: ChipGeneratorPerObjectNameSingularPerFieldName =
     {};
@@ -92,6 +94,8 @@ export const getRecordChipGenerators = (
                   objectMetadataItemToUse.nameSingular,
                   record,
                   imageIdentifierFieldMetadataToUse,
+                  allowRequestsToTwentyIcons,
+                  isFilesFieldMigrated,
                 ),
                 avatarType,
                 isLabelIdentifier,

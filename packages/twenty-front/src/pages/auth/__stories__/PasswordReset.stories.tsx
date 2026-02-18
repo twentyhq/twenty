@@ -9,7 +9,6 @@ import {
   ValidatePasswordResetTokenDocument,
 } from '~/generated-metadata/graphql';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -52,7 +51,7 @@ const buildHandlers = (hasPassword: boolean) => [
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/PasswordReset',
   component: PasswordReset,
-  decorators: [PageDecorator, I18nFrontDecorator],
+  decorators: [PageDecorator],
 };
 
 export default meta;

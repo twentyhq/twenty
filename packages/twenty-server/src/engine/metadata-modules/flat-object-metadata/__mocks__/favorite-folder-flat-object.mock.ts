@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const FAVORITE_FOLDER_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
-  standardId: '20202020-7cf8-401f-8211-a9587d27fd2d',
   nameSingular: 'favoriteFolder',
   namePlural: 'favoriteFolders',
   labelSingular: 'Favorite Folder',

@@ -11,7 +11,7 @@ export const MESSAGE_QUEUE_PRIORITY = {
   [MessageQueue.calendarQueue]: 4,
   [MessageQueue.contactCreationQueue]: 4,
   [MessageQueue.taskAssignedQueue]: 4,
-  [MessageQueue.serverlessFunctionQueue]: 4,
+  [MessageQueue.logicFunctionQueue]: 4,
   [MessageQueue.workspaceQueue]: 5,
   [MessageQueue.triggerQueue]: 5,
   [MessageQueue.deleteCascadeQueue]: 6,

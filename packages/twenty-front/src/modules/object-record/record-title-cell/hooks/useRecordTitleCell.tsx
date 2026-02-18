@@ -1,4 +1,4 @@
-import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { RecordTitleCellComponentInstanceContext } from '@/object-record/record-title-cell/states/contexts/RecordTitleCellComponentInstanceContext';
@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type OpenTitleCellFunctionParams = {
   recordId: string;
-  fieldName: string;
+  fieldMetadataItemId: string;
   instanceId?: string;
 };
 
@@ -29,7 +29,8 @@ export const useRecordTitleCell = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const { objectMetadataItem } = useContextStoreObjectMetadataItem();
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
@@ -67,15 +68,9 @@ export const useRecordTitleCell = () => {
     ({ set }) =>
       ({
         recordId,
-        fieldName,
+        fieldMetadataItemId,
         instanceId: instanceIdFromProps,
       }: OpenTitleCellFunctionParams) => {
-        if (!isDefined(objectMetadataItem)) {
-          throw new Error(
-            'Cannot find object metadata item in openRecordTitleCell this should not happen.',
-          );
-        }
-
         const computedInstanceId = instanceIdFromProps ?? instanceId;
 
         if (!isDefined(computedInstanceId)) {
@@ -103,24 +98,14 @@ export const useRecordTitleCell = () => {
           true,
         );
 
-        const fieldDefinitions = objectMetadataItem.fields.map(
-          (fieldMetadataItem, index) =>
-            formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              objectMetadataItem,
-              position: index,
-            }),
-        );
+        const { fieldMetadataItem, objectMetadataItem } =
+          getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
 
-        const fieldDefinition = fieldDefinitions.find(
-          (field) => field.metadata.fieldName === fieldName,
-        );
-
-        if (!fieldDefinition) {
-          throw new Error(
-            `Cannot find field definition for field name ${fieldName}, this should not happen.`,
-          );
-        }
+        const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+          field: fieldMetadataItem,
+          objectMetadataItem,
+          position: 0,
+        });
 
         initFieldInputDraftValue({
           recordId,
@@ -129,10 +114,10 @@ export const useRecordTitleCell = () => {
         });
       },
     [
-      objectMetadataItem,
       instanceId,
       pushFocusItemToFocusStack,
       initFieldInputDraftValue,
+      getFieldMetadataItemByIdOrThrow,
     ],
   );
 

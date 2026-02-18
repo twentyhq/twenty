@@ -1,16 +1,16 @@
 ---
-title: Checkmark
+title: Coche
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="En-tête" />
 </Frame>
 
-Represents a successful or completed action.
+Représente une action réussie ou complétée.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Utilisation">
     ```jsx
     import { Checkmark } from 'twenty-ui/display';
 
@@ -20,17 +20,17 @@ Represents a successful or completed action.
     ```
   </Tab>
 
-  <Tab title="Props">
-    Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a regular `div` element.
+  <Tab title="Propriétés">
+    Étend `React.ComponentPropsWithoutRef<'div'>` et accepte tous les props d'un élément `div` normal.
   </Tab>
 </Tabs>
 
-## Animated Checkmark
+## Coche animée
 
-Represents a checkmark icon with the added feature of animation.
+Représente une icône de coche avec la fonctionnalité d'animation ajoutée.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Utilisation">
     ```jsx
     import { AnimatedCheckmark } from 'twenty-ui/display';
 
@@ -47,12 +47,12 @@ Represents a checkmark icon with the added feature of animation.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type    | Description                                 | Default     |
-    | ----------- | ------- | ------------------------------------------- | ----------- |
-    | isAnimating | boolean | Controls whether the checkmark is animating | false       |
-    | color       | string  | Color of the checkmark                      |             |
-    | duration    | number  | The duration of the animation in seconds    | 0.5 seconds |
-    | size        | number  | The size of the checkmark                   | 28 pixels   |
+  <Tab title="Propriétés">
+    | Propriétés           | Type    | Description                         | Par défaut   |
+    | -------------------- | ------- | ----------------------------------- | ------------ |
+    | En cours d'animation | booléen | Contrôle si la coche est animée     | faux         |
+    | couleur              | chaîne  | Couleur de la coche                 |              |
+    | durée                | nombre  | La durée de l'animation en secondes | 0,5 secondes |
+    | taille               | nombre  | La taille de la coche               | 28 pixels    |
   </Tab>
 </Tabs>

@@ -99,7 +99,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
         });
       }
 
-      this.logger.log(
+      this.logger.debug(
         `Found ${folderInfos.length} folders for Microsoft account ${connectedAccount.handle}`,
       );
 

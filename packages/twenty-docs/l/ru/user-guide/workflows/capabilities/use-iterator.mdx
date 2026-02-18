@@ -1,88 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Использование итератора
+description: Перебирайте массивы записей и выполняйте действия для каждого элемента.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Итератор позволяет перебирать массив записей и выполнять действия для каждой из них. Он необходим для рабочих процессов, которым нужно обрабатывать несколько записей, возвращённых действием Search Records или полученных через вебхуки.
 
-## When to Use Iterator
+## Когда использовать итератор
 
-| Scenario                   | Пример                                         |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+| Сценарий                         | Пример                                                |
+| -------------------------------- | ----------------------------------------------------- |
+| **Обработка результатов поиска** | Отправить письмо каждому найденному человеку          |
+| **Обработка массивов вебхуков**  | Создать записи для каждого элемента по порядку        |
+| **Массовые обновления**          | Обновить несколько записей с рассчитанными значениями |
+| **Уведомления**                  | Оповестить нескольких людей о событии                 |
 
-## Understanding Iterator
+## Понимание итератора
 
-Iterator expects an **array** as input. It then:
+Итератор ожидает на входе **массив**. Затем он:
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+1. Берёт первый элемент массива
+2. Выполняет все действия внутри итератора с этим элементом
+3. Переходит к следующему элементу
+4. Повторяет, пока все элементы не будут обработаны
 
-## Basic Setup
+## Базовая настройка
 
-### Example: Email Everyone in Search Results
+### Пример: отправка письма всем из результатов поиска
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+**Цель**: найти всех контактов в определённой компании и отправить каждому персонализированное письмо.
 
-### Step 1: Search for Records
+### Шаг 1: Поиск записей
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+1. Добавьте действие **Search Records**
+2. Объект: **Люди**
+3. Фильтр: Company равно "Acme Inc"
+4. Это возвращает массив людей
 
-### Step 2: Check Results Exist
+### Шаг 2: Проверка наличия результатов
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+1. Добавьте действие **Фильтр**
+2. Условие: `{{searchRecords.length}}` больше 0
+3. Это предотвращает ошибки итератора при пустых результатах
 
-### Step 3: Add Iterator
+### Шаг 3: Добавьте итератор
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+1. Добавьте действие **Iterator**
+2. Входной массив: выберите `{{searchRecords}}`
+3. Это создаёт цикл
 
-### Step 4: Add Actions Inside Iterator
+### Шаг 4: Добавьте действия внутри итератора
 
-Actions placed after Iterator run for each item:
+Действия, добавленные после итератора, выполняются для каждого элемента:
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+1. Добавьте действие **Send Email** (внутри итератора)
+2. Кому: `{{iterator.currentItem.email}}`
+3. Тема: Привет, `{{iterator.currentItem.firstName}}`!
+4. Текст письма: персонализированное сообщение с использованием полей текущего элемента
 
 ### Результат
 
-If Search Records returns 5 people, the Iterator:
+Если Search Records возвращает 5 человек, то итератор:
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+* Отправляет письмо первому человеку
+* Отправляет письмо второму человеку
+* ... и так для всех 5
 
-## Accessing Current Item Data
+## Доступ к данным текущего элемента
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+Внутри итератора используйте `{{iterator.currentItem}}`, чтобы обратиться к текущей записи:
 
-| Variable                                | Описание                            |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+| Переменная                              | Описание                           |
+| --------------------------------------- | ---------------------------------- |
+| `{{iterator.currentItem}}`              | Весь объект текущей записи         |
+| `{{iterator.currentItem.id}}`           | ID записи                          |
+| `{{iterator.currentItem.email}}`        | Поле электронной почты             |
+| `{{iterator.currentItem.company.name}}` | Название связанной компании        |
+| `{{iterator.index}}`                    | Текущая позиция в массиве (с нуля) |
 
-## Common Patterns
+## Типовые шаблоны
 
-### Update Multiple Records
+### Обновление нескольких записей
 
-**Goal**: Mark all overdue tasks as "Late"
+**Цель**: пометить все просроченные задачи как "Late"
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -94,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### Создание записей из массива
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**Цель**: вебхук получает заказ с несколькими позициями; создайте запись для каждой
 
 ```
 1. Webhook Trigger (receives items array)
@@ -109,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### Условная обработка внутри цикла
 
-**Goal**: Only send email to contacts with valid emails
+**Цель**: отправлять письма только контактам с действительными адресами электронной почты
 
 ```
 1. Search Records (People)
@@ -125,52 +125,52 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 
 ### "Iterator expects an array"
 
-**Cause**: You passed a single record instead of an array.
+**Причина**: вы передали одну запись вместо массива.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**Решение**: убедитесь, что вы передаёте результат действия Search Records или поле-массив, а не одну запись.
 
 ```
 ✅ Correct: {{searchRecords}}
 ❌ Wrong: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### Итератор не запускается
 
-**Cause**: The array is empty.
+**Причина**: массив пуст.
 
-**Fix**: Add a Filter before Iterator to check array length:
+**Решение**: добавьте фильтр перед итератором, чтобы проверить длину массива:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### Действия выполняются слишком много раз
 
-**Cause**: Search Records returned more records than expected.
+**Причина**: действие Search Records вернуло больше записей, чем ожидалось.
 
-**Fix**:
+**Решение**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Добавьте более точные фильтры в Search Records
+* Установите ограничение в Search Records (макс. 200)
+* Добавьте фильтр внутри итератора для дополнительных условий
 
-## Performance Considerations
+## Особенности производительности
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **Расход кредитов**: каждая итерация потребляет кредиты на свои действия
+* **Время**: обработка больших массивов занимает больше времени
+* **Ограничения**: рассмотрите пакетную обработку очень больших операций
+* **Лимиты скорости**: при большом числе итераций внешние вызовы API могут упираться в лимиты скорости
 
 ## Лучшие практики
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. **Всегда проверяйте длину массива** перед итератором, чтобы избежать ошибок
+2. **Добавляйте фильтры внутри циклов**, если обрабатывать нужно не все элементы
+3. **Переименуйте шаг Iterator**, чтобы он описывал, что именно перебирается
+4. **Тестируйте на небольших массивах** перед обработкой больших наборов данных
+5. Отслеживайте выполнения рабочих процессов, чтобы убедиться, что итерации завершаются как ожидается
 
-## Related
+## Связанные материалы
 
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/ru/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/ru/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Как использовать ветвления](/l/ru/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Частые вопросы о рабочих процессах](/l/ru/user-guide/workflows/how-tos/need-more-help/workflows-faq)

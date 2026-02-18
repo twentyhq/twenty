@@ -1,170 +1,170 @@
 ---
-title: Workflow Troubleshooting
-description: Common workflow issues and how to resolve them.
+title: 工作流故障排除
+description: 常见工作流问题及其解决方法。
 ---
 
-## Common Issues and Solutions
+## 常见问题及解决方案
 
-### Workflow Not Triggering
+### 工作流未触发
 
-**Symptoms**: Your workflow doesn't run when you expect it to.
+**症状**：您的工作流未在您预期的时间运行。
 
-**Possible Causes**:
+**可能原因**：
 
-1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
-2. **Trigger conditions not met**: Verify the trigger matches your expected event
-3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
-4. **Permissions**: Check you have permission to run workflows
+1. **工作流未激活**：请确保工作流设置为 "Active" 而非 "Draft"
+2. **未满足触发条件**：请确认触发器与您期望的事件匹配
+3. **字段未被监控**：对于 "Record is Updated" 触发器，请确保正在监控特定字段
+4. **权限**：检查您是否具有运行工作流的权限
 
-**Solutions**:
+**解决方案**：
 
-* Verify workflow status in the workflow list
-* Test with the specific action you expect to trigger it
-* Review trigger configuration
-* Contact your admin about permissions
+* 在工作流列表中核实工作流状态
+* 使用您期望触发它的特定操作进行测试
+* 检查触发器配置
+* 就权限问题联系您的管理员
 
-### Workflow Triggers Too Early (Empty Fields)
+### 工作流触发过早（字段为空）
 
-**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+**症状**：在 UI 中手动创建记录时，您的工作流会在您填完所有字段之前就被触发。 工作流在大多数字段值为空的情况下运行。
 
-**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+**原因**：Twenty 实时保存所有内容——不存在单独的 "edit" 与 "read" 模式。 当您创建一条记录时，它会立即被保存，在您填写其他字段之前就触发 "Record is created" 事件。
 
-**When "Record is created" works well**:
+**当 "Record is created" 效果良好时**：
 
-* Records created via API calls (fields are populated in a single request)
-* Records created via import
-* Automated record creation from other workflows
+* 通过 API 调用创建的记录（字段在单个请求中填充）
+* 通过导入创建的记录
+* 由其他工作流自动创建记录
 
-**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+**解决方案**：对于在 UI 中手动创建的记录，请改用 **"Record is created or updated"** 作为触发器。 这样一来：
 
-* The workflow triggers after the user has finished filling in and saving the fields
-* You get the complete data rather than empty values
+* 工作流会在用户完成填写并保存字段后再触发
+* 您将获得完整的数据，而不是空值
 
 <Tip>
-  If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+  如果您只希望每条记录的工作流仅运行一次，请添加一个 Filter 操作以检查某个字段，例如 `createdAt equals updatedAt`（首次保存），或使用自定义复选框字段来跟踪该工作流是否已运行。
 </Tip>
 
-### Actions Failing
+### 操作失败
 
-**Symptoms**: Workflow runs but some actions fail.
+**症状**：工作流已运行，但部分操作失败。
 
-**Possible Causes**:
+**可能原因**：
 
-1. **Missing data**: Required fields are empty
-2. **Invalid references**: Variables from previous steps don't exist
-3. **API errors**: External services returning errors
-4. **Permission issues**: Action requires permissions you don't have
+1. **数据缺失**：必填字段为空
+2. **引用无效**：来自前面步骤的变量不存在
+3. **API 错误**：外部服务返回错误
+4. **权限问题**：该操作需要您不具备的权限
 
-**Solutions**:
+**解决方案**：
 
-* Check the workflow run details for error messages
-* Verify all required fields have values
-* Test API connections independently
-* Review role permissions
+* 在工作流运行详情中查看错误消息
+* 确认所有必填字段都有值
+* 单独测试 API 连接
+* 检查角色权限
 
-### HTTP Request Errors
+### HTTP 请求错误
 
-**Symptoms**: HTTP Request actions fail or return unexpected results.
+**症状**：HTTP 请求操作失败或返回意外结果。
 
-**Common Error Codes**:
+**常见错误代码**：
 
-* **400**: Bad request - check your request body format
-* **401**: Unauthorized - verify API key
-* **403**: Forbidden - check API permissions
-* **404**: Not found - verify endpoint URL
-* **429**: Too many requests - implement rate limiting
-* **500**: Server error - external service issue
+* **400**: 错误请求 - 检查请求正文格式
+* **401**: 未授权 - 验证 API 密钥
+* **403**: 禁止访问 - 检查 API 权限
+* **404**: 未找到 - 核实端点 URL
+* **429**: 请求过多 - 实施速率限制
+* **500**: 服务器错误 - 外部服务问题
 
-**Solutions**:
+**解决方案**：
 
-* Verify API endpoint URL
-* Check authentication headers
-* Test the API call outside of Twenty first
-* Add error handling in Code actions
+* 核实 API 端点 URL
+* 检查身份验证请求头
+* 先在 Twenty 之外测试该 API 调用
+* 在 Code 操作中添加错误处理
 
-### Code Action Errors
+### Code 操作错误
 
-**Symptoms**: JavaScript code fails to execute.
+**症状**：JavaScript 代码执行失败。
 
-**Common Issues**:
+**常见问题**：
 
-1. **Syntax errors**: Typos or invalid JavaScript
-2. **Undefined variables**: Referencing variables that don't exist
-3. **Type errors**: Operations on wrong data types
-4. **Timeouts**: Code taking too long to execute
+1. **语法错误**：拼写错误或无效的 JavaScript
+2. **未定义的变量**：引用了不存在的变量
+3. **类型错误**：对错误的数据类型进行操作
+4. **超时**：代码执行时间过长
 
-**Solutions**:
+**解决方案**：
 
-* Use the built-in code editor validation
-* Test code logic in a JavaScript console first
-* Add console.log statements for debugging
-* Simplify complex operations
+* 使用内置代码编辑器的校验功能
+* 先在 JavaScript 控制台中测试代码逻辑
+* 添加 console.log 语句进行调试
+* 简化复杂操作
 
-### Email Not Sending
+### 电子邮件无法发送
 
-**Symptoms**: Send Email action doesn't deliver emails.
+**症状**：Send Email 操作未能投递电子邮件。
 
-**Possible Causes**:
+**可能原因**：
 
-1. **No email account connected**: Check Settings → Accounts
-2. **Invalid email address**: Recipient email is malformed
-3. **Sending limits**: Email provider rate limits reached
-4. **Spam filters**: Emails being blocked
+1. **未连接电子邮件账户**：检查 Settings → Accounts
+2. **无效的电子邮件地址**：收件人电子邮件格式错误
+3. **发送限制**：已达到电子邮件服务商的速率限制
+4. **垃圾邮件过滤器**：电子邮件被拦截
 
-**Solutions**:
+**解决方案**：
 
-* Verify email account connection
-* Validate recipient email addresses
-* Check email provider limits
-* Review email content for spam triggers
+* 确认电子邮件账户连接正常
+* 校验收件人电子邮件地址
+* 检查电子邮件服务商的限制
+* 检查电子邮件内容是否包含垃圾邮件触发因素
 
-## Debugging Workflows
+## 调试工作流
 
-### Using Workflow Runs
+### 使用工作流运行
 
-1. Go to the workflow editor
-2. Open the **Runs** panel
-3. Find the failed run
-4. Click to see step-by-step details
-5. Review error messages and output data
+1. 进入工作流编辑器
+2. 打开 **Runs** 面板
+3. 找到失败的运行
+4. 点击查看逐步详情
+5. 查看错误消息和输出数据
 
-### Testing Individual Steps
+### 测试单个步骤
 
-1. For Code actions, use the **Test** button
-2. For HTTP requests, test the endpoint separately
-3. Create test records to trigger workflows
-4. Use manual triggers for controlled testing
+1. 对于 Code 操作，使用 **Test** 按钮
+2. 对于 HTTP 请求，请单独测试该端点
+3. 创建测试记录以触发工作流
+4. 使用手动触发器进行可控测试
 
-### Common Debugging Patterns
+### 常见调试模式
 
-**Add logging**:
-Use Code actions to log intermediate values for debugging.
+**添加日志**：
+使用 Code 操作记录中间值以进行调试。
 
-**Isolate steps**:
-Test each step independently to identify failures.
+**隔离步骤**：
+独立测试每个步骤以定位失败。
 
-**Check data flow**:
-Verify that each step receives the expected input data.
+**检查数据流**：
+确认每个步骤都接收到预期的输入数据。
 
-## Best Practices to Avoid Issues
+## 避免问题的最佳实践
 
-### Before Activation
+### 激活前
 
-* Test thoroughly in draft mode
-* Validate all API connections
-* Review trigger conditions carefully
-* Document expected behavior
+* 在草稿模式下进行充分测试
+* 验证所有 API 连接
+* 仔细检查触发条件
+* 记录预期行为
 
-### During Development
+### 开发过程中
 
-* Use descriptive step names
-* Add comments in Code actions
-* Test with realistic data
-* Plan for edge cases
+* 使用具有描述性的步骤名称
+* 在 Code 操作中添加注释
+* 使用真实数据进行测试
+* 考虑边界情况
 
-### After Activation
+### 激活后
 
-* Monitor initial runs closely
-* Set up alerts for failures
-* Review run history regularly
-* Keep workflows simple when possible
+* 密切监控初始运行
+* 设置失败告警
+* 定期查看运行历史
+* 尽可能保持工作流简洁

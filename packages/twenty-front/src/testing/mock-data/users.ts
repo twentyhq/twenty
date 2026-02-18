@@ -13,7 +13,7 @@ import {
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -126,6 +126,7 @@ export const mockCurrentWorkspace = {
       },
     ],
   },
+  billingEntitlements: [],
   billingSubscriptions: [
     {
       __typename: 'BillingSubscription',
@@ -154,6 +155,7 @@ export const mockCurrentWorkspace = {
   databaseSchema: '',
   databaseUrl: '',
   isTwoFactorAuthenticationEnforced: false,
+  eventLogRetentionDays: 90,
   __typename: 'Workspace',
 } as const satisfies Workspace;
 
@@ -190,7 +192,10 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+    permissionFlags: [
+      PermissionFlagType.WORKSPACE_MEMBERS,
+      PermissionFlagType.CONNECTED_ACCOUNTS,
+    ],
     twoFactorAuthenticationMethodSummary: [],
     objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
@@ -199,6 +204,8 @@ export const mockedUserData: MockedUser = {
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: true,
       restrictedFields: {},
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
     })),
   },
   locale: 'en',
@@ -229,6 +236,8 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       })),
   },
 };
@@ -259,6 +268,8 @@ export const mockedOnboardingUserData = (
         canSoftDeleteObjectRecords: true,
         canDestroyObjectRecords: true,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       })),
     },
     locale: 'en',

@@ -18,6 +18,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
+import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { isWorkflowUpdateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-update-record-action.guard';
@@ -84,6 +85,23 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       );
     }
 
+    const filteredObjectRecord = filterValidFieldsInRecord(
+      workflowActionInput.objectRecord,
+      objectMetadataInfo.flatObjectMetadata,
+      objectMetadataInfo.flatFieldMetadataMaps,
+    );
+
+    const filteredFieldsToUpdate = workflowActionInput.fieldsToUpdate?.filter(
+      (fieldName) => fieldName in filteredObjectRecord,
+    );
+
+    if (filteredFieldsToUpdate?.length === 0) {
+      throw new RecordCrudException(
+        'Failed to update: No fields to update',
+        RecordCrudExceptionCode.INVALID_REQUEST,
+      );
+    }
+
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
@@ -92,8 +110,8 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     const toolOutput = await this.updateRecordService.execute({
       objectName: workflowActionInput.objectName,
       objectRecordId: workflowActionInput.objectRecordId,
-      objectRecord: workflowActionInput.objectRecord,
-      fieldsToUpdate: workflowActionInput.fieldsToUpdate,
+      objectRecord: filteredObjectRecord,
+      fieldsToUpdate: filteredFieldsToUpdate,
       authContext: executionContext.authContext,
       updatedBy,
       rolePermissionConfig: executionContext.rolePermissionConfig,

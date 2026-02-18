@@ -1,80 +1,80 @@
 ---
-title: Create a Kanban View for Projects
-description: Track projects through stages using a visual board.
+title: Crea una vista Kanban para proyectos
+description: Supervisa los proyectos a través de etapas con un tablero visual.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Use a Kanban view to visualize your projects (or any object with stages) as cards moving through columns.
+Usa una vista Kanban para visualizar tus proyectos (o cualquier objeto con etapas) como tarjetas que se mueven por columnas.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Demostración en video" />
 
-## Prerequisites
+## Prerrequisitos
 
-Your object needs a **Select field** to use as columns (e.g., Status, Stage, Phase).
+Tu objeto necesita un **campo de selección** para usar como columnas (p. ej., Estado, Etapa, Fase).
 
-If you don't have one:
+Si no tienes uno:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Add a Select field with your stage options
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona tu objeto
+3. Agrega un campo de selección con tus opciones de etapa
 
-## Steps
+## Pasos
 
-1. Navigate to your object (e.g., Projects, Tasks)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Project Board")
-4. Click **Create**
-5. Click **Options** and select **Kanban** as the layout
-6. The view uses your Select field for columns automatically
-7. Click **Save**
+1. Ve a tu objeto (p. ej., Proyectos, Tareas)
+2. Haz clic en el menú desplegable de la vista → **+ Agregar vista**
+3. Asigna un nombre a tu vista (p. ej., "Tablero de proyecto")
+4. Haz clic en **Crear**
+5. Haz clic en **Opciones** y selecciona **Kanban** como diseño
+6. La vista usa tu campo de selección para las columnas automáticamente
+7. Haga clic en **Guardar**
 
-## Configure Your Board
+## Configura tu tablero
 
-### Show Key Fields on Cards
+### Muestra campos clave en las tarjetas
 
-1. Click **Options → Fields**
-2. Find fields in the "Hidden Fields" section
-3. Click the **eye icon** to display them on cards
-4. Drag to reorder
+1. Haz clic en **Opciones → Campos**
+2. Busca campos en la sección "Campos ocultos"
+3. Haz clic en el **icono de ojo** para mostrarlos en las tarjetas
+4. Arrastra para reordenar
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-### Enable Compact View
+### Habilita la vista compacta
 
-For a high-level overview:
+Para una vista general:
 
-1. Click **Options**
-2. Turn on **Compact view**
+1. Haz clic en **Opciones**
+2. Activa **Vista compacta**
 
-Cards show only the record name.
+Las tarjetas muestran solo el nombre del registro.
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-### Add Aggregations
+### Agrega agregaciones
 
-Show counts or totals at the top of each column:
+Muestra recuentos o totales en la parte superior de cada columna:
 
-1. Click the number next to a column name
-2. Select an aggregation (Count, Sum, etc.)
-3. Choose a field if needed
+1. Haz clic en el número junto al nombre de una columna
+2. Selecciona una agregación (Conteo, Suma, etc.)
+3. Elige un campo si es necesario
 
-## Moving Cards
+## Mover tarjetas
 
-Drag and drop cards between columns to update their status.
+Arrastra y suelta las tarjetas entre columnas para actualizar su estado.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="Demostración en video" />
 
-## Example: Task Board
+## Ejemplo: tablero de tareas
 
-| Column (Status) | Cards             |
-| --------------- | ----------------- |
-| **To Do**       | New tasks         |
-| **In Progress** | Active work       |
-| **Review**      | Awaiting approval |
-| **Done**        | Completed         |
+| Columna (Estado) | Tarjetas                |
+| ---------------- | ----------------------- |
+| **Por hacer**    | Nuevas tareas           |
+| **En progreso**  | Trabajo activo          |
+| **Revisión**     | En espera de aprobación |
+| **Completado**   | Completado              |
 
-## Related
+## Relacionado
 
-* [Kanban Views](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — aggregations, compact view, stages
-* [How to Set Up a Sales Pipeline](/l/es/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban for Opportunities
+* [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones, vista compacta, etapas
+* [Cómo configurar un pipeline de ventas](/l/es/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban para oportunidades

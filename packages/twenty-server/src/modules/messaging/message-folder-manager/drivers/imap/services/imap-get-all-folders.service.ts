@@ -102,7 +102,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       pathToExternalIdMap.set(mailbox.path, externalId);
 
       if (this.isValidMailbox(mailbox, folders)) {
-        const standardFolder = getStandardFolderByRegex(mailbox.path);
+        const standardFolder = getStandardFolderByRegex(mailbox.name);
 
         if (!shouldCreateFolderByDefault(standardFolder)) {
           continue;

@@ -1,171 +1,171 @@
 ---
-title: Migrating from Self-Hosted to Cloud
-description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+title: 从自托管迁移到云
+description: 分步指南：将您的 Twenty 自托管实例迁移到 Twenty Cloud。
 ---
 
-## Overview
+## 概览
 
-This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+本指南将引导您把数据从 Twenty 自托管实例迁移到 Twenty Cloud。 该过程包括设置您的云端工作区、导出数据并重新导入。
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>视图、工作流和角色必须在迁移后手动重新创建。 为这些配置工作预留时间。</Note>
 
-## Step 1: Create Your Cloud Workspace
+## 步骤 1：创建您的云端工作区
 
-1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
-2. Complete the initial setup wizard
-3. Note your new workspace URL
+1. 访问 [app.twenty.com](https://app.twenty.com) 并创建一个新的工作区
+2. 完成初始设置向导
+3. 记录您的新工作区 URL
 
-## Step 2: Recreate Your Data Model
+## 步骤 2：重新创建您的数据模型
 
-Before importing data, recreate your custom objects and fields:
+在导入数据之前，重新创建您的自定义对象和字段：
 
-1. Go to **Settings → Data Model** in your cloud instance
-2. Create custom objects that match your self-hosted setup
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, etc.)
+1. 在您的云端实例中进入 **设置 → 数据模型**
+2. 创建与自托管设置相匹配的自定义对象
+3. 向标准对象和自定义对象添加自定义字段
+4. 配置字段设置（唯一、必填等）
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>为便于参考，请截取自托管数据模型的屏幕截图，或并排打开两个实例。</Note>
 
-## Step 3: Invite All Users
+## 步骤 3：邀请所有用户
 
 <Warning>
-  **Critical: Invite users BEFORE importing data.**
+  **至关重要：在导入数据之前邀请用户。**
 
-  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+  在您导入任何引用到他们的记录（例如“账户所有者”字段）之前，用户必须先接受邀请。 如果用户尚不存在，则无法映射这些关系。
 </Warning>
 
-1. Go to **Settings → Members** in your cloud instance
-2. Invite all team members who had accounts on self-hosted
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+1. 在您的云端实例中进入 **设置 → 成员**
+2. 邀请所有在自托管环境中拥有账户的团队成员
+3. **等待所有人接受** 邀请
+4. 核实所有用户都出现在您的“成员”列表中
 
-## Step 4: Export Data from Self-Hosted
+## 步骤 4：从自托管导出数据
 
-Export each object from your self-hosted instance:
+从您的自托管实例中导出每个对象：
 
-1. Navigate to each object (Companies, People, Opportunities, etc.)
-2. Configure the view to show **all columns** you want to migrate
-3. Click **⋮ → Export view**
-4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+1. 导航到每个对象（公司、人员、商机等）
+2. 将视图配置为显示您希望迁移的**所有列**
+3. 点击 **⋮** → **导出视图**
+4. 将每个 CSV 文件保存为清晰的名称（例如，`companies-export.csv`）
 
-**Export in this order** (for reference when importing):
+**按以下顺序导出**（供导入时参考）：
 
-1. Companies
-2. People
-3. Opportunities
-4. Custom objects (following their dependencies)
-5. Tasks, Notes
+1. 公司
+2. 人员
+3. 机会
+4. 自定义对象（按其依赖关系顺序）
+5. 任务、笔记
 
-## Step 5: Update Workspace Member References
+## 步骤 5：更新工作区成员引用
 
-The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+导出的 CSV 包含来自您自托管实例的用户 ID。 这些 ID 与您的云端实例不匹配，因此需要将其替换为邮箱地址。
 
-**For each CSV file with user references (Owner, Assignee, etc.):**
+**对于每个包含用户引用（所有者、被指派人等）的 CSV 文件：**
 
-1. Open the CSV in a spreadsheet application
-2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
-3. Fill in the **email address** of each user
-4. You can delete the old ID column or leave it (it will be skipped during import)
+1. 在电子表格应用中打开该 CSV
+2. 在每个用户 ID 列旁边添加一个新列（例如，在 `accountOwnerId` 旁添加 `accountOwnerEmail`）
+3. 填写每位用户的邮箱地址
+4. 您可以删除旧的 ID 列或保留它（导入时会被跳过）
 
-**Example:**
+**示例:**
 
-Before:
+之前:
 
 ```csv
 name,domain,accountOwnerId
 Acme Corp,https://acme.com,old-uuid-123
 ```
 
-After:
+之后:
 
 ```csv
 name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>请使用用户接受云端工作区邀请时所使用的相同邮箱地址。</Note>
 
-## Step 6: Plan Your Import Order
+## 步骤 6：规划您的导入顺序
 
-Import files in the correct order to maintain relationships:
+按正确顺序导入文件以保持关系：
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and People)
-4. **Custom objects** (following their dependencies)
-5. **Tasks and Notes** last (link to other records)
+1. **公司** 优先（无依赖关系）
+2. **人员** 其次（关联到公司）
+3. **商机** 第三（关联到公司和人员）
+4. **自定义对象**（按其依赖关系）
+5. **任务和笔记** 最后（关联到其他记录）
 
-See [How to Import Relations](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+有关维护关系的详细信息，请参见[如何导入关系](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)。
 
-## Step 7: Import to Cloud
+## 步骤 7：导入到云端
 
-For each CSV file, in order:
+针对每个 CSV 文件，按顺序进行：
 
-1. Navigate to the object in your cloud instance
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map other columns as usual
-5. Review and fix any errors
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. 在云端实例中导航到该对象
+2. 点击 **⋮** → **导入记录**
+3. 上传 CSV 文件
+4. 将列映射到字段：
+   * 将用户邮箱列映射到相应的关系字段
+   * 按常规方式映射其他列
+5. 检查并修复任何错误
+6. 确认导入
+7. 在继续下一个文件之前，先核对几条记录
 
-## Step 8: Recreate Configuration
+## 步骤 8：重新创建配置
 
-After importing data, manually recreate:
+导入数据后，请手动重新创建：
 
-### Views
+### 视图
 
-* Recreate saved views with filters, sorts, and column configurations
-* Set up any kanban or calendar views
+* 根据筛选、排序和列配置重新创建已保存的视图
+* 设置任何看板或日历视图
 
-### Workflows
+### 工作流
 
-* Recreate automations in **Settings → Workflows**
-* Test each workflow before relying on it
+* 在 **设置 → 工作流** 中重新创建自动化
+* 在依赖之前先测试每个工作流
 
-### Roles and Permissions
+### 角色和权限
 
-* Configure roles in **Settings → Roles**
-* Assign users to appropriate roles
+* 在 **设置 → 角色** 中配置角色
+* 将用户分配到合适的角色
 
-### Integrations
+### 集成
 
-* Reconnect email and calendar sync for each user
-* Reconfigure any API integrations with new API keys
+* 为每位用户重新连接邮件和日历同步
+* 使用新的 API 密钥重新配置任何 API 集成
 
-## Post-Migration Checklist
+## 迁移后检查表
 
-<Check>All data imported successfully</Check>
-<Check>Relations between objects working correctly</Check>
-<Check>User assignments (Owner, Assignee) mapped correctly</Check>
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync reconnected</Check>
-<Check>API integrations updated with new keys</Check>
+<Check>所有数据均已成功导入</Check>
+<Check>对象之间的关系运行正常</Check>
+<Check>用户分配（所有者、被指派人）映射正确</Check>
+<Check>视图已重新创建</Check>
+<Check>工作流已重新创建并通过测试</Check>
+<Check>角色和权限已配置</Check>
+<Check>邮件/日历同步已重新连接</Check>
+<Check>API 集成已使用新密钥更新</Check>
 
-## FAQ
+## 常见问题
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in your cloud instance.
+  <Accordion title="我可以自动迁移工作流吗？">
+    目前不可以。 必须在您的云端实例中手动重新创建工作流。
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  <Accordion title="文件附件和图片怎么办？">
+    CSV 导出不包含文件附件。 您需要手动重新上传任何附件、通过 API 迁移它们，或联系我方团队获取大规模迁移的协助。
   </Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="迁移期间我可以同时运行两个实例吗？">
+    可以。我们建议在您确认云端迁移完成之前，保持自托管实例运行。 只要注意不要在两个环境中同时创建新数据即可。
   </Accordion>
 
-  <Accordion title="What if a user hasn't accepted their invitation yet?">
-    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  <Accordion title="如果某个用户尚未接受邀请怎么办？">
+    引用该用户的记录将导入失败，或其关系字段为空。 在导入数据之前，确保所有用户都已接受邀请。
   </Accordion>
 </AccordionGroup>
 
-## Need Help?
+## 需要帮助？
 
-For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/zh/user-guide/getting-started/capabilities/implementation-services).
+对于复杂的迁移或大型数据集，请通过 [contact@twenty.com](mailto:contact@twenty.com) 与我们联系，或查看我们的[实施服务](/l/zh/user-guide/getting-started/capabilities/implementation-services)。

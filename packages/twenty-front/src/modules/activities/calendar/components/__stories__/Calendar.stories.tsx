@@ -7,8 +7,7 @@ import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/gr
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { PageLayoutType } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -18,7 +17,6 @@ const meta: Meta<typeof CalendarEventsCard> = {
   title: 'Modules/Activities/Calendar/CalendarEventsCard',
   component: CalendarEventsCard,
   decorators: [
-    I18nFrontDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

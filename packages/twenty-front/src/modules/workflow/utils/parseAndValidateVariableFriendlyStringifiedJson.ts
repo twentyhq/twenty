@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-const schema = z
-  .record(z.string(), z.any())
-  .refine((data) => Object.keys(data).every((key) => !key.match(/\s/)), {
-    error: 'JSON keys cannot contain spaces',
-  });
+const schema = z.record(z.string(), z.any());
 
 export const parseAndValidateVariableFriendlyStringifiedJson = (
   expectedJson: string,

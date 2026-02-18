@@ -1,7 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { TABLE_COLUMNS_DENY_LIST } from '@/object-record/constants/TableColumnsDenyList';
 import { useMemo } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const useAvailableFieldMetadataItems = ({
   objectMetadataItemId,
@@ -18,8 +17,7 @@ export const useAvailableFieldMetadataItems = ({
         return (
           fieldMetadataItemToFilter.isActive &&
           !fieldMetadataItemToFilter.isSystem &&
-          !TABLE_COLUMNS_DENY_LIST.includes(fieldMetadataItemToFilter.name) &&
-          fieldMetadataItemToFilter.type !== FieldMetadataType.UUID
+          !TABLE_COLUMNS_DENY_LIST.includes(fieldMetadataItemToFilter.name)
         );
       }),
     [objectMetadataItem],

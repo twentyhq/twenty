@@ -6,12 +6,8 @@ import {
   isString,
 } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  buildOutputSchemaFromValue,
-  type Leaf,
-  type LeafType,
-  type Node,
-} from 'twenty-shared/workflow';
+import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
+import { type Leaf, type LeafType, type Node } from 'twenty-shared/workflow';
 
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 
@@ -37,7 +33,7 @@ export const inferArrayItemSchema = ({
   }
 
   if (isObject(firstItem)) {
-    const itemSchema = buildOutputSchemaFromValue(firstItem);
+    const itemSchema = getOutputSchemaFromValue(firstItem);
 
     return {
       isLeaf: false,

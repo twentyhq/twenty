@@ -4,7 +4,7 @@ export const makeUnauthenticatedAPIRequest = async (query: string) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
   return client
-    .post('/graphql')
+    .post('/metadata')
     .send({
       query,
     })

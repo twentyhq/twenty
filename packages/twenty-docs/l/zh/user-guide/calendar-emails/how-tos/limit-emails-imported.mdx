@@ -1,52 +1,50 @@
 ---
-title: Limit Emails Imported
-description: Control which emails are imported into Twenty.
+title: 限制导入的电子邮件
+description: 控制哪些电子邮件被导入Twenty。
 ---
 
-## Overview
+## 概览
 
-By default, Twenty syncs all external emails from your connected mailbox. You can limit what gets imported using **folder selection** and **visibility settings**.
+默认情况下，Twenty 会从您已连接的邮箱同步所有外部电子邮件。 您可以使用**文件夹选择**和**可见性设置**来限制导入的内容。
 
-## Method 1: Folder Selection (Recommended)
+## 方法一：文件夹选择（推荐）
 
-Control which email folders sync with Twenty:
+控制哪些电子邮件文件夹与Twenty同步：
 
-1. Go to **Settings → Releases → Lab**
-2. Enable **Message Folder**
-3. Return to **Settings → Accounts**
-4. Select your connected email account
-5. Choose which folders to sync:
+1. 进入 **设置 → 账户**
+2. 选择您已连接的电子邮件账户
+3. 选择要同步的文件夹：
 
-| Folder             | Description                   |
-| ------------------ | ----------------------------- |
-| **Inbox**          | Primary incoming emails       |
-| **Sent**           | Outgoing emails you've sent   |
-| **Archive**        | Archived messages             |
-| **Custom Folders** | Any specific folders you want |
+| 文件夹        | 描述          |
+| ---------- | ----------- |
+| **收件箱**    | 主要的收件电子邮件   |
+| **已发送**    | 您发送的外发电子邮件  |
+| **存档**     | 已存档的电子邮件    |
+| **自定义文件夹** | 您想要的任何特定文件夹 |
 
-6. Exclude folders you don't want synced (Spam, Trash, personal folders)
+6. 排除您不希望同步的文件夹（垃圾邮件、回收站、个人文件夹）
 
-<Note>This gives you precise control over which emails appear in your CRM without syncing everything.</Note>
+<Note>这使您可以精确控制哪些电子邮件显示在您的CRM中，而无需同步所有内容。</Note>
 
-## Method 2: Contact Auto-Creation Settings
+## 方法二：联系人自动创建设置
 
-Control when contacts are created from emails:
+控制何时从电子邮件创建联系人：
 
-1. Go to **Settings → Accounts**
-2. Select your connected mailbox
-3. Choose an option:
-   * **Deactivated**: No contacts created, but emails still sync to existing contacts
-   * **Sent & Received**: Create contacts from all external emails
-   * **Sent Only**: Only create contacts from emails you send
+1. 前往**设置→账户**
+2. 选择您已连接的邮箱
+3. 选择一个选项：
+   * **已停用**：不会创建联系人，但电子邮件仍会同步到现有联系人。
+   * **已发送和已接收**：从所有外部电子邮件创建联系人
+   * **仅限已发送**：仅根据您发送的电子邮件创建联系人
 
-## What's Always Excluded
+## 始终排除的内容
 
-These emails are never synced, regardless of settings:
+无论设置如何，这些电子邮件都不会被同步：
 
-* **Internal emails**: Messages between colleagues (same domain)
-* **Group emails**: Distribution lists and group messages
-* **Spam/Trash**: System folders are typically excluded
+* **内部电子邮件**：同事之间的消息（同一域名）
+* **群组邮件**：分发列表和群组消息
+* **垃圾邮件/回收站**：系统文件夹通常会被排除
 
-## Important Note
+## 重要提示
 
-<Note>We don't provide a CC email address for selective syncing. Use the folder selection feature above to achieve the same level of control.</Note>
+<Note>我们不提供用于选择性同步的抄送（CC）电子邮件地址。 请使用上面的文件夹选择功能来实现同等程度的控制。</Note>

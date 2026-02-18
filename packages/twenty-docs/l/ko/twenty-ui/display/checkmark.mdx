@@ -1,16 +1,16 @@
 ---
-title: Checkmark
+title: 체크마크
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="헤더" />
 </Frame>
 
-Represents a successful or completed action.
+성공하거나 완료된 작업을 나타냅니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { Checkmark } from 'twenty-ui/display';
 
@@ -20,17 +20,17 @@ Represents a successful or completed action.
     ```
   </Tab>
 
-  <Tab title="Props">
-    Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a regular `div` element.
+  <Tab title="프로퍼티">
+    `React.ComponentPropsWithoutRef<'div'>` 를 확장하며 일반 `div` 요소의 모든 속성을 수용합니다.
   </Tab>
 </Tabs>
 
-## Animated Checkmark
+## 애니메이션 체크마크
 
-Represents a checkmark icon with the added feature of animation.
+애니메이션 기능이 추가된 체크마크 아이콘을 나타냅니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { AnimatedCheckmark } from 'twenty-ui/display';
 
@@ -47,12 +47,12 @@ Represents a checkmark icon with the added feature of animation.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type    | Description                                 | Default     |
-    | ----------- | ------- | ------------------------------------------- | ----------- |
-    | isAnimating | boolean | Controls whether the checkmark is animating | false       |
-    | color       | string  | Color of the checkmark                      |             |
-    | duration    | number  | The duration of the animation in seconds    | 0.5 seconds |
-    | size        | number  | The size of the checkmark                   | 28 pixels   |
+  <Tab title="프로퍼티">
+    | 프로퍼티        | 유형  | 설명                         | 기본값   |
+    | ----------- | --- | -------------------------- | ----- |
+    | isAnimating | 부울  | 체크마크가 애니메이션 중인지 여부를 제어합니다. | 거짓    |
+    | 색상          | 문자열 | 체크마크의 색상                   |       |
+    | 지속 시간       | 숫자  | 애니메이션의 지속 시간(초)            | 0.5초  |
+    | 크기          | 숫자  | 체크마크의 크기                   | 28 픽셀 |
   </Tab>
 </Tabs>

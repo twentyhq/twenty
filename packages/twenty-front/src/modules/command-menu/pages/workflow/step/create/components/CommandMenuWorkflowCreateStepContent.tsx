@@ -1,5 +1,8 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { CommandMenuWorkflowSelectAction } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
+import {
+  CommandMenuWorkflowSelectAction,
+  type WorkflowActionSelection,
+} from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -55,7 +58,7 @@ export const CommandMenuWorkflowCreateStepContent = () => {
     await updateStep(updatedStep);
   };
 
-  const handleCreateStep = async (actionType: WorkflowActionType) => {
+  const handleCreateStep = async (selection: WorkflowActionSelection) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error(
         'Workflow ID must be configured for the edge when creating a step',
@@ -66,11 +69,12 @@ export const CommandMenuWorkflowCreateStepContent = () => {
       workflowInsertStepIds;
 
     const createdStep = await createStep({
-      newStepType: actionType,
+      newStepType: selection.type,
       parentStepId,
       nextStepId,
       position,
       connectionOptions,
+      defaultSettings: selection.defaultSettings,
     });
 
     if (!isDefined(createdStep)) {

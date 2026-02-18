@@ -19,8 +19,13 @@ storage:
     bucket: ""
     region: ""
     endpoint: ""
+    # Option A: direct values
     accessKeyId: ""
     secretAccessKey: ""
+    # Option B: reference a Secret
+    # secretName: my-s3-creds
+    # accessKeyIdKey: accessKeyId
+    # secretAccessKeyKey: secretAccessKey
 
 # Auth tokens (random if not provided)
 secrets:
@@ -137,6 +142,8 @@ db:
     password: ""
     database: twenty
     ssl: false
+    secretName: ""
+    passwordKey: ""
 
 # Redis
 redisInternal:

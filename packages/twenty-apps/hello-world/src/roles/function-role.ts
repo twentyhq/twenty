@@ -14,7 +14,7 @@ export const functionRole: RoleConfig = {
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -23,8 +23,8 @@ export const functionRole: RoleConfig = {
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },

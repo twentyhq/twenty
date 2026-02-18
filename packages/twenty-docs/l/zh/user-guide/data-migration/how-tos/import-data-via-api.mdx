@@ -1,176 +1,176 @@
 ---
-title: Import Data via API
-description: When and how to use Twenty's APIs for large-scale data imports.
+title: 通过 API 导入数据
+description: 何时以及如何使用 Twenty 的 API 进行大规模数据导入。
 ---
 
-## Overview
+## 概览
 
-Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
+Twenty 提供 **GraphQL** 和 **REST API**，用于以编程方式导入数据。 当 CSV 导入不适合您的数据量，或您需要自动化、定期的导入时，请使用 API。
 
-## When to Use API Import
+## 何时使用 API 导入
 
-| Scenario                           | Recommended Method            |
-| ---------------------------------- | ----------------------------- |
-| Under 10,000 records               | CSV Import                    |
-| 10,000 - 50,000 records            | CSV Import (split into files) |
-| **50,000+ records**                | **API Import**                |
-| One-time migration                 | Either (based on volume)      |
-| **Recurring imports**              | **API Import**                |
-| **Real-time sync**                 | **API Import**                |
-| **Integration with other systems** | **API Import**                |
+| 场景                  | 推荐方法            |
+| ------------------- | --------------- |
+| 少于 10,000 条记录       | CSV 导入          |
+| 10,000 - 50,000 条记录 | CSV 导入（拆分为多个文件） |
+| **50,000+ 条记录**     | **API 导入**      |
+| 一次性迁移               | 两者皆可（取决于数据量）    |
+| **定期导入**            | **API 导入**      |
+| **实时同步**            | **API 导入**      |
+| **与其他系统集成**         | **API 导入**      |
 
-<Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
+<Note>对于包含数十万条记录的数据集，API 比多次 CSV 导入显著更快且更可靠。</Note>
 
-## API Rate Limits
+## API 速率限制
 
-Twenty enforces rate limits to ensure system stability:
+Twenty 实施速率限制以确保系统稳定性：
 
-| Limit                      | Value                 |
-| -------------------------- | --------------------- |
-| **Requests per minute**    | 100                   |
-| **Records per batch call** | 60                    |
-| **Maximum throughput**     | ~6,000 records/minute |
-
-<Warning>
-  **Plan your import around these limits.**
-
-  For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
-</Warning>
-
-## Getting Started
-
-### Step 1: Get Your API Key
-
-1. Go to **Settings → Developers**
-2. Click **+ Create API key**
-3. Give your key a descriptive name
-4. Copy the API key immediately (it won't be shown again)
-5. Store it securely
+| 限制             | 值             |
+| -------------- | ------------- |
+| **每分钟请求数**     | 100           |
+| **每次批量调用的记录数** | 60            |
+| **最大吞吐量**      | ~6,000 条记录/分钟 |
 
 <Warning>
-  **Keep your API key secret.**
+  **围绕这些限制规划您的导入。**
 
-  Anyone with your API key can access and modify your workspace data. Never commit it to code repositories or share it publicly.
+  在最大吞吐量下，导入 100,000 条记录预计约需 17 分钟。 为错误处理和重试预留缓冲时间。
 </Warning>
 
-### Step 2: Choose Your API
+## 开始使用
 
-Twenty supports two API types:
+### 步骤 1：获取您的 API 密钥
 
-| API         | Best For                                                    | Documentation                                    |
-| ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
-| **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/zh/developers/extend/capabilities/apis) |
-| **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/zh/developers/extend/capabilities/apis) |
+1. 前往 **设置 → 开发者**
+2. 点击 **+ 创建 API 密钥**
+3. 为您的密钥指定一个描述性名称
+4. 立即复制该 API 密钥（不会再次显示）
+5. 将其安全存储
 
-Both APIs support:
+<Warning>
+  **请保密您的 API 密钥。**
 
-* Creating, reading, updating, and deleting records
-* **Batch operations** — create or update up to 60 records per call
+  任何获得您 API 密钥的人都可以访问并修改您的工作区数据。 切勿将其提交到代码仓库或公开分享。
+</Warning>
 
-**For imports, use batch operations** to maximize throughput within rate limits.
+### 步骤 2：选择您的 API
 
-### Step 3: Plan Your Import Order
+Twenty 支持两种 API 类型：
 
-Just like CSV imports, **order matters** for relations:
+| 接口          | 最适合                     | 文档                                             |
+| ----------- | ----------------------- | ---------------------------------------------- |
+| **GraphQL** | 灵活查询、获取关联数据、复杂操作        | [API 文档](/l/zh/developers/extend/capabilities/apis) |
+| **REST**    | 简单的 CRUD 操作、熟悉的 REST 模式 | [API 文档](/l/zh/developers/extend/capabilities/apis) |
 
-1. **Companies** first (no dependencies)
-2. **People** second (can link to Companies)
-3. **Opportunities** third (can link to Companies and People)
-4. **Tasks/Notes** (can link to any of the above)
-5. **Custom objects** (following their dependencies)
+两种 API 都支持：
 
-## Best Practices
+* 创建、读取、更新和删除记录
+* **批量操作** — 每次调用最多创建或更新 60 条记录
 
-### Batch Your Requests
+**对于导入，请使用批量操作**，以在速率限制内最大化吞吐量。
 
-* Don't send records one at a time
-* Group up to **60 records per API call**
-* This maximizes throughput within rate limits
+### 步骤 3：规划您的导入顺序
 
-### Handle Rate Limits
+与 CSV 导入一样，对于关联关系，**顺序很重要**：
 
-* Implement delays between requests (600ms minimum for sustained imports)
-* Use exponential backoff when you hit limits
-* Monitor for 429 (Too Many Requests) responses
+1. **公司** 优先（无依赖）
+2. **人员** 其次（可关联到公司）
+3. **商机** 第三（可关联到公司和人员）
+4. **任务/笔记**（可关联到以上任一项）
+5. **自定义对象**（按照其依赖关系）
 
-### Validate Data First
+## 最佳实践
 
-* Clean and validate your data before importing
-* Check required fields are populated
-* Verify formats match Twenty's requirements (see [Field Mapping](/l/zh/user-guide/data-migration/capabilities/field-mapping))
+### 批量处理请求
 
-### Log Everything
+* 不要逐条发送记录
+* 每次 API 调用最多分组处理 **60 条记录**
+* 这可在速率限制内最大化吞吐量
 
-* Log every record imported (including IDs)
-* Log errors with full context
-* This helps debug issues and verify completion
+### 处理速率限制
 
-### Test First
+* 在请求之间实施延迟（持续导入时至少 600ms）
+* 达到限制时使用指数退避
+* 监控 429（请求过多）响应
 
-* Test with a small batch (10-20 records)
-* Verify data appears correctly in Twenty
-* Then run the full import
+### 先验证数据
 
-### Upsert to Avoid Duplicates
+* 在导入前清洗并验证数据
+* 检查必填字段是否已填写
+* 验证格式是否符合 Twenty 的要求 (参见 [字段映射](/l/zh/user-guide/data-migration/capabilities/field-mapping))
 
-The GraphQL API supports **batch upsert** — update if the record exists, create if not. This prevents duplicates when re-running imports.
+### 记录一切
 
-## Finding Object and Field Names
+* 记录每一条导入的记录（包括 ID）
+* 记录错误及其完整上下文
+* 这有助于调试问题并验证完成情况
 
-To see available objects and fields:
+### 先进行测试
 
-1. Go to **Settings → API and Webhooks**
-2. Browse the **Metadata API**
-3. View all standard and custom objects with their fields
+* 使用小批量进行测试（10-20 条记录）
+* 验证数据在 Twenty 中显示是否正确
+* 然后执行完整导入
 
-The documentation shows all standard and custom objects, their fields, and the expected data types.
+### 使用合并插入避免重复
 
-## Professional Services
+GraphQL API 支持**批量合并插入** — 若记录已存在则更新，不存在则创建。 这可以在重新运行导入时防止重复。
 
-For complex API migrations, our partners can help:
+## 查找对象和字段名称
 
-| Service                 | What's Included                    |
-| ----------------------- | ---------------------------------- |
-| **Data Model Design**   | design your optimal data structure |
-| **Migration Scripts**   | write and run the import scripts   |
-| **Data Transformation** | handle complex mapping and cleanup |
-| **Validation & QA**     | verify the migration is complete   |
+查看可用的对象和字段：
 
-**Best for:**
+1. 前往 **设置 → API 和 Webhooks**
+2. 浏览 **Metadata API**
+3. 查看所有标准和自定义对象及其字段
 
-* Migrations of 100,000+ records
-* Complex data transformations
-* Tight timelines
-* Teams without developer resources
+文档展示了所有标准和自定义对象、它们的字段以及预期的数据类型。
 
-Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/zh/user-guide/getting-started/capabilities/implementation-services).
+## 专业服务
 
-## FAQ
+对于复杂的 API 迁移，我们的合作伙伴可以提供帮助：
+
+| 服务         | 包含内容       |
+| ---------- | ---------- |
+| **数据模型设计** | 设计最优的数据结构  |
+| **迁移脚本**   | 编写并运行导入脚本  |
+| **数据转换**   | 处理复杂的映射与清理 |
+| **验证与 QA** | 验证迁移是否完成   |
+
+**适用于：**
+
+* 迁移 100,000+ 条记录
+* 复杂的数据转换
+* 紧迫的时间安排
+* 缺乏开发人员资源的团队
+
+请通过 [contact@twenty.com](mailto:contact@twenty.com) 与我们联系，或查看我们的 [实施服务](/l/zh/user-guide/getting-started/capabilities/implementation-services)。
+
+## 常见问题
 
 <AccordionGroup>
-  <Accordion title="What's the difference between GraphQL and REST?">
-    GraphQL lets you request exactly the data you need in a single query and is better for complex operations. REST uses standard HTTP methods (GET, POST, PUT, DELETE) and may be more familiar if you've worked with traditional APIs.
+  <Accordion title="GraphQL 与 REST 有何区别？">
+    GraphQL 允许您在一次查询中准确请求所需数据，并且更适合复杂操作。 REST 使用标准的 HTTP 方法（GET、POST、PUT、DELETE），如果您使用过传统 API，可能会更熟悉。
   </Accordion>
 
-  <Accordion title="Can I update existing records via API?">
-    Yes! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+  <Accordion title="我可以通过 API 更新现有记录吗？">
+    是! 使用 update mutation（GraphQL）或带有记录 `id` 的 PUT/PATCH 请求（REST）。
   </Accordion>
 
-  <Accordion title="How do I handle duplicates?">
-    Query for existing records first using unique identifiers (email, domain). Update if exists, create if not.
+  <Accordion title="如何处理重复数据？">
+    首先使用唯一标识符（email、domain）查询现有记录。 存在则更新，不存在则创建。
   </Accordion>
 
-  <Accordion title="Can I delete records via API?">
-    Yes, use delete mutations (GraphQL) or DELETE requests (REST).
+  <Accordion title="我可以通过 API 删除记录吗？">
+    可以，使用 delete mutation（GraphQL）或 DELETE 请求（REST）。
   </Accordion>
 
-  <Accordion title="Is there a Python or Node.js SDK?">
-    Not currently, but both APIs work with any HTTP client in any language.
+  <Accordion title="是否提供 Python 或 Node.js 的 SDK？">
+    目前没有，但这两种 API 可与任何语言中的任意 HTTP 客户端配合使用。
   </Accordion>
 </AccordionGroup>
 
-## API Documentation
+## API 文档
 
-For full implementation details, code examples, and schema reference:
+有关完整的实现细节、代码示例和架构参考：
 
-* [API Documentation](/l/zh/developers/extend/capabilities/apis)
+* [API 文档](/l/zh/developers/extend/capabilities/apis)

@@ -1,126 +1,126 @@
 ---
-title: Permissions FAQ
-description: Frequently asked questions about roles and permissions.
+title: FAQ sur les autorisations
+description: Foire aux questions sur les rôles et les autorisations.
 ---
 
-## Roles
+## Rôles
 
 <AccordionGroup>
-  <Accordion title="What roles come with Twenty by default?">
-    Twenty comes with an **Admin** and **Member** roles by default. You can create additional custom roles based on your team's needs (e.g., Sales Rep, Manager, Read-Only User).
+  <Accordion title="Quels rôles sont inclus par défaut avec Twenty ?">
+    Twenty inclut par défaut les rôles **Admin** et **Member**. Vous pouvez créer des rôles personnalisés supplémentaires selon les besoins de votre équipe (par ex., Représentant commercial, Responsable, Utilisateur en lecture seule).
   </Accordion>
 
-  <Accordion title="Can I delete the Admin role?">
-    No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+  <Accordion title="Puis-je supprimer le rôle Admin ?">
+    Non, le rôle Admin ne peut pas être supprimé. Il doit toujours y avoir au moins un membre assigné au rôle Admin.
   </Accordion>
 
-  <Accordion title="What happens when I delete a role?">
-    Any workspace member assigned to that role will be automatically reassigned to the default role.
+  <Accordion title="Que se passe-t-il lorsque je supprime un rôle ?">
+    Tout membre de l'espace de travail assigné à ce rôle sera automatiquement réattribué au rôle par défaut.
   </Accordion>
 
-  <Accordion title="How do I set a default role for new members?">
-    Go to **Settings → Roles**, find the **Default Role** option, and select which role new members should automatically receive when they join.
+  <Accordion title="Comment définir un rôle par défaut pour les nouveaux membres ?">
+    Allez dans **Paramètres → Rôles**, trouvez l'option **Rôle par défaut**, puis sélectionnez le rôle que les nouveaux membres doivent recevoir automatiquement lorsqu'ils rejoignent.
   </Accordion>
 
-  <Accordion title="Can I assign multiple roles to one user?">
-    No, each user can only have one role at a time. Create a custom role if you need a combination of permissions.
+  <Accordion title="Puis-je attribuer plusieurs rôles à un même utilisateur ?">
+    Non, chaque utilisateur ne peut avoir qu'un seul rôle à la fois. Créez un rôle personnalisé si vous avez besoin d'une combinaison d'autorisations.
   </Accordion>
 </AccordionGroup>
 
-## Permissions
+## Autorisations
 
 <AccordionGroup>
-  <Accordion title="What's the difference between object and field permissions?">
-    * **Object permissions**: Control access to entire records (e.g., can see/edit/delete People records)
-    * **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
+  <Accordion title="Quelle est la différence entre les autorisations d'objet et de champ ?">
+    * **Autorisations d'objet** : Contrôlent l'accès aux enregistrements entiers (par ex., voir/modifier/supprimer des enregistrements People)
+    * **Autorisations de champ** : Contrôlent l'accès à des champs spécifiques au sein d'un objet (par ex., voir mais ne pas modifier le champ Salaire)
 
-    Field permissions allow more granular control over sensitive data.
+    Les autorisations de champ permettent un contrôle plus fin des données sensibles.
   </Accordion>
 
-  <Accordion title="How do permission overrides work?">
-    Permissions cascade from global to specific:
+  <Accordion title="Comment fonctionnent les remplacements d'autorisations ?">
+    Les autorisations se propagent du global vers le spécifique :
 
-    1. **All Objects** sets the baseline for all objects
-    2. **Object-Level Permissions** can override the global setting for specific objects
-    3. **Field-Level Permissions** can override the object setting for specific fields
+    1. **Tous les objets** définit la base pour tous les objets
+    2. **Autorisations au niveau de l'objet** peuvent remplacer le paramètre global pour des objets spécifiques
+    3. **Autorisations au niveau du champ** peuvent remplacer le paramètre de l'objet pour des champs spécifiques
 
-    More specific settings always take precedence.
+    Les paramètres plus spécifiques prévalent toujours.
   </Accordion>
 
-  <Accordion title="What do the different permission levels mean?">
-    For objects:
+  <Accordion title="Que signifient les différents niveaux d'autorisation ?">
+    Pour les objets :
 
-    * **See Records**: View records in lists and detail pages
-    * **Edit Records**: Modify existing records
-    * **Delete Records**: Soft-delete records (can be restored)
-    * **Destroy Records**: Permanently delete records
+    * **Voir les enregistrements** : Afficher les enregistrements dans les listes et les pages de détail
+    * **Modifier les enregistrements** : Modifier les enregistrements existants
+    * **Supprimer les enregistrements** : Suppression logique des enregistrements (peuvent être restaurés)
+    * **Détruire les enregistrements** : Supprimer définitivement les enregistrements
 
-    For fields:
+    Pour les champs :
 
-    * **See Field**: View the field value
-    * **Edit Field**: Modify the field value
-    * **No Access**: Field is completely hidden
+    * **Voir le champ** : Afficher la valeur du champ
+    * **Modifier le champ** : Modifier la valeur du champ
+    * **Aucun accès** : Le champ est complètement masqué
   </Accordion>
 
-  <Accordion title="Can I restrict access to specific records (row-level permissions)?">
-    Row-level permissions will be available on the **Organization** plan by Q1 2026. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+  <Accordion title="Puis-je restreindre l'accès à des enregistrements spécifiques (autorisations au niveau des lignes) ?">
+    Les autorisations au niveau des lignes seront disponibles sur l'offre **Organization** d'ici le 1er trimestre 2026. Cela vous permet de restreindre l'accès à des enregistrements spécifiques selon des critères (par ex., voir uniquement vos propres opportunités).
   </Accordion>
 
-  <Accordion title="How do I make a field read-only for certain users?">
-    1. Go to **Settings → Roles**
-    2. Select the role
-    3. Navigate to the object containing the field
-    4. Set the field permission to **See Field** (without Edit Field)
+  <Accordion title="Comment rendre un champ en lecture seule pour certains utilisateurs ?">
+    1. Allez dans **Paramètres → Rôles**
+    2. Sélectionnez le rôle
+    3. Accédez à l'objet contenant le champ
+    4. Définissez l'autorisation du champ sur **Voir le champ** (sans Modifier le champ)
   </Accordion>
 </AccordionGroup>
 
-## Settings & Actions
+## Paramètres et actions
 
 <AccordionGroup>
-  <Accordion title="What settings permissions are available?">
-    You can control access to:
+  <Accordion title="Quelles autorisations liées aux paramètres sont disponibles ?">
+    Vous pouvez contrôler l'accès à :
 
-    * API key generation
-    * Workspace preferences
-    * Role assignment
-    * Data model configuration
-    * Security settings
-    * Workflow management
+    * Génération de clés API
+    * Préférences de l'espace de travail
+    * Attribution des rôles
+    * Configuration du modèle de données
+    * Paramètres de sécurité
+    * Gestion des flux de travail
 
-    Use **Settings All Access** to grant full access, or enable specific permissions.
+    Utilisez **Accès total aux paramètres** pour accorder un accès complet, ou activez des autorisations spécifiques.
   </Accordion>
 
-  <Accordion title="What action permissions are available?">
-    You can control:
+  <Accordion title="Quelles autorisations d'actions sont disponibles ?">
+    Vous pouvez contrôler :
 
-    * **Send Email**: Ability to send emails from Twenty
-    * **Import CSV**: Ability to import data via CSV
-    * **Export CSV**: Ability to export data to CSV
+    * **Envoyer des e-mails** : Possibilité d'envoyer des e-mails depuis Twenty
+    * **Importer un CSV** : Possibilité d'importer des données via CSV
+    * **Exporter en CSV** : Possibilité d'exporter des données en CSV
 
-    Use **Application All Access** to grant all actions, or enable specific ones.
+    Utilisez **Accès total à l'application** pour autoriser toutes les actions, ou activez des actions spécifiques.
   </Accordion>
 </AccordionGroup>
 
 ## SSO
 
 <AccordionGroup>
-  <Accordion title="Is SSO available on all plans?">
-    No, SSO is a Premium feature available on the **Organization** plan only.
+  <Accordion title="Le SSO est-il disponible sur toutes les offres ?">
+    Non, le SSO est une fonctionnalité Premium disponible uniquement sur l'offre **Organization**.
   </Accordion>
 
-  <Accordion title="Which identity providers are supported?">
-    Twenty supports:
+  <Accordion title="Quels fournisseurs d'identité sont pris en charge ?">
+    Twenty prend en charge :
 
-    * **SAML 2.0** (works with most enterprise identity providers)
+    * **SAML 2.0** (fonctionne avec la plupart des fournisseurs d'identité d'entreprise)
     * **Google Workspace**
-    * **Microsoft Entra ID** (formerly Azure AD)
+    * **Microsoft Entra ID** (anciennement Azure AD)
   </Accordion>
 
-  <Accordion title="What is Just-in-Time (JIT) provisioning?">
-    With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+  <Accordion title="Qu'est-ce que l'approvisionnement Just-in-Time (JIT) ?">
+    Avec l'approvisionnement JIT, les comptes utilisateur sont automatiquement créés dans Twenty lorsqu'une personne se connecte via SSO pour la première fois. Le rôle par défaut leur est attribué automatiquement.
   </Accordion>
 
-  <Accordion title="Can I require SSO for all users?">
-    Yes, once SSO is configured, you can disable password login for SSO users to enforce authentication through your identity provider.
+  <Accordion title="Puis-je exiger le SSO pour tous les utilisateurs ?">
+    Oui, une fois le SSO configuré, vous pouvez désactiver la connexion par mot de passe pour les utilisateurs SSO afin d'imposer l'authentification via votre fournisseur d'identité.
   </Accordion>
 </AccordionGroup>

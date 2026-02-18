@@ -104,13 +104,38 @@ export const removeStep = ({
               });
             }
 
+            const finalNextStepIds = updatedNextStepIds.filter(
+              (id) => !allRemovedStepIds.includes(id),
+            );
+
             return {
               ...branch,
-              nextStepIds: updatedNextStepIds.filter(
-                (id) => !allRemovedStepIds.includes(id),
-              ),
+              nextStepIds: finalNextStepIds,
             };
           });
+
+          const filteredBranches = updatedBranches.filter(
+            (branch, branchIndex) => {
+              const isIfBranch = branchIndex === 0;
+              const isElseBranch =
+                branchIndex === updatedBranches.length - 1 &&
+                !isDefined(branch.filterGroupId);
+              const isElseIfBranch =
+                branchIndex > 0 &&
+                branchIndex < updatedBranches.length - 1 &&
+                isDefined(branch.filterGroupId);
+
+              if (isIfBranch || isElseBranch) {
+                return true;
+              }
+
+              if (isElseIfBranch && branch.nextStepIds.length === 0) {
+                return false;
+              }
+
+              return true;
+            },
+          );
 
           return {
             ...step,
@@ -118,7 +143,7 @@ export const removeStep = ({
               ...step.settings,
               input: {
                 ...step.settings.input,
-                branches: updatedBranches,
+                branches: filteredBranches,
               },
             },
           };

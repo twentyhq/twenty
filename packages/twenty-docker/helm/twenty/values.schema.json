@@ -45,6 +45,7 @@
         "env": {
           "type": "object",
           "properties": {
+            "SERVER_URL": { "type": "string", "description": "Override for the server URL (e.g., https://crm.example.com). If not set, derived from ingress or service." },
             "NODE_PORT": { "type": "integer", "minimum": 1 },
             "PG_DATABASE_URL": { "type": "string" },
             "REDIS_URL": { "type": "string" },

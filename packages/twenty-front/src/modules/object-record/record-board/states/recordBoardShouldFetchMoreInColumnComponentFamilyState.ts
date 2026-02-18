@@ -4,6 +4,6 @@ import { createComponentFamilyState } from '@/ui/utilities/state/component-state
 export const recordBoardShouldFetchMoreInColumnComponentFamilyState =
   createComponentFamilyState<boolean, string>({
     key: 'recordBoardShouldFetchMoreInColumnComponentFamilyState',
-    defaultValue: false,
+    defaultValue: true,
     componentInstanceContext: RecordBoardComponentInstanceContext,
   });

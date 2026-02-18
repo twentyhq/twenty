@@ -82,7 +82,7 @@ describe('AccessTokenService', () => {
             getRepository: jest.fn(),
             executeInWorkspaceContext: jest
               .fn()
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
           },
         },
       ],

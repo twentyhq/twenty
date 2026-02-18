@@ -6,6 +6,7 @@ import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-w
 import { FieldRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-rich-text-configuration.dto';
 import { FieldsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/fields-configuration.dto';
 import { FilesConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/files-configuration.dto';
+import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
@@ -31,6 +32,7 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     GAUGE_CHART: GaugeChartConfigurationDTO,
     BAR_CHART: BarChartConfigurationDTO,
     CALENDAR: CalendarConfigurationDTO,
+    FRONT_COMPONENT: FrontComponentConfigurationDTO,
     EMAILS: EmailsConfigurationDTO,
     FIELD: FieldConfigurationDTO,
     FIELD_RICH_TEXT: FieldRichTextConfigurationDTO,

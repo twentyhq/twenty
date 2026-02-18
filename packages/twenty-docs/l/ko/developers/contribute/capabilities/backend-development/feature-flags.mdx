@@ -1,12 +1,12 @@
 ---
-title: Feature Flags
+title: 기능 플래그
 ---
 
-Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
+기능 플래그는 실험적 기능을 숨기는 데 사용됩니다. Twenty의 경우, 사용자 수준이 아니라 워크스페이스 수준에서 설정됩니다.
 
-## Adding a new feature flag
+## 새로운 기능 플래그 추가
 
-In `FeatureFlagKey.ts` add the feature flag:
+`FeatureFlagKey.ts`에 기능 플래그 추가:
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-Also add it to the enum in `feature-flag.entity.ts`:
+또한 `feature-flag.entity.ts`의 열거형에 추가하십시오:
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+**백엔드** 기능에 기능 플래그를 적용하려면 다음을 사용하십시오:
 
 ```ts
 @Gate({
@@ -31,16 +31,16 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+**프론트엔드** 기능에 기능 플래그를 적용하려면 다음을 사용하십시오:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## 배포를 위한 기능 플래그 구성
 
-Change the corresponding record in the Table `core.featureFlag`:
+테이블 `core.featureFlag`의 해당 레코드 변경:
 
-| id     | key                      | workspaceId | value  |
-| ------ | ------------------------ | ----------- | ------ |
-| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |
+| id | 키                        | workspaceId | 값   |
+| -- | ------------------------ | ----------- | --- |
+| 임의 | `IS_FEATURENAME_ENABLED` | WorkspaceID | `참` |

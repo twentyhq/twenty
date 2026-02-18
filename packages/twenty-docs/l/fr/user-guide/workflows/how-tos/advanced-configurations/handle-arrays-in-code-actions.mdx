@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Gérer les tableaux dans les actions Code
+description: Apprenez à gérer correctement les entrées de type tableau dans les actions Code des workflows.
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+Lorsque vous travaillez avec des tableaux dans les actions Code, vous pouvez rencontrer deux difficultés courantes :
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **Tableaux passés sous forme de chaînes** — les données provenant de systèmes externes ou d'étapes précédentes arrivent sous forme de chaîne plutôt que sous forme de véritable tableau
+2. **Impossible de sélectionner des éléments individuellement** — vous ne pouvez sélectionner que le tableau entier, pas des champs spécifiques à l'intérieur
 
-Both can be solved with a Code node.
+Les deux peuvent être résolus avec un nœud Code.
 
-## Parsing Arrays from Strings
+## Analyse des tableaux à partir de chaînes
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+Les tableaux sont souvent transmis entre les étapes d'un workflow sous forme de chaînes ou de JSON plutôt que comme tableaux natifs. Cela se produit lorsque :
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* Réception de données depuis des API externes via HTTP Request
+* Traitement des charges utiles des webhooks
+* Transmission de données entre les étapes du workflow
 
-**Solution**: Add this pattern at the start of your Code action:
+**Solution** : Ajoutez ce modèle au début de votre action Code :
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+La ligne clé `typeof users === "string" ? JSON.parse(users) : users` vérifie si l'entrée est une chaîne, l'analyse si nécessaire, ou l'utilise directement si c'est déjà un tableau.
 
-## Extracting Individual Fields from Arrays
+## Extraction de champs individuels à partir de tableaux
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Un webhook peut renvoyer un tableau comme `answers: [...]`, mais dans les étapes de workflow suivantes vous ne pouvez sélectionner que le tableau entier — pas des éléments individuels à l'intérieur.
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**Solution** : Ajoutez un nœud Code pour extraire des champs spécifiques et les renvoyer sous forme d'objet structuré :
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+Le nœud Code renvoie un objet structuré au lieu d'un tableau. Dans les étapes suivantes, vous pouvez maintenant sélectionner des champs individuels comme `answer.firstname` et `answer.name` à partir du sélecteur de variables.
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  Nous travaillons activement à faciliter la gestion des tableaux dans de futures mises à jour.
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
 </Tip>

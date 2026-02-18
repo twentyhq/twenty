@@ -1,90 +1,90 @@
 ---
-title: Use Branches in Workflows
-description: Understand how branches work and how to control which path is executed.
+title: 在工作流中使用分支
+description: 了解分支如何工作，以及如何控制执行哪条路径。
 ---
 
-## How Branches Work
+## 分支的工作方式
 
-In the workflow editor, you can create multiple paths (branches) going out from a single node. This allows you to build complex automations with different outcomes.
+在工作流编辑器中，您可以从单个节点延伸出多条路径（分支）。 这使您能够构建具有不同结果的复杂自动化流程。
 
-**Important**: When a workflow runs, **all branches execute in parallel by default**. There is no built-in "if/else" logic to choose one branch over another—every path will run simultaneously.
+**重要**：当工作流运行时，默认情况下**所有分支都会并行执行**。 没有内置的 "if/else" 逻辑来在分支间做出选择——每条路径都会同时运行。
 
-## Controlling Which Branch Runs
+## 控制执行哪个分支
 
-To execute only one branch based on specific conditions, **add a Filter node at the beginning of each branch**.
+若要根据特定条件仅执行一个分支，**在每个分支的开头添加一个 Filter 节点**。
 
-### Example Setup
+### 示例设置
 
-1. Create your workflow with multiple branches from a single node
-2. Add a **Filter** node as the first step in each branch
-3. Set conditions on each Filter to determine when that branch should continue
-4. Only the branch(es) whose Filter conditions are met will proceed
+1. 从单个节点创建包含多个分支的工作流
+2. 在每个分支的第一步添加一个**Filter** 节点
+3. 在每个 Filter 上设置条件，以确定该分支何时继续
+4. 只有满足其 Filter 条件的分支会继续
 
 <img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
 
-### How Filters Work
+### Filter 的工作方式
 
-* If the Filter condition is **met**: The branch continues executing
-* If the Filter condition is **not met**: The branch stops at the Filter node
+* 如果 Filter 条件被**满足**：该分支继续执行
+* 如果 Filter 条件**未满足**：该分支会在 Filter 节点停止
 
-This effectively creates conditional logic where only the appropriate branch runs based on your data.
+这实际上创建了条件逻辑，使只有与您的数据相匹配的合适分支会运行。
 
-## Example: Route by Deal Size
+## 示例：按交易金额路由
 
-**Scenario**: When a deal is closed, send different notifications based on deal size.
+**场景**：当交易达成时，根据交易金额发送不同的通知。
 
-1. **Trigger**: Opportunity updated (Stage = Closed Won)
-2. **Branch 1**: Filter for Amount > $10,000 → Send Slack message to #big-deals
-3. **Branch 2**: Filter for Amount ≤ $10,000 → Send email to sales manager
+1. **触发器**：Opportunity 已更新（Stage = Closed Won）
+2. **分支 1**：Filter 条件：Amount > $10,000 → 向 #big-deals 发送 Slack 消息
+3. **分支 2**：Filter 条件：Amount ≤ $10,000 → 向销售经理发送电子邮件
 
-Both branches start, but only the one matching the deal amount will continue past its Filter.
+两个分支都会启动，但只有与交易金额匹配的分支会通过其 Filter 继续执行。
 
-## Creating Branches
+## 创建分支
 
 <Note>
-  To create a new branch from an existing step, click the **+** button on the step and add your action. You can add multiple branches by clicking **+** multiple times.
+  要从现有步骤创建新分支，请点击该步骤上的 **+** 按钮并添加您的操作。 您可以多次点击 **+** 来添加多个分支。
 </Note>
 
-1. In the workflow editor, select the step you want to branch from
-2. Click the **+** button to add an action
-3. This creates one branch
-4. Click **+** again on the same step to create additional branches
-5. Each branch can have its own sequence of actions
+1. 在工作流编辑器中，选择您想要从其分支出去的步骤
+2. 点击 **+** 以添加一个操作
+3. 这将创建一个分支
+4. 在同一步骤上再次点击 **+** 以创建更多分支
+5. 每个分支都可以拥有自己的一系列操作
 
-## Merging Branches Back Together
+## 合并分支
 
-After parallel branches complete their work, you can merge them back into a single path:
+并行分支完成其工作后，您可以将它们合并回单一路径：
 
-1. Complete your branched actions
-2. Add a new step that should run after all branches
-3. Drag a connection from the last step of each branch to this new step
-4. The merged step waits for all connected branches to complete before executing
+1. 完成您的分支内操作
+2. 在所有分支之后添加一个应运行的新步骤
+3. 将每个分支末端的连接拖拽到这个新步骤
+4. 合并后的步骤会在所有连接的分支完成后才执行
 
-### Example: Process Then Notify
+### 示例：先处理后通知
 
 ```
-Trigger
+触发器
    │
-   ├── Branch A: Update Customer Record
+   ├── 分支 A：更新客户记录
    │
-   └── Branch B: Create Support Ticket
+   └── 分支 B：创建支持工单
 
        ↘  ↙
 
-   Merged Step: Send Confirmation Email
+   合并步骤：发送确认电子邮件
 ```
 
-The confirmation email sends only after both the customer update and ticket creation are done.
+仅在客户更新和工单创建都完成后才会发送确认电子邮件。
 
-## Best Practices
+## 最佳实践
 
-* Always use **Filter nodes** at the start of branches when you want conditional execution
-* Keep branch conditions **mutually exclusive** to avoid duplicate actions
-* Test your workflows with different data to ensure the correct branches run
-* **Rename branch steps** descriptively so it's clear what each path does
-* **Merge branches** when you need a final action after parallel processing
+* 当您需要条件执行时，请始终在分支开始处使用**Filter 节点**
+* 使分支条件**互斥**，以避免重复操作
+* 使用不同数据测试您的工作流，以确保运行正确的分支
+* **重命名分支步骤**，使每条路径的作用清晰明了
+* **合并分支**，当您在并行处理后需要执行最终操作时
 
-## Related
+## 相关内容
 
-* [Workflows FAQ](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq) — answers about parallel execution
-* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions) — available actions for branches
+* [工作流常见问题](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq) — 关于并行执行的解答
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions) — 分支可用的操作

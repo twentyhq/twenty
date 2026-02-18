@@ -7,6 +7,7 @@ import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/servi
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
+import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -98,7 +99,7 @@ describe('GoogleAPIsService', () => {
               .mockResolvedValue(mockWorkspaceDataSource),
             executeInWorkspaceContext: jest
               .fn()
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
           },
         },
         {
@@ -125,6 +126,15 @@ describe('GoogleAPIsService', () => {
                 scopes: [],
                 isValid: true,
               }),
+          },
+        },
+        {
+          provide: GoogleApisServiceAvailabilityService,
+          useValue: {
+            checkServicesAvailability: jest.fn().mockResolvedValue({
+              isMessagingAvailable: true,
+              isCalendarAvailable: true,
+            }),
           },
         },
         {
@@ -238,11 +248,11 @@ describe('GoogleAPIsService', () => {
 
       expect(
         calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending,
-      ).toHaveBeenCalledWith([existingConnectedAccount.id], 'workspace-id');
+      ).toHaveBeenCalledWith([failedCalendarChannel.id], 'workspace-id');
 
       expect(
         messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending,
-      ).toHaveBeenCalledWith([existingConnectedAccount.id], 'workspace-id');
+      ).not.toHaveBeenCalled();
 
       expect(
         createMessageChannelService.createMessageChannel,

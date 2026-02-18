@@ -31,7 +31,7 @@ export class EntitySchemaRelationFactory {
   ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const fieldMetadatas = objectMetadata.fieldMetadataIds
+    const fieldMetadatas = objectMetadata.fieldIds
       .map((fieldId) => fieldMetadataMaps.byId[fieldId])
       .filter(isDefined);
 

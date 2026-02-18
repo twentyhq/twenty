@@ -1,122 +1,124 @@
 ---
-title: Fields
-description: Understand the role of fields and how to manage them.
+title: フィールド
+description: フィールドの役割とその管理方法を理解しましょう。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Fields
+## フィールドについて
 
-Fields are like columns in a spreadsheet. They store different types of data like text, numbers, or dates. Fields can be standard (built-in) or custom (the ones you create).
+フィールドはスプレッドシートの列のようなものです。 テキスト、数字、日付などの異なるデータタイプを保存します。 フィールドには、標準（ビルトイン）とカスタム（ユーザー作成）があります。
 
-### Standard Fields
+### 標準フィールド
 
-Standard fields come built-in with Twenty to handle common business needs.
+Twenty には、一般的な業務ニーズに対応する標準フィールドがビルトインされています。
 
-For example, `First Name` and `Last Name` are standard fields in the `People` object. They store text data for individual names.
+たとえば、「名」および「姓」は「人物」オブジェクトの標準フィールドです。 それらは個々の名前のテキストデータを保存します。
 
-You cannot delete standard fields, but you can deactivate them if you don't need them.
+標準フィールドは削除できませんが、必要がない場合は無効化できます。
 
-You can also customize the options of the standard `SELECT` type fields, for example the options for the `Stage` on Opportunities.
+標準の `SELECT` 型フィールドのオプションもカスタマイズできます。たとえば、商談の `Stage` のオプションです。
 
 <img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
 
-### Custom Fields
+### カスタムフィールド
 
-Custom fields can be added to any object. You can store text, numbers, dates, dropdown selections, and more. Use custom fields to track information that's specific to your business.
+カスタムフィールドは任意のオブジェクトに追加できます。 テキスト、数字、日付、ドロップダウンの選択肢などを保存できます。 カスタムフィールドを使用して、ビジネスに特化した情報を追跡します。
 
-For instance, a custom field for SpaceX could be `Rocket Active Status`, indicating if a rocket is operational.
+たとえば、SpaceX用のカスタムフィールドとして「ロケットの運用状況」を設定できます。これはロケットが稼働中かどうかを示します。
 
 <img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
 
-## Field Types
+## フィールドタイプ
 
-Twenty supports various field types:
+Twenty はさまざまなフィールドタイプをサポートしています。
 
-| Type         | Description                                                       | Example            |
-| ------------ | ----------------------------------------------------------------- | ------------------ |
-| Address      | Structured address with street, city, state, country, postal code | Office Address     |
-| Array        | List of text values                                               | Tags               |
-| Boolean      | True/false checkbox                                               | Is Active          |
-| Currency     | Monetary value with currency code                                 | Deal Amount (USD)  |
-| Date         | Date values                                                       | Close Date         |
-| Date & Time  | Date with time                                                    | Meeting Time       |
-| Domain       | Website domain (used for Companies)                               | acme.com           |
-| Email        | Email addresses (with primary + additional)                       | Contact Email      |
-| JSON         | Structured JSON data                                              | Custom metadata    |
-| Links        | URLs with labels (primary + secondary)                            | Website, LinkedIn  |
-| Long Text    | Multi-line text                                                   | Description, Notes |
-| Multi-Select | Multiple choices from a predefined list                           | Tags, Categories   |
-| Number       | Numeric values (integers or decimals)                             | Quantity, Score    |
-| Phone        | Phone numbers with country code                                   | Work Phone         |
-| Rating       | Star rating (1-5)                                                 | Priority, Score    |
-| Relation     | Links to records in other objects                                 | Company → People   |
-| Select       | Single choice from a predefined list                              | Stage, Status      |
-| Text         | Single line of text                                               | Name, Title        |
+| タイプ    | 説明                          | 例                |
+| ------ | --------------------------- | ---------------- |
+| 住所     | 通り、都市、州、国、郵便番号を含む構造化された住所   | オフィス住所           |
+| Array  | テキスト値のリスト                   | タグ               |
+| ブール型   | 真偽値のチェックボックス                | アクティブ            |
+| 通貨     | 通貨コード付きの金額                  | 商談金額（USD）        |
+| 日付     | 日付の値                        | 締切日              |
+| 日付と時間  | 時刻付きの日付                     | ミーティング時刻         |
+| ドメイン   | Web サイトのドメイン（Companies で使用） | acme.com         |
+| メール    | メールアドレス（主要＋追加）              | 連絡先メール           |
+| JSON   | 構造化された JSON データ             | カスタムメタデータ        |
+| リンク    | ラベル付きの URL（主要＋サブ）           | Web サイト、LinkedIn |
+| 長文テキスト | 複数行テキスト                     | 説明、メモ            |
+| マルチ選択  | あらかじめ定義されたリストから複数選択         | タグ、カテゴリ          |
+| 数      | 数値（整数または小数）                 | 数量、スコア           |
+| 電話     | 国番号付きの電話番号                  | 勤務先電話            |
+| 評価     | 星評価（1〜5）                    | 優先度、スコア          |
+| リレーション | 他のオブジェクト内のレコードへのリンク         | Company → People |
+| 選択     | あらかじめ定義されたリストからの単一選択        | ステージ、ステータス       |
+| テキスト   | 1 行のテキスト                    | 名前、タイトル          |
 
-## Create a Custom Field
+## カスタムフィールドを作成する
 
-To add a custom field to any object, follow these steps:
+任意のオブジェクトにカスタムフィールドを追加するには、次の手順に従います。
 
-1. Go to `Settings` in the left sidebar.
-2. Go to `Data Model`, then select the object you wish to customize.
-3. Proceed by clicking on `Add Field`.
-4. Choose a field name and type that suits your requirements. Consider adding a field description for better understanding.
+1. 左サイドバーの「設定」に移動します。
+2. 「データモデル」に移動し、カスタマイズしたいオブジェクトを選択します。
+   3.
+3. 「フィールドを追加」をクリックして続行します。
+   4.
+4. 要件に合ったフィールド名とタイプを選択してください。 より良い理解のためにフィールドの説明を追加することを検討してください。 より良い理解のためにフィールドの説明を追加することを検討してください。 より良い理解のためにフィールドの説明を追加することを検討してください。
 
-Your newly created field is now available within the application's fields. To display it on a specific view, click on the options menu, then select `Fields`.
+作成したフィールドはアプリケーションのフィールド内で利用できるようになります。 特定のビューに表示するには、オプションメニューをクリックして「フィールド」を選択します。 特定のビューに表示するには、オプションメニューをクリックして「フィールド」を選択します。
 
-<VimeoEmbed videoId="927628219" title="Video demonstration" />
+<VimeoEmbed videoId="927628219" title="動画デモ" />
 
-**Quick way:** Click the **+** button at the top right of any object table, then select `Customize fields`. This takes you directly to the Data Model settings.
+**簡単な方法:** 任意のオブジェクトテーブルの右上の **+** ボタンをクリックし、「フィールドをカスタマイズ」を選択します。 これにより、データモデルの設定に直接アクセスできます。
 
 <img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
 
-## Deactivate a Field
+## フィールドを無効にする
 
-You can deactivate a field to hide it from the app without losing your data. Think of it as hiding the field rather than deleting it.
+データを失わずにアプリからフィールドを隠すには、フィールドを無効にすることができます。 これはフィールドを削除するのではなく、隠すようなものです。 これはフィールドを削除するのではなく、隠すようなものです。 これはフィールドを削除するのではなく、隠すようなものです。
 
-Here's how you can do it:
+以下に方法を示します。
 
-1. Find the field you want to deactivate in your object settings.
+1. オブジェクト設定で無効化したいフィールドを見つけます。
 
-2. Click the three dots `⋮` next to the field to open the menu.
+2. フィールドの横にある三点リーダー`⋮`をクリックしてメニューを開きます。
 
-3. Select `Deactivate` from the dropdown.
+3. ドロップダウンメニューから「無効化」を選択します。
 
 <img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
 
-What happens when you deactivate a field?
+フィールドを無効にするとどうなりますか？
 
-1. **In the app:** The field disappears and you can't add new values to it.
+1. **アプリ内では:** フィールドが消え、新しい値を追加することができなくなります。
 
-2. **Existing relationships:** If it's a relation field, existing connections stay but you can't create new ones.
+2. **既存の関係:** それがリレーションフィールドである場合、既存の接続は維持されますが、新しいものを作成することはできません。
 
-3. **API access:** You can still access the field and its data through the API.
+3. **APIアクセス:** フィールドとそのデータには引き続きAPI経由でアクセスできます。
 
-You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+標準フィールドとカスタムフィールドを再アクティブ化することができます。また、それらを永久に削除するオプションがあります。
 
-## Make Fields Unique
+## フィールドをユニークにする
 
-Make a field unique to ensure distinct records cannot have the same value. For example, email addresses are unique for each person.
+異なるレコードが同じ値を持つことがないように、フィールドをユニークにします。 例えば、メールアドレスは各人物に対してユニークです。 例えば、メールアドレスは各人物に対してユニークです。 例えば、メールアドレスは各人物に対してユニークです。
 
-If you get an error when setting uniqueness, check for duplicate values in your data (including deleted records).
+ユニーク性を設定する際にエラーが発生した場合、データ内の重複した値（削除されたレコードも含む）を確認してください。
 
-## Field Configuration Best Practices
+## フィールド構成のベストプラクティス
 
-### Naming Conventions and Limitations
+### 命名規則と制限
 
-* **Singular and plural named must be distinct**: Our GraphQL API needs distinct names for mutations
-* **Protected field names**: some names are reserved for system usage (e.g., `Type`, `Application`)
+* **単数形と複数形の名前は独立している必要があります**：私たちのGraphQL APIでは、変換に際して名前の違いが必要です
+* **保護されたフィールド名**：一部の名前はシステムで使用するために予約されています（例：`Type`、`Application`）
 
-### Currency and Phone Fields
+### 通貨フィールドと電話フィールド
 
-* **Default currency**: can be configured via the data model
-* **Default country codes**: can be configured for phone fields via the data model
+* **デフォルト通貨**：データモデルを介して設定できます
+* **デフォルト国コード**：データモデルを介して電話フィールドに設定できます
 
-### Select Fields
+### 選択フィールド
 
-* **A default option can be selected** for each Select field
+* **各選択フィールドにデフォルトオプションを選択できます**
 
-### Record Text Fields
+### レコードテキストフィールド
 
-* **Each object has one main display field**: This field appears in the leftmost column and represents the record when linked to other objects. It must be a text field. For example, People uses `Name` as the main field, so when you link a person to a company, you'll see their name in the company's view.
+* **各オブジェクトには**1つのメイン表示フィールドがあります。このフィールドは左側の列に表示され、他のオブジェクトにリンクされたときにレコードを表します。 これはテキストフィールドである必要があります。 たとえば、Peopleは「名前」をメインフィールドとして使用しているため、人物を会社にリンクすると、会社のビューにその名前が表示されます。 これはテキストフィールドである必要があります。 たとえば、Peopleは「名前」をメインフィールドとして使用しているため、人物を会社にリンクすると、会社のビューにその名前が表示されます。 これはテキストフィールドである必要があります。 たとえば、Peopleは「名前」をメインフィールドとして使用しているため、人物を会社にリンクすると、会社のビューにその名前が表示されます。

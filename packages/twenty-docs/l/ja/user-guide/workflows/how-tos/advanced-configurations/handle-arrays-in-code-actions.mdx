@@ -1,24 +1,24 @@
 ---
-title: Handle Arrays in Code Actions
-description: Learn how to properly handle array inputs in workflow Code actions.
+title: Code アクションで配列を扱う
+description: ワークフローの Code アクションで配列入力を適切に扱う方法を学びましょう。
 ---
 
-When working with arrays in Code actions, you may encounter two common challenges:
+Code アクションで配列を扱う際、次の2つの一般的な課題に直面することがあります:
 
-1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
-2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+1. **文字列として渡される配列** — 外部システムや前のステップからのデータが、本来の配列ではなく文字列として届く
+2. **個々の項目を選べない** — 配列全体しか選択できず、その中の特定フィールドを選べない
 
-Both can be solved with a Code node.
+どちらも Code ノードで解決できます。
 
-## Parsing Arrays from Strings
+## 文字列から配列をパースする
 
-Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+配列は、ネイティブな配列ではなく、文字列や JSON としてワークフローの各ステップ間で受け渡されることがよくあります。 これは次のような場合に発生します:
 
-* Receiving data from external APIs via HTTP Request
-* Processing webhook payloads
-* Passing data between workflow steps
+* HTTP Request で外部 API からデータを受け取る場合
+* Webhook ペイロードを処理する場合
+* ワークフローのステップ間でデータを受け渡す場合
 
-**Solution**: Add this pattern at the start of your Code action:
+**解決策**: Code アクションの先頭に次のパターンを追加します:
 
 ```javascript
 export const main = async (params: {
@@ -39,13 +39,13 @@ export const main = async (params: {
 };
 ```
 
-The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+重要な行は `typeof users === \"string\" ? JSON.parse(users) : users` は、入力が文字列かどうかを判定し、必要であればパースし、すでに配列であればそのまま使用します。
 
-## Extracting Individual Fields from Arrays
+## 配列から個別のフィールドを取り出す
 
-A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+Webhook が `answers: [...]` のような配列を返すことがありますが、その後のワークフローのステップでは、**配列全体** — その中の個別の項目は選択できません。
 
-**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+**解決策**: 特定のフィールドを抽出して構造化オブジェクトとして返す Code ノードを追加します:
 
 ```javascript
 export const main = async (params: {
@@ -71,12 +71,12 @@ export const main = async (params: {
 };
 ```
 
-The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+この Code ノードは、配列ではなく構造化オブジェクトを返します。 以降のステップでは、変数ピッカーから `answer.firstname` や `answer.name` のような個別フィールドを選択できるようになります。
 
 <Note>
-  We're actively working on making array handling easier in future updates.
+  将来のアップデートで配列の扱いをより簡単にできるよう、積極的に改善を進めています。
 </Note>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  コードエディタ右上の四角いアイコンをクリックすると全画面表示になります — デフォルトのエディタ幅には制限があるため便利です。
 </Tip>

@@ -1,122 +1,122 @@
 ---
-title: Fields
-description: Understand the role of fields and how to manage them.
+title: 필드
+description: 필드의 역할을 이해하고 관리 방법을 알아보세요.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Fields
+## 필드 정보
 
-Fields are like columns in a spreadsheet. They store different types of data like text, numbers, or dates. Fields can be standard (built-in) or custom (the ones you create).
+필드는 스프레드시트의 열과 같습니다. 텍스트, 숫자 또는 날짜와 같은 다양한 유형의 데이터를 저장합니다. 필드는 기본 제공 표준 필드 또는 사용자 정의 필드(사용자가 생성한 필드)일 수 있습니다.
 
-### Standard Fields
+### 표준 필드
 
-Standard fields come built-in with Twenty to handle common business needs.
+표준 필드는 일반적인 비즈니스 요구를 처리할 수 있도록 Twenty에 기본 제공됩니다.
 
-For example, `First Name` and `Last Name` are standard fields in the `People` object. They store text data for individual names.
+예를 들어, `이름` 및 `성`은 `사람` 객체의 표준 필드입니다. 이는 개인 이름에 대한 텍스트 데이터를 저장합니다.
 
-You cannot delete standard fields, but you can deactivate them if you don't need them.
+표준 필드를 삭제할 수는 없지만 필요하지 않을 경우 비활성화할 수 있습니다.
 
-You can also customize the options of the standard `SELECT` type fields, for example the options for the `Stage` on Opportunities.
+또한 표준 `SELECT` 유형 필드의 옵션을 사용자 지정할 수 있습니다. 예를 들어 기회(Opportunities)에서 `Stage` 옵션을 설정할 수 있습니다.
 
 <img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
 
-### Custom Fields
+### 사용자 정의 필드
 
-Custom fields can be added to any object. You can store text, numbers, dates, dropdown selections, and more. Use custom fields to track information that's specific to your business.
+사용자 정의 필드는 모든 객체에 추가할 수 있습니다. 텍스트, 숫자, 날짜, 드롭다운 선택 항목 등을 저장할 수 있습니다. 비즈니스에 특화된 정보를 추적하기 위해 사용자 정의 필드를 사용하세요.
 
-For instance, a custom field for SpaceX could be `Rocket Active Status`, indicating if a rocket is operational.
+예를 들어, SpaceX의 경우 `로켓 활성 상태`가 사용자 정의 필드가 될 수 있으며, 이는 로켓이 작동 중인지 여부를 나타냅니다.
 
 <img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
 
-## Field Types
+## 필드 유형
 
-Twenty supports various field types:
+Twenty는 다양한 필드 유형을 지원합니다:
 
-| Type         | Description                                                       | Example            |
-| ------------ | ----------------------------------------------------------------- | ------------------ |
-| Address      | Structured address with street, city, state, country, postal code | Office Address     |
-| Array        | List of text values                                               | Tags               |
-| Boolean      | True/false checkbox                                               | Is Active          |
-| Currency     | Monetary value with currency code                                 | Deal Amount (USD)  |
-| Date         | Date values                                                       | Close Date         |
-| Date & Time  | Date with time                                                    | Meeting Time       |
-| Domain       | Website domain (used for Companies)                               | acme.com           |
-| Email        | Email addresses (with primary + additional)                       | Contact Email      |
-| JSON         | Structured JSON data                                              | Custom metadata    |
-| Links        | URLs with labels (primary + secondary)                            | Website, LinkedIn  |
-| Long Text    | Multi-line text                                                   | Description, Notes |
-| Multi-Select | Multiple choices from a predefined list                           | Tags, Categories   |
-| Number       | Numeric values (integers or decimals)                             | Quantity, Score    |
-| Phone        | Phone numbers with country code                                   | Work Phone         |
-| Rating       | Star rating (1-5)                                                 | Priority, Score    |
-| Relation     | Links to records in other objects                                 | Company → People   |
-| Select       | Single choice from a predefined list                              | Stage, Status      |
-| Text         | Single line of text                                               | Name, Title        |
+| 유형      | 설명                                 | 예시             |
+| ------- | ---------------------------------- | -------------- |
+| 주소      | 거리, 도시, 주/도, 국가, 우편번호가 포함된 구조화된 주소 | 사무실 주소         |
+| 배열      | 텍스트 값 목록                           | 태그             |
+| 부울      | 참/거짓 체크박스                          | 활성 여부          |
+| 통화      | 통화 코드가 포함된 금액                      | 거래 금액(USD)     |
+| 날짜      | 날짜 값                               | 마감일            |
+| 날짜 및 시간 | 시간이 포함된 날짜                         | 회의 시간          |
+| 도메인     | 웹사이트 도메인(회사에 사용)                   | acme.com       |
+| 이메일     | 이메일 주소(기본 + 추가)                    | 연락처 이메일        |
+| JSON    | 구조화된 JSON 데이터                      | 사용자 지정 메타데이터   |
+| 링크      | 레이블이 있는 URL(기본 + 보조)               | 웹사이트, LinkedIn |
+| 긴 텍스트   | 여러 줄 텍스트                           | 설명, 메모         |
+| 다중 선택   | 미리 정의된 목록에서 여러 항목 선택               | 태그, 카테고리       |
+| 숫자      | 숫자 값(정수 또는 소수)                     | 수량, 점수         |
+| 전화      | 국가 코드가 포함된 전화번호                    | 업무용 전화         |
+| 평점      | 별점(1~5)                            | 우선순위, 점수       |
+| 관계      | 다른 객체의 레코드 링크                      | 회사 → 사람        |
+| 선택      | 미리 정의된 목록에서 단일 항목 선택               | 단계, 상태         |
+| 텍스트     | 한 줄 텍스트                            | 이름, 직함         |
 
-## Create a Custom Field
+## 사용자 정의 필드 생성
 
-To add a custom field to any object, follow these steps:
+모든 객체에 사용자 정의 필드를 추가하려면 다음 단계를 따르세요:
 
-1. Go to `Settings` in the left sidebar.
-2. Go to `Data Model`, then select the object you wish to customize.
-3. Proceed by clicking on `Add Field`.
-4. Choose a field name and type that suits your requirements. Consider adding a field description for better understanding.
+1. 왼쪽 사이드바에서 `설정`으로 이동합니다.
+2. `데이터 모델`로 이동한 다음 사용자 지정하려는 객체를 선택합니다.
+3. `필드 추가`를 클릭하여 계속 진행합니다.
+4. 요구 사항에 맞는 필드 이름과 유형을 선택합니다. 더 나은 이해를 위해 필드 설명을 추가하는 것을 고려하세요.
 
-Your newly created field is now available within the application's fields. To display it on a specific view, click on the options menu, then select `Fields`.
+새로 생성된 필드는 애플리케이션의 필드 내에서 사용 가능합니다. 특정 보기에서 표시하려면 옵션 메뉴를 클릭한 다음 `필드`를 선택하세요.
 
-<VimeoEmbed videoId="927628219" title="Video demonstration" />
+<VimeoEmbed videoId="927628219" title="동영상 시연" />
 
-**Quick way:** Click the **+** button at the top right of any object table, then select `Customize fields`. This takes you directly to the Data Model settings.
+**빠른 방법:** 모든 객체 테이블의 오른쪽 상단의 **+** 버튼을 클릭한 다음 `필드 사용자 지정`을 선택합니다. 이렇게 하면 바로 데이터 모델 설정으로 이동합니다.
 
 <img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
 
-## Deactivate a Field
+## 필드 비활성화
 
-You can deactivate a field to hide it from the app without losing your data. Think of it as hiding the field rather than deleting it.
+데이터를 잃지 않고 앱에서 필드를 숨기려면 필드를 비활성화할 수 있습니다. 삭제 대신 필드를 숨기는 것으로 생각하세요.
 
-Here's how you can do it:
+다음은 비활성화 방법입니다:
 
-1. Find the field you want to deactivate in your object settings.
+1. 객체 설정에서 비활성화하려는 필드를 찾습니다.
 
-2. Click the three dots `⋮` next to the field to open the menu.
+2. 필드 옆에 있는 세 점 `⋮`을 클릭하여 메뉴를 엽니다.
 
-3. Select `Deactivate` from the dropdown.
+3. 드롭다운에서 `비활성화`를 선택합니다.
 
 <img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
 
-What happens when you deactivate a field?
+필드를 비활성화하면 어떻게 되나요?
 
-1. **In the app:** The field disappears and you can't add new values to it.
+1. **앱 안에서:** 필드가 사라지며 더 이상 새로운 값을 추가할 수 없습니다.
 
-2. **Existing relationships:** If it's a relation field, existing connections stay but you can't create new ones.
+2. **기존 관계:** 관계 필드인 경우 기존 연결은 유지되지만 새 연결을 만들 수 없습니다.
 
-3. **API access:** You can still access the field and its data through the API.
+3. **API 액세스:** 여전히 API를 통해 필드와 그 데이터를 액세스할 수 있습니다.
 
-You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+표준 및 사용자 정의 필드를 다시 활성화하거나 영구적으로 삭제할 수 있는 옵션이 있습니다.
 
-## Make Fields Unique
+## 필드를 고유하게 만들기
 
-Make a field unique to ensure distinct records cannot have the same value. For example, email addresses are unique for each person.
+동일한 값을 가진 레코드가 없도록 필드를 고유하게 만드세요. 예를 들어, 이메일 주소는 각 사람마다 고유합니다.
 
-If you get an error when setting uniqueness, check for duplicate values in your data (including deleted records).
+고유성을 설정할 때 오류가 발생하면 데이터(삭제된 레코드를 포함하여)에서 중복 값을 확인하세요.
 
-## Field Configuration Best Practices
+## 필드 구성 모범 사례
 
-### Naming Conventions and Limitations
+### 명명 규칙 및 제한 사항
 
-* **Singular and plural named must be distinct**: Our GraphQL API needs distinct names for mutations
-* **Protected field names**: some names are reserved for system usage (e.g., `Type`, `Application`)
+* **단수형 및 복수형 이름은** 구별되어야 합니다: GraphQL API에는 변이를 위한 구별된 이름이 필요합니다.
+* **보호된 필드 이름**: 일부 이름은 시스템 용도로 예약되어 있습니다(예: `Type`, `Application`)
 
-### Currency and Phone Fields
+### 통화 및 전화 필드
 
-* **Default currency**: can be configured via the data model
-* **Default country codes**: can be configured for phone fields via the data model
+* **기본 통화:** 데이터 모델을 통해 구성할 수 있습니다.
+* **기본 국가 코드:** 전화 필드를 위해 데이터 모델을 통해 구성할 수 있습니다.
 
-### Select Fields
+### 선택 필드
 
-* **A default option can be selected** for each Select field
+* **각 선택 필드에는 기본 옵션을 선택할 수 있습니다**.
 
-### Record Text Fields
+### 레코드 텍스트 필드
 
-* **Each object has one main display field**: This field appears in the leftmost column and represents the record when linked to other objects. It must be a text field. For example, People uses `Name` as the main field, so when you link a person to a company, you'll see their name in the company's view.
+* **각 객체에는 하나의 메인 디스플레이 필드가 있습니다:** 이 필드는 가장 왼쪽 열에 나타나며 다른 객체와 링크될 때 레코드를 나타냅니다. 텍스트 필드여야 합니다. 예를 들어, 사람은 `이름`을 주요 필드로 사용하기 때문에 사람을 회사에 연결할 때 회사의 보기에서 이름을 볼 수 있습니다.

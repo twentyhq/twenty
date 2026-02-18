@@ -1,11 +1,13 @@
 {
   "name": "create-twenty-app",
-  "version": "0.3.1",
+  "version": "0.6.0",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
   "files": [
-    "dist/**/*"
+    "dist",
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build"
@@ -43,6 +45,9 @@
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.startcase": "^4",
     "@types/node": "^20.0.0",
+    "twenty-sdk": "workspace:*",
+    "twenty-shared": "workspace:*",
+    "typescript": "^5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1"

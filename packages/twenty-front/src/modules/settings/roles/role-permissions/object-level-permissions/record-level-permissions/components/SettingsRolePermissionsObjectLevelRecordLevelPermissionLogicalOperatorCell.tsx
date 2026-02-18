@@ -18,12 +18,13 @@ const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   height: ${({ theme }) => theme.spacing(8)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContainer = styled.div`
   align-items: start;
   display: flex;
-  min-width: ${({ theme }) => theme.spacing(20)};
+  min-width: ${({ theme }) => theme.spacing(16)};
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 

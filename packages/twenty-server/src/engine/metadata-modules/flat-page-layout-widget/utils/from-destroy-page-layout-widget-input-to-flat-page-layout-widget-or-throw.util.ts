@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type DestroyPageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/destroy-page-layout-widget.input';
 import {
@@ -25,7 +26,10 @@ export const fromDestroyPageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
   );
 
   const existingFlatPageLayoutWidgetToDestroy =
-    flatPageLayoutWidgetMaps.byId[pageLayoutWidgetId];
+    findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: pageLayoutWidgetId,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
 
   if (!isDefined(existingFlatPageLayoutWidgetToDestroy)) {
     throw new PageLayoutWidgetException(

@@ -4,7 +4,6 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -13,7 +12,7 @@ const meta: Meta<typeof FormPhoneFieldInput> = {
   component: FormPhoneFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -23,7 +22,7 @@ type Story = StoryObj<typeof FormPhoneFieldInput>;
 const defaultPhoneValue: FieldPhonesValue = {
   primaryPhoneNumber: '0612345678',
   primaryPhoneCountryCode: 'FR',
-  primaryPhoneCallingCode: '33',
+  primaryPhoneCallingCode: '+33',
 };
 
 const FormPhoneFieldInputWithState = ({
@@ -67,7 +66,8 @@ export const WithVariablesAsDefaultValues: Story = {
   args: {
     label: 'Phone',
     defaultValue: {
-      primaryPhoneCountryCode: `{{${MOCKED_STEP_ID}.name}}`,
+      primaryPhoneCountryCode: '',
+      primaryPhoneCallingCode: `{{${MOCKED_STEP_ID}.name}}`,
       primaryPhoneNumber: `{{${MOCKED_STEP_ID}.amount.amountMicros}}`,
     },
     VariablePicker: () => <div>VariablePicker</div>,
@@ -75,12 +75,12 @@ export const WithVariablesAsDefaultValues: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const countryCodeVariable = await canvas.findByText('Name');
-    expect(countryCodeVariable).toBeVisible();
+    const callingCodeVariable = await canvas.findByText('Name');
+    expect(callingCodeVariable).toBeVisible();
 
     const variablePickers = await canvas.findAllByText('VariablePicker');
 
-    expect(variablePickers).toHaveLength(1);
+    expect(variablePickers).toHaveLength(2);
 
     for (const variablePicker of variablePickers) {
       expect(variablePicker).toBeVisible();
@@ -116,14 +116,16 @@ export const SelectingVariables: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const countryCodeDefaultValue = await canvas.findByText('No country');
-    expect(countryCodeDefaultValue).toBeVisible();
+    const callingCodeDefaultValue = await canvas.findByText('No calling code');
+
+    expect(callingCodeDefaultValue).toBeVisible();
 
     const phoneNumberDefaultValue =
       await canvas.findByPlaceholderText('Enter phone number');
     expect(phoneNumberDefaultValue).toHaveDisplayValue('');
 
-    const phoneNumberVariablePicker = await canvas.findByText('Add variable');
+    const addVariableButtons = await canvas.findAllByText('Add variable');
+    const phoneNumberVariablePicker = addVariableButtons[1];
 
     await userEvent.click(phoneNumberVariablePicker);
 
@@ -149,10 +151,10 @@ export const Disabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const countryInput = await canvas.findByText('No country');
-    expect(countryInput).toBeVisible();
+    const callingCodeInput = await canvas.findByText('No calling code');
+    expect(callingCodeInput).toBeVisible();
 
-    await userEvent.click(countryInput);
+    await userEvent.click(callingCodeInput);
 
     const searchInputInModal = canvas.queryByPlaceholderText('Search');
     expect(searchInputInModal).not.toBeInTheDocument();

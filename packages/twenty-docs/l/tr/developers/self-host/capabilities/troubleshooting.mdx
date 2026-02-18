@@ -8,7 +8,7 @@ Geliştirme ortamını kurarken, sürüm yükseltirken veya kendi sunucunuzda ba
 
 ### Kendi Kendine Barındırma
 
-#### First install results in `password authentication failed for user "postgres"`
+#### İlk kurulum, `password authentication failed for user "postgres"` hatasıyla sonuçlanıyor.
 
 🚨 **ÖNEMLİ: Bu çözüm SADECE yeni kurulumlar için GEÇERLİDİR** 🚨
 Mevcut bir Twenty örneğiniz varsa ve üretim verileri varsa, bu adımları **TAKİP ETMEYİN**, çünkü bu veritabanınızı kalıcı olarak silecektir!
@@ -16,7 +16,7 @@ Mevcut bir Twenty örneğiniz varsa ve üretim verileri varsa, bu adımları **T
 Twenty'yi ilk kez kurarken, varsayılan veritabanı parolasını değiştirmek isteyebilirsiniz.
 İlk kurulum sırasında belirlediğiniz parola, veritabanı hacminde kalıcı olarak depolanır. Daha sonra bu parolayı yapılandırmanızda, eski hacmi kaldırmadan değiştirmeye çalışırsanız, kimlik doğrulama hataları alırsınız çünkü veritabanı hala orijinal parolayı kullanmaktadır.
 
-⚠️ WARNING: Following steps will PERMANENTLY DELETE all database data! ⚠️
+⚠️ UYARI: Aşağıdaki adımlar veritabanındaki tüm verileri KALICI OLARAK SİLECEKTİR! ⚠️
 Bu yalnızca önemli veri içermeyen yeni kurulumlar için geçerlidir.
 
 `PG_DATABASE_PASSWORD` güncellemek için:
@@ -67,11 +67,11 @@ Bu, kurulu eslint uzantısıyla kutudan çıktığı anda çalışmalıdır. Bu 
 
 `packages/twenty-front/.env` içinde `VITE_DISABLE_TYPESCRIPT_CHECKER=true` ve `VITE_DISABLE_ESLINT_CHECKER=true`'i açarak arka plan kontrollerini devre dışı bırakın, böylece gerekli RAM miktarını azaltın.
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. Örneğin, sunucuda çalışıyorsanız yalnızca `npx nx worker twenty-server` çalıştırın.
+**Bu işe yaramazsa:**
+Yalnızca ihtiyaç duyduğunuz hizmetleri çalıştırın, `npx nx start` yerine. Örneğin, sunucuda çalışıyorsanız yalnızca `npx nx worker twenty-server` çalıştırın.
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**Bu işe yaramazsa:**
+WSL'de yalnızca `npx nx run twenty-server:start` çalıştırmayı denediyseniz ve aşağıdaki bellek hatasıyla karşılaşıyorsanız:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
@@ -82,11 +82,11 @@ Geçici çözüm, aşağıdaki komutu terminalde çalıştırmak veya otomatik o
 \--max-old-space-size=8192 bayrağı, Node.js yığını için 8GB'lık üst sınır ayarlar; kullanım uygulama talebiyle ölçeklenir.
 Referans: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. Twenty'de bazı VScode uzantılarının çok fazla RAM aldığını fark ettik, bu yüzden onları geçici olarak devre dışı bırakıyoruz.
+**Bu işe yaramazsa:**
+Hangi işlemlerin makinenizin RAM'inin çoğunu kullandığını araştırın. Twenty'de bazı VScode uzantılarının çok fazla RAM aldığını fark ettik, bu yüzden onları geçici olarak devre dışı bırakıyoruz.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**Bu işe yaramazsa:**
+Makinenizi yeniden başlatmak hayalet işlemleri temizlemeye yardımcı olur.
 
 #### `npx nx start` çalıştırırken günlüklerde garip [0] ve [1] var
 
@@ -94,7 +94,7 @@ Bu, `npx nx start` komutunun kaputun altında daha fazla komut çalıştırması
 
 #### E-postalar gönderilmiyor
 
-Most of the time, it's because the `worker` is not running in the background. Çalıştırmayı deneyin
+Çoğu zaman bunun nedeni `worker`ın arka planda çalışmıyor olmasıdır. Çalıştırmayı deneyin
 
 ```
 npx nx worker twenty-server
@@ -141,7 +141,7 @@ Bu, kullanıcı giriş yapmadığında yetkisiz olduğundan ve kimliği doğrula
 
 #### Ön uç başlatılamıyor ve TS5042 hatası döndürüyor: Seçenek 'project' komut satırında kaynak dosyalarla birleştirilemez
 
-Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+Aşağıdaki örnekte olduğu gibi `packages/twenty-ui/vite-config.ts` içindeki checker eklentisini yorum satırına alın
 
 ```
 plugins: [
@@ -169,7 +169,7 @@ plugins: [
 
 Veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` komutunu çalıştırarak yönetim paneline erişim sağlayın.
 
-### 1-click Docker compose
+### 1-tıklama ile Docker Compose
 
 #### Giriş Yapılamıyor
 
@@ -186,7 +186,7 @@ Kurulumdan sonra giriş yapamıyorsanız:
    docker compose up -d
    ```
 
-Note the database:reset command will completely erase your database and recreate it from scratch.
+Dikkat: database:reset komutu veritabanınızı tamamen silecek ve sıfırdan yeniden oluşturacaktır.
 
 #### Ters Proxy'nin Arkasında Bağlantı Sorunları
 

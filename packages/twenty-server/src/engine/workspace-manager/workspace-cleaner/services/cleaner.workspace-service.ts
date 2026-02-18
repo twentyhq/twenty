@@ -25,11 +25,22 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
-import {
-  WorkspaceCleanerException,
-  WorkspaceCleanerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+export const CLEAN_SUSPENDED_WORKSPACES_OPERATIONS = [
+  'warn',
+  'destroy',
+  'soft-delete',
+] as const;
+export type CleanSuspendedWorkspacesOperation =
+  (typeof CLEAN_SUSPENDED_WORKSPACES_OPERATIONS)[number];
+
+export type CleanSuspendedWorkspacesOptions = {
+  workspaceIds: string[];
+  dryRun?: boolean;
+  ignoreDestroyGracePeriod?: boolean;
+  onlyOperation?: CleanSuspendedWorkspacesOperation;
+};
 
 @Injectable()
 export class CleanerWorkspaceService {
@@ -68,39 +79,14 @@ export class CleanerWorkspaceService {
       );
   }
 
-  async computeDaysSinceSubscriptionUnpaidOrThrow(
+  async computeDaysSinceSuspended(
     workspace: WorkspaceEntity,
-  ): Promise<number> {
-    try {
-      const lastSubscription =
-        await this.billingSubscriptionRepository.findOneOrFail({
-          where: {
-            workspaceId: workspace.id,
-          },
-          order: { updatedAt: 'DESC' },
-        });
-
-      if (
-        lastSubscription.status !== SubscriptionStatus.Unpaid &&
-        lastSubscription.status !== SubscriptionStatus.Canceled
-      ) {
-        throw new Error(
-          'No cancelled or unpaid billing subscription found for workspace',
-        );
-      }
-
-      const daysSinceSubscriptionUnpaid = differenceInDays(
-        new Date(),
-        lastSubscription.currentPeriodStart,
-      );
-
-      return daysSinceSubscriptionUnpaid;
-    } catch {
-      throw new WorkspaceCleanerException(
-        `No cancelled or unpaid billing subscription found for workspace ${workspace.id} ${workspace.displayName}`,
-        WorkspaceCleanerExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
+  ): Promise<number | null> {
+    if (isDefined(workspace.suspendedAt)) {
+      return differenceInDays(new Date(), workspace.suspendedAt);
     }
+
+    return null;
   }
 
   async checkIfAtLeastOneWorkspaceMemberWarned(
@@ -329,7 +315,7 @@ export class CleanerWorkspaceService {
     }
   }
 
-  async hardDeleteSoftDeletedWorkspace({
+  async destroySoftDeletedWorkspace({
     workspace,
     ignoreGracePeriod = false,
     dryRun = false,
@@ -375,10 +361,9 @@ export class CleanerWorkspaceService {
   async batchWarnOrCleanSuspendedWorkspaces({
     workspaceIds,
     dryRun = false,
-  }: {
-    workspaceIds: string[];
-    dryRun?: boolean;
-  }): Promise<void> {
+    ignoreDestroyGracePeriod = false,
+    onlyOperation,
+  }: CleanSuspendedWorkspacesOptions): Promise<void> {
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}batchWarnOrCleanSuspendedWorkspaces running...`,
     );
@@ -404,38 +389,54 @@ export class CleanerWorkspaceService {
           deletedWorkspacesCount <
           this.maxNumberOfWorkspacesDeletedPerExecution;
 
-        if (isSoftDeletedWorkspace && isWithinDeletionLimit) {
-          const result = await this.hardDeleteSoftDeletedWorkspace({
+        if (
+          (!isDefined(onlyOperation) || onlyOperation === 'destroy') &&
+          isSoftDeletedWorkspace &&
+          isWithinDeletionLimit
+        ) {
+          const result = await this.destroySoftDeletedWorkspace({
             workspace,
             dryRun,
-            ignoreGracePeriod: false,
+            ignoreGracePeriod: ignoreDestroyGracePeriod,
           });
 
           if (isDefined(result)) {
             deletedWorkspacesCount++;
+            this.logger.log(
+              `Destroyed ${deletedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit durings this execution`,
+            );
           }
           continue;
         }
 
-        const workspaceInactivity =
-          await this.computeDaysSinceSubscriptionUnpaidOrThrow(workspace);
+        const inactiveDaysSinceSuspended =
+          await this.computeDaysSinceSuspended(workspace);
 
-        if (workspaceInactivity > this.inactiveDaysBeforeSoftDelete) {
+        if (inactiveDaysSinceSuspended === null) {
+          continue;
+        }
+
+        if (
+          (!isDefined(onlyOperation) || onlyOperation === 'soft-delete') &&
+          inactiveDaysSinceSuspended > this.inactiveDaysBeforeSoftDelete
+        ) {
           await this.informWorkspaceMembersAndSoftDeleteWorkspace(
             workspace,
-            workspaceInactivity,
+            inactiveDaysSinceSuspended,
             dryRun,
           );
 
           continue;
         }
+
         if (
-          workspaceInactivity > this.inactiveDaysBeforeWarn &&
-          workspaceInactivity <= this.inactiveDaysBeforeSoftDelete
+          (!isDefined(onlyOperation) || onlyOperation === 'warn') &&
+          inactiveDaysSinceSuspended > this.inactiveDaysBeforeWarn &&
+          inactiveDaysSinceSuspended <= this.inactiveDaysBeforeSoftDelete
         ) {
           await this.warnWorkspaceMembers(
             workspace,
-            workspaceInactivity,
+            inactiveDaysSinceSuspended,
             dryRun,
           );
         }

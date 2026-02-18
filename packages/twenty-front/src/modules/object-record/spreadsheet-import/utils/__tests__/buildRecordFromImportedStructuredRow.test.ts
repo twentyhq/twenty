@@ -5,8 +5,7 @@ import {
   type ImportedStructuredRow,
   type SpreadsheetImportField,
 } from '@/spreadsheet-import/types';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { RelationType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 describe('buildRecordFromImportedStructuredRow', () => {
   const fields: FieldMetadataItem[] = [
@@ -429,8 +428,8 @@ describe('buildRecordFromImportedStructuredRow', () => {
         blocknote: 'Rich content in blocknote format',
         markdown: 'Content in markdown format',
       },
-      dateField: '2023-12-25',
-      dateTimeField: '2023-12-25T10:30:00Z',
+      dateField: '2023-12-25T00:00:00.000Z',
+      dateTimeField: '2023-12-25T10:30:00.000Z',
       ratingField: '4',
     });
   });

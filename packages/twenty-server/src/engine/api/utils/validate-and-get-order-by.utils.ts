@@ -15,6 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const isOrderByDirection = (value: unknown): value is OrderByDirection => {
@@ -103,7 +104,10 @@ export const countRelationFieldsInOrderBy = (
   return orderBy.filter((orderByItem) => {
     const fieldName = Object.keys(orderByItem)[0];
     const fieldMetadataId = fieldIdByName[fieldName];
-    const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     return fieldMetadata?.type === FieldMetadataType.RELATION;
   }).length;

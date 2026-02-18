@@ -1365,7 +1365,7 @@ const baseMock = [
   },
 ];
 
-// eslint-disable-next-line @nx/workspace-max-consts-per-file, @typescript-eslint/naming-convention
+// eslint-disable-next-line twenty/max-consts-per-file, @typescript-eslint/naming-convention
 const baseMockToRecordConnection = {
   edges: baseMock.map(
     (mockCompany) =>
@@ -1379,7 +1379,7 @@ const baseMockToRecordConnection = {
   __typename: 'CompanyConnection',
 } as RecordGqlConnectionEdgesRequired;
 
-// eslint-disable-next-line @nx/workspace-max-consts-per-file
+// eslint-disable-next-line twenty/max-consts-per-file
 export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = getRecordsFromRecordConnection(
   { recordConnection: baseMockToRecordConnection },
 );

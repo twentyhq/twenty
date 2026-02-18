@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { Temporal } from 'temporal-polyfill';
 
 import {
   FieldMetadataType,
@@ -9,6 +10,7 @@ import {
   type BooleanFilter,
   type CurrencyFilter,
   type DateFilter,
+  type FilesFilter,
   type FloatFilter,
   type MultiSelectFilter,
   type PhonesFilter,
@@ -51,7 +53,6 @@ import {
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
-import { Temporal } from 'temporal-polyfill';
 
 type FieldShared = {
   id: string;
@@ -160,6 +161,27 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               [correspondingFieldMetadataItem.name]: {
                 like: `%${recordFilter.value}%`,
               } as RawJsonFilter,
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+          );
+      }
+    case 'FILES':
+      switch (recordFilter.operand) {
+        case RecordFilterOperand.CONTAINS:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              like: `%${recordFilter.value}%`,
+            } as FilesFilter,
+          };
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
+          return {
+            not: {
+              [correspondingFieldMetadataItem.name]: {
+                like: `%${recordFilter.value}%`,
+              } as FilesFilter,
             },
           };
         default:
@@ -368,6 +390,43 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           throw new Error(`Date filter is empty`);
         }
 
+        if (recordFilter.operand === RecordFilterOperand.IS) {
+          const timeZone = filterValueDependencies.timeZone ?? 'UTC';
+
+          let parsedPlainDate = null;
+
+          try {
+            parsedPlainDate = recordFilter.value.includes('T')
+              ? Temporal.Instant.from(recordFilter.value)
+                  .toZonedDateTimeISO(timeZone)
+                  .toPlainDate()
+              : Temporal.PlainDate.from(recordFilter.value);
+          } catch {
+            throw new Error(
+              `Cannot parse "${recordFilter.value}" for ${filterType} filter`,
+            );
+          }
+
+          const zonedDateTime = parsedPlainDate.toZonedDateTime(timeZone);
+          const start = zonedDateTime.toInstant();
+          const end = zonedDateTime.add({ days: 1 }).toInstant();
+
+          return {
+            and: [
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  gte: start.toString(),
+                } as DateTimeFilter,
+              },
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  lt: end.toString(),
+                } as DateTimeFilter,
+              },
+            ],
+          };
+        }
+
         const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
 
         switch (recordFilter.operand) {
@@ -383,34 +442,6 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               [correspondingFieldMetadataItem.name]: {
                 lt: resolvedDateTime.toString(),
               } as DateTimeFilter,
-            };
-          }
-          case RecordFilterOperand.IS: {
-            const start = resolvedDateTime
-              .toZonedDateTimeISO('UTC')
-              .with({
-                second: 0,
-                millisecond: 0,
-                microsecond: 0,
-                nanosecond: 0,
-              })
-              .toInstant();
-
-            const end = start.add({ minutes: 1 });
-
-            return {
-              and: [
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    lt: end.toString(),
-                  } as DateTimeFilter,
-                },
-                {
-                  [correspondingFieldMetadataItem.name]: {
-                    gte: start.toString(),
-                  } as DateTimeFilter,
-                },
-              ],
             };
           }
         }

@@ -22,9 +22,6 @@ export class SkillEntity
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true, type: 'uuid' })
-  standardId: string | null;
-
   @Column({ nullable: false })
   name: string;
 

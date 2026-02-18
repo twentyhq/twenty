@@ -1,122 +1,122 @@
 ---
-title: Fix Import Errors
-description: Complete troubleshooting guide for resolving CSV import errors.
+title: Corrigir erros de importação
+description: Guia completo de solução de problemas para corrigir erros de importação de CSV.
 ---
 
-## Overview
+## Visão Geral
 
-Import not working? This guide helps you identify and fix common import errors step by step.
+A importação não está funcionando? Este guia ajuda-o a identificar e corrigir, passo a passo, erros comuns de importação.
 
-## How Import Validation Works
+## Como funciona a validação da importação
 
-After uploading your file and mapping columns, Twenty validates your data:
+Depois de carregar o seu ficheiro e mapear as colunas, o Twenty valida os seus dados:
 
-1. **Validation runs** — Twenty checks each row for errors
-2. **Errors are highlighted** — problematic rows appear in **yellow**
-3. **You can fix in-place** — edit cells directly in the import UI
-4. **Or remove rows** — skip problematic records entirely
+1. **A validação é executada** — o Twenty verifica cada linha quanto a erros
+2. **Os erros são realçados** — as linhas problemáticas aparecem a **amarelo**
+3. **Pode corrigir no local** — edite as células diretamente na interface de importação
+4. **Ou remova linhas** — ignore completamente os registos problemáticos
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>**Corrija os erros na interface.** Não precisa de voltar à sua folha de cálculo. Edite as células diretamente durante a importação para poupar tempo.</Note>
 
-## Step-by-Step Troubleshooting
+## Resolução de problemas passo a passo
 
-### Step 1: Identify the Error Type
+### Passo 1: Identifique o tipo de erro
 
-Click on a highlighted row to see the specific error message. Common error types:
+Clique numa linha realçada para ver a mensagem de erro específica. Tipos de erro comuns:
 
-| Error Message                                                         | What It Means                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Duplicate values highlighted in yellow                                | Value already exists in Twenty or appears twice in your file |
-| `{field} is not a valid {type}` (hover on yellow cell)                | Data doesn't match expected format                           |
-| Required field highlighted                                            | A required field is empty                                    |
-| `Can't connect to {object}. No unique record found...` (import fails) | Referenced record doesn't exist                              |
-| `Too many records. Up to 10000 allowed` (upload blocked)              | File has more than 10,000 records                            |
+| Mensagem de Erro                                                            | O que significa                                                   |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Valores duplicados realçados a amarelo                                      | O valor já existe no Twenty ou aparece duas vezes no seu ficheiro |
+| `{field} is not a valid {type}` (passe o cursor sobre a célula amarela)     | Os dados não correspondem ao formato esperado                     |
+| Campo obrigatório realçado                                                  | O campo obrigatório está vazio                                    |
+| `Can't connect to {object}. No unique record found...` (a importação falha) | O registo referenciado não existe                                 |
+| `Too many records. Up to 10000 allowed` (carregamento bloqueado)            | O ficheiro tem mais de 10 000 registos                            |
 
-### Step 2: Fix the Error
+### Passo 2: Corrija o erro
 
-Follow the specific instructions below for each error type.
+Siga as instruções específicas abaixo para cada tipo de erro.
 
 ---
 
-## Error: Duplicate Value
+## Erro: Valor duplicado
 
-### What You'll See
+### O Que Você Verá
 
-Rows with duplicate values are **highlighted in yellow** in the import UI before the import starts.
+As linhas com valores duplicados são realçadas a amarelo na interface de importação antes de a importação começar.
 
-### What It Means
+### O que significa
 
-A unique field (email, domain) either:
+Um campo único (email, domínio) pode:
 
-* Already exists in Twenty
-* Appears twice in your file
+* Já existe no Twenty
+* Aparece duas vezes no seu ficheiro
 
-### How to Fix
+### Como corrigir
 
-**Option 1: Edit the duplicate value**
+**Opção 1: Edite o valor duplicado**
 
-1. Click the cell with the error
-2. Change to a unique value
-3. Continue with import
+1. Clique na célula com o erro
+2. Altere para um valor único
+3. Continue com a importação
 
-**Option 2: Remove the duplicate row**
+**Opção 2: Remova a linha duplicada**
 
-1. Click the X next to the row
-2. The row will be skipped during import
+1. Clique no X ao lado da linha
+2. A linha será ignorada durante a importação
 
-**Option 3: Let Twenty update the existing record**
+**Opção 3: Deixe o Twenty atualizar o registo existente**
 
-1. Ensure your file includes a unique identifier (`email`, `domain`, or `id`)
-2. Map the unique identifier field
-3. Twenty will update the existing record instead of creating a duplicate
+1. Garanta que o seu ficheiro inclui um identificador único (`email`, `domain` ou `id`)
+2. Mapeie o campo do identificador único
+3. O Twenty atualizará o registo existente em vez de criar um duplicado
 
 <Note>
-  **You can update unique fields too.**
+  **Também pode atualizar campos únicos.**
 
-  * If you keep the `id` but change the `email` → the email will be updated
-  * If you keep the `email` but change the `id` → the id will be updated
+  * Se mantiver o `id` mas alterar o `email` → o email será atualizado
+  * Se mantiver o `email` mas alterar o `id` → o id será atualizado
 
-  As long as one unique identifier matches, Twenty updates the record.
+  Desde que um identificador único corresponda, o Twenty atualiza o registo.
 </Note>
 
-### How to Prevent This Error
+### Como prevenir este erro
 
-Before importing:
+Antes de importar:
 
-1. Sort your spreadsheet by the unique field
-2. Remove duplicate rows
-3. Check if records already exist in Twenty
+1. Ordene a sua folha de cálculo pelo campo único
+2. Remova linhas duplicadas
+3. Verifique se os registos já existem no Twenty
 
 <Warning>
-  **Soft-deleted records count toward uniqueness.**
+  **Registos eliminados logicamente contam para a unicidade.**
 
-  Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+  Verifique o Menu de Comandos → Ver registos eliminados. Os registos lá continuam a impor a unicidade. Elimine-os permanentemente ou restaure e atualize.
 </Warning>
 
-For more details: [Uniqueness Constraints](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
+Para mais detalhes: [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
 
 ---
 
-## Error: Invalid Format
+## Erro: Formato inválido
 
-### What You'll See
+### O Que Você Verá
 
-The cell value is highlighted in yellow. Hover over it to see the error message:
+O valor da célula está realçado a amarelo. Passe o cursor sobre ele para ver a mensagem de erro:
 
 ```
-{field name} is not a valid {field type}
+{field name} não é um {field type} válido
 ```
 
-### What It Means
+### O que significa
 
-The data doesn't match the expected format for that field type.
+Os dados não correspondem ao formato esperado para esse tipo de campo.
 
-### How to Fix — By Field Type
+### Como corrigir — Por tipo de campo
 
-#### Email
+#### E-mail
 
-**Problem:** Invalid email format
-**Solution:** Use format `name@domain.com`
+**Problema:** Formato de email inválido
+**Solução:** Use o formato `name@domain.com`
 
 ```
 ❌ john.smith@
@@ -124,45 +124,45 @@ The data doesn't match the expected format for that field type.
 ✓ john.smith@acme.com
 ```
 
-#### Domain
+#### Domínio
 
-**Problem:** Inconsistent format may cause duplicates
-**Solution:** Use `https://domain.com` format (recommended)
-
-```
-⚠️ acme.com         (valid, but not recommended)
-⚠️ www.acme.com     (valid, but not recommended)
-✅ https://acme.com  (recommended)
-```
-
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
-
-#### Date
-
-**Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**Problema:** Formato inconsistente pode causar duplicados
+**Solução:** Use o formato `https://domain.com` (recomendado)
 
 ```
-✓ 2024-03-15        (YYYY-MM-DD - recommended)
+⚠️ acme.com         (válido, mas não recomendado)
+⚠️ www.acme.com     (válido, mas não recomendado)
+✅ https://acme.com  (recomendado)
+```
+
+<Note>Todos os formatos são válidos, mas `https://domain.com` é recomendado porque corresponde ao formato usado pela sincronização de email/calendário. Usar outros formatos pode criar empresas duplicadas.</Note>
+
+#### Data
+
+**Problema:** Formato de data não reconhecido
+**Solução:** Use um formato consistente em todo o ficheiro
+
+```
+✓ 2024-03-15        (YYYY-MM-DD - recomendado)
 ✓ 03/15/2024        (MM/DD/YYYY)
 ✓ 15/03/2024        (DD/MM/YYYY)
 ```
 
-#### Phone
+#### Telefone
 
-**Problem:** Missing required columns
-**Solution:** Include all phone columns
+**Problema:** Colunas obrigatórias em falta
+**Solução:** Inclua todas as colunas de telefone
 
-| Column                                  | Example      |
+| Coluna                                  | Exemplo      |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-#### Boolean
+#### Booleano
 
-**Problem:** Wrong boolean value
-**Solution:** Use uppercase `TRUE` or `FALSE`
+**Problema:** Valor booleano incorreto
+**Solução:** Use `TRUE` ou `FALSE` em maiúsculas
 
 ```
 ❌ true
@@ -172,37 +172,37 @@ The data doesn't match the expected format for that field type.
 ✓ FALSE
 ```
 
-#### Select / Multi-Select
+#### Seleção / Seleção múltipla
 
-**Problem:** Value doesn't match existing options
-**Solution:** Use **API names**, not display labels
+**Problema:** O valor não corresponde às opções existentes
+**Solução:** Use **nomes da API**, não rótulos de exibição
 
-How to find API names:
+Como encontrar nomes da API:
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
-4. Use the API name (e.g., `OPTION_1`, not "Option 1")
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o objeto e o campo
+3. Ative o **Modo Avançado** (alternador no canto inferior direito)
+4. Use o nome da API (por exemplo, `OPTION_1`, não "Option 1")
 
 ```
 ❌ High Priority
 ✓ HIGH_PRIORITY
 ```
 
-#### Currency
+#### Moeda
 
-**Problem:** Missing amount or currency code
-**Solution:** Fill both columns
+**Problema:** Valor ou código de moeda em falta
+**Solução:** Preencha ambas as colunas
 
-| Column                | Example   |
-| --------------------- | --------- |
-| **Amount / Amount**   | `1234.56` |
-| **Amount / Currency** | `USD`     |
+| Coluna            | Exemplo   |
+| ----------------- | --------- |
+| **Valor / Valor** | `1234.56` |
+| **Valor / Moeda** | `USD`     |
 
-#### Number
+#### Número
 
-**Problem:** Non-numeric characters
-**Solution:** Numbers only, period for decimals
+**Problema:** Caracteres não numéricos
+**Solução:** Apenas números; ponto para decimais
 
 ```
 ❌ $1,234.56
@@ -210,221 +210,221 @@ How to find API names:
 ✓ 1234.56
 ```
 
-For complete format reference: [Field Mapping](/l/pt/user-guide/data-migration/capabilities/field-mapping)
+Para referência completa de formatos: [Referência de Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping)
 
 ---
 
-## Error: Required Field Missing
+## Erro: Campo obrigatório em falta
 
-### What You'll See
+### O Que Você Verá
 
-The row is highlighted in yellow with the required field cell marked.
+A linha está realçada a amarelo com a célula do campo obrigatório assinalada.
 
-### What It Means
+### O que significa
 
-A required field is empty for this row.
+Um campo obrigatório está vazio nesta linha.
 
-### How to Fix
+### Como corrigir
 
-**Option 1: Enter a value**
+**Opção 1: Introduza um valor**
 
-1. Click the empty cell
-2. Enter a value
-3. Continue with import
+1. Clique na célula vazia
+2. Introduza um valor
+3. Continue com a importação
 
-**Option 2: Remove the row**
+**Opção 2: Remova a linha**
 
-1. If you don't have the data, click X to skip the row
+1. Se não tiver os dados, clique em X para ignorar a linha
 
-### How to Prevent This Error
+### Como prevenir este erro
 
-Before importing, identify required fields:
+Antes de importar, identifique os campos obrigatórios:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Check which fields are marked as required
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o seu objeto
+3. Verifique quais os campos marcados como obrigatórios
 
 ---
 
-## Error: Relation Not Found
+## Erro: Relação não encontrada
 
-### What You'll See
+### O Que Você Verá
 
-This error appears **after the import starts** — the import fails with a message like:
+Este erro aparece após o início da importação — a importação falha com uma mensagem como:
 
 ```
 Can't connect to company. No unique record found with condition: id = 7776ee49-f608-4a77-8cc8-6fe96ae1e43f
 ```
 
-This means there is no Company in Twenty with that specific identifier.
+Isto significa que não existe nenhuma Empresa no Twenty com esse identificador específico.
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>Ao contrário de outros erros, este não é detetado durante a etapa de revisão dos dados. A importação começará e depois falhará quando encontrar a relação em falta.</Note>
 
-### What It Means
+### O que significa
 
-You're trying to link to a record that doesn't exist in Twenty.
+Está a tentar ligar a um registo que não existe no Twenty.
 
-### How to Fix
+### Como corrigir
 
-**Option 1: Import parent records first**
+**Opção 1: Importe primeiro os registos pai**
 
-1. Cancel the current import
-2. Import the parent records (e.g., Companies)
-3. Then import the child records (e.g., People)
+1. Cancele a importação atual
+2. Importe os registos pai (por exemplo, Empresas)
+3. Depois, importe os registos filho (por exemplo, Pessoas)
 
-**Option 2: Fix the reference value**
+**Opção 2: Corrija o valor de referência**
 
-1. Check the reference value in your file
-2. Ensure it exactly matches an existing record
-3. Verify format: domains should be `https://domain.com`
+1. Verifique o valor de referência no seu ficheiro
+2. Garanta que corresponde exatamente a um registo existente
+3. Verifique o formato: os domínios devem ser `https://domain.com`
 
-**Option 3: Remove the relation**
+**Opção 3: Remova a relação**
 
-1. Clear the cell to import without the relation
-2. Add the relation manually later
+1. Limpe a célula para importar sem a relação
+2. Adicione a relação manualmente mais tarde
 
-### How to Prevent This Error
+### Como prevenir este erro
 
-1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+1. **Importe na ordem correta:**
+   * Empresas primeiro
+   * Pessoas em segundo (com referências à empresa)
+   * Oportunidades em terceiro
 
-2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
-
-<Warning>
-  **Import will fail if a reference is made to a non-existent record.**
-
-  Always import parent objects before child objects.
-</Warning>
-
-For more details: [Import Relations](/l/pt/user-guide/data-migration/capabilities/import-relations)
-
----
-
-## Error: File Too Large
-
-### What You'll See
-
-This error appears **when uploading your file** — the upload is blocked entirely:
-
-```
-Too many records. Up to 10000 allowed
-```
-
-You won't be able to proceed to the data review step until you reduce the file size.
-
-### What It Means
-
-Your file has more than 10,000 records.
-
-### How to Fix
-
-**Option 1: Split into multiple files**
-
-1. Divide your data into files of 10,000 records or fewer
-2. Import each file separately
-3. Maintain import order (Companies before People)
-
-**Option 2: Use API import**
-For very large datasets, use the API which has no record limit.
-See: [How to Import Data via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api)
-
----
-
-## Error: Field Not Recognized
-
-### What It Means
-
-A column in your file can't be mapped because the field doesn't exist in Twenty.
-
-### How to Fix
-
-1. Go to **Settings → Data Model**
-2. Select the object you're importing
-3. Click **+ Add field**
-4. Create the custom field with the appropriate type
-5. Re-upload your file
-
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
-
----
-
-## Error: User Relation Empty
-
-### What It Means
-
-You're trying to assign a record to a user (Owner, Assignee) but the relation isn't being mapped.
-
-### Common Causes
-
-1. **User hasn't accepted their invitation** — the user doesn't exist in Twenty yet
-2. **Using user ID from old system** — Twenty can't match IDs from another system
-3. **Wrong email format** — the email doesn't match the user's Twenty account
-
-### How to Fix
-
-1. Ensure all users have **accepted their invitation** to your Twenty workspace
-2. Use the user's **email address** (not their name or old system ID)
-3. Use the same email they used to join Twenty
+2. **Verifique os valores de referência:**
+   * Exporte os registos pai para obter identificadores exatos
+   * Use o formato de domínio `https://domain.com`
+   * Verifique erros de digitação e sensibilidade a maiúsculas/minúsculas
 
 <Warning>
-  **Users must accept invitations before importing.**
+  **A importação falhará se for feita referência a um registo inexistente.**
 
-  If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+  Importe sempre os objetos pai antes dos objetos filho.
+</Warning>
+
+Para mais detalhes: [Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
+
+---
+
+## Erro: Ficheiro demasiado grande
+
+### O Que Você Verá
+
+Este erro aparece ao carregar o seu ficheiro — o carregamento é totalmente bloqueado:
+
+```
+Demasiados registos. Até 10 000 permitidos
+```
+
+Não poderá avançar para a etapa de revisão dos dados até reduzir o tamanho do ficheiro.
+
+### O que significa
+
+O seu ficheiro tem mais de 10 000 registos.
+
+### Como corrigir
+
+**Opção 1: Divida em vários ficheiros**
+
+1. Divida os seus dados em ficheiros de 10 000 registos ou menos
+2. Importe cada ficheiro separadamente
+3. Mantenha a ordem de importação (Empresas antes de Pessoas)
+
+**Opção 2: Use a importação via API**
+Para conjuntos de dados muito grandes, use a API, que não tem limite de registos.
+Consulte: [Como Importar Dados via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api)
+
+---
+
+## Erro: Campo não reconhecido
+
+### O que significa
+
+Uma coluna no seu ficheiro não pode ser mapeada porque o campo não existe no Twenty.
+
+### Como corrigir
+
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o objeto que está a importar
+3. Clique em **+ Adicionar campo**
+4. Crie o campo personalizado com o tipo apropriado
+5. Carregue novamente o seu ficheiro
+
+<Note>A importação de CSV cria registos, não campos. Todos os campos devem existir antes de importar.</Note>
+
+---
+
+## Erro: Relação de utilizador vazia
+
+### O que significa
+
+Está a tentar atribuir um registo a um utilizador (Proprietário, Responsável), mas a relação não está a ser mapeada.
+
+### Causas comuns
+
+1. **O utilizador não aceitou o convite** — o utilizador ainda não existe no Twenty
+2. **A usar o ID de utilizador do sistema antigo** — o Twenty não consegue corresponder IDs de outro sistema
+3. **Formato de email incorreto** — o email não corresponde à conta do utilizador no Twenty
+
+### Como corrigir
+
+1. Garanta que todos os utilizadores aceitaram o convite para o seu espaço de trabalho no Twenty
+2. Use o **endereço de email** do utilizador (não o nome nem o ID do sistema antigo)
+3. Use o mesmo email que utilizaram para aderir ao Twenty
+
+<Warning>
+  **Os utilizadores devem aceitar os convites antes de importar.**
+
+  Se um utilizador não tiver aceite o convite, os registos que o referenciem terão relações de utilizador vazias.
 </Warning>
 
 ---
 
-## Pre-Import Checklist
+## Lista de verificação antes da importação
 
-Avoid errors by checking these before importing:
+Evite erros verificando isto antes de importar:
 
-### File Requirements
+### Requisitos do ficheiro
 
-<Check>File is CSV, XLSX, or XLS format</Check>
-<Check>File has fewer than 10,000 records</Check>
-<Check>File uses UTF-8 encoding</Check>
+<Check>O ficheiro está no formato CSV, XLSX ou XLS</Check>
+<Check>O ficheiro tem menos de 10 000 registos</Check>
+<Check>O ficheiro usa codificação UTF-8</Check>
 
-### Data Quality
+### Qualidade dos dados
 
-<Check>No duplicate emails (for People)</Check>
-<Check>No duplicate domains (for Companies)</Check>
-<Check>All dates use consistent format</Check>
-<Check>All domains use `https://domain.com` format</Check>
+<Check>Sem emails duplicados (para Pessoas)</Check>
+<Check>Sem domínios duplicados (para Empresas)</Check>
+<Check>Todas as datas usam um formato consistente</Check>
+<Check>Todos os domínios usam o formato `https://domain.com`</Check>
 
-### Field Formats
+### Formatos de campos
 
-<Check>Boolean fields use `TRUE` or `FALSE` (uppercase)</Check>
-<Check>Select fields use API names, not display labels</Check>
-<Check>Phone fields have all required columns</Check>
-<Check>Currency fields have both Amount and Currency Code</Check>
+<Check>Campos booleanos usam `TRUE` ou `FALSE` (maiúsculas)</Check>
+<Check>Campos de seleção usam nomes da API, não rótulos de exibição</Check>
+<Check>Campos de telefone têm todas as colunas necessárias</Check>
+<Check>Campos de moeda têm tanto o Valor como o Código da Moeda</Check>
 
-### Relations
+### Relações
 
-<Check>Parent records imported before child records</Check>
-<Check>Relation columns reference existing records</Check>
-<Check>Domain format matches Twenty's format exactly</Check>
+<Check>Registos pai importados antes dos registos filho</Check>
+<Check>Colunas de relação referenciam registos existentes</Check>
+<Check>O formato de domínio corresponde exatamente ao formato do Twenty</Check>
 
-### Data Model
+### Modelo de dados
 
-<Check>All custom fields exist in Settings → Data Model</Check>
-<Check>Select options exist before importing</Check>
+<Check>Todos os campos personalizados existem em Definições → Modelo de Dados</Check>
+<Check>As opções de seleção existem antes de importar</Check>
 
 ---
 
-## Still Having Issues?
+## Ainda com problemas?
 
-If you've tried the above solutions:
+Se já tentou as soluções acima:
 
-1. **Download the sample file** — see the exact format Twenty expects
-2. **Export existing records** — compare your file to working data
-3. **Test with a small batch** — try 5-10 rows first
-4. **Check the reference articles:**
-   * [Field Mapping](/l/pt/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/pt/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/pt/user-guide/data-migration/capabilities/error-handling)
+1. **Transfira o ficheiro de exemplo** — veja o formato exato que o Twenty espera
+2. **Exporte os registos existentes** — compare o seu ficheiro com dados funcionais
+3. **Teste com um pequeno lote** — experimente primeiro 5–10 linhas
+4. **Consulte os artigos de referência:**
+   * [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping)
+   * [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
+   * [Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
+   * [Tratamento de Erros](/l/pt/user-guide/data-migration/capabilities/error-handling)

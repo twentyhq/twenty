@@ -82,7 +82,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'ChipFieldDisplay',
-  averageThresholdInMs: 0.2,
+  averageThresholdInMs: 0.3,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

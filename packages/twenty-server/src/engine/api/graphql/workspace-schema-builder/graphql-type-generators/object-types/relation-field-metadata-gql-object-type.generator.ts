@@ -32,10 +32,10 @@ export class RelationFieldMetadataGqlObjectTypeGenerator {
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
-    const type = this.typeMapperService.mapToScalarType(
-      fieldMetadata.type,
+    const type = this.typeMapperService.mapToPreBuiltGraphQLOutputType({
+      fieldMetadataType: fieldMetadata.type,
       typeOptions,
-    );
+    });
 
     if (!isDefined(type)) {
       const message = `Could not find a GraphQL output type for ${type} field metadata`;

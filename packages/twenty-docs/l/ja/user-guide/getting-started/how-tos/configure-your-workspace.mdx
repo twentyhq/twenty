@@ -1,77 +1,80 @@
 ---
-title: Configure Your Workspace
-description: Every business works differently. Start with these 3 steps to shape Twenty around your needs.
+title: ワークスペースを構成する
+description: すべてのビジネスは違った方法で動作します。 ニーズに合わせて Twenty を整えるために、まずは次の3つのステップから始めましょう。
 ---
 
-<Note>**Quick Win**: Start with connecting your mailbox. This gives you immediate value and helps your team see Twenty in action with real data. You can do so under Settings → Accounts.</Note>
+<Note>**クイックウィン**: まずはメールボックスを接続しましょう。 これは即座に価値を提供し、チームが実際のデータでTwentyを行動しているところを確認するのに役立ちます。 設定 → アカウントで行えます。</Note>
 
-## 1. Customize your data model
+## 1. データモデルをカスタマイズする
 
-Twenty offers the flexibility you need to shape the data model that will best support your day-to-day.
-Create objects and fields of any type, including relations between your different objects. You can do so under Settings → Data Model.
-Here are a few tips:
+Twentyは、日常をサポートする最適なデータモデルを形成するために必要な柔軟性を提供します。
+異なるオブジェクト間の関係を含む、任意のタイプのオブジェクトとフィールドを作成できます。 You can do so under Settings → Data Model.
+異なるオブジェクト間の関係を含む、任意のタイプのオブジェクトとフィールドを作成できます。 You can do so under Settings → Data Model. 設定 → データモデルで行えます。
+ここにいくつかのヒントがあります：
 
-* **You are not limited in the number of custom fields nor custom objects**. Adding custom objects and fields will not lead to upgrading your plan.
-* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. We recommend using those as much as possible, adding fields to categorize your records if need be. Here is an example:
-  * It is best to use the People object for your prospects and partners, creating a field on the People object named `Person Type`, instead of creating a Partner custom object. Because you would not be able to access the emails exchanged with this person from the Partner records.
-  * Create different views under People, one to display partners and one to display prospects.
-* Two People cannot have the same email address. Two Companies cannot have the same domain.
-* You can deactivate standard fields and objects you do not want to use.
-* You can hide fields from views: don't be afraid of creating fields, you won't have to display all of them.
+* **カスタムフィールドやカスタムオブジェクトの数には制限がありません**。 カスタムオブジェクトやフィールドを追加しても、プランをアップグレードする必要はありません。 **カスタムフィールドやカスタムオブジェクトの数には制限がありません**。 カスタムオブジェクトやフィールドを追加しても、プランをアップグレードする必要はありません。 カスタムオブジェクトやフィールドを追加しても、プランをアップグレードする必要はありません。
+* **メールボックスやカレンダーから同期されたメールと会議には、「人」「会社」「機会」の3つのオブジェクトからアクセスできます。** 可能な限りそれらを使用し、記録を整理するためにフィールドを追加することをお勧めします。 こちらは例です： こちらは例です： こちらは例です：
+  * 「人」オブジェクトを見込み客やパートナーに使用し、代わりに「パートナー」カスタムオブジェクトを作成するのではなく、「人」オブジェクトに「人物タイプ」というフィールドを作成するのが最良です。 なぜなら、この人物と交換されたメールを「パートナー」記録からアクセスすることはできないからです。 「人」オブジェクトを見込み客やパートナーに使用し、代わりに「パートナー」カスタムオブジェクトを作成するのではなく、「人」オブジェクトに「人物タイプ」というフィールドを作成するのが最良です。 なぜなら、この人物と交換されたメールを「パートナー」記録からアクセスすることはできないからです。 なぜなら、この人物と交換されたメールを「パートナー」記録からアクセスすることはできないからです。
+  * 「人」カテゴリの中でパートナーを表示するためのビュー、見込み客を表示するためのビューを作成します。
+* 2人の「人」は同じメールアドレスを持つことはできません。 2つの会社は同じドメインを持つことはできません。 2つの会社は同じドメインを持つことはできません。 2つの会社は同じドメインを持つことはできません。
+* 使用したくない標準フィールドとオブジェクトを無効化できます。
+* ビューからフィールドを隠すことができます：フィールドを作成することを恐れないでください、それらすべてを表示する必要はありません。
 
-Read [this article](/l/ja/user-guide/data-model/overview) to learn how to design your data model.
+データモデルの設計方法についてもっと学ぶには、[この記事](/l/ja/user-guide/data-model/overview)をお読みください。
 
-## 2. Bring your data in
+## 2. データを導入する
 
-Bringing your existing data into Twenty gives your team context from the start.
+既存のデータをTwentyに導入すると、チームが最初からコンテキストを得ることができます。
 
-### Connect your mailbox
+### メールボックスを接続する
 
-If you have not done so when creating your workspace, connect your **Google or Microsoft account** under Settings → Accounts. This allows Twenty to:
+ワークスペースの作成時に行っていない場合は、設定 → アカウントで **Google または Microsoft アカウント** を接続してください。 これにより、Twentyが次のことを行えるようになります：
 
-* Import your messages and meetings
-* Auto-create contacts based on interactions (optional)
-* Keep communication history visible for your team
+* メッセージと会議のインポート
+* インタラクションに基づく自動連絡先作成（オプション）
+* チームにコミュニケーション履歴を表示し続ける
 
-**Using another provider?**
-You can add another mailbox via SMTP or another calendar via CalDAV. You will need to activate the feature under Settings → Releases → Lab, and then go back to the Settings → Accounts tab.
+**他のプロバイダーを使用していますか？**
+SMTP経由で別のメールボックスを追加するか、CalDAV経由で別のカレンダーを追加できます。 [設定] → [リリース] → [ラボ]で機能を有効にしてから、[設定] → [アカウント]タブに戻る必要があります。 [設定] → [リリース] → [ラボ]で機能を有効にしてから、[設定] → [アカウント]タブに戻る必要があります。 設定するには、**設定 → アカウント** に移動します。
 
-### Import data via csv
+### csvファイルでデータをインポートする
 
-Use the Command menu (`Cmd + K` or `Ctrl + K`) to import People, Companies, Opportunities, or any custom objects via CSV.
+コマンドメニュー（`Cmd + K`または`Ctrl + K`）を使用して、CSV経由で人、会社、機会、または任意のカスタムオブジェクトをインポートします。
 
-**Key guidelines**:
+**重要なガイドライン**：
 
-* Download the sample file to understand the expected format
-* Limit each file to 10k records
-* Remove duplicate emails for People or duplicate domains for Companies
-* Review and fix errors (highlighted in yellow) before importing
+* サンプルファイルをダウンロードして予想される形式を理解します
+* 各ファイルを10kレコードまで制限する
+* 人の重複メール、会社の重複ドメインを削除する
+* インポート前にエラー（黄色でハイライト）をレビューして修正する
 
-Read [this article](/l/ja/user-guide/data-migration/overview) to learn more about data import.
+データインポートについてさらに学ぶには、[この記事](/l/ja/user-guide/data-migration/overview)を読んでください。
 
-## 3. Create your first view
+## 3. 最初のビューを作成する
 
-Creating different views is key to make the data actionable for your team.
-Here is how to proceed:
+異なるビューを作成することは、チームに対してデータを実行可能にする鍵です。
+進め方はこちらです：
+進め方はこちらです：
+進め方はこちらです：
 
-* **Add or hide columns**
-  Manage the fields visible in a given view clicking on Options → Fields (from the top right). You can show/hide fields from there.
+* **列を追加または非表示にする**
+  オプション → フィールド（右上から）をクリックして、特定のビューで表示されるフィールドを管理します。 そこからフィールドを表示/非表示にできます。 そこからフィールドを表示/非表示にできます。 そこからフィールドを表示/非表示にできます。
 
-* **Reorder fields**
-  Reorder the fields from a given view clicking on Options → Fields (from the top right). Drag and drop the fields to reorder them.
+* **フィールドを並べ替える**
+  オプション → フィールド（右上から）をクリックして、特定のビューのフィールドを並べ替えます。 ドラッグアンドドロップでフィールドを並べ替えます。
 
-* **Filter your view**
-  Narrow down the records displayed using the Filters from the top right.
+* **ビューをフィルタリングする**
+  右上のフィルターを使用して表示されるレコードを絞り込みます。
 
-* **Sort records**
-  Reorder records displayed using the Sort function from the top right, or by clicking directly on the column name.
+* **レコードを並び替える**
+  右上の並び替え機能を使用するか、列名を直接クリックして表示されるレコードを並び替えます。
 
-* **Choose the layout**
-  You can switch to a **Kanban layout** or a list **Group By** layout, as long as the object has a `Stage` or similar select-type field.
+* **レイアウトを選択する**
+  オブジェクトに「ステージ」または同様の選択タイプフィールドがある限り、**カンバンレイアウト**または**グループ化**レイアウトに切り替えることができます。
 
-* **Save your view as Favorites**
-  This can be done using the dropdown menu showing the different views.
+* **ビューをお気に入りとして保存する**
+  これは、異なるビューを表示するドロップダウンメニューを使用して行うことができます。
 
-## What's next?
+## 次は何をしますか？
 
-Start creating automations using [workflows](/l/ja/user-guide/workflows/overview).
+[ワークフロー](/l/ja/user-guide/workflows/overview)を使用して自動化を開始してください。

@@ -7,7 +7,7 @@ import {
   isInputObjectType,
   isObjectType,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
@@ -26,7 +26,6 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class ObjectMetadataCreateGqlInputTypeGenerator {
@@ -187,10 +186,10 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
     fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
-    const type = this.typeMapperService.mapToScalarType(
-      fieldMetadata.type,
+    const type = this.typeMapperService.mapToPreBuiltGraphQLInputType({
+      fieldMetadataType: fieldMetadata.type,
       typeOptions,
-    );
+    });
 
     if (!isDefined(type) || isObjectType(type)) {
       const message = `Could not find a GraphQL input type for ${fieldMetadata.type} field metadata`;

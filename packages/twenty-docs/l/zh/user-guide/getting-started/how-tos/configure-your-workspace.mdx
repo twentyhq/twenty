@@ -1,77 +1,77 @@
 ---
-title: Configure Your Workspace
-description: Every business works differently. Start with these 3 steps to shape Twenty around your needs.
+title: 配置您的工作区
+description: 每个企业的运作方式都不尽相同。 从以下 3 个步骤开始，使 Twenty 更符合您的需求。
 ---
 
-<Note>**Quick Win**: Start with connecting your mailbox. This gives you immediate value and helps your team see Twenty in action with real data. You can do so under Settings → Accounts.</Note>
+<Note>**速成技巧**: 请先连接您的邮箱。 这将立即为您带来价值，并帮助您的团队通过真实数据看到 Twenty 运行的效果。 您可以在 设置 → 账户 中进行操作。</Note>
 
-## 1. Customize your data model
+## 1. 自定义您的数据模型
 
-Twenty offers the flexibility you need to shape the data model that will best support your day-to-day.
-Create objects and fields of any type, including relations between your different objects. You can do so under Settings → Data Model.
-Here are a few tips:
+Twenty提供所需的灵活性以构建最能支持您日常工作的数据模型。
+创建任何类型的对象和字段，包括不同对象之间的关系。 您可以在 设置 → 数据模型 下操作。
+以下是一些提示：
 
-* **You are not limited in the number of custom fields nor custom objects**. Adding custom objects and fields will not lead to upgrading your plan.
-* **People, Companies and Opportunities are the three objects from where you can access the emails and meetings synchronized from your mailbox and calendar**. We recommend using those as much as possible, adding fields to categorize your records if need be. Here is an example:
-  * It is best to use the People object for your prospects and partners, creating a field on the People object named `Person Type`, instead of creating a Partner custom object. Because you would not be able to access the emails exchanged with this person from the Partner records.
-  * Create different views under People, one to display partners and one to display prospects.
-* Two People cannot have the same email address. Two Companies cannot have the same domain.
-* You can deactivate standard fields and objects you do not want to use.
-* You can hide fields from views: don't be afraid of creating fields, you won't have to display all of them.
+* **自定义字段和对象数量不受限制**。 添加自定义对象和字段不会导致升级您的计划。
+* **人员、公司和机会是您可以访问从邮箱和日历同步的电子邮件和会议的三个对象**。 我们建议尽可能多使用这些，必要时添加字段以对记录进行分类。 以下是一个示例：
+  * 最好将“人员”对象用于您的潜在客户和合作伙伴，在“人员”对象上创建一个名为“人员类型”的字段，而不是创建合作伙伴自定义对象。 因为您将无法从合作伙伴记录中访问与此人交换的电子邮件。
+  * 在人员中创建不同的视图，一种用于显示合作伙伴，一种用于显示潜在客户。
+* 两个人不能拥有相同的电子邮件地址。 两家公司不能拥有相同的域名。
+* 您可以停用您不想使用的标准字段和对象。
+* 您可以从视图中隐藏字段：不要害怕创建字段，您无需展示所有字段。
 
-Read [this article](/l/zh/user-guide/data-model/overview) to learn how to design your data model.
+阅读[这篇文章](/l/zh/user-guide/data-model/overview)了解如何设计您的数据模型。
 
-## 2. Bring your data in
+## 2. 导入您的数据
 
-Bringing your existing data into Twenty gives your team context from the start.
+将现有数据导入 Twenty 为您的团队从一开始就提供了背景信息。
 
-### Connect your mailbox
+### 连接您的邮箱
 
-If you have not done so when creating your workspace, connect your **Google or Microsoft account** under Settings → Accounts. This allows Twenty to:
+如果您在创建工作区时尚未这样做，请在 设置 → 帐户 下连接您的**Google 或 Microsoft 帐户**。 这允许 Twenty：
 
-* Import your messages and meetings
-* Auto-create contacts based on interactions (optional)
-* Keep communication history visible for your team
+* 导入您的邮件和会议
+* 根据互动自动创建联系人（可选）
+* 确保您的团队可以看到通信历史
 
-**Using another provider?**
-You can add another mailbox via SMTP or another calendar via CalDAV. You will need to activate the feature under Settings → Releases → Lab, and then go back to the Settings → Accounts tab.
+**使用其他提供商？**
+您可以通过 SMTP 添加另一个邮箱或通过 CalDAV 添加其他日历。 前往 **设置 → 账户** 进行配置。
 
-### Import data via csv
+### 通过 csv 导入数据
 
-Use the Command menu (`Cmd + K` or `Ctrl + K`) to import People, Companies, Opportunities, or any custom objects via CSV.
+使用命令菜单（`Cmd + K` 或 `Ctrl + K`）通过 CSV 导入人员、公司、机会或任何自定义对象。
 
-**Key guidelines**:
+**关键指南**：
 
-* Download the sample file to understand the expected format
-* Limit each file to 10k records
-* Remove duplicate emails for People or duplicate domains for Companies
-* Review and fix errors (highlighted in yellow) before importing
+* 下载示例文件以了解预期格式
+* 每个文件限制为 10k 条记录
+* 删除人员的重复电子邮件或公司的重复域名
+* 在导入之前检查并修复错误（以黄色高亮显示）
 
-Read [this article](/l/zh/user-guide/data-migration/overview) to learn more about data import.
+阅读[这篇文章](/l/zh/user-guide/data-migration/overview)以了解更多关于数据导入的信息。
 
-## 3. Create your first view
+## 3. 创建您的第一个视图
 
-Creating different views is key to make the data actionable for your team.
-Here is how to proceed:
+创建不同的视图是使数据对您的团队具有可操作性的关键。
+以下是操作步骤：
 
-* **Add or hide columns**
-  Manage the fields visible in a given view clicking on Options → Fields (from the top right). You can show/hide fields from there.
+* **添加或隐藏列**
+  在视图中单击选项 → 字段，以管理可见字段。 您可以从中显示/隐藏字段。
 
-* **Reorder fields**
-  Reorder the fields from a given view clicking on Options → Fields (from the top right). Drag and drop the fields to reorder them.
+* **重新排序字段**
+  在视图中单击选项 → 字段，以重新排序字段。 拖放字段即可重新排列它们。
 
-* **Filter your view**
-  Narrow down the records displayed using the Filters from the top right.
+* **筛选您的视图**
+  使用顶部右边的筛选器来缩小显示的记录。
 
-* **Sort records**
-  Reorder records displayed using the Sort function from the top right, or by clicking directly on the column name.
+* **对记录排序**
+  使用顶部右边的排序功能重新排列显示的记录，或直接点击列名。
 
-* **Choose the layout**
-  You can switch to a **Kanban layout** or a list **Group By** layout, as long as the object has a `Stage` or similar select-type field.
+* **选择布局**
+  您可以切换到 **看板布局** 或以 **组方式** 列表，只要对象有 `阶段` 或类似的选择类型字段。
 
-* **Save your view as Favorites**
-  This can be done using the dropdown menu showing the different views.
+* **将您的视图保存为收藏夹**
+  您可以使用显示不同视图的下拉菜单进行此操作。
 
-## What's next?
+## 接下来是什么？
 
-Start creating automations using [workflows](/l/zh/user-guide/workflows/overview).
+开始使用[工作流程](/l/zh/user-guide/workflows/overview)创建自动化。

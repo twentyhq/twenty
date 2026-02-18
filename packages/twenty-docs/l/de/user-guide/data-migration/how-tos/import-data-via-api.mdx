@@ -1,176 +1,176 @@
 ---
-title: Import Data via API
-description: When and how to use Twenty's APIs for large-scale data imports.
+title: Daten über die API importieren
+description: Wann und wie Sie die APIs von Twenty für groß angelegte Datenimporte verwenden.
 ---
 
 ## Übersicht
 
-Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
+Twenty stellt sowohl **GraphQL**- als auch **REST-APIs** für den programmatischen Datenimport bereit. Verwenden Sie die API, wenn der CSV-Import für Ihr Datenvolumen nicht praktikabel ist oder wenn Sie automatisierte, wiederkehrende Importe benötigen.
 
-## When to Use API Import
+## Wann Sie den API-Import verwenden sollten
 
-| Scenario                           | Recommended Method            |
-| ---------------------------------- | ----------------------------- |
-| Under 10,000 records               | CSV Import                    |
-| 10,000 - 50,000 records            | CSV Import (split into files) |
-| **50,000+ records**                | **API Import**                |
-| One-time migration                 | Either (based on volume)      |
-| **Recurring imports**              | **API Import**                |
-| **Real-time sync**                 | **API Import**                |
-| **Integration with other systems** | **API Import**                |
+| Szenario                             | Empfohlene Methode                |
+| ------------------------------------ | --------------------------------- |
+| Unter 10.000 Datensätzen             | CSV-Import                        |
+| 10.000–50.000 Datensätze             | CSV-Import (in Dateien aufteilen) |
+| **Über 50.000 Datensätze**           | **API-Import**                    |
+| Einmalige Migration                  | Beides (je nach Volumen)          |
+| **Wiederkehrende Importe**           | **API-Import**                    |
+| **Echtzeitsynchronisierung**         | **API-Import**                    |
+| **Integration mit anderen Systemen** | **API-Import**                    |
 
-<Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
+<Note>Für Datensätze im Bereich von Hunderttausenden ist die API deutlich schneller und zuverlässiger als mehrere CSV-Importe.</Note>
 
-## API Rate Limits
+## API-Rate-Limits
 
-Twenty enforces rate limits to ensure system stability:
+Twenty setzt Rate-Limits durch, um die Systemstabilität zu gewährleisten:
 
-| Limit                      | Wert                  |
-| -------------------------- | --------------------- |
-| **Requests per minute**    | 100                   |
-| **Records per batch call** | 60                    |
-| **Maximum throughput**     | ~6,000 records/minute |
+| Limit                           | Wert                     |
+| ------------------------------- | ------------------------ |
+| **Anfragen pro Minute**         | 100                      |
+| **Datensätze pro Batch-Aufruf** | 60                       |
+| **Maximaler Durchsatz**         | ~6.000 Datensätze/Minute |
 
 <Warning>
-  **Plan your import around these limits.**
+  **Planen Sie Ihren Import unter Berücksichtigung dieser Limits.**
 
-  For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
+  Für 100.000 Datensätze bei maximalem Durchsatz rechnen Sie mit etwa 17 Minuten Importzeit. Fügen Sie Pufferzeit für Fehlerbehandlung und Wiederholungen hinzu.
 </Warning>
 
 ## Erste Schritte
 
-### Step 1: Get Your API Key
+### Schritt 1: API-Schlüssel abrufen
 
-1. Go to **Settings → Developers**
-2. Click **+ Create API key**
-3. Give your key a descriptive name
-4. Copy the API key immediately (it won't be shown again)
-5. Store it securely
+1. Gehen Sie zu **Einstellungen → Entwickler**
+2. Klicken Sie auf **+ API-Schlüssel erstellen**
+3. Geben Sie Ihrem API-Schlüssel einen aussagekräftigen Namen
+4. Kopieren Sie den API-Schlüssel sofort (er wird nicht erneut angezeigt)
+5. Bewahren Sie ihn sicher auf
 
 <Warning>
-  **Keep your API key secret.**
+  **Halten Sie Ihren API-Schlüssel geheim.**
 
-  Anyone with your API key can access and modify your workspace data. Never commit it to code repositories or share it publicly.
+  Jeder, der Ihren API-Schlüssel besitzt, kann auf die Daten Ihres Arbeitsbereichs zugreifen und sie ändern. Checken Sie ihn niemals in Code-Repositories ein und geben Sie ihn nicht öffentlich weiter.
 </Warning>
 
-### Step 2: Choose Your API
+### Schritt 2: Wählen Sie Ihre API
 
-Twenty supports two API types:
+Twenty unterstützt zwei API-Typen:
 
-| API         | Best For                                                    | Dokumentation                                    |
-| ----------- | ----------------------------------------------------------- | ------------------------------------------------ |
-| **GraphQL** | Flexible queries, fetching related data, complex operations | [API Docs](/l/de/developers/extend/capabilities/apis) |
-| **REST**    | Simple CRUD operations, familiar REST patterns              | [API Docs](/l/de/developers/extend/capabilities/apis) |
+| API         | Am besten geeignet für                                           | Dokumentation                                             |
+| ----------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
+| **GraphQL** | Flexible Abfragen, Abruf verknüpfter Daten, komplexe Operationen | [API-Dokumentation](/l/de/developers/extend/capabilities/apis) |
+| **REST**    | Einfache CRUD-Operationen, vertraute REST-Muster                 | [API-Dokumentation](/l/de/developers/extend/capabilities/apis) |
 
-Both APIs support:
+Beide APIs unterstützen:
 
-* Creating, reading, updating, and deleting records
-* **Batch operations** — create or update up to 60 records per call
+* Erstellen, Lesen, Aktualisieren und Löschen von Datensätzen
+* **Batch-Operationen** — bis zu 60 Datensätze pro Aufruf erstellen oder aktualisieren
 
-**For imports, use batch operations** to maximize throughput within rate limits.
+**Verwenden Sie für Importe Batch-Operationen**, um den Durchsatz innerhalb der Rate-Limits zu maximieren.
 
-### Step 3: Plan Your Import Order
+### Schritt 3: Importreihenfolge planen
 
-Just like CSV imports, **order matters** for relations:
+Wie bei CSV-Importen ist die **Reihenfolge bei Relationen wichtig**:
 
-1. **Companies** first (no dependencies)
-2. **People** second (can link to Companies)
-3. **Opportunities** third (can link to Companies and People)
-4. **Tasks/Notes** (can link to any of the above)
-5. **Custom objects** (following their dependencies)
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (können mit Unternehmen verknüpft werden)
+3. **Opportunities** an dritter Stelle (können mit Unternehmen und Personen verknüpft werden)
+4. **Aufgaben/Notizen** (können mit allen oben genannten verknüpft werden)
+5. **Benutzerdefinierte Objekte** (gemäß ihren Abhängigkeiten)
 
 ## Beste Praktiken
 
-### Batch Your Requests
+### Anfragen bündeln
 
-* Don't send records one at a time
-* Group up to **60 records per API call**
-* This maximizes throughput within rate limits
+* Senden Sie Datensätze nicht einzeln
+* Fassen Sie bis zu **60 Datensätze pro API-Aufruf** zusammen
+* Dies maximiert den Durchsatz innerhalb der Rate-Limits
 
-### Handle Rate Limits
+### Mit Rate-Limits umgehen
 
-* Implement delays between requests (600ms minimum for sustained imports)
-* Use exponential backoff when you hit limits
-* Monitor for 429 (Too Many Requests) responses
+* Implementieren Sie Verzögerungen zwischen den Anfragen (mindestens 600 ms für dauerhafte Importe)
+* Verwenden Sie exponentielles Backoff, wenn Sie an Grenzen stoßen
+* Überwachen Sie 429-Antworten (Too Many Requests)
 
-### Validate Data First
+### Daten zuerst validieren
 
-* Clean and validate your data before importing
-* Check required fields are populated
-* Verify formats match Twenty's requirements (see [Field Mapping](/l/de/user-guide/data-migration/capabilities/field-mapping))
+* Bereinigen und validieren Sie Ihre Daten vor dem Import
+* Prüfen Sie, ob Pflichtfelder ausgefüllt sind
+* Überprüfen Sie, ob die Formate den Anforderungen von Twenty entsprechen (siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping))
 
-### Log Everything
+### Alles protokollieren
 
-* Log every record imported (including IDs)
-* Log errors with full context
-* This helps debug issues and verify completion
+* Protokollieren Sie jeden importierten Datensatz (einschließlich IDs)
+* Protokollieren Sie Fehler mit vollem Kontext
+* Dies hilft bei der Fehleranalyse und der Überprüfung des Abschlusses
 
-### Test First
+### Zuerst testen
 
-* Test with a small batch (10-20 records)
-* Verify data appears correctly in Twenty
-* Then run the full import
+* Testen Sie mit einer kleinen Stichprobe (10–20 Datensätze)
+* Überprüfen Sie, ob die Daten in Twenty korrekt angezeigt werden
+* Führen Sie anschließend den vollständigen Import aus
 
-### Upsert to Avoid Duplicates
+### Upsert verwenden, um Duplikate zu vermeiden
 
-The GraphQL API supports **batch upsert** — update if the record exists, create if not. This prevents duplicates when re-running imports.
+Die GraphQL-API unterstützt **Batch-Upsert** — aktualisieren, wenn der Datensatz existiert, ansonsten erstellen. Dies verhindert Duplikate beim erneuten Ausführen von Importen.
 
-## Finding Object and Field Names
+## Objekt- und Feldnamen finden
 
-To see available objects and fields:
+So sehen Sie verfügbare Objekte und Felder:
 
-1. Go to **Settings → API and Webhooks**
-2. Browse the **Metadata API**
-3. View all standard and custom objects with their fields
+1. Gehen Sie zu **Einstellungen → API und Webhooks**
+2. Durchsuchen Sie die **Metadaten-API**
+3. Sehen Sie alle Standard- und benutzerdefinierten Objekte mit ihren Feldern
 
-The documentation shows all standard and custom objects, their fields, and the expected data types.
+Die Dokumentation zeigt alle Standard- und benutzerdefinierten Objekte, deren Felder und die erwarteten Datentypen.
 
 ## Professionelle Dienstleistungen
 
-For complex API migrations, our partners can help:
+Bei komplexen API-Migrationen können unsere Partner helfen:
 
-| Service                 | What's Included                    |
-| ----------------------- | ---------------------------------- |
-| **Data Model Design**   | design your optimal data structure |
-| **Migration Scripts**   | write and run the import scripts   |
-| **Data Transformation** | handle complex mapping and cleanup |
-| **Validation & QA**     | verify the migration is complete   |
+| Dienst                               | Enthalten                                         |
+| ------------------------------------ | ------------------------------------------------- |
+| **Datenmodell-Design**               | Entwerfen Sie Ihre optimale Datenstruktur         |
+| **Migrationsskripte**                | Schreiben und Ausführen der Importskripte         |
+| **Daten-Transformation**             | Bearbeitung komplexer Zuordnungen und Bereinigung |
+| **Validierung & Qualitätssicherung** | Überprüfen, dass die Migration abgeschlossen ist  |
 
-**Best for:**
+**Am besten geeignet für:**
 
-* Migrations of 100,000+ records
-* Complex data transformations
-* Tight timelines
-* Teams without developer resources
+* Migrationen mit über 100.000 Datensätzen
+* Komplexe Daten-Transformationen
+* Straffe Zeitpläne
+* Teams ohne Entwicklerressourcen
 
-Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/de/user-guide/getting-started/capabilities/implementation-services).
+Kontaktieren Sie uns unter [contact@twenty.com](mailto:contact@twenty.com) oder informieren Sie sich über unsere [Implementierungsservices](/l/de/user-guide/getting-started/capabilities/implementation-services).
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What's the difference between GraphQL and REST?">
-    GraphQL lets you request exactly the data you need in a single query and is better for complex operations. REST uses standard HTTP methods (GET, POST, PUT, DELETE) and may be more familiar if you've worked with traditional APIs.
+  <Accordion title="Was ist der Unterschied zwischen GraphQL und REST?">
+    Mit GraphQL können Sie in einer einzelnen Abfrage genau die Daten anfordern, die Sie benötigen, und es eignet sich besser für komplexe Operationen. REST verwendet standardmäßige HTTP-Methoden (GET, POST, PUT, DELETE) und ist möglicherweise vertrauter, wenn Sie mit herkömmlichen APIs gearbeitet haben.
   </Accordion>
 
-  <Accordion title="Can I update existing records via API?">
-    Ja! Use update mutations (GraphQL) or PUT/PATCH requests (REST) with the record's `id`.
+  <Accordion title="Kann ich vorhandene Datensätze über die API aktualisieren?">
+    Ja! Verwenden Sie Update-Mutationen (GraphQL) oder PUT/PATCH-Anfragen (REST) mit der `id` des Datensatzes.
   </Accordion>
 
-  <Accordion title="How do I handle duplicates?">
-    Query for existing records first using unique identifiers (email, domain). Update if exists, create if not.
+  <Accordion title="Wie gehe ich mit Duplikaten um?">
+    Fragen Sie zunächst nach vorhandenen Datensätzen mit eindeutigen Kennungen (E-Mail, Domain). Aktualisieren, wenn vorhanden; erstellen, wenn nicht.
   </Accordion>
 
-  <Accordion title="Can I delete records via API?">
-    Yes, use delete mutations (GraphQL) or DELETE requests (REST).
+  <Accordion title="Kann ich Datensätze über die API löschen?">
+    Ja, verwenden Sie Lösch-Mutationen (GraphQL) oder DELETE-Anfragen (REST).
   </Accordion>
 
-  <Accordion title="Is there a Python or Node.js SDK?">
-    Not currently, but both APIs work with any HTTP client in any language.
+  <Accordion title="Gibt es ein SDK für Python oder Node.js?">
+    Derzeit nicht, aber beide APIs funktionieren mit jedem HTTP-Client in jeder Sprache.
   </Accordion>
 </AccordionGroup>
 
-## API Documentation
+## API-Dokumentation
 
-For full implementation details, code examples, and schema reference:
+Für vollständige Implementierungsdetails, Codebeispiele und Schema-Referenz:
 
-* [API Documentation](/l/de/developers/extend/capabilities/apis)
+* [API-Dokumentation](/l/de/developers/extend/capabilities/apis)

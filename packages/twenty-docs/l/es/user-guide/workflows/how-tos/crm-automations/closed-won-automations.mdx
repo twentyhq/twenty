@@ -1,140 +1,140 @@
 ---
-title: Closed Won Automations
-description: Automate post-win activities when opportunities close.
+title: Automatizaciones de Cerrado Ganado
+description: Automatiza las actividades posteriores al cierre cuando las oportunidades se cierran como ganadas.
 ---
 
-When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
+Cuando se cierra un negocio, deben ocurrir varias cosas: actualizar el estado de la empresa, notificar a los miembros del equipo, crear tareas de incorporación. Automatiza todo esto con un único flujo de trabajo.
 
-## The Problem
+## Problema
 
-When an opportunity moves to "Closed Won":
+Cuando una oportunidad pasa a "Cerrado ganado":
 
-* Company type needs to change from "Prospect" to "Customer"
-* Onboarding tasks need to be created
-* Customer success team needs to be notified
-* Sales rep needs confirmation
+* El tipo de empresa debe cambiar de "Prospect" a "Customer"
+* Se deben crear tareas de incorporación
+* Se debe notificar al equipo de Customer Success
+* El representante de ventas necesita una confirmación
 
-Doing this manually is time-consuming and error-prone.
+Hacer esto manualmente consume tiempo y es propenso a errores.
 
-## The Solution
+## La solución
 
-Create a workflow that handles all post-win activities automatically.
+Crea un flujo de trabajo que gestione automáticamente todas las actividades posteriores al cierre ganado.
 
-## Complete Workflow Setup
+## Configuración completa del flujo de trabajo
 
-### Step 1: Create the Workflow
+### Paso 1: Crear el flujo de trabajo
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Deal Won - Post-Win Automation"
+1. Ve a **Configuración → Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Asígnale el nombre "Deal Won - Post-Win Automation"
 
-### Step 2: Configure the Trigger
+### Paso 2: Configurar el disparador
 
-1. Select **Record is Updated**
-2. Choose **Opportunities**
-3. Under "Fields to monitor", select **Stage**
+1. Selecciona **Record is Updated**
+2. Elige **Oportunidades**
+3. En "Campos a supervisar", selecciona **Etapa**
 
-### Step 3: Add Stage Filter
+### Paso 3: Agregar filtro de etapa
 
-1. Add **Filter** action
-2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+1. Añade la acción **Filter**
+2. Condición: `{{trigger.object.stage}}` es igual a "Closed Won"
 
-### Step 4: Update Company Type
+### Paso 4: Actualizar el tipo de empresa
 
-1. Add **Update Record** action
-2. Configure:
+1. Añade la acción **Update Record**
+2. Configurar:
 
-| Field               | Value                           |
-| ------------------- | ------------------------------- |
-| **Object**          | Companies                       |
-| **Record**          | `{{trigger.object.company.id}}` |
-| **Type**            | Customer                        |
-| **First Deal Date** | `{{trigger.object.closedAt}}`   |
-| **Account Owner**   | `{{trigger.object.owner.id}}`   |
+| Campo                        | Valor                           |
+| ---------------------------- | ------------------------------- |
+| **Objeto**                   | Empresas                        |
+| **Registro**                 | `{{trigger.object.company.id}}` |
+| **Tipo**                     | Cliente                         |
+| **Fecha del primer negocio** | `{{trigger.object.closedAt}}`   |
+| **Propietario de la cuenta** | `{{trigger.object.owner.id}}`   |
 
-### Step 5: Create Onboarding Task
+### Paso 5: Crear tarea de incorporación
 
-1. Add **Create Record** action
-2. Configure:
+1. Añade la acción **Create Record**
+2. Configurar:
 
-| Field                   | Value                                                                                                |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Object**              | Tasks                                                                                                |
-| **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
-| **Assignee**            | Customer Success team member                                                                         |
-| **Due Date**            | 3 days from now                                                                                      |
-| **Priority**            | High                                                                                                 |
-| **Related Company**     | `{{trigger.object.company.id}}`                                                                      |
-| **Related Opportunity** | `{{trigger.object.id}}`                                                                              |
-| **Description**         | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| Campo                       | Valor                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Objeto**                  | Tareas                                                                                                              |
+| **Título**                  | `Incorporación: {{trigger.object.name}}`                                                                            |
+| **Asignado**                | Miembro del equipo de Customer Success                                                                              |
+| **Fecha de vencimiento**    | Dentro de 3 días                                                                                                    |
+| **Prioridad**               | Alta                                                                                                                |
+| **Empresa relacionada**     | `{{trigger.object.company.id}}`                                                                                     |
+| **Oportunidad relacionada** | `{{trigger.object.id}}`                                                                                             |
+| **Descripción**             | `Incorporación de nuevo cliente para {{trigger.object.company.name}}. Valor del negocio: {{trigger.object.amount}}` |
 
-### Step 6: Notify Customer Success
+### Paso 6: Notificar a Customer Success
 
-1. Add **Send Email** action
-2. Configure:
+1. Añade la acción **Send Email**
+2. Configurar:
 
-| Field       | Value                                              |
-| ----------- | -------------------------------------------------- |
-| **To**      | customer-success@yourcompany.com                   |
-| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **Body**    | See example below                                  |
+| Campo      | Valor                                               |
+| ---------- | --------------------------------------------------- |
+| **Para**   | customer-success@yourcompany.com                    |
+| **Asunto** | `🎉 Nuevo cliente: {{trigger.object.company.name}}` |
+| **Cuerpo** | Consulta el ejemplo a continuación                  |
 
-**Email body example**:
+**Ejemplo de cuerpo del correo**:
 
 ```
-Hi CS Team,
+Hola equipo de CS,
 
-We have a new customer!
+¡Tenemos un nuevo cliente!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+Empresa: {{trigger.object.company.name}}
+Negocio: {{trigger.object.name}}
+Valor: {{trigger.object.amount}}
+Representante de ventas: {{trigger.object.owner.name}}
+Fecha de cierre: {{trigger.object.closedAt}}
 
-An onboarding task has been created automatically.
+Se ha creado automáticamente una tarea de incorporación.
 
-Let's give them a great start!
+¡Démosles un gran comienzo!
 ```
 
-### Step 7: Confirm to Sales Rep
+### Paso 7: Confirmar al representante de ventas
 
-1. Add another **Send Email** action
-2. Configure:
+1. Añade otra acción **Send Email**
+2. Configurar:
 
-| Field       | Value                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------- |
-| **To**      | `{{trigger.object.owner.email}}`                                                                                     |
-| **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                             |
-| **Body**    | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+| Campo      | Valor                                                                                                                       |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Para**   | `{{trigger.object.owner.email}}`                                                                                            |
+| **Asunto** | `✅ Negocio cerrado: {{trigger.object.name}}`                                                                                |
+| **Cuerpo** | ¡Felicidades! Tu negocio ha sido procesado. Se ha notificado al equipo de Customer Success y la incorporación ha comenzado. |
 
-### Step 8: Test and Activate
+### Paso 8: Probar y activar
 
-1. Test by moving a test opportunity to "Closed Won"
-2. Verify:
-   * Company type changed to "Customer"
-   * Onboarding task created
-   * CS team received email
-   * Sales rep received confirmation
-3. Activate when ready
+1. Prueba moviendo una oportunidad de prueba a "Closed Won"
+2. Verificar:
+   * El tipo de empresa cambió a "Customer"
+   * Tarea de incorporación creada
+   * El equipo de CS recibió el correo electrónico
+   * El representante de ventas recibió la confirmación
+3. Actívalo cuando esté listo
 
-## Handling Closed Lost
+## Cómo gestionar Closed Lost
 
-Create a similar workflow for lost deals:
+Crea un flujo de trabajo similar para negocios perdidos:
 
-### Trigger
+### Disparador
 
-* Record is Updated (Opportunities, Stage = "Closed Lost")
+* Record is Updated (Oportunidades, Etapa = "Closed Lost")
 
-### Actions
+### Acciones
 
-1. **Create Record**: Task for "Lost Deal Analysis"
-2. **Update Record**: Add lost reason to company record
-3. **Send Email**: Notify manager of lost deal
+1. **Create Record**: Tarea para "Análisis de negocio perdido"
+2. **Update Record**: Agrega el motivo de pérdida al registro de la empresa
+3. **Send Email**: Notifica al gerente sobre el negocio perdido
 
-## Advanced: Multi-Step Onboarding
+## Avanzado: incorporación de varios pasos
 
-For complex onboarding, create multiple tasks:
+Para una incorporación compleja, crea varias tareas:
 
 ```javascript
 export const main = async (params) => {
@@ -149,31 +149,31 @@ export const main = async (params) => {
 };
 ```
 
-Use **Iterator** to create each task from the array.
+Usa **Iterator** para crear cada tarea a partir del array.
 
-## Customization Ideas
+## Ideas de personalización
 
-### Keep your other tools up-to-date
+### Mantén tus otras herramientas actualizadas
 
-* Create customer in billing system with an **HTTP Request**
+* Crea el cliente en el sistema de facturación con una **HTTP Request**
 
-### Conditional Actions
+### Acciones condicionales
 
-Use **Filter** actions to:
+Usa acciones **Filter** para:
 
-* Different onboarding for enterprise vs SMB
-* Different assignees based on region
-* Skip notifications for small deals
+* Incorporación diferente para empresas grandes frente a pymes
+* Asignados diferentes según la región
+* Omitir notificaciones para negocios pequeños
 
-### Include Deal Details
+### Incluir detalles del negocio
 
-Use **Code** action to format:
+Usa la acción **Code** para formatear:
 
-* Deal summary documents
-* Handoff notes for CS team
-* Custom onboarding checklists
+* Documentos de resumen del negocio
+* Notas de traspaso para el equipo de CS
+* Listas de verificación de incorporación personalizadas
 
-## Related
+## Relacionado
 
-* [Workflow Actions](/l/es/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)

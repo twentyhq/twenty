@@ -68,11 +68,11 @@ git config --global core.autocrlf false
 
 В `packages/twenty-front/.env` раскомментируйте `VITE_DISABLE_TYPESCRIPT_CHECKER=true` и `VITE_DISABLE_ESLINT_CHECKER=true`, чтобы отключить фоновые проверки, таким образом уменьшая количество необходимой оперативной памяти.
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. Например, если вы работаете на сервере, запускайте только `npx nx worker twenty-server`
+**Если это не работает:**
+Запускайте только те сервисы, которые вам нужны, вместо `npx nx start`. Например, если вы работаете на сервере, запускайте только `npx nx worker twenty-server`
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**Если это не работает:**
+Если вы пытались запустить только `npx nx run twenty-server:start` в WSL и это завершается приведённой ниже ошибкой памяти:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
@@ -83,11 +83,11 @@ If you tried to run only `npx nx run twenty-server:start` on WSL and it's failin
 Флаг --max-old-space-size=8192 устанавливает верхний предел 8 ГБ для heap Node.js; использование этого значения зависит от потребностей приложения.
 Источник: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. В Twenty мы заметили, что некоторые расширения VScode потребляют много оперативной памяти, поэтому мы временно их отключаем.
+**Если это не работает:**
+Исследуйте, какие процессы занимают большую часть оперативной памяти вашей машины. В Twenty мы заметили, что некоторые расширения VScode потребляют много оперативной памяти, поэтому мы временно их отключаем.
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**Если это не работает:**
+Перезагрузка вашей машины помогает очистить зависшие процессы.
 
 #### При запуске `npx nx start` в логах появляются странные [0] и [1]
 
@@ -170,7 +170,7 @@ plugins: [
 
 Выполните `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` в контейнере базы данных, чтобы получить доступ к административной панели.
 
-### 1-click Docker compose
+### Docker Compose в один клик
 
 #### Не удается войти в систему
 

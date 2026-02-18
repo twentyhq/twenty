@@ -160,7 +160,7 @@ export class WorkflowSchemaWorkspaceService {
           ),
         ) as OutputSchema;
       }
-      case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
+      case WorkflowActionType.CODE: // StepOutput schema is computed on logicFunction draft execution
       default:
         return {};
     }

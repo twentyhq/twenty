@@ -1,6 +1,6 @@
 ---
 title: Разрешения
-description: Control access to objects, fields, and settings with role-based permissions.
+description: Управляйте доступом к объектам, полям и настройкам с помощью разрешений на основе ролей.
 image: /images/user-guide/permissions/permissions.png
 ---
 
@@ -17,7 +17,7 @@ image: /images/user-guide/permissions/permissions.png
 1. Перейдите в **Настройки → Роли**
 2. В разделе **Все роли** нажмите **+ Создать роль**
 3. Введите имя роли
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
+4. На вкладке **Разрешения** по умолчанию [настройте разрешения](#customize-permissions)
 5. Нажмите **Сохранить**, чтобы завершить
 
 ## Удалить роль
@@ -30,7 +30,7 @@ image: /images/user-guide/permissions/permissions.png
 4. Нажмите **Подтвердить** в модальном окне
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. Все роли, кроме **Администратора**, могут быть удалены. Всегда должен быть назначен хотя бы один участник на роль **Администратора**.
+  Если роль удалена, любой участник рабочего пространства, назначенный на неё, будет автоматически переназначен на роль по умолчанию. Все роли, кроме **Администратора**, могут быть удалены. Всегда должен быть назначен хотя бы один участник на роль **Администратора**.
 </Note>
 
 ## Назначение ролей участникам
@@ -58,82 +58,82 @@ image: /images/user-guide/permissions/permissions.png
 4. Новые участники рабочего пространства будут получать эту роль при присоединении
 
 <Note>
-  You can only assign roles to existing workspace members. Чтобы пригласить новых участников, используйте [Управление членами](/l/ru/user-guide/settings/capabilities/member-management).
+  Вы можете назначать роли только существующим участникам рабочего пространства. Чтобы пригласить новых участников, используйте [Управление членами](/l/ru/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Настроить разрешения
 
 Разрешения определяют, что каждая роль может получить доступ или изменить в вашем рабочем пространстве, включая объекты и записи рабочего пространства, настройки и действия.
 
-### Object Permissions
+### Разрешения на уровне объекта
 
-The **Objects** section controls what this role can do with records across your workspace.
+Раздел **Объекты** определяет, что эта роль может делать с записями во всём вашем рабочем пространстве.
 
-#### Set Default Permissions (All Objects)
+#### Задать разрешения по умолчанию (для всех объектов)
 
-First, configure the baseline permissions that apply to **all objects** by default:
+Сначала настройте базовые разрешения, которые по умолчанию применяются ко **всем объектам**:
 
-| Permission                                  | Описание                               |
-| ------------------------------------------- | -------------------------------------- |
-| **Просмотр записей на всех объектах**       | View records in lists and detail pages |
-| **Редактирование записей на всех объектах** | Modify existing records                |
-| **Удаление записей на всех объектах**       | Soft-delete records (can be restored)  |
-| **Уничтожение записей на всех объектах**    | Permanently delete records             |
+| Разрешение                                  | Описание                                                              |
+| ------------------------------------------- | --------------------------------------------------------------------- |
+| **Просмотр записей на всех объектах**       | Просматривать записи в списках и на страницах с подробной информацией |
+| **Редактирование записей на всех объектах** | Изменять существующие записи                                          |
+| **Удаление записей на всех объектах**       | Мягко удалять записи (их можно восстановить)                          |
+| **Уничтожение записей на всех объектах**    | Безвозвратно удалять записи                                           |
 
-Select or unselect based on what should be the default behavior for this role.
+Включайте или отключайте в зависимости от того, каким должно быть поведение по умолчанию для этой роли.
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **Пример — роль стажёра**: По умолчанию стажёр должен видеть все объекты, но не редактировать их. Включите "Просмотр записей для всех объектов", но оставьте "Редактирование записей для всех объектов" не отмеченным.
 </Note>
 
-#### Add Object-Level Exceptions
+#### Добавить исключения на уровне объекта
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+После настройки значений по умолчанию используйте подраздел **На уровне объекта**, чтобы добавить правила, которые переопределяют значения по умолчанию для конкретных объектов.
 
-Click **+ Add rule** and select an object to create an exception.
+Нажмите **+ Добавить правило** и выберите объект, чтобы создать исключение.
 
-**Example rules for an Intern role:**
+**Примеры правил для роли стажёра:**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| Правило                                      | Результат                                                        |
+| -------------------------------------------- | ---------------------------------------------------------------- |
+| Opportunities → отключить "Просмотр записей" | Стажёр вообще не видит объект Opportunities                      |
+| People → включить "Редактирование записей"   | Стажёр может редактировать записи People (но не других объектов) |
 
-### Field Permissions
+### Разрешения на уровне поля
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+В рамках каждого правила на уровне объекта вы можете дополнительно настроить **разрешения на уровне поля**, чтобы управлять доступом к конкретным полям.
 
-| Permission     | Описание                   |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| Разрешение              | Описание                    |
+| ----------------------- | --------------------------- |
+| **Просмотр поля**       | Просматривать значение поля |
+| **Редактирование поля** | Изменять значение поля      |
+| **Нет доступа**         | Поле полностью скрыто       |
 
-**Example — Restrict sensitive fields:**
+**Пример — ограничение доступа к конфиденциальным полям:**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+Для роли стажёра с правом редактирования People вы можете ограничить некоторые поля:
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* People → Email → только **Просмотр поля** (редактирование недоступно)
+* People → Address → **Нет доступа** (полностью скрыто)
 
-This allows the intern to edit most People fields while protecting sensitive information.
+Это позволяет стажёру редактировать большинство полей People, при этом защищая конфиденциальную информацию.
 
-### How Permission Inheritance Works
+### Как работает наследование разрешений
 
-Permissions cascade from general to specific:
+Разрешения применяются каскадно — от общих к конкретным:
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **Все объекты** → задаёт базовый уровень для всех объектов
+2. **Правила на уровне объекта** → переопределяют базовые настройки для конкретных объектов
+3. **Правила на уровне поля** → переопределяют настройки объекта для конкретных полей
 
-More specific settings always take precedence.
+Более конкретные настройки всегда имеют приоритет.
 
 ### Управление переопределениями разрешений
 
-To override inherited permissions:
+Чтобы переопределить унаследованные разрешения:
 
 1. Нажмите **X**, чтобы удалить унаследованное правило
-2. Select the specific permissions you want
+2. Выберите нужные конкретные разрешения
 3. Нажмите оранжевую **Отмена** (круглая стрелка), чтобы отменить изменения
 
 Когда закончите, нажмите **Завершить**, затем **Сохранить**, после чего вас перенаправит на страницу роли.
@@ -146,7 +146,7 @@ To override inherited permissions:
 * Или включите специальные разрешения (например, генерация API-ключей, предпочтения рабочего пространства, назначение ролей, настройка модели данных, настройки безопасности и управление Workflows)
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **Текущее ограничение**: Для ручного запуска рабочих процессов в настоящее время требуется доступ к управлению рабочими процессами. Это поведение может измениться в будущих версиях.
 </Note>
 
 ### Разрешения на действия в рабочем пространстве
@@ -156,43 +156,43 @@ To override inherited permissions:
 * Переключатель **Все доступ к приложениям** для предоставления полных разрешений
 * Или включите индивидуальные действия, такие как **Отправить email**, **Импортировать CSV** и **Экспортировать CSV**
 
-## Assigning Roles to API Keys and AI Agents
+## Назначение ролей ключам API и AI-агентам
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+Помимо участников рабочего пространства, роли также можно назначать **ключам API** и **AI-агентам**. Это особенно полезно для команд, которые хотят точно контролировать, «кто» что может делать в их рабочем пространстве — включая автоматизированные процессы и интеграции.
 
-### Why Assign Roles to API Keys and AI Agents?
+### Зачем назначать роли ключам API и AI-агентам?
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **Безопасность**: Ограничьте доступ и возможность изменений для автоматизированных процессов
+* **Соответствие требованиям**: Обеспечьте, чтобы интеграции получали доступ только к необходимым данным
+* **Контроль**: Предотвратите случайные изменения данных из-за неверно настроенных автоматизаций
+* **Аудит**: Отслеживайте, какие действия выполнены какой интеграцией или каким агентом
 
-### Assign a Role to an API Key
+### Назначить роль ключу API
 
 1. Перейдите в **Настройки → Роли**
 2. Нажмите на роль, которую вы хотите назначить
 3. Откройте вкладку **Назначение**
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
+4. В разделе **Ключи API** нажмите **+ Назначить ключу API**
+5. Выберите ключ API из списка
 6. Подтвердите назначение
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+Теперь ключ API унаследует все разрешения, определённые этой ролью. Любые вызовы API, выполненные с этим ключом, будут соответствующим образом ограничены.
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  Ключи API без назначенной роли используют разрешения по умолчанию. Для повышения безопасности всегда назначайте конкретную роль производственным ключам API.
 </Note>
 
-### Assign a Role to an AI Agent
+### Назначить роль AI-агенту
 
 1. Перейдите в **Настройки → Роли**
 2. Нажмите на роль, которую вы хотите назначить
 3. Откройте вкладку **Назначение**
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
+4. В разделе **AI-агенты** нажмите **+ Назначить AI-агенту**
+5. Выберите AI-агента из списка
 6. Подтвердите назначение
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+AI-агент сможет получать доступ к данным и выполнять действия только в пределах разрешений назначенной ему роли.
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  Для AI-агентов, работающих в рамках рабочих процессов, это гарантирует, что агент не сможет получать доступ к данным или изменять их вне своей предназначенной области — даже если у рабочего процесса есть более широкие разрешения.
 </Note>

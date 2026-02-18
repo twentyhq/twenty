@@ -41,7 +41,7 @@ export default defineConfig(({ command }) => {
 
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.lib.json')
-    : path.resolve(__dirname, './tsconfig.dev.json');
+    : path.resolve(__dirname, './tsconfig.json');
 
   const checkersConfig: Checkers = {
     typescript: {
@@ -55,6 +55,12 @@ export default defineConfig(({ command }) => {
   };
 
   return {
+    resolve: {
+      alias: {
+        '@ui/': path.resolve(__dirname, 'src') + '/',
+        '@assets/': path.resolve(__dirname, 'src/assets') + '/',
+      },
+    },
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
@@ -95,12 +101,11 @@ export default defineConfig(({ command }) => {
         },
       }),
     ],
-    // Configuration for building your library.
-    // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
       cssCodeSplit: false,
       minify: 'esbuild',
       sourcemap: false,
+      emptyOutDir: false,
       outDir: './dist',
       reportCompressedSize: true,
       commonjsOptions: {
@@ -114,7 +119,6 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        // External packages that should not be bundled into your library.
         external: Object.keys(packageJson.dependencies || {}),
         output: [
           {

@@ -15,7 +15,6 @@ exports[`Agent update should fail should fail when attempting to update a standa
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -73,7 +72,6 @@ exports[`Agent update should fail when settings null required properties 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -109,7 +107,6 @@ exports[`Agent update should fail when updating label to one that already exists
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -145,7 +142,6 @@ exports[`Agent update should fail when updating responseFormat type to json with
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -181,7 +177,6 @@ exports[`Agent update should fail when updating responseFormat type to text with
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -217,7 +212,6 @@ exports[`Agent update should fail when updating responseFormat with invalid type
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -253,7 +247,6 @@ exports[`Agent update should fail when updating with empty label 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -289,7 +282,6 @@ exports[`Agent update should fail when updating with empty modelId 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",
@@ -325,7 +317,6 @@ exports[`Agent update should fail when updating with empty prompt 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "agent",

@@ -1,147 +1,147 @@
 ---
 title: APIs
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+description: Consulte e modifique seus dados de CRM programaticamente usando REST ou GraphQL.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
+O Twenty foi desenvolvido para ser amigável ao desenvolvedor, oferecendo APIs poderosas que se adaptam ao seu modelo de dados personalizado. Oferecemos quatro tipos distintos de API para atender diferentes necessidades de integração.
 
-## Developer-First Approach
+## Abordagem Focada no Desenvolvedor
 
-Twenty generates APIs specifically for your data model:
+Twenty gera APIs especificamente para o seu modelo de dados:
 
-* **No long IDs required**: Use your object and field names directly in endpoints
-* **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
-* **Dedicated endpoints**: Each object and field gets its own API endpoint
-* **Custom documentation**: Generated specifically for your workspace's data model
+* **Nenhum ID longo necessário**: Use os nomes dos seus objetos e campos diretamente nas endpoints
+* **Objetos padrão e personalizados tratados igualmente**: Seus objetos personalizados recebem o mesmo tratamento de API que os incorporados
+* **Endpoints dedicados**: Cada objeto e campo tem seu próprio endpoint de API
+* **Documentação personalizada**: Gerada especificamente para o modelo de dados do seu workspace
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  Sua documentação de API personalizada fica disponível em **Configurações → API & Webhooks** após criar uma chave de API. Como o Twenty gera APIs que correspondem ao seu modelo de dados personalizado, a documentação é exclusiva do seu workspace.
 </Note>
 
-## The Two API Types
+## Os dois tipos de API
 
 ### Core API
 
-Accessed on `/rest/` or `/graphql/`
+Acessada em `/rest/` ou `/graphql/`
 
-Work with your actual **records** (the data):
+Trabalhe com seus **registros** (os dados):
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
-* Manage record relationships
+* Criar, ler, atualizar e excluir Pessoas, Empresas, Oportunidades, etc.
+* Consultar e filtrar dados
+* Gerenciar relações de registros
 
 ### Metadata API
 
-Accessed on `/rest/metadata/` or `/metadata/`
+Acessada em `/rest/metadata/` ou `/metadata/`
 
-Manage your **workspace and data model**:
+Gerencie seu **workspace e modelo de dados**:
 
-* Create, modify, or delete objects and fields
-* Configure workspace settings
-* Define relationships between objects
+* Criar, modificar ou excluir objetos e campos
+* Configurar as configurações do workspace
+* Defina relacionamentos entre objetos
 
 ## REST vs GraphQL
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+As APIs Core e Metadata estão disponíveis nos formatos REST e GraphQL:
 
-| Format      | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| Formato     | Operações disponíveis                                                             |
+| ----------- | --------------------------------------------------------------------------------- |
+| **REST**    | CRUD, operações em lote, upserts                                                  |
+| **GraphQL** | Os mesmos + **upserts em lote**, consultas de relacionamento em uma única chamada |
 
-Choose based on your needs — both formats access the same data.
+Escolha com base nas suas necessidades — ambos os formatos acessam os mesmos dados.
 
-## API Endpoints
+## Endpoints de API
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| Ambiente           | URL base                  |
+| ------------------ | ------------------------- |
+| **Nuvem**          | `https://api.twenty.com/` |
+| **Auto-hospedado** | `https://{your-domain}/`  |
 
-## Authentication
+## Autenticação
 
-Every API request requires an API key in the header:
+Toda solicitação de API requer uma chave de API no cabeçalho:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Create an API Key
+### Criar uma Chave de API
 
-1. Go to **Settings → APIs & Webhooks**
-2. Click **+ Create key**
-3. Configure:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
-4. Click **Save**
-5. **Copy immediately** — the key is only shown once
+1. Vá para **Configurações → APIs & Webhooks**
+2. Clique em **+ Criar chave**
+3. Configurar:
+   * **Nome**: Nome descritivo para a chave
+   * **Data de expiração**: Quando a chave expira
+4. Clique em **Salvar**
+5. **Copie imediatamente** — a chave é exibida apenas uma vez
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="Criando chave de API" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  Sua chave de API concede acesso a dados confidenciais. Não a compartilhe com serviços não confiáveis. Se for comprometida, desative-a imediatamente e gere uma nova.
 </Warning>
 
-### Assign a Role to an API Key
+### Atribuir uma função a uma chave de API
 
-For better security, assign a specific role to limit access:
+Para maior segurança, atribua uma função específica para limitar o acesso:
 
-1. Go to **Settings → Roles**
-2. Click on the role to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+1. Vá para **Configurações → Funções**
+2. Clique na função que deseja atribuir
+3. Abra a aba de **Atribuição**
+4. Em **Chaves de API**, clique em **+ Atribuir à chave de API**
+5. Selecione a chave de API
 
-The key will inherit that role's permissions. See [Permissions](/l/pt/user-guide/permissions-access/capabilities/permissions) for details.
+A chave herdará as permissões dessa função. Veja [Permissões](/l/pt/user-guide/permissions-access/capabilities/permissions) para obter detalhes.
 
-### Manage API Keys
+### Gerenciar Chaves de API
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Regenerar**: Configurações → APIs & Webhooks → Clique na chave → **Regenerar**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Excluir**: Configurações → APIs & Webhooks → Clique na chave → **Excluir**
 
-## API Playground
+## Playground de API
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+Teste suas APIs diretamente no navegador com nosso playground integrado — disponível tanto para **REST** quanto para **GraphQL**.
 
-### Access the Playground
+### Acesse o Playground
 
-1. Go to **Settings → APIs & Webhooks**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+1. Vá para **Configurações → APIs & Webhooks**
+2. Crie uma chave de API (obrigatório)
+3. Clique em **REST API** ou **GraphQL API** para abrir o playground
 
-### What You Get
+### O que você obtém
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **Documentação interativa**: Gerada para o seu modelo de dados específico
+* **Testes ao vivo**: Execute chamadas de API reais no seu workspace
+* **Explorador de esquema**: Navegue pelos objetos, campos e relacionamentos disponíveis
+* **Construtor de solicitações**: Construa consultas com preenchimento automático
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+O playground reflete seus objetos e campos personalizados, portanto, a documentação está sempre precisa para o seu workspace.
 
-## Batch Operations
+## Operações em Lote
 
-Both REST and GraphQL support batch operations:
+Tanto REST quanto GraphQL suportam operações em lote:
 
-* **Batch size**: Up to 60 records per request
-* **Operations**: Create, update, delete multiple records
+* **Tamanho do lote**: Até 60 registros por requisição
+* **Operações**: Criar, atualizar e excluir vários registros
 
-**GraphQL-only features:**
+**Recursos exclusivos do GraphQL:**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **Upsert em lote**: Criar ou atualizar em uma única chamada
+* Use nomes de objetos no plural (por exemplo, `CreateCompanies` em vez de `CreateCompany`)
 
-## Rate Limits
+## Limites de taxa
 
-API requests are throttled to ensure platform stability:
+As solicitações de API são limitadas para garantir a estabilidade da plataforma:
 
-| Limit          | Value                |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| Limite              | Valor                    |
+| ------------------- | ------------------------ |
+| **Solicitações**    | 100 chamadas por minuto  |
+| **Tamanho do lote** | 60 registros por chamada |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  Use operações em lote para maximizar a taxa de transferência — processe até 60 registros em uma única chamada de API em vez de fazer solicitações individuais.
 </Tip>

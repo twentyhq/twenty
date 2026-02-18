@@ -1,76 +1,76 @@
 ---
-title: Error Handling & Validation
-description: Review and fix import errors directly in the UI before confirming.
+title: Fehlerbehandlung und Validierung
+description: Überprüfen und beheben Sie Importfehler direkt in der Benutzeroberfläche, bevor Sie den Import bestätigen.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Pre-Import Validation
+## Vorabvalidierung
 
-After uploading your file and mapping fields, Twenty validates your data **before** importing. This allows you to catch and fix errors without affecting your existing data.
+Nachdem Sie Ihre Datei hochgeladen und die Felder zugeordnet haben, validiert Twenty Ihre Daten, **bevor** sie importiert werden. So können Sie Fehler erkennen und beheben, ohne Ihre vorhandenen Daten zu beeinträchtigen.
 
 ## Wie es funktioniert
 
-1. **Upload** your CSV file
-2. **Map** your columns to Twenty fields
-3. **Review** the potential errors highlighted in yellow
-4. **Fix errors** directly in the UI
-5. **Confirm** the import
+1. **Hochladen** Ihrer CSV-Datei
+2. **Zuordnen** Ihrer Spalten zu Twenty-Feldern
+3. **Überprüfen** der gelb hervorgehobenen potenziellen Fehler
+4. **Fehlerbehebung** direkt in der Benutzeroberfläche
+5. **Bestätigen** des Imports
 
-<VimeoEmbed videoId="1145273857" title="Video demonstration" />
+<VimeoEmbed videoId="1145273857" title="Video-Demonstration" />
 
-## Error Display
+## Fehleranzeige
 
-Rows with issues are highlighted in **yellow**. You can:
+Zeilen mit Fehlern sind **gelb** hervorgehoben. Sie können:
 
-* **Edit the cell directly** to fix the error
-* **Remove the row** to skip it entirely
+* **Die Zelle direkt bearbeiten**, um den Fehler zu beheben
+* **Die Zeile entfernen**, um sie vollständig zu überspringen
 
-This inline editing saves time—no need to go back to your spreadsheet, fix errors, and re-upload.
+Diese Inline-Bearbeitung spart Zeit—Sie müssen nicht zu Ihrer Tabellenkalkulation zurückkehren, Fehler beheben und erneut hochladen.
 
-## Common Error Types
+## Häufige Fehlertypen
 
-### Duplicate Values
+### Doppelte Werte
 
-**Cause**: A unique field (email, domain) already exists in Twenty or appears twice in your file.
+**Ursache**: Ein eindeutiges Feld (E-Mail, Domain) existiert bereits in Twenty oder kommt in Ihrer Datei doppelt vor.
 
-**Fix**:
+**Lösung**:
 
-* Edit the duplicate value in the import UI
-* Remove one of the duplicate rows
+* Bearbeiten Sie den doppelten Wert in der Import-Benutzeroberfläche
+* Entfernen Sie eine der doppelten Zeilen
 
-See [Uniqueness Constraints](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints) for more details on how uniqueness is enforced.
+Weitere Details dazu, wie die Eindeutigkeit erzwungen wird, finden Sie unter [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints).
 
-### Invalid Format
+### Ungültiges Format
 
-**Cause**: Data doesn't match the expected format (e.g., invalid email, wrong date format).
+**Ursache**: Daten entsprechen nicht dem erwarteten Format (z. B. ungültige E-Mail, falsches Datumsformat).
 
-**Fix**: Edit the cell to use the correct format.
+**Lösung**: Bearbeiten Sie die Zelle, um das korrekte Format zu verwenden.
 
-See [Field Mapping](/l/de/user-guide/data-migration/capabilities/field-mapping) for the expected format of each field type.
+Siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping) für das erwartete Format jedes Feldtyps.
 
-### Missing Required Fields
+### Erforderliche Felder fehlen
 
-**Cause**: A required field is empty.
+**Ursache**: Ein erforderliches Feld ist leer.
 
-**Fix**: Enter a value in the required field or remove the row.
+**Lösung**: Geben Sie im erforderlichen Feld einen Wert ein oder entfernen Sie die Zeile.
 
-### Relation Not Found
+### Beziehung nicht gefunden
 
-**Cause**: The referenced record doesn't exist (e.g., a Company domain that wasn't imported).
+**Ursache**: Der referenzierte Datensatz existiert nicht (z. B. eine Unternehmensdomain, die nicht importiert wurde).
 
-**Fix**:
+**Lösung**:
 
-* Import the parent records first
-* Or correct the reference value
+* Importieren Sie zuerst die übergeordneten Datensätze
+* Oder korrigieren Sie den Referenzwert
 
-See [Import Relations](/l/de/user-guide/data-migration/capabilities/import-relations) for the correct import order and how to link records.
+Siehe [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations) für die korrekte Importreihenfolge und wie Datensätze verknüpft werden.
 
-## Tips for Fewer Errors
+## Tipps für weniger Fehler
 
-1. **Download the template** to see expected format prior to importing your file
-2. **Clean your data** in the spreadsheet first
-3. **Import files in correct order** to import relations (Companies → People → Opportunities)
-4. **Test with small batches** before full import
-5. **Check for duplicates** before uploading
-6. **Limit the size of your file to 10,000 records** per file
+1. **Laden Sie die Vorlage herunter**, um das erwartete Format vor dem Import Ihrer Datei zu sehen
+2. **Bereinigen Sie Ihre Daten** zunächst in der Tabellenkalkulation
+3. **Importieren Sie Dateien in der richtigen Reihenfolge**, um Beziehungen zu importieren (Unternehmen → Personen → Verkaufschancen)
+4. **Testen Sie mit kleinen Stapeln** vor dem vollständigen Import
+5. **Auf Duplikate prüfen** vor dem Hochladen
+6. **Begrenzen Sie die Größe Ihrer Datei auf 10.000 Datensätze** pro Datei

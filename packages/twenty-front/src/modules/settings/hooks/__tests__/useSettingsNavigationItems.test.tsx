@@ -4,15 +4,15 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
   OnboardingStatus,
   PermissionFlagType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { i18n } from '@lingui/core';
@@ -48,7 +48,6 @@ const mockBilling: Billing = {
 const initializeState = ({ set }: MutableSnapshot) => {
   set(currentUserState, mockCurrentUser);
   set(billingState, mockBilling);
-  set(labPublicFeatureFlagsState, []);
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -80,6 +79,7 @@ describe('useSettingsNavigationItems', () => {
       [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
       [PermissionFlagType.ROLES]: false,
       [PermissionFlagType.SECURITY]: false,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -101,6 +101,7 @@ describe('useSettingsNavigationItems', () => {
       [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
       [PermissionFlagType.ROLES]: true,
       [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
@@ -115,6 +116,16 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show user section items regardless of permissions', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.WORKSPACE]: false,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: false,
+      [PermissionFlagType.DATA_MODEL]: false,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
+      [PermissionFlagType.ROLES]: false,
+      [PermissionFlagType.SECURITY]: false,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
+    }));
+
     const { result } = renderHook(() => useSettingsNavigationItems(), {
       wrapper: Wrapper,
     });
@@ -122,7 +133,13 @@ describe('useSettingsNavigationItems', () => {
     const userSection = result.current.find(
       (section) => section.label === 'User',
     );
-    expect(userSection?.items.length).toBeGreaterThan(0);
-    expect(userSection?.items.every((item) => !item.isHidden)).toBe(true);
+    expect(
+      userSection?.items.filter((item) => !item.isHidden).length,
+    ).toBeGreaterThan(0);
+    expect(
+      userSection?.items
+        .filter((item) => item.path !== SettingsPath.Accounts)
+        .every((item) => !item.isHidden),
+    ).toBe(true);
   });
 });

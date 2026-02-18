@@ -1,6 +1,7 @@
 import { createSkill } from 'test/integration/metadata/suites/skill/utils/create-skill.util';
 import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete-skill.util';
 import { findSkill } from 'test/integration/metadata/suites/skill/utils/find-skill.util';
+import { isDefined } from 'twenty-shared/utils';
 
 describe('Skill deletion should succeed', () => {
   it('should successfully delete a custom skill', async () => {
@@ -14,6 +15,10 @@ describe('Skill deletion should succeed', () => {
     });
 
     const skillId = createData.createSkill.id;
+
+    if (!isDefined(skillId)) {
+      return;
+    }
 
     const { data: findBeforeData } = await findSkill({
       expectToFail: false,

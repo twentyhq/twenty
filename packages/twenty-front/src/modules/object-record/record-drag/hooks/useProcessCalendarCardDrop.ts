@@ -18,9 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useProcessCalendarCardDrop = () => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const { currentView } = useGetCurrentViewOnly();
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { userTimezone } = useUserTimezone();
 
@@ -107,6 +105,7 @@ export const useProcessCalendarCardDrop = () => {
 
         if (calendarFieldMetadata.type === FieldMetadataType.DATE) {
           await updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
             updateOneRecordInput: {
               [calendarFieldMetadata.name]: destinationPlainDate.toString(),
@@ -127,6 +126,7 @@ export const useProcessCalendarCardDrop = () => {
               );
 
           await updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
             updateOneRecordInput: {
               [calendarFieldMetadata.name]: newDate.toInstant().toString(),
@@ -137,6 +137,7 @@ export const useProcessCalendarCardDrop = () => {
       },
     [
       currentView,
+      objectMetadataItem.nameSingular,
       objectMetadataItem.fields,
       calendarDayRecordIdsSelector,
       userTimezone,

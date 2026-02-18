@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
+import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update-input.dto';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -38,6 +39,7 @@ export class WorkflowVersionWorkspaceService {
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
+  @WithLock('workflowId')
   async createDraftFromWorkflowVersion({
     workspaceId,
     workflowId,
@@ -50,7 +52,6 @@ export class WorkflowVersionWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -139,6 +140,7 @@ export class WorkflowVersionWorkspaceService {
           trigger: newWorkflowVersionTrigger,
         };
       },
+      authContext,
     );
   }
 
@@ -154,7 +156,6 @@ export class WorkflowVersionWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -289,7 +290,7 @@ export class WorkflowVersionWorkspaceService {
                   ...remappedStep.settings.input,
                   initialLoopStepIds:
                     source.settings.input.initialLoopStepIds.map(
-                      (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+                      (oldId: string) => oldToNewIdMap.get(oldId) ?? oldId,
                     ),
                 },
               };
@@ -311,6 +312,7 @@ export class WorkflowVersionWorkspaceService {
           trigger: remappedTrigger ?? null,
         };
       },
+      authContext,
     );
   }
 
@@ -325,61 +327,55 @@ export class WorkflowVersionWorkspaceService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflowVersion = await workflowVersionRepository.findOneOrFail({
-          where: {
-            id: workflowVersionId,
-          },
-        });
-
-        assertWorkflowVersionIsDraft(workflowVersion);
-
-        const triggerPosition = positions.find(
-          (position) => position.id === TRIGGER_STEP_ID,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
-        const updatedTrigger =
-          isDefined(triggerPosition) && isDefined(workflowVersion.trigger)
-            ? {
-                ...workflowVersion.trigger,
-                position: triggerPosition.position,
-              }
-            : undefined;
+      const workflowVersion = await workflowVersionRepository.findOneOrFail({
+        where: {
+          id: workflowVersionId,
+        },
+      });
 
-        const updatedSteps = workflowVersion.steps?.map((step) => {
-          const updatedStep = positions.find(
-            (position) => position.id === step.id,
-          );
+      assertWorkflowVersionIsDraft(workflowVersion);
 
-          if (updatedStep) {
-            return {
-              ...step,
-              position: updatedStep.position,
-            };
-          }
+      const triggerPosition = positions.find(
+        (position) => position.id === TRIGGER_STEP_ID,
+      );
 
-          return step;
-        });
+      const updatedTrigger =
+        isDefined(triggerPosition) && isDefined(workflowVersion.trigger)
+          ? {
+              ...workflowVersion.trigger,
+              position: triggerPosition.position,
+            }
+          : undefined;
 
-        const updatePayload = {
-          ...(!isDefined(updatedTrigger) ? {} : { trigger: updatedTrigger }),
-          ...(!isDefined(updatedSteps) ? {} : { steps: updatedSteps }),
-        };
-
-        await workflowVersionRepository.update(
-          workflowVersionId,
-          updatePayload,
+      const updatedSteps = workflowVersion.steps?.map((step) => {
+        const updatedStep = positions.find(
+          (position) => position.id === step.id,
         );
-      },
-    );
+
+        if (updatedStep) {
+          return {
+            ...step,
+            position: updatedStep.position,
+          };
+        }
+
+        return step;
+      });
+
+      const updatePayload = {
+        ...(!isDefined(updatedTrigger) ? {} : { trigger: updatedTrigger }),
+        ...(!isDefined(updatedSteps) ? {} : { steps: updatedSteps }),
+      };
+
+      await workflowVersionRepository.update(workflowVersionId, updatePayload);
+    }, authContext);
   }
 }

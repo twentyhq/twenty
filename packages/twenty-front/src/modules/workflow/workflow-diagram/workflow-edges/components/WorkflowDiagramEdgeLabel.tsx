@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { Label } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
@@ -14,9 +15,23 @@ const StyledContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const WorkflowDiagramEdgeLabel = ({ label }: { label: string }) => {
+const StyledNumber = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+type WorkflowDiagramEdgeLabelProps = {
+  label: string;
+  elseIfIndex?: number;
+};
+
+export const WorkflowDiagramEdgeLabel = ({
+  label,
+  elseIfIndex,
+}: WorkflowDiagramEdgeLabelProps) => {
   return (
     <StyledContainer>
+      {isDefined(elseIfIndex) && <StyledNumber>{elseIfIndex}</StyledNumber>}
       <Label>{label}</Label>
     </StyledContainer>
   );

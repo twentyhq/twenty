@@ -308,7 +308,7 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'attachment',
-      targetFieldName: 'task',
+      targetFieldName: 'targetTask',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

@@ -145,6 +145,32 @@ export class CalDAVClient {
     }
   }
 
+  async validateSyncCollectionSupport(): Promise<void> {
+    const account = await this.getAccount();
+
+    const calendars = await fetchCalendars({
+      account,
+      headers: this.headers,
+    });
+
+    const eventCalendar = calendars.find((calendar) =>
+      calendar.components?.includes('VEVENT'),
+    );
+
+    if (!eventCalendar) {
+      throw new Error('No calendar with event support found');
+    }
+
+    const supportsSyncCollection =
+      eventCalendar.reports?.includes('syncCollection') ?? false;
+
+    if (!supportsSyncCollection) {
+      throw new Error(
+        'CALDAV_SYNC_COLLECTION_NOT_SUPPORTED: Your CalDAV server does not support incremental sync (RFC 6578)',
+      );
+    }
+  }
+
   /**
    * Determines if an event is a full-day event by checking the raw iCal data.
    * Full-day events use VALUE=DATE parameter in DTSTART/DTEND properties.

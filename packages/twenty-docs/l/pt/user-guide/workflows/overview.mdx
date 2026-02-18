@@ -1,80 +1,80 @@
 ---
-title: Workflows
-description: Learn how to build automations in Twenty.
+title: Fluxos de trabalho
+description: Aprenda a criar automações no Twenty.
 image: /images/user-guide/workflows/workflow.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/workflows/workflow.png" alt="Workflows" />
+  <img src="/images/user-guide/workflows/workflow.png" alt="Fluxos de trabalho" />
 </Frame>
 
-## Why Workflows Matter
+## Por que Workflows Importam
 
-Twenty was built to bring maximum flexibility to its users. Rather than forcing you to adapt your business processes to rigid, pre-built features, workflows enable you to build automations that create the CRM that best supports your unique business use cases.
+Twenty foi criado para trazer flexibilidade máxima aos seus usuários. Em vez de forçá-lo a adaptar seus processos de negócios a recursos rígidos e pré-construídos, os workflows permitem que você crie automações que criem o CRM que melhor apoie seus casos de uso de negócios exclusivos.
 
-Workflows are Twenty's in-app feature for building these automations. They give you the building blocks to create exactly what your business needs, when it needs it.
+Workflows são o recurso interno de Twenty para criar essas automações. Eles oferecem os blocos de construção para criar exatamente o que seu negócio precisa, quando precisa.
 
-## What can I do with workflows?
+## O que posso fazer com workflows?
 
-We recommend building automations for two main purposes:
+Recomendamos a construção de automações para dois principais propósitos:
 
-1. **Internal automations to facilitate your team's day-to-day**: Reduce the amount of manual entries and repetitive tasks that slow down your team.
-2. **Bring data in and out of Twenty**: Connect Twenty via API calls and webhooks to your database and other tools.
+1. **Automações internas para facilitar o dia a dia da sua equipe**: Reduza a quantidade de entradas manuais e tarefas repetitivas que retardam sua equipe.
+2. **Traga dados para dentro e para fora do Twenty**: Conecte-se ao Twenty por meio de chamadas de API e webhooks para seu banco de dados e outras ferramentas.
 
-## Building Your First Workflow
+## Criando seu primeiro fluxo de trabalho
 
-### Step 1: Create a New Workflow
+### Etapa 1: Criar um novo fluxo de trabalho
 
-1. Go to **Workflows** accessible below the other objects
-2. Click **+ New Record**
-3. Give your workflow a name
+1. Vá para **Workflows**, localizado abaixo dos outros objetos
+2. Clique em **+ New Record**
+3. Dê um nome ao seu fluxo de trabalho
 
-### Step 2: Add a Trigger
+### Etapa 2: Adicionar um gatilho
 
-Every workflow starts with a trigger. Choose from:
+Todo fluxo de trabalho começa com um gatilho. Escolha entre:
 
-* **Record events**: When a record is created, updated, or deleted
-* **Schedule**: Run at specific times (daily, weekly, etc.)
-* **Manual**: Triggered by a user action
-* **Webhook**: Triggered by a webhook
+* **Eventos de registro**: Quando um registro é criado, atualizado ou excluído
+* **Agendamento**: Executar em horários específicos (diariamente, semanalmente, etc.)
+* **Manual**: Acionado por uma ação do usuário
+* **Webhook**: Acionado por um webhook
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
-### Step 3: Add Actions
+### Etapa 3: Adicionar ações
 
-After your trigger, add one or more actions:
+Após o gatilho, adicione uma ou mais ações:
 
-* **Create Record**: Add new records to any object
-* **Update Record**: Modify existing record data
-* **Delete Record**: Remove records from objects
-* **Search Records**: Find records matching criteria
-* **Upsert Record**: Create or update based on matching criteria
-* **Iterator**: Loop through arrays of records
-* **Filter**: Control which records proceed
-* **Delay**: Wait before continuing (duration or scheduled date)
-* **Send Email**: Send emails via your connected account
-* **Code**: Run custom JavaScript
-* **HTTP Request**: Call external APIs
-* **Form**: Get inputs from users within Twenty UI at the time of execution
-* **AI Agent** (Coming soon): Run intelligent AI tasks
+* **Criar registro**: Adicionar novos registros a qualquer objeto
+* **Atualizar registro**: Modificar os dados do registro existente
+* **Excluir registro**: Remover registros de objetos
+* **Pesquisar registros**: Encontrar registros que correspondam aos critérios
+* **Inserir/atualizar registro**: Criar ou atualizar com base em critérios de correspondência
+* **Iterador**: Percorrer arrays de registros
+* **Filtro**: Controlar quais registros prosseguem
+* **Atraso**: Aguardar antes de continuar (duração ou data agendada)
+* **Enviar e-mail**: Enviar e-mails via sua conta conectada
+* **Código**: Executar JavaScript personalizado
+* **Solicitação HTTP**: Chamar APIs externas
+* **Formulário**: Obter entradas de usuários na interface do Twenty no momento da execução
+* **Agente de IA** (Em breve): Executar tarefas de IA inteligentes
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Step 4: Test and Activate
+### Etapa 4: Testar e ativar
 
-1. Use the **Test** button to run your workflow with sample data
-2. Review the results to ensure it works as expected
-3. Toggle the workflow **Active** when ready
+1. Use o botão **Test** para executar seu fluxo de trabalho com dados de exemplo
+2. Revise os resultados para garantir que funcione como esperado
+3. Alterne o fluxo de trabalho para **Active** quando estiver pronto
 
-## Workflow Best Practices
+## Melhores Práticas de Workflows
 
-* **Edit step names**: Rename your workflow steps to clearly describe what each one does. This helps with maintenance and makes it easier to hand off to coworkers
-* **Leverage previous step data**: You can use fields from records returned by any previous step in your workflow
-* **Start simple**: Begin with basic workflows and add complexity over time as you become more comfortable with the system
-* **Plan before building**: Map out your workflow logic before you start building to avoid getting stuck halfway through
+* **Editar nomes de etapas**: Renomeie as etapas do seu Workflow para descrever claramente o que cada uma faz. Isso ajuda na manutenção e facilita a transferência para colegas
+* **Aproveitar dados de etapas anteriores**: Você pode usar campos de registros retornados por qualquer etapa anterior no seu Workflow
+* **Comece simples**: Inicie com Workflows básicos e adicione complexidade ao longo do tempo à medida que se sentir mais confortável com o sistema
+* **Planeje antes de construir**: Mapeie a lógica do seu Workflow antes de começar a construir para evitar ficar preso no meio do caminho
 
-## Next Steps
+## Próximos Passos
 
-* [Workflow Triggers](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [CRM Automations](/l/pt/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Automações de CRM](/l/pt/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

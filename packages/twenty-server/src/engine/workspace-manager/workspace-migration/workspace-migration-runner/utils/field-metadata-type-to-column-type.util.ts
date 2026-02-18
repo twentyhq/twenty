@@ -1,9 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
-  WorkspaceMigrationRunnerException,
-  WorkspaceMigrationRunnerExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { isTextColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-text-column-type.util';
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
@@ -35,14 +35,15 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
       return 'enum';
+    case FieldMetadataType.FILES:
     case FieldMetadataType.RAW_JSON:
       return 'jsonb';
     case FieldMetadataType.TS_VECTOR:
       return 'tsvector';
     default:
-      throw new WorkspaceMigrationRunnerException(
-        `Cannot convert ${fieldMetadataType} to column type.`,
-        WorkspaceMigrationRunnerExceptionCode.UNSUPPORTED_FIELD_METADATA_TYPE,
-      );
+      throw new WorkspaceMigrationActionExecutionException({
+        message: `Cannot convert ${fieldMetadataType} to column type.`,
+        code: WorkspaceMigrationActionExecutionExceptionCode.UNSUPPORTED_FIELD_METADATA_TYPE,
+      });
   }
 };

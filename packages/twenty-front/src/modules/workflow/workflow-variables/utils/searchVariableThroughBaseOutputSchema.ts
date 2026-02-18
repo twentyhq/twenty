@@ -2,16 +2,21 @@ import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/u
 import { isDefined } from 'twenty-shared/utils';
 import {
   CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
   type BaseOutputSchemaV2,
 } from 'twenty-shared/workflow';
 
+/**
+ * Parses a variable name to extract its components
+ * Example: "{{step1.field.value}}" -> { stepId: "step1", pathSegments: ["field"], targetFieldName: "value" }
+ */
 const parseVariableName = (rawVariableName: string) => {
   const variableWithoutBrackets = rawVariableName.replace(
     CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
   const stepId = parts.at(0);
 
   return {

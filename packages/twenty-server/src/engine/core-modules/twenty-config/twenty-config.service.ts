@@ -3,8 +3,6 @@ import { Injectable, Logger, Optional } from '@nestjs/common';
 import { isString } from 'class-validator';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { type ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -200,14 +198,7 @@ export class TwentyConfigService {
   }
 
   getLoggingConfig(): LoggerOptions {
-    switch (this.get('NODE_ENV')) {
-      case NodeEnvironment.DEVELOPMENT:
-        return ['query', 'error'];
-      case NodeEnvironment.TEST:
-        return [];
-      default:
-        return ['error'];
-    }
+    return this.get('TYPEORM_LOGGING');
   }
 
   private validateNotEnvOnly<T extends keyof ConfigVariables>(

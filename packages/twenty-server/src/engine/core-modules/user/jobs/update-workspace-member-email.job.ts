@@ -35,21 +35,15 @@ export class UpdateWorkspaceMemberEmailJob {
 
     const authContext = buildSystemAuthContext(workspace.id);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspace.id,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        await workspaceMemberRepository.update(
-          { userId },
-          { userEmail: email },
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          workspace.id,
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
-      },
-    );
+
+      await workspaceMemberRepository.update({ userId }, { userEmail: email });
+    }, authContext);
   }
 }

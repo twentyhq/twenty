@@ -1,16 +1,16 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "دليل المستخدم",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "اكتشف Twenty",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
@@ -18,32 +18,32 @@
           "label": "نموذج البيانات",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "ترحيل البيانات",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "التقويم والبريد الإلكتروني",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
@@ -51,22 +51,22 @@
           "label": "سير العمل",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "الإرشادات",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "أتمتة إدارة علاقات العملاء"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "الاتصال بأدوات أخرى"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "التكوينات المتقدمة"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "المزيد من المساعدة"
                 }
               }
             }
@@ -76,21 +76,21 @@
           "label": "الذكاء الاصطناعي",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "طرق العرض والمسارات",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
@@ -98,21 +98,21 @@
           "label": "لوحات القيادة",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "الصلاحيات والوصول",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
@@ -120,10 +120,10 @@
           "label": "الفوترة",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         },
@@ -131,10 +131,10 @@
           "label": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "الإرشادات"
             }
           }
         }
@@ -147,26 +147,26 @@
           "label": "المطورون"
         },
         "extend": {
-          "label": "Extend",
+          "label": "التوسيع",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "الاستضافة الذاتية",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "القدرات"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "المساهمة",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "القدرات",
               "groups": {
                 "frontendDevelopment": {
                   "label": "تطوير الواجهة الأمامية",
@@ -184,7 +184,7 @@
                           "label": "إدخال"
                         },
                         "navigation": {
-                          "label": "Navigation"
+                          "label": "التنقل"
                         }
                       }
                     }

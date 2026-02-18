@@ -77,8 +77,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 Stejný postup můžete aplikovat na logiku získávání dat pomocí Apollo hooks.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Špatně, způsobí překreslení i když se data nemění,
+//    protože useEffect je třeba přehodnotit
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
@@ -96,12 +96,12 @@ export const App = () => (
   <RecoilRoot>
     <PageComponent />
   </RecoilRoot>
-);
+);},{
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ Dobře, nezpůsobí překreslení, pokud se data nemění,
+//   protože useEffect je přehodnoceno v další sourozené komponentě
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
@@ -240,7 +240,7 @@ Nejčastější příklad je komponenta ikon:
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// In MyComponent
+// V komponentě MyComponent
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 

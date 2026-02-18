@@ -3,8 +3,10 @@ import {
   type FieldMetadataTypesToTestForFilterInputValidation,
 } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
+  type FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationType,
+  type FieldMetadataMultiItemSettings,
   type RelationCreationPayload,
 } from 'twenty-shared/types';
 
@@ -18,6 +20,9 @@ type FieldMetadataCreationInput = {
   options?: FieldMetadataComplexOption[];
   relationCreationPayload?: RelationCreationPayload;
   morphRelationsCreationPayload?: RelationCreationPayload[];
+  settings?:
+    | FieldMetadataMultiItemSettings
+    | FieldMetadataSettingsMapping['FILES'];
 };
 
 export const getFieldMetadataCreationInputs = (
@@ -158,6 +163,15 @@ export const getFieldMetadataCreationInputs = (
       label: 'arrayField',
       type: FieldMetadataType.ARRAY,
       objectMetadataId,
+    },
+    [FieldMetadataType.FILES]: {
+      name: 'filesField',
+      label: 'filesField',
+      type: FieldMetadataType.FILES,
+      objectMetadataId,
+      settings: {
+        maxNumberOfValues: 2,
+      },
     },
     [FieldMetadataType.UUID]: {
       name: 'uuidField',

@@ -12,16 +12,16 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
-import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
-import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
-import { prepareForOrderByRelationFieldParsing } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/prepare-for-order-by-relation-field-parsing.util';
 import {
   type GroupByDateField,
   type GroupByField,
   type GroupByRegularField,
-} from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { getGroupByOrderExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-order-expression.util';
+import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
+import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
+import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
+import { prepareForOrderByRelationFieldParsing } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/prepare-for-order-by-relation-field-parsing.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type AggregationField,
@@ -30,6 +30,8 @@ import {
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -70,9 +72,10 @@ export class GraphqlQueryOrderGroupByParser {
   }): Record<string, OrderByClause>[] {
     const parsedOrderBy: Record<string, OrderByClause>[] = [];
 
-    const fields = this.flatObjectMetadata.fieldMetadataIds
-      .map((id) => this.flatFieldMetadataMaps.byId[id])
-      .filter(isDefined);
+    const fields = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: this.flatObjectMetadata.fieldIds,
+      flatEntityMaps: this.flatFieldMetadataMaps,
+    });
 
     const availableAggregations: Record<string, AggregationField> =
       getAvailableAggregationsFromObjectFields(fields);
@@ -97,7 +100,10 @@ export class GraphqlQueryOrderGroupByParser {
 
       const fieldName = Object.keys(orderByArg)[0];
       const fieldMetadataId = this.fieldIdByName[fieldName];
-      const fieldMetadata = this.flatFieldMetadataMaps.byId[fieldMetadataId];
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadataId,
+        flatEntityMaps: this.flatFieldMetadataMaps,
+      });
 
       if (!isDefined(fieldMetadata)) {
         throw new UserInputError(`Cannot orderBy unknown field: ${fieldName}.`);
@@ -381,11 +387,11 @@ export class GraphqlQueryOrderGroupByParser {
     flatObjectMetadata: FlatObjectMetadata;
     fieldMetadata: FlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
-    const fieldIsInGroupBy = groupByFields.some(
+    const groupByField = groupByFields.find(
       (groupByField) => groupByField.fieldMetadata.id === fieldMetadata.id,
     );
 
-    if (!fieldIsInGroupBy) {
+    if (!isDefined(groupByField)) {
       throw new UserInputError(
         `Cannot order by a field that is not an aggregate nor in groupBy criteria: ${fieldMetadata.name}.`,
       );
@@ -398,8 +404,15 @@ export class GraphqlQueryOrderGroupByParser {
       return null;
     }
 
+    const columnNameWithQuotes = `"${flatObjectMetadata.nameSingular}"."${fieldMetadata.name}"`;
+
+    const expression = getGroupByOrderExpression({
+      groupByField,
+      columnNameWithQuotes,
+    });
+
     return {
-      [`"${flatObjectMetadata.nameSingular}"."${fieldMetadata.name}"${orderByCasting}`]:
+      [`${expression}${orderByCasting}`]:
         convertOrderByToFindOptionsOrder(orderByDirection),
     };
   };
@@ -493,7 +506,7 @@ export class GraphqlQueryOrderGroupByParser {
       )[0]
     }"`;
 
-    const expression = getGroupByExpression({
+    const expression = getGroupByOrderExpression({
       groupByField: associatedGroupByField,
       columnNameWithQuotes,
     });
@@ -620,7 +633,7 @@ export class GraphqlQueryOrderGroupByParser {
 
       const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
 
-      const expression = getGroupByExpression({
+      const expression = getGroupByOrderExpression({
         groupByField: associatedGroupByField,
         columnNameWithQuotes,
       });

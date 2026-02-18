@@ -1,170 +1,170 @@
 ---
-title: Workflow Troubleshooting
-description: Common workflow issues and how to resolve them.
+title: 워크플로우 문제 해결
+description: 일반적인 워크플로우 문제와 해결 방법.
 ---
 
-## Common Issues and Solutions
+## 일반적인 문제와 해결책
 
-### Workflow Not Triggering
+### 워크플로우가 작동하지 않음
 
-**Symptoms**: Your workflow doesn't run when you expect it to.
+**증상**: 워크플로우가 예상한 시점에 실행되지 않습니다.
 
-**Possible Causes**:
+**가능한 원인**:
 
-1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
-2. **Trigger conditions not met**: Verify the trigger matches your expected event
-3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
-4. **Permissions**: Check you have permission to run workflows
+1. **워크플로우가 활성화되지 않음**: 워크플로우가 "Draft"가 아니라 "Active"로 설정되어 있는지 확인하세요
+2. **트리거 조건 불충족**: 트리거가 예상한 이벤트와 일치하는지 확인하세요
+3. **필드가 모니터링되지 않음**: "Record is Updated" 트리거의 경우 특정 필드가 모니터링되고 있는지 확인하세요
+4. **권한**: 워크플로우를 실행할 권한이 있는지 확인하세요
 
-**Solutions**:
+**해결책**:
 
-* Verify workflow status in the workflow list
-* Test with the specific action you expect to trigger it
-* Review trigger configuration
-* Contact your admin about permissions
+* 워크플로우 목록에서 워크플로우 상태를 확인하세요
+* 해당 트리거를 유발할 것으로 예상되는 특정 작업으로 테스트하세요
+* 트리거 구성을 검토하세요
+* 권한과 관련해 관리자에게 문의하세요
 
-### Workflow Triggers Too Early (Empty Fields)
+### 워크플로우 트리거가 너무 일찍 발생함(빈 필드)
 
-**Symptoms**: When manually creating a record in the UI, your workflow triggers before you've had time to fill in all the fields. The workflow runs with mostly empty field values.
+**증상**: UI에서 레코드를 수동으로 생성할 때 모든 필드를 채우기 전에 워크플로우가 트리거됩니다. 대부분의 필드 값이 비어 있는 상태로 워크플로우가 실행됩니다.
 
-**Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
+**발생 원인**: Twenty는 모든 내용을 실시간으로 저장합니다 — 별도의 "edit" 및 "read" 모드는 없습니다. 레코드를 생성하면 즉시 저장되어 추가 필드를 채우기 전에 "Record is created" 이벤트가 트리거됩니다.
 
-**When "Record is created" works well**:
+**"Record is created"가 적절한 경우**:
 
-* Records created via API calls (fields are populated in a single request)
-* Records created via import
-* Automated record creation from other workflows
+* API 호출로 생성된 레코드(단일 요청으로 필드가 채워짐)
+* 가져오기로 생성된 레코드
+* 다른 워크플로우에서 자동으로 생성된 레코드
 
-**Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+**해결 방법**: UI에서 수동으로 생성된 레코드의 경우 트리거로 \*\*"Record is created or updated"\*\*를 사용하세요. 이렇게 하면:
 
-* The workflow triggers after the user has finished filling in and saving the fields
-* You get the complete data rather than empty values
+* 사용자가 필드를 모두 작성하고 저장한 후에 워크플로우가 트리거됩니다
+* 빈 값이 아닌 완전한 데이터를 얻을 수 있습니다
 
 <Tip>
-  If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+  레코드당 한 번만 워크플로우를 실행하려면, `createdAt equals updatedAt`(첫 저장)과 같은 필드를 확인하는 필터 액션을 추가하거나, 워크플로우가 이미 실행되었는지 추적하기 위해 사용자 지정 체크박스 필드를 사용하세요.
 </Tip>
 
-### Actions Failing
+### 액션 실패
 
-**Symptoms**: Workflow runs but some actions fail.
+**증상**: 워크플로우는 실행되지만 일부 액션이 실패합니다.
 
-**Possible Causes**:
+**가능한 원인**:
 
-1. **Missing data**: Required fields are empty
-2. **Invalid references**: Variables from previous steps don't exist
-3. **API errors**: External services returning errors
-4. **Permission issues**: Action requires permissions you don't have
+1. **데이터 누락**: 필수 필드가 비어 있음
+2. **잘못된 참조**: 이전 단계의 변수가 존재하지 않음
+3. **API 오류**: 외부 서비스가 오류를 반환함
+4. **권한 문제**: 액션에 필요한 권한이 없음
 
-**Solutions**:
+**해결책**:
 
-* Check the workflow run details for error messages
-* Verify all required fields have values
-* Test API connections independently
-* Review role permissions
+* 워크플로우 실행 세부 정보에서 오류 메시지를 확인하세요
+* 모든 필수 필드에 값이 있는지 확인하세요
+* API 연결을 별도로 테스트하세요
+* 역할 권한을 검토하세요
 
-### HTTP Request Errors
+### HTTP 요청 오류
 
-**Symptoms**: HTTP Request actions fail or return unexpected results.
+**증상**: HTTP 요청 액션이 실패하거나 예상치 못한 결과를 반환합니다.
 
-**Common Error Codes**:
+**일반적인 오류 코드**:
 
-* **400**: Bad request - check your request body format
-* **401**: Unauthorized - verify API key
-* **403**: Forbidden - check API permissions
-* **404**: Not found - verify endpoint URL
-* **429**: Too many requests - implement rate limiting
-* **500**: Server error - external service issue
+* **400**: 잘못된 요청 - 요청 본문 형식을 확인하세요
+* **401**: 인증되지 않음 - API 키를 확인하세요
+* **403**: 접근 거부 - API 권한을 확인하세요
+* **404**: 찾을 수 없음 - 엔드포인트 URL을 확인하세요
+* **429**: 너무 많은 요청 - 요청 속도 제한을 구현하세요
+* **500**: 서버 오류 - 외부 서비스 문제
 
-**Solutions**:
+**해결책**:
 
-* Verify API endpoint URL
-* Check authentication headers
-* Test the API call outside of Twenty first
-* Add error handling in Code actions
+* API 엔드포인트 URL을 확인하세요
+* 인증 헤더를 확인하세요
+* 먼저 Twenty 밖에서 API 호출을 테스트하세요
+* 코드 액션에 오류 처리를 추가하세요
 
-### Code Action Errors
+### 코드 액션 오류
 
-**Symptoms**: JavaScript code fails to execute.
+**증상**: JavaScript 코드가 실행되지 않습니다.
 
-**Common Issues**:
+**일반적인 문제**:
 
-1. **Syntax errors**: Typos or invalid JavaScript
-2. **Undefined variables**: Referencing variables that don't exist
-3. **Type errors**: Operations on wrong data types
-4. **Timeouts**: Code taking too long to execute
+1. **구문 오류**: 오탈자 또는 유효하지 않은 JavaScript
+2. **정의되지 않은 변수**: 존재하지 않는 변수를 참조함
+3. **타입 오류**: 잘못된 데이터 타입에 대한 연산
+4. **시간 초과**: 코드 실행에 너무 오래 걸림
 
-**Solutions**:
+**해결책**:
 
-* Use the built-in code editor validation
-* Test code logic in a JavaScript console first
-* Add console.log statements for debugging
-* Simplify complex operations
+* 내장 코드 편집기의 유효성 검사를 사용하세요
+* 먼저 JavaScript 콘솔에서 코드 로직을 테스트하세요
+* 디버깅을 위해 console.log 문을 추가하세요
+* 복잡한 연산을 단순화하세요
 
-### Email Not Sending
+### 이메일이 전송되지 않음
 
-**Symptoms**: Send Email action doesn't deliver emails.
+**증상**: 이메일 보내기 액션이 이메일을 전송하지 않습니다.
 
-**Possible Causes**:
+**가능한 원인**:
 
-1. **No email account connected**: Check Settings → Accounts
-2. **Invalid email address**: Recipient email is malformed
-3. **Sending limits**: Email provider rate limits reached
-4. **Spam filters**: Emails being blocked
+1. **이메일 계정이 연결되지 않음**: Settings → Accounts를 확인하세요
+2. **잘못된 이메일 주소**: 수신자 이메일이 형식에 맞지 않음
+3. **전송 한도**: 이메일 제공업체의 속도 제한에 도달함
+4. **스팸 필터**: 이메일이 차단됨
 
-**Solutions**:
+**해결책**:
 
-* Verify email account connection
-* Validate recipient email addresses
-* Check email provider limits
-* Review email content for spam triggers
+* 이메일 계정 연결 상태를 확인하세요
+* 수신자 이메일 주소를 검증하세요
+* 이메일 제공업체의 제한을 확인하세요
+* 스팸 트리거가 될 수 있는 이메일 콘텐츠를 검토하세요
 
-## Debugging Workflows
+## 워크플로우 디버깅
 
-### Using Workflow Runs
+### 워크플로우 실행 활용
 
-1. Go to the workflow editor
-2. Open the **Runs** panel
-3. Find the failed run
-4. Click to see step-by-step details
-5. Review error messages and output data
+1. 워크플로우 편집기로 이동하세요
+2. **Runs** 패널을 엽니다
+3. 실패한 실행을 찾으세요
+4. 클릭하여 단계별 세부 정보를 확인하세요
+5. 오류 메시지와 출력 데이터를 검토하세요
 
-### Testing Individual Steps
+### 개별 단계 테스트
 
-1. For Code actions, use the **Test** button
-2. For HTTP requests, test the endpoint separately
-3. Create test records to trigger workflows
-4. Use manual triggers for controlled testing
+1. 코드 액션의 경우 **Test** 버튼을 사용하세요
+2. HTTP 요청의 경우 엔드포인트를 별도로 테스트하세요
+3. 워크플로우를 트리거하기 위한 테스트 레코드를 생성하세요
+4. 제어된 테스트를 위해 수동 트리거를 사용하세요
 
-### Common Debugging Patterns
+### 일반적인 디버깅 패턴
 
-**Add logging**:
-Use Code actions to log intermediate values for debugging.
+**로깅 추가**:
+디버깅을 위해 코드 액션을 사용해 중간 값을 기록하세요.
 
-**Isolate steps**:
-Test each step independently to identify failures.
+**단계 격리**:
+실패를 식별하기 위해 각 단계를 개별적으로 테스트하세요.
 
-**Check data flow**:
-Verify that each step receives the expected input data.
+**데이터 흐름 확인**:
+각 단계가 예상된 입력 데이터를 수신하는지 확인하세요.
 
-## Best Practices to Avoid Issues
+## 문제를 피하기 위한 모범 사례
 
-### Before Activation
+### 활성화 이전
 
-* Test thoroughly in draft mode
-* Validate all API connections
-* Review trigger conditions carefully
-* Document expected behavior
+* 초안 모드에서 충분히 테스트하세요
+* 모든 API 연결을 검증하세요
+* 트리거 조건을 주의 깊게 검토하세요
+* 예상 동작을 문서화하세요
 
-### During Development
+### 개발 중
 
-* Use descriptive step names
-* Add comments in Code actions
-* Test with realistic data
-* Plan for edge cases
+* 알기 쉬운 단계 이름을 사용하세요
+* 코드 액션에 주석을 추가하세요
+* 현실적인 데이터로 테스트하세요
+* 엣지 케이스를 대비하세요
 
-### After Activation
+### 활성화 이후
 
-* Monitor initial runs closely
-* Set up alerts for failures
-* Review run history regularly
-* Keep workflows simple when possible
+* 초기 실행을 면밀히 모니터링하세요
+* 실패에 대한 알림을 설정하세요
+* 실행 기록을 정기적으로 검토하세요
+* 가능한 경우 워크플로우를 단순하게 유지하세요

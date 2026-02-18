@@ -8,7 +8,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const ROCKET_FLAT_FIELDS_MOCK = {
   id: getFlatFieldMetadataMock({
     id: 'c7c23914-80c4-46d2-a559-1ce20d07fb3c',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -32,7 +31,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   name: getFlatFieldMetadataMock({
     id: '9c10de36-1ade-4be1-af78-c4fc55669fbd',
-    standardId: '20202020-ba07-4ffd-ba63-009491f5749c',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.TEXT,
     name: 'name',
@@ -56,7 +54,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '7aa0896a-82dd-43c0-b38f-a316a8064d51',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -80,7 +77,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '1ca95b19-f02d-43c1-b9ae-8a9d522bb34b',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -104,7 +100,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: 'aae8d11a-27b3-4844-a68f-a2023ae12443',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -128,7 +123,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   createdBy: getFlatFieldMetadataMock({
     id: '23ebf744-88ad-4d0f-9084-a63e29c4655b',
-    standardId: '20202020-be0e-4971-865b-32ca87cbb315',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.ACTOR,
     name: 'createdBy',
@@ -152,7 +146,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   position: getFlatFieldMetadataMock({
     id: '2f1976a6-ae59-43c5-85bc-49fb8fd03e18',
-    standardId: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.POSITION,
     name: 'position',
@@ -176,7 +169,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   timelineActivities: getFlatFieldMetadataMock({
     id: '53a223cc-a445-420d-8698-1a9137039448',
-    standardId: '20202020-f1ef-4ba4-8f33-1a4577afa477',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.RELATION,
     name: 'timelineActivities',
@@ -200,7 +192,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   favorites: getFlatFieldMetadataMock({
     id: '14010360-f3c2-442e-b05f-43c30158f246',
-    standardId: '20202020-a4a7-4686-b296-1c6c3482ee21',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.RELATION,
     name: 'favorites',
@@ -224,7 +215,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   attachments: getFlatFieldMetadataMock({
     id: 'f5984acf-5128-42ac-840f-9d2888423699',
-    standardId: '20202020-8d59-46ca-b7b2-73d167712134',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.RELATION,
     name: 'attachments',
@@ -248,7 +238,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   noteTargets: getFlatFieldMetadataMock({
     id: 'c91376fb-20bd-47c7-8922-b64f7db51cfa',
-    standardId: '20202020-01fd-4f37-99dc-9427a444018a',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.RELATION,
     name: 'noteTargets',
@@ -272,7 +261,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   taskTargets: getFlatFieldMetadataMock({
     id: '80e3b587-69ec-48bc-a872-20105c3b7df4',
-    standardId: '20202020-0860-4566-b865-bff3c626c303',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.RELATION,
     name: 'taskTargets',
@@ -296,7 +284,6 @@ export const ROCKET_FLAT_FIELDS_MOCK = {
   }),
   searchVector: getFlatFieldMetadataMock({
     id: 'e7609ea3-5a88-4d64-b0c1-eefd4602361a',
-    standardId: '70e56537-18ef-4811-b1c7-0a444006b815',
     objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     type: FieldMetadataType.TS_VECTOR,
     name: 'searchVector',

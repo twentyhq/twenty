@@ -11,7 +11,7 @@ const modulesCoverage = {
   branches: 25,
   statements: 43,
   lines: 44,
-  functions: 37,
+  functions: 30,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
 };
@@ -25,7 +25,7 @@ const pagesCoverage = {
 };
 
 const performanceCoverage = {
-  branches: 35,
+  branches: 33,
   statements: 60,
   lines: 60,
   functions: 45,

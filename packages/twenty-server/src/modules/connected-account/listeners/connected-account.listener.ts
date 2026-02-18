@@ -27,36 +27,30 @@ export class ConnectedAccountListener {
     const workspaceId = payload.workspaceId;
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        for (const eventPayload of payload.events) {
-          const workspaceMemberId =
-            eventPayload.properties.before.accountOwnerId;
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      for (const eventPayload of payload.events) {
+        const workspaceMemberId = eventPayload.properties.before.accountOwnerId;
 
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
-          const workspaceMember = await workspaceMemberRepository.findOneOrFail(
-            {
-              where: { id: workspaceMemberId },
-            },
-          );
-
-          const userId = workspaceMember.userId;
-
-          const connectedAccountId = eventPayload.properties.before.id;
-
-          await this.accountsToReconnectService.removeAccountToReconnect(
-            userId,
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
-            connectedAccountId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
           );
-        }
-      },
-    );
+        const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+          where: { id: workspaceMemberId },
+        });
+
+        const userId = workspaceMember.userId;
+
+        const connectedAccountId = eventPayload.properties.before.id;
+
+        await this.accountsToReconnectService.removeAccountToReconnect(
+          userId,
+          workspaceId,
+          connectedAccountId,
+        );
+      }
+    }, authContext);
   }
 }

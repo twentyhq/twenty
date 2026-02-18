@@ -77,7 +77,6 @@ export class GetMessagesService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
@@ -113,6 +112,7 @@ export class GetMessagesService {
 
         return messageThreads;
       },
+      authContext,
     );
   }
 
@@ -126,7 +126,6 @@ export class GetMessagesService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const opportunityRepository =
           await this.globalWorkspaceOrmManager.getRepository<OpportunityWorkspaceEntity>(
@@ -161,6 +160,7 @@ export class GetMessagesService {
 
         return messageThreads;
       },
+      authContext,
     );
   }
 }

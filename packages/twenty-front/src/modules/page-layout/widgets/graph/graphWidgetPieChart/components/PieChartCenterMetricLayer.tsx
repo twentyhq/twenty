@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 type PieChartCenterMetricProps = {
   objectMetadataItemId: string;

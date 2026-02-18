@@ -66,7 +66,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
 
   updatedNodes.push(ifElseNode);
 
-  const branches = step.settings.input.branches;
+  const branches = step.settings?.input?.branches ?? [];
   const totalBranches = branches.length;
 
   branches.forEach((branch, branchIndex) => {
@@ -75,6 +75,13 @@ export const generateNodesAndEdgesForIfElseNode = ({
       totalBranches,
       branch,
     });
+
+    const elseIfIndex =
+      branchIndex > 0 &&
+      branchIndex < totalBranches - 1 &&
+      isDefined(branch.filterGroupId)
+        ? branchIndex
+        : undefined;
 
     const nextStepIds = branch.nextStepIds;
     for (const nextStepId of nextStepIds) {
@@ -99,6 +106,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
           labelOptions: {
             position: Position.Bottom,
             label,
+            elseIfIndex,
           },
           edgePathStrategy: getEdgePathStrategy({
             step,

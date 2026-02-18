@@ -1,16 +1,16 @@
 ---
-title: Menu Item
+title: メニュー項目
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="ヘッダー" />
 </Frame>
 
-A versatile menu item designed to be used in a menu or navigation list.
+メニューまたはナビゲーションリストで使用するために設計された汎用性の高いメニュー項目です。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { IconAlertCircle } from "@tabler/icons-react";
@@ -41,30 +41,30 @@ A versatile menu item designed to be used in a menu or navigation list.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props         | Type          | Description                                                                                          |
-    | ------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
-    | LeftIcon      | IconComponent | An optional left icon displayed before the text in the menu item                                     |
-    | accent        | string        | Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder` |
-    | text          | string        | The text content of the menu item                                                                    |
-    | iconButtons   | array         | An array of objects representing additional icon buttons associated with the menu item               |
-    | isTooltipOpen | boolean       | Controls the visibility of the tooltip associated with the menu item                                 |
-    | testId        | string        | The data-testid attribute for testing purposes                                                       |
-    | onClick       | function      | Callback function triggered when the menu item is clicked                                            |
-    | className     | string        | Optional name for additional styling                                                                 |
+  <Tab title="プロパティ">
+    | プロパティ         | タイプ         | 説明                                                                   |
+    | ------------- | ----------- | -------------------------------------------------------------------- |
+    | 左アイコン         | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン                                       |
+    | アクセント         | string      | メニュー項目のアクセントカラーを指定します。 オプションは `default`、`danger`、`placeholder` を含みます |
+    | テキスト          | string      | メニュー項目のテキスト内容                                                        |
+    | アイコンボタン       | 配列          | メニュー項目に関連する追加のアイコンボタンを表すオブジェクトの配列                                    |
+    | ツールチップオープンフラグ | ブール型        | メニュー項目に関連するツールチップの表示状態を制御する                                          |
+    | テストID         | string      | テスト目的のためのdata-testid属性                                               |
+    | onClick       | 関数          | メニュー項目がクリックされたときにトリガーされるコールバック関数                                     |
+    | className     | string      | 追加スタイル用のオプション名                                                       |
   </Tab>
 </Tabs>
 
-## Variants
+## バリエーション
 
-The different variants of the menu item component include the following:
+メニュー項目コンポーネントの異なるバリエーションには以下が含まれます:
 
-### Command
+### コマンド
 
-A command-style menu item within a menu to indicate keyboard shortcuts.
+キーボードショートカットを示すためのメニュー内のコマンド形式のメニュー項目。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemCommand } from "twenty-ui/display";
@@ -89,25 +89,25 @@ A command-style menu item within a menu to indicate keyboard shortcuts.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type          | Description                                                      |
-    | ------------ | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon     | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text         | string        | The text content of the menu item                                |
-    | firstHotKey  | string        | The first keyboard shortcut associated with the command          |
-    | secondHotKey | string        | The second keyboard shortcut associated with the command         |
-    | isSelected   | boolean       | Indicates whether the menu item is selected or highlighted       |
-    | onClick      | function      | Callback function triggered when the menu item is clicked        |
-    | className    | string        | Optional name for additional styling                             |
+  <Tab title="プロパティ">
+    | プロパティ        | タイプ         | 説明                               |
+    | ------------ | ----------- | -------------------------------- |
+    | 左アイコン        | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン   |
+    | テキスト         | string      | メニュー項目のテキスト内容                    |
+    | firstHotKey  | string      | コマンドに関連する最初のキーボードショートカット         |
+    | secondHotKey | string      | コマンドに関連する2番目のキーボードショートカット        |
+    | isSelected   | ブール型        | メニュー項目が選択またはハイライトされているかどうかを示します  |
+    | onClick      | 関数          | メニュー項目がクリックされたときにトリガーされるコールバック関数 |
+    | className    | string      | 追加スタイル用のオプション名                   |
   </Tab>
 </Tabs>
 
-### Draggable
+### ドラッグ可能
 
-A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+メニューまたはリスト内で項目をドラッグし、アイコンボタンを通じて追加のアクションを実行するために設計されたドラッグ可能なメニュー項目コンポーネント。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { IconAlertCircle } from "@tabler/icons-react";
@@ -134,26 +134,26 @@ A draggable menu item component designed to be used in a menu or list where item
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                                                |
-    | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item                           |
-    | accent         | string        | The accent color of the menu item. It can either be `default`, `placeholder`, and `danger` |
-    | iconButtons    | array         | An array of objects representing additional icon buttons associated with the menu item     |
-    | isTooltipOpen  | boolean       | Controls the visibility of the tooltip associated with the menu item                       |
-    | onClick        | function      | Callback function to be triggered when the link is clicked                                 |
-    | text           | string        | The text content of the menu item                                                          |
-    | isDragDisabled | boolean       | Indicates whether dragging is disabled                                                     |
-    | className      | string        | Optional name for additional styling                                                       |
+  <Tab title="プロパティ">
+    | プロパティ          | タイプ         | 説明                                                            |
+    | -------------- | ----------- | ------------------------------------------------------------- |
+    | 左アイコン          | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン                                |
+    | アクセント          | string      | メニュー項目のアクセントカラー。 `default`、`placeholder`、および `danger` のいずれかです |
+    | アイコンボタン        | 配列          | メニュー項目に関連する追加のアイコンボタンを表すオブジェクトの配列                             |
+    | ツールチップオープンフラグ  | ブール型        | メニュー項目に関連するツールチップの表示状態を制御します                                  |
+    | onClick        | 関数          | リンクがクリックされるとトリガーされるコールバック関数                                   |
+    | テキスト           | string      | メニュー項目のテキスト内容                                                 |
+    | isDragDisabled | ブール型        | ドラッグが無効かどうかを示します                                              |
+    | className      | string      | 追加スタイル用のオプション名                                                |
   </Tab>
 </Tabs>
 
-### Multi Select
+### マルチ選択
 
-Provides a way to implement multi-select functionality with an associated checkbox.
+関連するチェックボックスを使用してマルチ選択機能を実装する方法を提供します。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemMultiSelect } from "twenty-ui/display";
@@ -172,23 +172,23 @@ Provides a way to implement multi-select functionality with an associated checkb
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                      |
-    | -------------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text           | string        | The text content of the menu item                                |
-    | selected       | boolean       | Indicates whether the menu item is selected (checked)            |
-    | onSelectChange | function      | Callback function triggered when the checkbox state changes      |
-    | className      | string        | Optional name for additional styling                             |
+  <Tab title="プロパティ">
+    | プロパティ          | タイプ         | 説明                                  |
+    | -------------- | ----------- | ----------------------------------- |
+    | 左アイコン          | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン      |
+    | テキスト           | string      | メニュー項目のテキスト内容                       |
+    | selected       | ブール型        | メニュー項目が選択されているかどうかを示します             |
+    | onSelectChange | 関数          | チェックボックスの状態が変更されたときにトリガーされるコールバック関数 |
+    | className      | string      | 追加スタイル用のオプション名                      |
   </Tab>
 </Tabs>
 
-### Multi Select Avatar
+### マルチ選択アバター
 
-A multi-select menu item with an avatar, a checkbox for selection, and textual content.
+選択用のチェックボックスとテキストコンテンツを備えたアバター付きのマルチ選択メニュー項目。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
 
@@ -208,23 +208,23 @@ A multi-select menu item with an avatar, a checkbox for selection, and textual c
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type        | Description                                                          |
-    | -------------- | ----------- | -------------------------------------------------------------------- |
-    | avatar         | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-    | text           | string      | The text content of the menu item                                    |
-    | selected       | boolean     | Indicates whether the menu item is selected (checked)                |
-    | onSelectChange | function    | Callback function triggered when the checkbox state changes          |
-    | className      | string      | Optional name for additional styling                                 |
+  <Tab title="プロパティ">
+    | プロパティ          | タイプ         | 説明                                  |
+    | -------------- | ----------- | ----------------------------------- |
+    | avatar         | `ReactNode` | メニュー項目の左側に表示されるアバターまたはアイコン          |
+    | テキスト           | string      | メニュー項目のテキスト内容                       |
+    | selected       | ブール型        | メニュー項目が選択されているかどうかを示します             |
+    | onSelectChange | 関数          | チェックボックスの状態が変更されたときにトリガーされるコールバック関数 |
+    | className      | string      | 追加スタイル用のオプション名                      |
   </Tab>
 </Tabs>
 
-### Navigate
+### ナビゲート
 
-A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+オプションの左アイコン、テキストコンテンツ、および右のチューロマークを特徴とするメニュー項目。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemNavigate } from "twenty-ui/display";
@@ -246,22 +246,22 @@ A menu item featuring an optional left icon, textual content, and a right-chevro
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type          | Description                                                      |
-    | --------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text      | string        | The text content of the menu item                                |
-    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
-    | className | string        | Optional name for additional styling                             |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ         | 説明                               |
+    | --------- | ----------- | -------------------------------- |
+    | 左アイコン     | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン   |
+    | テキスト      | string      | メニュー項目のテキスト内容                    |
+    | onClick   | 関数          | メニュー項目がクリックされたときにトリガーされるコールバック関数 |
+    | className | string      | 追加スタイル用のオプション名                   |
   </Tab>
 </Tabs>
 
-### Select
+### 選択
 
-A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
+オプションの左コンテンツ（アイコンとテキスト）と選択状態のインジケーター（チェックアイコン）を備えた選択可能なメニュー項目。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemSelect } from "twenty-ui/display";
@@ -286,25 +286,25 @@ A selectable menu item, featuring optional left content (icon and text) and an i
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type          | Description                                                      |
-    | --------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text      | string        | The text content of the menu item                                |
-    | selected  | boolean       | Indicates whether the menu item is selected (checked)            |
-    | disabled  | boolean       | Indicates whether the menu item is disabled                      |
-    | hovered   | boolean       | Indicates whether the menu item is currently being hovered over  |
-    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
-    | className | string        | Optional name for additional styling                             |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ         | 説明                               |
+    | --------- | ----------- | -------------------------------- |
+    | 左アイコン     | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン   |
+    | テキスト      | string      | メニュー項目のテキスト内容                    |
+    | selected  | ブール型        | メニュー項目が選択されているかどうかを示します          |
+    | 無効        | ブール型        | メニュー項目が無効かどうかを示します               |
+    | hovered   | ブール型        | メニュー項目が現在ホバーされているかどうかを示します       |
+    | onClick   | 関数          | メニュー項目がクリックされたときにトリガーされるコールバック関数 |
+    | className | string      | 追加スタイル用のオプション名                   |
   </Tab>
 </Tabs>
 
-### Select Avatar
+### 選択アバター
 
-A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+アバター付きの選択可能なメニュー項目、オプションの左コンテンツ（アバターとテキスト）および選択状態のためのインジケーター（チェックアイコン）。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { MenuItemSelectAvatar } from "twenty-ui/display";
 
@@ -333,26 +333,26 @@ A selectable menu item with an avatar, featuring optional left content (avatar a
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type        | Description                                                          |
-    | --------- | ----------- | -------------------------------------------------------------------- |
-    | avatar    | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-    | text      | string      | The text content of the menu item                                    |
-    | selected  | boolean     | Indicates whether the menu item is selected (checked)                |
-    | disabled  | boolean     | Indicates whether the menu item is disabled                          |
-    | hovered   | boolean     | Indicates whether the menu item is currently being hovered over      |
-    | testId    | string      | The data-testid attribute for testing purposes                       |
-    | onClick   | function    | Callback function to be triggered when the menu item is clicked      |
-    | className | string      | Optional name for additional styling                                 |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ         | 説明                               |
+    | --------- | ----------- | -------------------------------- |
+    | avatar    | `ReactNode` | メニュー項目の左側に表示されるアバターまたはアイコン       |
+    | テキスト      | string      | メニュー項目のテキスト内容                    |
+    | selected  | ブール型        | メニュー項目が選択されているかどうかを示します          |
+    | 無効        | ブール型        | メニュー項目が無効かどうかを示します               |
+    | hovered   | ブール型        | メニュー項目が現在ホバーされているかどうかを示します       |
+    | テストID     | string      | テスト目的のためのdata-testid属性           |
+    | onClick   | 関数          | メニュー項目がクリックされたときにトリガーされるコールバック関数 |
+    | className | string      | 追加スタイル用のオプション名                   |
   </Tab>
 </Tabs>
 
-### Select Color
+### 色を選択
 
-A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+ユーザーがメニューから色を選択できるシナリオに使用するための、カラーパレットサンプルを備えた選択可能なメニュー項目。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { MenuItemSelectColor } from "twenty-ui/display";
 
@@ -376,25 +376,25 @@ A selectable menu item with a color sample for scenarios where you want users to
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type     | Description                                                                                                                                                                 |
-    | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | color     | string   | The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
-    | selected  | boolean  | Indicates whether the menu item is selected (checked)                                                                                                                       |
-    | disabled  | boolean  | Indicates whether the menu item is disabled                                                                                                                                 |
-    | hovered   | boolean  | Indicates whether the menu item is currently being hovered over                                                                                                             |
-    | variant   | string   | The variant of the color sample. It can either be `default` or `pipeline`                                                                                                   |
-    | onClick   | function | Callback function to be triggered when the menu item is clicked                                                                                                             |
-    | className | string   | Optional name for additional styling                                                                                                                                        |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ    | 説明                                                                                                                     |
+    | --------- | ------ | ---------------------------------------------------------------------------------------------------------------------- |
+    | カラー       | string | メニュー項目にサンプルとして表示されるテーマカラー。 選択肢には、`green`、`turquoise`、`sky`、`blue`、`purple`、`pink`、`red`、`orange`、`yellow`、`gray`があります。 |
+    | 選択済み      | ブール型   | メニュー項目が選択されている（チェックされている）かどうかを示します                                                                                     |
+    | 無効        | ブール型   | メニュー項目が無効かどうかを示します                                                                                                     |
+    | ホバー       | ブール型   | メニュー項目が現在ホバーされているかどうかを示します                                                                                             |
+    | バリアント     | string | 色サンプルのバリアント。 `default` または `pipeline` のいずれかです。                                                                         |
+    | onClick   | 関数     | メニュー項目がクリックされたときにトリガーされるコールバック関数                                                                                       |
+    | className | string | 追加スタイル用のオプション名                                                                                                         |
   </Tab>
 </Tabs>
 
-### Toggle
+### 切り替え
 
-A menu item with an associated toggle switch to allow users to enable or disable a specific feature
+特定の機能を有効または無効にするためのトグルスイッチが付いたメニュー項目
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { IconBell } from '@tabler/icons-react';
 
@@ -415,14 +415,14 @@ A menu item with an associated toggle switch to allow users to enable or disable
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                       |
-    | -------------- | ------------- | ----------------------------------------------------------------- |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item  |
-    | text           | string        | The text content of the menu item                                 |
-    | toggled        | boolean       | Indicates whether the toggle switch is in the "on" or "off" state |
-    | onToggleChange | function      | Callback function triggered when the toggle switch state changes  |
-    | toggleSize     | string        | The size of the toggle switch. It can be either \                 |
-    | className      | string        | Optional name for additional styling                              |
+  <Tab title="プロパティ">
+    | プロパティ          | タイプ         | 説明                               |
+    | -------------- | ----------- | -------------------------------- |
+    | 左アイコン          | アイコンコンポーネント | メニュー項目のテキストの前に表示されるオプションの左アイコン   |
+    | テキスト           | string      | メニュー項目のテキスト内容                    |
+    | 切り替え済み         | ブール型        | トグルスイッチが「オン」または「オフ」かを示します        |
+    | onToggleChange | 関数          | トグルスイッチの状態が変化した際にトリガーされるコールバック関数 |
+    | toggleSize     | string      | トグルスイッチのサイズです。 いずれかになります \       |
+    | className      | string      | 追加スタイル用のオプション名                   |
   </Tab>
 </Tabs>

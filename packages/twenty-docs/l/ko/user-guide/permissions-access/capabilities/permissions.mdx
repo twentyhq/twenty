@@ -1,198 +1,198 @@
 ---
-title: Permissions
-description: Control access to objects, fields, and settings with role-based permissions.
+title: 권한
+description: 역할 기반 권한을 통해 객체, 필드 및 설정에 대한 접근을 제어합니다.
 image: /images/user-guide/permissions/permissions.png
 ---
 
-Twenty's permission system allows you to control access to three main areas:
+Twenty의 권한 시스템은 세 가지 주요 영역에 대한 접근을 제어할 수 있게 해줍니다:
 
-* **Objects and Fields**: Control who can view, edit, or delete records and individual fields
-* **Settings**: Manage access to workspace configuration and administrative functions
-* **Actions**: Control general workspace actions like importing data or sending emails
+* **객체 및 필드**: 기록 및 개별 필드를 누가 볼 수 있고, 편집하거나 삭제할 수 있는지 제어
+* **설정**: 워크스페이스 구성과 관리자 기능에 대한 접근을 관리합니다
+* **작업**: 데이터 가져오기나 이메일 보내기와 같은 일반 작업 공간 작업을 제어
 
-## Create a Role
+## 역할 생성
 
-To create a new role:
+새로운 역할 생성하기:
 
-1. Go to **Settings → Roles**
-2. Under **All Roles**, click on **+ Create Role**
-3. Enter a role name
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Click **Save** to finish
+1. **설정 → 역할**로 이동
+2. **모든 역할**에서 **+ 역할 생성** 클릭
+3. 역할 이름 입력
+4. 기본 **권한** 탭에서 [권한을 구성합니다](#customize-permissions)
+5. **저장** 클릭하여 완료
 
-## Delete a Role
+## 역할 삭제
 
-To delete a role:
+역할을 삭제하려면:
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to remove
-3. Open the **Settings** tab, then click **Delete Role**
-4. Click **Confirm** in the modal
+1. **설정 → 역할**로 이동
+2. 제거하려는 역할을 클릭합니다
+3. **설정** 탭 열고 **역할 삭제** 클릭
+4. 모달에서 **확인** 클릭
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+  역할이 삭제되면, 해당 역할이 할당된 워크스페이스 구성원은 기본 역할로 자동 재할당됩니다. **Admin** 역할을 제외한 모든 역할을 삭제할 수 있습니다. **Admin** 역할에는 항상 최소 한 명의 구성원이 할당되어 있어야 합니다.
 </Note>
 
-## Assign Roles to Members
+## 구성원에게 역할 할당
 
-### View Current Assignments
+### 현재 할당 보기
 
-* Go to **Settings → Roles**
-* See all roles and how many members are assigned to each
-* View which members have which roles
+* **설정 → 역할**로 이동
+* 모든 역할과 각 역할에 지정된 멤버 수 확인
+* 어떤 회원이 어떤 역할을 가지고 있는지 보기
 
-### Assign a Role to a Member
+### 구성원에게 역할 할당
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Click **+ Assign to member**
-5. Select the workspace member from the list
-6. Confirm the assignment
+1. **설정 → 역할**로 이동
+2. 할당할 역할 클릭
+3. **배정** 탭 열기
+4. **+ 멤버에게 할당** 클릭
+5. 목록에서 워크스페이스 구성원을 선택합니다
+6. 할당 확인
 
-### Set Default Role
+### 기본 역할 설정
 
-1. Go to **Settings → Roles**
-2. In the **Options** section, find **Default Role**
-3. Select which role new members should automatically receive
-4. New workspace members will be assigned this role when they join
+1. **설정 → 역할**로 이동
+2. **옵션** 섹션에서 **기본 역할**을 찾습니다
+3. 새로운 멤버가 자동으로 받을 역할 선택
+4. 새 작업 공간 회원이 가입 시 이 역할이 할당됩니다.
 
 <Note>
-  You can only assign roles to existing workspace members. To invite new members, use [Member Management](/l/ko/user-guide/settings/capabilities/member-management).
+  기존 워크스페이스 구성원에게만 역할을 할당할 수 있습니다. To invite new members, use [Member Management](/l/ko/user-guide/settings/capabilities/member-management).
 </Note>
 
-## Customize Permissions
+## 권한 사용자 정의
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+권한은 각 역할이 작업 공간 내에서 접근하거나 수정할 수 있는 항목을 결정합니다. 여기에는 작업 공간 객체 기록, 설정 및 작업이 포함됩니다.
 
-### Object Permissions
+### 객체 권한
 
-The **Objects** section controls what this role can do with records across your workspace.
+**객체** 섹션에서는 이 역할이 워크스페이스 전반의 레코드에 대해 수행할 수 있는 작업을 제어합니다.
 
-#### Set Default Permissions (All Objects)
+#### 기본 권한 설정(모든 객체)
 
-First, configure the baseline permissions that apply to **all objects** by default:
+먼저, 기본적으로 **모든 객체**에 적용되는 기준 권한을 구성합니다:
 
-| Permission                         | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| **See Records on All Objects**     | View records in lists and detail pages |
-| **Edit Records on All Objects**    | Modify existing records                |
-| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
-| **Destroy Records on All Objects** | Permanently delete records             |
+| 권한               | 설명                    |
+| ---------------- | --------------------- |
+| **모든 객체의 기록 보기** | 목록 및 상세 페이지에서 레코드를 조회 |
+| **모든 객체의 기록 편집** | 기존 레코드를 수정            |
+| **모든 객체의 기록 삭제** | 레코드를 소프트 삭제(복원 가능)    |
+| **모든 객체의 기록 파기** | 레코드를 영구 삭제            |
 
-Select or unselect based on what should be the default behavior for this role.
+이 역할의 기본 동작이 무엇이어야 하는지에 따라 선택 또는 선택 해제합니다.
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **예시 — 인턴 역할**: 인턴은 기본적으로 모든 객체를 볼 수 있지만 수정할 수는 없어야 합니다. "모든 객체에서 레코드 보기"를 활성화하고, "모든 객체에서 레코드 편집"은 선택 해제 상태로 둡니다.
 </Note>
 
-#### Add Object-Level Exceptions
+#### 객체 수준 예외 추가
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+기본값을 설정한 후, **객체 수준** 하위 섹션을 사용해 특정 객체에 대해 기본값을 재정의하는 규칙을 추가합니다.
 
-Click **+ Add rule** and select an object to create an exception.
+**+ Add rule**를 클릭하고 예외를 만들 객체를 선택합니다.
 
-**Example rules for an Intern role:**
+**인턴 역할을 위한 예시 규칙:**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| 규칙                            | 효과                                    |
+| ----------------------------- | ------------------------------------- |
+| Opportunities → "레코드 보기" 비활성화 | 인턴은 Opportunities 객체를 전혀 볼 수 없습니다     |
+| People → "레코드 수정" 활성화         | 인턴은 People 레코드를 수정할 수 있습니다(다른 객체는 불가) |
 
-### Field Permissions
+### 필드 권한
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+각 객체 수준 규칙 내에서 더 나아가 특정 필드에 대한 접근을 제어하기 위해 **필드 수준 권한**을 구성할 수 있습니다.
 
-| Permission     | Description                |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| 권한        | 설명            |
+| --------- | ------------- |
+| **필드 보기** | 필드 값을 조회      |
+| **필드 수정** | 필드 값을 수정      |
+| **접근 불가** | 필드가 완전히 숨겨집니다 |
 
-**Example — Restrict sensitive fields:**
+**예시 — 민감한 필드 제한:**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+People 수정 권한이 있는 인턴 역할의 경우, 특정 필드를 제한할 수 있습니다:
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* People → Email → **필드 보기**만 허용(수정 불가)
+* People → Address → **접근 불가**(완전히 숨김)
 
-This allows the intern to edit most People fields while protecting sensitive information.
+이렇게 하면 인턴이 People의 대부분 필드를 수정할 수 있으면서도 민감한 정보를 보호할 수 있습니다.
 
-### How Permission Inheritance Works
+### 권한 상속 방식
 
-Permissions cascade from general to specific:
+권한은 일반에서 구체적으로 계단식으로 적용됩니다:
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **All Objects** → 모든 객체에 대한 기준을 설정합니다
+2. **Object-Level rules** → 특정 객체에 대해 기준을 재정의합니다
+3. **Field-Level rules** → 특정 필드에 대해 객체 설정을 재정의합니다
 
-More specific settings always take precedence.
+보다 구체적인 설정이 항상 우선합니다.
 
-### Managing Permission Overrides
+### 권한 무시 관리
 
-To override inherited permissions:
+상속된 권한을 재정의하려면:
 
-1. Click **X** to remove the inherited rule
-2. Select the specific permissions you want
-3. Click the orange **Undo** icon (circular arrow) to revert changes
+1. 상속된 규칙 제거하려면 **X** 클릭
+2. 원하는 구체적인 권한을 선택합니다
+3. 변경 사항을 되돌리려면 주황색 **실행 취소** 아이콘(원형 화살표)을 클릭
 
-When done, click **Finish**, then **Save** once redirected to the role page.
+완료되면 **마침**, 역할 페이지로 리디렉션되면 **저장** 클릭.
 
-### Workspace Settings Permissions
+### 작업 공간 설정 권한
 
-Control access to workspace settings in two ways:
+워크스페이스 설정에 대한 접근은 두 가지 방식으로 제어할 수 있습니다:
 
-* Toggle **Settings All Access** to grant full access
-* Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+* **Settings All Access**를 전환하여 전체 접근을 허용합니다
+* 또는 특정 권한을 개별적으로 활성화합니다(예: API 키 생성, 워크스페이스 환경설정, 역할 할당, 데이터 모델 구성, 보안 설정, 워크플로 관리)
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **현재 제한 사항**: 워크플로를 수동으로 트리거하려면 현재 워크플로 관리 권한이 필요합니다. 이 동작은 향후 릴리스에서 변경될 수 있습니다.
 </Note>
 
-### Workspace Action Permissions
+### 워크스페이스 작업 권한
 
-Control access to general workspace actions:
+일반적인 워크스페이스 작업에 대한 접근을 제어합니다:
 
-* Toggle **Application All Access** to grant full permissions
-* Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
+* **Application All Access**를 전환하여 전체 권한을 부여합니다
+* 또는 **Send Email**, **Import CSV**, **Export CSV**와 같은 개별 작업을 활성화합니다
 
-## Assigning Roles to API Keys and AI Agents
+## API 키 및 AI 에이전트에 역할 할당
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+워크스페이스 구성원뿐 아니라 **API 키** 및 **AI 에이전트**에도 역할을 할당할 수 있습니다. 이는 자동화 프로세스와 통합을 포함하여 워크스페이스에서 "누가" 무엇을 할 수 있는지를 정확히 제어하려는 팀에 특히 유용합니다.
 
-### Why Assign Roles to API Keys and AI Agents?
+### API 키와 AI 에이전트에 역할을 할당하는 이유
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **보안**: 자동화 프로세스가 접근하거나 수정할 수 있는 범위를 제한
+* **규정 준수**: 통합이 필요한 데이터에만 접근하도록 보장
+* **제어**: 잘못 구성된 자동화로 인한 우발적 데이터 변경 방지
+* **감사 추적성**: 어떤 통합 또는 에이전트가 어떤 작업을 수행했는지 추적
 
-### Assign a Role to an API Key
+### API 키에 역할 할당
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
-6. Confirm the assignment
+1. **설정 → 역할**로 이동
+2. 할당할 역할 클릭
+3. **배정** 탭 열기
+4. **API 키**에서 **+ Assign to API key**를 클릭합니다
+5. 목록에서 API 키를 선택합니다
+6. 할당 확인
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+이제 해당 API 키는 그 역할에 정의된 모든 권한을 상속받습니다. 이 키로 수행되는 모든 API 호출은 그에 따라 제한됩니다.
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  역할이 할당되지 않은 API 키는 기본 권한을 사용합니다. 보안을 강화하려면 운영 환경의 API 키에 항상 특정 역할을 할당하세요.
 </Note>
 
-### Assign a Role to an AI Agent
+### AI 에이전트에 역할 할당
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
-6. Confirm the assignment
+1. **설정 → 역할**로 이동
+2. 할당할 역할 클릭
+3. **배정** 탭 열기
+4. **AI 에이전트**에서 **+ Assign to AI agent**를 클릭합니다
+5. 목록에서 AI 에이전트를 선택합니다
+6. 할당 확인
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+AI 에이전트는 할당된 역할에서 허용한 데이터와 작업에만 접근하고 수행할 수 있습니다.
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  워크플로 내에서 실행되는 AI 에이전트의 경우, 워크플로에 더 넓은 권한이 있더라도 에이전트가 의도된 범위를 벗어난 데이터에 접근하거나 수정할 수 없도록 보장합니다.
 </Note>

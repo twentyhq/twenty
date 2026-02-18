@@ -4,7 +4,10 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export type GetMessageListsArgs = {
-  messageChannel: Pick<MessageChannelWorkspaceEntity, 'syncCursor' | 'id'>;
+  messageChannel: Pick<
+    MessageChannelWorkspaceEntity,
+    'syncCursor' | 'id' | 'messageFolderImportPolicy'
+  >;
   connectedAccount: Pick<
     ConnectedAccountWorkspaceEntity,
     | 'provider'

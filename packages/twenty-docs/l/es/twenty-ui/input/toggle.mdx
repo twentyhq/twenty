@@ -1,14 +1,14 @@
 ---
-title: Toggle
+title: Cambiar
 image: /images/user-guide/table-views/table.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+  <img src="/images/user-guide/table-views/table.png" alt="Encabezado" />
 </Frame>
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { Toggle } from "twenty-ui/input";
 
@@ -16,7 +16,7 @@ image: /images/user-guide/table-views/table.png
       return (
         <Toggle
         value = {true}
-        onChange = {()=>console.log('On Change event')}
+        onChange = {()=>console.log('Evento onChange')}
         color="green"
         toggleSize = "medium"
         />
@@ -25,12 +25,12 @@ image: /images/user-guide/table-views/table.png
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props      | Type     | Description                                                                                 | Default      |
-    | ---------- | -------- | ------------------------------------------------------------------------------------------- | ------------ |
-    | value      | boolean  | The current state of the toggle                                                             | `false`      |
-    | onChange   | function | Callback function triggered when the toggle state changes                                   |              |
-    | color      | string   | Color of the toggle when it\                                                                | s blue color |
-    | toggleSize | string   | Size of the toggle, affecting both height and weight. Has two options: `small` and `medium` | medium       |
+  <Tab title="&#x22;Props&#x22;">
+    | "Props"         | Tipo     | Descripción                                                                                                            | Predeterminado   |
+    | --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------- |
+    | valor           | booleano | El estado actual del interruptor de palanca                                                                            | `falso`          |
+    | "onChange"      | función  | Función de retorno que se activa cuando el estado del interruptor de palanca cambia                                    |                  |
+    | color           | cadena   | Color del interruptor de palanca cuando                                                                                | es de color azul |
+    | tamañoConmutado | cadena   | Tamaño del interruptor de palanca, que afecta tanto la altura como el ancho. Tiene dos opciones: `pequeño` y `mediano` | mediano          |
   </Tab>
 </Tabs>

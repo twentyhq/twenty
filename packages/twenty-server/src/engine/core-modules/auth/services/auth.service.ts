@@ -68,7 +68,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
@@ -397,20 +397,20 @@ export class AuthService {
     workspaceId,
     impersonatorUserWorkspaceId,
     impersonatedUserWorkspaceId,
-    impersonatorUserId,
+    _impersonatorUserId,
     impersonatedUserId,
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
     impersonatedUserWorkspaceId: string;
-    impersonatorUserId: string;
+    _impersonatorUserId: string;
     impersonatedUserId: string;
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
     const analytics = this.auditService.createContext({
       workspaceId,
-      userId: impersonatorUserId,
+      userWorkspaceId: impersonatorUserWorkspaceId,
     });
 
     analytics.insertWorkspaceEvent('Monitoring', {

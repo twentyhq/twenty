@@ -1,6 +1,6 @@
 import { RGBA } from '@ui/theme/constants/Rgba';
 
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
+/* eslint-disable twenty/no-hardcoded-colors */
 export const BOX_SHADOW_DARK = {
   color: RGBA('#000000', 0.6),
   light: `0px 2px 4px 0px ${RGBA(

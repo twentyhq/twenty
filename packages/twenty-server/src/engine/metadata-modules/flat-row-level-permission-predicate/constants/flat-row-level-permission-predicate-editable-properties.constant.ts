@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES = [
   'fieldMetadataId',
@@ -11,4 +11,4 @@ export const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES = [
   'subFieldName',
   'workspaceMemberFieldMetadataId',
   'workspaceMemberSubFieldName',
-] as const satisfies (keyof FlatRowLevelPermissionPredicate)[];
+] as const satisfies MetadataEntityPropertyName<'rowLevelPermissionPredicate'>[];

@@ -1,198 +1,198 @@
 ---
 title: Permissions
-description: Control access to objects, fields, and settings with role-based permissions.
+description: Contrôlez l'accès aux objets, aux champs et aux paramètres avec des autorisations basées sur les rôles.
 image: /images/user-guide/permissions/permissions.png
 ---
 
-Twenty's permission system allows you to control access to three main areas:
+Le système d'autorisations de Twenty vous permet de contrôler l'accès à trois domaines principaux :
 
-* **Objects and Fields**: Control who can view, edit, or delete records and individual fields
-* **Settings**: Manage access to workspace configuration and administrative functions
-* **Actions**: Control general workspace actions like importing data or sending emails
+* **Objets et champs** : Contrôlez qui peut afficher, modifier ou supprimer des enregistrements et des champs individuels
+* **Paramètres** : Gérez l'accès à la configuration de l'espace de travail et aux fonctions administratives
+* **Actions** : Contrôlez les actions générales de l'espace de travail comme l'importation de données ou l'envoi d'e-mails
 
-## Create a Role
+## Créer un Rôle
 
-To create a new role:
+Pour créer un nouveau rôle :
 
-1. Go to **Settings → Roles**
-2. Under **All Roles**, click on **+ Create Role**
-3. Enter a role name
-4. In the default **Permissions** tab, [configure permissions](#customize-permissions)
-5. Click **Save** to finish
+1. Allez dans **Paramètres → Rôles**
+2. Sous **Tous les rôles**, cliquez sur **+ Créer un rôle**
+3. Entrez un nom de rôle
+4. Dans l'onglet **Autorisations** par défaut, [configurez les autorisations](#customize-permissions)
+5. Cliquez sur **Enregistrer** pour terminer
 
-## Delete a Role
+## Supprimer un Rôle
 
-To delete a role:
+Pour supprimer un rôle :
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to remove
-3. Open the **Settings** tab, then click **Delete Role**
-4. Click **Confirm** in the modal
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez supprimer
+3. Ouvrez l'onglet **Paramètres**, puis cliquez sur **Supprimer le rôle**
+4. Cliquez sur **Confirmer** dans la fenêtre modale
 
 <Note>
-  If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+  Si un rôle est supprimé, tout membre de l'espace de travail qui lui est attribué sera automatiquement réattribué au rôle par défaut. Tous sauf le rôle **Admin** peuvent être supprimés. Il doit toujours y avoir au moins un membre assigné au rôle **Admin**.
 </Note>
 
-## Assign Roles to Members
+## Attribuer des Rôles aux Membres
 
-### View Current Assignments
+### Voir les Attributions Actuelles
 
-* Go to **Settings → Roles**
-* See all roles and how many members are assigned to each
-* View which members have which roles
+* Allez dans **Paramètres → Rôles**
+* Voir tous les rôles et combien de membres sont assignés à chacun
+* Voir quels membres ont quels rôles
 
-### Assign a Role to a Member
+### Attribuer un Rôle à un Membre
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Click **+ Assign to member**
-5. Select the workspace member from the list
-6. Confirm the assignment
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Cliquez sur **+ Attribuer à un membre**
+5. Sélectionnez le membre de l'espace de travail dans la liste
+6. Confirmez l'attribution
 
-### Set Default Role
+### Définir le Rôle par Défaut
 
-1. Go to **Settings → Roles**
-2. In the **Options** section, find **Default Role**
-3. Select which role new members should automatically receive
-4. New workspace members will be assigned this role when they join
+1. Allez dans **Paramètres → Rôles**
+2. Dans la section **Options**, trouvez **Rôle par Défaut**
+3. Sélectionnez le rôle que les nouveaux membres devraient automatiquement recevoir
+4. Les nouveaux membres de l'espace de travail seront assignés à ce rôle lorsqu'ils rejoindront
 
 <Note>
-  You can only assign roles to existing workspace members. To invite new members, use [Member Management](/l/fr/user-guide/settings/capabilities/member-management).
+  Vous ne pouvez attribuer des rôles qu'aux membres existants de l'espace de travail. Pour inviter de nouveaux membres, utilisez [Gestion des Membres](/l/fr/user-guide/settings/capabilities/member-management).
 </Note>
 
-## Customize Permissions
+## Personnaliser les Autorisations
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+Les autorisations déterminent ce que chaque rôle peut accéder ou modifier dans votre espace de travail, y compris les enregistrements d'objets de l'espace de travail, les paramètres et les actions.
 
-### Object Permissions
+### Autorisations des objets
 
-The **Objects** section controls what this role can do with records across your workspace.
+La section **Objets** contrôle ce que ce rôle peut faire avec les enregistrements dans l'ensemble de votre espace de travail.
 
-#### Set Default Permissions (All Objects)
+#### Définir les autorisations par défaut (tous les objets)
 
-First, configure the baseline permissions that apply to **all objects** by default:
+Commencez par configurer les autorisations de base qui s'appliquent par défaut à **tous les objets** :
 
-| Permission                         | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| **See Records on All Objects**     | View records in lists and detail pages |
-| **Edit Records on All Objects**    | Modify existing records                |
-| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
-| **Destroy Records on All Objects** | Permanently delete records             |
+| Autorisation                                          | Description                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
+| **Voir les enregistrements sur tous les objets**      | Afficher les enregistrements dans les listes et les pages de détail |
+| **Modifier les enregistrements sur tous les objets**  | Modifier les enregistrements existants                              |
+| **Supprimer les enregistrements sur tous les objets** | Supprimer logiquement les enregistrements (peuvent être restaurés)  |
+| **Détruire les enregistrements sur tous les objets**  | Supprimer définitivement les enregistrements                        |
 
-Select or unselect based on what should be the default behavior for this role.
+Sélectionnez ou désélectionnez selon le comportement par défaut souhaité pour ce rôle.
 
 <Note>
-  **Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **Exemple — rôle de stagiaire** : Un stagiaire doit pouvoir voir tous les objets mais ne pas les modifier par défaut. Activez "Voir les enregistrements sur tous les objets" mais laissez "Modifier les enregistrements sur tous les objets" décoché.
 </Note>
 
-#### Add Object-Level Exceptions
+#### Ajouter des exceptions au niveau de l'objet
 
-After setting defaults, use the **Object-Level** sub-section to add rules that override the defaults for specific objects.
+Après avoir défini les valeurs par défaut, utilisez la sous-section **Niveau objet** pour ajouter des règles qui remplacent les valeurs par défaut pour des objets spécifiques.
 
-Click **+ Add rule** and select an object to create an exception.
+Cliquez sur **+ Ajouter une règle** et sélectionnez un objet pour créer une exception.
 
-**Example rules for an Intern role:**
+**Exemples de règles pour un rôle de stagiaire :**
 
-| Rule                                  | Effect                                                 |
-| ------------------------------------- | ------------------------------------------------------ |
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
-| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
+| Règle                                                | Effet                                                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Opportunités → désactiver "Voir les enregistrements" | Le stagiaire ne peut pas du tout voir l'objet Opportunités                            |
+| Personnes → activer "Modifier les enregistrements"   | Le stagiaire peut modifier les enregistrements Personnes (mais pas les autres objets) |
 
-### Field Permissions
+### Autorisations des champs
 
-Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
+Dans chaque règle au niveau de l'objet, vous pouvez aller plus loin et configurer des **autorisations au niveau du champ** pour contrôler l'accès à des champs spécifiques.
 
-| Permission     | Description                |
-| -------------- | -------------------------- |
-| **See Field**  | View the field value       |
-| **Edit Field** | Modify the field value     |
-| **No Access**  | Field is completely hidden |
+| Autorisation          | Description                      |
+| --------------------- | -------------------------------- |
+| **Voir le champ**     | Afficher la valeur du champ      |
+| **Modifier le champ** | Modifier la valeur du champ      |
+| **Aucun accès**       | Le champ est complètement masqué |
 
-**Example — Restrict sensitive fields:**
+**Exemple — Restreindre les champs sensibles :**
 
-For the Intern role with People edit access, you might want to restrict certain fields:
+Pour le rôle de stagiaire avec l'accès de modification sur Personnes, il peut être souhaitable de restreindre certains champs :
 
-* People → Email → **See Field** only (cannot edit)
-* People → Address → **No Access** (completely hidden)
+* Personnes → E-mail → **Voir le champ** uniquement (impossible de modifier)
+* Personnes → Adresse → **Aucun accès** (complètement masquée)
 
-This allows the intern to edit most People fields while protecting sensitive information.
+Cela permet au stagiaire de modifier la plupart des champs de Personnes tout en protégeant les informations sensibles.
 
-### How Permission Inheritance Works
+### Fonctionnement de l'héritage des autorisations
 
-Permissions cascade from general to specific:
+Les autorisations se propagent du général vers le spécifique :
 
-1. **All Objects** → sets the baseline for all objects
-2. **Object-Level rules** → override the baseline for specific objects
-3. **Field-Level rules** → override the object setting for specific fields
+1. **Tous les objets** → définit la base pour tous les objets
+2. **Règles au niveau de l'objet** → remplacent la base pour des objets spécifiques
+3. **Règles au niveau du champ** → remplacent le paramètre de l'objet pour des champs spécifiques
 
-More specific settings always take precedence.
+Les paramètres plus spécifiques prévalent toujours.
 
-### Managing Permission Overrides
+### Gestion des Exceptions d'Autorisations
 
-To override inherited permissions:
+Pour remplacer les autorisations héritées :
 
-1. Click **X** to remove the inherited rule
-2. Select the specific permissions you want
-3. Click the orange **Undo** icon (circular arrow) to revert changes
+1. Cliquez sur **X** pour supprimer la règle héritée
+2. Sélectionnez les autorisations spécifiques que vous souhaitez
+3. Cliquez sur l'icône orange **Annuler** (flèche circulaire) pour revenir aux modifications
 
-When done, click **Finish**, then **Save** once redirected to the role page.
+Lorsque terminé, cliquez sur **Terminer**, puis **Enregistrer** une fois redirigé vers la page de rôle.
 
-### Workspace Settings Permissions
+### Autorisations des Paramètres de l'Espace de Travail
 
-Control access to workspace settings in two ways:
+Contrôlez l'accès aux paramètres de l'espace de travail de deux manières :
 
-* Toggle **Settings All Access** to grant full access
-* Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
+* Activez **Accès Complet aux Paramètres** pour accorder un accès total
+* Ou activez des autorisations spécifiques (par exemple, génération de clé API, préférences de l'espace de travail, attribution de rôles, configuration du modèle de données, paramètres de sécurité et gestion des workflows)
 
 <Note>
-  **Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **Limitation actuelle** : L'accès à la gestion des workflows est actuellement requis pour déclencher manuellement des workflows. Ce comportement pourrait changer dans de prochaines versions.
 </Note>
 
-### Workspace Action Permissions
+### Autorisations des Actions de l'Espace de Travail
 
-Control access to general workspace actions:
+Contrôlez l'accès aux actions générales de l'espace de travail :
 
-* Toggle **Application All Access** to grant full permissions
-* Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
+* Activez **Accès Complet à l'Application** pour accorder toutes les autorisations
+* Ou activez des actions individuelles telles que **Envoyer un Email**, **Importer CSV** et **Exporter CSV**
 
-## Assigning Roles to API Keys and AI Agents
+## Attribution de rôles aux clés API et aux agents IA
 
-Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
+Au-delà des membres de l'espace de travail, des rôles peuvent également être attribués aux **clés API** et aux **agents IA**. C'est particulièrement utile pour les équipes qui veulent contrôler précisément "qui" peut faire quoi dans leur espace de travail — y compris les processus automatisés et les intégrations.
 
-### Why Assign Roles to API Keys and AI Agents?
+### Pourquoi attribuer des rôles aux clés API et aux agents IA ?
 
-* **Security**: Limit what automated processes can access or modify
-* **Compliance**: Ensure integrations only touch the data they need
-* **Control**: Prevent accidental data changes from misconfigured automations
-* **Auditability**: Track which actions were performed by which integration or agent
+* **Sécurité** : Limitez ce à quoi les processus automatisés peuvent accéder ou ce qu'ils peuvent modifier
+* **Conformité** : Assurez-vous que les intégrations n'accèdent qu'aux données dont elles ont besoin
+* **Contrôle** : Empêchez les modifications accidentelles de données dues à des automatisations mal configurées
+* **Auditabilité** : Suivez quelles actions ont été effectuées par quelle intégration ou quel agent
 
-### Assign a Role to an API Key
+### Attribuer un rôle à une clé API
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key from the list
-6. Confirm the assignment
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Sous **Clés API**, cliquez sur **+ Attribuer à une clé API**
+5. Sélectionnez la clé API dans la liste
+6. Confirmez l'attribution
 
-The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
+La clé API héritera désormais de toutes les autorisations définies par ce rôle. Toute requête API effectuée avec cette clé sera restreinte en conséquence.
 
 <Note>
-  API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  Les clés API sans rôle attribué utilisent les autorisations par défaut. Pour une sécurité renforcée, attribuez toujours un rôle spécifique aux clés API de production.
 </Note>
 
-### Assign a Role to an AI Agent
+### Attribuer un rôle à un agent IA
 
-1. Go to **Settings → Roles**
-2. Click on the role you want to assign
-3. Open the **Assignment** tab
-4. Under **AI Agents**, click **+ Assign to AI agent**
-5. Select the AI agent from the list
-6. Confirm the assignment
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Sous **Agents IA**, cliquez sur **+ Attribuer à un agent IA**
+5. Sélectionnez l'agent IA dans la liste
+6. Confirmez l'attribution
 
-The AI agent will only be able to access data and perform actions allowed by its assigned role.
+L'agent IA ne pourra accéder aux données et effectuer des actions que celles autorisées par le rôle qui lui est attribué.
 
 <Note>
-  For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  Pour les agents IA exécutés au sein de workflows, cela garantit que l'agent ne peut ni accéder ni modifier des données en dehors de sa portée prévue — même si le workflow dispose d'autorisations plus larges.
 </Note>

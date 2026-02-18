@@ -1,130 +1,130 @@
 ---
-title: Display Related Record Data
-description: Show data from related records (e.g., Company info on Opportunities) using workflows.
+title: Mostrar datos de registros relacionados
+description: Muestra datos de registros relacionados (p. ej., información de la empresa en Oportunidades) usando flujos de trabajo.
 ---
 
-Display data from related records directly on your records — for example, show the employee count from a Company on its Opportunities. This workflow workaround is useful until nested fields are natively available.
+Muestra datos de registros relacionados directamente en tus registros — por ejemplo, muestra el recuento de empleados de una Empresa en sus Oportunidades. Esta solución provisional con flujos de trabajo es útil hasta que los campos anidados estén disponibles de forma nativa.
 
-## Common Use Cases
+## Casos de Uso Comunes
 
-| Source      | Destination | Fields to Copy                  |
-| ----------- | ----------- | ------------------------------- |
-| Company     | Opportunity | Industry, Company Size, ARR     |
-| Person      | Opportunity | Email, Phone, Title             |
-| Opportunity | Company     | Last Deal Amount, Last Won Date |
+| Fuente      | Destino     | Campos a copiar                                                         |
+| ----------- | ----------- | ----------------------------------------------------------------------- |
+| Empresa     | Oportunidad | Industria, Tamaño de la empresa, ARR                                    |
+| Persona     | Oportunidad | Correo electrónico, Teléfono, Cargo                                     |
+| Oportunidad | Empresa     | Importe de la última oportunidad, Fecha de la última oportunidad ganada |
 
-## Basic Field Copy
+## Copia básica de campos
 
-### Example: Copy Contact Email to Opportunity
+### Ejemplo: Copiar el correo electrónico del contacto a la oportunidad
 
-**Goal**: When setting a Point of Contact on an opportunity, copy their email to the opportunity for easy access.
+**Objetivo**: Al establecer un Punto de contacto en una oportunidad, copia su correo electrónico a la oportunidad para un acceso sencillo.
 
-### Prerequisite
+### Requisito previo
 
-Create the destination fields in **Settings → Data Model → Opportunities** before building the workflow:
+Crea los campos de destino en **Configuración → Modelo de datos → Oportunidades** antes de crear el flujo de trabajo:
 
-* Contact Email (type: Email)
-* Contact Phone (type: Phone)
+* Correo electrónico del contacto (tipo: Email)
+* Teléfono del contacto (tipo: Phone)
 
-### Setup
+### Configuración
 
-1. **Trigger**: Record is Updated (Opportunities, Point of Contact field)
+1. **Desencadenante**: Se actualiza el registro (Oportunidades, campo Punto de contacto)
 
-2. **Filter**: Check that Point of Contact is not empty
+2. **Filtro**: Comprueba que el Punto de contacto no esté vacío
 
-3. **Search Records**: Find the linked person
-   * Object: People
-   * Filter: ID equals `{{trigger.object.pointOfContact.id}}`
+3. **Buscar registros**: Encuentra a la persona vinculada
+   * Objeto: Personas
+   * Filtro: ID igual a `{{trigger.object.pointOfContact.id}}`
 
-4. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Contact Email: `{{searchRecords[0].email}}`
-   * Contact Phone: `{{searchRecords[0].phone}}`
+4. **Actualizar registro**:
+   * Objeto: Oportunidades
+   * Registro: `{{trigger.object.id}}`
+   * Correo electrónico del contacto: `{{searchRecords[0].email}}`
+   * Teléfono del contacto: `{{searchRecords[0].phone}}`
 
-## Copy Multiple Fields
+## Copiar varios campos
 
-### Example: Sync Company Info to All Related Opportunities
+### Ejemplo: Sincronizar la información de la empresa con todas las oportunidades relacionadas
 
-**Goal**: When company details change, update all related opportunities.
+**Objetivo**: Cuando cambien los detalles de la empresa, actualiza todas las oportunidades relacionadas.
 
-### Setup
+### Configuración
 
-1. **Trigger**: Record is Updated (Companies)
-   * Fields: Industry, Company Size, Annual Revenue
+1. **Desencadenante**: Se actualiza el registro (Empresas)
+   * Campos: Industria, Tamaño de la empresa, Ingresos anuales
 
-2. **Search Records**: Find all opportunities for this company
-   * Object: Opportunities
-   * Filter: Company ID equals `{{trigger.object.id}}`
+2. **Buscar registros**: Encuentra todas las oportunidades de esta empresa
+   * Objeto: Oportunidades
+   * Filtro: ID de empresa igual a `{{trigger.object.id}}`
 
-3. **Iterator**: Loop through each opportunity
+3. **Iterator**: Recorre cada oportunidad
 
-4. **Update Record** (inside iterator):
-   * Object: Opportunities
-   * Record: `{{iterator.currentItem.id}}`
-   * Company Industry: `{{trigger.object.industry}}`
-   * Company Size: `{{trigger.object.companySize}}`
-   * Company ARR: `{{trigger.object.annualRevenue}}`
+4. **Actualizar registro** (dentro del Iterator):
+   * Objeto: Oportunidades
+   * Registro: `{{iterator.currentItem.id}}`
+   * Industria de la empresa: `{{trigger.object.industry}}`
+   * Tamaño de la empresa: `{{trigger.object.companySize}}`
+   * ARR de la empresa: `{{trigger.object.annualRevenue}}`
 
-## Copy on Record Creation
+## Copiar al crear el registro
 
-### Example: Pre-fill Opportunity with Company Data
+### Ejemplo: Rellenar previamente la oportunidad con datos de la empresa
 
-**Goal**: When creating an opportunity linked to a company, automatically copy key company info.
+**Objetivo**: Al crear una oportunidad vinculada a una empresa, copia automáticamente la información clave de la empresa.
 
-### Prerequisite
+### Requisito previo
 
-Create the destination fields in **Settings → Data Model → Opportunities**:
+Crea los campos de destino en **Configuración → Modelo de datos → Oportunidades**:
 
-* Company Industry (type: Text)
-* Company Size (type: Number)
+* Industria de la empresa (tipo: Texto)
+* Tamaño de la empresa (tipo: Número)
 
-### Setup
+### Configuración
 
-1. **Trigger**: Record is Created (Opportunities)
-   * Filter: Company is not empty
+1. **Desencadenante**: Se crea el registro (Oportunidades)
+   * Filtro: La empresa no está vacía
 
-2. **Search Records**: Get the linked company's details
-   * Object: Companies
-   * Filter: ID equals `{{trigger.object.company.id}}`
+2. **Buscar registros**: Obtén los detalles de la empresa vinculada
+   * Objeto: Empresas
+   * Filtro: ID igual a `{{trigger.object.company.id}}`
 
-3. **Update Record**:
-   * Object: Opportunities
-   * Record: `{{trigger.object.id}}`
-   * Company Industry: `{{searchRecords[0].industry}}`
-   * Company Size: `{{searchRecords[0].employees}}`
-
-<Note>
-  **Tasks and Notes limitation**: Relations on Tasks and Notes are hardcoded as many-to-many and are not yet available in workflow triggers or actions. To access these relations, use the [API](/l/es/developers/extend/capabilities/apis) instead.
-</Note>
-
-## Bidirectional Sync
-
-### Example: Keep Primary Contact in Sync
-
-**Goal**: When a company's primary contact changes, update the contact. When a person becomes primary, update the company.
-
-### Workflow 1: Company → Person
-
-1. **Trigger**: Record is Updated (Companies, Primary Contact field)
-2. **Update Record**: Set person's "Is Primary Contact" to true
-3. **Search Records**: Find previous primary contact
-4. **Update Record**: Set previous contact's "Is Primary Contact" to false
-
-### Workflow 2: Person → Company
-
-1. **Trigger**: Record is Updated (People, Is Primary Contact = true)
-2. **Update Record**: Set company's Primary Contact to this person
+3. **Actualizar registro**:
+   * Objeto: Oportunidades
+   * Registro: `{{trigger.object.id}}`
+   * Industria de la empresa: `{{searchRecords[0].industry}}`
+   * Tamaño de la empresa: `{{searchRecords[0].employees}}`
 
 <Note>
-  Be careful with bidirectional syncs to avoid infinite loops. Use filters to check if the value actually changed before updating.
+  **Limitación de Tareas y Notas**: Las relaciones en Tareas y Notas están codificadas como de muchos a muchos y aún no están disponibles en los desencadenantes o acciones de flujos de trabajo. Para acceder a estas relaciones, usa la [API](/l/es/developers/extend/capabilities/apis).
 </Note>
 
-## Using Code for Complex Mapping
+## Sincronización bidireccional
 
-### Example: Transform Data During Copy
+### Ejemplo: Mantener sincronizado el contacto principal
 
-**Goal**: Copy and format phone number from person to opportunity.
+**Objetivo**: Cuando cambie el contacto principal de una empresa, actualiza el contacto. Cuando una persona se convierta en contacto principal, actualiza la empresa.
+
+### Flujo de trabajo 1: Empresa → Persona
+
+1. **Desencadenante**: Se actualiza el registro (Empresas, campo Contacto principal)
+2. **Actualizar registro**: Establece "Es contacto principal" de la persona en true
+3. **Buscar registros**: Encuentra el contacto principal anterior
+4. **Actualizar registro**: Establece "Es contacto principal" del contacto anterior en false
+
+### Flujo de trabajo 2: Persona → Empresa
+
+1. **Desencadenante**: Se actualiza el registro (Personas, Es contacto principal = true)
+2. **Actualizar registro**: Establece el Contacto principal de la empresa en esta persona
+
+<Note>
+  Ten cuidado con las sincronizaciones bidireccionales para evitar bucles infinitos. Usa filtros para comprobar si el valor realmente cambió antes de actualizar.
+</Note>
+
+## Uso de código para mapeo complejo
+
+### Ejemplo: Transformar datos durante la copia
+
+**Objetivo**: Copiar y formatear el número de teléfono de la persona a la oportunidad.
 
 ```javascript
 export const main = async (params) => {
@@ -144,27 +144,27 @@ export const main = async (params) => {
 };
 ```
 
-## Best Practices
+## Mejores prácticas
 
-### Avoid Loops
+### Evitar bucles
 
-* Don't create workflows that trigger each other endlessly
-* Use specific field conditions
-* Add checks to see if value actually changed
+* No crees flujos de trabajo que se activen mutuamente sin fin
+* Usa condiciones específicas de campo
+* Añade comprobaciones para ver si el valor realmente cambió
 
-### Handle Missing Data
+### Gestionar datos faltantes
 
-* Always check if source record exists before copying
-* Provide default values for optional fields
-* Use filters to skip when source field is empty
+* Comprueba siempre que el registro de origen exista antes de copiar
+* Proporciona valores predeterminados para los campos opcionales
+* Usa filtros para omitir cuando el campo de origen esté vacío
 
-### Performance
+### Rendimiento
 
-* Batch updates when copying to many records
-* Use scheduled workflows for bulk sync operations
-* Consider using Iterator for multiple record updates
+* Procesa actualizaciones por lotes al copiar a muchos registros
+* Usa flujos de trabajo programados para operaciones de sincronización masiva
+* Considera usar Iterator para actualizaciones de múltiples registros
 
-## Related
+## Relacionado
 
-* [Workflow Actions](/l/es/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Triggers](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)

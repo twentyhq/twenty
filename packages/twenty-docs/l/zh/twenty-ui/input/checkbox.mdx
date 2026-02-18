@@ -1,16 +1,16 @@
 ---
-title: Checkbox
+title: 复选框
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="标题" />
 </Frame>
 
-Used when a user needs to select multiple values from several options.
+用于用户需要从多个选项中选择多个值时。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="**用法**">
     ```jsx
     import { Checkbox } from "twenty-ui/display";
 
@@ -30,15 +30,15 @@ Used when a user needs to select multiple values from several options.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props           | Type     | Description                                                                                  |
-    | --------------- | -------- | -------------------------------------------------------------------------------------------- |
-    | checked         | boolean  | Indicates whether the checkbox is checked                                                    |
-    | indeterminate   | boolean  | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)  |
-    | onChange        | function | The callback function you want to trigger when the checkbox state changes                    |
-    | onCheckedChange | function | The callback function you want to trigger when the `checked` state changes                   |
-    | variant         | string   | The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary` |
-    | size            | string   | The size of the checkbox. Has two options: `small` and `large`                               |
-    | shape           | string   | The shape of the checkbox. Has two options: `squared` and `rounded`                          |
+  <Tab title="属性">
+    | 属性              | 类型  | 描述                                                  |
+    | --------------- | --- | --------------------------------------------------- |
+    | 选中              | 布尔值 | 指示复选框是否被选中                                          |
+    | 不确定             | 布尔值 | 指示复选框是否处于不确定状态（既非选中也非未选中）                           |
+    | onChange        | 函数  | 当复选框状态更改时需要触发的回调函数                                  |
+    | onCheckedChange | 函数  | 当`checked`状态更改时需要触发的回调函数                            |
+    | 变体              | 字符串 | 盒子的视觉样式变体。 选项包括：`primary`，`secondary`， 和 `tertiary` |
+    | 大小              | 字符串 | 复选框的大小。 有两个选项：`small` 和 `large`                     |
+    | 形状              | 字符串 | 复选框的形状。 有两个选项：`squared` 和 `rounded`                 |
   </Tab>
 </Tabs>

@@ -9,7 +9,12 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import {
+  getToolDisplayMessage,
+  resolveToolInput,
+} from '@/ai/utils/getToolDisplayMessage';
+import { ToolOutputMessageSchema } from '@/ai/schemas/toolOutputMessageSchema';
+import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,12 +24,7 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  display: flex;
+  font-family: ${({ theme }) => theme.font.family};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -53,12 +53,12 @@ const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)} 0;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
   justify-content: space-between;
   width: 100%;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${({ theme }) => theme.font.color.primary};
   }
 `;
 
@@ -114,17 +114,23 @@ const StyledTab = styled.div<{ isActive: boolean }>`
   font-weight: ${({ theme, isActive }) =>
     isActive ? theme.font.weight.medium : theme.font.weight.regular};
   cursor: pointer;
-  transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  transition: color ${({ theme }) => theme.animation.duration.fast}s ease-in-out;
   padding-bottom: ${({ theme }) => theme.spacing(2)};
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
+    color: ${({ theme }) => theme.font.color.primary};
   }
 `;
 
 type TabType = 'output' | 'input';
 
-export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
+export const ToolStepRenderer = ({
+  toolPart,
+  isStreaming,
+}: {
+  toolPart: ToolUIPart;
+  isStreaming: boolean;
+}) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
@@ -132,15 +138,14 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
   const { input, output, type, errorText } = toolPart;
-  const toolName = type.split('-')[1];
+  const rawToolName = type.split('-')[1];
 
-  const toolInput =
-    isDefined(input) && typeof input === 'object' && 'input' in input
-      ? input.input
-      : input;
+  const { resolvedInput: toolInput, resolvedToolName: toolName } =
+    resolveToolInput(input, rawToolName);
 
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
+  const ToolIcon = getToolIcon(toolName);
 
   if (toolName === 'code_interpreter') {
     const codeInput = toolInput as { code?: string } | undefined;
@@ -153,7 +158,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
       };
     } | null;
 
-    const isRunning = !output && !hasError;
+    const isRunning = !output && !hasError && isStreaming;
 
     return (
       <CodeExecutionDisplay
@@ -168,17 +173,24 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   }
 
   if (!output && !hasError) {
+    const displayText = isStreaming
+      ? getToolDisplayMessage(input, rawToolName, false)
+      : getToolDisplayMessage(input, rawToolName, true);
+
     return (
       <StyledContainer>
         <StyledToggleButton isExpandable={false}>
           <StyledLeftContent>
-            <StyledLoadingContainer>
-              <ShimmeringText>
-                <StyledDisplayMessage>
-                  {getToolDisplayMessage(input, toolName, false)}
-                </StyledDisplayMessage>
-              </ShimmeringText>
-            </StyledLoadingContainer>
+            <StyledIconTextContainer>
+              <ToolIcon size={theme.icon.size.sm} />
+              {isStreaming ? (
+                <ShimmeringText>
+                  <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
+                </ShimmeringText>
+              ) : (
+                <StyledDisplayMessage>{displayText}</StyledDisplayMessage>
+              )}
+            </StyledIconTextContainer>
           </StyledLeftContent>
           <StyledRightContent>
             <StyledToolName>{toolName}</StyledToolName>
@@ -188,21 +200,29 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
     );
   }
 
-  const displayMessage = hasError
-    ? t`Tool execution failed`
-    : output &&
-        typeof output === 'object' &&
-        'message' in output &&
-        typeof output.message === 'string'
-      ? output.message
-      : getToolDisplayMessage(input, toolName, true);
-
-  const result =
-    output && typeof output === 'object' && 'result' in output
-      ? (output as { result: string }).result
+  // For execute_tool, the actual result is nested inside output.result
+  const outputResult = ToolOutputResultSchema.safeParse(output);
+  const unwrappedOutput =
+    rawToolName === 'execute_tool' && outputResult.success
+      ? outputResult.data.result
       : output;
 
-  const ToolIcon = getToolIcon(toolName);
+  const unwrappedResult = ToolOutputResultSchema.safeParse(unwrappedOutput);
+  const unwrappedMessage = ToolOutputMessageSchema.safeParse(unwrappedOutput);
+
+  const displayMessage = hasError
+    ? t`Tool execution failed`
+    : rawToolName === 'learn_tools' ||
+        rawToolName === 'execute_tool' ||
+        rawToolName === 'load_skills'
+      ? getToolDisplayMessage(input, rawToolName, true)
+      : unwrappedMessage.success
+        ? unwrappedMessage.data.message
+        : getToolDisplayMessage(input, rawToolName, true);
+
+  const result = unwrappedResult.success
+    ? unwrappedResult.data.result
+    : unwrappedOutput;
 
   return (
     <StyledContainer>

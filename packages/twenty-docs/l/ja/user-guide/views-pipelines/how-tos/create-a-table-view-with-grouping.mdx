@@ -1,51 +1,51 @@
 ---
-title: Create a Table View with Grouping
-description: Organize your records into collapsible groups by field value.
+title: グループ化を使ってテーブルビューを作成
+description: フィールド値ごとにレコードを折りたたみ可能なグループに整理します。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Group your table view by a Select field to organize records into collapsible sections.
+Select フィールドでテーブルビューをグループ化し、レコードを折りたたみ可能なセクションに整理します。
 
 <img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
 
-## Steps
+## 手順
 
-1. Navigate to the object (People, Companies, etc.)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Companies by Type")
-4. Click **Create**
-5. Click **Options → Group**
-6. Choose a Select field to group by
-7. Click **Save**
+1. オブジェクト（人、会社など）に移動します。
+2. ビューのドロップダウンをクリックし、**+ ビューを追加**を選択します
+3. ビューに名前を付けます（例: "種類別の会社"）。
+4. **作成** をクリックします
+5. **オプション → グループ** をクリックします
+6. グループ化の基準にする Select フィールドを選択します
+7. **保存**をクリック
 
-## Configure Group Order
+## グループの順序を設定
 
-Under **Options → Group → Sort**, choose how groups are ordered:
+**オプション → グループ → 並べ替え** で、グループの並び順を選択します:
 
-| Option                   | Description                                   |
-| ------------------------ | --------------------------------------------- |
-| **Alphabetical**         | A to Z                                        |
-| **Reverse alphabetical** | Z to A                                        |
-| **Manual order**         | Drag groups to reorder under "Visible groups" |
+| オプション         | 説明                               |
+| ------------- | -------------------------------- |
+| **アルファベット順**  | A から Z                           |
+| **アルファベット逆順** | Z から A                           |
+| **手動**        | "表示中のグループ" の下で、グループをドラッグして並べ替えます |
 
-Click the **eye icon** next to a group to hide it from the view.
+グループの横にある **目のアイコン** をクリックして、ビューから非表示にします。
 
 <Note>
-  **For best performance, limit to 10-15 visible groups.** If you need more, consider using a Dashboard instead.
+  **最適なパフォーマンスのため、表示中のグループは10〜15に制限してください。** それ以上が必要な場合は、代わりにダッシュボードの使用を検討してください。
 </Note>
 
-## Example: Companies by Industry
+## 例：業種別の会社
 
-1. Go to **Companies**
-2. Create a new view named "By Industry"
-3. Click **Options → Group**
-4. Select the **Industry** field
-5. Save
+1. **会社** に移動します
+2. "業種別" という名前の新しいビューを作成します
+3. **オプション → グループ** をクリックします
+4. **業種** フィールドを選択します
+5. 保存
 
-Now your companies are organized by industry, making it easy to focus on one segment at a time.
+これで会社が業種ごとに整理され、1つのセグメントに集中しやすくなります。
 
-## Related
+## 関連
 
-* [Table Views](/l/ja/user-guide/views-pipelines/capabilities/table-views) — all table view features
-* [Filters and Sorting](/l/ja/user-guide/views-pipelines/capabilities/filters-and-sorting) — combine grouping with filters
+* [テーブルビュー](/l/ja/user-guide/views-pipelines/capabilities/table-views) — テーブルビューのすべての機能
+* [フィルターと並べ替え](/l/ja/user-guide/views-pipelines/capabilities/filters-and-sorting) — グループ化をフィルターと組み合わせる

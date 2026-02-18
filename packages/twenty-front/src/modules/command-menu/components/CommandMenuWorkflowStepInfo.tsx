@@ -9,7 +9,6 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
@@ -60,10 +59,7 @@ export const CommandMenuWorkflowStepInfo = ({
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
-  const { updateOneRecord: updateOneWorkflowVersion } =
-    useUpdateOneRecord<WorkflowVersion>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
+  const { updateOneRecord: updateOneWorkflowVersion } = useUpdateOneRecord();
 
   const {
     trigger,
@@ -153,6 +149,7 @@ export const CommandMenuWorkflowStepInfo = ({
 
     if (isTrigger) {
       await updateOneWorkflowVersion({
+        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
         idToUpdate: targetWorkflowVersionId,
         updateOneRecordInput: {
           trigger: {

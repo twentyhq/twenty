@@ -1,44 +1,44 @@
 ---
-title: Set Up a Webhook Trigger
-description: Receive data from external services to trigger workflows.
+title: 设置 Webhook 触发器
+description: 从外部服务接收数据以触发工作流。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Webhook triggers allow external services to start your workflows by sending data to a unique URL. Use them to connect forms, third-party apps, and custom integrations.
+Webhook 触发器允许外部服务通过向唯一的 URL 发送数据来启动您的工作流。 使用它们连接表单、第三方应用和自定义集成。
 
-## When to Use Webhooks
+## 何时使用 Webhook
 
-| Use Case                | Example                                 |
-| ----------------------- | --------------------------------------- |
-| **Web forms**           | Contact form submissions create leads   |
-| **Third-party apps**    | Stripe payment → create customer record |
-| **Custom integrations** | Your app → Twenty automation            |
-| **No-code tools**       | Zapier, Make, n8n connections           |
+| 用例        | 示例                 |
+| --------- | ------------------ |
+| **网页表单**  | 联系表单提交会创建线索        |
+| **第三方应用** | Stripe 支付 → 创建客户记录 |
+| **自定义集成** | 您的应用 → Twenty 自动化  |
+| **无代码工具** | Zapier、Make、n8n 连接 |
 
-## Step-by-Step Setup
+## 分步设置
 
-### Step 1: Create the Workflow
+### 步骤 1：创建工作流
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it (e.g., "Website Form Submission")
+1. 进入 **设置 → 工作流**
+2. 点击 **+ 新建工作流**
+3. 为其命名（例如，“网站表单提交”）
 
-### Step 2: Configure the Webhook Trigger
+### 步骤 2：配置 Webhook 触发器
 
-1. Click on the trigger block
-2. Select **Webhook**
-3. You'll receive a unique webhook URL like:
+1. 单击触发器块
+2. 选择 **Webhook**
+3. 您将收到一个唯一的 Webhook URL，例如：
    ```
    https://api.twenty.com/webhooks/workflow/abc123...
    ```
-4. Copy this URL—you'll need it for your external service
+4. 复制此 URL——您需要在外部服务中使用它
 
-### Step 3: Define Expected Data Structure
+### 步骤 3：定义预期的数据结构
 
-For **POST** requests, define the expected body structure:
+对于 **POST** 请求，定义预期的请求体结构：
 
-1. Click **Define expected body**
-2. Enter a sample JSON that matches what your service will send:
+1. 点击 **定义预期请求体**
+2. 输入与您的服务将发送内容匹配的示例 JSON：
 
 ```json
 {
@@ -50,30 +50,30 @@ For **POST** requests, define the expected body structure:
 }
 ```
 
-3. Click **Save**—this creates variables you can use in subsequent steps
+3. 点击 **保存**——这会创建可在后续步骤中使用的变量
 
-### Step 4: Add Actions
+### 步骤 4：添加操作
 
-Now add actions that use the webhook data:
+现在添加使用 Webhook 数据的操作：
 
-**Example: Create a Person record**
+**示例：创建一条 Person 记录**
 
-1. Add **Create Record** action
-2. Select **People** object
-3. Map fields:
+1. 添加 **创建记录** 操作
+2. 选择 **People** 对象
+3. 映射字段：
 
-| Field      | Value                                                |
-| ---------- | ---------------------------------------------------- |
-| First Name | `{{trigger.body.firstName}}`                         |
-| Last Name  | `{{trigger.body.lastName}}`                          |
-| Email      | `{{trigger.body.email}}`                             |
-| Company    | Search or create based on `{{trigger.body.company}}` |
+| 字段   | 值                                   |
+| ---- | ----------------------------------- |
+| 名字   | `{{trigger.body.firstName}}`        |
+| 姓氏   | `{{trigger.body.lastName}}`         |
+| 电子邮件 | `{{trigger.body.email}}`            |
+| 公司   | 基于 `{{trigger.body.company}}` 搜索或创建 |
 
-### Step 5: Test the Webhook
+### 步骤 5：测试 Webhook
 
-Before activating, test your webhook:
+在激活之前，测试您的 Webhook：
 
-**Using cURL**:
+**使用 cURL**：
 
 ```bash
 curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
@@ -81,22 +81,22 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
   -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
 ```
 
-**Using Postman or similar**:
+**使用 Postman 或类似工具**：
 
-1. Create a POST request to your webhook URL
-2. Set Content-Type header to `application/json`
-3. Add your test JSON body
-4. Send and check workflow runs
+1. 向您的 Webhook URL 发起一个 POST 请求
+2. 将 Content-Type 头设置为 `application/json`
+3. 添加您的测试 JSON 请求体
+4. 发送并检查工作流运行情况
 
-### Step 6: Activate
+### 步骤 6：启用
 
-Once tested, click **Activate** to make the workflow live.
+测试完成后，点击 **启用** 使该工作流生效。
 
-## Handling Different Data Structures
+## 处理不同的数据结构
 
-### Nested Data
+### 嵌套数据
 
-If your webhook sends nested data:
+如果您的 Webhook 发送的是嵌套数据：
 
 ```json
 {
@@ -108,11 +108,11 @@ If your webhook sends nested data:
 }
 ```
 
-Reference with: `{{trigger.body.contact.email}}`
+通过以下方式引用：`{{trigger.body.contact.email}}`
 
-### Arrays
+### 数组
 
-If data includes arrays:
+如果数据包含数组：
 
 ```json
 {
@@ -123,11 +123,11 @@ If data includes arrays:
 }
 ```
 
-How you handle arrays depends on your use case:
+如何处理数组取决于您的使用场景：
 
-**Unknown number of items → Use Iterator**
+**项目数量未知 → 使用 Iterator**
 
-If you need to process each item in the array (e.g., create a record for each), add a **Code** action to parse the array, then use **Iterator**:
+如果需要处理数组中的每个项目（例如为每个项目创建一条记录），请添加一个 **Code** 操作来解析数组，然后使用 **Iterator**：
 
 ```javascript
 export const main = async (params: { items: any }) => {
@@ -138,11 +138,11 @@ export const main = async (params: { items: any }) => {
 };
 ```
 
-Then use Iterator to loop through: `{{code.items}}`
+然后使用 Iterator 进行循环：`{{code.items}}`
 
-**Known/specific fields → Extract to named fields**
+**已知/特定字段 → 提取到具名字段**
 
-If the array contains specific fields you want to access individually (e.g., form answers where position 0 is always "first name", position 1 is always "last name"), add a **Code** action to extract them:
+如果数组包含您想单独访问的特定字段（例如表单答案，其中位置 0 始终为“名”，位置 1 始终为“姓”），请添加一个 **Code** 操作来提取它们：
 
 ```javascript
 export const main = async (params: { items: any }) => {
@@ -159,13 +159,13 @@ export const main = async (params: { items: any }) => {
 };
 ```
 
-Now you can select `product.name` and `product.qty` individually in subsequent steps.
+现在您可以在后续步骤中分别选择 `product.name` 和 `product.qty`。
 
 <Tip>
-  For more details on handling arrays, see [Handle Arrays in Code Actions](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  关于处理数组的更多详情，请参见[在代码操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)。
 </Tip>
 
-## Related
+## 相关内容
 
-* [Workflow Triggers](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)

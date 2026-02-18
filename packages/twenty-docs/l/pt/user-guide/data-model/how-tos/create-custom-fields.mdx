@@ -1,72 +1,72 @@
 ---
-title: Create Custom Fields
-description: Step-by-step guide to adding custom fields to any object.
+title: Criar Campos Personalizados
+description: Guia passo a passo para adicionar campos personalizados a qualquer objeto.
 ---
 
-Custom fields let you capture information specific to your business. Add them to any object—standard or custom.
+Os campos personalizados permitem capturar informações específicas do seu negócio. Adicione-os a qualquer objeto — padrão ou personalizado.
 
-## Steps
+## Etapas
 
-1. Go to **Settings → Data Model**
-2. Select the object you want to add a field to
-3. Click **+ Add Field**
-4. Choose a **field type** (see [Fields](/l/pt/user-guide/data-model/capabilities/fields) for all types)
-5. Enter the **field name** and optional description
-6. Configure field-specific settings (see below)
-7. Click **Save**
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o objeto ao qual pretende adicionar um campo
+3. Clique em **+ Adicionar campo**
+4. Escolha um **tipo de campo** (consulte [Campos](/l/pt/user-guide/data-model/capabilities/fields) para ver todos os tipos)
+5. Introduza o **nome do campo** e uma descrição opcional
+6. Configure definições específicas do campo (ver abaixo)
+7. Clique em **Salvar**
 
-**Quick method:** Click the **+** at the end of column headers in any table view → **Customize fields**.
+**Método rápido:** Clique em **+** no final dos cabeçalhos de coluna em qualquer visualização de tabela → **Personalizar campos**.
 
-## Show the Field in Views
+## Mostrar o campo nas visualizações
 
-New fields aren't automatically visible. To display:
+Novos campos não são visíveis automaticamente. Para exibir:
 
-1. Open the object's table view
-2. Click **Options → Fields**
-3. Click the **eye icon** next to your field to show it
-4. Drag to reorder
+1. Abra a visualização de tabela do objeto
+2. Clique em **Opções → Campos**
+3. Clique no **ícone de olho** ao lado do seu campo para mostrá-lo
+4. Arraste para reordenar
 
-## Configuration Options
+## Opções de Configuração
 
-### For Select / Multi-Select
+### Para Seleção / Seleção múltipla
 
-1. Click **+ Add option** to create choices
-2. Set a **default option** if desired
-3. Drag to reorder options
-
-<Note>
-  **Use API names for imports.** Enable **Advanced mode** in Settings to see API names. See [Field Mapping](/l/pt/user-guide/data-migration/capabilities/field-mapping).
-</Note>
-
-### For Currency Fields
-
-Set the **default currency** (USD, EUR, etc.) for new records.
-
-### For Phone Fields
-
-Set the **default country code** to pre-fill for new phone numbers.
-
-### Making a Field Unique
-
-Toggle **Unique** to prevent duplicate values across records.
+1. Clique em **+ Adicionar opção** para criar opções
+2. Defina uma **opção predefinida** se desejar
+3. Arraste para reordenar as opções
 
 <Note>
-  If duplicates exist (including in deleted records), you'll get an error. Clean up duplicates first.
+  **Use nomes de API para importações.** Ative o **modo Avançado** em Definições para ver os nomes de API. Consulte [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping).
 </Note>
 
-### Setting Default Values
+### Para Campos de Moeda
 
-For Select fields, you can choose which option is pre-selected for new records. For Checkbox fields, set whether it's checked or unchecked by default.
+Defina a **moeda predefinida** (USD, EUR, etc.) para novos registos.
 
-## Deactivating a Field
+### Para Campos de Telefone
 
-1. Go to **Settings → Data Model**
-2. Find the field
-3. Click **⋮ → Deactivate**
+Defina o **código de país predefinido** para preencher automaticamente novos números de telefone.
 
-Data is preserved. You can reactivate or permanently delete later.
+### Tornar um Campo Único
 
-## Related
+Ative a opção **Único** para impedir valores duplicados entre registos.
 
-* [Fields](/l/pt/user-guide/data-model/capabilities/fields) — all field types explained
-* [Data Model FAQ](/l/pt/user-guide/data-model/how-tos/data-model-faq) — common questions
+<Note>
+  Se existirem duplicados (incluindo em registos eliminados), ocorrerá um erro. Elimine os duplicados primeiro.
+</Note>
+
+### Definir Valores Predefinidos
+
+Para campos de Seleção, pode escolher qual opção é pré-selecionada para novos registos. Para campos de Caixa de seleção, defina se fica marcado ou desmarcado por predefinição.
+
+## Desativar um Campo
+
+1. Vá a **Definições → Modelo de Dados**
+2. Localize o campo
+3. Clique em **⋮ → Desativar**
+
+Os dados são preservados. Pode reativar ou eliminar permanentemente mais tarde.
+
+## Relacionados
+
+* [Campos](/l/pt/user-guide/data-model/capabilities/fields) — todos os tipos de campo explicados
+* [Perguntas frequentes sobre o modelo de dados](/l/pt/user-guide/data-model/how-tos/data-model-faq) — perguntas comuns

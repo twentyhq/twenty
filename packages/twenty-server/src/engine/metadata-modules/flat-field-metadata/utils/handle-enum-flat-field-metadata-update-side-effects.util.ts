@@ -11,7 +11,6 @@ import {
   type FlatViewGroupsToDeleteUpdateAndCreate,
   recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-groups-on-flat-field-metadata-options-update.util';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
 
 type HandleEnumFlatFieldMetadataOptionsUpdateSideEffectsArgs = FromTo<
   FlatFieldMetadata<EnumFieldMetadataType>,
@@ -49,20 +48,14 @@ export const handleEnumFlatFieldMetadataUpdateSideEffects = ({
     JSON.stringify(fromFlatFieldMetadata.options) !==
     JSON.stringify(toFlatFieldMetadata.options)
   ) {
-    const optionsPropertyUpdate: PropertyUpdate<
-      FlatFieldMetadata<EnumFieldMetadataType>,
-      'options'
-    > = {
-      from: fromFlatFieldMetadata.options,
-      property: 'options',
-      to: toFlatFieldMetadata.options,
-    };
+    const optionsPropertyUpdate =
+      toFlatFieldMetadata.options as FlatFieldMetadata<EnumFieldMetadataType>['options'];
 
     const { flatViewFiltersToDelete, flatViewFiltersToUpdate } =
       recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate({
         flatViewFilterMaps,
         fromFlatFieldMetadata,
-        update: optionsPropertyUpdate,
+        toOptions: optionsPropertyUpdate,
       });
 
     sideEffectResult.flatViewFiltersToDelete.push(...flatViewFiltersToDelete);
@@ -76,7 +69,7 @@ export const handleEnumFlatFieldMetadataUpdateSideEffects = ({
       flatViewMaps,
       flatViewGroupMaps,
       fromFlatFieldMetadata,
-      update: optionsPropertyUpdate,
+      toOptions: optionsPropertyUpdate,
     });
 
     sideEffectResult.flatViewGroupsToCreate.push(...flatViewGroupsToCreate);

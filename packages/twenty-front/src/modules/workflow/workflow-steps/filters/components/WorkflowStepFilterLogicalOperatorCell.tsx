@@ -8,13 +8,18 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo } from 'react';
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   height: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledNumber = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledContainer = styled.div`
@@ -28,12 +33,14 @@ type WorkflowStepFilterLogicalOperatorCellProps = {
   index: number;
   stepFilterGroup: StepFilterGroup;
   firstFilterLabel?: string;
+  elseIfIndex?: number;
 };
 
 export const WorkflowStepFilterLogicalOperatorCell = ({
   index,
   stepFilterGroup,
   firstFilterLabel,
+  elseIfIndex,
 }: WorkflowStepFilterLogicalOperatorCellProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
   const { t } = useLingui();
@@ -69,7 +76,10 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
   return (
     <StyledContainer>
       {index === 0 ? (
-        <StyledText>{firstFilterLabel ?? defaultFirstFilterLabel}</StyledText>
+        <StyledText>
+          {isDefined(elseIfIndex) && <StyledNumber>{elseIfIndex}</StyledNumber>}
+          {firstFilterLabel ?? defaultFirstFilterLabel}
+        </StyledText>
       ) : index === 1 ? (
         readonly ? (
           <Select

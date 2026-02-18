@@ -1,41 +1,41 @@
 ---
-title: Frontend Commands
+title: 프론트엔드 명령어
 ---
 
-## Useful commands
+## 유용한 명령어
 
-### Starting the app
+### 앱 시작하기
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerate graphql schema based on API graphql schema
+### API GraphQL 스키마를 기반으로 GraphQL 스키마 재생성
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-OR
+또는
 
 ```bash
 npx nx run twenty-front:graphql:generate
 ```
 
-### Lint
+### 린트
 
 ```bash
 npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## Translations
+## 번역
 
 ```bash
 npx nx run twenty-front:lingui:extract
 npx nx run twenty-front:lingui:compile
 ```
 
-### Test
+### 테스트
 
 ```bash
 npx nx run twenty-front:test # run jest tests
@@ -44,11 +44,11 @@ npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve
 npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## Tech Stack
+## 기술 스택
 
-The project has a clean and simple stack, with minimal boilerplate code.
+프로젝트는 최소한의 보일러플레이트 코드로 깔끔하고 단순한 스택을 가지고 있습니다.
 
-**App**
+**앱**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -56,35 +56,35 @@ The project has a clean and simple stack, with minimal boilerplate code.
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**Testing**
+**테스트**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**Tooling**
+**도구**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
 * [ESLint](https://eslint.org/)
 
-## Architecture
+## 아키텍처
 
-### Routing
+### 라우팅
 
-[React Router](https://reactrouter.com/) handles the routing.
+[React Router](https://reactrouter.com/)가 라우팅을 처리합니다.
 
 To avoid unnecessary [re-renders](/l/ko/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### State Management
+### 상태 관리
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts)이 상태 관리를 처리합니다.
 
-See [best practices](/l/ko/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
+상태 관리에 대한 자세한 정보는 [최고의 관례](/l/ko/developers/contribute/capabilities/frontend-development/best-practices-front#state-management)를 참조하십시오.
 
-## Testing
+## 테스트
 
-[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
+[Jest](https://jestjs.io/)는 유닛 테스트 도구로 사용되고 [Storybook](https://storybook.js.org/)은 컴포넌트 테스트에 사용됩니다.
 
-Jest is mainly for testing utility functions, and not components themselves.
+Jest는 주로 유틸리티 함수 테스트에 사용되며, 직접 컴포넌트를 테스트하지는 않습니다.
 
-Storybook is for testing the behavior of isolated components, as well as displaying the design system.
+Storybook은 개별 컴포넌트의 동작을 테스트하고 디자인 시스템을 표시하는 데 사용됩니다.

@@ -1,16 +1,16 @@
 ---
-title: Menu Item
+title: 菜单项
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="标题" />
 </Frame>
 
-A versatile menu item designed to be used in a menu or navigation list.
+一个多用途的菜单项，设计用于菜单或导航列表中。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="**用法**">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { IconAlertCircle } from "@tabler/icons-react";
@@ -41,30 +41,30 @@ A versatile menu item designed to be used in a menu or navigation list.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props         | Type          | Description                                                                                          |
-    | ------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
-    | LeftIcon      | IconComponent | An optional left icon displayed before the text in the menu item                                     |
-    | accent        | string        | Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder` |
-    | text          | string        | The text content of the menu item                                                                    |
-    | iconButtons   | array         | An array of objects representing additional icon buttons associated with the menu item               |
-    | isTooltipOpen | boolean       | Controls the visibility of the tooltip associated with the menu item                                 |
-    | testId        | string        | The data-testid attribute for testing purposes                                                       |
-    | onClick       | function      | Callback function triggered when the menu item is clicked                                            |
-    | className     | string        | Optional name for additional styling                                                                 |
+  <Tab title="属性">
+    | 属性            | 类型     | 描述                                                  |
+    | ------------- | ------ | --------------------------------------------------- |
+    | 左侧图标          | 图标组件   | 在菜单项文本之前显示的可选左图标                                    |
+    | 强调色           | string | 指定菜单项的点缀颜色。 选项包括：`default`、`danger` 和 `placeholder` |
+    | 文本            | 字符串    | 菜单项的文本内容                                            |
+    | 图标按钮          | 数组     | 表示与菜单项关联的额外图标按钮的对象数组                                |
+    | isTooltipOpen | 布尔值    | 控制与菜单项关联的工具提示的可见性                                   |
+    | 测试 ID         | 字符串    | 用于测试目的的数据测试 ID 属性                                   |
+    | onClick       | 函数     | 在点击菜单项时触发的回调函数                                      |
+    | 类名            | 字符串    | 用于额外样式的可选名称                                         |
   </Tab>
 </Tabs>
 
-## Variants
+## 变体
 
-The different variants of the menu item component include the following:
+菜单项组件的不同变体包括以下内容：
 
-### Command
+### 命令
 
-A command-style menu item within a menu to indicate keyboard shortcuts.
+菜单中的命令样式菜单项，用于表示键盘快捷键。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemCommand } from "twenty-ui/display";
@@ -89,25 +89,25 @@ A command-style menu item within a menu to indicate keyboard shortcuts.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type          | Description                                                      |
-    | ------------ | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon     | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text         | string        | The text content of the menu item                                |
-    | firstHotKey  | string        | The first keyboard shortcut associated with the command          |
-    | secondHotKey | string        | The second keyboard shortcut associated with the command         |
-    | isSelected   | boolean       | Indicates whether the menu item is selected or highlighted       |
-    | onClick      | function      | Callback function triggered when the menu item is clicked        |
-    | className    | string        | Optional name for additional styling                             |
+  <Tab title="属性">
+    | 属性           | 类型            | 描述                |
+    | ------------ | ------------- | ----------------- |
+    | LeftIcon     | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+    | 文本           | 字符串           | 菜单项的文本内容          |
+    | firstHotKey  | 字符串           | 与命令关联的第一个键盘快捷键    |
+    | secondHotKey | 字符串           | 与命令关联的第二个键盘快捷键    |
+    | isSelected   | 布尔值           | 指示菜单项是否被选中或高亮     |
+    | onClick      | 功能            | 点击菜单项时触发的回调函数     |
+    | className    | 字符串           | 用于额外样式的可选名称       |
   </Tab>
 </Tabs>
 
-### Draggable
+### 可拖动的
 
-A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+设计用于在菜单或列表中使用的可拖动菜单项组件，项目可以拖动，并且可以通过图标按钮执行其他操作。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { IconAlertCircle } from "@tabler/icons-react";
@@ -134,26 +134,26 @@ A draggable menu item component designed to be used in a menu or list where item
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                                                |
-    | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item                           |
-    | accent         | string        | The accent color of the menu item. It can either be `default`, `placeholder`, and `danger` |
-    | iconButtons    | array         | An array of objects representing additional icon buttons associated with the menu item     |
-    | isTooltipOpen  | boolean       | Controls the visibility of the tooltip associated with the menu item                       |
-    | onClick        | function      | Callback function to be triggered when the link is clicked                                 |
-    | text           | string        | The text content of the menu item                                                          |
-    | isDragDisabled | boolean       | Indicates whether dragging is disabled                                                     |
-    | className      | string        | Optional name for additional styling                                                       |
+  <Tab title="属性">
+    | 属性             | 类型            | 描述                                                 |
+    | -------------- | ------------- | -------------------------------------------------- |
+    | LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标                                  |
+    | 强调色            | 字符串           | 菜单项的强调色。 可设置为 `default`, `placeholder`, 和 `danger` |
+    | iconButtons    | 数组            | 表示与菜单项关联的附加图标按钮的对象数组                               |
+    | isTooltipOpen  | 布尔值           | 控制与菜单项关联的工具提示的可见性                                  |
+    | onClick        | 功能            | 点击链接时触发的回调函数                                       |
+    | 文本             | 字符串           | 菜单项的文本内容                                           |
+    | isDragDisabled | 布尔值           | 指示是否禁用拖动                                           |
+    | className      | 字符串           | 用于额外样式的可选名称                                        |
   </Tab>
 </Tabs>
 
-### Multi Select
+### 多选
 
-Provides a way to implement multi-select functionality with an associated checkbox.
+提供通过关联选择框实现多选功能的方法。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemMultiSelect } from "twenty-ui/display";
@@ -172,23 +172,23 @@ Provides a way to implement multi-select functionality with an associated checkb
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                      |
-    | -------------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text           | string        | The text content of the menu item                                |
-    | selected       | boolean       | Indicates whether the menu item is selected (checked)            |
-    | onSelectChange | function      | Callback function triggered when the checkbox state changes      |
-    | className      | string        | Optional name for additional styling                             |
+  <Tab title="属性">
+    | 属性             | 类型            | 描述                |
+    | -------------- | ------------- | ----------------- |
+    | LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+    | 文本             | 字符串           | 菜单项的文本内容          |
+    | 已选择            | 布尔值           | 指示菜单项是否被选中（勾选）    |
+    | onSelectChange | 功能            | 选择框状态变化时触发的回调函数   |
+    | className      | 字符串           | 用于额外样式的可选名称       |
   </Tab>
 </Tabs>
 
-### Multi Select Avatar
+### 多选头像
 
-A multi-select menu item with an avatar, a checkbox for selection, and textual content.
+带有头像、多选功能的菜单项，具有选择框和文本内容。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
 
@@ -208,23 +208,23 @@ A multi-select menu item with an avatar, a checkbox for selection, and textual c
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type        | Description                                                          |
-    | -------------- | ----------- | -------------------------------------------------------------------- |
-    | avatar         | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-    | text           | string      | The text content of the menu item                                    |
-    | selected       | boolean     | Indicates whether the menu item is selected (checked)                |
-    | onSelectChange | function    | Callback function triggered when the checkbox state changes          |
-    | className      | string      | Optional name for additional styling                                 |
+  <Tab title="属性">
+    | 属性             | 类型          | 描述              |
+    | -------------- | ----------- | --------------- |
+    | avatar         | `ReactNode` | 将在菜单项左侧显示的头像或图标 |
+    | 文本             | 字符串         | 菜单项的文本内容        |
+    | selected       | 布尔值         | 指示菜单项是否被选中（勾选）  |
+    | onSelectChange | 功能          | 选择框状态变化时触发的回调函数 |
+    | className      | 字符串         | 用于额外样式的可选名称     |
   </Tab>
 </Tabs>
 
-### Navigate
+### 导航
 
-A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+带有可选左侧图标、文本内容和右箭头图标的菜单项。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemNavigate } from "twenty-ui/display";
@@ -246,22 +246,22 @@ A menu item featuring an optional left icon, textual content, and a right-chevro
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type          | Description                                                      |
-    | --------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text      | string        | The text content of the menu item                                |
-    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
-    | className | string        | Optional name for additional styling                             |
+  <Tab title="属性">
+    | 属性        | 类型            | 描述                |
+    | --------- | ------------- | ----------------- |
+    | LeftIcon  | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+    | 文本        | 字符串           | 菜单项的文本内容          |
+    | onClick   | 功能            | 点击菜单项时触发的回调函数     |
+    | className | 字符串           | 用于额外样式的可选名称       |
   </Tab>
 </Tabs>
 
-### Select
+### 选择
 
-A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
+可选择的菜单项，具有可选的左侧内容（图标和文本）和用于选择状态的指示器（检查图标）。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemSelect } from "twenty-ui/display";
@@ -286,25 +286,25 @@ A selectable menu item, featuring optional left content (icon and text) and an i
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type          | Description                                                      |
-    | --------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text      | string        | The text content of the menu item                                |
-    | selected  | boolean       | Indicates whether the menu item is selected (checked)            |
-    | disabled  | boolean       | Indicates whether the menu item is disabled                      |
-    | hovered   | boolean       | Indicates whether the menu item is currently being hovered over  |
-    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
-    | className | string        | Optional name for additional styling                             |
+  <Tab title="属性">
+    | 属性       | 类型            | 描述                |
+    | -------- | ------------- | ----------------- |
+    | LeftIcon | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+    | 文本       | 字符串           | 菜单项的文本内容          |
+    | selected | 布尔值           | 指示菜单项是否被选中（勾选）    |
+    | 禁用       | 布尔值           | 指示菜单项是否被禁用        |
+    | hovered  | 布尔值           | 指示菜单项当前是否被悬停      |
+    | onClick  | 功能            | 点击菜单项时触发的回调函数     |
+    | 类名       | 字符串           | 用于额外样式的可选名称       |
   </Tab>
 </Tabs>
 
-### Select Avatar
+### 选择头像
 
-A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+带有头像的可选择的菜单项，具有可选的左侧内容（头像和文本）和用于选择状态的指示器（检查图标）。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { MenuItemSelectAvatar } from "twenty-ui/display";
 
@@ -333,26 +333,26 @@ A selectable menu item with an avatar, featuring optional left content (avatar a
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type        | Description                                                          |
-    | --------- | ----------- | -------------------------------------------------------------------- |
-    | avatar    | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-    | text      | string      | The text content of the menu item                                    |
-    | selected  | boolean     | Indicates whether the menu item is selected (checked)                |
-    | disabled  | boolean     | Indicates whether the menu item is disabled                          |
-    | hovered   | boolean     | Indicates whether the menu item is currently being hovered over      |
-    | testId    | string      | The data-testid attribute for testing purposes                       |
-    | onClick   | function    | Callback function to be triggered when the menu item is clicked      |
-    | className | string      | Optional name for additional styling                                 |
+  <Tab title="属性">
+    | 属性      | 类型          | 描述                   |
+    | ------- | ----------- | -------------------- |
+    | 头像      | `ReactNode` | 用于显示在菜单项左侧的头像或图标     |
+    | 文本      | 字符串         | 菜单项的文本内容             |
+    | 已选择     | 布尔值         | 表示菜单项是否被选中（已选）       |
+    | 禁用      | 布尔值         | 表示菜单项是否被禁用           |
+    | 悬停      | 布尔值         | 表示菜单项是否正被悬停          |
+    | 测试ID    | 字符串         | 用于测试目的的data-testid属性 |
+    | onClick | 功能          | 点击菜单项时触发的回调函数        |
+    | 类名      | 字符串         | 用于额外样式的可选名称          |
   </Tab>
 </Tabs>
 
-### Select Color
+### 选择颜色
 
-A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+一个可选择的菜单项，带有颜色样本，用于需要用户从菜单中选择颜色的场景。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { MenuItemSelectColor } from "twenty-ui/display";
 
@@ -376,25 +376,25 @@ A selectable menu item with a color sample for scenarios where you want users to
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type     | Description                                                                                                                                                                 |
-    | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | color     | string   | The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
-    | selected  | boolean  | Indicates whether the menu item is selected (checked)                                                                                                                       |
-    | disabled  | boolean  | Indicates whether the menu item is disabled                                                                                                                                 |
-    | hovered   | boolean  | Indicates whether the menu item is currently being hovered over                                                                                                             |
-    | variant   | string   | The variant of the color sample. It can either be `default` or `pipeline`                                                                                                   |
-    | onClick   | function | Callback function to be triggered when the menu item is clicked                                                                                                             |
-    | className | string   | Optional name for additional styling                                                                                                                                        |
+  <Tab title="属性">
+    | 属性      | 类型  | 描述                                                                        |
+    | ------- | --- | ------------------------------------------------------------------------- |
+    | 颜色      | 字符串 | 菜单项中作为样本显示的主题颜色。 选项包括：`绿色`，`绿松石`，`天蓝`，`蓝色`，`紫色`，`粉红色`，`红色`，`橙色`，`黄色`，`灰色` |
+    | 已选择     | 布尔值 | 表示菜单项是否被选中（已选）                                                            |
+    | 禁用      | 布尔值 | 表示菜单项是否被禁用                                                                |
+    | 悬停      | 布尔值 | 表示菜单项是否正被悬停                                                               |
+    | 变体      | 字符串 | 颜色样本的变体。 可以是`默认`或`管道`                                                     |
+    | onClick | 功能  | 点击菜单项时触发的回调函数                                                             |
+    | 类名      | 字符串 | 用于额外样式的可选名称                                                               |
   </Tab>
 </Tabs>
 
-### Toggle
+### 切换
 
-A menu item with an associated toggle switch to allow users to enable or disable a specific feature
+一个菜单项，带有一个关联的开关，允许用户启用或禁用某个特定功能
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { IconBell } from '@tabler/icons-react';
 
@@ -415,14 +415,14 @@ A menu item with an associated toggle switch to allow users to enable or disable
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                       |
-    | -------------- | ------------- | ----------------------------------------------------------------- |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item  |
-    | text           | string        | The text content of the menu item                                 |
-    | toggled        | boolean       | Indicates whether the toggle switch is in the "on" or "off" state |
-    | onToggleChange | function      | Callback function triggered when the toggle switch state changes  |
-    | toggleSize     | string        | The size of the toggle switch. It can be either \                 |
-    | className      | string        | Optional name for additional styling                              |
+  <Tab title="属性">
+    | 属性     | 类型            | 描述                 |
+    | ------ | ------------- | ------------------ |
+    | 左侧图标   | IconComponent | 在菜单项文本前显示的可选左侧图标   |
+    | 文本     | 字符串           | 菜单项的文本内容           |
+    | 已切换    | 布尔值           | 表示开关按钮处于“开”还是“关”状态 |
+    | 切换状态变更 | 功能            | 开关状态改变时触发的回调函数     |
+    | 切换尺寸   | 字符串           | 开关的尺寸。 它可以是\       |
+    | 类名     | 字符串           | 用于额外样式的可选名称        |
   </Tab>
 </Tabs>

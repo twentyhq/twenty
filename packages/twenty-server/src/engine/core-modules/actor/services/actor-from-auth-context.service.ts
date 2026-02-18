@@ -3,14 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -99,16 +99,15 @@ export class ActorFromAuthContextService {
         },
       );
 
-    this.logger.log(
-      `Injecting ${fieldName} from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
-    );
-
     const { idByNameSingular } = buildObjectIdByNameMaps(
       flatObjectMetadataMaps,
     );
     const objectId = idByNameSingular[objectMetadataNameSingular];
     const objectMetadata = objectId
-      ? flatObjectMetadataMaps.byId[objectId]
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: objectId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
       : undefined;
 
     const fieldIdByName = objectMetadata
@@ -169,7 +168,6 @@ export class ActorFromAuthContextService {
 
     if (isDefined(user)) {
       return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext as WorkspaceAuthContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -191,6 +189,7 @@ export class ActorFromAuthContextService {
             workspaceMemberId: workspaceMember.id,
           });
         },
+        authContext as WorkspaceAuthContext,
       );
     }
 

@@ -59,6 +59,12 @@ const dateTimeFieldFormSchema = z
   .extend(settingsDataModelFieldDateFormSchema.shape)
   .extend(isUniqueFieldFormSchema.shape);
 
+const relationFieldFormSchema = z
+  .object({
+    type: z.literal(FieldMetadataType.RELATION),
+  })
+  .extend(settingsDataModelFieldMorphRelationFormSchema.shape);
+
 const morphRelationFieldFormSchema = z
   .object({
     type: z.literal(FieldMetadataType.MORPH_RELATION),
@@ -117,6 +123,10 @@ const arrayFieldFormSchema = z
   .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema))
   .extend(isUniqueFieldFormSchema.shape);
 
+const filesFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.FILES) })
+  .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema));
+
 const otherFieldsFormSchema = z
   .object({
     type: z.enum(
@@ -124,6 +134,7 @@ const otherFieldsFormSchema = z
         omit(SETTINGS_FIELD_TYPE_CONFIGS, [
           FieldMetadataType.BOOLEAN,
           FieldMetadataType.CURRENCY,
+          FieldMetadataType.RELATION,
           FieldMetadataType.MORPH_RELATION,
           FieldMetadataType.SELECT,
           FieldMetadataType.MULTI_SELECT,
@@ -136,6 +147,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.EMAILS,
           FieldMetadataType.LINKS,
           FieldMetadataType.ARRAY,
+          FieldMetadataType.FILES,
         ]),
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
@@ -149,6 +161,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
+    relationFieldFormSchema,
     morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
@@ -159,6 +172,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     emailsFieldFormSchema,
     linksFieldFormSchema,
     arrayFieldFormSchema,
+    filesFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
@@ -178,6 +192,7 @@ const previewableTypes = [
   FieldMetadataType.DATE,
   FieldMetadataType.DATE_TIME,
   FieldMetadataType.EMAILS,
+  FieldMetadataType.FILES,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.LINKS,
   FieldMetadataType.MULTI_SELECT,
@@ -325,6 +340,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             FieldMetadataType.EMAILS,
             FieldMetadataType.LINKS,
             FieldMetadataType.ARRAY,
+            FieldMetadataType.FILES,
           ].includes(fieldType) && (
             <>
               <SettingsDataModelFieldMaxValuesForm

@@ -9,6 +9,7 @@ const mutationOIDCCallSpy = jest.fn();
 const mutationSAMLCallSpy = jest.fn();
 
 jest.mock('~/generated-metadata/graphql', () => ({
+  ...jest.requireActual('~/generated-metadata/graphql'),
   useCreateOidcIdentityProviderMutation: () => [mutationOIDCCallSpy],
   useCreateSamlIdentityProviderMutation: () => [mutationSAMLCallSpy],
 }));
@@ -79,15 +80,13 @@ describe('useCreateSSOIdentityProvider', () => {
     const OTHERParams = {
       type: 'OTHER' as const,
     };
-    renderHook(
-      async () => {
-        const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
-        await expect(
-          // @ts-expect-error - It's expected to throw an error
-          createSSOIdentityProvider(OTHERParams),
-        ).rejects.toThrowError();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useCreateSSOIdentityProvider(), {
+      wrapper: Wrapper,
+    });
+
+    await expect(
+      // @ts-expect-error - It's expected to throw an error
+      result.current.createSSOIdentityProvider(OTHERParams),
+    ).rejects.toThrow('Invalid IdpType');
   });
 });

@@ -37,16 +37,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -62,7 +52,17 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
+        key: FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
         workspaceId: workspaceId,
         value: true,
       },
@@ -72,12 +72,57 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
         key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_MARKETPLACE_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
         workspaceId: workspaceId,
         value: true,
       },

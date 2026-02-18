@@ -53,6 +53,10 @@ export const SettingsDataModelFieldMaxValuesForm = ({
       title = t`Maximum values`;
       description = t`Limit how many values can be added to this field`;
       break;
+    case FieldMetadataType.FILES:
+      title = t`Maximum files`;
+      description = t`Limit how many files can be attached to this field`;
+      break;
     default:
       return null;
   }

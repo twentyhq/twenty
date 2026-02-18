@@ -1,149 +1,149 @@
 ---
-title: Show Expected Amount in Your Pipeline
-description: Calculate and display weighted deal values based on stage probability.
+title: 파이프라인에 예상 금액 표시{
+description: 단계별 확률을 기준으로 거래 금액에 가중치를 적용하여 계산하고 표시합니다.
 ---
 
-The Expected Amount is a calculated value: **Amount × Probability**. This helps you forecast revenue by weighting deals based on how likely they are to close.
+예상 금액은 계산된 값입니다: **Amount × Probability**. 이는 거래의 성사 가능성에 따른 가중치를 적용해 매출을 예측하는 데 도움이 됩니다.
 
 <Tip>
-  This is an example of creating [Formula Fields](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows.
+  이는 워크플로를 사용하여 [수식 필드](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields)를 만드는 예시입니다.
 </Tip>
 
-This guide walks you through setting up the custom fields and workflows needed to calculate and display expected amounts in your pipeline.
+이 가이드는 파이프라인에서 예상 금액을 계산하고 표시하는 데 필요한 사용자 정의 필드와 워크플로를 설정하는 방법을 안내합니다.
 
-## Step 1: Create Custom Fields
+## 1단계: 사용자 정의 필드 생성
 
-You need two custom fields on the Opportunities object.
+Opportunities 객체에 사용자 정의 필드 두 개가 필요합니다.
 
-### Create the Probability Field
+### Probability 필드 만들기
 
-1. Go to **Settings → Data Model → Opportunities**
-2. Click **+ Add Field**
-3. Configure:
-   * **Name**: Probability
-   * **Type**: Number
-   * **Description**: Stage-based probability (0-100%)
-4. Click **Save**
+1. **Settings → Data Model → Opportunities**로 이동합니다.
+2. **+ 필드 추가**를 클릭합니다.
+3. 구성:
+   * **이름**: Probability
+   * **유형**: 숫자
+   * **설명**: 단계 기반 확률(0~100%)
+4. **저장** 클릭
 
-### Create the Expected Amount Field
+### Expected Amount 필드 만들기
 
-1. Click **+ Add Field**
-2. Configure:
-   * **Name**: Expected Amount
-   * **Type**: Currency
-   * **Description**: Calculated: Amount × Probability
-3. Click **Save**
+1. **+ 필드 추가**를 클릭합니다.
+2. 구성:
+   * **이름**: Expected Amount
+   * **유형**: 통화
+   * **설명**: 계산식: Amount × Probability
+3. **저장** 클릭
 
-### Optional: Make Fields Read-Only for Users
+### 선택 사항: 사용자에 대해 필드를 읽기 전용으로 설정
 
-If you don't want users manually editing these calculated fields:
+사용자가 이러한 계산된 필드를 수동으로 편집하지 못하게 하려면:
 
-1. Go to **Settings → Roles**
-2. Select the role to configure
-3. Find the Opportunities object
-4. Set **Probability** and **Expected Amount** fields to read-only
+1. **설정 → 역할**로 이동
+2. 구성할 역할을 선택합니다.
+3. Opportunities 객체를 찾습니다.
+4. **Probability** 및 **Expected Amount** 필드를 읽기 전용으로 설정합니다.
 
-This ensures only the workflows can update these values.
+이렇게 하면 워크플로만 이러한 값을 업데이트할 수 있습니다.
 
-## Step 2: Create Workflow #1 — Update Probability on Stage Change
+## 2단계: 워크플로 #1 만들기 — 단계 변경 시 Probability 업데이트
 
-This workflow automatically sets the Probability when an opportunity moves to a new stage.
+이 워크플로는 Opportunities 레코드가 새 단계로 이동할 때 Probability를 자동으로 설정합니다.
 
-### Create the Workflow
+### 워크플로 만들기
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Update Probability on Stage Change"
+1. **Workflows**로 이동합니다.
+2. **+ New Workflow**를 클릭합니다.
+3. 이름을 "Update Probability on Stage Change"로 지정합니다.
 
-### Configure the Trigger
+### 트리거 구성
 
-1. Add a **Record Created or Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Stage** field is updated
+1. **Record Created or Updated** 트리거를 추가합니다.
+2. 객체로 **Opportunities**를 선택합니다.
+3. 다음으로 필터링: **Stage** 필드가 업데이트됨
 
-### Add Branches for Each Stage
+### 각 단계별 분기 추가
 
-Create a branch for each stage with its probability:
+각 단계에 해당 확률로 분기를 만듭니다:
 
-| Stage       | Probability |
-| ----------- | ----------- |
-| New         | 10%         |
-| Qualified   | 25%         |
-| Meeting     | 40%         |
-| Proposal    | 60%         |
-| Negotiation | 80%         |
-| Closed Won  | 100%        |
-| Closed Lost | 0%          |
+| 단계          | 확률   |
+| ----------- | ---- |
+| 새로운         | 10%  |
+| Qualified   | 25%  |
+| Meeting     | 40%  |
+| Proposal    | 60%  |
+| Negotiation | 80%  |
+| Closed Won  | 100% |
+| Closed Lost | 0%   |
 
 <Note>
-  To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+  새 분기를 만들려면 워크플로 캔버스를 마우스 오른쪽 버튼으로 클릭하고 **New action**을 클릭합니다. 그런 다음 이전 노드에서 이 새 액션으로 화살표를 드래그하여 이전 노드와 연결합니다.
 </Note>
 
-For each stage:
+각 단계에 대해:
 
-1. Add a **Filter** node: Stage = [stage name]
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Probability
-   * Value: [probability for that stage]
+1. **Filter** 노드를 추가합니다: Stage = [단계 이름]
+2. **Update Record** 액션을 추가합니다:
+   * 레코드: 트리거된 Opportunity
+   * 필드: Probability
+   * 값: [해당 단계의 확률]
 
-### Calculate Expected Amount
+### Expected Amount 계산
 
-After the branches rejoin:
+분기가 다시 합쳐진 후:
 
-1. Add a **Filter** node: Amount is not empty
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Expected Amount
-   * Value: Amount × Probability
+1. **Filter** 노드를 추가합니다: Amount가 비어 있지 않음
+2. **Update Record** 액션을 추가합니다:
+   * 레코드: 트리거된 Opportunity
+   * 필드: Expected Amount
+   * 값: Amount × Probability
 
-## Step 3: Create Workflow #2 — Recalculate on Amount Change
+## 3단계: 워크플로 #2 만들기 — Amount 변경 시 재계산
 
-This workflow updates the Expected Amount when the deal Amount changes.
+이 워크플로는 거래의 Amount가 변경될 때 Expected Amount를 업데이트합니다.
 
-### Create the Workflow
+### 워크플로 만들기
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Recalculate Expected Amount on Amount Change"
+1. **Workflows**로 이동합니다.
+2. **+ New Workflow**를 클릭합니다.
+3. 이름을 "Recalculate Expected Amount on Amount Change"로 지정합니다.
 
-### Configure the Trigger
+### 트리거 구성
 
-1. Add a **Record Created or Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Amount** field is updated
+1. **Record Created or Updated** 트리거를 추가합니다.
+2. 객체로 **Opportunities**를 선택합니다.
+3. 다음으로 필터링: **Amount** 필드가 업데이트됨
 
-### Add the Logic
+### 로직 추가
 
-1. Add a **Filter** node: Amount is not empty
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Expected Amount
-   * Value: Amount × Probability
+1. **Filter** 노드를 추가합니다: Amount가 비어 있지 않음
+2. **Update Record** 액션을 추가합니다:
+   * 레코드: 트리거된 Opportunity
+   * 필드: Expected Amount
+   * 값: Amount × Probability
 
-## Step 4: Display in Your Pipeline
+## 4단계: 파이프라인에 표시
 
-Now show the Expected Amount totals in your Kanban view:
+이제 칸반 보기에서 Expected Amount 합계를 표시합니다:
 
-1. Open your **Sales Pipeline** Kanban view
-2. Click the **number** next to any Stage name at the top of a column
-3. Select **Sum**
-4. Choose **Expected Amount**
+1. Sales Pipeline 칸반 보기를 엽니다.
+2. 열 상단의 Stage 이름 옆 숫자를 클릭합니다.
+3. **Sum**을 선택합니다.
+4. Expected Amount를 선택합니다.
 
-Each column now shows the total weighted pipeline value for that stage.
+이제 각 열에는 해당 단계의 가중 파이프라인 총액이 표시됩니다.
 
-## Summary
+## 요약
 
-| Component                 | Purpose                                                                   |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Probability field**     | Stores the stage-based win probability                                    |
-| **Expected Amount field** | Stores Amount × Probability                                               |
-| **Workflow #1**           | Updates Probability when Stage changes, then recalculates Expected Amount |
-| **Workflow #2**           | Recalculates Expected Amount when Amount changes                          |
-| **Aggregation**           | Displays Sum of Expected Amount per stage                                 |
+| 구성 요소                  | 용도                                                            |
+| ---------------------- | ------------------------------------------------------------- |
+| **Probability 필드**     | 단계 기반 성공 확률을 저장합니다.                                           |
+| **Expected Amount 필드** | Amount × Probability 값을 저장합니다.                                |
+| **워크플로 #1**            | Stage가 변경되면 Probability를 업데이트하고, 이어서 Expected Amount를 재계산합니다. |
+| **워크플로 #2**            | Amount가 변경되면 Expected Amount를 재계산합니다.                         |
+| **집계**                 | 단계별 Expected Amount의 합계를 표시합니다.                               |
 
-## Related
+## 관련 항목
 
-* [Formula Fields](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields) — create calculated fields using workflows
-* [Kanban Views](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — column aggregations
-* [How to Create Custom Fields](/l/ko/user-guide/data-model/how-tos/create-custom-fields) — field configuration
+* [수식 필드](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields) — 워크플로를 사용하여 계산된 필드를 생성
+* [칸반 보기](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — 열 집계
+* [사용자 정의 필드 만드는 방법](/l/ko/user-guide/data-model/how-tos/create-custom-fields) — 필드 구성

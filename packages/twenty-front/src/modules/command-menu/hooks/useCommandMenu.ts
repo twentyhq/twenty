@@ -1,19 +1,20 @@
 import { useRecoilCallback } from 'recoil';
 
-import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-
-import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -30,12 +31,11 @@ export const useCommandMenu = () => {
           .getValue();
 
         if (isCommandMenuOpened) {
+          jotaiStore.set(addToNavPayloadRegistryStateV2.atom, new Map());
           set(isCommandMenuOpenedState, false);
+          jotaiStore.set(isCommandMenuOpenedStateV2.atom, false);
           set(isCommandMenuClosingState, true);
           closeAnyOpenDropdown();
-          removeFocusItemFromFocusStackById({
-            focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
-          });
           removeFocusItemFromFocusStackById({
             focusId: SIDE_PANEL_FOCUS_ID,
           });

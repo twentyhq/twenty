@@ -49,7 +49,7 @@ export class MessagingProcessFolderActionsService {
 
     for (const folder of foldersWithPendingActions) {
       try {
-        this.logger.log(
+        this.logger.debug(
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Processing folder action: ${folder.pendingSyncAction}`,
         );
 
@@ -65,7 +65,7 @@ export class MessagingProcessFolderActionsService {
 
           folderIdsToDelete.push(folder.id);
 
-          this.logger.log(
+          this.logger.debug(
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_DELETION action`,
           );
         }
@@ -90,7 +90,6 @@ export class MessagingProcessFolderActionsService {
       const authContext = buildSystemAuthContext(workspaceId);
 
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceDataSource =
             await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
@@ -110,7 +109,7 @@ export class MessagingProcessFolderActionsService {
                   transactionManager,
                 );
 
-                this.logger.log(
+                this.logger.debug(
                   `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingSyncAction to NONE for ${processedFolderIds.length} folders`,
                 );
               }
@@ -128,6 +127,7 @@ export class MessagingProcessFolderActionsService {
             },
           );
         },
+        authContext,
       );
     }
   }

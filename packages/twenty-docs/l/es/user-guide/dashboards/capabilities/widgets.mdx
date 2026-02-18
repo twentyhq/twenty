@@ -1,131 +1,149 @@
 ---
 title: Widgets
-description: Explore the widget types and visualization options in Twenty.
+description: Explora los tipos de widgets y las opciones de visualización en Twenty.
 ---
 
-## Available Widgets
+import { ChartIcon } from '/snippets/chart-icon.mdx';
 
-Twenty provides various widget types to visualize your CRM data.
+## Widgets disponibles
 
-### Bar Charts
+Twenty ofrece varios tipos de widgets para visualizar tus datos de CRM.
 
-Display data as horizontal or vertical bars.
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Gráficos de barras</span>
 
-**Best for:**
+Muestra los datos como barras horizontales o verticales.
 
-* Comparing values across categories
-* Showing rankings
-* Tracking metrics by time period
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Gráfico de barras" />
+</Frame>
 
-**Example uses:**
+**Ideal para:**
 
-* Deals by stage
-* Revenue by sales rep
-* Contacts added per month
+* Comparar valores entre categorías
+* Mostrar clasificaciones
+* Hacer seguimiento de métricas por período de tiempo
 
-<Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars (horizontal) or 50 bars (vertical). If you see the warning "Undisplayed data: max X bars per chart", add filters to narrow down your data or change the grouping (e.g., group by week instead of days).
-</Note>
+**Ejemplos de uso:**
 
-### Pie Charts
-
-Show proportions of a whole.
-
-**Best for:**
-
-* Showing composition or distribution
-* Comparing parts to whole
-* Highlighting major segments
-
-**Example uses:**
-
-* Deal distribution by source
-* Contact breakdown by industry
-* Pipeline composition by owner
-
-### Line Charts
-
-Display trends over time.
-
-**Best for:**
-
-* Tracking changes over time
-* Identifying trends
-* Comparing multiple metrics
-
-**Example uses:**
-
-* Monthly deal count trend
-* Revenue growth over quarters
-* Activity levels over time
-
-### Number Metrics
-
-Display single key values prominently.
-
-**Best for:**
-
-* Highlighting KPIs
-* Showing totals or averages
-* Quick status checks
-
-**Example uses:**
-
-* Total pipeline value
-* Number of open opportunities
-* Conversion rate
-
-**Advanced options:**
-
-* **Ratio**: For Select fields, calculate ratios between values. Go to **Data on display** → select your field → enable the **Ratio** option.
-* **Prefix & Suffix**: Add custom text before or after the number (e.g., "$" prefix or "%" suffix) for better readability.
-
-### iFrames
-
-Embed external tools and content directly in your dashboard.
-
-**Best for:**
-
-* Displaying external reports or dashboards
-* Integrating third-party sales tools
-* Showing live content from other systems
-
-**Example uses:**
-
-* Metrics from your Support tool
-* Metrics from your dialer
-* Live content from your Sales sequence tool
+* Oportunidades por etapa
+* Ingresos por representante de ventas
+* Contactos agregados por mes
 
 <Note>
-  **Coming soon**: Gauge charts and tables are not yet available but are on our roadmap.
+  **Límites de visualización**: Los gráficos de barras pueden mostrar un máximo de 100 barras y 50 grupos por barra cuando se usa Agrupar por. Si ves la advertencia "Datos no mostrados: máximo de X barras por gráfico", agrega filtros para acotar tus datos o cambia la agrupación (p. ej., agrupar por semana en lugar de por días).
 </Note>
 
-## Configuring Widgets
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Gráficos de pastel</span>
 
-### Data Source
+Muestra las proporciones de un todo.
 
-1. Select the object to visualize (Opportunities, People, etc.)
-2. Choose the metric to display (count, sum, average)
-3. Apply filters to focus on specific data
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Gráfico de pastel" />
+</Frame>
 
-### Grouping
+**Ideal para:**
 
-Group data by:
+* Mostrar composición o distribución
+* Comparar las partes con el todo
+* Resaltar los segmentos principales
 
-* Fields (stage, owner, industry)
-* Time periods (day, week, month, quarter)
-* Custom segments
+**Ejemplos de uso:**
 
-### Styling
+* Distribución de oportunidades por origen
+* Desglose de contactos por sector
+* Composición del embudo por propietario
 
-Customize your charts with:
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Gráficos de líneas</span>
 
-* Colors and themes
-* Labels and legends
-* Size and positioning
+Muestra las tendencias a lo largo del tiempo.
 
-### Duplicating Widgets
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Gráfico de líneas" />
+</Frame>
 
-1. Click on the widget
-2. Open **Options**
-3. Click **Duplicate widget**
+**Ideal para:**
+
+* Hacer seguimiento de los cambios a lo largo del tiempo
+* Identificar tendencias
+* Comparar múltiples métricas
+
+**Ejemplos de uso:**
+
+* Tendencia mensual del número de oportunidades
+* Crecimiento de ingresos por trimestres
+* Niveles de actividad a lo largo del tiempo
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Gráficos agregados</span>
+
+Muestra valores clave individuales de forma destacada.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Gráfico agregado" />
+</Frame>
+
+**Ideal para:**
+
+* Resaltar los KPI
+* Mostrar totales o promedios
+* Comprobaciones rápidas de estado
+
+**Ejemplos de uso:**
+
+* Valor total del embudo
+* Número de oportunidades abiertas
+* Tasa de conversión
+
+**Opciones avanzadas:**
+
+* **Proporción**: Para campos de tipo Select, calcula proporciones entre valores. Ve a **Datos en pantalla** → selecciona tu campo → activa la opción **Proporción**.
+* **Prefijo y sufijo**: Agrega texto personalizado antes o después del número (p. ej., prefijo "$" o sufijo "%") para mejorar la legibilidad.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+Incorpora herramientas y contenido externos directamente en tu panel.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**Ideal para:**
+
+* Mostrar informes o paneles externos
+* Integrar herramientas de ventas de terceros
+* Mostrar contenido en tiempo real de otros sistemas
+
+**Ejemplos de uso:**
+
+* Métricas de tu herramienta de soporte
+* Métricas de tu herramienta de marcación
+* Contenido en tiempo real de tu herramienta de secuencias de ventas
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Texto enriquecido</span>
+
+Añade texto con formato y contenido directamente a tu panel.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Texto enriquecido" />
+</Frame>
+
+**Ideal para:**
+
+* Añadir contexto o instrucciones
+* Descripciones del panel
+* Notas y anotaciones
+
+**Funciones:**
+
+* Formato de texto enriquecido (negrita, cursiva, listas, etc.)
+* Carga de imágenes y archivos
+* Edición con estilo Markdown
+
+<Note>
+  **Próximamente**: Los gráficos de indicador y las tablas aún no están disponibles, pero están en nuestra hoja de ruta.
+</Note>
+
+### Duplicar widgets
+
+1. Haz clic en el widget
+2. Abre **Opciones**
+3. Haz clic en **Duplicar widget**

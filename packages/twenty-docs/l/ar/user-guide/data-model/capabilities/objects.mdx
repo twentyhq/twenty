@@ -1,11 +1,11 @@
 ---
 title: كائنات
-description: Learn about standard and custom objects in Twenty.
+description: تعرّف على الكائنات القياسية والمخصصة في Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Standard Objects
+## الكائنات القياسية
 
 الكائنات القياسية هي كيانات مُعرّفة مسبقًا في مساحة العمل الخاصة بك لمساعدتك في البدء. هي جزء من نموذج بيانات مشترك يمكن الوصول إليه بواسطة جميع مستخدمي Twenty. يمكنك استخدامها كما هي أو تخصيصها أو تعطيلها.
 
@@ -25,11 +25,11 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ### الملاحظات
 
-The `Notes` object stores free-form notes that can be attached to People, Companies, Opportunities, and other records. Use notes to capture meeting summaries, important details, or any contextual information.
+يخزّن كائن `Notes` ملاحظات حرة يمكن إرفاقها بالأشخاص والشركات والفرص وسجلات أخرى. استخدم الملاحظات لالتقاط ملخصات الاجتماعات والتفاصيل المهمة أو أي معلومات سياقية.
 
 ### المهام
 
-The `Tasks` object stores to-dos and action items. Tasks can be linked to People, Companies, Opportunities, and other records. Track due dates, assignees, and completion status to stay on top of your follow-ups.
+يخزّن كائن `Tasks` المهام المطلوب إنجازها وبنود العمل. يمكن ربط المهام بالأشخاص والشركات والفرص وسجلات أخرى. تتبّع تواريخ الاستحقاق والمكلّفين وحالة الإكمال للبقاء على اطّلاع بمتابعاتك.
 
 ## كائنات مخصصة
 
@@ -37,55 +37,55 @@ The `Tasks` object stores to-dos and action items. Tasks can be linked to People
 
 <img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
 
-### Creating a New Custom Object
+### إنشاء كائن مخصص جديد
 
 لإنشاء كائن مخصص جديد:
 
 1. اذهب إلى الإعدادات في الشريط الجانبي الأيسر.
 2. تحت قسم مساحة العمل، انتقل إلى نموذج البيانات. هنا ستتمكن من رؤية نظرة عامة على جميع الكائنات القياسية والمخصصة الحالية (النشطة والمعطلة).
 
-<VimeoEmbed videoId="926288174" title="Video demonstration" />
+<VimeoEmbed videoId="926288174" title="عرض توضيحي بالفيديو" />
 
 3. انقر على "+ كائن جديد" في الأعلى. أدخل الاسم (مفرد وجمع)، اختر أيقونة، أضف وصفًا للكائن المخصص واضغط حفظ (في الزاوية العليا اليمنى). باستخدام القائمة كمثال للكائن المخصص، سيكون المفرد هو "قائمة" والجمع "قوائم" مع الوصف كمثل "قوائم قام المضيفون بإنشائها لعرض ممتلكاتهم."
 
-4. Your custom object is now created and will appear in your sidebar. You can start adding records to it right away.
+4. تم الآن إنشاء الكائن المخصص الخاص بك وسيظهر في الشريط الجانبي لديك. يمكنك البدء في إضافة السجلات إليه فورًا.
 
-## Managing Objects
+## إدارة الكائنات
 
-### Deactivating Objects
+### إلغاء تنشيط الكائنات
 
-If you don't need a standard or custom object:
+إذا لم تكن بحاجة إلى كائن قياسي أو مخصص:
 
-1. Go to Settings → Data Model
-2. Find the object you want to deactivate
-3. Click the toggle to deactivate it
-4. The object will be hidden from your workspace but data is preserved
+1. انتقل إلى الإعدادات → نموذج البيانات
+2. اعثر على الكائن الذي تريد إلغاء تنشيطه
+3. انقر زر التبديل لإلغاء تنشيطه
+4. سيتم إخفاء الكائن من مساحة العمل لديك ولكن سيتم الاحتفاظ بالبيانات
 
-### Reactivating Objects
+### إعادة تنشيط الكائنات
 
-To bring back a deactivated object:
+لإعادة كائن تم إلغاء تنشيطه:
 
-1. Go to Settings → Data Model
-2. Look for deactivated objects (they'll be grayed out)
-3. Click the toggle to reactivate it
-4. The object and all its data will be restored
+1. انتقل إلى الإعدادات → نموذج البيانات
+2. ابحث عن الكائنات التي تم إلغاء تنشيطها (ستظهر باللون الرمادي)
+3. انقر زر التبديل لإعادة تنشيطه
+4. سيتم استعادة الكائن وجميع بياناته
 
 ## أفضل الممارسات
 
-### When to Create Custom Objects
+### متى يجب إنشاء كائنات مخصصة
 
-* **Unique business entities**: Things specific to your industry or process
-* **Complex relationships**: When you need to track connections between multiple entities
-* **Scalable data**: When you might have many instances of something
+* **كيانات عمل فريدة**: أمور خاصة بمجالك أو بعملياتك
+* **علاقات معقّدة**: عندما تحتاج إلى تتبّع الروابط بين عدة كيانات
+* **بيانات قابلة للتوسّع**: عندما قد يكون لديك العديد من المثيلات لشيء ما
 
-### When to Use Fields Instead
+### متى تستخدم الحقول بدلًا من ذلك
 
-* **Simple attributes**: Properties that describe existing objects
-* **Categories or labels**: Ways to classify existing records
-* **Single values**: Information that doesn't need its own lifecycle
+* **سمات بسيطة**: خصائص تصف الكائنات الموجودة
+* **فئات أو تسميات**: طرق لتصنيف السجلات الموجودة
+* **قيم مفردة**: معلومات لا تحتاج إلى دورة حياة خاصة بها
 
-### Object Naming
+### تسمية الكائنات
 
-* **Use clear, descriptive names**: Make it obvious what the object represents
-* **Follow conventions**: Use singular for the object name, plural for the collection
-* **Consider your team**: Choose names everyone will understand
+* **استخدم أسماء واضحة ووصفية**: اجعل ما يمثّله الكائن واضحًا
+* **اتّبع الاصطلاحات**: استخدم المفرد لاسم الكائن، والجمع للمجموعة
+* **ضع فريقك في الاعتبار**: اختر أسماء يفهمها الجميع

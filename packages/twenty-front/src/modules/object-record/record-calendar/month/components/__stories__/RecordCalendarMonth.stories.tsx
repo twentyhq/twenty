@@ -22,7 +22,6 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -122,6 +121,8 @@ const meta: Meta<typeof RecordCalendarMonth> = {
                         canSoftDeleteObjectRecords: true,
                         canDestroyObjectRecords: true,
                         restrictedFields: {},
+                        rowLevelPermissionPredicates: [],
+                        rowLevelPermissionPredicateGroups: [],
                       },
                     }}
                   >
@@ -139,7 +140,6 @@ const meta: Meta<typeof RecordCalendarMonth> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
-    I18nFrontDecorator,
     RouterDecorator,
   ],
 };

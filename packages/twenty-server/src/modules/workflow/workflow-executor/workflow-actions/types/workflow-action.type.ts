@@ -6,6 +6,7 @@ import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-e
 import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-settings.type';
 import { type WorkflowIfElseActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-action-settings.type';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
+import { type WorkflowLogicFunctionActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/types/workflow-logic-function-action-settings.type';
 import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
   type WorkflowCreateRecordActionSettings,
@@ -40,8 +41,18 @@ export type WorkflowCodeAction = BaseWorkflowAction & {
   settings: WorkflowCodeActionSettings;
 };
 
+export type WorkflowLogicFunctionAction = BaseWorkflowAction & {
+  type: WorkflowActionType.LOGIC_FUNCTION;
+  settings: WorkflowLogicFunctionActionSettings;
+};
+
 export type WorkflowSendEmailAction = BaseWorkflowAction & {
   type: WorkflowActionType.SEND_EMAIL;
+  settings: WorkflowSendEmailActionSettings;
+};
+
+export type WorkflowDraftEmailAction = BaseWorkflowAction & {
+  type: WorkflowActionType.DRAFT_EMAIL;
   settings: WorkflowSendEmailActionSettings;
 };
 
@@ -111,7 +122,9 @@ export type WorkflowDelayAction = BaseWorkflowAction & {
 
 export type WorkflowAction =
   | WorkflowCodeAction
+  | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction
+  | WorkflowDraftEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction

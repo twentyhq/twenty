@@ -39,11 +39,15 @@ Nesne A'daki birçok kayıt, Nesne B'deki birçok kayda bağlanabilir.
 
 **Örnek:** Birçok Kişi birçok Projeye bağlanabilir ve tersi de geçerlidir.
 
-<Warning>
-  **Çoktan-çoka ilişkiler henüz desteklenmiyor.**
+Çoktan çoğa ilişkiler bir **kesişim nesnesi** deseni kullanır: her iki tarafı bağlayan ara bir nesne. Kesişim ilişkisi özelliğiyle Twenty, ara nesneyi arayüzden gizleyerek nihai bağlı kayıtları doğrudan görüntüler.
 
-  Bu ilişki türü 2026'nın ilk yarısı için planlanıyor. Geçici bir çözüm olarak, her iki nesneyle de Çoktan-bire ilişkileri olan aracı bir "junction" nesnesi (ör. "Proje Atamaları") oluşturun.
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Lab Özelliği**: Kesişim ilişkileri, kullanılmadan önce **Settings → Updates → Lab** bölümünde etkinleştirilmelidir.
 </Warning>
+
+Eksiksiz bir adım adım kılavuz için [Çoktan Çoğa İlişkiler Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-many-to-many-relations) bölümüne bakın.
 
 ## Bir İlişki Alanı Oluşturma
 

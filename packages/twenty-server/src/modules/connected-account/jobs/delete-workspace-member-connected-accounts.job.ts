@@ -24,19 +24,16 @@ export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
+        );
 
-        await connectedAccountRepository.delete({
-          accountOwnerId: workspaceMemberId,
-        });
-      },
-    );
+      await connectedAccountRepository.delete({
+        accountOwnerId: workspaceMemberId,
+      });
+    }, authContext);
   }
 }

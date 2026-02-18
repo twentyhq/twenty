@@ -29,7 +29,7 @@ Zahrnuje komponenty nejvyšší úrovně definované aplikačními trasami. Impo
 ## Moduly
 
 Každý modul představuje funkci nebo skupinu funkcí s jejich specifickými komponenty, stavy a provozní logikou.
-Všechny by měly dodržovat strukturu níže. You can nest modules within modules (referred to as submodules) and the same rules will apply.
+Všechny by měly dodržovat strukturu níže. Moduly můžete vnořovat do sebe (tzv. podmoduly) a platí pro ně stejná pravidla.
 
 ```
 module1
@@ -64,7 +64,7 @@ Více podrobností naleznete v [GraphQL](https://graphql.org/learn/).
 
 * Fragmenty
 
-Fragment je znovupoužitelný kus dotazu, který můžete použít na různých místech. By using fragments, it's easier to avoid duplicating code.
+Fragment je znovupoužitelný kus dotazu, který můžete použít na různých místech. Pomocí fragmentů je snazší vyhnout se duplikaci kódu.
 
 Více podrobností naleznete v [GraphQL Fragments](https://graphql.org/learn/queries/#fragments).
 
@@ -76,7 +76,7 @@ Více podrobností naleznete v [GraphQL Queries](https://graphql.org/learn/queri
 
 Více podrobností naleznete v [GraphQL Mutations](https://graphql.org/learn/queries/#mutations).
 
-### Hooks
+### Hooky
 
 Více podrobností naleznete v [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks).
 
@@ -88,9 +88,9 @@ Obsahuje logiku správy stavů. To řeší [RecoilJS](https://recoiljs.org).
 
 Vestavěná správa stavů v Reactu stále spravuje stav uvnitř komponenty.
 
-### Utils
+### Pomocné funkce
 
-Měly by obsahovat pouze znovupoužitelné čisté funkce. Otherwise, create custom hooks in the `hooks` folder.
+Měly by obsahovat pouze znovupoužitelné čisté funkce. V opačném případě vytvořte vlastní hooky ve složce `hooks`.
 
 ## UI
 

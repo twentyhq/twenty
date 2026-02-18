@@ -1,22 +1,33 @@
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
+import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
+import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export type GenerateDepthRecordGqlFieldsFromFields = {
   objectMetadataItems: Pick<
     ObjectMetadataItem,
-    'id' | 'fields' | 'labelIdentifierFieldMetadataId' | 'nameSingular'
+    | 'id'
+    | 'fields'
+    | 'labelIdentifierFieldMetadataId'
+    | 'imageIdentifierFieldMetadataId'
+    | 'nameSingular'
+    | 'namePlural'
   >[];
   fields: Pick<
     FieldMetadataItem,
-    'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
+    'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
   >[];
   depth: 0 | 1;
   shouldOnlyLoadRelationIdentifiers?: boolean;
+  isFilesFieldMigrated?: boolean;
 };
 
 export const generateDepthRecordGqlFieldsFromFields = ({
@@ -24,6 +35,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
   fields,
   depth,
   shouldOnlyLoadRelationIdentifiers = true,
+  isFilesFieldMigrated,
 }: GenerateDepthRecordGqlFieldsFromFields) => {
   const generatedRecordGqlFields: RecordGqlFields = fields.reduce(
     (recordGqlFields, fieldMetadata) => {
@@ -47,11 +59,51 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
+        const isActivityTargetField =
+          fieldMetadata.name === CoreObjectNamePlural.NoteTarget ||
+          fieldMetadata.name === CoreObjectNamePlural.TaskTarget;
+
+        if (isActivityTargetField && depth === 1) {
+          const activityTargetObjectNameSingular =
+            fieldMetadata.name === CoreObjectNamePlural.NoteTarget
+              ? CoreObjectNameSingular.Note
+              : CoreObjectNameSingular.Task;
+
+          const activityTargetGqlFields = generateActivityTargetGqlFields({
+            activityObjectNameSingular: activityTargetObjectNameSingular,
+            objectMetadataItems,
+            loadRelations: 'activity',
+          });
+
+          return {
+            ...recordGqlFields,
+            [fieldMetadata.name]: activityTargetGqlFields,
+          };
+        }
+
+        if (isJunctionRelationField(fieldMetadata)) {
+          const junctionGqlFields = generateJunctionRelationGqlFields({
+            fieldMetadataItem: fieldMetadata,
+            objectMetadataItems,
+            isFilesFieldMigrated,
+          });
+
+          if (isDefined(junctionGqlFields) && depth === 1) {
+            return {
+              ...recordGqlFields,
+              [fieldMetadata.name]: junctionGqlFields,
+            };
+          }
+        }
+
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem);
 
         const imageIdentifierFieldMetadataItem =
-          getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
+          getImageIdentifierFieldMetadataItem(
+            targetObjectMetadataItem,
+            isFilesFieldMigrated,
+          );
 
         const relationIdentifierSubGqlFields = {
           id: true,

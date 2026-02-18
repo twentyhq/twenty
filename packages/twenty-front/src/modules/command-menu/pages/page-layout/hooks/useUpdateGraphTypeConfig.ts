@@ -18,7 +18,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,

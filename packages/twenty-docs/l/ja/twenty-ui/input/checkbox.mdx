@@ -1,16 +1,16 @@
 ---
-title: Checkbox
-image: /images/user-guide/tasks/tasks_header.png
+title: チェックボックス
+image: '""'
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="&#x22;&#x22;" alt="ヘッダー" />
 </Frame>
 
-Used when a user needs to select multiple values from several options.
+ユーザーが、複数のオプションから複数の値を選択する必要がある場合に使用されます。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { Checkbox } from "twenty-ui/display";
 
@@ -30,15 +30,15 @@ Used when a user needs to select multiple values from several options.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props           | Type     | Description                                                                                  |
-    | --------------- | -------- | -------------------------------------------------------------------------------------------- |
-    | checked         | boolean  | Indicates whether the checkbox is checked                                                    |
-    | indeterminate   | boolean  | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)  |
-    | onChange        | function | The callback function you want to trigger when the checkbox state changes                    |
-    | onCheckedChange | function | The callback function you want to trigger when the `checked` state changes                   |
-    | variant         | string   | The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary` |
-    | size            | string   | The size of the checkbox. Has two options: `small` and `large`                               |
-    | shape           | string   | The shape of the checkbox. Has two options: `squared` and `rounded`                          |
+  <Tab title="プロパティ">
+    | プロパティ           | タイプ    | 説明                                                                        |
+    | --------------- | ------ | ------------------------------------------------------------------------- |
+    | checked         | ブール型   | チェックボックスがチェックされているかどうかを示します                                               |
+    | 不確定             | ブール型   | チェックボックスが不確定な状態（チェック済みでも未チェックでもない）かどうかを示します                               |
+    | onChange        | 関数     | チェックボックスの状態が変化したときにトリガーされるコールバック関数                                        |
+    | onCheckedChange | 関数     | `checked` 状態が変化したときにトリガーされるコールバック関数                                       |
+    | バリアント           | string | ボックスのビジュアルスタイルのバリエーション。 オプションには `primary`、 `secondary`、 `tertiary` が含まれます |
+    | サイズ             | string | チェックボックスのサイズ。 オプションは2つ：`small` と `large`                                  |
+    | 形状              | string | チェックボックスの形状。 オプションは2つ：`squared` と `rounded`                               |
   </Tab>
 </Tabs>

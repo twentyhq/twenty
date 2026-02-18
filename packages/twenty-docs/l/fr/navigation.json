@@ -1,187 +1,187 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "Guide de l'utilisateur",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "Découvrez Twenty",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "dataModel": {
-          "label": "Data Model",
+          "label": "Modèle de données",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "Migration de données",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "Calendrier et e-mails",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "workflows": {
-          "label": "Workflows",
+          "label": "Flux de travail",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "Guides pratiques",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "Automatisations CRM"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "Connexion à d'autres outils"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "Configurations avancées"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "Besoin de plus d'aide"
                 }
               }
             }
           }
         },
         "ai": {
-          "label": "AI",
+          "label": "IA",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "Vues et pipelines",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "dashboards": {
-          "label": "Dashboards",
+          "label": "Tableaux de bord",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "Autorisations et accès",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "billing": {
-          "label": "Billing",
+          "label": "Facturation",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         },
         "settings": {
-          "label": "Settings",
+          "label": "Paramètres",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "Guides pratiques"
             }
           }
         }
       }
     },
     "developers": {
-      "label": "Developers",
+      "label": "Développeurs",
       "groups": {
         "developersGroup": {
-          "label": "Developers"
+          "label": "Développeurs"
         },
         "extend": {
-          "label": "Extend",
+          "label": "Étendre",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "Auto-hébergement",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "Capacités"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "Contribuer",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "Capacités",
               "groups": {
                 "frontendDevelopment": {
-                  "label": "Frontend Development",
+                  "label": "Développement frontend",
                   "groups": {
                     "twentyUi": {
                       "label": "Twenty UI",
                       "groups": {
                         "display": {
-                          "label": "Display"
+                          "label": "Afficher"
                         },
                         "feedback": {
-                          "label": "Feedback"
+                          "label": "Retour d'information"
                         },
                         "input": {
-                          "label": "Input"
+                          "label": "Entrée "
                         },
                         "navigation": {
                           "label": "Navigation"
@@ -191,7 +191,7 @@
                   }
                 },
                 "backendDevelopment": {
-                  "label": "Backend Development"
+                  "label": "Développement backend"
                 }
               }
             }

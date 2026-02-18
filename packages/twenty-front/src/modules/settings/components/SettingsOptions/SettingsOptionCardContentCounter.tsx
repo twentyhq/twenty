@@ -1,10 +1,10 @@
 import { SettingsCounter } from '@/settings/components/SettingsCounter';
 import {
-  StyledSettingsOptionCardContent,
-  StyledSettingsOptionCardDescription,
-  StyledSettingsOptionCardIcon,
-  StyledSettingsOptionCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
+  StyledSettingsCardContent,
+  StyledSettingsCardDescription,
+  StyledSettingsCardIcon,
+  StyledSettingsCardTitle,
+} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { type IconComponent } from 'twenty-ui/display';
 
@@ -32,18 +32,18 @@ export const SettingsOptionCardContentCounter = ({
   showButtons = true,
 }: SettingsOptionCardContentCounterProps) => {
   return (
-    <StyledSettingsOptionCardContent disabled={disabled}>
+    <StyledSettingsCardContent disabled={disabled}>
       {Icon && (
-        <StyledSettingsOptionCardIcon>
+        <StyledSettingsCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsOptionCardIcon>
+        </StyledSettingsCardIcon>
       )}
       <div>
-        <StyledSettingsOptionCardTitle>{title}</StyledSettingsOptionCardTitle>
+        <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
         {description && (
-          <StyledSettingsOptionCardDescription>
+          <StyledSettingsCardDescription>
             {description}
-          </StyledSettingsOptionCardDescription>
+          </StyledSettingsCardDescription>
         )}
       </div>
       <SettingsCounter
@@ -54,6 +54,6 @@ export const SettingsOptionCardContentCounter = ({
         disabled={disabled}
         showButtons={showButtons}
       />
-    </StyledSettingsOptionCardContent>
+    </StyledSettingsCardContent>
   );
 };

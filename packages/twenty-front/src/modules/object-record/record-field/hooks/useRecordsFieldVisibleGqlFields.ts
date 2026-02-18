@@ -9,7 +9,9 @@ import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UseRecordsFieldVisibleGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
@@ -29,19 +31,28 @@ export const useRecordsFieldVisibleGqlFields = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const isFilesFieldMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+  );
+
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
-    fields: visibleRecordFields.map(
-      (field) =>
-        fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
-    ),
+    fields: visibleRecordFields
+      .map(
+        (field) =>
+          fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
+      )
+      .filter(isDefined),
     depth: 1,
+    isFilesFieldMigrated,
   });
 
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-  const imageIdentifierFieldMetadataItem =
-    getImageIdentifierFieldMetadataItem(objectMetadataItem);
+  const imageIdentifierFieldMetadataItem = getImageIdentifierFieldMetadataItem(
+    objectMetadataItem,
+    isFilesFieldMigrated,
+  );
 
   const hasPosition = hasObjectMetadataItemPositionField(objectMetadataItem);
 

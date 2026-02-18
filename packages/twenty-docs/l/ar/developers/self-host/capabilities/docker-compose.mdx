@@ -1,5 +1,5 @@
 ---
-title: 1-Click w/ Docker Compose
+title: بنقرة واحدة مع Docker Compose
 ---
 
 <Warning>
@@ -44,7 +44,7 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
 
 1. **إنشاء ملف .env**
 
-   Copy the example environment file to a new .env file in your working directory:
+   انسخ ملف البيئة النموذجي إلى ملف .env جديد في دليل العمل لديك:
 
    ```bash
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
@@ -86,7 +86,7 @@ curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/ref
 
 ### الخطوة 3: إطلاق التطبيق
 
-Start the Docker containers:
+بدء حاويات Docker:
 
 ```bash
 docker compose up -d
@@ -94,9 +94,9 @@ docker compose up -d
 
 ### الخطوة 4: الوصول إلى التطبيق
 
-If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+إذا كنت تستضيف twentyCRM على جهازك، فافتح المتصفح وانتقل إلى [http://localhost:3000](http://localhost:3000).
 
-If you host it on a server, check that the server is running and that everything is ok with
+إذا كنت تستضيفه على خادم، فتحقق من أن الخادم يعمل وأن كل شيء على ما يرام باستخدام
 
 ```bash
 curl http://localhost:3000
@@ -186,66 +186,66 @@ SSL (HTTPS) مطلوب لعمل ميزات معينة في المتصفح بشك
 
 * **إعدادات الجدار الناري:**
 
-  Open necessary ports in your firewall to allow external access.
+  افتح المنافذ اللازمة في جدار الحماية للسماح بالوصول الخارجي.
 
 * **التناسق:**
 
   يجب أن يتطابق `SERVER_URL` مع طريقة وصول المستخدمين إلى تطبيقك في متصفحاتهم.
 
-#### Persistence
+#### استمرارية البيانات
 
 * **أحجام البيانات:**
 
-  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+  يستخدم تكوين Docker Compose وحدات التخزين للاحتفاظ بالبيانات لقاعدة البيانات وتخزين الخادم.
 
 * **البيئات غير المرتبطة بالحالة:**
 
   إذا كنت تقوم بالنشر إلى بيئة غير مرتبطة بالحالة (مثل بعض خدمات السحابة)، فقم بتكوين التخزين الخارجي لحفظ البيانات.
 
-## Backup and Restore
+## النسخ الاحتياطي والاستعادة
 
-Regular backups protect your CRM data from loss.
+تحمي النسخ الاحتياطية المنتظمة بيانات نظام إدارة علاقات العملاء لديك من الفقدان.
 
-### Create a Database Backup
+### إنشاء نسخة احتياطية لقاعدة البيانات
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### أتمتة النسخ الاحتياطية اليومية
 
-Add to your crontab (`crontab -e`):
+أضف إلى crontab لديك (`crontab -e`):
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### الاستعادة من نسخة احتياطية
 
-1. Stop the application:
+1. إيقاف التطبيق:
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. استعادة قاعدة البيانات:
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. إعادة تشغيل الخدمات:
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### أفضل ممارسات النسخ الاحتياطي
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **اختبر عمليات الاستعادة بانتظام** — تحقق من أن النسخ الاحتياطية تعمل فعلاً
+* **خزّن النسخ الاحتياطية خارج الموقع** — استخدم التخزين السحابي (S3، GCS، إلخ.)
+* **شفّر البيانات الحساسة** — قم بحماية النسخ الاحتياطية بالتشفير
+* **احتفِظ بنسخ متعددة** — احتفِظ بنسخ احتياطية يومية وأسبوعية وشهرية
 
 ## استكشاف الأخطاء وإصلاحها
 

@@ -41,7 +41,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class UserService extends TypeOrmQueryService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
@@ -66,7 +66,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const authContext = buildSystemAuthContext(workspace.id);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -81,6 +80,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
           },
         });
       },
+      authContext,
     );
   }
 
@@ -92,7 +92,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const authContext = buildSystemAuthContext(workspace.id);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -105,6 +104,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
           withDeleted: withDeleted,
         });
       },
+      authContext,
     );
   }
 
@@ -116,7 +116,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const authContext = buildSystemAuthContext(workspace.id);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -130,6 +129,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
           withDeleted: true,
         });
       },
+      authContext,
     );
   }
 
@@ -202,7 +202,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     const workspaceMembers =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -213,6 +212,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
           return workspaceMemberRepository.find();
         },
+        authContext,
       );
 
     const userWorkspaceId = userWorkspace.id;
@@ -255,21 +255,18 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        await workspaceMemberRepository.delete({
-          userId: userWorkspace.userId,
-        });
-      },
-    );
+      await workspaceMemberRepository.delete({
+        userId: userWorkspace.userId,
+      });
+    }, authContext);
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId,

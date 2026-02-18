@@ -41,7 +41,6 @@ export class MessagingDeleteGroupEmailMessagesService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageChannelMessageAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
@@ -56,7 +55,7 @@ export class MessagingDeleteGroupEmailMessagesService {
           });
 
         if (!firstRecord) {
-          this.logger.log(
+          this.logger.debug(
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - No message associations found`,
           );
 
@@ -126,7 +125,7 @@ export class MessagingDeleteGroupEmailMessagesService {
 
                 totalDeletedCount += messageExternalIdsChunk.length;
 
-                this.logger.log(
+                this.logger.debug(
                   `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Deleted ${messageExternalIdsChunk.length} group email messages`,
                 );
               }
@@ -146,6 +145,7 @@ export class MessagingDeleteGroupEmailMessagesService {
 
         return totalDeletedCount;
       },
+      authContext,
     );
   }
 }

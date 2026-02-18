@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -27,8 +27,10 @@ import { validateAddressFieldOrThrow } from 'src/engine/api/common/common-args-p
 import { validateArrayFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util';
 import { validateBooleanFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util';
 import { validateCurrencyFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util';
-import { validateDateAndDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util';
+import { validateDateFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util';
+import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util';
 import { validateEmailsFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util';
+import { validateFilesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { validateFullNameFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util';
 import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util';
 import { validateMultiSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util';
@@ -54,6 +56,7 @@ import { transformPhonesValue } from 'src/engine/core-modules/record-transformer
 import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -118,7 +121,11 @@ export class DataArgProcessor {
           );
         }
 
-        const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
+        const fieldMetadata =
+          findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
+            flatEntityId: fieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          });
 
         if (!fieldMetadata) {
           throw new CommonQueryRunnerException(
@@ -178,8 +185,9 @@ export class DataArgProcessor {
         return transformTextField(validatedValue);
       }
       case FieldMetadataType.DATE_TIME:
+        return validateDateTimeFieldOrThrow(value, key);
       case FieldMetadataType.DATE:
-        return validateDateAndDateTimeFieldOrThrow(value, key);
+        return validateDateFieldOrThrow(value, key);
       case FieldMetadataType.BOOLEAN:
         return validateBooleanFieldOrThrow(value, key);
       case FieldMetadataType.RATING:
@@ -217,7 +225,7 @@ export class DataArgProcessor {
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const fieldMetadataRelationSettings =
-          fieldMetadata.settings as FieldMetadataRelationSettings;
+          fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
 
         if (
           fieldMetadataRelationSettings.relationType ===
@@ -245,6 +253,15 @@ export class DataArgProcessor {
         const validatedValue = validateEmailsFieldOrThrow(value, key);
 
         return transformEmailsValue(validatedValue);
+      }
+      case FieldMetadataType.FILES: {
+        const validatedValue = validateFilesFieldOrThrow(
+          value,
+          key,
+          fieldMetadata.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES],
+        );
+
+        return transformRawJsonField(validatedValue);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);

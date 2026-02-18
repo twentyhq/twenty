@@ -20,7 +20,7 @@ const StyledFilterRow = styled.div`
 `;
 
 const StyledOperandSelectContainer = styled.div`
-  width: 46px;
+  width: 50px;
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRowProps = {

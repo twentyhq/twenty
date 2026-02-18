@@ -41,6 +41,18 @@ export const useCommandMenuActions = () => {
       action.scope === ActionScope.Global,
   );
 
+  const frontComponentGlobalActions: ActionConfig[] = actions?.filter(
+    (action) =>
+      action.type === ActionType.FrontComponent &&
+      action.scope === ActionScope.Global,
+  );
+
+  const frontComponentRecordSelectionActions: ActionConfig[] = actions?.filter(
+    (action) =>
+      action.type === ActionType.FrontComponent &&
+      action.scope === ActionScope.RecordSelection,
+  );
+
   const fallbackActions: ActionConfig[] = actions?.filter(
     (action) => action.type === ActionType.Fallback,
   );
@@ -58,6 +70,8 @@ export const useCommandMenuActions = () => {
     actionObjectActions,
     workflowRunRecordSelectionActions,
     workflowRunGlobalActions,
+    frontComponentGlobalActions,
+    frontComponentRecordSelectionActions,
     fallbackActions,
     createRelatedRecordActions,
   };

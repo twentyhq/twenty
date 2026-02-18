@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: Формульные поля
+description: Создавайте формульные поля с помощью рабочих процессов, пока не появится встроенная поддержка.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+В Twenty пока нет собственной поддержки формульных полей (планируется в 2026), но того же результата можно добиться с помощью рабочих процессов. Это обходное решение позволяет автоматически вычислять и заполнять значения полей — от простых конкатенаций до сложной бизнес-логики.
 
 ## Типичные случаи использования
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| Сценарий использования | Пример формулы                       |
+| ---------------------- | ------------------------------------ |
+| **Полное имя**         | Имя + " " + Фамилия                  |
+| **Ожидаемая сумма**    | Сумма × Вероятность                  |
+| **Дней до срока**      | Срок - Сегодня                       |
+| **Дней на этапе**      | Сегодня - Дата входа в этап          |
+| **Оценка лида**        | Баллы на основе нескольких критериев |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/ru/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Полный пример отслеживания времени на этапах воронки см. в разделе [Как отслеживать, сколько времени возможности находятся на каждом этапе](/l/ru/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
-## Basic Formula: Concatenation
+## Базовая формула: конкатенация
 
-### Example: Auto-Fill Full Name
+### Пример: автозаполнение полного имени
 
-**Goal**: Automatically combine first and last name into a full name field.
+**Цель**: автоматически объединять имя и фамилию в поле полного имени.
 
 ### Настройка
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **Триггер**: запись обновлена или создана (Люди)
 
-2. **Filter**: Check that first name or last name changed
+2. **Фильтр**: проверьте, что изменились имя или фамилия
 
-3. **Code action**:
+3. **Действие кода**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **Обновить запись**: установить Полное имя равным `{{code.fullName}}`
 
-## Numeric Formula: Expected Amount
+## Числовая формула: ожидаемая сумма
 
-### Example: Calculate Expected Revenue
+### Пример: рассчитать ожидаемую выручку
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**Цель**: умножить сумму возможности на вероятность, чтобы получить ожидаемую сумму.
 
-See [How to Show Expected Amount in Pipeline](/l/ru/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+Полный рабочий процесс см. в разделе [Как показать ожидаемую сумму в воронке](/l/ru/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline).
 
-### Quick Setup
+### Быстрая настройка
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **Триггер**: запись обновлена (Возможности, поле Сумма ИЛИ Вероятность)
 
-2. **Code action**:
+2. **Действие кода**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **Обновить запись**: установить Ожидаемую сумму равной `{{code.expectedAmount}}`
 
-## Date Formula: Days Calculation
+## Формула даты: вычисление дней
 
-### Example: Days Until Task Due
+### Пример: дни до срока задачи
 
-**Goal**: Calculate how many days remain until a task's due date.
+**Цель**: вычислить, сколько дней осталось до срока задачи.
 
 ### Настройка
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **Триггер**: запись обновлена или создана (Задачи, поле Срок)
 
-2. **Code action**:
+2. **Действие кода**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **Обновить запись**: установить поле «Дни до срока» равным `{{code.daysUntilDue}}`
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  Отрицательные значения означают просроченные задачи. Это поле можно использовать для фильтрации или сортировки задач по срочности.
 </Note>
 
-## Conditional Formula: Lead Score
+## Условная формула: оценка лида
 
-### Example: Calculate Lead Score Based on Criteria
+### Пример: расчет оценки лида на основе критериев
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**Цель**: оценивать лидов на основе размера компании, отрасли и вовлеченности.
 
 ### Настройка
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **Триггер**: запись обновлена (Люди или Компании)
 
-2. **Code action**:
+2. **Действие кода**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **Обновить запись**: установить Оценку лида равной `{{code.leadScore}}`
 
-## Text Formula: Domain Extraction
+## Текстовая формула: извлечение домена
 
-### Example: Extract Domain from Email
+### Пример: извлечение домена из email
 
-**Goal**: Automatically extract and store the email domain.
+**Цель**: автоматически извлечь и сохранить домен email.
 
 ### Настройка
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **Триггер**: запись обновлена (Люди, поле Email)
 
-2. **Code action**:
+2. **Действие кода**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **Обновить запись**: установить поле Домен равным `{{code.domain}}`
 
 ## Лучшие практики
 
-### Performance
+### Производительность
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* Запускайте только при изменении релевантных полей
+* Используйте фильтры, чтобы пропускать записи, которым не требуется вычисление
+* Избегайте сложных вычислений в высоконагруженных рабочих процессах
 
-### Error Handling
+### Обработка ошибок
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* Проверяйте значения null/undefined перед вычислениями
+* Используйте значения по умолчанию при отсутствии данных
+* Возвращайте понятные сообщения об ошибках при сбое вычислений
 
 ### Тестирование
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* Тестируйте на крайних случаях (пустые поля, нулевые значения)
+* Проверьте вычисления вручную перед активацией
+* Отслеживайте выполнения рабочих процессов на предмет неожиданных результатов
 
-## Related
+## Связанные материалы
 
-* [How to Show Expected Amount in Pipeline](/l/ru/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/ru/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+* [Как показать ожидаемую сумму в воронке](/l/ru/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [Как отслеживать время на этапе](/l/ru/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)

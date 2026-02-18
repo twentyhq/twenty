@@ -1,12 +1,12 @@
 ---
-title: Feature Flags
+title: Indicadores de característica
 ---
 
-Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
+Los indicadores de característica se usan para ocultar características experimentales. Para Twenty, se configuran a nivel de espacio de trabajo y no a nivel de usuario.
 
-## Adding a new feature flag
+## Agregar un nuevo indicador de característica
 
-In `FeatureFlagKey.ts` add the feature flag:
+En `FeatureFlagKey.ts` agrega el indicador de característica:
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-Also add it to the enum in `feature-flag.entity.ts`:
+También agrégalo al enum en `feature-flag.entity.ts`:
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+Para aplicar un indicador de característica en una característica de **backend** usa:
 
 ```ts
 @Gate({
@@ -31,16 +31,16 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+Para aplicar un indicador de característica en una característica de **frontend** usa:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## Configurar indicadores de característica para el despliegue
 
-Change the corresponding record in the Table `core.featureFlag`:
+Cambie el registro correspondiente en la Tabla `core.featureFlag`:
 
-| id     | key                      | workspaceId | value  |
-| ------ | ------------------------ | ----------- | ------ |
-| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |
+| iD        | clave                    | workspaceId               | valor       |
+| --------- | ------------------------ | ------------------------- | ----------- |
+| Aleatorio | `IS_FEATURENAME_ENABLED` | ID del espacio de trabajo | `verdadero` |

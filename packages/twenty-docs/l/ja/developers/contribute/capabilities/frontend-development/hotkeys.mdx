@@ -1,42 +1,42 @@
 ---
-title: Hotkeys
+title: ホットキー
 ---
 
-## Introduction
+## イントロダクション
 
-When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
+ホットキーをリッスンする必要がある場合、通常は `onKeyDown` イベントリスナーを使用します。
 
-In `twenty-front` however, you might have conflicts between same hotkeys that are used in different components, mounted at the same time.
+しかし、`twenty-front` では、同時にマウントされている異なるコンポーネントで使用される同じホットキーの間で競合が生じることがあります。
 
-For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
+例えば、Enterキーをリッスンするページと、Enterキーをリッスンするモーダル、さらにそのモーダル内のSelectコンポーネントもEnterキーをリッスンしている場合、全てが同時にマウントされると競合が生じる可能性があります。
 
-## The `useScopedHotkeys` hook
+## `useScopedHotkeys` フック
 
-To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
+この問題を解決するために、どのような競合もなくホットキーをリッスンすることを可能にするカスタムフックがあります。
 
-You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+コンポーネント内に配置すると、コンポーネントがマウントされ、指定された**ホットキースコープ**がアクティブなときだけホットキーをリッスンします。
 
-## How to listen for hotkeys in practice?
+## 実際にホットキーをリッスンする方法は？
 
-There are two steps involved in setting up hotkey listening :
+ホットキーをリッスンするための設定には2つのステップがあります：
 
-1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
-2. Use the `useScopedHotkeys` hook to listen to hotkeys
+1. ホットキーをリッスンする[ホットキースコープ](#what-is-a-hotkey-scope-)を設定します
+2. ホットキーをリッスンするために `useScopedHotkeys` フックを使用します
 
-Setting up hotkey scopes is required even in simple pages, because other UI elements like left menu or command menu might also listen to hotkeys.
+他のUI要素（例：左側のメニューやコマンドメニュー）もホットキーをリッスンする可能性があるため、ホットキースコープの設定は単純なページでも必要です。
 
-## Use cases for hotkeys
+## ホットキーのユースケース
 
-In general, you'll have two use cases that require hotkeys :
+一般的に、ホットキーが必要となる動作は2つあります：
 
-1. In a page or a component mounted in a page
-2. In a modal-type component that takes the focus due to a user action
+1. ページにマウントされたコンポーネントで
+2. ユーザーのアクションでフォーカスをとるモーダルタイプのコンポーネントで
 
-The second use case can happen recursively : a dropdown in a modal for example.
+2番目のユースケースは再帰的に発生します：例えばモーダル内のドロップダウン。
 
-### Listening to hotkeys in a page
+### ページ内でホットキーをリッスン
 
-Example :
+例：
 
 ```tsx
 const PageListeningEnter = () => {
@@ -71,11 +71,11 @@ const PageListeningEnter = () => {
 };
 ```
 
-### Listening to hotkeys in a modal-type component
+### モーダルタイプのコンポーネントでホットキーをリッスン
 
-For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+この例では、親にモーダルを閉じるように指示するためにEscapeキーをリッスンするモーダルコンポーネントを使用します。
 
-Here the user interaction is changing the scope.
+ここで、ユーザーの操作がスコープを変更します。
 
 ```tsx
 const ExamplePageWithModal = () => {
@@ -108,7 +108,7 @@ const ExamplePageWithModal = () => {
 };
 ```
 
-Then in the modal component :
+その後、モーダルコンポーネント内で：
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
@@ -131,15 +131,15 @@ It's important to use this pattern when you're not sure that just using a useEff
 
 Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
-## What is a hotkey scope?
+## ホットキースコープとは？
 
-A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
+ホットキースコープは、ホットキーがアクティブなコンテキストを表す文字列です。 通常、enumとしてエンコードされます。 通常、enumとしてエンコードされます。 通常、enumとしてエンコードされます。
 
-When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
+ホットキースコープを変更すると、このスコープをリッスンしているホットキーが有効になり、他のスコープをリッスンしているホットキーが無効になります。
 
-You can set only one scope at a time.
+一度に1つのスコープしか設定できません。
 
-As an example, the hotkey scopes for each page are defined in the `PageHotkeyScope` enum:
+例として、各ページのホットキースコープは`PageHotkeyScope` enumで定義されています：
 
 ```tsx
 export enum PageHotkeyScope {
@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
+内部的には、現在選択されているスコープはアプリケーション全体で共有されるRecoilステートに格納されています：
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
+しかし、このRecoilステートは手動で処理しないでください！ 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。
 
-## How is it working internally?
+## 内部的にはどう機能しているのか？
 
-We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
+[react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro)の上に薄いラッパーを作成し、より効率的にし、不必要な再レンダリングを避けます。
 
-We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.
+また、ホットキースコープの状態を処理し、アプリケーション全体で利用できるRecoilステートを作成しました。

@@ -3,14 +3,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { BarChartLayout } from '~/generated/graphql';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetBarChart',
   component: GraphWidgetBarChart,
   decorators: [
-    I18nFrontDecorator,
     (Story) => (
       <GraphWidgetTestWrapper>
         <Story />

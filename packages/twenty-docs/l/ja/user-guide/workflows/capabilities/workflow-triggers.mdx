@@ -1,136 +1,135 @@
 ---
-title: Workflow Triggers
-description: Learn about the different triggers that start your workflows.
+title: ワークフロートリガー
+description: ワークフローを開始するさまざまなトリガーについて学びましょう。
 ---
 
-## About Triggers
+## トリガーについて
 
-Workflows always start with a single trigger that defines when the automation should run.
+ワークフローは、常に自動化をいつ実行するかを定義する単一のトリガーで開始されます。
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+  **高度なオブジェクトにも対応しています！** 標準の CRM オブジェクト（People、Companies、Opportunities）に加えて、次のオブジェクトでもワークフローをトリガーし、アクションを実行できます:
 
-  * Workspace Members
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
+  * ワークスペースメンバー
+  * カレンダーイベント
+  * メッセージ（メール）
+  * タスク、ノート、その他多数のシステムオブジェクト
 
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+  これにより、カレンダーイベントが作成された際にチームメンバーに通知したり、受信メールを自動処理したりするなど、強力な自動化が可能になります。
 </Tip>
 
-## Record is Created
+## レコードの作成
 
-Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+新しいレコードが選択されたオブジェクト（人物、会社、機会、または任意のカスタムオブジェクト）で作成されるときに、ワークフローを開始します。
 
-**Configuration**: Select the object type to monitor for new records.
+**設定**：新しいレコードを監視するオブジェクトタイプを選択します。
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+  * このトリガーは、CSV、メールボックスおよびカレンダーの同期、API によって作成されたレコードに最適です。
+  * **手動で作成されたレコードには推奨されません**: このトリガーでは、レコードが作成されるとすぐにワークフローが開始します。 Twenty UI はその場での自動保存を提供しているため（編集モードがあって検証して保存する方式ではありません）、ユーザーがすべてのフィールドを入力する前にワークフローがトリガーされます。
+    手動で作成されたレコードでこのワークフローをトリガーするには、代わりにトリガー `Record is created or updated` を使用することを推奨します。
 </Note>
 
-## Record is Updated
+## レコードの更新
 
-Starts the workflow when changes are made to an existing record.
+既存のレコードに変更が加えられたときにワークフローを開始します。
 
-**Configuration**:
+**設定**：
 
-* Select the object type
-* Optionally specify which fields to monitor for changes
+* オブジェクトタイプを選択
+* 変更を監視するフィールドをオプションで指定
 
-## Record is Updated or Created
+## レコードの更新または作成
 
-Starts the workflow when a record is either created or updated in a selected object.
+選択されたオブジェクトでレコードが作成または更新されたときに、ワークフローを開始します。
 
-**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
+**なぜ重要か**：このトリガーが特に役立つのは、さまざまな方法で作成されたレコードが異なる動作をするためです。
 
-* **API/CSV imports**: Records are created with all fields populated immediately
-* **Manual creation**: Records are created first, then fields are added in subsequent updates
+* **API/CSV インポート**： レコードはすべてのフィールドが即座に入力されて作成されます。
+* **手動作成**： レコードは最初に作成され、その後の更新でフィールドが追加されます。
 
-**Configuration**:
+**設定**：
 
-* Select the object type to monitor
-* Optionally specify which fields to monitor for changes
-* The workflow will trigger both on initial creation and any subsequent updates
+* 監視するオブジェクトタイプを選択
+* 変更を監視するフィールドをオプションで指定
+* ワークフローは最初の作成時とその後のすべての更新時にトリガーされます。
 
-## Record is Deleted
+## レコードの削除
 
-Starts the workflow when a record is removed from an object.
+オブジェクトからレコードが削除されたときにワークフローを開始します。
 
-**Configuration**: Select the object type to monitor for deletions.
+**設定**：削除を監視するオブジェクトタイプを選択します。
 
-## Manual Trigger
+## 手動トリガー
 
-Starts the workflow when triggered by a user action. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+ユーザーのアクションによってトリガーされたときにワークフローを開始します。 このトリガーには、`Cmd+K` メニューから、またはレコードを選択した後にトップナビバーに表示されるカスタムボタン経由でアクセスできます。
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
-**Availability Configuration**:
-Choose how the workflow should handle record selection:
+**可用性設定**: レコードの選択をワークフローでどのように扱うか選択します。
 
-* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+* **グローバル**： このワークフローをトリガーするためにレコードは必要ありません。 ワークフローは、どこからでも（任意のオブジェクトから）コマンドメニュー `Cmd + K` でトリガーされ、レコードを入力として使用しません。
 
-* **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run from beginning to end as many times as there are records selected.
+* **シングル**：選択したレコードがワークフローに渡されます。 これは特定のオブジェクトに対して設定されています。 ワークフローを起動する前に複数のレコードを選択できます。 選択されたレコードの数だけ、ワークフローは最初から最後まで実行されます。
 
   <Note>
-    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+    **ソフト上限: 100回/分**。 これを超えると、ワークフローは "Not Started" ステータスのままになり、バックグラウンドジョブによって、または別のワークフローがキューに入ったときに段階的に処理されます。 つまり、単一のトリガーで100件を超えるレコードを選択できますが、実行は遅くなります。
   </Note>
 
-* **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an [Iterator action](/l/ja/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **一括**：選択されたレコードがワークフローに渡されます。 これは特定のオブジェクトに対して設定されています。 ワークフローを起動する前に複数のレコードを選択できます。 ワークフローは一度実行され、すべてのレコードリストを入力として提供します。 つまり、このワークフローには [イテレーターアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions#iterator) を含める必要があります。
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+  こちらはより高度で、ワークフローの実行回数を最適化したい人に最適です。
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
 
-**Additional Configuration**:
+**追加の設定**：
 
-* Select the target object (for Single and Bulk availability)
-* Choose a command icon for the workflow trigger
-* Configure navbar placement (Pinned or Not Pinned)
+* 対象オブジェクトを選択（シングルと一括の可用性用）
+* ワークフロートリガーのコマンドアイコンを選択
+* ナビゲーションバープレースメントを設定（固定または未固定）
 
-**Access Methods**:
+**アクセス方法**：
 
-* `Cmd+K` menu to find and launch manual workflows
-* Custom button in the top navbar (if configured)
+* `Cmd+K` メニューで手動ワークフローを見つけて起動
+* トップナビゲーションバーのカスタムボタン（設定されている場合）
 
-## Time-Based Trigger: On a Schedule
+## 時間ベースのトリガー: スケジュール実行
 
-Starts the workflow on a recurring basis you define.
+指定された頻度でワークフローを開始します。
 
-**Configuration**:
+**設定**：
 
-* Select time unit (minutes, hours, days)
-* Enter a value or use custom cron expressions for advanced scheduling
+* 時間単位を選択（分、時間、日）
+* 高度なスケジュール設定には、値を入力するか、カスタム cron 式を使用します
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+  **タイムゾーン**: スケジュールされたワークフローは **UTC** で実行されます。 日次スケジュールの時間を設定する際は、ローカル時間を UTC に変換してください。
 </Note>
 
-## External Trigger: Webhook
+## 外部トリガー: Webhook
 
-Starts the workflow when a GET or POST request is received from an external service.
+外部サービスからのGETまたはPOSTリクエストを受信するとワークフローを開始します。
 
 <img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
 
-**Configuration**:
+**設定**：
 
-* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
-* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
-* Configure authentication (coming soon).
+* ワークフローは一意の Webhook URL を提供します—これをコピーして、呼び出し先エンドポイントとして外部システムに追加してください。
+* POST リクエストの場合、Twenty が想定するデータを認識できるよう、期待されるボディ構造を定義してください。 ここに、ワークフロー内の後続の処理で必要となる、受信するフィールドを追加してください。
+* 認証の設定（近日対応）。
 
-## Choosing the Right Trigger
+## 適切なトリガーの選び方
 
-| Use Case                    | Recommended Trigger          |
-| --------------------------- | ---------------------------- |
-| New leads need processing   | Record is Created            |
-| Data changes need sync      | Record is Updated            |
-| Import/manual data handling | Record is Updated or Created |
-| Cleanup after deletion      | Record is Deleted            |
-| User-initiated action       | Launch Manually              |
-| Recurring reports           | On a Schedule                |
-| External integration        | Webhook or On a Schedule     |
+| ユースケース          | 推奨トリガー              |
+| --------------- | ------------------- |
+| 新規リードの処理が必要     | レコードの作成             |
+| データ変更の同期が必要     | レコードの更新             |
+| インポート/手動でのデータ処理 | レコードの更新または作成        |
+| 削除後のクリーンアップ     | レコードの削除             |
+| ユーザー起点のアクション    | 手動で起動               |
+| 定期レポート          | スケジュールで             |
+| 外部統合            | Webhook またはスケジュール実行 |

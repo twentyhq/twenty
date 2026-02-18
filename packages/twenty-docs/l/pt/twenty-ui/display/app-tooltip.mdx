@@ -1,16 +1,16 @@
 ---
-title: App Tooltip
+title: Dica do Aplicativo
 image: /images/user-guide/tips/light-bulb.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Cabeçalho" />
 </Frame>
 
-A brief message that displays additional information when a user interacts with an element.
+Uma mensagem breve que exibe informações adicionais quando um usuário interage com um elemento.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
 
@@ -37,27 +37,27 @@ A brief message that displays additional information when a user interacts with 
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props            | Type                                           | Description                                                                                                                                                                                             |
-    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className        | string                                         | Optional CSS class for additional styling                                                                                                                                                               |
-    | anchorSelect     | CSS selector                                   | Selector for the tooltip anchor (the element that triggers the tooltip)                                                                                                                                 |
-    | content          | string                                         | The content you want to display within the tooltip                                                                                                                                                      |
-    | delayHide        | number                                         | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                       |
-    | offset           | number                                         | The offset in pixels for positioning the tooltip                                                                                                                                                        |
-    | noArrow          | boolean                                        | If `true`, hides the arrow on the tooltip                                                                                                                                                               |
-    | isOpen           | boolean                                        | If `true`, the tooltip is open by default                                                                                                                                                               |
-    | place            | `PlacesType` string from `react-tooltip`       | Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end` |
-    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Position strategy for the tooltip. Has two values: `absolute` and `fixed`                                                                                                                               |
+  <Tab title="Propriedades">
+    | Propriedades     | Tipo                                         | Descrição                                                                                                                                                                                               |
+    | ---------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | string                                       | Classe CSS opcional para estilização adicional.                                                                                                                                                         |
+    | anchorSelect     | Seleção CSS                                  | Seletor para o âncora da dica (o elemento que aciona a dica)                                                                                                                                            |
+    | conteúdo         | string                                       | O conteúdo que deseja exibir na dica                                                                                                                                                                    |
+    | delayHide        | número                                       | O atraso em segundos antes de ocultar a dica após o cursor deixar a âncora.                                                                                                                             |
+    | offset           | número                                       | O deslocamento em pixels para posicionar a dica.                                                                                                                                                        |
+    | noArrow          | booleano                                     | Se `true`, oculta a seta na dica.                                                                                                                                                                       |
+    | isOpen           | booleano                                     | Se `true`, a dica está aberta por padrão.                                                                                                                                                               |
+    | local            | string `PlacesType` de `react-tooltip`       | Especifica o posicionamento da dica. Os valores incluem `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, e `left-end`. |
+    | positionStrategy | string `PositionStrategy` de `react-tooltip` | Estratégia de posição para a dica. Possui dois valores: `absolute` e `fixed`.                                                                                                                           |
   </Tab>
 </Tabs>
 
-## Overflowing Text with Tooltip
+## Texto Overflow com Dica
 
-Handles overflowing text and displays a tooltip when the text overflows.
+Lida com texto em excesso e exibe uma dica quando o texto transborda.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -70,9 +70,9 @@ Handles overflowing text and displays a tooltip when the text overflows.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props | Type   | Description                                                  |
-    | ----- | ------ | ------------------------------------------------------------ |
-    | text  | string | The content you want to display in the overflowing text area |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo   | Descrição                                                     |
+    | ------------ | ------ | ------------------------------------------------------------- |
+    | texto        | string | O conteúdo que você deseja exibir na área de texto excessivo. |
   </Tab>
 </Tabs>

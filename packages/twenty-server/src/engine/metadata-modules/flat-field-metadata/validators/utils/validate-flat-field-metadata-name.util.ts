@@ -1,5 +1,4 @@
 import { msg, t } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -34,15 +33,6 @@ export const validateFlatFieldMetadataName = ({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: t`Name is too short`,
       userFriendlyMessage: msg`Name is too short`,
-      value: name,
-    });
-  }
-
-  if (name !== camelCase(name)) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: t`Name should be in camelCase`,
-      userFriendlyMessage: msg`Name should be in camelCase`,
       value: name,
     });
   }

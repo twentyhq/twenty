@@ -4,6 +4,7 @@ import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/di
 import { ArrayFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ArrayFieldDisplay';
 import { BooleanFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/BooleanFieldDisplay';
 import { EmailsFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay';
+import { FilesFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/FilesFieldDisplay';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay';
 import { PhonesFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay';
@@ -16,6 +17,7 @@ import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFie
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
@@ -118,6 +120,8 @@ export const FieldDisplay = () => {
     <ActorFieldDisplay />
   ) : isFieldArray(fieldDefinition) ? (
     <ArrayFieldDisplay />
+  ) : isFieldFiles(fieldDefinition) ? (
+    <FilesFieldDisplay />
   ) : isFieldEmails(fieldDefinition) ? (
     <EmailsFieldDisplay />
   ) : isFieldPhones(fieldDefinition) ? (

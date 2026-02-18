@@ -17,9 +17,8 @@ exports[`Failing create field metadata tests suite should fail to create NUMERIC
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "numericField",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
@@ -58,9 +57,8 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "positionField",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",

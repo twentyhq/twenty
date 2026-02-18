@@ -1,0 +1,175 @@
+---
+title: Create Many-to-Many Relations
+description: Connect records where many items on both sides can be linked together using junction objects.
+---
+
+Many-to-many relations let you connect multiple records on both sides. For example: many People can work on many Projects, and each Project can have many People.
+
+<Warning>
+**Lab Feature**: Junction relations are currently in the Lab. Enable them at **Settings → Updates → Lab** before following this guide.
+</Warning>
+
+<Note>
+This feature also requires **Advanced mode** to be enabled (toggle at the bottom right of Settings).
+</Note>
+
+## When to Use Many-to-Many
+
+Use many-to-many when both sides of a relationship can have multiple connections:
+
+| Relationship | Example |
+|-------------|---------|
+| People ↔ Projects | A person works on multiple projects; a project has multiple team members |
+| Companies ↔ Tags | A company can have multiple tags; a tag can apply to multiple companies |
+| Products ↔ Orders | A product can be in multiple orders; an order contains multiple products |
+
+## How It Works
+
+Twenty uses a **junction object** pattern for many-to-many relations. A junction object sits between two objects and holds the connections:
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+The **Project Assignments** object (junction) has:
+- A relation to People (many-to-one)
+- A relation to Projects (many-to-one)
+
+When you enable the junction relation toggle, Twenty displays linked records directly instead of showing the intermediate junction records.
+
+## Prerequisites
+
+1. **Enable Junction Relations in Lab**: Go to **Settings → Updates → Lab** and enable **Junction Relations**
+2. **Enable Advanced mode**: Toggle on **Advanced mode** at the bottom right of the Settings sidebar
+3. Plan your data model:
+   - Which two objects are you connecting?
+   - What should the junction object be called?
+
+## Step 1: Create the Junction Object
+
+First, create the intermediate object that will hold the connections.
+
+1. Go to **Settings → Data Model**
+2. Click **+ New object**
+3. Name it descriptively (e.g., "Project Assignment", "Team Member", "Product Order")
+4. Click **Save**
+
+<Tip>
+**Naming convention**: Use a name that describes the relationship, like "Project Assignment" or "Team Membership". This makes the data model easier to understand.
+</Tip>
+
+## Step 2: Create Relations from the Junction Object
+
+Add relation fields from the junction object to both objects you want to connect.
+
+### First Relation (Junction → Object A)
+
+1. Select your junction object in **Settings → Data Model**
+2. Click **+ Add Field**
+3. Choose **Relation** as the field type
+4. Select the first object (e.g., "People")
+5. Set the relation type to **Many-to-One** (many assignments can link to one person)
+6. Name the fields:
+   - Field on junction: e.g., "Person"
+   - Field on People: e.g., "Project Assignments"
+7. Click **Save**
+
+### Second Relation (Junction → Object B)
+
+1. Still on the junction object, click **+ Add Field**
+2. Choose **Relation** as the field type
+3. Select the second object (e.g., "Projects")
+4. Set the relation type to **Many-to-One**
+5. Name the fields:
+   - Field on junction: e.g., "Project"
+   - Field on Projects: e.g., "Team Members"
+6. Click **Save**
+
+## Step 3: Configure the Junction Relation Display
+
+Now configure the source objects to display linked records directly, skipping the intermediate junction object.
+
+1. Go to **Settings → Data Model**
+2. Select the first object (e.g., "People")
+3. Find the relation field pointing to the junction object (e.g., "Project Assignments")
+4. Click to edit the field
+5. Enable **"This is a relation to a Junction Object"**
+6. Select the **Target relation** (e.g., "Project" — the field on the junction that points to the other side)
+7. Click **Save**
+
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+Repeat for the other object:
+1. Select "Projects" in Data Model
+2. Edit the "Team Members" relation field
+3. Enable the junction toggle
+4. Select "Person" as the target relation
+5. Save
+
+## Result
+
+After configuration:
+
+- On a **Person** record, the "Project Assignments" field displays **Projects** directly (not assignment records)
+- On a **Project** record, the "Team Members" field displays **People** directly
+
+The junction object still exists and stores the connections, but the UI presents a cleaner many-to-many view.
+
+## Example: People ↔ Projects
+
+Here's a complete walkthrough:
+
+### Create the Junction Object
+- Name: **Project Assignment**
+- Description: "Links people to projects they work on"
+
+### Add Relations
+1. **Project Assignment → People**
+   - Type: Many-to-One
+   - Field on Assignment: "Person"
+   - Field on People: "Project Assignments"
+
+2. **Project Assignment → Projects**
+   - Type: Many-to-One
+   - Field on Assignment: "Project"
+   - Field on Projects: "Team Members"
+
+### Configure Junction Display
+1. On **People** object:
+   - Edit "Project Assignments" field
+   - Enable junction toggle
+   - Target: "Project"
+
+2. On **Projects** object:
+   - Edit "Team Members" field
+   - Enable junction toggle
+   - Target: "Person"
+
+### Use It
+- Open a Person record → See their Projects directly
+- Open a Project record → See team members directly
+- Create new connections from either side
+
+## Adding Extra Data to Connections
+
+Since the junction object is a real object, you can add custom fields to store information about the relationship:
+
+- **Role**: "Developer", "Designer", "Manager"
+- **Start Date**: When they joined the project
+- **Hours Allocated**: Weekly hours on this project
+
+To access this data, navigate to the junction object directly or query it via the API.
+
+## Limitations
+
+- **CSV Import/Export**: Importing many-to-many relations directly is not supported. Import records to the junction object instead.
+- **Filters**: Filtering by many-to-many relations may have limited options.
+
+## Related
+
+- [Relation Fields](/user-guide/data-model/capabilities/relation-fields) — relation types explained
+- [Create Custom Objects](/user-guide/data-model/how-tos/create-custom-objects) — how to create objects
+- [Create Relation Fields](/user-guide/data-model/how-tos/create-relation-fields) — basic relation setup

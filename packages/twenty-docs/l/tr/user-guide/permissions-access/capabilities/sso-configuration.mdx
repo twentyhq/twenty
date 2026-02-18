@@ -1,125 +1,125 @@
 ---
-title: SSO Configuration
-description: Configure Single Sign-On for secure enterprise authentication.
+title: SSO Yapılandırması
+description: Güvenli kurumsal kimlik doğrulaması için Tek Oturum Açma'yı (SSO) yapılandırın.
 ---
 
-## About SSO
+## SSO Hakkında
 
-Single Sign-On (SSO) allows your team members to log into Twenty using your organization's identity provider. This provides:
+Tek Oturum Açma (SSO), ekip üyelerinizin kuruluşunuzun kimlik sağlayıcısını kullanarak Twenty'ye giriş yapmasına olanak tanır. Bu şunları sağlar:
 
-* **Centralized access control**: Manage access from one place
-* **Enhanced security**: Leverage your existing security policies
-* **Better user experience**: One set of credentials for all tools
+* **Merkezi erişim denetimi**: Erişimi tek bir yerden yönetin
+* **Geliştirilmiş güvenlik**: Mevcut güvenlik ilkelerinizden yararlanın
+* **Daha iyi kullanıcı deneyimi**: Tüm araçlar için tek bir kimlik bilgisi seti
 
-## Supported Providers
+## Desteklenen Sağlayıcılar
 
-Twenty supports SSO with:
+Twenty, SSO'yu şu sağlayıcılarla destekler:
 
-* **SAML 2.0**: Works with most enterprise identity providers
-* **Google Workspace**: For organizations using Google
-* **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+* **SAML 2.0**: Çoğu kurumsal kimlik sağlayıcıyla çalışır
+* **Google Workspace**: Google kullanan kuruluşlar için
+* **Microsoft Entra ID**: (önceden Azure AD) Microsoft ortamları için
 
-## Setting Up SSO
+## SSO'yu Ayarlama
 
 ### Ön Gereksinimler
 
-* Organization plan (cloud and self-hosted workspaces)
-* Admin access to your identity provider
-* Admin access to Twenty workspace
+* Kuruluş planı (bulut ve kendi barındırılan çalışma alanları)
+* Kimlik sağlayıcınıza yönetici erişimi
+* Twenty çalışma alanına yönetici erişimi
 
 <Note>
-  **For self-hosting users willing to set up SSO**, reach out to contact@twenty.com
+  **SSO'yu kurmak isteyen öz barındırma kullanıcıları için**, contact@twenty.com ile iletişime geçin
 </Note>
 
-### Configuration Steps
+### Yapılandırma Adımları
 
-#### 1. Access SSO Settings
+#### 1. SSO Ayarlarına Erişim
 
-1. Go to **Settings → Security**
-2. Find the **SSO Configuration** section
-3. Click **Configure SSO**
+1. **Ayarlar → Güvenlik** bölümüne gidin
+2. **SSO Yapılandırması** bölümünü bulun
+3. **SSO'yu Yapılandır**'a tıklayın
 
-#### 2) Choose Your Provider
+#### 2) Sağlayıcınızı Seçin
 
-Select your identity provider from the list or choose "Custom SAML" for other providers.
+Kimlik sağlayıcınızı listeden seçin veya diğer sağlayıcılar için "Custom SAML" seçeneğini seçin
 
-#### 3. Configure Your Identity Provider
+#### 3. Kimlik Sağlayıcınızı Yapılandırın
 
-You'll need to configure your identity provider with:
+Kimlik sağlayıcınızı aşağıdakilerle yapılandırmanız gerekir:
 
-* **Entity ID**: Provided by Twenty
-* **ACS URL**: The callback URL for authentication
-* **Certificate**: For secure communication
+* **Entity ID**: Twenty tarafından sağlanır
+* **ACS URL**: Kimlik doğrulaması için geri çağrı URL'si
+* **Certificate**: Güvenli iletişim için
 
-#### 4. Enter Provider Details in Twenty
+#### 4. Sağlayıcı Ayrıntılarını Twenty'ye Girin
 
-* **SSO URL**: Login URL from your provider
-* **Entity ID**: Your provider's identifier
-* **Certificate**: X.509 certificate from your provider
+* **SSO URL**: Sağlayıcınızdan giriş URL'si
+* **Entity ID**: Sağlayıcınızın tanımlayıcısı
+* **Certificate**: Sağlayıcınızdan X.509 sertifikası
 
-#### 5. Test and Enable
+#### 5. Test Edin ve Etkinleştirin
 
-1. Click **Test Configuration** to verify setup
-2. Enable SSO when testing is successful
-3. Configure user provisioning preferences
+1. Kurulumu doğrulamak için **Yapılandırmayı Test Et**'e tıklayın
+2. Test başarılı olduğunda SSO'yu etkinleştirin
+3. Kullanıcı sağlama tercihlerini yapılandırın
 
-## User Provisioning
+## Kullanıcı Sağlama
 
-### Just-in-Time (JIT) Provisioning
+### Tam Zamanında (JIT) Sağlama
 
-* Users are created automatically on first login
-* Assigned default role automatically
-* No manual user creation needed
+* Kullanıcılar ilk oturum açmada otomatik olarak oluşturulur
+* Varsayılan rol otomatik olarak atanır
+* Manuel kullanıcı oluşturma gerekmez
 
-### Manual Provisioning
+### Manuel Sağlama
 
-* Invite users before they can log in
-* Pre-assign specific roles
-* More control over who can access
+* Kullanıcıları, oturum açabilmelerinden önce davet edin
+* Belirli rolleri önceden atayın
+* Kimlerin erişebileceği üzerinde daha fazla kontrol
 
-## Managing SSO Users
+## SSO Kullanıcılarını Yönetme
 
-### Role Assignment
+### Rol Atama
 
-SSO users can be assigned roles like regular users:
+SSO kullanıcılarına, normal kullanıcılarda olduğu gibi roller atanabilir:
 
 1. **Ayarlar → Üyeler** bölümüne gidin
-2. Find the user
-3. Change their role as needed
+2. Kullanıcıyı bulun
+3. Gerektiğinde rolünü değiştirin
 
-### Access Revocation
+### Erişim İptali
 
-To remove access for SSO users:
+SSO kullanıcılarının erişimini kaldırmak için:
 
-* Remove them from your identity provider, or
-* Remove them from the Twenty workspace
+* Kimlik sağlayıcınızdan kaldırın veya
+* Twenty çalışma alanından kaldırın
 
 ## En İyi Uygulamalar
 
 ### Güvenlik
 
-* **Require SSO**: Disable password login for SSO users
-* **Regular audits**: Review access periodically
-* **Strong IdP policies**: Enforce MFA at the identity provider
+* **SSO'yu Zorunlu Kıl**: SSO kullanıcıları için parola ile oturum açmayı devre dışı bırakın
+* **Düzenli denetimler**: Erişimi periyodik olarak gözden geçirin
+* **Güçlü IdP ilkeleri**: Kimlik sağlayıcıda MFA'yı zorunlu kılın
 
-### User Management
+### Kullanıcı Yönetimi
 
-* **Clear naming**: Use consistent naming from your directory
-* **Group mapping**: Map IdP groups to Twenty roles (if available)
-* **Offboarding process**: Include Twenty in your deprovisioning workflow
+* **Net adlandırma**: Dizininizde tutarlı adlandırma kullanın
+* **Grup eşleme**: IdP gruplarını Twenty rollerine eşleyin (varsa)
+* **Ayrılış süreci**: Erişim kaldırma iş akışınıza Twenty'yi dahil edin
 
 ## Sorun Giderme
 
-### Common Issues
+### Yaygın Sorunlar
 
-* **Certificate errors**: Ensure certificate hasn't expired
-* **URL mismatches**: Verify ACS URL matches exactly
-* **User not found**: Check JIT provisioning settings
+* **Sertifika hataları**: Sertifikanın süresinin dolmadığından emin olun
+* **URL uyuşmazlıkları**: ACS URL'sinin birebir eşleştiğini doğrulayın
+* **Kullanıcı bulunamadı**: JIT sağlama ayarlarını kontrol edin
 
 ### Yardım Almak
 
-If you encounter issues, contact support with:
+Sorunlarla karşılaşırsanız, desteğe şu bilgilerle ulaşın:
 
-* Error messages received
-* Identity provider being used
-* Configuration details (without sensitive data)
+* Alınan hata iletileri
+* Kullanılan kimlik sağlayıcı
+* Yapılandırma ayrıntıları (hassas veriler olmadan)

@@ -1,4 +1,4 @@
-import { type FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { type FileFolder } from 'twenty-shared/types';
 
 import { type ShortCropSize } from 'src/utils/image';
 

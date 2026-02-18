@@ -9,7 +9,7 @@ import {
   type DuplicateWorkflowVersionStepInput,
   type DuplicateWorkflowVersionStepMutation,
   type DuplicateWorkflowVersionStepMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 export const useDuplicateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();

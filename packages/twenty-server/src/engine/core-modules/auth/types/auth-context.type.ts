@@ -40,14 +40,15 @@ export enum JwtTokenTypeEnum {
   POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
-  APPLICATION = 'APPLICATION',
+  APPLICATION_ACCESS = 'APPLICATION_ACCESS',
+  APPLICATION_REFRESH = 'APPLICATION_REFRESH',
 }
 
 type CommonPropertiesJwtPayload = {
   sub: string;
 };
 
-export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
+export type FileTokenJwtPayloadLegacy = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.FILE;
   workspaceId: string;
   filename: string;
@@ -55,6 +56,12 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
   noteBlockId?: string;
   attachmentId?: string;
   personId?: string;
+};
+
+export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.FILE;
+  workspaceId: string;
+  fileId: string;
 };
 
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -96,10 +103,20 @@ export type ApiKeyTokenJwtPayload = CommonPropertiesJwtPayload & {
   jti?: string;
 };
 
-export type ApplicationTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: JwtTokenTypeEnum.APPLICATION;
+export type ApplicationAccessTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APPLICATION_ACCESS;
   workspaceId: string;
   applicationId: string;
+  userWorkspaceId?: string;
+  userId?: string;
+};
+
+export type ApplicationRefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APPLICATION_REFRESH;
+  workspaceId: string;
+  applicationId: string;
+  userWorkspaceId?: string;
+  userId?: string;
 };
 
 export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -121,10 +138,12 @@ export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
-  | ApplicationTokenJwtPayload
+  | ApplicationAccessTokenJwtPayload
+  | ApplicationRefreshTokenJwtPayload
   | WorkspaceAgnosticTokenJwtPayload
   | LoginTokenJwtPayload
   | TransientTokenJwtPayload
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
+  | FileTokenJwtPayloadLegacy
   | PostgresProxyTokenJwtPayload;

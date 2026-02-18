@@ -1,85 +1,85 @@
 ---
-title: Workflow Versions
-description: Manage workflow versions and drafts.
+title: 工作流版本
+description: 管理工作流的版本和草稿。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Versions
+## 关于版本
 
-Every time you activate a workflow, a new version is created. This allows you to track changes over time and revert to previous configurations if needed.
+每次您激活一个工作流时，都会创建一个新版本。 这使您能够随时间跟踪更改，并在需要时恢复到先前的配置。
 
-## Version Statuses
+## 版本状态
 
-| Status          | Description                            |
-| --------------- | -------------------------------------- |
-| **Draft**       | Being edited, not yet published        |
-| **Active**      | Live version responding to triggers    |
-| **Deactivated** | Previously active but manually stopped |
-| **Archived**    | Past versions kept for history         |
+| 状态      | 描述              |
+| ------- | --------------- |
+| **草稿**  | 正在编辑，尚未发布       |
+| **活跃**  | 运行中的版本，响应触发器    |
+| **已停用** | 之前为活跃状态，但已被手动停止 |
+| **已归档** | 为历史记录保留的过去版本    |
 
-## Working with Drafts
+## 处理草稿
 
-When you edit an active workflow, your changes are saved as a **draft**. The active version continues to run while you work on updates.
+当您编辑活跃的工作流时，您的更改将保存为**草稿**。 在您进行更新时，活跃版本会继续运行。
 
-Once you're done editing, you can:
+完成编辑后，您可以：
 
-* **Activate**: Publish the draft as the new active version (the previous version is archived)
-* **Discard**: Delete the draft and keep the current active version
+* **激活**：将草稿发布为新的活跃版本（先前的版本会被归档）
+* **丢弃**：删除草稿并保留当前的活跃版本
 
-## Version History
+## 版本历史
 
-### Viewing Past Versions
+### 查看历史版本
 
-1. Open the workflow
-2. Click the **Versions** tab
-3. See all previous versions with timestamps
+1. 打开该工作流
+2. 点击**版本**选项卡
+3. 查看包含时间戳的所有先前版本
 
-### Restoring a Version
+### 还原版本
 
-1. Find the version you want to restore
-2. Click **Use as draft**
-3. The version is copied to a new draft
-4. Make any necessary updates
-5. Activate when ready
+1. 找到您要还原的版本
+2. 点击**用作草稿**
+3. 该版本会被复制为一个新的草稿
+4. 进行任何必要的更新
+5. 准备就绪后激活
 
-## Best Practices
+## 最佳实践
 
-### Version Management
+### 版本管理
 
-* Activate only when ready for production
-* Keep meaningful changes between versions
-* Document major changes in workflow names or descriptions
-* Test in draft mode before activating
+* 仅在准备好用于生产环境时再激活
+* 在各版本之间仅保留有意义的更改
+* 记录工作流名称或描述中的重大更改
+* 在激活前先在草稿模式下进行测试
 
-### Reverting Changes
+### 还原更改
 
-* If a new version causes issues, restore the previous version
-* Use the version history to track what changed
-* Always test restored versions before activating
+* 如果新版本引发问题，请还原到上一版本
+* 使用版本历史来跟踪发生了哪些更改
+* 在激活之前务必测试已还原的版本
 
-## Common Workflows
+## 常见工作流
 
-### Quick Edit
+### 快速编辑
 
-1. Make minor changes to an active workflow
-2. Test in draft mode
-3. Activate the new version
+1. 对活跃的工作流进行小幅更改
+2. 在草稿模式下测试
+3. 激活新版本
 
-### Major Revision
+### 重大修订
 
-1. Use the previous version as a starting point
-2. Make significant changes in draft
-3. Thoroughly test all scenarios
-4. Activate when confident
+1. 以先前版本为起点
+2. 在草稿中进行重大更改
+3. 全面测试所有场景
+4. 确认无误后再激活
 
-### Rollback
+### 回滚
 
-1. Identify the issue with the current version
-2. Find the last working version in history
-3. Click **Use as draft**
-4. Activate to restore the old behavior
+1. 找出现有版本的问题
+2. 在历史记录中找到最后一个可用的版本
+3. 点击**用作草稿**
+4. 激活以恢复原有行为
 
-## Related
+## 相关内容
 
-* [Getting Started with Workflows](/l/zh/user-guide/workflows/overview)
-* [Workflow Runs](/l/zh/user-guide/workflows/capabilities/workflow-runs)
+* [工作流入门](/l/zh/user-guide/workflows/overview)
+* [工作流运行](/l/zh/user-guide/workflows/capabilities/workflow-runs)

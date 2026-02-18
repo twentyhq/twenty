@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
@@ -6,6 +5,7 @@ import { type RecordTitleCellContainerType } from '@/object-record/record-title-
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { withTheme, type Theme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -51,7 +51,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
       onClick={() => {
         openRecordTitleCell({
           recordId,
-          fieldName: fieldDefinition.metadata.fieldName,
+          fieldMetadataItemId: fieldDefinition.fieldMetadataId,
           instanceId: getRecordFieldInputInstanceId({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,

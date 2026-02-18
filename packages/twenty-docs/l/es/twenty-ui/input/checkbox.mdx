@@ -1,16 +1,16 @@
 ---
-title: Checkbox
+title: Caja de selección
 image: /images/user-guide/tasks/tasks_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Encabezado" />
 </Frame>
 
-Used when a user needs to select multiple values from several options.
+Usado cuando un usuario necesita seleccionar múltiples valores entre varias opciones.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { Checkbox } from "twenty-ui/display";
 
@@ -31,14 +31,14 @@ Used when a user needs to select multiple values from several options.
   </Tab>
 
   <Tab title="Props">
-    | Props           | Type     | Description                                                                                  |
-    | --------------- | -------- | -------------------------------------------------------------------------------------------- |
-    | checked         | boolean  | Indicates whether the checkbox is checked                                                    |
-    | indeterminate   | boolean  | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)  |
-    | onChange        | function | The callback function you want to trigger when the checkbox state changes                    |
-    | onCheckedChange | function | The callback function you want to trigger when the `checked` state changes                   |
-    | variant         | string   | The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary` |
-    | size            | string   | The size of the checkbox. Has two options: `small` and `large`                               |
-    | shape           | string   | The shape of the checkbox. Has two options: `squared` and `rounded`                          |
+    | Props           | Tipo     | Descripción                                                                                            |
+    | --------------- | -------- | ------------------------------------------------------------------------------------------------------ |
+    | marcado         | booleano | Indica si la caja de selección está marcada                                                            |
+    | indeterminado   | booleano | Indica si la caja de selección está en un estado indeterminado (ni marcada ni desmarcada)              |
+    | onChange        | función  | La función de devolución de llamada que desea activar cuando cambia el estado de la caja de selección  |
+    | onCheckedChange | función  | La función de devolución de llamada que desea activar cuando cambia el estado `marcado`                |
+    | variante        | cadena   | La variante de estilo visual de la caja. Las opciones incluyen: `primario`, `secundario` y `terciario` |
+    | tamaño          | cadena   | El tamaño de la caja de selección. Tiene dos opciones: `pequeño` y `grande`                            |
+    | forma           | cadena   | La forma de la caja de selección. Tiene dos opciones: `cuadrado` y `redondeado`                        |
   </Tab>
 </Tabs>

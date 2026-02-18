@@ -1,16 +1,16 @@
 ---
-title: Chip
+title: 칩
 image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+  <img src="/images/user-guide/github/github-header.png" alt="헤더" />
 </Frame>
 
-A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
+레이블, 선택적 왼쪽 및 오른쪽 컴포넌트, 다양한 스타일 옵션을 갖춘 시각적 요소로, 레이블과 태그를 표시하는 클릭 가능 또는 클릭 불가 컨테이너로 사용할 수 있습니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { Chip } from 'twenty-ui/components';
 
@@ -18,7 +18,7 @@ A visual element that you can use as a clickable or non-clickable container with
       return (
         <Chip
           size="large"
-          label="Clickable Chip"
+          label="클릭 가능한 칩"
           clickable={true}
           variant="highlighted"
           accent="text-primary"
@@ -33,22 +33,22 @@ A visual element that you can use as a clickable or non-clickable container with
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type                     | Description                                                                                  |
-    | ------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
-    | linkToEntity | string                   | The link to the entity                                                                       |
-    | entityId     | string                   | The unique identifier for the entity                                                         |
-    | name         | string                   | The name of the entity                                                                       |
-    | pictureUrl   | string                   | s picture",                                                                                  |
-    | avatarType   | Avatar Type              | The type of avatar you want to display. Has two options: `rounded` and `squared`             |
-    | variant      | `EntityChipVariant` enum | Variant of the entity chip you want to display. Has two options: `regular` and `transparent` |
-    | LeftIcon     | IconComponent            | A React component representing an icon. Displayed on the left side of the chip               |
+  <Tab title="프로퍼티">
+    | 프로퍼티         | 유형                      | 설명                                                        |
+    | ------------ | ----------------------- | --------------------------------------------------------- |
+    | linkToEntity | 문자열                     | 엔티티에 대한 링크                                                |
+    | entityId     | 문자열                     | 엔티티의 고유 식별자                                               |
+    | 이름           | 문자열                     | 엔티티의 이름                                                   |
+    | pictureUrl   | 문자열                     | 사진",                                                      |
+    | avatarType   | 아바타 유형                  | 표시할 아바타의 유형입니다. 두 가지 옵션이 있습니다: `rounded`와 `squared`       |
+    | 변형           | `EntityChipVariant` 열거형 | 표시할 엔티티 칩의 변형입니다. 두 가지 옵션이 있습니다: `regular`와 `transparent` |
+    | 왼쪽 아이콘       | 아이콘 컴포넌트                | 아이콘을 나타내는 React 컴포넌트입니다. 칩의 왼쪽에 표시됩니다.                    |
   </Tab>
 </Tabs>
 
-## Examples
+## 예시
 
-### Transparent Disabled Chip
+### 투명 비활성 칩
 
 ```jsx
 import { Chip } from 'twenty-ui/components';
@@ -57,7 +57,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Transparent Disabled Chip"
+      label="투명한 비활성 칩"
       clickable={false}
       variant="rounded"
       accent="text-secondary"
@@ -73,7 +73,7 @@ export const MyComponent = () => {
 
 <br />
 
-### Disabled Chip with Tooltip
+### 툴팁이 포함된 비활성 칩
 
 ```jsx
 import { Chip } from "twenty-ui/components";
@@ -82,7 +82,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="내용이 넘치면 툴팁이 표시되는 비활성 칩."
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -95,12 +95,12 @@ export const MyComponent = () => {
 };
 ```
 
-## Entity Chip
+## 엔티티 칩
 
-A Chip-like element to display information about an entity.
+엔티티에 대한 정보를 표시하기 위한 칩 유사 요소입니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { BrowserRouter as Router } from 'react-router-dom';
     import { IconTwentyStar } from 'twenty-ui/display';
@@ -112,7 +112,7 @@ A Chip-like element to display information about an entity.
           <Chip
             linkToEntity="/entity-link"
             entityId="entityTest"
-            name="Entity name"
+            name="엔터티 이름"
             pictureUrl=""
             avatarType="rounded"
             variant="regular"
@@ -124,15 +124,15 @@ A Chip-like element to display information about an entity.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type                     | Description                                                                                  |
-    | ------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
-    | linkToEntity | string                   | The link to the entity                                                                       |
-    | entityId     | string                   | The unique identifier for the entity                                                         |
-    | name         | string                   | The name of the entity                                                                       |
-    | pictureUrl   | string                   | s picture",                                                                                  |
-    | avatarType   | Avatar Type              | The type of avatar you want to display. Has two options: `rounded` and `squared`             |
-    | variant      | `EntityChipVariant` enum | Variant of the entity chip you want to display. Has two options: `regular` and `transparent` |
-    | LeftIcon     | IconComponent            | A React component representing an icon. Displayed on the left side of the chip               |
+  <Tab title="프로퍼티">
+    | 프로퍼티         | 유형                      | 설명                                                        |
+    | ------------ | ----------------------- | --------------------------------------------------------- |
+    | linkToEntity | 문자열                     | 엔티티에 대한 링크                                                |
+    | entityId     | 문자열                     | 엔티티의 고유 식별자                                               |
+    | 이름           | 문자열                     | 엔티티의 이름                                                   |
+    | pictureUrl   | 문자열                     | 사진",                                                      |
+    | avatarType   | 아바타 유형                  | 표시할 아바타의 유형입니다. 두 가지 옵션이 있습니다: `rounded`와 `squared`       |
+    | 변형           | `EntityChipVariant` 열거형 | 표시할 엔티티 칩의 변형입니다. 두 가지 옵션이 있습니다: `regular`와 `transparent` |
+    | 왼쪽 아이콘       | 아이콘 컴포넌트                | 아이콘을 나타내는 React 컴포넌트입니다. 칩의 왼쪽에 표시됩니다.                    |
   </Tab>
 </Tabs>

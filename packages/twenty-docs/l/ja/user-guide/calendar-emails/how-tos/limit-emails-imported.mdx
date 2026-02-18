@@ -1,52 +1,50 @@
 ---
-title: Limit Emails Imported
-description: Control which emails are imported into Twenty.
+title: インポートされるメールを制限
+description: Twenty にインポートされるメールを管理します。
 ---
 
-## Overview
+## 概要
 
-By default, Twenty syncs all external emails from your connected mailbox. You can limit what gets imported using **folder selection** and **visibility settings**.
+デフォルトでは、Twenty は接続済みメールボックスのすべての外部メールを同期します。 **フォルダー選択** と **表示設定** を使用して、インポート対象を制限できます。
 
-## Method 1: Folder Selection (Recommended)
+## 方法 1: フォルダー選択（推奨）
 
-Control which email folders sync with Twenty:
+Twenty と同期するメールフォルダーを制御:
 
-1. Go to **Settings → Releases → Lab**
-2. Enable **Message Folder**
-3. Return to **Settings → Accounts**
-4. Select your connected email account
-5. Choose which folders to sync:
+1. **設定 → アカウント** に移動
+2. 接続済みのメールアカウントを選択
+3. 同期するフォルダーを選択してください:
 
-| Folder             | Description                   |
-| ------------------ | ----------------------------- |
-| **Inbox**          | Primary incoming emails       |
-| **Sent**           | Outgoing emails you've sent   |
-| **Archive**        | Archived messages             |
-| **Custom Folders** | Any specific folders you want |
+| フォルダー         | 説明            |
+| ------------- | ------------- |
+| **受信トレイ**     | 主要な受信メール      |
+| **送信済み**      | 送信したメール       |
+| **アーカイブ**     | アーカイブされたメッセージ |
+| **カスタムフォルダー** | 任意に指定したフォルダー  |
 
-6. Exclude folders you don't want synced (Spam, Trash, personal folders)
+6. 同期したくないフォルダーを除外（スパム、ゴミ箱、個人用フォルダー）
 
-<Note>This gives you precise control over which emails appear in your CRM without syncing everything.</Note>
+<Note>これにより、すべてを同期することなく、CRM に表示されるメールを正確に制御できます。</Note>
 
-## Method 2: Contact Auto-Creation Settings
+## 方法 2: 連絡先の自動作成設定
 
-Control when contacts are created from emails:
+メールから連絡先を作成するタイミングを制御します:
 
-1. Go to **Settings → Accounts**
-2. Select your connected mailbox
-3. Choose an option:
-   * **Deactivated**: No contacts created, but emails still sync to existing contacts
-   * **Sent & Received**: Create contacts from all external emails
-   * **Sent Only**: Only create contacts from emails you send
+1. **設定 → アカウント** に移動します
+2. 接続済みのメールボックスを選択
+3. オプションを選択:
+   * **無効**: 連絡先は作成されませんが、メールは既存の連絡先と引き続き同期されます
+   * **送受信**: すべての外部メールから連絡先を作成します
+   * **送信のみ**: 自分が送信したメールからのみ連絡先を作成します
 
-## What's Always Excluded
+## 常に除外されるもの
 
-These emails are never synced, regardless of settings:
+設定に関係なく、これらのメールは同期されません:
 
-* **Internal emails**: Messages between colleagues (same domain)
-* **Group emails**: Distribution lists and group messages
-* **Spam/Trash**: System folders are typically excluded
+* **内部メール**: 同僚（同一ドメイン）間のメッセージ
+* **グループメール**: 配信リストおよびグループメッセージ
+* **スパム/ゴミ箱**: システムフォルダーは通常除外されます
 
-## Important Note
+## 重要な注意事項
 
-<Note>We don't provide a CC email address for selective syncing. Use the folder selection feature above to achieve the same level of control.</Note>
+<Note>選択的な同期のための CC メールアドレスは提供していません。 上記のフォルダー選択機能を使用して、同等のレベルの制御が可能です。</Note>

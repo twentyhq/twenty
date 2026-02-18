@@ -9,11 +9,13 @@ import {
   type ToolSet,
 } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -130,8 +132,14 @@ export class AgentAsyncExecutorService {
             authContext,
             actorContext,
             agent: agent as unknown as ToolProviderContext['agent'],
-            userId: authContext?.user?.id,
-            userWorkspaceId: authContext?.userWorkspaceId,
+            userId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.user.id
+                : undefined,
+            userWorkspaceId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.userWorkspaceId
+                : undefined,
           },
           {
             categories: [

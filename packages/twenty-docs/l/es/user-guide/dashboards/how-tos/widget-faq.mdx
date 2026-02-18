@@ -1,0 +1,67 @@
+---
+title: Preguntas frecuentes del Widget
+description: Preguntas frecuentes y mensajes de error explicados.
+---
+
+<AccordionGroup>
+  <Accordion title="¿Cómo muestro porcentajes en lugar de recuentos?">
+    Tres opciones:
+
+    * **Porcentaje vacío/no vacío**: En Datos en pantalla, selecciona Porcentaje vacío o Porcentaje no vacío
+    * **Proporción**: Para campos de Selección o Casilla de verificación, activa Proporción para mostrar una opción específica como porcentaje de todos los registros
+    * **Sufijo**: Para gráficos agregados, añade `%` como Sufijo en la configuración de estilo
+  </Accordion>
+
+  <Accordion title="¿Cuál es la diferencia entre barras agrupadas y apiladas?">
+    Al usar **Agrupar por**, puedes mostrar las series de dos maneras:
+
+    * **Agrupadas**: Barras una al lado de la otra—ideal para comparar valores exactos
+    * **Apiladas**: Barras una encima de otra—ideal para mostrar la composición
+
+    Activa o desactiva **Apiladas** en la configuración de estilo para cambiar.
+  </Accordion>
+
+  <Accordion title="¿Por qué no puedo ver las opciones Suma o Promedio?">
+    Las operaciones disponibles dependen del **tipo de campo**:
+
+    * **Campos numéricos**: Suma, Promedio, Mínimo, Máximo
+    * **Campos de fecha**: Más antiguo, Más reciente (solo gráficos agregados)
+    * **Campos de casilla de verificación**: Contar verdadero, Contar falso
+
+    Si no ves una opción, verifica que hayas seleccionado un tipo de campo compatible.
+  </Accordion>
+
+  <Accordion title="¿Por qué algunas configuraciones están atenuadas o faltan?">
+    Muchas configuraciones solo aparecen cuando se cumplen los requisitos previos:
+
+    * **Granularidad de fecha**: Selecciona primero un campo de fecha
+    * **Agrupar por, Leyenda, Apiladas**: Establece primero el Origen
+    * **Conmutadores de Leyenda y Apiladas**: Establece primero Agrupar por
+
+    Si falta una configuración, configura primero su requisito previo.
+  </Accordion>
+
+  <Accordion title="¿Qué significa 'No data'?">
+    El gráfico no encontró registros que coincidan con tu configuración.
+
+    **Para solucionarlo:** Quita o ajusta los filtros, verifica que seleccionaste el objeto Origen correcto o comprueba que existan registros para tu rango de fechas.
+  </Accordion>
+
+  <Accordion title="¿Qué significa 'Invalid configuration'?">
+    Falta una configuración obligatoria o es incompatible.
+
+    **Para solucionarlo:** Asegúrate de que Origen esté definido, que Datos en pantalla esté configurado y que se hayan seleccionado los campos de agrupación requeridos.
+  </Accordion>
+
+  <Accordion title="¿Qué significa 'Undisplayed data'?">
+    Tus datos superan los límites de visualización (100 barras, 100 puntos de datos o 100 porciones).
+
+    **Para solucionarlo:** Agrega filtros para acotar tus datos o cambia la granularidad de fecha de Día a Semana o Mes.
+  </Accordion>
+
+  <Accordion title="¿Por qué un eje no muestra datos?">
+    El campo seleccionado no tiene valores para los registros de tu filtro o el tipo de campo no coincide con los datos esperados.
+
+    **Para solucionarlo:** Prueba con un campo diferente o verifica que los registros tengan valores para el campo seleccionado.
+  </Accordion>
+</AccordionGroup>

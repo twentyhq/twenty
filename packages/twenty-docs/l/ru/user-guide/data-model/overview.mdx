@@ -121,55 +121,55 @@ Twenty предоставляет полную гибкость:
 
 ### 5. Сначала — простота
 
-Начните с полей. Move to new objects only when you feel the limits:
+Начните с полей. Переходите к новым объектам только когда почувствуете ограничения:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Слишком много полей в одном объекте
+* Повторяющиеся записи, которые должны быть отдельными
+* Связи, которые не вписываются должным образом
 
-## Special Note on People, Companies, and Opportunities
+## Специальная заметка по Людям, Компаниям и Возможностям
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **Синхронизация электронной почты и календаря работает только с Людьми, Компаниями и Возможностями.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Это единственные объекты, в которых вы можете получить доступ к синхронизированным письмам и встречам из вашего почтового ящика/календаря. Рекомендуем по возможности использовать их.
 </Warning>
 
-**Best practices:**
+**Лучшие практики:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* Если вам нужны категории Людей, используйте поля (а не новые объекты)
+* Пример: используйте поле `Person Type` со значениями "Потенциальный клиент" и "Партнёр" вместо создания отдельных объектов
+* Создайте разные **представления** для фильтрации: одно — для партнёров, другое — для потенциальных клиентов
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Допустимо иметь поля, которые применимы не к каждой записи.** Например, поле `Referral Link` у Людей, которое применяется только когда `Person Type = Partner`. Скройте это поле в представлениях, где оно не актуально.
 
-## Questions to Guide Your Choice
+## Вопросы, которые помогут сделать выбор
 
 Спросите себя:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>Является ли это просто свойством того, что у меня уже есть, или ему нужны свои собственные свойства?</Check>
+<Check>Понадобится ли мне когда-нибудь отслеживать несколько таких для одной записи, не зная заранее, сколько?</Check>
+<Check>Связывается ли эта концепция с несколькими разными объектами, а не только с одним?</Check>
+<Check>Будет ли у неё собственный жизненный цикл (стадии, даты начала/окончания)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Если хотя бы на один из них ответ «да», вероятно, пришло время для нового объекта.
 
-## Accessing Your Data Model
+## Доступ к вашей модели данных
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Перейдите в **Настройки** в левой боковой панели
+2. Нажмите **Модель данных**
+3. Просмотрите все ваши объекты (стандартные и пользовательские)
+4. Нажмите любой объект, чтобы просмотреть и отредактировать его поля
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Не видите «Модель данных» в настройках?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  Доступ к модели данных обычно ограничен администраторами. Свяжитесь с администратором рабочего пространства, если вам нужен доступ.
 </Note>
 
 ## Следующие шаги
 
-Once you've planned your data model:
+После того как вы спланировали модель данных:
 
 * [Как создать пользовательские объекты](/l/ru/user-guide/data-model/how-tos/create-custom-objects)
 * [Как создать пользовательские поля](/l/ru/user-guide/data-model/how-tos/create-custom-fields)
@@ -177,4 +177,4 @@ Once you've planned your data model:
 
 ## Нужна Помощь?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/ru/user-guide/getting-started/capabilities/implementation-services).
+Наша команда может помочь вам в разработке и создании необходимой модели данных. Узнайте о наших [услугах по внедрению](/l/ru/user-guide/getting-started/capabilities/implementation-services).

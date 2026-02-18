@@ -75,12 +75,11 @@ export const generateNodesAndEdgesForIteratorNode = ({
 
   updatedNodes.push(iteratorNode);
 
-  const initialLoopStepIds = Array.isArray(
-    step.settings.input.initialLoopStepIds,
-  )
-    ? step.settings.input.initialLoopStepIds
-    : isNonEmptyString(step.settings.input.initialLoopStepIds)
-      ? [step.settings.input.initialLoopStepIds]
+  const input = step.settings?.input;
+  const initialLoopStepIds = Array.isArray(input?.initialLoopStepIds)
+    ? input.initialLoopStepIds
+    : isNonEmptyString(input?.initialLoopStepIds)
+      ? [input.initialLoopStepIds]
       : [];
 
   for (const initialLoopStepId of initialLoopStepIds) {

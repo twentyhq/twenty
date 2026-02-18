@@ -1,53 +1,53 @@
 ---
-title: I Don't See Emails on Records
-description: Troubleshooting missing emails on records.
+title: Я не вижу электронных писем в записях
+description: Устранение неполадок с отсутствующими электронными письмами в записях.
 ---
 
-## Common Reasons
+## Распространённые причины
 
-### 1. Initial Sync Still in Progress
+### 1. Первичная синхронизация всё ещё выполняется
 
-Email sync takes time, especially for large mailboxes. Twenty imports emails at approximately **400 messages per minute** (limited by Gmail API rate limiting).
+Синхронизация почты занимает время, особенно для больших почтовых ящиков. Twenty импортирует письма примерно со скоростью **400 сообщений в минуту** (ограничено лимитами частоты Gmail API).
 
-* **Calendar sync**: Completes in minutes
-* **Email sync**: Depends on mailbox size (e.g., 10,000 emails ≈ 25 minutes, 50,000 emails ≈ 2 hours)
+* **Синхронизация календаря**: завершается за несколько минут
+* **Синхронизация почты**: зависит от размера почтового ящика (например, 10,000 писем ≈ 25 минут, 50,000 писем ≈ 2 часа)
 
-**Solution**: Wait for the initial import to complete. You can estimate timing based on your mailbox size.
+**Решение**: Дождитесь завершения первичного импорта. Вы можете оценить время в зависимости от размера вашего почтового ящика.
 
-### 2. Contact Doesn't Exist in Twenty
+### 2. Контакт не существует в Twenty
 
-Emails only appear on existing People records. If the contact wasn't created yet:
+Электронные письма отображаются только в существующих записях People. Если контакт ещё не создан:
 
-* Enable **Contact Auto-Creation** in your mailbox settings
-* Or manually create the Person record first
+* Включите **Contact Auto-Creation** в настройках вашего почтового ящика
+* Или сначала вручную создайте запись Person
 
-**Solution**: Go to **Settings → Accounts**, select your mailbox, and enable contact auto-creation.
+**Решение**: Перейдите в **Settings → Accounts**, выберите свой почтовый ящик и включите **Contact Auto-Creation**.
 
-### 3. Internal Emails Are Excluded
+### 3. Внутренние электронные письма исключены
 
-Emails between colleagues (same email domain) are never synced to maintain privacy.
+Электронные письма между коллегами (один и тот же домен электронной почты) никогда не синхронизируются для обеспечения конфиденциальности.
 
-**Solution**: This is expected behavior. Only external emails are synced.
+**Решение**: Это ожидаемое поведение. Синхронизируются только внешние электронные письма.
 
-### 4. Email Is from a Group or Distribution List
+### 4. Письмо от группы или списка рассылки
 
-Group emails and distribution lists are excluded from sync.
+Групповые письма и списки рассылки исключены из синхронизации.
 
-**Solution**: This is expected behavior.
+**Решение**: Это ожидаемое поведение.
 
-### 5. Folder Not Selected for Sync
+### 5. Папка не выбрана для синхронизации
 
-If you're using the Message Folder feature, some folders might be excluded.
+Если вы используете функцию Message Folder, некоторые папки могут быть исключены.
 
-**Solution**: Go to **Settings → Accounts**, select your mailbox, and check folder sync settings.
+**Решение**: Перейдите в **Settings → Accounts**, выберите свой почтовый ящик и проверьте настройки синхронизации папок.
 
-### 6. Wrong Email Address on Record
+### 6. Неверный адрес электронной почты в записи
 
-The Person record might have a different email address than the one used in the email.
+В записи Person может быть указан другой адрес электронной почты, чем тот, который используется в письме.
 
-**Solution**: Add the correct email address to the Person record.
+**Решение**: Добавьте корректный адрес электронной почты в запись Person.
 
-## Still Not Working?
+## Всё ещё не работает?
 
-1. Try disconnecting and reconnecting your mailbox
-2. Contact support if issues persist
+1. Попробуйте отключить и заново подключить ваш почтовый ящик
+2. Обратитесь в поддержку, если проблемы сохраняются

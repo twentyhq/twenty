@@ -1,4 +1,5 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   DeleteQueryBuilder,
   type DeleteResult,
@@ -120,12 +121,18 @@ export class WorkspaceDeleteQueryBuilder<
         this.internalContext.flatFieldMetadataMaps,
       );
 
-      const formattedBefore = formatResult<T[]>(
+      const formattedBefore = formatResult<T | null>(
         before,
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
       );
+
+      const recordsBefore = isDefined(formattedBefore)
+        ? Array.isArray(formattedBefore)
+          ? formattedBefore
+          : [formattedBefore]
+        : [];
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -133,7 +140,7 @@ export class WorkspaceDeleteQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedBefore,
+          recordsBefore,
           authContext: this.authContext,
         }),
       );

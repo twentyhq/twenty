@@ -21,7 +21,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
         <Button
           className
           Icon={null}
-          title="Title"
+          title="Başlık"
           fullWidth={false}
           variant="primary"
           size="medium"
@@ -69,7 +69,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
           <Button
             className
             Icon={null}
-            title="Button 1"
+            title="Buton 1"
             fullWidth={false}
             variant="primary"
             size="medium"
@@ -83,7 +83,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
           <Button
             className
             Icon={null}
-            title="Button 2"
+            title="Buton 2"
             fullWidth={false}
             variant="secondary"
             size="medium"
@@ -97,7 +97,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
           <Button
             className
             Icon={null}
-            title="Button 3"
+            title="Buton 3"
             fullWidth={false}
             variant="tertiary"
             size="medium"
@@ -139,7 +139,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
         <FloatingButton
           className
           Icon={IconSearch}
-          title="Title"
+          title="Başlık"
           size="medium"
           position="standalone"
           applyShadow={true}
@@ -269,12 +269,12 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
       const iconButtons = [
         {
           Icon: IconClipboardText,
-          onClick: () => console.log("Button 1 clicked"),
+          onClick: () => console.log("Buton 1 tıklandı"),
           isActive: true,
         },
         {
           Icon: IconCheckbox,
-          onClick: () => console.log("Button 2 clicked"),
+          onClick: () => console.log("Buton 2 tıklandı"),
           isActive: true,
         },
       ];
@@ -310,7 +310,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
       return <LightButton
       className
       icon={null}
-      title="Title"
+      title="Başlık"
       accent="secondary"
       active={false}
       disabled={false}
@@ -322,16 +322,16 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
   </Tab>
 
   <Tab title="Özellikler">
-    | Özellikler    | Tür               | Açıklama                                                              |
-    | ------------- | ----------------- | --------------------------------------------------------------------- |
-    | sınıfAdı      | dize              | Ek stil için isteğe bağlı ad                                          |
-    | simge         | `React.ReactNode` | Düğmede görüntülemek istediğiniz simge                                |
-    | başlık        | dize              | Düğmenin metin içeriği                                                |
-    | vurgula       | dize              | Düğmenin vurgu rengi. Options include: `secondary` and `tertiary`     |
-    | aktif         | boolean           | Düğmenin etkin bir durumda olup olmadığını belirler                   |
-    | devre dışı    | boolean           | Düğmenin devre dışı olup olmadığını belirler                          |
-    | odak          | boolean           | Düğmenin odakta olup olmadığını belirtir                              |
-    | tıklandığında | fonksiyon         | Kullanıcı düğmeye tıkladığında tetiklenen bir geri çağırma fonksiyonu |
+    | Özellikler    | Tür               | Açıklama                                                                   |
+    | ------------- | ----------------- | -------------------------------------------------------------------------- |
+    | sınıfAdı      | dize              | Ek stil için isteğe bağlı ad                                               |
+    | simge         | `React.ReactNode` | Düğmede görüntülemek istediğiniz simge                                     |
+    | başlık        | dize              | Düğmenin metin içeriği                                                     |
+    | vurgula       | dize              | Düğmenin vurgu rengi. Seçenekler şunları içerir: `secondary` ve `tertiary` |
+    | aktif         | boolean           | Düğmenin etkin bir durumda olup olmadığını belirler                        |
+    | devre dışı    | boolean           | Düğmenin devre dışı olup olmadığını belirler                               |
+    | odak          | boolean           | Düğmenin odakta olup olmadığını belirtir                                   |
+    | tıklandığında | fonksiyon         | Kullanıcı düğmeye tıkladığında tetiklenen bir geri çağırma fonksiyonu      |
   </Tab>
 </Tabs>
 
@@ -349,7 +349,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
           className
           testId="test1"
           Icon={IconSearch}
-          title="Title"
+          title="Başlık"
           size="small"
           accent="secondary"
           active={true}
@@ -363,18 +363,18 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
   </Tab>
 
   <Tab title="Özellikler">
-    | Özellikler    | Tür                   | Açıklama                                                              |
-    | ------------- | --------------------- | --------------------------------------------------------------------- |
-    | sınıfAdı      | dize                  | Ek stil için isteğe bağlı ad                                          |
-    | testId        | dize                  | Düğme için test tanımlayıcısı                                         |
-    | Simge         | `React.ComponentType` | Düğme içinde görüntülenen isteğe bağlı bir simge bileşeni             |
-    | başlık        | dize                  | Düğmenin metin içeriği                                                |
-    | boyut         | dize                  | Düğmenin boyutu. İki seçeneği vardır: `küçük` ve `orta`               |
-    | vurgula       | dize                  | Düğmenin vurgu rengi. Options include: `secondary` and `tertiary`     |
-    | aktif         | boolean               | Düğmenin etkin durumda olup olmadığını belirler                       |
-    | devre dışı    | boolean               | Düğmenin devre dışı olup olmadığını belirler                          |
-    | odak          | boolean               | Düğmenin odakta olup olmadığını belirtir                              |
-    | tıklandığında | fonksiyon             | Kullanıcı düğmeye tıkladığında tetiklenen bir geri çağırma fonksiyonu |
+    | Özellikler    | Tür                   | Açıklama                                                                   |
+    | ------------- | --------------------- | -------------------------------------------------------------------------- |
+    | sınıfAdı      | dize                  | Ek stil için isteğe bağlı ad                                               |
+    | testId        | dize                  | Düğme için test tanımlayıcısı                                              |
+    | Simge         | `React.ComponentType` | Düğme içinde görüntülenen isteğe bağlı bir simge bileşeni                  |
+    | başlık        | dize                  | Düğmenin metin içeriği                                                     |
+    | boyut         | dize                  | Düğmenin boyutu. İki seçeneği vardır: `küçük` ve `orta`                    |
+    | vurgula       | dize                  | Düğmenin vurgu rengi. Seçenekler şunları içerir: `secondary` ve `tertiary` |
+    | aktif         | boolean               | Düğmenin etkin durumda olup olmadığını belirler                            |
+    | devre dışı    | boolean               | Düğmenin devre dışı olup olmadığını belirler                               |
+    | odak          | boolean               | Düğmenin odakta olup olmadığını belirtir                                   |
+    | tıklandığında | fonksiyon             | Kullanıcı düğmeye tıkladığında tetiklenen bir geri çağırma fonksiyonu      |
   </Tab>
 </Tabs>
 
@@ -389,7 +389,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
     export const MyComponent = () => {
       return (
         <MainButton
-          title="Checkbox"
+          title="Onay kutusu"
           fullWidth={false}
           variant="primary"
           soon={false}
@@ -405,7 +405,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
     | ------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
     | başlık                    | dize                             | Düğmenin metin içeriği                                                                             |
     | tamGenişlik               | boolean                          | Düğmenin konteynerinin tüm genişliğini kaplayıp kaplamayacağını tanımlar                           |
-    | varyant                   | dize                             | Düğmenin görsel stil varyantı. Options include `primary` and `secondary`                           |
+    | varyant                   | dize                             | Düğmenin görsel stil varyantı. Seçenekler şunları içerir: `primary` ve `secondary`                 |
     | yakında                   | boolean                          | Düğmenin "yakında" (örneğin gelecek özellikler için) olarak işaretlenip işaretlenmediğini belirtir |
     | Simge                     | `React.ComponentType`            | Düğme içinde görüntülenen isteğe bağlı bir simge bileşeni                                          |
     | React `düğme` özellikleri | `React.ComponentProps<'button'>` | Tüm standart HTML düğme özellikleri desteklenir                                                    |

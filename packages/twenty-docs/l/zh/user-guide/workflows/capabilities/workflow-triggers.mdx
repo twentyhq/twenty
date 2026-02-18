@@ -1,136 +1,136 @@
 ---
-title: Workflow Triggers
-description: Learn about the different triggers that start your workflows.
+title: 工作流程触发器
+description: 了解可启动你的工作流的不同触发器。
 ---
 
-## About Triggers
+## 关于触发器
 
-Workflows always start with a single trigger that defines when the automation should run.
+工作流程总是从一个单一触发器开始，定义自动化运行的条件。
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+  **支持高级对象！** 除了标准 CRM 对象（人员、公司、商机）之外，你还可以基于以下对象触发工作流并执行操作：
 
-  * Workspace Members
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
+  * 工作区成员
+  * 日历事件
+  * 消息（电子邮件）
+  * 任务、备注以及许多其他系统对象
 
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+  这将带来强大的自动化能力，例如在创建日历事件时通知团队成员，或自动处理收到的电子邮件。
 </Tip>
 
-## Record is Created
+## 记录已创建
 
-Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+当在选定的对象(人员、公司、机会或任何自定义对象)中创建新记录时，启动工作流程。
 
-**Configuration**: Select the object type to monitor for new records.
+**配置**:选择要监控新记录的对象类型。
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+  * 此触发器非常适合由 CSV、邮箱和日历同步、API 创建的记录。
+  * **不建议用于手动创建的记录**：使用此触发器，记录一创建就会启动工作流。 由于 Twenty UI 提供即时自动保存（没有先进入编辑模式再验证保存记录的流程），因此在用户输入完所有字段之前，工作流就会被触发。
+    若要在手动创建的记录上触发此工作流，建议改用触发器 `Record is created or updated`。
 </Note>
 
-## Record is Updated
+## 记录已更新
 
-Starts the workflow when changes are made to an existing record.
+当对现有记录进行更改时，启动工作流程。
 
-**Configuration**:
+**配置**：
 
-* Select the object type
-* Optionally specify which fields to monitor for changes
+* 选择对象类型
+* 可以选择指定要监控更改的字段
 
-## Record is Updated or Created
+## 记录已更新或创建
 
-Starts the workflow when a record is either created or updated in a selected object.
+当在选定的对象中创建或更新记录时，启动工作流程。
 
-**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
+**重要性**:此触发器尤其有用，因为通过不同方法创建的记录行为不同：
 
-* **API/CSV imports**: Records are created with all fields populated immediately
-* **Manual creation**: Records are created first, then fields are added in subsequent updates
+* **API/CSV导入**:记录立即以填充所有字段的方式创建
+* **手动创建**:首先创建记录，然后在随后的更新中添加字段
 
-**Configuration**:
+**配置**：
 
-* Select the object type to monitor
-* Optionally specify which fields to monitor for changes
-* The workflow will trigger both on initial creation and any subsequent updates
+* 选择要监控的对象类型
+* 可以选择指定要监控更改的字段
+* 工作流程将在初始创建和后续更新时触发
 
-## Record is Deleted
+## 记录已删除
 
-Starts the workflow when a record is removed from an object.
+当从对象中移除记录时，启动工作流程。
 
-**Configuration**: Select the object type to monitor for deletions.
+**配置**:选择要监控删除的对象类型。
 
-## Manual Trigger
+## 手动触发器
 
-Starts the workflow when triggered by a user action. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+当由用户操作触发时启动工作流程。 此触发器可以通过 `Cmd+K` 菜单访问，或在选择记录后通过顶部导航栏中显示的自定义按钮进行访问。
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
-**Availability Configuration**:
-Choose how the workflow should handle record selection:
+**可用性配置**:
+选择工作流程如何处理记录选择：
 
-* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+* **全局**:无需记录即可触发此工作流程。 工作流可在任意位置（从任何对象）通过命令菜单 `Cmd + K` 触发，且不使用记录作为输入。
 
-* **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run from beginning to end as many times as there are records selected.
+* **单个**:选定的记录将传送至您的工作流程。 已为特定对象配置。 可以在触发工作流程之前选择多个记录。 工作流将从头到尾运行，与所选记录的数量相同的次数。
 
   <Note>
-    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+    **软限制：100 次/分钟**。 超过该限制后，工作流将保持在 "Not Started" 状态，并会逐步处理—由后台作业处理，或在另一个工作流进入队列时处理。 这意味着你可以通过一次触发选择超过 100 条记录；只是执行会更慢。
   </Note>
 
-* **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an [Iterator action](/l/zh/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **批量**：所选记录将传递给您的工作流程。 已为特定对象配置。 可以在触发工作流程之前选择多个记录。 工作流程将运行一次，并将整个记录列表作为输入。 这意味着工作流需要包含一个[迭代器操作](/l/zh/user-guide/workflows/capabilities/workflow-actions#iterator)。
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+  这更为高级，最适合希望优化工作流运行次数的人。
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
 
-**Additional Configuration**:
+**附加配置**：
 
-* Select the target object (for Single and Bulk availability)
-* Choose a command icon for the workflow trigger
-* Configure navbar placement (Pinned or Not Pinned)
+* 选择目标对象（用于单个和批量可用性）
+* 为工作流程触发器选择一个命令图标
+* 配置导航栏位置（已固定或未固定）
 
-**Access Methods**:
+**访问方法**：
 
-* `Cmd+K` menu to find and launch manual workflows
-* Custom button in the top navbar (if configured)
+* 使用 `Cmd+K` 菜单查找并启动手动工作流
+* 导航栏顶部的自定义按钮（如果已配置）
 
-## Time-Based Trigger: On a Schedule
+## 基于时间的触发器：按计划
 
-Starts the workflow on a recurring basis you define.
+在您定义的重复基础上启动工作流程。
 
-**Configuration**:
+**配置**：
 
-* Select time unit (minutes, hours, days)
-* Enter a value or use custom cron expressions for advanced scheduling
+* 选择时间单位（分钟、小时、天）
+* 输入值或使用自定义 Cron 表达式进行高级调度
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+  **时区**：计划的工作流在 **UTC** 下运行。 为每日计划设置时间时，请将本地时间换算为 UTC。
 </Note>
 
-## External Trigger: Webhook
+## 外部触发器：Webhook
 
-Starts the workflow when a GET or POST request is received from an external service.
+当接收到外部服务的 GET 或 POST 请求时启动工作流程。
 
 <img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
 
-**Configuration**:
+**配置**：
 
-* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
-* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
-* Configure authentication (coming soon).
+* 该工作流会提供唯一的 webhook URL—复制它并将其添加到你的外部系统，作为调用的端点。
+* 对于 POST 请求，定义预期的正文结构，以便 Twenty 知道将接收哪些数据。 在此添加你将接收的字段，这些字段将在下方的工作流中使用。
+* 配置认证（即将推出）。
 
-## Choosing the Right Trigger
+## 选择合适的触发器
 
-| Use Case                    | Recommended Trigger          |
-| --------------------------- | ---------------------------- |
-| New leads need processing   | Record is Created            |
-| Data changes need sync      | Record is Updated            |
-| Import/manual data handling | Record is Updated or Created |
-| Cleanup after deletion      | Record is Deleted            |
-| User-initiated action       | Launch Manually              |
-| Recurring reports           | On a Schedule                |
-| External integration        | Webhook or On a Schedule     |
+| 用例        | 推荐的触发器       |
+| --------- | ------------ |
+| 新线索需要处理   | 记录已创建        |
+| 数据变更需要同步  | 记录已更新        |
+| 导入/手动数据处理 | 记录已更新或创建     |
+| 删除后的清理    | 记录已删除        |
+| 用户发起的操作   | 手动启动         |
+| 定期报告      | 计划           |
+| 外部集成      | Webhook 或按计划 |

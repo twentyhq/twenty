@@ -82,7 +82,7 @@ export const createCreateCompleteWorkflowTool = (
 CRITICAL SCHEMA REQUIREMENTS:
 - Trigger type MUST be one of: DATABASE_EVENT, MANUAL, CRON, WEBHOOK
 - NEVER use "RECORD_CREATED" - this is invalid. Use "DATABASE_EVENT" instead.
-- Each step MUST include: id, name, type, valid, settings
+- Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
 - Use "trigger" as stepId for trigger step in stepPositions and edges
@@ -92,12 +92,13 @@ Common mistakes to avoid:
 - Missing the "name" and "valid" fields in steps
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
+- Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
 - Common object patterns and field structures
 - Proper relationship field formats
-- Variable reference syntax (e.g., {{trigger.object.fieldName}})
+- Variable reference syntax: {{trigger.fieldName}} for trigger data, {{<step-id>.result.fieldName}} for step outputs (step-id is the step's UUID, not its name)
 - Error handling options
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.`,
@@ -206,38 +207,35 @@ const createWorkflow = async ({
 }): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const workflowRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'workflow',
-          context.rolePermissionConfig,
-        );
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'workflow',
+        context.rolePermissionConfig,
+      );
 
-      const workflowPosition =
-        await deps.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflow',
-          },
-          workspaceId: context.workspaceId,
-        });
+    const workflowPosition =
+      await deps.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflow',
+        },
+        workspaceId: context.workspaceId,
+      });
 
-      const workflow = {
-        id: uuidv4(),
-        name,
-        statuses: [WorkflowStatus.DRAFT],
-        position: workflowPosition,
-      };
+    const workflow = {
+      id: uuidv4(),
+      name,
+      statuses: [WorkflowStatus.DRAFT],
+      position: workflowPosition,
+    };
 
-      await workflowRepository.insert(workflow);
+    await workflowRepository.insert(workflow);
 
-      return workflow.id;
-    },
-  );
+    return workflow.id;
+  }, authContext);
 };
 
 const createWorkflowVersion = async ({
@@ -255,41 +253,38 @@ const createWorkflowVersion = async ({
 }): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const workflowVersionRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'workflowVersion',
-          context.rolePermissionConfig,
-        );
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowVersionRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'workflowVersion',
+        context.rolePermissionConfig,
+      );
 
-      const versionPosition =
-        await deps.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowVersion',
-          },
-          workspaceId: context.workspaceId,
-        });
+    const versionPosition =
+      await deps.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId: context.workspaceId,
+      });
 
-      const workflowVersion = {
-        id: uuidv4(),
-        workflowId,
-        name: 'v1',
-        status: WorkflowVersionStatus.DRAFT,
-        trigger,
-        steps,
-        position: versionPosition,
-      };
+    const workflowVersion = {
+      id: uuidv4(),
+      workflowId,
+      name: 'v1',
+      status: WorkflowVersionStatus.DRAFT,
+      trigger,
+      steps,
+      position: versionPosition,
+    };
 
-      await workflowVersionRepository.insert(workflowVersion);
+    await workflowVersionRepository.insert(workflowVersion);
 
-      return workflowVersion.id;
-    },
-  );
+    return workflowVersion.id;
+  }, authContext);
 };
 
 const updateWorkflowStatus = async ({
@@ -305,20 +300,17 @@ const updateWorkflowStatus = async ({
 }) => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const workflowRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'workflow',
-          context.rolePermissionConfig,
-        );
+  await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const workflowRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'workflow',
+        context.rolePermissionConfig,
+      );
 
-      await workflowRepository.update(workflowId, {
-        statuses: [WorkflowStatus.ACTIVE],
-        lastPublishedVersionId: workflowVersionId,
-      });
-    },
-  );
+    await workflowRepository.update(workflowId, {
+      statuses: [WorkflowStatus.ACTIVE],
+      lastPublishedVersionId: workflowVersionId,
+    });
+  }, authContext);
 };

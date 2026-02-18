@@ -1,6 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
@@ -41,7 +42,7 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
   > & {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   };
 
 export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpdateSideEffects =
@@ -70,7 +71,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
     FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
@@ -130,7 +131,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     flatIndexMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    workspaceCustomApplicationId,
+    flatApplication,
   });
 
   if (indexChangesSideEffectResult.status === 'fail') {

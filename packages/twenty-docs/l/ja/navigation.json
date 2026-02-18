@@ -1,72 +1,72 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "ユーザーガイド",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "Twenty を知る",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "dataModel": {
-          "label": "Data Model",
+          "label": "データモデル",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "データ移行",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "カレンダーとメール",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "workflows": {
-          "label": "Workflows",
+          "label": "ワークフロー",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "ハウツー",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "CRM の自動化"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "他のツールと連携"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "高度な設定"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "さらにヘルプが必要な場合"
                 }
               }
             }
@@ -76,122 +76,122 @@
           "label": "AI",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "ビューとパイプライン",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "dashboards": {
-          "label": "Dashboards",
+          "label": "ダッシュボード",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "権限とアクセス",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "billing": {
-          "label": "Billing",
+          "label": "請求",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         },
         "settings": {
-          "label": "Settings",
+          "label": "設定",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "ハウツー"
             }
           }
         }
       }
     },
     "developers": {
-      "label": "Developers",
+      "label": "開発者",
       "groups": {
         "developersGroup": {
-          "label": "Developers"
+          "label": "開発者"
         },
         "extend": {
-          "label": "Extend",
+          "label": "拡張",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "セルフホスト",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "機能"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "貢献",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "機能",
               "groups": {
                 "frontendDevelopment": {
-                  "label": "Frontend Development",
+                  "label": "フロントエンド開発",
                   "groups": {
                     "twentyUi": {
                       "label": "Twenty UI",
                       "groups": {
                         "display": {
-                          "label": "Display"
+                          "label": "表示"
                         },
                         "feedback": {
-                          "label": "Feedback"
+                          "label": "フィードバック"
                         },
                         "input": {
-                          "label": "Input"
+                          "label": "入力"
                         },
                         "navigation": {
-                          "label": "Navigation"
+                          "label": "ナビゲーション"
                         }
                       }
                     }
                   }
                 },
                 "backendDevelopment": {
-                  "label": "Backend Development"
+                  "label": "バックエンド開発"
                 }
               }
             }

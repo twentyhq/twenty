@@ -133,7 +133,6 @@ export class SyncMessageFoldersService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageFolderRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
@@ -188,6 +187,7 @@ export class SyncMessageFoldersService {
           },
         );
       },
+      authContext,
     );
   }
 }

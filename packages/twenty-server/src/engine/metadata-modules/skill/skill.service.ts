@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { fromCreateSkillInputToFlatSkillToCreate } from 'src/engine/metadata-modules/flat-skill/utils/from-create-skill-input-to-flat-skill-to-create.util';
+import { fromCreateSkillInputToUniversalFlatSkillToCreate } from 'src/engine/metadata-modules/flat-skill/utils/from-create-skill-input-to-flat-skill-to-create.util';
 import { fromDeleteSkillInputToFlatSkillOrThrow } from 'src/engine/metadata-modules/flat-skill/utils/from-delete-skill-input-to-flat-skill-or-throw.util';
 import { fromFlatSkillToSkillDto } from 'src/engine/metadata-modules/flat-skill/utils/from-flat-skill-to-skill-dto.util';
 import { fromUpdateSkillInputToFlatSkillToUpdateOrThrow } from 'src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util';
@@ -38,7 +38,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(fromFlatSkillToSkillDto);
@@ -74,28 +74,30 @@ export class SkillService {
         { workspaceId },
       );
 
-    const flatSkillToCreate = fromCreateSkillInputToFlatSkillToCreate({
-      createSkillInput: input,
-      workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
-    });
+    const universalFlatSkillToCreate =
+      fromCreateSkillInputToUniversalFlatSkillToCreate({
+        createSkillInput: input,
+        flatApplication: workspaceCustomFlatApplication,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             skill: {
-              flatEntityToCreate: [flatSkillToCreate],
+              flatEntityToCreate: [universalFlatSkillToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating skill',
@@ -112,7 +114,7 @@ export class SkillService {
 
     return fromFlatSkillToSkillDto(
       findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatSkillToCreate.id,
+        flatEntityId: universalFlatSkillToCreate.id,
         flatEntityMaps: recomputedFlatSkillMaps,
       }),
     );
@@ -122,6 +124,11 @@ export class SkillService {
     input: UpdateSkillInput,
     workspaceId: string,
   ): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps: existingFlatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -147,10 +154,12 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating skill',
@@ -174,6 +183,11 @@ export class SkillService {
   }
 
   async delete(id: string, workspaceId: string): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps: existingFlatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -199,10 +213,12 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting skill',
@@ -221,7 +237,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatSkill) => flatSkill.isActive)
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -243,7 +259,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (flatSkill) => names.includes(flatSkill.name) && flatSkill.isActive,
@@ -251,6 +267,11 @@ export class SkillService {
   }
 
   async activate(id: string, workspaceId: string): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -282,10 +303,12 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while activating skill',
@@ -309,6 +332,11 @@ export class SkillService {
   }
 
   async deactivate(id: string, workspaceId: string): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -340,10 +368,12 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deactivating skill',

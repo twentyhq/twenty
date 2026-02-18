@@ -9,16 +9,16 @@ import {
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
+import { getUniqueConstraintsFields, pascalCase } from 'twenty-shared/utils';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class RelationConnectGqlInputTypeGenerator {
@@ -76,14 +76,14 @@ export class RelationConnectGqlInputTypeGenerator {
   ): Record<string, GraphQLInputFieldConfig> {
     const { flatIndexMaps } = context;
 
-    const indexMetadatas = flatObjectMetadata.indexMetadataIds
-      .map((indexId) => flatIndexMaps.byId[indexId])
-      .filter(isDefined)
-      .map((flatIndex) => ({
-        id: flatIndex.id,
-        isUnique: flatIndex.isUnique,
-        indexFieldMetadatas: flatIndex.flatIndexFieldMetadatas,
-      }));
+    const indexMetadatas = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: flatObjectMetadata.indexMetadataIds,
+      flatEntityMaps: flatIndexMaps,
+    }).map((flatIndex) => ({
+      id: flatIndex.id,
+      isUnique: flatIndex.isUnique,
+      indexFieldMetadatas: flatIndex.flatIndexFieldMetadatas,
+    }));
 
     const objectWithIndexes = {
       id: flatObjectMetadata.id,
@@ -123,9 +123,10 @@ export class RelationConnectGqlInputTypeGenerator {
             > = {};
 
             uniqueProperties.forEach((property) => {
-              const scalarType = this.typeMapperService.mapToScalarType(
-                property.type,
-              );
+              const scalarType =
+                this.typeMapperService.mapToPreBuiltGraphQLInputType({
+                  fieldMetadataType: property.type,
+                });
 
               compositeFields[property.name] = {
                 type: scalarType || GraphQLString,
@@ -144,10 +145,14 @@ export class RelationConnectGqlInputTypeGenerator {
             };
           }
         } else {
-          const scalarType = this.typeMapperService.mapToScalarType(
-            field.type,
-            { settings: field.settings, isIdField: field.name === 'id' },
-          );
+          const scalarType =
+            this.typeMapperService.mapToPreBuiltGraphQLInputType({
+              fieldMetadataType: field.type,
+              typeOptions: {
+                settings: field.settings,
+                isIdField: field.name === 'id',
+              },
+            });
 
           inputFields[field.name] = {
             type: scalarType || GraphQLString,

@@ -1,11 +1,11 @@
 import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
+import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import {
   AggregateOperations,
   WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
-} from '~/generated/graphql';
-import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
+} from '~/generated-metadata/graphql';
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({

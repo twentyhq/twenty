@@ -5,16 +5,15 @@ describe('getWorkflowVariablesUsedInStep', () => {
   it('returns the variables used in a one-level object', () => {
     const step: WorkflowStep = {
       id: '42e8b60e-dd44-417a-875f-823d63f16819',
-      name: 'Code - Serverless Function',
+      name: 'Code - Logic Function',
       type: 'CODE',
       valid: false,
       settings: {
         input: {
-          serverlessFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2d',
-          serverlessFunctionInput: {
+          logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2d',
+          logicFunctionInput: {
             a: '{{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a.b.c.d}}',
           },
-          serverlessFunctionVersion: 'draft',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -97,16 +96,15 @@ Set {
   it('returns all the variables used in a single field', () => {
     const step: WorkflowStep = {
       id: '42e8b60e-dd44-417a-875f-823d63f16819',
-      name: 'Code - Serverless Function',
+      name: 'Code - Logic Function',
       type: 'CODE',
       valid: false,
       settings: {
         input: {
-          serverlessFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2d',
-          serverlessFunctionInput: {
+          logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2d',
+          logicFunctionInput: {
             a: '{{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.b}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.c}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.d}}',
           },
-          serverlessFunctionVersion: 'draft',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -137,16 +135,15 @@ Set {
   it('returns the variables used many times only once', () => {
     const step: WorkflowStep = {
       id: '42e8b60e-dd44-417a-875f-823d63f16819',
-      name: 'Code - Serverless Function',
+      name: 'Code - Logic Function',
       type: 'CODE',
       valid: false,
       settings: {
         input: {
-          serverlessFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2d',
-          serverlessFunctionInput: {
+          logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2d',
+          logicFunctionInput: {
             a: '{{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}}',
           },
-          serverlessFunctionVersion: 'draft',
         },
         outputSchema: {},
         errorHandlingOptions: {

@@ -282,7 +282,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       targetObjectName: 'attachment',
-      targetFieldName: 'dashboard',
+      targetFieldName: 'targetDashboard',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

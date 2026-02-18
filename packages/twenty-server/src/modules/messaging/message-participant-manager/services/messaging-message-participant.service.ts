@@ -23,60 +23,57 @@ export class MessagingMessageParticipantService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageParticipantRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-            workspaceId,
-            'messageParticipant',
-          );
-
-        const existingParticipantsBasedOnMessageIds =
-          await messageParticipantRepository.find({
-            where: {
-              messageId: In(
-                participants.map((participant) => participant.messageId),
-              ),
-            },
-          });
-
-        const participantsToCreate: Pick<
-          MessageParticipantWorkspaceEntity,
-          'messageId' | 'handle' | 'displayName' | 'role'
-        >[] = participants
-          .filter(
-            (participant) =>
-              !existingParticipantsBasedOnMessageIds.find(
-                (existingParticipant) =>
-                  existingParticipant.messageId === participant.messageId &&
-                  existingParticipant.handle === participant.handle &&
-                  existingParticipant.displayName === participant.displayName &&
-                  existingParticipant.role === participant.role,
-              ),
-          )
-          .map((participant) => {
-            return {
-              messageId: participant.messageId,
-              handle: participant.handle,
-              displayName: participant.displayName,
-              role: participant.role,
-            };
-          });
-
-        const createdParticipants = await messageParticipantRepository.insert(
-          participantsToCreate,
-          transactionManager,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageParticipantRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+          workspaceId,
+          'messageParticipant',
         );
 
-        await this.matchParticipantService.matchParticipants({
-          participants: createdParticipants.raw ?? [],
-          objectMetadataName: 'messageParticipant',
-          transactionManager,
-          matchWith: 'workspaceMemberAndPerson',
-          workspaceId,
+      const existingParticipantsBasedOnMessageIds =
+        await messageParticipantRepository.find({
+          where: {
+            messageId: In(
+              participants.map((participant) => participant.messageId),
+            ),
+          },
         });
-      },
-    );
+
+      const participantsToCreate: Pick<
+        MessageParticipantWorkspaceEntity,
+        'messageId' | 'handle' | 'displayName' | 'role'
+      >[] = participants
+        .filter(
+          (participant) =>
+            !existingParticipantsBasedOnMessageIds.find(
+              (existingParticipant) =>
+                existingParticipant.messageId === participant.messageId &&
+                existingParticipant.handle === participant.handle &&
+                existingParticipant.displayName === participant.displayName &&
+                existingParticipant.role === participant.role,
+            ),
+        )
+        .map((participant) => {
+          return {
+            messageId: participant.messageId,
+            handle: participant.handle,
+            displayName: participant.displayName,
+            role: participant.role,
+          };
+        });
+
+      const createdParticipants = await messageParticipantRepository.insert(
+        participantsToCreate,
+        transactionManager,
+      );
+
+      await this.matchParticipantService.matchParticipants({
+        participants: createdParticipants.raw ?? [],
+        objectMetadataName: 'messageParticipant',
+        transactionManager,
+        matchWith: 'workspaceMemberAndPerson',
+        workspaceId,
+      });
+    }, authContext);
   }
 }

@@ -1,4 +1,4 @@
-import { type WidgetConfigurationType } from '~/generated/graphql';
+import { type WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export type FieldConfiguration = {
   __typename: 'FieldConfiguration';

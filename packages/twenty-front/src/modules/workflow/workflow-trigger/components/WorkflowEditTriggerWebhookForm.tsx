@@ -17,10 +17,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  buildOutputSchemaFromValue,
-  TRIGGER_STEP_ID,
-} from 'twenty-shared/workflow';
+import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import { IconCopy } from 'twenty-ui/display';
 
@@ -153,9 +151,7 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = buildOutputSchemaFromValue(
-                parsingResult.data,
-              );
+              const outputSchema = getOutputSchemaFromValue(parsingResult.data);
 
               triggerOptions.onTriggerUpdate(
                 {

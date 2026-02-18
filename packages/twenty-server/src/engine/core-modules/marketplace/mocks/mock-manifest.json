@@ -1,0 +1,37 @@
+{
+  "application": {
+    "universalIdentifier": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "defaultRoleUniversalIdentifier": "00000000-0000-0000-0000-000000000000",
+    "displayName": "Data Enrichment",
+    "description": "Enrich your data easily. Choose your provider.",
+    "icon": "IconSparkles",
+    "marketplaceData": {
+      "author": "Cosmos Labs",
+      "category": "Data",
+      "logo": "assets/logo.png",
+      "screenshots": [
+        "assets/screenshot-1.png",
+        "assets/screenshot-2.png",
+        "assets/screenshot-3.png"
+      ],
+      "aboutDescription": "Enhance your workspace with automated data intelligence. This app monitors your new records and automatically populates missing details such as job titles, company size, social profiles, and industry insights.",
+      "providers": ["Clearbit", "Apollo", "Hunter.io"],
+      "websiteUrl": "https://google.com",
+      "termsUrl": "https://google.com"
+    }
+  },
+  "entities": {
+    "objects": [],
+    "fields": [],
+    "logicFunctions": [],
+    "frontComponents": [],
+    "roles": []
+  },
+  "publicAssets": [],
+  "sources": {},
+  "packageJson": {
+    "name": "@twenty-apps/data-enrichment",
+    "version": "1.0.0"
+  },
+  "yarnLock": ""
+}

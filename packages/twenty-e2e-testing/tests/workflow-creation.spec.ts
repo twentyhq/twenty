@@ -7,6 +7,9 @@ test('Create workflow', async ({ page }) => {
 
   await page.goto(process.env.LINK);
 
+  const workflowsFolder = page.getByRole('button', { name: 'Workflows' });
+  await workflowsFolder.click();
+
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
 
@@ -47,6 +50,8 @@ test('Create workflow', async ({ page }) => {
       .getByTestId('top-bar-title')
       .getByText(NEW_WORKFLOW_NAME);
 
+    // Wait for the name to be visible and not hidden
+    await workflowName.waitFor({ state: 'visible' });
     await expect(workflowName).toBeVisible();
 
     await expect(page).toHaveURL(`/object/workflow/${newWorkflowId}`);

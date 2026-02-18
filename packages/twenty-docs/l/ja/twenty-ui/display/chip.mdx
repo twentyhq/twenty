@@ -1,16 +1,16 @@
 ---
-title: Chip
+title: チップ
 image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+  <img src="/images/user-guide/github/github-header.png" alt="ヘッダー" />
 </Frame>
 
-A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
+ラベル、オプションの左および右コンポーネント、さまざまなスタイルオプションを使用してラベルやタグを表示するクリック可能または非クリック可能なコンテナとして使用できるビジュアル要素。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { Chip } from 'twenty-ui/components';
 
@@ -33,22 +33,22 @@ A visual element that you can use as a clickable or non-clickable container with
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type                     | Description                                                                                  |
-    | ------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
-    | linkToEntity | string                   | The link to the entity                                                                       |
-    | entityId     | string                   | The unique identifier for the entity                                                         |
-    | name         | string                   | The name of the entity                                                                       |
-    | pictureUrl   | string                   | s picture",                                                                                  |
-    | avatarType   | Avatar Type              | The type of avatar you want to display. Has two options: `rounded` and `squared`             |
-    | variant      | `EntityChipVariant` enum | Variant of the entity chip you want to display. Has two options: `regular` and `transparent` |
-    | LeftIcon     | IconComponent            | A React component representing an icon. Displayed on the left side of the chip               |
+  <Tab title="プロパティ">
+    | プロパティ        | タイプ                     | 説明                                                       |
+    | ------------ | ----------------------- | -------------------------------------------------------- |
+    | linkToEntity | string                  | エンティティへのリンク                                              |
+    | entityId     | string                  | エンティティの一意識別子                                             |
+    | 名前           | string                  | エンティティの名前                                                |
+    | pictureUrl   | string                  | 写真",                                                     |
+    | avatarType   | アバタータイプ                 | 表示したいアバターのタイプ。 オプションは2つ：`rounded` と `squared`            |
+    | バリアント        | `EntityChipVariant` 列挙型 | 表示したいエンティティチップのバリアント。 オプションは2つ：`regular` と `transparent` |
+    | 左アイコン        | アイコンコンポーネント             | アイコンを表す React コンポーネント。 チップの左側に表示されます                     |
   </Tab>
 </Tabs>
 
-## Examples
+## 例
 
-### Transparent Disabled Chip
+### 透明無効チップ
 
 ```jsx
 import { Chip } from 'twenty-ui/components';
@@ -73,7 +73,7 @@ export const MyComponent = () => {
 
 <br />
 
-### Disabled Chip with Tooltip
+### ツールチップ付き無効チップ
 
 ```jsx
 import { Chip } from "twenty-ui/components";
@@ -95,12 +95,12 @@ export const MyComponent = () => {
 };
 ```
 
-## Entity Chip
+## エンティティチップ
 
-A Chip-like element to display information about an entity.
+エンティティに関する情報を表示するチップ風の要素。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { BrowserRouter as Router } from 'react-router-dom';
     import { IconTwentyStar } from 'twenty-ui/display';
@@ -124,15 +124,15 @@ A Chip-like element to display information about an entity.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type                     | Description                                                                                  |
-    | ------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
-    | linkToEntity | string                   | The link to the entity                                                                       |
-    | entityId     | string                   | The unique identifier for the entity                                                         |
-    | name         | string                   | The name of the entity                                                                       |
-    | pictureUrl   | string                   | s picture",                                                                                  |
-    | avatarType   | Avatar Type              | The type of avatar you want to display. Has two options: `rounded` and `squared`             |
-    | variant      | `EntityChipVariant` enum | Variant of the entity chip you want to display. Has two options: `regular` and `transparent` |
-    | LeftIcon     | IconComponent            | A React component representing an icon. Displayed on the left side of the chip               |
+  <Tab title="プロパティ">
+    | プロパティ        | タイプ                     | 説明                                                       |
+    | ------------ | ----------------------- | -------------------------------------------------------- |
+    | linkToEntity | string                  | エンティティへのリンク                                              |
+    | entityId     | string                  | エンティティの一意識別子                                             |
+    | 名前           | string                  | エンティティの名前                                                |
+    | pictureUrl   | string                  | 写真",                                                     |
+    | avatarType   | アバタータイプ                 | 表示したいアバターのタイプ。 オプションは2つ：`rounded` と `squared`            |
+    | バリアント        | `EntityChipVariant` 列挙型 | 表示したいエンティティチップのバリアント。 オプションは2つ：`regular` と `transparent` |
+    | 左アイコン        | アイコンコンポーネント             | アイコンを表す React コンポーネント。 チップの左側に表示されます                     |
   </Tab>
 </Tabs>

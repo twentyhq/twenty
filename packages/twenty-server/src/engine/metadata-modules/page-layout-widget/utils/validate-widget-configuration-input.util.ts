@@ -2,6 +2,7 @@ import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
@@ -110,6 +111,12 @@ export const validateWidgetConfigurationInput = ({
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
       errors = validateWidgetConfigurationByDto(
         StandaloneRichTextConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.FRONT_COMPONENT:
+      errors = validateWidgetConfigurationByDto(
+        FrontComponentConfigurationDTO,
         configuration,
       );
       break;

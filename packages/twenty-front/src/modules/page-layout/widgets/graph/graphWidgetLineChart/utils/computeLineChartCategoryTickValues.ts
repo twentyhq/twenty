@@ -1,5 +1,7 @@
+import { isNumber, isString } from '@sniptt/guards';
+
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 
 export const computeLineChartCategoryTickValues = ({
@@ -9,7 +11,7 @@ export const computeLineChartCategoryTickValues = ({
   marginRight,
 }: {
   width: number;
-  data: LineChartSeries[];
+  data: LineChartSeriesWithColor[];
   marginLeft: number;
   marginRight: number;
 }): (string | number)[] => {
@@ -19,9 +21,7 @@ export const computeLineChartCategoryTickValues = ({
 
   const values = data[0].data.map((point) => {
     const value = point.x;
-    return typeof value === 'number' || typeof value === 'string'
-      ? value
-      : String(value);
+    return isNumber(value) || isString(value) ? value : String(value);
   });
 
   const availableWidth = width - (marginLeft + marginRight);

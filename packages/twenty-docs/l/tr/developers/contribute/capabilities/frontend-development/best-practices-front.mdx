@@ -13,7 +13,7 @@ React ve Recoil, kod tabanında durumu yönetir.
 Durumunuzu depolamak için ihtiyaç duyduğunuz kadar atom oluşturmak iyi bir uygulamadır.
 
 <Warning>
-  It's better to use extra atoms than trying to be too concise with props drilling.
+  Prop drilling ile gereğinden fazla sade olmaya çalışmaktansa, fazladan atom kullanmak daha iyidir.
 </Warning>
 
 ```tsx
@@ -77,8 +77,8 @@ Kök bileşenize bir `useEffect` eklemeniz gerektiğini hissediyorsanız, bunu b
 Aynısını Apollo kancaları ile veri çekme mantığı için de uygulayabilirsiniz.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ Kötü, veri değişmese bile yeniden render'a neden olacak,
+//    çünkü useEffect'in yeniden değerlendirilmesi gerekiyor
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
@@ -100,8 +100,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ İyi, veri değişmiyorsa yeniden render'a neden olmaz,
+//   çünkü useEffect başka bir kardeş bileşende yeniden değerlendirilir
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
@@ -259,7 +259,7 @@ React bağlamında prop taşıma, durum değişkenlerini ve ayarlayıcılarını
 
 1. **Azalan Okunabilirlik**: Bir prop'un nereden kaynaklandığını veya nerede kullanıldığını izlemek, derin bir şekilde iç içe geçmiş bir bileşen yapısında karışık hale gelebilir.
 
-2. **Maintenance Challenges**: Changes in one component's prop structure might require adjustments in several components, even if they don't directly use the prop.
+2. **Bakım Zorlukları**: Bir bileşenin prop yapısındaki değişiklikler, prop'u doğrudan kullanmasalar bile, birden fazla bileşende ayarlamalar yapılmasını gerektirebilir.
 
 3. **Azalan Bileşen Yeniden Kullanılabilirliği**: Çok fazla props'u yalnızca aşağıya aktarma amacıyla alan bir bileşen, daha az genel amaçlı hale gelir ve farklı bağlamlarda yeniden kullanılması zorlaşır.
 
@@ -269,7 +269,7 @@ Aşırı prop taşıma kullanıyorsanız, [durum yönetimi en iyi uygulamaların
 
 İçe aktarırken, tüm veya göreli yolları belirtmek yerine belirlenen takma adları tercih edin.
 
-**The Aliases**
+**Takma Adlar**
 
 ```js
 {
@@ -319,6 +319,6 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 ```
 
-## Breaking Changes
+## Geriye Dönük Uyumsuz Değişiklikler
 
 Testler henüz kapsamlı bir şekilde entegre edilmediği için, ilerlemeden önce yapılan değişikliklerin başka yerlerde bozulmalara neden olmadığından emin olmak için her zaman kapsamlı manuel testler yapın.

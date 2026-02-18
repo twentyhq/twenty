@@ -1,103 +1,103 @@
 ---
-title: Import Relations Between Objects via CSV
-description: Complete step-by-step guide to linking records during CSV import.
+title: CSV でオブジェクト間のリレーションをインポートする
+description: CSV インポート時にレコードを関連付けるための完全なステップバイステップガイド。
 ---
 
-## Overview
+## 概要
 
-This guide walks you through importing relations between objects—for example, linking People to Companies, or Opportunities to People.
+本ガイドでは、オブジェクト間のリレーションをインポートする手順を説明します（例：連絡先を会社にリンク、または商談を連絡先にリンク）。
 
-<Note>**What can be imported:** Only one-to-many relations pointing to a single object type. Relations pointing to multiple object types (like Notes linking to People AND Companies) are not yet supported for import.</Note>
+<Note>**インポート可能なもの:** 単一のオブジェクトタイプを指す 1 対多のリレーションのみ。 複数のオブジェクトタイプを指すリレーション（例：メモが連絡先と会社の双方にリンク）は、現時点ではインポートに対応していません。</Note>
 
-## Understanding Relations
+## リレーションの理解
 
-### What is a "One-to-Many" Relation?
+### 「1 対多」リレーションとは？
 
-In a one-to-many relation:
+1 対多のリレーションでは:
 
-* **One** Company has **many** People (employees)
-* **One** Company has **many** Opportunities
-* **One** Person has **many** Tasks
+* **1 つの**会社には**多数の**連絡先（従業員）がいる
+* **1 つの**会社には**多数の**商談がある
+* **1 つの**連絡先には**多数の**タスクがある
 
-The "one" side is the **parent**. The "many" side is the **child**.
+「1」の側は**親**です。 「多」の側は**子**です。
 
-### Common Relations in Twenty
+### Twenty における一般的なリレーション
 
-| Relation                  | "One" Side (Parent) | "Many" Side (Child) |
-| ------------------------- | ------------------- | ------------------- |
-| Companies → People        | Company             | People              |
-| Companies → Opportunities | Company             | Opportunities       |
-| People → Tasks            | Person              | Tasks               |
-| People → Notes            | Person              | Notes               |
+| リレーション    | 「1」の側（親） | 「多」の側（子） |
+| --------- | -------- | -------- |
+| 会社 → 連絡先  | 会社       | 人物       |
+| 会社 → 商談   | 会社       | 商談       |
+| 連絡先 → タスク | 人物       | タスク      |
+| 連絡先 → メモ  | 人物       | ノート      |
 
-## Step 1: Identify the "One" and "Many" Sides
+## ステップ 1: 「1」と「多」の側を特定する
 
-Before importing, determine which object is the parent and which is the child.
+インポート前に、どのオブジェクトが親で、どれが子かを判断します。
 
-**Ask yourself:** "Does ONE [Object A] have MANY [Object B]?"
+**自問:** 「1 つの [オブジェクト A] は多数の [オブジェクト B] を持つか？」
 
-* One Company → Many People ✓ (Company is parent)
-* One Person → Many Companies ✗ (This is wrong—a person belongs to one company)
+* 1 つの会社 → 多数の連絡先 ✓（会社が親）
+* 1 人 → 多数の会社 ✗（誤りです—1 人は 1 社に所属）
 
-## Step 2: Import the Parent Records First
+## ステップ 2: まず親レコードをインポートする
 
-The parent ("one" side) must exist in Twenty before you can reference it.
+参照する前に、親（「1」の側）が Twenty に存在している必要があります。
 
-**Import order:**
+**インポート順:**
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and/or People)
-4. **Tasks/Notes** (link to any of the above)
+1. **会社**を最初に（依存関係なし）
+2. **連絡先**を次に（会社にリンク）
+3. **商談**を 3 番目に（会社や連絡先にリンク）
+4. **タスク/メモ**（上記のいずれかにリンク）
 
 <Warning>
-  **If the parent record doesn't exist, the import will fail.**
+  **親レコードが存在しない場合、インポートは失敗します。**
 
-  Always verify that Companies are imported before importing People with company references.
+  会社参照を含む連絡先をインポートする前に、必ず会社がインポート済みであることを確認してください。
 </Warning>
 
-## Step 3: Note the Parent's Unique Identifier
+## ステップ 3: 親の一意識別子を控える
 
-You need to reference the parent record using a **unique identifier**. Available options:
+親レコードは**一意の識別子**で参照する必要があります。 利用可能な選択肢:
 
-| Parent Object         | Available Unique Identifiers                                    |
-| --------------------- | --------------------------------------------------------------- |
-| **Companies**         | `id` (UUID), `domain` (recommended), or any custom unique field |
-| **People**            | `id` (UUID), `email`, or any custom unique field                |
-| **Workspace Members** | `id` (UUID), `email` (not name)                                 |
-| **Custom Objects**    | `id` (UUID), or any field marked as unique                      |
+| 親オブジェクト         | 利用可能な一意識別子                                |
+| --------------- | ----------------------------------------- |
+| **会社**          | `id`（UUID）、`domain`（推奨）、または任意のカスタム一意フィールド |
+| **連絡先**         | `id`（UUID）、`email`、または任意のカスタム一意フィールド      |
+| **ワークスペースメンバー** | `id`（UUID）、`email`（名前ではありません）             |
+| **カスタムオブジェクト**  | `id`（UUID）、または一意としてマークされた任意のフィールド         |
 
-<Note>**Recommended:** Use `domain` for Companies and `email` for People. These are human-readable and easy to verify in your spreadsheet.</Note>
+<Note>**推奨:** 会社には `domain`、連絡先には `email` を使用してください。 これらは人間が読みやすく、スプレッドシートで簡単に確認できます。</Note>
 
-### Finding the Identifier
+### 識別子の見つけ方
 
-If you need the `id`:
+`id` が必要な場合:
 
-1. Export the parent records from Twenty
-2. The export includes the `id` column
-3. Use these IDs in your child records file
+1. 親レコードを Twenty からエクスポートする
+2. エクスポートには `id` 列が含まれます
+3. これらの ID を子レコードのファイルで使用する
 
-## Step 4: Verify the Relation Field Exists
+## ステップ 4: リレーションフィールドが存在することを確認する
 
-Before importing, ensure the relation field exists between your objects.
+インポート前に、オブジェクト間のリレーションフィールドが存在することを確認します。
 
-**To check or create:**
+**確認・作成方法:**
 
-1. Go to **Settings → Data Model**
-2. Select your child object (e.g., People)
-3. Look for a relation field pointing to the parent (e.g., Company)
-4. If it doesn't exist, create it:
-   * Click **+ Add field**
-   * Select **Relation** type
-   * Choose the parent object
+1. **設定 → データモデル** に移動する
+2. 子オブジェクト（例：連絡先）を選択する
+3. 親（例：会社）を指すリレーションフィールドを探す
+4. 存在しない場合は作成する:
+   * **+ Add field** をクリック
+   * **Relation** タイプを選択
+   * 親オブジェクトを選択
 
-## Step 5: Prepare Your CSV File
+## ステップ 5: CSV ファイルを準備する
 
-Add a column to your child CSV that references the parent using its unique identifier.
+子側の CSV に、親を一意の識別子で参照する列を追加します。
 
-### Example: People Linking to Companies
+### 例：連絡先を会社にリンクする
 
-**Your People CSV:**
+**連絡先の CSV:**
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain
@@ -106,66 +106,66 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co
 Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 ```
 
-The `companyDomain` column references the Company's domain.
+`companyDomain` 列は会社のドメインを参照します。
 
-### Format Requirements
+### 形式要件
 
-| Identifier | Format         | Example                                |
-| ---------- | -------------- | -------------------------------------- |
-| Domain     | URL format     | `https://acme.com`                     |
-| Email      | Standard email | `john@acme.com`                        |
-| ID         | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| 識別子  | 形式          | 例                                      |
+| ---- | ----------- | -------------------------------------- |
+| ドメイン | URL 形式      | `https://acme.com`                     |
+| メール  | 標準的なメールアドレス | `john@acme.com`                        |
+| ID   | UUID        | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Domain format matters!**
+  **ドメインの形式が重要です！**
 
-  Use `https://domain.com` (not just `domain.com`). This matches how Twenty stores Company domains and prevents matching errors.
+  `https://domain.com` を使用してください（`domain.com` だけではありません）。 これは Twenty が会社のドメインを保存する方法に一致し、照合エラーを防ぎます。
 </Warning>
 
-### Important Rules
+### 重要なルール
 
-1. **Exact match required** — the value must exactly match the parent record
-2. **Map only ONE unique identifier** — don't include both `companyId` AND `companyDomain`
-3. **Case sensitive** — `Acme.com` ≠ `acme.com`
+1. **完全一致が必要** — 値は親レコードと完全に一致している必要があります
+2. **一意の識別子は 1 つだけマッピング** — `companyId` と `companyDomain` の両方を含めないでください
+3. **大文字小文字を区別** — `Acme.com` ≠ `acme.com`
 
-## Step 6: Upload and Map the Relation
+## ステップ 6: リレーションをアップロードしてマッピングする
 
-1. Navigate to the child object (e.g., People)
-2. Click **⋮** → **Import records**
-3. Upload your CSV file
-4. In the field mapping step:
-   * Find your relation column (e.g., `companyDomain`)
-   * Map it to the **Company** relation field
-5. Complete the remaining mapping
-6. Review errors and confirm
+1. 子オブジェクト（例：連絡先）に移動
+2. **⋮** → **Import records** をクリック
+3. CSV ファイルをアップロード
+4. フィールドマッピングのステップで:
+   * リレーション列（例：`companyDomain`）を見つける
+   * それを**会社**のリレーションフィールドにマッピングする
+5. 残りのマッピングを完了する
+6. エラーを確認して確定する
 
-Twenty will automatically link each child record to the matching parent.
+Twenty が各子レコードを一致する親に自動でリンクします。
 
-## Step 7: Verify the Import
+## ステップ 7: インポートを確認する
 
-After importing:
+インポート後：
 
-1. Open a few child records (e.g., People)
-2. Verify the relation field shows the correct parent (e.g., Company)
-3. Open a parent record and check the related records section
+1. いくつかの子レコード（例：連絡先）を開く
+2. リレーションフィールドに正しい親（例：会社）が表示されていることを確認する
+3. 親レコードを開き、関連レコードのセクションを確認する
 
-## Common Mistakes to Avoid
+## 避けるべき一般的なミス
 
-| Mistake                    | Problem                                            | Solution                                                |
-| -------------------------- | -------------------------------------------------- | ------------------------------------------------------- |
-| **Wrong import order**     | Importing People before Companies                  | Always import parents first, then children              |
-| **Wrong domain format**    | Using `acme.com` instead of `https://acme.com`     | Use full URL format with `https://`                     |
-| **Multiple unique fields** | Mapping both `companyId` AND `companyDomain`       | Map only ONE unique identifier                          |
-| **Missing relation field** | The relation field doesn't exist in the data model | Create it in **Settings → Data Model** before importing |
-| **Non-existent records**   | The parent record doesn't exist in Twenty          | Import parent records first, or check for typos         |
-| **Case mismatch**          | `Acme.com` in file but `acme.com` in Twenty        | Ensure exact case matching                              |
+| ミス                 | 問題                                          | 解決策                           |
+| ------------------ | ------------------------------------------- | ----------------------------- |
+| **インポート順の誤り**      | 会社より先に連絡先をインポートしている                         | 常に親を先に、次に子をインポートする            |
+| **ドメイン形式の誤り**      | `https://acme.com` ではなく `acme.com` を使用している  | `https://` を含む完全な URL 形式を使用する |
+| **複数の一意フィールド**     | `companyId` と `companyDomain` の両方をマッピングしている | 一意の識別子は 1 つだけマッピングする          |
+| **リレーションフィールドがない** | データモデルにリレーションフィールドが存在しない                    | インポート前に **設定 → データモデル** で作成する |
+| **存在しないレコード**      | 親レコードが Twenty に存在しない                        | 先に親レコードをインポートするか、タイプミスを確認する   |
+| **大文字小文字の不一致**     | ファイルでは `Acme.com`、Twenty では `acme.com`      | 大文字小文字が完全に一致していることを確認する       |
 
-## Linking to Workspace Members
+## ワークスペースメンバーへのリンク
 
-When linking to Workspace Members (your team):
+ワークスペースメンバー（あなたのチーム）にリンクする場合：
 
-* Use their **email address**, not their name
-* Example: `owner@yourcompany.com`, not "John Smith"
+* 名前ではなく**メールアドレス**を使用する
+* 例：`owner@yourcompany.com`、"John Smith" ではなく
 
 ```csv
 taskName,assignedTo
@@ -176,53 +176,53 @@ Review proposal,jane@yourcompany.com
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What if my parent record doesn't have a domain or email?">
-    You have two options:
+  <Accordion title="親レコードにドメインやメールがない場合はどうすればよいですか？">
+    次の 2 つの選択肢があります：
 
-    1. Use the Twenty `id` (export parent records to get their IDs)
-    2. Create a custom unique field in your data model to store an external ID from your previous system
+    1. Twenty の `id` を使用する（親レコードをエクスポートして ID を取得）
+    2. データモデルにカスタムの一意フィールドを作成し、以前のシステムの外部 ID を保存する
   </Accordion>
 
-  <Accordion title="Can I update relations on existing records?">
-    Yes! Include the child record's unique identifier (e.g., `email` for People) and the new relation value. The import will update the relation.
+  <Accordion title="既存レコードのリレーションを更新できますか？">
+    はい! 子レコードの一意の識別子（例：連絡先なら `email`）と新しいリレーションの値を含めてください。 インポートによってリレーションが更新されます。
   </Accordion>
 
-  <Accordion title="Can I import Many-to-Many relationships?">
-    Many-to-Many relations are not yet supported for import. This is planned for H1 2026.
+  <Accordion title="多対多のリレーションをインポートできますか？">
+    多対多のリレーションは、現時点ではインポートに対応していません。 これは 2026 年上期に対応予定です。
   </Accordion>
 
-  <Accordion title="Can I link to multiple object types (like Notes to People AND Companies)?">
-    Relations pointing to multiple object types are not yet supported for import/export. This is on our roadmap.
+  <Accordion title="複数のオブジェクトタイプ（例：メモを連絡先と会社の双方）にリンクできますか？">
+    複数のオブジェクトタイプを指すリレーションは、現時点ではインポート/エクスポートに対応していません。 これはロードマップにあります。
   </Accordion>
 
-  <Accordion title="What happens if a parent record doesn't exist?">
-    The import will show an error for that row. You can either:
+  <Accordion title="親レコードが存在しない場合はどうなりますか？">
+    その行に対してエラーが表示されます。 次のいずれかを行うことができます。
 
-    * Import the parent record first, then re-import
-    * Fix the reference value
-    * Remove the row from import
+    * 先に親レコードをインポートしてから再インポートする
+    * 参照値を修正する
+    * インポート対象からその行を削除する
   </Accordion>
 
-  <Accordion title="Why is my relation not linking correctly?">
-    Common causes:
+  <Accordion title="リレーションが正しくリンクされないのはなぜですか？">
+    よくある原因：
 
-    * Wrong format (use `https://domain.com` for domains)
-    * Case mismatch (check exact spelling)
-    * Parent doesn't exist (import parents first)
-    * Mapping multiple identifiers (use only one)
+    * 形式の誤り（ドメインには `https://domain.com` を使用）
+    * 大文字小文字の不一致（綴りを正確に確認）
+    * 親が存在しない（先に親をインポート）
+    * 複数の識別子をマッピングしている（1 つだけを使用）
   </Accordion>
 </AccordionGroup>
 
 <Warning>
-  **Remember: Soft-deleted records count toward uniqueness.**
+  **注意: 論理削除されたレコードも一意性の判定に含まれます。**
 
-  If you're getting "not found" errors but the record seems to exist, check Command Menu → See deleted records. The parent may have been soft-deleted.
+  「not found」エラーが出るのにレコードが存在するように見える場合は、Command Menu → See deleted records を確認してください。 親が論理削除されている可能性があります。
 </Warning>
 
-## Troubleshooting
+## トラブルシューティング
 
-Having issues? Check:
+お困りですか？ 次を確認してください:
 
-* [How to Fix Import Errors](/l/ja/user-guide/data-migration/how-tos/fix-import-errors)
-* [Import Relations Capabilities](/l/ja/user-guide/data-migration/capabilities/import-relations)
-* [Uniqueness Constraints](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [インポートエラーを解決する方法](/l/ja/user-guide/data-migration/how-tos/fix-import-errors)
+* [リレーションのインポート機能](/l/ja/user-guide/data-migration/capabilities/import-relations)
+* [一意性制約](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)

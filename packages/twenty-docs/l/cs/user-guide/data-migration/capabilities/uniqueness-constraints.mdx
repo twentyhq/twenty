@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: Omezení jedinečnosti
+description: Jak Twenty prosazuje jedinečnost dat při importu.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Přehled
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Twenty vynucuje jedinečnost u vybraných polí, aby se předešlo duplicitním záznamům a zajistila integrita dat. Porozumění těmto omezením je zásadní pro úspěšné importy.
 
-## Default Unique Fields
+## Výchozí jedinečná pole
 
-| Objekt              | Unique Fields          |
-| ------------------- | ---------------------- |
-| **People**          | `id`, `email`          |
-| **Společnosti**     | `id`, `domain`         |
-| **Vlastní objekty** | `id` only (by default) |
+| Objekt              | Jedinečná pole                     |
+| ------------------- | ---------------------------------- |
+| **Lidé**            | `id`, `email`                      |
+| **Společnosti**     | `id`, `domain`                     |
+| **Vlastní objekty** | pouze `id` (ve výchozím nastavení) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Pole `id` je interní identifikátor Twenty, automaticky generovaný pro každý záznam. Používá formát UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## Vlastní jedinečná pole
 
-You can define additional unique fields under **Settings → Data Model**:
+Další jedinečná pole můžete definovat v **Nastavení → Datový model**:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt
+3. Klikněte na pole
+4. V nastavení pole zapněte **Jedinečné**
 
-### Use Cases for Custom Unique Fields
+### Příklady použití vlastních jedinečných polí
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **Externí ID**: Ukládejte ID z jiných systémů (Salesforce ID, HubSpot ID)
+* **Obchodní identifikátory**: osobní čísla zaměstnanců, zákaznické kódy
+* **Alternativní kontaktní údaje**: profil na LinkedInu, telefonní číslo
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>Název pole `id` je vyhrazen pro interní ID Twenty. Pro externí identifikátory použijte jiný název, například `externalId` nebo `legacyId`.</Note>
 
-## Import Behavior
+## Chování importu
 
-### Creating New Records
+### Vytváření nových záznamů
 
-If a unique field value doesn't exist, a new record is created.
+Pokud hodnota jedinečného pole neexistuje, vytvoří se nový záznam.
 
-### Updating Existing Records
+### Aktualizace stávajících záznamů
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+Pokud hodnota jedinečného pole odpovídá existujícímu záznamu, tento záznam se **aktualizuje** novými daty.
+<Warning>Pro **aktualizaci stávajících záznamů** se doporučuje **párovat pouze jedno jedinečné pole**.</Warning>
 
-### Soft-Deleted Records
+### Měkce smazané záznamy
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **Smazané záznamy se započítávají do jedinečnosti.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  Měkce smazané záznamy (viditelné v Command Menu → Zobrazit smazané záznamy) jsou zahrnuty do kontrol jedinečnosti. Pokud naimportujete záznam se stejnou jedinečnou hodnotou jako smazaný záznam, smazaný záznam bude **obnoven** s novými daty.
 </Warning>
 
-## Duplicate Detection During Import
+## Detekce duplicit během importu
 
-During the validation phase:
+Během fáze validace:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* Duplicitní hodnoty ve vašem souboru jsou zvýrazněny žlutě
+* Před zahájením importu můžete v uživatelském rozhraní upravit nebo odstranit duplicitní řádky
 
-<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+<VimeoEmbed videoId="1145246326" title="Ukázka videa" />
 
 ## Osvědčené postupy
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. **Odstraňte duplikáty** ze souboru před importem
+2. Před importem **zkontrolujte existující záznamy** v Twenty
+3. **Používejte externí ID** při migraci z jiných systémů
+4. **Zahrňte jedinečná pole**, pokud chcete aktualizovat stávající záznamy

@@ -39,21 +39,18 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-          ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
+      });
+    }, authContext);
   }
 
   public async markAsCalendarEventListFetchOngoing(
@@ -66,22 +63,19 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
-          syncStatus: CalendarChannelSyncStatus.ONGOING,
-          syncStageStartedAt: new Date().toISOString(),
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
+        syncStatus: CalendarChannelSyncStatus.ONGOING,
+        syncStageStartedAt: new Date().toISOString(),
+      });
+    }, authContext);
   }
 
   public async resetAndMarkAsCalendarEventListFetchPending(
@@ -100,22 +94,19 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncCursor: '',
-          syncStageStartedAt: null,
-          throttleFailureCount: 0,
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncCursor: '',
+        syncStageStartedAt: null,
+        throttleFailureCount: 0,
+      });
+    }, authContext);
 
     await this.markAsCalendarEventListFetchPending(
       calendarChannelIds,
@@ -133,20 +124,17 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStageStartedAt: null,
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStageStartedAt: null,
+      });
+    }, authContext);
   }
 
   public async markAsCalendarEventsImportPending(
@@ -160,21 +148,18 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-          ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+        ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
+      });
+    }, authContext);
   }
 
   public async markAsCalendarEventsImportOngoing(
@@ -187,21 +172,19 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
-          syncStatus: CalendarChannelSyncStatus.ONGOING,
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
+        syncStatus: CalendarChannelSyncStatus.ONGOING,
+        syncStageStartedAt: new Date().toISOString(),
+      });
+    }, authContext);
   }
 
   public async markAsCompletedAndMarkAsCalendarEventListFetchPending(
@@ -214,24 +197,21 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-          syncStatus: CalendarChannelSyncStatus.ACTIVE,
-          throttleFailureCount: 0,
-          syncStageStartedAt: null,
-          syncedAt: new Date().toISOString(),
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        syncStatus: CalendarChannelSyncStatus.ACTIVE,
+        throttleFailureCount: 0,
+        syncStageStartedAt: null,
+        syncedAt: new Date().toISOString(),
+      });
+    }, authContext);
 
     await this.markAsCalendarEventListFetchPending(
       calendarChannelIds,
@@ -260,21 +240,18 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+        );
 
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
-          syncStage: CalendarChannelSyncStage.FAILED,
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
+        syncStage: CalendarChannelSyncStage.FAILED,
+      });
+    }, authContext);
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.CalendarEventSyncJobFailedUnknown,
@@ -298,48 +275,45 @@ export class CalendarChannelSyncStatusService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
-
-        await calendarChannelRepository.update(calendarChannelIds, {
-          syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-          syncStage: CalendarChannelSyncStage.FAILED,
-        });
-
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        const calendarChannels = await calendarChannelRepository.find({
-          select: ['id', 'connectedAccountId'],
-          where: { id: Any(calendarChannelIds) },
-        });
-
-        const connectedAccountIds = calendarChannels.map(
-          (calendarChannel) => calendarChannel.connectedAccountId,
-        );
-
-        await connectedAccountRepository.update(
-          { id: Any(connectedAccountIds) },
-          {
-            authFailedAt: new Date(),
-          },
-        );
-
-        await this.addToAccountsToReconnect(
-          calendarChannels.map((calendarChannel) => calendarChannel.id),
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
           workspaceId,
+          'calendarChannel',
         );
-      },
-    );
+
+      await calendarChannelRepository.update(calendarChannelIds, {
+        syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+        syncStage: CalendarChannelSyncStage.FAILED,
+      });
+
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
+        );
+
+      const calendarChannels = await calendarChannelRepository.find({
+        select: ['id', 'connectedAccountId'],
+        where: { id: Any(calendarChannelIds) },
+      });
+
+      const connectedAccountIds = calendarChannels.map(
+        (calendarChannel) => calendarChannel.connectedAccountId,
+      );
+
+      await connectedAccountRepository.update(
+        { id: Any(connectedAccountIds) },
+        {
+          authFailedAt: new Date(),
+        },
+      );
+
+      await this.addToAccountsToReconnect(
+        calendarChannels.map((calendarChannel) => calendarChannel.id),
+        workspaceId,
+      );
+    }, authContext);
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,

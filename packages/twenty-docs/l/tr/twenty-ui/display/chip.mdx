@@ -7,7 +7,7 @@ image: /images/user-guide/github/github-header.png
   <img src="/images/user-guide/github/github-header.png" alt="Başlık" />
 </Frame>
 
-A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
+Etiketleri ve 'tag'leri görüntülemek için, bir etiket metni, isteğe bağlı sol ve sağ bileşenler ve çeşitli stil seçenekleriyle tıklanabilir veya tıklanamaz bir kapsayıcı olarak kullanabileceğiniz görsel bir öğe.
 
 <Tabs>
   <Tab title="Kullanım">
@@ -18,7 +18,7 @@ A visual element that you can use as a clickable or non-clickable container with
       return (
         <Chip
           size="large"
-          label="Clickable Chip"
+          label="Tıklanabilir Chip"
           clickable={true}
           variant="highlighted"
           accent="text-primary"
@@ -57,7 +57,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Transparent Disabled Chip"
+      label="Şeffaf Devre Dışı Chip"
       clickable={false}
       variant="rounded"
       accent="text-secondary"
@@ -82,7 +82,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="Taştığında araç ipucunu tetikleyen devre dışı Chip."
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -112,7 +112,7 @@ Bir varlık hakkında bilgi göstermek için bir Çip benzeri öğe.
           <Chip
             linkToEntity="/entity-link"
             entityId="entityTest"
-            name="Entity name"
+            name="Varlık adı"
             pictureUrl=""
             avatarType="rounded"
             variant="regular"

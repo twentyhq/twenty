@@ -13,6 +13,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -21,18 +22,21 @@ import {
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -255,6 +259,16 @@ const mockCompanyRecord: ObjectRecord = {
   },
 };
 
+// Sets a record in both Recoil and Jotai stores so field display hooks can read it
+const setRecordInStores = (
+  snapshot: MutableSnapshot,
+  recordId: string,
+  record: ObjectRecord,
+) => {
+  snapshot.set(recordStoreFamilyState(recordId), record);
+  jotaiStore.set(recordStoreFamilyStateV2.atomFamily(recordId), record);
+};
+
 const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
@@ -278,7 +292,7 @@ const TAB_ID_OVERVIEW = 'tab-overview';
 const createPageLayoutWithWidget = (
   widget: PageLayoutWidget,
   objectMetadataId: string,
-) => ({
+): PageLayout => ({
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Mock Page Layout',
   type: PageLayoutType.RECORD_PAGE,
@@ -286,6 +300,7 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab' as const,
+      applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
       position: 0,
@@ -306,8 +321,8 @@ const meta: Meta<typeof FieldWidget> = {
   component: FieldWidget,
   decorators: [
     ComponentDecorator,
-    I18nFrontDecorator,
     ChipGeneratorsDecorator,
+    FileUploadDecorator,
     (Story) => (
       <MemoryRouter>
         <Story />
@@ -368,7 +383,7 @@ export const TextFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -389,7 +404,7 @@ export const TextFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -460,7 +475,7 @@ export const AddressFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -481,7 +496,7 @@ export const AddressFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -555,7 +570,7 @@ export const NumberFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -576,7 +591,7 @@ export const NumberFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -647,7 +662,7 @@ export const LinkFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -668,7 +683,7 @@ export const LinkFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -739,14 +754,15 @@ export const ManyToOneRelationFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
       // Set the related WorkspaceMember record for relation field display
       if (
         mockCompanyRecord.accountOwner !== null &&
         mockCompanyRecord.accountOwner !== undefined
       ) {
-        snapshot.set(
-          recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
+        setRecordInStores(
+          snapshot,
+          mockCompanyRecord.accountOwner.id,
           mockCompanyRecord.accountOwner,
         );
       }
@@ -770,7 +786,7 @@ export const ManyToOneRelationFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -841,12 +857,9 @@ export const OneToManyRelationFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
       // Set the related Person record for ONE_TO_MANY relation display
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -867,7 +880,7 @@ export const OneToManyRelationFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -938,7 +951,7 @@ export const BooleanFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -959,7 +972,7 @@ export const BooleanFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1029,7 +1042,7 @@ export const CurrencyFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -1050,7 +1063,7 @@ export const CurrencyFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1120,10 +1133,7 @@ export const EmailsFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -1144,7 +1154,7 @@ export const EmailsFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1215,10 +1225,7 @@ export const PhonesFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -1239,7 +1246,7 @@ export const PhonesFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1310,8 +1317,9 @@ export const SelectFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_OPPORTUNITY_RECORD_ID),
+      setRecordInStores(
+        snapshot,
+        TEST_OPPORTUNITY_RECORD_ID,
         mockOpportunityRecord,
       );
     };
@@ -1334,7 +1342,7 @@ export const SelectFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1406,7 +1414,7 @@ export const MultiSelectFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
     };
 
     return (
@@ -1427,7 +1435,7 @@ export const MultiSelectFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1502,13 +1510,15 @@ export const TimelineActivityRelationFieldWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_TIMELINE_ACTIVITY_RECORD_ID),
+      setRecordInStores(
+        snapshot,
+        TEST_TIMELINE_ACTIVITY_RECORD_ID,
         mockTimelineActivityRecord,
       );
       // Set the related WorkspaceMember record for TimelineActivity relation display
-      snapshot.set(
-        recordStoreFamilyState('test-workspace-member-xyz'),
+      setRecordInStores(
+        snapshot,
+        'test-workspace-member-xyz',
         mockWorkspaceMemberRecord,
       );
     };
@@ -1531,7 +1541,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1602,13 +1612,14 @@ export const ManyToOneRelationCardWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
       if (
         mockCompanyRecord.accountOwner !== null &&
         mockCompanyRecord.accountOwner !== undefined
       ) {
-        snapshot.set(
-          recordStoreFamilyState(mockCompanyRecord.accountOwner.id),
+        setRecordInStores(
+          snapshot,
+          mockCompanyRecord.accountOwner.id,
           mockCompanyRecord.accountOwner,
         );
       }
@@ -1632,7 +1643,7 @@ export const ManyToOneRelationCardWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1712,11 +1723,8 @@ export const OneToManyRelationCardWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
+      setRecordInStores(snapshot, TEST_RECORD_ID, mockCompanyRecord);
+      setRecordInStores(snapshot, TEST_PERSON_RECORD_ID, mockPersonRecord);
     };
 
     return (
@@ -1737,7 +1745,7 @@ export const OneToManyRelationCardWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1808,12 +1816,14 @@ export const TimelineActivityRelationCardWidget: Story = {
         }),
         pageLayoutData,
       );
-      snapshot.set(
-        recordStoreFamilyState(TEST_TIMELINE_ACTIVITY_RECORD_ID),
+      setRecordInStores(
+        snapshot,
+        TEST_TIMELINE_ACTIVITY_RECORD_ID,
         mockTimelineActivityRecord,
       );
-      snapshot.set(
-        recordStoreFamilyState('test-workspace-member-xyz'),
+      setRecordInStores(
+        snapshot,
+        'test-workspace-member-xyz',
         mockWorkspaceMemberRecord,
       );
     };
@@ -1836,7 +1846,7 @@ export const TimelineActivityRelationCardWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1867,5 +1877,201 @@ export const TimelineActivityRelationCardWidget: Story = {
     await waitFor(() => {
       expect(lastUpdateField).toBeVisible();
     });
+  },
+};
+
+// Helper function to generate mock person records for progressive loading tests
+const generateMockPersonRecords = (count: number) => {
+  const names = [
+    { firstName: 'Jane', lastName: 'Smith' },
+    { firstName: 'John', lastName: 'Williams' },
+    { firstName: 'Alice', lastName: 'Brown' },
+    { firstName: 'Bob', lastName: 'Davis' },
+    { firstName: 'Carol', lastName: 'Miller' },
+    { firstName: 'David', lastName: 'Wilson' },
+    { firstName: 'Emma', lastName: 'Moore' },
+    { firstName: 'Frank', lastName: 'Taylor' },
+    { firstName: 'Grace', lastName: 'Anderson' },
+    { firstName: 'Henry', lastName: 'Thomas' },
+    { firstName: 'Ivy', lastName: 'Jackson' },
+    { firstName: 'Jack', lastName: 'White' },
+  ];
+
+  return Array.from({ length: count }, (_, index) => {
+    const nameInfo = names[index % names.length];
+    const recordId = `person-${index + 1}`;
+    return {
+      id: recordId,
+      __typename: 'Person',
+      name: {
+        __typename: 'FullName',
+        firstName: nameInfo.firstName,
+        lastName: `${nameInfo.lastName} ${index + 1}`,
+      },
+      emails: {
+        __typename: 'Emails',
+        primaryEmail: `${nameInfo.firstName.toLowerCase()}.${nameInfo.lastName.toLowerCase()}${index + 1}@example.com`,
+        additionalEmails: [],
+      },
+      phones: {
+        __typename: 'Phones',
+        primaryPhoneNumber: `555000${(index + 1).toString().padStart(4, '0')}`,
+        primaryPhoneCountryCode: '+1',
+        primaryPhoneCallingCode: '+1',
+        additionalPhones: [],
+      },
+    };
+  });
+};
+
+export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
+  render: () => {
+    const mockPeople = generateMockPersonRecords(12);
+    const companyWithManyPeople = {
+      ...mockCompanyRecord,
+      people: mockPeople.map(({ id, __typename, name }) => ({
+        __typename,
+        id,
+        name,
+      })),
+    };
+
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      id: 'widget-one-to-many-relation-card-progressive',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.FIELD,
+      title: 'People',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 11,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
+        fieldMetadataId: companyPeopleField.id,
+        layout: 'CARD',
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+      const pageLayoutData = createPageLayoutWithWidget(
+        widget,
+        companyObjectMetadataItem.id,
+      );
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      setRecordInStores(snapshot, TEST_RECORD_ID, companyWithManyPeople);
+      // Set each person record in the store
+      mockPeople.forEach((person) => {
+        setRecordInStores(snapshot, person.id, person);
+      });
+    };
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Verify initial display - should show first 5 items
+    const firstPerson = await canvas.findByText('Jane Smith 1');
+    expect(firstPerson).toBeVisible();
+
+    const fifthPerson = await canvas.findByText('Carol Miller 5');
+    expect(fifthPerson).toBeVisible();
+
+    // Verify sixth person is NOT visible initially
+    expect(canvas.queryByText('David Wilson 6')).not.toBeInTheDocument();
+
+    // Verify "More (7)" button is visible (12 total - 5 shown = 7 remaining)
+    const moreButton = await canvas.findByTestId(
+      'field-widget-show-more-button',
+    );
+    expect(moreButton).toBeVisible();
+    expect(moreButton).toHaveTextContent('More (7)');
+
+    // Click "More" button to load 5 more items
+    await userEvent.click(moreButton);
+
+    // Verify more items are now visible
+    await waitFor(() => {
+      const sixthPerson = canvas.getByText('David Wilson 6');
+      expect(sixthPerson).toBeVisible();
+    });
+
+    const tenthPerson = await canvas.findByText('Henry Thomas 10');
+    expect(tenthPerson).toBeVisible();
+
+    // Verify "More (2)" button is visible (12 total - 10 shown = 2 remaining)
+    const updatedMoreButton = await canvas.findByTestId(
+      'field-widget-show-more-button',
+    );
+    expect(updatedMoreButton).toHaveTextContent('More (2)');
+
+    // Click "More" button again to load remaining items
+    await userEvent.click(updatedMoreButton);
+
+    // Verify all items are now visible
+    await waitFor(() => {
+      const twelfthPerson = canvas.getByText('Jack White 12');
+      expect(twelfthPerson).toBeVisible();
+    });
+
+    // Verify "More" button is no longer visible
+    expect(
+      canvas.queryByTestId('field-widget-show-more-button'),
+    ).not.toBeInTheDocument();
   },
 };

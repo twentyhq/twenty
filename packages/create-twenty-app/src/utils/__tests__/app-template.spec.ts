@@ -12,6 +12,9 @@ jest.mock('fs-extra', () => {
   };
 });
 
+const APPLICATION_FILE_NAME = 'application-config.ts';
+const DEFAULT_ROLE_FILE_NAME = 'default-role.ts';
+
 describe('copyBaseApplicationProject', () => {
   let testAppDirectory: string;
 
@@ -32,7 +35,7 @@ describe('copyBaseApplicationProject', () => {
     }
   });
 
-  it('should create the correct folder structure with src/app/', async () => {
+  it('should create the correct folder structure with src/', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -40,16 +43,16 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    // Verify src/app/ folder exists
-    const srcAppPath = join(testAppDirectory, 'src', 'app');
+    // Verify src/ folder exists
+    const srcAppPath = join(testAppDirectory, 'src');
     expect(await fs.pathExists(srcAppPath)).toBe(true);
 
-    // Verify application.config.ts exists in src/app/
-    const appConfigPath = join(srcAppPath, 'application.config.ts');
+    // Verify application-config.ts exists in src/
+    const appConfigPath = join(srcAppPath, APPLICATION_FILE_NAME);
     expect(await fs.pathExists(appConfigPath)).toBe(true);
 
-    // Verify default-function.role.ts exists in src/app/
-    const roleConfigPath = join(srcAppPath, 'default-function.role.ts');
+    // Verify default-role.ts exists in src/
+    const roleConfigPath = join(srcAppPath, 'roles', DEFAULT_ROLE_FILE_NAME);
     expect(await fs.pathExists(roleConfigPath)).toBe(true);
   });
 
@@ -67,9 +70,8 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.dependencies['twenty-sdk']).toBe('0.3.1');
-    expect(packageJson.scripts.sync).toBe('twenty app sync');
-    expect(packageJson.scripts.dev).toBe('twenty app dev');
+    expect(packageJson.dependencies['twenty-sdk']).toBe('latest');
+    expect(packageJson.scripts['twenty']).toBe('twenty');
   });
 
   it('should create .gitignore file', async () => {
@@ -103,7 +105,7 @@ describe('copyBaseApplicationProject', () => {
     expect(yarnLockContent).toContain('yarn lockfile v1');
   });
 
-  it('should create application.config.ts with defineApp and correct values', async () => {
+  it('should create application-config.ts with defineApplication and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -111,23 +113,18 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    const appConfigPath = join(
-      testAppDirectory,
-      'src',
-      'app',
-      'application.config.ts',
-    );
+    const appConfigPath = join(testAppDirectory, 'src', APPLICATION_FILE_NAME);
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
 
-    // Verify it uses defineApp
+    // Verify it uses defineApplication
     expect(appConfigContent).toContain(
-      "import { defineApp } from 'twenty-sdk'",
+      "import { defineApplication } from 'twenty-sdk'",
     );
-    expect(appConfigContent).toContain('export default defineApp({');
+    expect(appConfigContent).toContain('export default defineApplication({');
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(
-      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role'",
+      "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role'",
     );
 
     // Verify display name and description
@@ -141,11 +138,11 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it references the role
     expect(appConfigContent).toContain(
-      'functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
   });
 
-  it('should create default-function.role.ts with defineRole and correct values', async () => {
+  it('should create default-role.ts with defineRole and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -156,8 +153,8 @@ describe('copyBaseApplicationProject', () => {
     const roleConfigPath = join(
       testAppDirectory,
       'src',
-      'app',
-      'default-function.role.ts',
+      'roles',
+      DEFAULT_ROLE_FILE_NAME,
     );
     const roleConfigContent = await fs.readFile(roleConfigPath, 'utf8');
 
@@ -169,7 +166,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it exports the universal identifier constant
     expect(roleConfigContent).toContain(
-      'export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
 
     // Verify role label includes app name
@@ -185,7 +182,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it has a universalIdentifier (UUID format)
     expect(roleConfigContent).toMatch(
-      /universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER/,
+      /universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER/,
     );
   });
 
@@ -213,12 +210,7 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    const appConfigPath = join(
-      testAppDirectory,
-      'src',
-      'app',
-      'application.config.ts',
-    );
+    const appConfigPath = join(testAppDirectory, 'src', APPLICATION_FILE_NAME);
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
 
     expect(appConfigContent).toContain("description: ''");
@@ -247,11 +239,11 @@ describe('copyBaseApplicationProject', () => {
 
     // Read both app configs
     const firstAppConfig = await fs.readFile(
-      join(firstAppDir, 'src', 'app', 'application.config.ts'),
+      join(firstAppDir, 'src', APPLICATION_FILE_NAME),
       'utf8',
     );
     const secondAppConfig = await fs.readFile(
-      join(secondAppDir, 'src', 'app', 'application.config.ts'),
+      join(secondAppDir, 'src', APPLICATION_FILE_NAME),
       'utf8',
     );
 
@@ -287,19 +279,19 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: secondAppDir,
     });
 
-    // Read both role configs
     const firstRoleConfig = await fs.readFile(
-      join(firstAppDir, 'src', 'app', 'default-function.role.ts'),
+      join(firstAppDir, 'src', 'roles', DEFAULT_ROLE_FILE_NAME),
       'utf8',
     );
+
     const secondRoleConfig = await fs.readFile(
-      join(secondAppDir, 'src', 'app', 'default-function.role.ts'),
+      join(secondAppDir, 'src', 'roles', DEFAULT_ROLE_FILE_NAME),
       'utf8',
     );
 
     // Extract UUIDs using regex
     const uuidRegex =
-      /DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
+      /DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstRoleConfig.match(uuidRegex)?.[1];
     const secondUuid = secondRoleConfig.match(uuidRegex)?.[1];
 

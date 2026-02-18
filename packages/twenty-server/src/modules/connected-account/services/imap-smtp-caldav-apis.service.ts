@@ -29,7 +29,6 @@ export class ImapSmtpCalDavAPIService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -41,6 +40,7 @@ export class ImapSmtpCalDavAPIService {
           where: { id, provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV },
         });
       },
+      authContext,
     );
   }
 
@@ -57,7 +57,6 @@ export class ImapSmtpCalDavAPIService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -147,6 +146,7 @@ export class ImapSmtpCalDavAPIService {
 
         return newOrExistingAccountId;
       },
+      authContext,
     );
   }
 }

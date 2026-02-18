@@ -94,37 +94,12 @@ exports[`Page layout widget creation should fail General validation failures whe
 exports[`Page layout widget creation should fail General validation failures when pageLayoutTabId references non-existent tab 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "pageLayoutWidget": [
-        {
-          "errors": [
-            {
-              "code": "PAGE_LAYOUT_TAB_NOT_FOUND",
-              "message": "Page layout tab not found",
-              "userFriendlyMessage": "Page layout tab not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "pageLayoutTabId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "pageLayoutWidget",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 pageLayoutWidget",
-    "summary": {
-      "pageLayoutWidget": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating page layout widget",
-  "name": "GraphQLError",
+  "message": "Could not find pageLayoutTab for given pageLayoutTabId",
+  "name": "NotFoundError",
 }
 `;
 

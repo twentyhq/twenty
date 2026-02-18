@@ -1,22 +1,22 @@
 ---
-title: Frontend Commands
+title: Comandos del Frontend
 ---
 
-## Useful commands
+## Comandos útiles
 
-### Starting the app
+### Iniciando la aplicación
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerate graphql schema based on API graphql schema
+### Regenerar el esquema de graphql basado en el esquema API graphql
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-OR
+O
 
 ```bash
 npx nx run twenty-front:graphql:generate
@@ -25,30 +25,30 @@ npx nx run twenty-front:graphql:generate
 ### Lint
 
 ```bash
-npx nx run twenty-front:lint # pass --fix to fix lint errors
+npx nx run twenty-front:lint # pasar --fix para corregir errores de lint
 ```
 
-## Translations
+## Traducciones
 
 ```bash
 npx nx run twenty-front:lingui:extract
 npx nx run twenty-front:lingui:compile
 ```
 
-### Test
+### Prueba
 
 ```bash
-npx nx run twenty-front:test # run jest tests
-npx nx run twenty-front:storybook:serve:dev # run storybook
-npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
-npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:test # ejecutar pruebas con Jest
+npx nx run twenty-front:storybook:serve:dev # ejecutar Storybook
+npx nx run twenty-front:storybook:test # ejecutar pruebas # (requiere que yarn storybook:serve:dev esté en ejecución)
+npx nx run twenty-front:storybook:coverage # (requiere que yarn storybook:serve:dev esté en ejecución)
 ```
 
-## Tech Stack
+## Stack Tecnológico
 
-The project has a clean and simple stack, with minimal boilerplate code.
+El proyecto tiene un stack limpio y sencillo, con un código boilerplate mínimo.
 
-**App**
+**Aplicación**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -56,35 +56,35 @@ The project has a clean and simple stack, with minimal boilerplate code.
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**Testing**
+**Pruebas**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**Tooling**
+**Herramientas**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
 * [ESLint](https://eslint.org/)
 
-## Architecture
+## Arquitectura
 
-### Routing
+### Enrutamiento
 
-[React Router](https://reactrouter.com/) handles the routing.
+[React Router](https://reactrouter.com/) maneja el enrutamiento.
 
 To avoid unnecessary [re-renders](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### State Management
+### Gestión del Estado
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) maneja la gestión del estado.
 
-See [best practices](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
+Ver [mejores prácticas](/l/es/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) para más información sobre la gestión del estado.
 
-## Testing
+## Pruebas
 
-[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
+[Jest](https://jestjs.io/) sirve como la herramienta para pruebas unitarias mientras [Storybook](https://storybook.js.org/) es para pruebas de componentes.
 
-Jest is mainly for testing utility functions, and not components themselves.
+Jest es principalmente para probar funciones utilitarias, y no los componentes en sí mismos.
 
-Storybook is for testing the behavior of isolated components, as well as displaying the design system.
+Storybook es para probar el comportamiento de componentes aislados, así como mostrar el sistema de diseño.

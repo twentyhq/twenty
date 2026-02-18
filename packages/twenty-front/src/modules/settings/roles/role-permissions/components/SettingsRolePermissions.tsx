@@ -1,3 +1,4 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
 import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
@@ -14,12 +15,14 @@ type SettingsRolePermissionsProps = {
   roleId: string;
   isEditable: boolean;
   fromAgentId?: string;
+  objectMetadataItemsFromMarketplaceApp?: ObjectMetadataItem[];
 };
 
 export const SettingsRolePermissions = ({
   roleId,
   isEditable,
   fromAgentId,
+  objectMetadataItemsFromMarketplaceApp,
 }: SettingsRolePermissionsProps) => {
   return (
     <StyledRolePermissionsContainer>
@@ -30,6 +33,10 @@ export const SettingsRolePermissions = ({
       <SettingsRolePermissionsObjectLevelSection
         roleId={roleId}
         fromAgentId={fromAgentId}
+        isEditable={isEditable}
+        objectMetadataItemsFromMarketplaceApp={
+          objectMetadataItemsFromMarketplaceApp
+        }
       />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}

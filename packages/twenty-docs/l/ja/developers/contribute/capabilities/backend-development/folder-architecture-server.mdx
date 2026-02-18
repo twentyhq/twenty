@@ -1,9 +1,9 @@
 ---
-title: Folder Architecture
-info: A detailed look into our server folder architecture
+title: フォルダ構成
+info: 当社のサーバーフォルダ構造の詳細な観察
 ---
 
-The backend directory structure is as follows:
+バックエンドのディレクトリ構造は以下の通りです:
 
 ```
 server
@@ -21,37 +21,37 @@ server
   └───utils
 ```
 
-## Ability
+## 能力
 
-Defines permissions and includes handlers for each entity.
+各エンティティの権限を定義し、ハンドラーを含みます。
 
-## Decorators
+## デコレータ
 
-Defines custom decorators in NestJS for added functionality.
+NestJS で機能を拡張するためのカスタムデコレーターを定義します。
 
-See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+詳細については、[カスタムデコレータ](https://docs.nestjs.com/custom-decorators) を参照してください。
 
-## Filters
+## フィルター
 
-Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+GraphQLエンドポイントで発生する可能性のある例外を処理するための例外フィルターを含みます。
 
-## Guards
+## ガード
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+詳細については、[ガード](https://docs.nestjs.com/guards) を参照してください。
 
-## Health
+## ヘルス
 
-Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
+データベースが期待通りに動作しているかを確認するためのJSONを返す公開されたREST API (healthz) を含みます。
 
-## Metadata
+## メタデータ
 
-Defines custom objects and makes available a GraphQL API (graphql/metadata).
+カスタムオブジェクトを定義し、GraphQL API (graphql/metadata) を利用可能にします。
 
-## Workspace
+## ワークスペース
 
-Generates and serves custom GraphQL schema based on the metadata.
+メタデータに基づいてカスタムGraphQLスキーマを生成し、提供します。
 
-### Workspace Directory Structure
+### ワークスペースディレクトリ構造
 
 ```
 workspace
@@ -83,43 +83,43 @@ workspace
   └───workspace.factory.ts
 ```
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
+ワークスペースディレクトリのルートには、`workspace.factory.ts` が含まれ、`createGraphQLSchema` 関数が含まれています。 この関数は、メタデータを使用して、個々のワークスペース用のスキーマを調整し、ワークスペース固有のスキーマを生成します。 スキーマとリゾルバーの構築を分離することで、`makeExecutableSchema` 関数を使用し、これらの個別要素を組み合わせます。 この関数は、メタデータを使用して、個々のワークスペース用のスキーマを調整し、ワークスペース固有のスキーマを生成します。 スキーマとリゾルバーの構築を分離することで、`makeExecutableSchema` 関数を使用し、これらの個別要素を組み合わせます。 この関数は、メタデータを使用して、個々のワークスペース用のスキーマを調整し、ワークスペース固有のスキーマを生成します。 スキーマとリゾルバーの構築を分離することで、`makeExecutableSchema` 関数を使用し、これらの個別要素を組み合わせます。
 
-This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+この戦略は、組織化だけでなく、パフォーマンスやスケーラビリティを向上させるための型定義のキャッシングのような最適化にも役立ちます。
 
-### Workspace Schema builder
+### ワークスペーススキーマビルダー
 
-Generates the GraphQL schema, and includes:
+GraphQLスキーマを生成し、含まれるもの:
 
-#### Factories:
+#### ファクトリー:
 
-Specialised constructors to generate GraphQL-related constructs.
+GraphQL関連の構造を生成するための専門的なコンストラクター。
 
-* The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
-* The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+* type.factoryは、フィールドメタデータを`TypeMapperService`を使用してGraphQLタイプに変換します。
+* type-definition.factoryは、`objectMetadata`から導出されるGraphQLの入力または出力オブジェクトを作成します。
 
-#### GraphQL Types
+#### GraphQLタイプ
 
-Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+列挙型、入力、オブジェクト、スカラーを含み、スキーマ構築の基礎となります。
 
-#### Interfaces and Object Definitions
+#### インターフェースとオブジェクト定義
 
-Contains the blueprints for GraphQL entities, and includes both predefined and custom types like `MONEY` or `URL`.
+GraphQLエンティティの設計図を含み、`MONEY`や`URL`のような定義済みおよびカスタムタイプが含まれます。
 
-#### Services
+#### サービス
 
-Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+FieldMetadataTypeに対応するGraphQLスカラーまたはクエリ修飾子を関連付けるためのサービスを含みます。
 
-#### Storage
+#### ストレージ
 
-Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
+GraphQLタイプの重複を防ぐための再利用可能な型定義を含む`TypeDefinitionsStorage`クラスを含みます。
 
-### Workspace Resolver Builder
+### ワークスペースリゾルバービルダー
 
-Creates resolver functions for querying and mutating the GraphQL schema.
+GraphQLスキーマのクエリおよび変更を行うリゾルバー関数を作成します。
 
-Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+このディレクトリ内の各ファクトリーは、様々なテーブルに適用可能な`FindManyResolverFactory`のように、異なるリゾルバータイプを生成する役割を果たします。
 
-### Workspace Query Runner
+### ワークスペースクエリランナー
 
-Runs the generated queries on the database and parses the result.
+データベースで生成されたクエリを実行し、その結果を解析します。

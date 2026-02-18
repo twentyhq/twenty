@@ -14,7 +14,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { t } from '@lingui/core/macro';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
-import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { type MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<
@@ -39,12 +39,11 @@ const StyledDetailsContainer = styled.div`
 export const SettingsAccountsMessageChannelDetails = ({
   messageChannel,
 }: SettingsAccountsMessageChannelDetailsProps) => {
-  const { updateOneRecord } = useUpdateOneRecord<MessageChannel>({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const handleVisibilityChange = (value: MessageChannelVisibility) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.MessageChannel,
       idToUpdate: messageChannel.id,
       updateOneRecordInput: {
         visibility: value,
@@ -56,6 +55,7 @@ export const SettingsAccountsMessageChannelDetails = ({
     value: MessageChannelContactAutoCreationPolicy,
   ) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.MessageChannel,
       idToUpdate: messageChannel.id,
       updateOneRecordInput: {
         contactAutoCreationPolicy: value,
@@ -65,6 +65,7 @@ export const SettingsAccountsMessageChannelDetails = ({
 
   const handleIsGroupEmailExcludedToggle = (value: boolean) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.MessageChannel,
       idToUpdate: messageChannel.id,
       updateOneRecordInput: {
         excludeGroupEmails: value,
@@ -74,6 +75,7 @@ export const SettingsAccountsMessageChannelDetails = ({
 
   const handleIsNonProfessionalEmailExcludedToggle = (value: boolean) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.MessageChannel,
       idToUpdate: messageChannel.id,
       updateOneRecordInput: {
         excludeNonProfessionalEmails: value,
@@ -85,6 +87,7 @@ export const SettingsAccountsMessageChannelDetails = ({
     value: MessageFolderImportPolicy,
   ) => {
     updateOneRecord({
+      objectNameSingular: CoreObjectNameSingular.MessageChannel,
       idToUpdate: messageChannel.id,
       updateOneRecordInput: { messageFolderImportPolicy: value },
     });

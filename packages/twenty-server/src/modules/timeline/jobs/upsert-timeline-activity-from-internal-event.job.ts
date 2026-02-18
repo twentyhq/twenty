@@ -38,38 +38,35 @@ export class UpsertTimelineActivityFromInternalEvent {
 
     const authContext = buildSystemAuthContext(workspaceEventBatch.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceEventBatch.workspaceId,
-            WorkspaceMemberWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceEventBatch.workspaceId,
+          WorkspaceMemberWorkspaceEntity,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
-        const userIds = workspaceEventBatch.events
-          .map((event) => event.userId)
-          .filter(isDefined);
+      const userIds = workspaceEventBatch.events
+        .map((event) => event.userId)
+        .filter(isDefined);
 
-        const workspaceMembers = await workspaceMemberRepository.findBy({
-          userId: In(userIds),
-        });
+      const workspaceMembers = await workspaceMemberRepository.findBy({
+        userId: In(userIds),
+      });
 
-        for (const eventData of workspaceEventBatch.events) {
-          const workspaceMember = workspaceMembers.find(
-            (workspaceMember) => workspaceMember.userId === eventData.userId,
-          );
+      for (const eventData of workspaceEventBatch.events) {
+        const workspaceMember = workspaceMembers.find(
+          (workspaceMember) => workspaceMember.userId === eventData.userId,
+        );
 
-          if (eventData.userId && workspaceMember) {
-            eventData.workspaceMemberId = workspaceMember.id;
-          }
+        if (eventData.userId && workspaceMember) {
+          eventData.workspaceMemberId = workspaceMember.id;
         }
+      }
 
-        await this.timelineActivityService.upsertEvents(workspaceEventBatch);
-      },
-    );
+      await this.timelineActivityService.upsertEvents(workspaceEventBatch);
+    }, authContext);
   }
 }

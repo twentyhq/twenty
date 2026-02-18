@@ -1,24 +1,40 @@
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { type AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
+import { type StandardPageLayoutConfig } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config';
+import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import {
   type CreateStandardPageLayoutArgs,
   createStandardPageLayoutFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/create-standard-page-layout-flat-metadata.util';
 
-export const STANDARD_FLAT_PAGE_LAYOUT_BUILDERS_BY_LAYOUT_NAME = {
-  myFirstDashboard: (args: Omit<CreateStandardPageLayoutArgs, 'context'>) =>
+type BuilderArgs = Omit<CreateStandardPageLayoutArgs, 'context'>;
+
+type BuilderFn = (args: BuilderArgs) => FlatPageLayout;
+
+const createBuilderFromConfig = (
+  layoutName: string,
+  config: StandardPageLayoutConfig,
+): BuilderFn => {
+  return (args: BuilderArgs) =>
     createStandardPageLayoutFlatMetadata({
       ...args,
       context: {
-        layoutName: 'myFirstDashboard',
-        name: 'My First Dashboard',
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: null,
+        layoutName,
+        name: config.name,
+        type: config.type,
+        objectUniversalIdentifier: config.objectUniversalIdentifier,
+        defaultTabUniversalIdentifier: config.defaultTabUniversalIdentifier,
       },
-    }),
-} satisfies {
-  [P in AllStandardPageLayoutName]: (
-    args: Omit<CreateStandardPageLayoutArgs, 'context'>,
-  ) => FlatPageLayout;
+    });
 };
+
+const createBuilders = (): Record<string, BuilderFn> => {
+  return Object.fromEntries(
+    Object.entries(STANDARD_PAGE_LAYOUTS).map(([layoutName, config]) => [
+      layoutName,
+      createBuilderFromConfig(layoutName, config),
+    ]),
+  );
+};
+
+export const STANDARD_FLAT_PAGE_LAYOUT_BUILDERS_BY_LAYOUT_NAME =
+  createBuilders();

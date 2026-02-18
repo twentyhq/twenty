@@ -37,7 +37,7 @@ export class EntitySchemaColumnFactory {
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    const fieldMetadataCollection = objectMetadata.fieldMetadataIds
+    const fieldMetadataCollection = objectMetadata.fieldIds
       .map((fieldId) => fieldMetadataMaps.byId[fieldId])
       .filter(isDefined);
 

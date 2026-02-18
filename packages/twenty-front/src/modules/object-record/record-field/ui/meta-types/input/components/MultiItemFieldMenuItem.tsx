@@ -22,6 +22,7 @@ type MultiItemFieldMenuItemProps<T> = {
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
   onCopy?: (value: T) => void;
+  onClick?: () => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
@@ -34,6 +35,7 @@ export const MultiItemFieldMenuItem = <T,>({
   onEdit,
   onSetAsPrimary,
   onDelete,
+  onClick,
   DisplayComponent,
   showPrimaryIcon,
   showSetAsPrimaryButton,
@@ -77,6 +79,7 @@ export const MultiItemFieldMenuItem = <T,>({
     <MenuItemWithOptionDropdown
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick}
       text={<DisplayComponent value={value} />}
       isIconDisplayedOnHoverOnly={!showPrimaryIcon && !isDropdownOpen}
       RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}

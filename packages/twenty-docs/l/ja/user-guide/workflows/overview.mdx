@@ -1,80 +1,80 @@
 ---
-title: Workflows
-description: Learn how to build automations in Twenty.
+title: ワークフロー
+description: Twenty で自動化を構築する方法を学びましょう。
 image: /images/user-guide/workflows/workflow.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/workflows/workflow.png" alt="Workflows" />
+  <img src="/images/user-guide/workflows/workflow.png" alt="ワークフロー" />
 </Frame>
 
-## Why Workflows Matter
+## ワークフローが重要な理由
 
-Twenty was built to bring maximum flexibility to its users. Rather than forcing you to adapt your business processes to rigid, pre-built features, workflows enable you to build automations that create the CRM that best supports your unique business use cases.
+Twentyはユーザーに最大限の柔軟性を提供するために作られました。 Twentyはユーザーに最大限の柔軟性を提供するために作られました。 ビジネスプロセスを堅苦しい既成の機能に適応させるのではなく、ワークフローは自動化を構築して、あなたの独自のビジネスユースケースを最大限にサポートするCRMを作成します。
 
-Workflows are Twenty's in-app feature for building these automations. They give you the building blocks to create exactly what your business needs, when it needs it.
+ワークフローはこれらの自動化を作るためのTwentyのアプリケーション内機能です。 必要な時に必要なものを正確に作成するための構成要素を提供します。 必要な時に必要なものを正確に作成するための構成要素を提供します。 必要な時に必要なものを正確に作成するための構成要素を提供します。
 
-## What can I do with workflows?
+## ワークフローで何ができますか？
 
-We recommend building automations for two main purposes:
+主に2つの目的のために自動化を構築することをお勧めします。
 
-1. **Internal automations to facilitate your team's day-to-day**: Reduce the amount of manual entries and repetitive tasks that slow down your team.
-2. **Bring data in and out of Twenty**: Connect Twenty via API calls and webhooks to your database and other tools.
+1. **チームの日常を効率化する社内自動化**: 手動エントリーやチームの足を引っ張る反復作業を減らします。
+2. **データの入出力をTwentyで行う**: APIコールやWebhookを通じてデータベースや他のツールとTwentyを接続します。
 
-## Building Your First Workflow
+## 最初のワークフローの作成
 
-### Step 1: Create a New Workflow
+### ステップ 1: 新しいワークフローを作成
 
-1. Go to **Workflows** accessible below the other objects
-2. Click **+ New Record**
-3. Give your workflow a name
+1. 他のオブジェクトの下にある **Workflows** に移動します
+2. 「**+ New Record**」をクリックします
+3. ワークフローに名前を付けます
 
-### Step 2: Add a Trigger
+### ステップ 2: トリガーを追加
 
-Every workflow starts with a trigger. Choose from:
+すべてのワークフローはトリガーから始まります。 以下から選択します:
 
-* **Record events**: When a record is created, updated, or deleted
-* **Schedule**: Run at specific times (daily, weekly, etc.)
-* **Manual**: Triggered by a user action
-* **Webhook**: Triggered by a webhook
+* **Record events**: レコードが作成、更新、または削除されたとき
+* **Schedule**: 指定した時間に実行（毎日、毎週など）
+* **Manual**: ユーザー操作によってトリガーされます
+* **Webhook**: Webhook によってトリガーされます
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
-### Step 3: Add Actions
+### ステップ 3: アクションを追加
 
-After your trigger, add one or more actions:
+トリガーの後に、1 つ以上のアクションを追加します:
 
-* **Create Record**: Add new records to any object
-* **Update Record**: Modify existing record data
-* **Delete Record**: Remove records from objects
-* **Search Records**: Find records matching criteria
-* **Upsert Record**: Create or update based on matching criteria
-* **Iterator**: Loop through arrays of records
-* **Filter**: Control which records proceed
-* **Delay**: Wait before continuing (duration or scheduled date)
-* **Send Email**: Send emails via your connected account
-* **Code**: Run custom JavaScript
-* **HTTP Request**: Call external APIs
-* **Form**: Get inputs from users within Twenty UI at the time of execution
-* **AI Agent** (Coming soon): Run intelligent AI tasks
+* **Create Record**: 任意のオブジェクトに新しいレコードを追加
+* **Update Record**: 既存のレコードデータを変更
+* **Delete Record**: オブジェクトからレコードを削除
+* **Search Records**: 条件に一致するレコードを見つける
+* **Upsert Record**: 一致する条件に基づいて作成または更新する
+* **Iterator**: レコードの配列をループ処理する
+* **Filter**: 次に進むレコードを制御する
+* **Delay**: 続行する前に待機する（期間または指定日時）
+* **Send Email**: 接続済みアカウント経由でメールを送信する
+* **Code**: カスタム JavaScript を実行する
+* **HTTP Request**: 外部 API を呼び出す
+* **Form**: 実行時に Twenty の UI でユーザーから入力を取得する
+* **AI Agent**（近日公開）: インテリジェントな AI タスクを実行する
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Step 4: Test and Activate
+### ステップ 4: テストして有効化
 
-1. Use the **Test** button to run your workflow with sample data
-2. Review the results to ensure it works as expected
-3. Toggle the workflow **Active** when ready
+1. **Test** ボタンを使って、サンプルデータでワークフローを実行します
+2. 結果を確認し、期待どおりに動作することを確かめます
+3. 準備ができたら、ワークフローを **Active** に切り替えます
 
-## Workflow Best Practices
+## ワークフローのベストプラクティス
 
-* **Edit step names**: Rename your workflow steps to clearly describe what each one does. This helps with maintenance and makes it easier to hand off to coworkers
-* **Leverage previous step data**: You can use fields from records returned by any previous step in your workflow
-* **Start simple**: Begin with basic workflows and add complexity over time as you become more comfortable with the system
-* **Plan before building**: Map out your workflow logic before you start building to avoid getting stuck halfway through
+* **ステップ名を編集する**：各ステップが何をするかを明確に記述するためにワークフローのステップ名を変更します。 これはメンテナンスに役立ち、同僚への引き継ぎが容易になります。 これはメンテナンスに役立ち、同僚への引き継ぎが容易になります。 これはメンテナンスに役立ち、同僚への引き継ぎが容易になります。
+* **前のステップのデータを活用する**：ワークフローの前の任意のステップによって返されたレコードのフィールドを使用できます。
+* **簡単に始める**：基本的なワークフローから始め、システムに慣れるにつれて複雑さを増していきます。
+* **構築する前に計画する**：途中で行き詰まらないように、ワークフローロジックを最初に計画します。
 
-## Next Steps
+## 次のステップ
 
-* [Workflow Triggers](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [CRM Automations](/l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [CRM の自動化](/l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

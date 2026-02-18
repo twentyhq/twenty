@@ -1,180 +1,180 @@
 ---
-title: Data Model
-description: Learn what a data model is and how to design one that fits your business.
+title: データモデル
+description: データモデルとは何か、ビジネスに適したデータモデルの設計方法を学びましょう。
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/custom_data_model.png" alt="Data Model" />
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="データモデル" />
 </Frame>
 
-## What is a Data Model?
+## データモデルとは何ですか？
 
-A data model is the structure that defines how information is organized in your CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+データモデルは、CRMにおける情報がどのように整理されるかを定義する構造です。 それは、どのオブジェクトが存在するか（会社、人、機会など）、それらが持つプロパティ（フィールド）が何か、そしてそれらがどのように関連しているかを決定します。 それを顧客データの地図として考えることができます。 それは、どのオブジェクトが存在するか（会社、人、機会など）、それらが持つプロパティ（フィールド）が何か、そしてそれらがどのように関連しているかを決定します。 それを顧客データの地図として考えることができます。 それは、どのオブジェクトが存在するか（会社、人、機会など）、それらが持つプロパティ（フィールド）が何か、そしてそれらがどのように関連しているかを決定します。 それを顧客データの地図として考えることができます。 それは、どのオブジェクトが存在するか（会社、人、機会など）、それらが持つプロパティ（フィールド）が何か、そしてそれらがどのように関連しているかを決定します。 それを顧客データの地図として考えることができます。 それは、どのオブジェクトが存在するか（会社、人、機会など）、それらが持つプロパティ（フィールド）が何か、そしてそれらがどのように関連しているかを決定します。 それを顧客データの地図として考えることができます。 それは、どのオブジェクトが存在するか（会社、人、機会など）、それらが持つプロパティ（フィールド）が何か、そしてそれらがどのように関連しているかを決定します。 それを顧客データの地図として考えることができます。 顧客データの**設計図**だと考えてください—一度設計したら、実際のデータで埋めていきます。
 
-## Key Concepts
+## 主要な概念
 
-### Objects
+### オブジェクト
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**オブジェクト**は、CRMにおけるデータの主要なカテゴリです。 各オブジェクトは、追跡したい対象の種類を表します。
 
-Twenty comes with standard objects:
+Twenty には標準オブジェクトがあります:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **People** — 個人（連絡先、リード、パートナー）
+* **Companies** — 組織
+* **Opportunities** — 商談または売上
+* **Notes** — レコードに添付されたメモ
+* **Tasks** — レコードに関連付けられたToDo
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+あなたのビジネス固有のあらゆるもの向けに**カスタムオブジェクト**を作成することもできます（例：Projects、Subscriptions、Events）。
 
-### Fields
+### フィールド
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**フィールド**は、各オブジェクトを記述するプロパティ（属性）です。 実際の情報を保存します。
 
-For example, the **People** object has fields like:
+例えば、**People** オブジェクトには次のようなフィールドがあります:
 
-* Name
-* Email
-* Phone
-* Job Title
-* Company (a relation to the Companies object)
+* 名前
+* メール
+* 電話
+* 職種
+* Company（Companies オブジェクトへのリレーション）
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+フィールドにはさまざまな**タイプ**があります: テキスト、数値、日付、セレクト、マルチセレクト、リレーションなど。 任意のオブジェクトにカスタムフィールドを追加できます。
 
-### Records
+### レコード
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**レコード**は、オブジェクト内の個別のエントリであり、あなたが作成・管理する実データです。
 
-For example:
+例えば：
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith" は People オブジェクトの**レコード**です
+* "Acme Corp" は Companies オブジェクトの**レコード**です
 
-**An analogy:**
+**例え:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **Fields**         | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| データモデルの概念  | 実世界のたとえ             |
+| ---------- | ------------------- |
+| **オブジェクト** | 本のセクション（カテゴリ）       |
+| **フィールド**  | スプレッドシートの列（プロパティ）   |
+| **レコード**   | スプレッドシートの行（実際のエントリ） |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+データモデル（オブジェクト + フィールド）は一度設計し、その構造の中で多数のレコードを作成します。
 
-## Why Customize Your Data Model?
+## データモデルをカスタマイズする理由
 
-Every business works differently. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+すべてのビジネスは違った方法で動作します。 データモデルをカスタマイズすれば、硬直的なシステムに自分のプロセスを押し込めるのではなく、Twenty を**あなたの**プロセスに合わせて形作れます。
 
-Twenty offers full flexibility:
+Twenty は高い柔軟性を提供します:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* 必要なだけカスタムオブジェクトを作成できます
+* 無制限にカスタムフィールドを追加できます
+* カスタマイズしても価格は変わりません
 
-## Tips to Design Your Data Model
+## データモデルを設計するためのヒント
 
-### 1. Start with Your Core Objects
+### 1. コアとなるオブジェクトから始める
 
-Identify the main concepts you work with. Twenty already provides:
+取り扱う主要な概念を特定しましょう。 Twenty にはすでに次のものが用意されています:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **People** — 連絡先
+* **Companies** — 取引先
+* **Opportunities** — 商談
 
-Think about what else you might need:
+他に何が必要か考えてみましょう:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* Stripe には `Subscriptions` オブジェクトが必要になるでしょう
+* Airbnb には `Trips` オブジェクトが必要になるでしょう
+* アクセラレーターには `Batches` オブジェクトが必要になるでしょう
 
-### 2. Use Fields for Variations, Not New Objects
+### 2. バリエーションには新規オブジェクトではなくフィールドを使う
 
-If something is just a characteristic of an existing object, make it a **field**.
+既存オブジェクトの単なる特性であれば、**フィールド**にしましょう。
 
-**Use fields for:**
+**フィールドを使うケース:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* カテゴリやラベル（例：Companies の `Industry`）
+* ステータス値（例：Opportunities の `Stage`）
+* 属性やプロパティ
 
-### 3. Create an Object When It Stands on Its Own
+### 3. 独立して成立する場合はオブジェクトを作成する
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+その概念に固有のライフサイクル、プロパティ、またはリレーションシップがあるなら、オブジェクトにする価値があります。
 
-**Create an object for:**
+**オブジェクトを作成する対象:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **Projects** — 期限、所有者、タスクを持つもの
+* **Subscriptions** — 会社、製品、請求書を結びつけるもの
+* **Events** — 参加者とフォローアップアクションを伴うもの
 
-These go beyond a single field because they carry their own data and relationships.
+これらは単一のフィールドを超えており、独自のデータと関係を有しています。
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. レコード数が不定の場合はオブジェクトを作成する
 
-If something can be linked multiple times and you don't know how many, use an object.
+関連付け回数が複数で、どれだけになるかわからない場合は、オブジェクトを使用します。
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**悪いアプローチ:**
+`Product 1`、`Product 2`、`Product 3` のようなフィールドを作成する...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**良いアプローチ:**
+`Products` オブジェクトを作成してレコードに関連付ける。 こうすることで、製品が1つでも100でも、モデルを変更せずに対応できます。
 
-### 5. Keep It Simple First
+### 5. まずはシンプルに
 
-Start with fields. Move to new objects only when you feel the limits:
+まずはフィールドから始めましょう。 限界を感じたときにのみ新しいオブジェクトへ移行しましょう:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* 1つのオブジェクトにフィールドが多すぎる
+* 別々にすべきレコードが繰り返されている
+* リレーションがうまく収まらない
 
-## Special Note on People, Companies, and Opportunities
+## 人、会社、機会に関する特別な注意事項
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **メールとカレンダーの同期は、人、会社、機会でのみ機能します。**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  メールボックス/カレンダーから同期済みのメールやミーティングにアクセスできるのは、これらのオブジェクトだけです。 可能な限りこれらを使用することを推奨します。
 </Warning>
 
-**Best practices:**
+**ベストプラクティス:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* 「人」のカテゴリが必要な場合は、新しいオブジェクトではなくフィールドを使用してください
+* 例: 別々のオブジェクトを作成するのではなく、値として「見込み客」と「パートナー」を持つ `Person Type` フィールドを使用します
+* フィルター用に別々の**ビュー**を作成します: 1つはパートナーを表示し、もう1つは見込み客を表示します
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**すべてのレコードに当てはまらないフィールドがあっても問題ありません。** 例えば、`Person Type = Partner` の場合にのみ適用される、「人」オブジェクトの `Referral Link` フィールド。 関連しないビューではこのフィールドを非表示にします。
 
-## Questions to Guide Your Choice
+## 選択を導くための質問
 
-Ask yourself:
+自問してください：
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>これは、すでに持っているものの単なるプロパティですか、それとも独自のプロパティが必要ですか？</Check>
+<Check>各レコードで、その数を事前に知らずに複数を追跡する必要がありますか？</Check>
+<Check>この概念は、1つだけでなく複数の異なるオブジェクトに関連しますか？</Check>
+<Check>それは独自のライフサイクル（ステージ、開始/終了日）を持ちますか？</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+1つ以上に "はい" と答えるなら、新しいオブジェクトにする時期かもしれません。
 
-## Accessing Your Data Model
+## データモデルへのアクセス
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. 左サイドバーの**設定**に移動します
+2. **データモデル**をクリックします
+3. すべてのオブジェクト（標準およびカスタム）を表示します
+4. 任意のオブジェクトをクリックして、そのフィールドを表示・編集します
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **設定にデータモデルが見当たりませんか？**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  データモデルへのアクセスは通常、管理者に制限されています。 アクセスが必要な場合は、ワークスペース管理者に連絡してください。
 </Note>
 
-## Next Steps
+## 次のステップ
 
-Once you've planned your data model:
+データモデルの計画が完了したら:
 
-* [How to Create Custom Objects](/l/ja/user-guide/data-model/how-tos/create-custom-objects)
-* [How to Create Custom Fields](/l/ja/user-guide/data-model/how-tos/create-custom-fields)
-* [How to Create Relation Fields](/l/ja/user-guide/data-model/how-tos/create-relation-fields)
+* [カスタムオブジェクトの作成方法](/l/ja/user-guide/data-model/how-tos/create-custom-objects)
+* [カスタムフィールドの作成方法](/l/ja/user-guide/data-model/how-tos/create-custom-fields)
+* [リレーションフィールドの作成方法](/l/ja/user-guide/data-model/how-tos/create-relation-fields)
 
-## Need Help?
+## ヘルプが必要ですか?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/ja/user-guide/getting-started/capabilities/implementation-services).
+当社のチームが、必要なデータモデルの設計と作成を支援します。 当社の[実装サービス](/l/ja/user-guide/getting-started/capabilities/implementation-services)をご覧ください。

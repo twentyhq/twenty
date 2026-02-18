@@ -1,6 +1,6 @@
 ---
 title: API'ler
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+description: CRM verilerinizi REST veya GraphQL kullanarak programatik olarak sorgulayın ve değiştirin.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
@@ -9,7 +9,7 @@ Twenty, geliştirici dostu olacak şekilde tasarlanmıştır ve özel veri model
 
 ## Öncelik Geliştiricide Yaklaşımı
 
-Twenty generates APIs specifically for your data model:
+Twenty, veri modeliniz için özel olarak API'ler oluşturur:
 
 * **Uzun kimlik numaralarına gerek yok**: Uç noktalarda nesne ve alan adlarınızı doğrudan kullanın
 * **Standart ve özel nesneler eşit şekilde ele alınır**: Özel nesneleriniz yerleşik olanlarla aynı API muamelesini görür.
@@ -17,52 +17,52 @@ Twenty generates APIs specifically for your data model:
 * **Özel dokümantasyon**: Çalışma alanınızın veri modeli için özel olarak üretilmiştir.
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  Bir API anahtarı oluşturduktan sonra kişiselleştirilmiş API dokümantasyonunuz **Ayarlar → API ve Webhook'lar** altında mevcuttur. Twenty, özel veri modelinize uyan API'ler oluşturduğundan, dokümantasyon çalışma alanınıza özeldir.
 </Note>
 
-## The Two API Types
+## İki API Türü
 
 ### Temel API
 
-Accessed on `/rest/` or `/graphql/`
+`/rest/` veya `/graphql/` üzerinden erişilebilir.
 
-Work with your actual **records** (the data):
+Gerçek **kayıtlarınızla** (verilerin kendisiyle) çalışın:
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
+* People, Companies, Opportunities vb. oluşturun, okuyun, güncelleyin, silin.
+* Verileri sorgulayın ve filtreleyin
 * Kayıt ilişkilerini yönetin
 
 ### Meta Veriler API
 
-Accessed on `/rest/metadata/` or `/metadata/`
+`/rest/metadata/` veya `/metadata/` üzerinden erişilebilir.
 
-Manage your **workspace and data model**:
+**Çalışma alanınızı ve veri modelinizi** yönetin:
 
 * Nesne ve alanlar oluşturun, değiştirin veya silin
 * Çalışma alanı ayarlarını yapılandırın
-* Define relationships between objects
+* Nesneler arasındaki ilişkileri tanımlayın
 
-## REST vs GraphQL
+## REST ve GraphQL
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+Hem Core hem de Metadata API'leri, REST ve GraphQL formatlarında mevcuttur:
 
-| Biçim       | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| Biçim       | Kullanılabilir İşlemler                                                          |
+| ----------- | -------------------------------------------------------------------------------- |
+| **REST**    | CRUD, toplu işlemler, ekleme-güncelleme işlemleri                                |
+| **GraphQL** | Aynısı + **toplu ekleme-güncelleme işlemleri**, tek bir çağrıda ilişki sorguları |
 
-Choose based on your needs — both formats access the same data.
+İhtiyaçlarınıza göre seçin — her iki format da aynı verilere erişir.
 
 ## API Uç Noktaları
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| Ortam                        | Temel URL                 |
+| ---------------------------- | ------------------------- |
+| **Bulut**                    | `https://api.twenty.com/` |
+| **Kendi Kendine Barındırma** | `https://{your-domain}/`  |
 
 ## Kimlik Doğrulama
 
-Every API request requires an API key in the header:
+Her API isteği, başlıkta bir API anahtarı gerektirir:
 
 ```
 Authorization: Bearer YOUR_API_KEY
@@ -70,78 +70,78 @@ Authorization: Bearer YOUR_API_KEY
 
 ### Bir API Anahtarı Oluştur
 
-1. Go to **Settings → APIs & Webhooks**
-2. Click **+ Create key**
+1. **Ayarlar → API ve Webhook'lar**'a gidin
+2. **+ Anahtar oluştur**'a tıklayın
 3. Alanı Yapılandır:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
+   * **Ad**: Anahtar için açıklayıcı bir ad
+   * **Son Kullanma Tarihi**: Anahtarın ne zaman sona ereceği
 4. **Kaydet**'e tıklayın
-5. **Copy immediately** — the key is only shown once
+5. **Hemen kopyalayın** — anahtar yalnızca bir kez gösterilir
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="API anahtarı oluşturma" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  API anahtarınız hassas verilere erişim sağlar. Güvenilmeyen hizmetlerle paylaşmayın. Tehlikeye girerse, onu hemen devre dışı bırakın ve yenisini oluşturun.
 </Warning>
 
-### Assign a Role to an API Key
+### Bir API Anahtarına Rol Atama
 
-For better security, assign a specific role to limit access:
+Daha iyi güvenlik için, erişimi sınırlamak amacıyla belirli bir rol atayın:
 
 1. **Ayarlar → Roller** bölümüne gidin
-2. Click on the role to assign
+2. Atamak istediğiniz role tıklayın
 3. **Atama** sekmesini açın
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+4. **API Anahtarları** altında, **+ API anahtarına ata**'ya tıklayın
+5. API anahtarını seçin
 
-The key will inherit that role's permissions. See [Permissions](/l/tr/user-guide/permissions-access/capabilities/permissions) for details.
+Anahtar, o rolün izinlerini devralacaktır. Ayrıntılar için [İzinler](/l/tr/user-guide/permissions-access/capabilities/permissions) bölümüne bakın.
 
 ### API Anahtarlarını Yönet
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Yeniden Oluştur**: Ayarlar → API ve Webhook'lar → Anahtara tıklayın → **Yeniden Oluştur**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Sil**: Ayarlar → API ve Webhook'lar → Anahtara tıklayın → **Sil**
 
-## API Playground
+## API Oyun Alanı
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+Yerleşik oyun alanımız ile API'lerinizi doğrudan tarayıcıda test edin — hem **REST** hem de **GraphQL** için kullanılabilir.
 
-### Access the Playground
+### Oyun Alanına Erişin
 
-1. Go to **Settings → APIs & Webhooks**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+1. **Ayarlar → API ve Webhook'lar**'a gidin
+2. Bir API anahtarı oluşturun (gerekli)
+3. Oyun alanını açmak için **REST API** veya **GraphQL API**'ye tıklayın
 
-### What You Get
+### Elde Edecekleriniz
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **Etkileşimli dokümantasyon**: Belirli veri modeliniz için oluşturulur
+* **Canlı test**: Çalışma alanınıza karşı gerçek API çağrılarını gerçekleştirin
+* **Şema gezgini**: Kullanılabilir nesnelere, alanlara ve ilişkilere göz atın
+* **İstek oluşturucu**: Otomatik tamamlama ile sorgular oluşturun
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+Oyun alanı, özel nesnelerinizi ve alanlarınızı yansıtır, bu nedenle dokümantasyon çalışma alanınız için her zaman doğrudur.
 
 ## Toplu İşlemler
 
-Both REST and GraphQL support batch operations:
+Hem REST hem de GraphQL, toplu işlemleri destekler:
 
 * **Toplu boyut**: İstek başına 60 kayıt kadar
-* **Operations**: Create, update, delete multiple records
+* **İşlemler**: Birden çok kaydı oluşturma, güncelleme, silme
 
-**GraphQL-only features:**
+**Yalnızca GraphQL Özellikleri:**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **Toplu Ekleme-Güncelleme**: Tek bir çağrıda oluşturun veya güncelleyin
+* Çoğul nesne adlarını kullanın (ör. `CreateCompany` yerine `CreateCompanies`)
 
-## Rate Limits
+## Hız Sınırları
 
-API requests are throttled to ensure platform stability:
+Platform kararlılığını sağlamak için API istekleri kısıtlanır:
 
-| Limit          | Değer                |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| Sınır            | Değer                 |
+| ---------------- | --------------------- |
+| **İstekler**     | Dakikada 100 çağrı    |
+| **Toplu boyutu** | Çağrı başına 60 kayıt |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  Verimi en üst düzeye çıkarmak için toplu işlemleri kullanın — tekil istekler yapmak yerine tek bir API çağrısında 60 kayda kadar işleyin.
 </Tip>

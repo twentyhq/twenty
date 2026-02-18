@@ -42,7 +42,6 @@ export class CreateCalendarChannelService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const calendarChannelRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
@@ -70,6 +69,7 @@ export class CreateCalendarChannelService {
 
         return newCalendarChannel.id;
       },
+      authContext,
     );
   }
 }

@@ -6,9 +6,17 @@ import { TimelineMessagingResolver } from 'src/engine/core-modules/messaging/tim
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
-  imports: [WorkspaceDataSourceModule, UserModule, ConnectedAccountModule],
+  imports: [
+    WorkspaceDataSourceModule,
+    UserModule,
+    ConnectedAccountModule,
+    FeatureFlagModule,
+    PermissionsModule,
+  ],
   exports: [],
   providers: [
     TimelineMessagingResolver,

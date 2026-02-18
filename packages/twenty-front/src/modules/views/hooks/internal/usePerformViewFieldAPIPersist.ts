@@ -17,7 +17,7 @@ import {
   useDeleteCoreViewFieldMutation,
   useDestroyCoreViewFieldMutation,
   useUpdateCoreViewFieldMutation,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 export const usePerformViewFieldAPIPersist = () => {
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();

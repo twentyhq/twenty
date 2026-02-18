@@ -19,6 +19,11 @@ export class SearchRecordDTO {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
+  objectLabelSingular: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
   label: string;
 
   @Field(() => String, { nullable: true })

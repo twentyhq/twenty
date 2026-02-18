@@ -1,18 +1,9 @@
 import { useTheme } from '@emotion/react';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
-
-const StyledFieldsWidgetSectionContainer = styled(Section)`
-  padding-top: ${({ theme }) => theme.spacing(3)};
-  padding-bottom: 0;
-  width: auto;
-
-  &:not(:first-of-type) {
-    padding-top: 0;
-  }
-`;
 
 const StyledHeader = styled.header`
   align-items: center;
@@ -20,8 +11,6 @@ const StyledHeader = styled.header`
   display: flex;
   height: 24px;
   justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleLabel = styled.div`
@@ -29,7 +18,9 @@ const StyledTitleLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledChevronIcon = styled(IconChevronDown)<{ isExpanded: boolean }>`
+const StyledChevronIcon = styled(IconChevronDown, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isExpanded',
+})<{ isExpanded: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
@@ -53,7 +44,7 @@ export const FieldsWidgetSectionContainer = ({
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
 
   return (
-    <StyledFieldsWidgetSectionContainer>
+    <Section>
       <StyledHeader onClick={handleToggleSection}>
         <StyledTitleLabel>{title}</StyledTitleLabel>
         <StyledChevronIcon
@@ -69,6 +60,6 @@ export const FieldsWidgetSectionContainer = ({
       >
         {children}
       </AnimatedExpandableContainer>
-    </StyledFieldsWidgetSectionContainer>
+    </Section>
   );
 };

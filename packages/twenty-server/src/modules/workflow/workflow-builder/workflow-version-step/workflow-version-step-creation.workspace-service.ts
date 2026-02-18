@@ -11,8 +11,8 @@ import {
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
-import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
+import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
@@ -38,6 +38,7 @@ export class WorkflowVersionStepCreationWorkspaceService {
       position,
       parentStepConnectionOptions,
       id,
+      defaultSettings,
     } = input;
 
     const workflowVersion =
@@ -59,6 +60,7 @@ export class WorkflowVersionStepCreationWorkspaceService {
           position,
           workflowVersionId,
           id,
+          defaultSettings,
         },
       );
 

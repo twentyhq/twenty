@@ -11,7 +11,7 @@ type SimplifiedFlatObjectMetadata = {
   universalIdentifier: string;
   applicationId: string | null;
 } & {
-  fieldMetadataIds: string[];
+  fieldIds: string[];
   indexMetadataIds: string[];
   viewIds: string[];
 };

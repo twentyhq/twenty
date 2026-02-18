@@ -4,7 +4,7 @@ import {
   BarChartLayout,
   GraphOrderBy,
   WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { createDefaultGraphWidget } from '@/page-layout/utils/createDefaultGraphWidget';
 
 describe('createDefaultGraphWidget', () => {
@@ -30,12 +30,13 @@ describe('createDefaultGraphWidget', () => {
         __typename: 'BarChartConfiguration',
         configurationType: WidgetConfigurationType.BAR_CHART,
         layout: BarChartLayout.VERTICAL,
-        displayDataLabel: false,
-        color: 'blue',
+        displayDataLabel: true,
+        displayLegend: true,
+        color: 'auto',
         primaryAxisGroupByFieldMetadataId: 'field-2',
         aggregateFieldMetadataId: 'field-1',
         aggregateOperation: AggregateOperations.SUM,
-        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
       });
     });

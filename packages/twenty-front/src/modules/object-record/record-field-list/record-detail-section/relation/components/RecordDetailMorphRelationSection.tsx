@@ -74,10 +74,12 @@ export const RecordDetailMorphRelationSection = ({
 
   const handleSubmit: FieldInputEvent = ({ newValue }) => {
     if (!isDefined(newValue)) {
-      throw new CustomError(
-        'Value to persist is required',
-        'VALUE_TO_PERSIST_IS_REQUIRED',
-      );
+      persistMorphManyToOne({
+        recordId,
+        fieldDefinition,
+        valueToPersist: null,
+      });
+      return;
     }
 
     const { id, objectMetadataId } = newValue as {

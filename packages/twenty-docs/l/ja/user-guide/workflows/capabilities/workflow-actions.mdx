@@ -1,311 +1,311 @@
 ---
-title: Workflow Actions
-description: Learn about the actions available in Twenty workflows.
+title: ワークフローアクション
+description: Twenty のワークフローで利用可能なアクションについて学びましょう。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Actions
+## アクションについて
 
-Actions define what happens after a trigger fires. You can chain multiple actions together to build complex automations.
+アクションはトリガーが起動した後に何が起こるかを定義します。 複数のアクションを連結して、複雑な自動化を構築できます。
 
 <Tip>
-  * Use the variable picker (click the `(x+)` icon) to browse available data from previous steps
-  * Hover over any input field to see which step a variable comes from — helpful when the same field (e.g., ID) exists in multiple previous steps
-  * Give each action a descriptive name for easier maintenance
+  * 変数ピッカー（`(x+)` アイコンをクリック）を使用して、前の手順から利用可能なデータを参照します
+  * 任意の入力フィールドにカーソルを合わせると、変数がどのステップから来ているかがわかります—同じフィールド（例：ID）が複数の前のステップに存在する場合に便利です
+  * 保守しやすくするため、各アクションにわかりやすい名前を付けてください
 </Tip>
 
-## Record Actions
+## レコードアクション
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Create a Record
+### レコードを作成
 
-Adds a new record to a selected object.
+選択したオブジェクトに新しいレコードを追加します。
 
-**Configuration**:
+**設定**：
 
-* Select the target object
-* Fill out the required and optional fields
-* Use data from previous steps or input values manually to populate fields
+* 対象オブジェクトを選択
+* 必要およびオプションのフィールドに入力
+* 前の手順のデータを使用するか、手動で値を入力してフィールドに設定します
 
-**Output**: The newly created record data is available for use in subsequent steps.
+**出力**：新しく作成されたレコードのデータが後続の手順で使用可能
 
-### Update Record
+### レコードを更新
 
-Modifies an existing record in a selected object.
+選択したオブジェクト内の既存のレコードを変更します。
 
 <img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
 
-**Configuration**:
+**設定**：
 
-* Select the target object
-* Choose the specific record to update.
-  * You can either choose a fixed record, using the drop down menu displaying all available records.
-  * Or you can have the record dynamically selected, by designating a record found in a previous step, using the `(x+)`. You cannot search for the record based on different criteria at this stage. If you've not yet identified the record, add a `Search Record` step before this `Update Record` step.
-* Select fields to modify and enter new values
+* 対象オブジェクトを選択
+* 更新する具体的なレコードを選択.
+  * 利用可能なすべてのレコードを表示するドロップダウンメニューから、固定のレコードを選択できます。
+  * または、`(x+)` を使用して前のステップで見つかったレコードを指定し、レコードを動的に選択できます。 この段階では、異なる条件に基づいてレコードを検索することはできません。 まだレコードを特定していない場合は、この `Update Record` ステップの前に `Search Record` ステップを追加してください。
+* 変更するフィールドを選択し、新しい値を入力
 
-**Output**: The updated record data is available for use in subsequent steps.
+**出力**：更新されたレコードのデータが後続の手順で使用可能
 
-### Delete Record
+### レコードを削除
 
-Removes a record from a selected object.
+選択したオブジェクトからレコードを削除します。
 
-**Configuration**:
+**設定**：
 
-* Select the target object
-* Choose the specific record to delete
+* 対象オブジェクトを選択
+* 削除する具体的なレコードを選択
 
-**Output**: The deleted record data remains available for use in subsequent steps.
+**出力**：削除されたレコードのデータは後続の手順で使用可能
 
-### Search Records
+### レコードを検索
 
-Finds records within a selected object using filter conditions.
+選択したオブジェクト内のフィルター条件を使用してレコードを探します。
 
-**Configuration**:
+**設定**：
 
-* Select the object to search
-* Set filter criteria to narrow results
-* Configure sorting and limits
+* 検索するオブジェクトを選択
+* 結果を絞り込むためのフィルター基準を設定
+* 並べ替えや制限を設定
 
-**Output**: Returns matching records that can be used in subsequent steps.
+**出力**：一致するレコードを返し、後続の手順で使用可能
 
 <Note>
-  **Limit**: Search Records returns a maximum of **200 records**. If you need to process more, add specific filters to reduce results or use scheduled workflows to process in batches.
+  **制限**：Search Records は最大 **200 件のレコード**を返します。 さらに処理する必要がある場合は、結果を絞り込むフィルターを追加するか、スケジュールされたワークフローを使用してバッチ処理してください。
 </Note>
 
-**Best Practice**: Use [branches](/l/ja/user-guide/workflows/capabilities/workflow-branches) after Search Records to handle "found" vs "not found" scenarios.
+**ベストプラクティス**：Search Records の後に[ブランチ](/l/ja/user-guide/workflows/capabilities/workflow-branches)を使用して、「見つかった」と「見つからない」のシナリオを処理します。
 
 ### Upsert Record
 
-Creates a new record or updates an existing one based on matching criteria. This is useful when you're not sure if a record already exists.
+一致条件に基づいて、新しいレコードを作成するか、既存のレコードを更新します。 レコードが既に存在するかどうか確信が持てない場合に便利です。
 
 <img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
 
-**Configuration**:
+**設定**：
 
-* Select the target object
-* Note which fields can be used for matching: email for People, domain for Companies, ID for any object, or any field marked as Unique. You'll need to populate at least one of these below.
-* Fill out the field values. Do not forget to populate at least one of the unique identifiers.
+* 対象オブジェクトを選択
+* どのフィールドがマッチングに使用できるかに注意してください：People には email、Companies には domain、任意のオブジェクトには ID、または Unique としてマークされた任意のフィールド。 以下のうち少なくとも 1 つは入力する必要があります。
+* フィールドの値を入力します。 少なくとも 1 つの一意の識別子を必ず入力してください。
 
 <Note>
-  **Matching usually works even better when adding only one unique identifier.** For example, the screenshot below will match companies based on their domain. The ID is not necessarily needed.
+  **通常、一意の識別子を 1 つだけ追加するほうがマッチングはうまく機能します。** 例えば、以下のスクリーンショットでは、ドメインに基づいて会社を照合します。 ID は必ずしも必要ではありません。
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
 
-* Use data from previous steps to populate fields
+* 前の手順からのデータを使用してフィールドを埋める
 
-**How it works**:
+**仕組み**:
 
-1. Searches for a record matching your criteria
-2. If found → updates the existing record
-3. If not found → creates a new record
+1. 指定した条件に一致するレコードを検索します
+2. 見つかった場合 → 既存のレコードを更新します
+3. 見つからない場合 → 新しいレコードを作成します
 
-**Output**: The created or updated record data is available for use in subsequent steps.
+**出力**：作成または更新されたレコードのデータは後続の手順で使用できます。
 
-## Flow Actions
+## フローアクション
 
-### Iterator
+### イテレータ
 
-**Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
+**前の手順から返されたレコード配列をループ**し、各レコードに個別にアクションを実行できます。
 
-**Configuration**:
+**設定**：
 
-* Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node)
-* Define the actions to perform on each record in the loop.
-
-<Note>
-  - You can add several actions within an iterator.
-  - When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
-</Note>
-
-* Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions.
-
-<VimeoEmbed videoId="1146577247" title="Video demonstration" />
-
-### Filter
-
-Filters records based on specified conditions, allowing only records that meet the criteria to pass through.
-
-**Configuration**:
-
-* Select the record to filter
-* Define filter conditions and criteria
-* Configure which records should pass through to subsequent steps
+* 前の手順からレコードの配列を選択します（例：Search Records の結果、Bulk に対応した手動トリガー、コードノード）
+* ループ内の各レコードで実行するアクションを定義.
 
 <Note>
-  1. **Output**: Filter nodes don't return data—they act as gates. If the conditions are met, the workflow continues. If not, the workflow stops at that branch.
-  2. The `IS` operator can be used with numeric fields. It performs as an `EQUAL`.
+  - イテレーター内に複数のアクションを追加できます。
+  - イテレーター内で分岐を使用する場合、各分岐の最後のステップがループを閉じるようにイテレーターへ戻る接続になっていることを確認してください。
 </Note>
 
-### Delay
+* `Current Item` フィールドにアクセス：現在処理中のレコードのフィールドを使用するには、**Iterator** ステップをクリックし、**Current item** を選択します。 そのレコードで使用可能なフィールドの一覧が表示され、後続のアクションで使用するために選択できます。
 
-Pauses workflow execution for a specified duration or until a specific date/time.
+<VimeoEmbed videoId="1146577247" title="デモ動画" />
 
-**Delay Types**:
+### フィルター
 
-| Type               | Description                                                        |
-| ------------------ | ------------------------------------------------------------------ |
-| **Duration**       | Wait for a specific amount of time (days, hours, minutes, seconds) |
-| **Scheduled Date** | Wait until a specific date and time                                |
+指定された条件に基づいてレコードをフィルタリングし、条件を満たすレコードのみを通過させます。
 
-**Configuration for Duration**:
+**設定**：
 
-* Set days, hours, minutes, and/or seconds
-* Combine multiple units (e.g., 2 days and 4 hours)
-
-**Configuration for Scheduled Date**:
-
-* Select a date and time
-* Can reference a date field from a previous step (e.g., follow up 3 days after a meeting)
-
-**Use cases**:
-
-* Wait 24 hours before sending a follow-up email
-* Pause until an opportunity's close date
-* Schedule actions for business hours
+* フィルター対象のレコードを選択
+* フィルタ条件と基準を定義
+* 後続の手順に通過するレコードを設定
 
 <Note>
-  The scheduled date cannot be in the past. If a date field from a previous step is used and the date has already passed, the workflow will fail.
+  1. **出力**：フィルターノードはデータを返しません—ゲートとして機能します。 条件を満たす場合、ワークフローは継続します。 満たさない場合、その分岐でワークフローは停止します。
+  2. `IS` 演算子は数値フィールドで使用できます。 これは `EQUAL` と同様に動作します。
 </Note>
 
-**Limits & Credits**:
+### 遅延
 
-* **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-* **1 credit consumed** when the Delay node executes, regardless of duration
-* **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
+指定した期間、または特定の日時までワークフローの実行を一時停止します。
 
-## Communication Actions
+**遅延の種類**：
 
-### Send Email
+| タイプ      | 説明                    |
+| -------- | --------------------- |
+| **期間**   | 指定した時間（日、時間、分、秒）待機します |
+| **予定日時** | 特定の日時まで待機します          |
 
-Sends an email from your workflow. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
+**期間の設定**：
 
-**Prerequisites**: Add an email account in Settings → Accounts
+* 日、時間、分、秒を設定します
+* 複数の単位を組み合わせます（例：2日と4時間）
 
-**Configuration**:
+**予定日時の設定**：
 
-* Select the sender email account
+* 日付と時刻を選択します
+* 前の手順の日付フィールドを参照できます（例：ミーティングの3日後にフォローアップ）
+
+**ユースケース**：
+
+* フォローアップメールを送信する前に24時間待機する
+* 商談のクローズ日まで一時停止する
+* 営業時間内にアクションを実行するようスケジュールする
 
 <Note>
-  You can only send emails from mailboxes synced to your own Twenty account. Sending from other team members' mailboxes (e.g., the account owner's email) is on the roadmap.
+  予定日時は過去に設定できません。 前の手順の日付フィールドを使用し、その日付がすでに過去の場合、ワークフローは失敗します。
 </Note>
 
-For all the following steps, you can reference variables from previous steps for personalization.
+**制限とクレジット**：
 
-* Enter recipient email address.
+* **最大期間の制限はありません**—分、日、週、さらに長い遅延を設定できます
+* 期間に関係なく、Delay ノードの実行時に**1 クレジットを消費**します
+* 待機中は**クレジットは消費されません**—5分の遅延も5日の遅延もコストは同じです
+
+## コミュニケーションアクション
+
+### メールを送信
+
+ワークフローからメールを送信します。 テンプレート化されたグループメールに最適です。 メールは、メールボックスから送信するメールと同様の見た目になります。
+ニュースレター（よりリッチな書式が必要）や自動メール配信には適していません。
+
+**前提条件**：設定 → アカウントでメールアカウントを追加
+
+**設定**：
+
+* 送信元のメールアカウントを選択
 
 <Note>
-  Only one recipient is possible at the moment.
+  自分の Twenty アカウントと同期されたメールボックスからのみメールを送信できます。 他のチームメンバーのメールボックス（例：アカウント所有者のメール）からの送信はロードマップにあります。
 </Note>
 
-* Set subject line.
-* Compose message body. You can format links, create numbered list, bullet point lists, add attachments.
+以降のすべての手順で、パーソナライズのために前の手順の変数を参照できます。
+
+* 受信者のメールアドレスを入力.
 
 <Note>
-  Adding HTML signatures is not possible at the moment.
+  現在は受信者は1名のみです。
 </Note>
 
-### Form
+* 件名を設定.
+* メッセージ本文を作成. リンクの書式設定、番号付きリストや箇条書きの作成、添付ファイルの追加ができます。
 
-Prompts a form during workflow execution to collect user input. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+<Note>
+  現在、HTML署名の追加はできません。
+</Note>
+
+### フォーム
+
+ワークフロー実行中にフォームをプロンプトしてユーザー入力を収集します。 回答はその後、後続の手順で、入力に基づいてレコード作成、メール送信、その他のアクションの実行に利用できます。
 
 <Warning>
-  **Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+  **フォームは手動トリガー専用に設計されています。** 他のトリガーを持つワークフロー（レコード作成、更新など）では、ユーザーが期待する体験とは異なり、フォームにはワークフロー実行インターフェースからのみアクセス可能です。 通知センターは、2026年に自動化されたワークフローでフォームを適切にサポートするためにリリースされます。
 </Warning>
 
-**Configuration**:
+**設定**：
 
-* Configure the fields that users will be asked to fill. For each field, choose
-  * a type among text, number, date, a given record, a select field. Select fields from all objects are available.
-  * a label
-  * a default value under `Placeholder` (optional)
-* Edit the form title
+* ユーザーに入力してもらうフィールドを設定します。 各フィールドについて、次を選択します。
+  * テキスト、数値、日付、特定のレコード、セレクトフィールドのいずれかのタイプ。 すべてのオブジェクトのセレクトフィールドが利用可能です。
+  * ラベル
+  * `Placeholder` のデフォルト値（任意）
+* フォームのタイトルを編集
 
-**Output**: Form responses are available for use in subsequent steps.
+**出力**：フォームレスポンスが後続の手順で使用可能
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**例**：「Quick Lead」ワークフローはすべてのワークスペースでデフォルトで利用可能で、コマンドメニュー `Cmd + K` のどこからでも利用できます。
 
-**How to fill the form**:
+**フォームの記入方法**：
 
-* Trigger your manual workflow from the command menu `Cmd K`
-* Fill the form that is displayed in the side panel and click `Submit`.
+* コマンドメニュー `Cmd K` から手動ワークフローをトリガーします
+* サイドパネルに表示されるフォームに入力し、`Submit` をクリックします。
 
 <Note>
-  The fields cannot be made mandatory.
+  フィールドを必須にすることはできません。
 </Note>
 
-<VimeoEmbed videoId="1147277989" title="Video demonstration" />
+<VimeoEmbed videoId="1147277989" title="デモ動画" />
 
-## Integration Actions
+## 統合アクション
 
-### Code
+### コード
 
-Runs custom JavaScript within your workflow.
+ワークフロー内でカスタムJavaScriptを実行します。
 
-**Configuration**:
+**設定**：
 
-* Access variables from previous steps. You can edit the variables names dynamically.
+* 前の手順からの変数にアクセス. 変数名を動的に編集できます。
 
-<VimeoEmbed videoId="1147281795" title="Video demonstration" />
+<VimeoEmbed videoId="1147281795" title="デモ動画" />
 
-* Write JavaScript code in the editor
-* Return variables for use in subsequent steps
-* Test code directly in the step
+* エディタでJavaScriptコードを記述
+* 後続の手順で使用するための変数を返す
+* ステップ内でコードを直接テスト
 
 <Note>
-  If you need to use external API keys in your code, you must input them directly in the function body. You cannot configure API keys elsewhere and reference them in the serverless function.
+  コードで外部のAPIキーを使用する必要がある場合は、関数本体に直接入力する必要があります。 You cannot configure API keys elsewhere and reference them in the logic function.
 </Note>
 
 <Tip>
-  **Working with arrays?** Arrays from external systems or previous steps may come as strings. See [How to handle arrays in Code actions](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) for the solution.
+  **配列を扱っていますか？** 外部システムや前の手順からの配列は、文字列として渡される場合があります。 配列の扱いの詳細については、[Code アクションで配列を扱う](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)を参照してください。
 </Tip>
 
 <Tip>
-  Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+  コードエディタ右上の四角いアイコンをクリックすると全画面表示になります — デフォルトのエディタ幅には制限があるため便利です。
 </Tip>
 
-### HTTP Request
+### HTTPリクエスト
 
-Sends a request to an external API as part of your workflow.
+ワークフローの一部として外部APIにリクエストを送信します。
 
 <img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
 
-**Configuration**:
+**設定**：
 
-* Enter the API endpoint URL. Using parameters from previous steps is possible.
-* Select HTTP method (GET, POST, PUT, PATCH, DELETE)
-* Add required headers and values
-* Provide sample response for structure preview
+* APIエンドポイントURLを入力. 前の手順のパラメーターを使用できます。
+* HTTPメソッドを選択（GET, POST, PUT, PATCH, DELETE）
+* 必要なヘッダと値を追加
+* 構造プレビューのためにサンプルレスポンスを提供
 
-## AI Actions
+## AI アクション
 
-### AI Agent - Coming Soon
+### AI エージェント - 近日公開
 
-Runs an AI agent within your workflow to perform intelligent tasks.
+ワークフロー内でAIエージェントを実行し、インテリジェントなタスクを実行します。
 
-**Configuration**:
+**設定**：
 
-* **Agent**: Select an existing AI agent or use the default agent
-* **Prompt**: Write the instruction for the AI agent
-* Reference variables from previous steps in the prompt
+* **エージェント**：既存のAIエージェントを選択するか、デフォルトのエージェントを使用します
+* **プロンプト**：AIエージェントへの指示を作成します
+* プロンプト内で前の手順の変数を参照します
 
-**What AI Agents can do**:
+**AI エージェントでできること**：
 
-* Analyze and summarize data
-* Classify or categorize records
-* Generate text content
-* Make decisions based on data
-* Interact with your CRM data using tools
+* データを分析・要約する
+* レコードを分類・カテゴリ化する
+* テキストコンテンツを生成する
+* データに基づいて意思決定する
+* ツールを使って CRM データと対話する
 
-**Output**: The AI agent's response is available for use in subsequent steps. If the agent has a structured output schema, the response will follow that format.
+**出力**：AIエージェントの応答は後続の手順で使用できます。 エージェントに構造化された出力スキーマがある場合、応答はその形式に従います。
 
 <Note>
-  AI Agent actions consume workflow credits based on the AI model used. See [Workflow Credits](/l/ja/user-guide/workflows/capabilities/workflow-credits) for details.
+  AIエージェントのアクションは、使用するAIモデルに応じてワークフロークレジットを消費します。 詳細は[ワークフロークレジット](/l/ja/user-guide/workflows/capabilities/workflow-credits)を参照してください。
 </Note>
 
 <Note>
-  AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Roles** to control what data they can access. See [Permissions](/l/ja/user-guide/permissions-access/capabilities/permissions) for details.
+  AIエージェントはロールベースの権限に従います。 **設定 → ロール** でエージェントに特定のロールを割り当て、アクセスできるデータを制御できます。 詳細は[権限](/l/ja/user-guide/permissions-access/capabilities/permissions)を参照してください。
 </Note>

@@ -4,7 +4,7 @@
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
   "tags": [
-    "scope:frontend"
+    "scope:shared"
   ],
   "targets": {
     "build": {
@@ -55,6 +55,24 @@
         "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
+    "build:individual": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/individual"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vite build -c vite.config.individual.ts"
+      }
+    },
     "clean": {
       "executor": "nx:run-commands",
       "options": {
@@ -101,16 +119,8 @@
         "test": {}
       }
     },
-    "storybook:coverage": {},
-    "storybook:test": {
-      "options": {
-        "port": 6007
-      }
-    },
-    "storybook:serve-and-test:static": {
-      "options": {
-        "port": 6007
-      }
-    }
+    "storybook:test": {},
+    "storybook:test:no-coverage": {},
+    "storybook:coverage": {}
   }
 }

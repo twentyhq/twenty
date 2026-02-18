@@ -1,18 +1,18 @@
 ---
-title: Links
+title: 링크
 image: /images/user-guide/what-is-twenty/20.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="헤더" />
 </Frame>
 
-## Contact Link
+## 연락 링크
 
-A stylized link component for displaying contact information.
+연락처 정보를 표시하기 위한 스타일화된 링크 구성 요소입니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -38,22 +38,22 @@ A stylized link component for displaying contact information.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                |
-    | --------- | ----------------- | ---------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                       |
-    | href      | string            | The target URL or path for the link                        |
-    | onClick   | function          | Callback function to be triggered when the link is clicked |
-    | children  | `React.ReactNode` | The content to be displayed inside the link                |
+  <Tab title="프로퍼티">
+    | 프로퍼티     | 유형                | 설명                    |
+    | -------- | ----------------- | --------------------- |
+    | 클래스 네임   | 문자열               | 추가 스타일을 위한 선택적 이름     |
+    | href     | 문자열               | 링크의 대상 URL 또는 경로      |
+    | onClick  | function          | 링크가 클릭될 때 트리거되는 콜백 함수 |
+    | children | `React.ReactNode` | 링크 내부에 표시할 콘텐츠        |
   </Tab>
 </Tabs>
 
-## Raw Link
+## 원시 링크
 
-A stylized link component for displaying links.
+링크를 표시하기 위한 스타일화된 링크 구성 요소입니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { RawLink } from "/navigation";
     import { BrowserRouter as Router } from "react-router-dom";
@@ -75,22 +75,22 @@ A stylized link component for displaying links.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                |
-    | --------- | ----------------- | ---------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                       |
-    | href      | string            | The target URL or path for the link                        |
-    | onClick   | function          | Callback function to be triggered when the link is clicked |
-    | children  | `React.ReactNode` | The content to be displayed inside the link                |
+  <Tab title="프로퍼티">
+    | 프로퍼티     | 유형                | 설명                    |
+    | -------- | ----------------- | --------------------- |
+    | 클래스 네임   | 문자열               | 추가 스타일을 위한 선택적 이름     |
+    | href     | 문자열               | 링크의 대상 URL 또는 경로      |
+    | onClick  | function          | 링크가 클릭될 때 트리거되는 콜백 함수 |
+    | children | `React.ReactNode` | 링크 내부에 표시할 콘텐츠        |
   </Tab>
 </Tabs>
 
-## Rounded Link
+## 둥근 링크
 
-A rounded-styled link with a Chip component for links.
+Chip 구성 요소가 있는 라운드 스타일 링크입니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { RoundedLink } from "/navigation";
     import { BrowserRouter as Router } from "react-router-dom";
@@ -111,21 +111,21 @@ A rounded-styled link with a Chip component for links.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type              | Description                                                |
-    | -------- | ----------------- | ---------------------------------------------------------- |
-    | href     | string            | The target URL or path for the link                        |
-    | children | `React.ReactNode` | The content to be displayed inside the link                |
-    | onClick  | function          | Callback function to be triggered when the link is clicked |
+  <Tab title="프로퍼티">
+    | 프로퍼티     | 유형                | 설명                    |
+    | -------- | ----------------- | --------------------- |
+    | href     | 문자열               | 링크의 대상 URL 또는 경로      |
+    | children | `React.ReactNode` | 링크 내부에 표시할 콘텐츠        |
+    | onClick  | 기능                | 링크가 클릭될 때 트리거되는 콜백 함수 |
   </Tab>
 </Tabs>
 
-## Social Link
+## 소셜 링크
 
-Stylized social links, with support for various social link types, such as URLs, LinkedIn, and X (or Twitter).
+URL, LinkedIn 및 X(또는 Twitter)와 같은 다양한 소셜 링크 유형을 지원하는 스타일화된 소셜 링크입니다.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="사용법">
     ```jsx
     import { SocialLink } from "twenty-ui/navigation";
     import { BrowserRouter as Router } from "react-router-dom";
@@ -143,12 +143,12 @@ Stylized social links, with support for various social link types, such as URLs,
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type              | Description                                                                 |
-    | -------- | ----------------- | --------------------------------------------------------------------------- |
-    | href     | string            | The target URL or path for the link                                         |
-    | children | `React.ReactNode` | The content to be displayed inside the link                                 |
-    | type     | string            | The type of social links. Options include: `url`, `LinkedIn`, and `Twitter` |
-    | onClick  | function          | Callback function to be triggered when the link is clicked                  |
+  <Tab title="프로퍼티">
+    | 프로퍼티     | 유형                | 설명                                                      |
+    | -------- | ----------------- | ------------------------------------------------------- |
+    | href     | 문자열               | 링크의 대상 URL 또는 경로                                        |
+    | children | `React.ReactNode` | 링크 내부에 표시할 콘텐츠                                          |
+    | 유형       | 문자열               | 소셜 링크 유형입니다. 옵션은 다음과 같습니다: `url`, `LinkedIn`, `Twitter` |
+    | onClick  | 기능                | 링크를 클릭할 때 호출되는 콜백 함수                                    |
   </Tab>
 </Tabs>

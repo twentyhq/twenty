@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -6,20 +6,23 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 
 describe('Generate Column Definitions', () => {
+  const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+  const mockObjectId = '20202020-object-id';
+
   const mockObjectMetadata = getFlatObjectMetadataMock({
     universalIdentifier: 'person',
-    id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-    workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+    id: mockObjectId,
     nameSingular: 'person',
+    namePlural: 'persons',
   });
 
-  const mockSchemaName = getWorkspaceSchemaName(mockObjectMetadata.workspaceId);
+  const mockSchemaName = getWorkspaceSchemaName(workspaceId);
 
   describe('Enum Field Schema Generation', () => {
     it('should generate deterministic enum names to prevent schema conflicts', () => {
       const enumField = getFlatFieldMetadataMock({
         universalIdentifier: 'status',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.SELECT,
         name: 'status',
         options: [
@@ -43,6 +46,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: enumField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toHaveLength(1);
@@ -63,7 +67,7 @@ describe('Generate Column Definitions', () => {
     it('should handle multi-select fields with proper enum generation', () => {
       const multiSelectField = getFlatFieldMetadataMock({
         universalIdentifier: 'tags',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.MULTI_SELECT,
         name: 'tags',
         options: [
@@ -87,6 +91,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: multiSelectField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toHaveLength(1);
@@ -109,15 +114,16 @@ describe('Generate Column Definitions', () => {
     it('should handle null relation settings without crashing', () => {
       const relationField = getFlatFieldMetadataMock({
         universalIdentifier: 'company',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.RELATION,
         name: 'company',
-        settings: undefined,
+        universalSettings: null,
       });
 
       const columns = generateColumnDefinitions({
         flatFieldMetadata: relationField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       // Relations without join columns must return empty array
@@ -127,11 +133,11 @@ describe('Generate Column Definitions', () => {
     it('should generate proper UUID foreign key columns for valid relations', () => {
       const relationField = getFlatFieldMetadataMock({
         universalIdentifier: 'company',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.RELATION,
         name: 'company',
         settings: {
-          relationType: 'MANY_TO_ONE' as any,
+          relationType: RelationType.MANY_TO_ONE,
           joinColumnName: 'companyId',
         },
       });
@@ -139,6 +145,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: relationField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toHaveLength(1);
@@ -161,7 +168,7 @@ describe('Generate Column Definitions', () => {
     it('should generate all required columns for ADDRESS composite type', () => {
       const addressField = getFlatFieldMetadataMock({
         universalIdentifier: 'address',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.ADDRESS,
         name: 'homeAddress',
         isNullable: true,
@@ -170,6 +177,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: addressField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toHaveLength(8);
@@ -199,7 +207,7 @@ describe('Generate Column Definitions', () => {
     it('should handle CURRENCY composite type properly', () => {
       const currencyField = getFlatFieldMetadataMock({
         universalIdentifier: 'price',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.CURRENCY,
         name: 'price',
         defaultValue: {
@@ -211,6 +219,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: currencyField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toHaveLength(2);
@@ -243,7 +252,7 @@ describe('Generate Column Definitions', () => {
     it('should handle null and undefined default values safely', () => {
       const textField = getFlatFieldMetadataMock({
         universalIdentifier: 'description',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.TEXT,
         name: 'description',
         defaultValue: null,
@@ -252,6 +261,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: textField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toStrictEqual([
@@ -270,7 +280,7 @@ describe('Generate Column Definitions', () => {
     it('should handle boolean fields with default values', () => {
       const booleanField = getFlatFieldMetadataMock({
         universalIdentifier: 'isActive',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.BOOLEAN,
         name: 'isActive',
         defaultValue: true,
@@ -279,6 +289,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: booleanField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toStrictEqual([
@@ -299,7 +310,7 @@ describe('Generate Column Definitions', () => {
     it('should handle text fields without crashing', () => {
       const textField = getFlatFieldMetadataMock({
         universalIdentifier: 'content',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.TEXT,
         name: 'content',
       });
@@ -307,6 +318,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: textField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toStrictEqual([
@@ -325,7 +337,7 @@ describe('Generate Column Definitions', () => {
     it('should handle UUID fields properly', () => {
       const uuidField = getFlatFieldMetadataMock({
         universalIdentifier: 'uuid',
-        objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        objectMetadataId: mockObjectId,
         type: FieldMetadataType.UUID,
         name: 'uuid',
       });
@@ -333,6 +345,7 @@ describe('Generate Column Definitions', () => {
       const columns = generateColumnDefinitions({
         flatFieldMetadata: uuidField,
         flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
       });
 
       expect(columns).toStrictEqual([

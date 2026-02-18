@@ -53,15 +53,13 @@ describe('useUpdateOneRecord', () => {
     jest.clearAllMocks();
   });
   it('works as expected', async () => {
-    const { result } = renderHook(
-      () => useUpdateOneRecord({ objectNameSingular: 'person' }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(() => useUpdateOneRecord(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       const res = await result.current.updateOneRecord({
+        objectNameSingular: 'person',
         idToUpdate,
         updateOneRecordInput: updateInput,
       });

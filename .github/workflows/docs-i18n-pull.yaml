@@ -107,10 +107,13 @@ jobs:
       - name: Regenerate docs.json
         run: yarn docs:generate
 
+      - name: Regenerate documentation paths constants
+        run: yarn docs:generate-paths
+
       - name: Commit artifacts to pull request branch
         if: github.event_name == 'pull_request'
         run: |
-          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json
+          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json packages/twenty-shared/src/constants/DocumentationPaths.ts
           if git diff --staged --quiet --exit-code; then
             echo "No navigation/doc changes to commit."
             exit 0

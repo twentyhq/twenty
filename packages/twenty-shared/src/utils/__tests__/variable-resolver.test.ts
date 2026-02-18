@@ -129,4 +129,54 @@ describe('resolveInput', () => {
       }),
     ).toBe('{ "a": "str" }');
   });
+
+  describe('bracket notation for keys with special characters', () => {
+    it('should resolve variables with keys containing spaces', () => {
+      const contextWithSpaces = {
+        step: {
+          'key with space': 'value from space key',
+        },
+      };
+      expect(resolveInput('{{step.[key with space]}}', contextWithSpaces)).toBe(
+        'value from space key',
+      );
+    });
+
+    it('should resolve nested variables with keys containing spaces', () => {
+      const contextWithSpaces = {
+        step: {
+          'first key': {
+            'nested key': 'nested value',
+          },
+        },
+      };
+      expect(
+        resolveInput('{{step.[first key].[nested key]}}', contextWithSpaces),
+      ).toBe('nested value');
+    });
+
+    it('should resolve mixed normal and bracket notation paths', () => {
+      const contextWithMixed = {
+        step: {
+          normal: {
+            'key with space': 42,
+          },
+        },
+      };
+      expect(
+        resolveInput('{{step.normal.[key with space]}}', contextWithMixed),
+      ).toBe(42);
+    });
+
+    it('should resolve variables with keys containing dots', () => {
+      const contextWithDots = {
+        step: {
+          'key.with.dots': 'dotted value',
+        },
+      };
+      expect(resolveInput('{{step.[key.with.dots]}}', contextWithDots)).toBe(
+        'dotted value',
+      );
+    });
+  });
 });

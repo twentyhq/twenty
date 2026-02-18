@@ -9,11 +9,9 @@ export const isFieldCellSupported = (
   objectMetadataItems: ObjectMetadataItem[],
 ) => {
   if (
-    [
-      FieldMetadataType.UUID,
-      FieldMetadataType.POSITION,
-      FieldMetadataType.RICH_TEXT,
-    ].includes(fieldMetadataItem.type)
+    [FieldMetadataType.POSITION, FieldMetadataType.RICH_TEXT].includes(
+      fieldMetadataItem.type,
+    )
   ) {
     return false;
   }

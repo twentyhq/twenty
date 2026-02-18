@@ -4,8 +4,15 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 export const workflowCodeActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      serverlessFunctionId: z.string(),
-      serverlessFunctionVersion: z.string(),
-      serverlessFunctionInput: z.record(z.string(), z.any()),
+      logicFunctionId: z
+        .string()
+        .describe(
+          'The ID of the logic function that holds the code. This is auto-generated when a CODE step is created via create_workflow_version_step — do NOT set this manually.',
+        ),
+      logicFunctionInput: z
+        .record(z.string(), z.any())
+        .describe(
+          'Key-value map of input parameters to pass to the logic function at runtime.',
+        ),
     }),
   });

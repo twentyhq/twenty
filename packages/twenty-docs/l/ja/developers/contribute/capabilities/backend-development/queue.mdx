@@ -1,20 +1,20 @@
 ---
-title: Message Queue
+title: メッセージキュー
 ---
 
-Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.
-Each use case will have its own queue class extended from `MessageQueueServiceBase`.
+キューは非同期処理を実行するための手段を提供します。 それらは、登録時にウェルカムメールを送信するなどのバックグラウンドタスクを実行するために使用できます。
+各ユースケースには `MessageQueueServiceBase` から拡張された独自のキュークラスが必要です。
 
-Currently, we only support `bull-mq`[bull-mq](https://bullmq.io/) as the queue driver.
+現在のところ、キュードライバとして `bull-mq`[bull-mq](https://bullmq.io/) のみをサポートしています。
 
-## Steps to create and use a new queue
+## 新しいキューを作成して使用する手順
 
-1. Add a queue name for your new queue under enum `MESSAGE_QUEUES`.
-2. Provide the factory implementation of the queue with the queue name as the dependency token.
-3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
-4. Add worker class with token based injection just like producer.
+1. enum `MESSAGE_QUEUES` に、新しいキュー用のキュー名を追加します。
+2. 依存トークンとしてキュー名を持つキューのファクトリ実装を提供します。
+3. 依存性トークンとしてキュー名を使用して、作成したキューを必要なモジュール/サービスにインジェクトします。
+4. トークンベースのインジェクションを用いたワーカークラスをプロデューサーと同様に追加します。
 
-### Example usage
+### 使用例
 
 ```ts
 class Resolver {

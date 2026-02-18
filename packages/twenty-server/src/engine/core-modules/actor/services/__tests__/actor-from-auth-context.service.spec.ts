@@ -45,7 +45,7 @@ describe('ActorFromAuthContextService', () => {
     getRepository: jest.fn().mockResolvedValue(mockWorkspaceMemberRepository),
     executeInWorkspaceContext: jest
       .fn()
-      .mockImplementation((_authContext: any, fn: () => any) => fn()),
+      .mockImplementation((fn: () => any, _authContext?: any) => fn()),
   };
 
   beforeEach(async () => {
@@ -67,25 +67,37 @@ describe('ActorFromAuthContextService', () => {
           useValue: {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
               flatObjectMetadataMaps: {
-                byId: {
-                  'person-id': {
+                byUniversalIdentifier: {
+                  'person-universal-id': {
                     id: 'person-id',
                     nameSingular: 'person',
-                    fieldMetadataIds: ['createdBy-id'],
+                    fieldIds: ['createdBy-id'],
+                    universalIdentifier: 'person-universal-id',
                   },
                 },
+                universalIdentifierById: {
+                  'person-id': 'person-universal-id',
+                },
+                universalIdentifiersByApplicationId: {},
               },
               flatFieldMetadataMaps: {
-                byId: {
-                  'createdBy-id': {
+                byUniversalIdentifier: {
+                  'createdBy-universal-id': {
                     id: 'createdBy-id',
                     name: 'createdBy',
                     objectMetadataId: 'person-id',
+                    universalIdentifier: 'createdBy-universal-id',
                   },
                 },
+                universalIdentifierById: {
+                  'createdBy-id': 'createdBy-universal-id',
+                },
+                universalIdentifiersByApplicationId: {},
               },
               flatIndexMaps: {
-                byId: {},
+                byUniversalIdentifier: {},
+                universalIdentifierById: {},
+                universalIdentifiersByApplicationId: {},
               },
             }),
           },

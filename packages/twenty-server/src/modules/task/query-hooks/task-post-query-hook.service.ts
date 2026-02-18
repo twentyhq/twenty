@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -29,20 +28,17 @@ export class TaskPostQueryHookService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const taskTargetRepository =
-          await this.globalWorkspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
-            workspace.id,
-            'taskTarget',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const taskTargetRepository =
+        await this.globalWorkspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
+          workspace.id,
+          'taskTarget',
+        );
 
-        await taskTargetRepository.softDelete({
-          taskId: In(payload.map((task) => task.id)),
-        });
-      },
-    );
+      await taskTargetRepository.softDelete({
+        taskId: In(payload.map((task) => task.id)),
+      });
+    }, authContext as WorkspaceAuthContext);
   }
 
   async handleTaskTargetsRestore(
@@ -57,19 +53,16 @@ export class TaskPostQueryHookService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const taskTargetRepository =
-          await this.globalWorkspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
-            workspace.id,
-            'taskTarget',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const taskTargetRepository =
+        await this.globalWorkspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
+          workspace.id,
+          'taskTarget',
+        );
 
-        await taskTargetRepository.restore({
-          taskId: In(payload.map((task) => task.id)),
-        });
-      },
-    );
+      await taskTargetRepository.restore({
+        taskId: In(payload.map((task) => task.id)),
+      });
+    }, authContext as WorkspaceAuthContext);
   }
 }

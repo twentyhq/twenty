@@ -10,8 +10,8 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { AggregateOperations } from 'twenty-shared/types';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
@@ -35,6 +35,11 @@ class UpdateViewFieldInputUpdates {
   @IsEnum(AggregateOperations)
   @Field(() => AggregateOperations, { nullable: true })
   aggregateOperation?: AggregateOperations;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewFieldGroupId?: string | null;
 }
 
 @InputType()

@@ -1,20 +1,14 @@
-import { t } from '@lingui/core/macro';
+import { WebhookEntitySelect } from '@/settings/developers/components/WebhookEntitySelect';
 import { Select } from '@/ui/input/components/Select';
-import { isDefined } from 'twenty-shared/utils';
-import { IconButton, type SelectOption } from 'twenty-ui/input';
-import {
-  IconBox,
-  IconNorthStar,
-  IconPlus,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/display';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/display';
+import { IconButton, type SelectOption } from 'twenty-ui/input';
 
-const OBJECT_DROPDOWN_WIDTH = 340;
-const ACTION_DROPDOWN_WIDTH = 140;
+const OBJECT_DROPDOWN_WIDTH = 240;
+const ACTION_DROPDOWN_WIDTH = 240;
 const OBJECT_MOBILE_WIDTH = 150;
 const ACTION_MOBILE_WIDTH = 140;
 
@@ -40,7 +34,7 @@ export const SettingsDatabaseEventsForm = ({
   removeOperation,
   disabled = false,
 }: {
-  events: { object: string | null; action: string }[];
+  events: { object: string | null; action: string; updatedFields?: string[] }[];
   updateOperation?: (
     index: number,
     field: 'object' | 'action',
@@ -51,45 +45,40 @@ export const SettingsDatabaseEventsForm = ({
 }) => {
   const isMobile = useIsMobile();
 
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const getActionOptions = (
+    updatedFields?: string[],
+  ): SelectOption<string>[] => {
+    const hasSpecificFields =
+      isDefined(updatedFields) && updatedFields.length > 0;
 
-  const { getIcon } = useIcons();
-
-  const objectOptions: SelectOption<string>[] = [
-    { label: t`All Objects`, value: '*', Icon: IconNorthStar },
-    ...objectMetadataItems.map((item) => ({
-      label: item.labelPlural,
-      value: item.nameSingular,
-      Icon: getIcon(item.icon),
-    })),
-  ];
-
-  const actionOptions: SelectOption<string>[] = [
-    { label: t`All`, value: '*', Icon: IconNorthStar },
-    { label: t`Created`, value: 'created', Icon: IconPlus },
-    { label: t`Updated`, value: 'updated', Icon: IconBox },
-    { label: t`Deleted`, value: 'deleted', Icon: IconTrash },
-  ];
+    return [
+      { label: t`All`, value: '*', Icon: IconNorthStar },
+      { label: t`Created`, value: 'created', Icon: IconPlus },
+      {
+        label: hasSpecificFields ? t`Updated (on specific fields)` : t`Updated`,
+        value: 'updated',
+        Icon: IconBox,
+      },
+      { label: t`Deleted`, value: 'deleted', Icon: IconTrash },
+    ];
+  };
 
   return (
     <>
       {events.map((operation, index) => (
         <StyledFilterRow key={index} isMobile={isMobile}>
-          <Select
+          <WebhookEntitySelect
             dropdownId={`object-webhook-type-select-${index}`}
             value={operation.object}
-            options={objectOptions}
             onChange={(newValue) =>
               updateOperation?.(index, 'object', newValue)
             }
-            fullWidth
-            emptyOption={{ label: t`Object`, value: null }}
             disabled={disabled}
           />
           <Select
             dropdownId={`operation-webhook-type-select-${index}`}
             value={operation.action}
-            options={actionOptions}
+            options={getActionOptions(operation.updatedFields)}
             onChange={(newValue) =>
               updateOperation?.(index, 'action', newValue)
             }

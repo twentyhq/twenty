@@ -1,6 +1,6 @@
 ---
 title: Ordnerarchitektur
-info: A detailed look into our server folder architecture
+info: Ein detaillierter Einblick in unsere Server-Ordnerarchitektur
 ---
 
 Die Server-Verzeichnisstruktur ist wie folgt:
@@ -29,7 +29,7 @@ Definiert Berechtigungen und enthält Handler für jedes Element.
 
 Definiert benutzerdefinierte Dekoratoren in NestJS für zusätzliche Funktionen.
 
-See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+Weitere Details finden Sie unter [benutzerdefinierte Dekoratoren](https://docs.nestjs.com/custom-decorators).
 
 ## Filter
 
@@ -37,7 +37,7 @@ Enthält Ausnahmefilter, um mögliche Ausnahmen bei GraphQL-Endpunkten zu behand
 
 ## Guards
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+Weitere Details finden Sie unter [Guards](https://docs.nestjs.com/guards).
 
 ## Health
 
@@ -49,9 +49,9 @@ Definiert benutzerdefinierte Objekte und stellt eine GraphQL-API (graphql/metada
 
 ## Arbeitsbereich
 
-Generates and serves custom GraphQL schema based on the metadata.
+Erzeugt und stellt ein benutzerdefiniertes GraphQL-Schema basierend auf den Metadaten bereit.
 
-### Workspace Directory Structure
+### Verzeichnisstruktur des Workspaces
 
 ```
 workspace
@@ -87,7 +87,7 @@ Der Stamm des Arbeitsbereichsverzeichnisses umfasst die Datei `arbeitsbereich.fa
 
 Diese Strategie dient nicht nur der Organisation, sondern hilft auch bei der Optimierung, wie z.B. dem Caching generierter Typdefinitionen zur Leistungs- und Skalierbarkeitssteigerung.
 
-### Workspace Schema builder
+### Workspace-Schema-Builder
 
 Generiert das GraphQL-Schema und umfasst:
 
@@ -108,13 +108,13 @@ Enthält die Blaupausen für GraphQL-Entitäten und umfasst sowohl vordefinierte
 
 #### Dienste
 
-Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+Enthält den Service, der dafür verantwortlich ist, FieldMetadataType dem passenden GraphQL-Scalar oder den entsprechenden Abfrage-Modifikatoren zuzuordnen.
 
 #### Speicher
 
 Enthält die Klasse `TypeDefinitionsStorage`, die wiederverwendbare Typdefinitionen enthält und die Duplizierung von GraphQL-Typen verhindert.
 
-### Workspace Resolver Builder
+### Workspace-Resolver-Builder
 
 Erstellt Resolverfunktionen für die Abfrage und Änderung des GraphQL-Schemas.
 

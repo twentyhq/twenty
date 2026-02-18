@@ -1,54 +1,54 @@
 ---
-title: Generate a PDF from Twenty
-description: Create a workflow to generate and attach a PDF (such as a quote) to a record.
+title: Создание PDF в Twenty
+description: Создайте рабочий процесс для создания и прикрепления PDF (например, коммерческого предложения) к записи.
 ---
 
-Automatically generate or fetch a PDF and attach it to a record in Twenty. This is commonly used to create quotes, invoices, or reports that are linked to Companies, Opportunities, or other objects.
+Автоматически создавайте или получайте PDF и прикрепляйте его к записи в Twenty. Это часто используют для создания коммерческих предложений, счетов или отчетов, связанных с компаниями, сделками или другими объектами.
 
 ## Обзор
 
-This workflow uses a **Manual Trigger** so users can generate a PDF on demand for any selected record. A **Serverless Function** handles:
+В этом рабочем процессе используется **Ручной триггер**, чтобы пользователи могли по запросу создавать PDF для любой выбранной записи. За обработку отвечает **Логическая функция**:
 
-1. Downloading the PDF from a URL (from a PDF generation service)
-2. Uploading the file to Twenty
-3. Creating an Attachment linked to the record
+1. Загрузка PDF по URL (из сервиса генерации PDF)
+2. Загрузка файла в Twenty
+3. Создание вложения, связанного с записью
 
 ## Требования
 
-Before setting up the workflow:
+Прежде чем настраивать рабочий процесс:
 
-1. **Create an API Key**: Go to **Settings → APIs** and create a new API key. You'll need this token for the serverless function.
-2. **Set up a PDF generation service** (optional): If you want to dynamically generate PDFs (e.g., quotes), use a service like Carbone, PDFMonkey, or DocuSeal to create the PDF and get a download URL.
+1. **Создайте ключ API**: перейдите в **Настройки → APIs** и создайте новый ключ API. Этот токен понадобится для логической функции.
+2. **Настройте сервис генерации PDF** (необязательно): если вы хотите динамически генерировать PDF (например, коммерческие предложения), используйте такие сервисы, как Carbone, PDFMonkey или DocuSeal, чтобы создать PDF и получить URL для скачивания.
 
 ## Пошаговая настройка
 
 ### Шаг 1: Настройте триггер
 
-1. Go to **Workflows** and create a new workflow
-2. Select **Manual Trigger**
-3. Choose the object you want to attach PDFs to (e.g., **Company** or **Opportunity**)
+1. Перейдите в **Рабочие процессы** и создайте новый рабочий процесс
+2. Выберите **Ручной триггер**
+3. Выберите объект, к которому нужно прикреплять PDF (например, **Company** или **Opportunity**)
 
 <Tip>
-  With a Manual Trigger, users can run this workflow using a button that appears on the top right once a record is selected, to generate and attach a PDF.
+  С помощью ручного триггера пользователи могут запускать этот рабочий процесс с кнопки, которая появляется в правом верхнем углу после выбора записи, чтобы сгенерировать и прикрепить PDF.
 </Tip>
 
-### Step 2: Add a Serverless Function
+### Шаг 2: Добавьте логическую функцию
 
-1. Add a **Serverless Function** action
-2. Create a new function with the code below
-3. Configure the input parameters
+1. Добавьте действие **Code** (логическая функция)
+2. Создайте новую функцию с кодом ниже
+3. Настройте входные параметры
 
-#### Input Parameters
+#### Входные параметры
 
-| Parameter   | Значение                |
+| Параметр    | Значение                |
 | ----------- | ----------------------- |
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the serverless function.
+  Если прикрепляете к другому объекту (Person, Opportunity и т. д.), переименуйте параметр соответствующим образом (например, `personId`, `opportunityId`) и обновите логическую функцию.
 </Note>
 
-#### Serverless Function Code
+#### Код логической функции
 
 ```typescript
 export const main = async (
@@ -152,11 +152,11 @@ export const main = async (
 };
 ```
 
-### Step 3: Customize for Your Use Case
+### Шаг 3: Настройте под ваш сценарий
 
-#### To attach to a different object
+#### Чтобы прикреплять к другому объекту
 
-Replace `companyId` with the appropriate field:
+Замените `companyId` на соответствующее поле:
 
 | Объект                  | Имя поля             |
 | ----------------------- | -------------------- |
@@ -165,14 +165,14 @@ Replace `companyId` with the appropriate field:
 | Сделка                  | `opportunityId`      |
 | Пользовательский объект | `yourCustomObjectId` |
 
-Update both the function parameter and the `variables.data` object in the attachment mutation.
+Обновите и параметр функции, и объект `variables.data` в мутации вложения.
 
-#### To use a dynamic PDF URL
+#### Чтобы использовать динамический URL PDF
 
-If using a PDF generation service, you can:
+Если используете сервис генерации PDF, вы можете:
 
-1. First make an HTTP Request action to generate the PDF
-2. Pass the returned PDF URL to the serverless function as a parameter
+1. Сначала выполните действие HTTP Request, чтобы сгенерировать PDF
+2. Передайте возвращенный URL PDF в логическую функцию как параметр
 
 ```typescript
 export const main = async (
@@ -185,44 +185,44 @@ export const main = async (
 
 ### Шаг 4: Протестируйте и активируйте
 
-1. Save the workflow
-2. Navigate to a Company record
-3. Click the **⋮** menu and select your workflow
-4. Check the **Attachments** section on the record to verify the PDF was attached
+1. Сохраните рабочий процесс
+2. Перейдите к записи Company
+3. Нажмите меню **⋮** и выберите ваш рабочий процесс
+4. Проверьте раздел **Attachments** в записи, чтобы убедиться, что PDF прикреплен
 5. Активируйте рабочий процесс
 
-## Combining with PDF Generation Services
+## Совмещение с сервисами генерации PDF
 
-For creating dynamic quotes or invoices:
+Для создания динамических коммерческих предложений или счетов:
 
-### Example: Generate Quote → Attach PDF
+### Пример: Сгенерировать коммерческое предложение → Прикрепить PDF
 
-| Шаг | Действие                 | Назначение                               |
-| --- | ------------------------ | ---------------------------------------- |
-| 1   | Manual Trigger (Company) | User initiates on a record               |
-| 2   | Поиск записи             | Get Opportunity or line item details     |
-| 3   | HTTP-запрос              | Call PDF generation API with record data |
-| 4   | Serverless Function      | Download and attach the generated PDF    |
+| Шаг | Действие                 | Назначение                                 |
+| --- | ------------------------ | ------------------------------------------ |
+| 1   | Ручной триггер (Company) | Пользователь запускает на записи           |
+| 2   | Поиск записи             | Получить сведения о сделке или позициях    |
+| 3   | HTTP-запрос              | Вызвать API генерации PDF с данными записи |
+| 4   | Бессерверная функция     | Скачать и прикрепить сгенерированный PDF   |
 
-### Popular PDF Generation Services
+### Популярные сервисы генерации PDF
 
-* **Carbone** - Template-based document generation
-* **PDFMonkey** - Dynamic PDF creation from templates
-* **DocuSeal** - Document automation platform
-* **Documint** - API-first document generation
+* **Carbone** — генерация документов на основе шаблонов
+* **PDFMonkey** — динамическое создание PDF из шаблонов
+* **DocuSeal** — платформа автоматизации документооборота
+* **Documint** — генерация документов, ориентированная на API
 
-Each service provides an API that returns a PDF URL, which you can then pass to the serverless function.
+Каждый сервис предоставляет API, который возвращает URL PDF; затем его можно передать в логическую функцию.
 
 ## Устранение неполадок
 
-| Проблема                     | Решение                                                    |
-| ---------------------------- | ---------------------------------------------------------- |
-| "Failed to download PDF"     | Check the PDF URL is accessible and returns a valid PDF    |
-| "Upload failed"              | Verify your API key is valid and has write permissions     |
-| "Attachment creation failed" | Ensure the object ID field name matches your target object |
+| Проблема                      | Решение                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| "Не удалось скачать PDF"      | Проверьте, что URL PDF доступен и возвращает корректный PDF                   |
+| "Не удалось загрузить"        | Убедитесь, что ваш ключ API действителен и имеет права на запись              |
+| "Не удалось создать вложение" | Убедитесь, что имя поля идентификатора объекта соответствует целевому объекту |
 
 ## Связанные материалы
 
 * [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Serverless Functions](/l/ru/user-guide/workflows/capabilities/workflow-actions#serverless-function)
-* [Generate a Quote or Invoice from Twenty](/l/ru/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+* [Логические функции](/l/ru/user-guide/workflows/capabilities/workflow-actions#code)
+* [Создание коммерческого предложения или счета в Twenty](/l/ru/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

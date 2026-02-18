@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: Benzersizlik Kısıtlamaları
+description: Twenty'nin içe aktarma sırasında veri benzersizliğini nasıl sağladığı.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Genel Bakış
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Yinelenen kayıtları önlemek ve veri bütünlüğünü sağlamak için Twenty bazı alanlarda benzersizliği uygular. Başarılı içe aktarmalar için bu kısıtlamaları anlamak kritiktir.
 
-## Default Unique Fields
+## Varsayılan Benzersiz Alanlar
 
-| Nesne             | Unique Fields          |
-| ----------------- | ---------------------- |
-| **People**        | `id`, `email`          |
-| **Şirketler**     | `id`, `domain`         |
-| **Özel nesneler** | `id` only (by default) |
+| Nesne             | Benzersiz Alanlar                 |
+| ----------------- | --------------------------------- |
+| **Kişiler**       | `id`, `email`                     |
+| **Şirketler**     | `id`, `domain`                    |
+| **Özel nesneler** | Yalnızca `id` (varsayılan olarak) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>`id` alanı Twenty'nin dahili tanımlayıcısıdır, her kayıt için otomatik olarak oluşturulur. UUID biçimini kullanır (ör. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## Özel Benzersiz Alanlar
 
-You can define additional unique fields under **Settings → Data Model**:
+Ek benzersiz alanları **Ayarlar → Veri Modeli** altında tanımlayabilirsiniz:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesneyi seçin
+3. Bir alana tıklayın
+4. Alan ayarlarında **Unique** özelliğini etkinleştirin
 
-### Use Cases for Custom Unique Fields
+### Özel Benzersiz Alanlar için Kullanım Senaryoları
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **Harici ID'ler**: Diğer sistemlerden gelen ID'leri saklayın (Salesforce ID, HubSpot ID)
+* **İş tanımlayıcıları**: Çalışan numaraları, müşteri kodları
+* **Alternatif iletişim bilgileri**: LinkedIn profili, telefon numarası
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>`id` alan adı Twenty'nin dahili ID'si için ayrılmıştır. Harici tanımlayıcılar için `externalId` veya `legacyId` gibi farklı bir ad kullanın.</Note>
 
-## Import Behavior
+## İçe Aktarma Davranışı
 
-### Creating New Records
+### Yeni Kayıtlar Oluşturma
 
-If a unique field value doesn't exist, a new record is created.
+Benzersiz alan değeri mevcut değilse yeni bir kayıt oluşturulur.
 
-### Updating Existing Records
+### Mevcut Kayıtları Güncelleme
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+Benzersiz alan değeri mevcut bir kayıtla eşleşirse, o kayıt yeni verilerle **güncellenir**.
+<Warning>**Mevcut kayıtları güncellemek** için, **yalnızca bir benzersiz alanı** eşleştirmeniz önerilir.</Warning>
 
-### Soft-Deleted Records
+### Yumuşak Silinmiş Kayıtlar
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **Silinmiş kayıtlar benzersizliğe dahildir.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  Yumuşak silinmiş kayıtlar (Komut Menüsü → Silinen kayıtları görüntüle altında görünür) benzersizlik kontrollerine dahildir. Silinmiş bir kayıtla aynı benzersiz değere sahip bir kaydı içe aktarırsanız, silinmiş kayıt yeni verilerle **geri yüklenir**.
 </Warning>
 
-## Duplicate Detection During Import
+## İçe Aktarma Sırasında Yinelenenleri Tespit Etme
 
-During the validation phase:
+Doğrulama aşamasında:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* Dosyanızdaki yinelenenler sarı renkle vurgulanır
+* İçe aktarmayı başlatmadan önce yinelenen satırları arayüzden düzenleyebilir veya kaldırabilirsiniz
 
-<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+<VimeoEmbed videoId="1145246326" title="Video gösterimi" />
 
 ## En İyi Uygulamalar
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. İçe aktarmadan önce dosyanızdan **yinelenenleri kaldırın**
+2. İçe aktarmadan önce Twenty'de **mevcut kayıtları kontrol edin**
+3. Diğer sistemlerden geçiş yaparken **harici ID'leri kullanın**
+4. Mevcut kayıtları güncellemek istiyorsanız **benzersiz alanları dahil edin**

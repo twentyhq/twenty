@@ -12,9 +12,8 @@ describe('getWorkflowPreviousSteps', () => {
         nextStepIds: ['step2', 'step3'],
         settings: {
           input: {
-            serverlessFunctionId: 'func1',
-            serverlessFunctionVersion: '1.0.0',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'func1',
+            logicFunctionInput: {},
           },
           outputSchema: {},
           errorHandlingOptions: {
@@ -31,9 +30,8 @@ describe('getWorkflowPreviousSteps', () => {
         nextStepIds: ['step4'],
         settings: {
           input: {
-            serverlessFunctionId: 'func2',
-            serverlessFunctionVersion: '1.0.0',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'func2',
+            logicFunctionInput: {},
           },
           outputSchema: {},
           errorHandlingOptions: {
@@ -50,9 +48,8 @@ describe('getWorkflowPreviousSteps', () => {
         nextStepIds: ['step4'],
         settings: {
           input: {
-            serverlessFunctionId: 'func3',
-            serverlessFunctionVersion: '1.0.0',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'func3',
+            logicFunctionInput: {},
           },
           outputSchema: {},
           errorHandlingOptions: {
@@ -69,9 +66,8 @@ describe('getWorkflowPreviousSteps', () => {
         nextStepIds: [],
         settings: {
           input: {
-            serverlessFunctionId: 'func4',
-            serverlessFunctionVersion: '1.0.0',
-            serverlessFunctionInput: {},
+            logicFunctionId: 'func4',
+            logicFunctionInput: {},
           },
           outputSchema: {},
           errorHandlingOptions: {

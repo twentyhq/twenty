@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionPositionsMutation,
   type UpdateWorkflowVersionPositionsMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';

@@ -46,19 +46,19 @@ Verwendet, wenn Benutzer nur eine Option aus einer Reihe von Optionen auswählen
     | ---------------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
     | Stil                   | `React.CSS` Eigenschaften | Zusätzliche Inline-Stile für die Komponente                                                         |
     | Klassenname            | Zeichenkette              | Optionale CSS-Klasse für zusätzliche Stilgebung                                                     |
-    | markiert               | boolesch                  | Indicates whether the radio button is checked                                                       |
-    | wert                   | Zeichenkette              | The label or text associated with the radio button                                                  |
-    | onChange               | Funktion                  | The function called when the selected radio button is changed                                       |
-    | beiMarkierungsÄnderung | Funktion                  | The function called when the `checked` state of the radio button changes                            |
+    | markiert               | boolesch                  | Gibt an, ob das Optionsfeld ausgewählt ist                                                          |
+    | wert                   | Zeichenkette              | Die dem Optionsfeld zugeordnete Beschriftung oder der Text                                          |
+    | onChange               | Funktion                  | Die Funktion, die aufgerufen wird, wenn sich das ausgewählte Optionsfeld ändert                     |
+    | beiMarkierungsÄnderung | Funktion                  | Die Funktion, die aufgerufen wird, wenn sich der `checked`-Status des Optionsfelds ändert           |
     | größe                  | Zeichenkette              | Die Größe des Radiobuttons. Optionen umfassen: `groß` und `klein`                                   |
     | deaktiviert            | boolesch                  | Wenn `true`, ist der Radiobutton deaktiviert und nicht anklickbar                                   |
     | labelPosition          | Zeichenkette              | Die Position des Labeltextes im Verhältnis zum Radiobutton. Hat zwei Optionen: `links` und `rechts` |
   </Tab>
 </Tabs>
 
-## Radio Group
+## Radio-Gruppe
 
-Groups together related radio buttons.
+Fasst zusammengehörige Optionsfelder zusammen.
 
 <Tabs>
   <Tab title="Verwendung">
@@ -87,11 +87,11 @@ Groups together related radio buttons.
   </Tab>
 
   <Tab title="Eigenschaften">
-    | Eigenschaften   | Typ               | Beschreibung                                                                                    |
-    | --------------- | ----------------- | ----------------------------------------------------------------------------------------------- |
-    | wert            | Zeichenkette      | The value of the currently selected radio button                                                |
-    | onChange        | Funktion          | The callback function triggered when the radio button is changed                                |
-    | beiWertÄnderung | Funktion          | Die Callback-Funktion, die ausgelöst wird, wenn sich der ausgewählte Wert in der Gruppe ändert. |
-    | Kinder          | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group              |
+    | Eigenschaften   | Typ               | Beschreibung                                                                                              |
+    | --------------- | ----------------- | --------------------------------------------------------------------------------------------------------- |
+    | wert            | Zeichenkette      | Der Wert des aktuell ausgewählten Optionsfelds                                                            |
+    | onChange        | Funktion          | Die Rückruffunktion, die ausgelöst wird, wenn sich das Optionsfeld ändert                                 |
+    | beiWertÄnderung | Funktion          | Die Callback-Funktion, die ausgelöst wird, wenn sich der ausgewählte Wert in der Gruppe ändert.           |
+    | Kinder          | `React.ReactNode` | Ermöglicht es, React-Komponenten (wie Radio) als untergeordnete Elemente an die Radio-Gruppe zu übergeben |
   </Tab>
 </Tabs>

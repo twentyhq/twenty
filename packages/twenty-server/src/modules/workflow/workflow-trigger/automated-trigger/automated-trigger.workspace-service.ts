@@ -27,22 +27,19 @@ export class AutomatedTriggerWorkspaceService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            'workflowAutomatedTrigger',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowAutomatedTriggerRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+          workspaceId,
+          'workflowAutomatedTrigger',
+        );
 
-        await workflowAutomatedTriggerRepository.insert({
-          type,
-          settings,
-          workflowId,
-        });
-      },
-    );
+      await workflowAutomatedTriggerRepository.insert({
+        type,
+        settings,
+        workflowId,
+      });
+    }, authContext);
   }
 
   async deleteAutomatedTrigger({
@@ -54,17 +51,14 @@ export class AutomatedTriggerWorkspaceService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            'workflowAutomatedTrigger',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowAutomatedTriggerRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+          workspaceId,
+          'workflowAutomatedTrigger',
+        );
 
-        await workflowAutomatedTriggerRepository.delete({ workflowId });
-      },
-    );
+      await workflowAutomatedTriggerRepository.delete({ workflowId });
+    }, authContext);
   }
 }

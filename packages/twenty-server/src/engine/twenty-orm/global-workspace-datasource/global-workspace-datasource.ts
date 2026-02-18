@@ -13,9 +13,9 @@ import {
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -33,15 +33,18 @@ type CreateQueryBuilderOptions = {
 
 export class GlobalWorkspaceDataSource extends DataSource {
   readonly eventEmitterService: WorkspaceEventEmitter;
+  readonly coreDataSource: DataSource;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
   constructor(
     options: DataSourceOptions,
     eventEmitterService: WorkspaceEventEmitter,
+    coreDataSource: DataSource,
   ) {
     super(options);
     this.eventEmitterService = eventEmitterService;
+    this.coreDataSource = coreDataSource;
     this._isConstructing = false;
 
     Object.defineProperty(this, 'manager', {

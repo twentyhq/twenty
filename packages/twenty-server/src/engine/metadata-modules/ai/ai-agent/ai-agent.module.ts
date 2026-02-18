@@ -17,7 +17,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { AgentResolver } from './agent.resolver';
@@ -46,7 +46,7 @@ import { AgentEntity } from './entities/agent.entity';
   providers: [
     AgentResolver,
     AgentService,
-    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    WorkspaceMigrationGraphqlApiExceptionInterceptor,
     AgentGraphqlApiExceptionInterceptor,
   ],
   exports: [AgentService, TypeOrmModule.forFeature([AgentEntity])],

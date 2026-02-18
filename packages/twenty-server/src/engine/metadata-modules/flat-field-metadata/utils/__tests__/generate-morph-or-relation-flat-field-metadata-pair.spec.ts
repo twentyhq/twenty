@@ -1,17 +1,41 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
-  type FieldMetadataRelationSettings,
+  type FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   generateMorphOrRelationFlatFieldMetadataPair,
   type SourceTargetMorphOrRelationFlatFieldAndFlatIndex,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
+
+const MOCK_FLAT_APPLICATION: FlatApplication = {
+  id: '20202020-81ee-42da-a281-668632f32fe7',
+  universalIdentifier: '20202020-81ee-42da-a281-668632f32fe7',
+  name: 'Workspace Custom Application',
+  description: null,
+  version: null,
+  workspaceId: 'workspace-id',
+  sourceType: 'local',
+  sourcePath: '',
+  packageJsonChecksum: null,
+  packageJsonFileId: null,
+  yarnLockChecksum: null,
+  yarnLockFileId: null,
+  availablePackages: {},
+  logicFunctionLayerId: null,
+  defaultRoleId: null,
+  defaultRole: null,
+  canBeUninstalled: false,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+};
 
 type GenerateMorphOrRelationFlatFieldMetadataPairTestInput = Parameters<
   typeof generateMorphOrRelationFlatFieldMetadataPair
@@ -27,10 +51,6 @@ type TestCase = EachTestingContext<{
 }>;
 
 describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () => {
-  const mockWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-  const mockWorkspaceCustomApplicationId =
-    '20202020-81ee-42da-a281-668632f32fe7';
-
   describe('Success cases', () => {
     const testCases: TestCase[] = [
       {
@@ -42,21 +62,20 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
-            workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
               description: 'Company pets',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
               isCustom: true,
               isSystem: false,
               isUnique: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,
-                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetObjectMetadataId:
+                  PET_FLAT_OBJECT_MOCK.universalIdentifier,
                 targetFieldLabel: 'Company',
                 targetFieldIcon: 'IconBuildingSkyscraper',
               },
@@ -78,21 +97,20 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
-            workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
               description: 'Company pets',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
               isCustom: true,
               isSystem: false,
               isUnique: false,
               relationCreationPayload: {
                 type: RelationType.MANY_TO_ONE,
-                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetObjectMetadataId:
+                  PET_FLAT_OBJECT_MOCK.universalIdentifier,
                 targetFieldLabel: 'Company',
                 targetFieldIcon: 'IconBuildingSkyscraper',
               },
@@ -114,21 +132,20 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
-            workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
               description: 'Company pets',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
               isCustom: false,
               isSystem: true,
               isUnique: true,
               relationCreationPayload: {
                 type: RelationType.MANY_TO_ONE,
-                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetObjectMetadataId:
+                  PET_FLAT_OBJECT_MOCK.universalIdentifier,
                 targetFieldLabel: 'Company',
                 targetFieldIcon: 'IconBuildingSkyscraper',
               },
@@ -150,8 +167,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
-            workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -159,13 +175,13 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Morph relation to pet',
               icon: 'IconCat',
               type: FieldMetadataType.MORPH_RELATION,
-              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
               isCustom: false,
               isSystem: true,
               isUnique: false,
               relationCreationPayload: {
                 type: RelationType.MANY_TO_ONE,
-                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetObjectMetadataId:
+                  PET_FLAT_OBJECT_MOCK.universalIdentifier,
                 targetFieldLabel: 'Companies',
                 targetFieldIcon: 'IconBuildingSkyscraper',
               },
@@ -187,8 +203,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
-            workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -196,13 +211,13 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Morph relation to pet',
               icon: 'IconCat',
               type: FieldMetadataType.MORPH_RELATION,
-              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
               isCustom: false,
               isSystem: true,
               isUnique: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,
-                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetObjectMetadataId:
+                  PET_FLAT_OBJECT_MOCK.universalIdentifier,
                 targetFieldLabel: 'Companies',
                 targetFieldIcon: 'IconBuildingSkyscraper',
               },
@@ -224,8 +239,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
             targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
-            workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -233,13 +247,13 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Morph relation to pet',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
               isCustom: false,
               isSystem: true,
               isUnique: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,
-                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetObjectMetadataId:
+                  PET_FLAT_OBJECT_MOCK.universalIdentifier,
                 targetFieldLabel: 'Companies',
                 targetFieldIcon: 'IconBuildingSkyscraper',
               },
@@ -278,16 +292,16 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         expect(sourceFieldMetadata.type).toBe(expectedSourceFieldType);
         expect(sourceFieldMetadata.name).toBe(input.createFieldInput.name);
         expect(sourceFieldMetadata.label).toBe(input.createFieldInput.label);
-        expect(sourceFieldMetadata.objectMetadataId).toBe(
-          input.sourceFlatObjectMetadata.id,
+        expect(sourceFieldMetadata.objectMetadataUniversalIdentifier).toBe(
+          input.sourceFlatObjectMetadata.universalIdentifier,
         );
-        expect(sourceFieldMetadata.relationTargetObjectMetadataId).toBe(
-          input.targetFlatObjectMetadata.id,
-        );
+        expect(
+          sourceFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+        ).toBe(input.targetFlatObjectMetadata.universalIdentifier);
         const sourceSettings =
-          sourceFieldMetadata.settings as FieldMetadataRelationSettings;
+          sourceFieldMetadata.universalSettings as FieldMetadataSettingsMapping['RELATION'];
         const targetSettings =
-          targetFieldMetadata.settings as FieldMetadataRelationSettings;
+          targetFieldMetadata.universalSettings as FieldMetadataSettingsMapping['RELATION'];
 
         expect(sourceSettings.relationType).toBe(expectedSourceRelationType);
 
@@ -298,20 +312,20 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         }
 
         expect(targetFieldMetadata.type).toBe(expectedTargetFieldType);
-        expect(targetFieldMetadata.objectMetadataId).toBe(
-          input.targetFlatObjectMetadata.id,
+        expect(targetFieldMetadata.objectMetadataUniversalIdentifier).toBe(
+          input.targetFlatObjectMetadata.universalIdentifier,
         );
-        expect(targetFieldMetadata.relationTargetObjectMetadataId).toBe(
-          input.sourceFlatObjectMetadata.id,
-        );
+        expect(
+          targetFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+        ).toBe(input.sourceFlatObjectMetadata.universalIdentifier);
         expect(targetSettings.relationType).toBe(expectedTargetRelationType);
 
-        expect(sourceFieldMetadata.relationTargetFieldMetadataId).toBe(
-          targetFieldMetadata.id,
-        );
-        expect(targetFieldMetadata.relationTargetFieldMetadataId).toBe(
-          sourceFieldMetadata.id,
-        );
+        expect(
+          sourceFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+        ).toBe(targetFieldMetadata.universalIdentifier);
+        expect(
+          targetFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+        ).toBe(sourceFieldMetadata.universalIdentifier);
 
         if (expectedSourceRelationType === RelationType.MANY_TO_ONE) {
           expect(sourceSettings.joinColumnName).toBe(
@@ -326,5 +340,51 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         }
       },
     );
+  });
+
+  describe('Universal identifier behaviour', () => {
+    it('should keep the source field universalIdentifier from createFieldInput', () => {
+      const sourceUniversalIdentifier = '11111111-2222-3333-4444-555555555555';
+
+      const input: GenerateMorphOrRelationFlatFieldMetadataPairTestInput = {
+        sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
+        targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+        targetFlatFieldMetadataType: FieldMetadataType.RELATION,
+        sourceFlatObjectMetadataJoinColumnName: 'petId',
+        flatApplication: MOCK_FLAT_APPLICATION,
+        createFieldInput: {
+          name: 'pets',
+          label: 'Pets',
+          description: 'Company pets',
+          icon: 'IconCat',
+          type: FieldMetadataType.RELATION,
+          isCustom: true,
+          isSystem: false,
+          isUnique: false,
+          universalIdentifier: sourceUniversalIdentifier,
+          relationCreationPayload: {
+            type: RelationType.ONE_TO_MANY,
+            targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+            targetFieldLabel: 'Company',
+            targetFieldIcon: 'IconBuildingSkyscraper',
+          },
+        },
+      };
+
+      const result: SourceTargetMorphOrRelationFlatFieldAndFlatIndex =
+        generateMorphOrRelationFlatFieldMetadataPair(input);
+
+      const [sourceFieldMetadata, targetFieldMetadata] =
+        result.flatFieldMetadatas;
+
+      expect(sourceFieldMetadata.universalIdentifier).toBe(
+        sourceUniversalIdentifier,
+      );
+
+      expect(targetFieldMetadata.universalIdentifier).toBeDefined();
+      expect(targetFieldMetadata.universalIdentifier).not.toBe(
+        sourceUniversalIdentifier,
+      );
+    });
   });
 });

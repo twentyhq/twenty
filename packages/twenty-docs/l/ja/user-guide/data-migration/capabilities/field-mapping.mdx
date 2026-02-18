@@ -1,198 +1,198 @@
 ---
-title: Field Mapping
-description: How field mapping works during data import.
+title: フィールドマッピング
+description: データインポート時のフィールドマッピングの仕組み。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## How Field Mapping Works
+## フィールドマッピングの仕組み
 
-When you upload a file, Twenty analyzes your columns and attempts to match them to existing fields.
+ファイルをアップロードすると、Twenty が列を解析し、既存のフィールドに一致させようとします。
 
-### Automatic Mapping
+### 自動マッピング
 
-Twenty tries to match columns based on:
+Twenty は次の基準に基づいて列を照合します：
 
-* Column header names (exact or similar matches)
-* Data type detection (dates, numbers, emails)
-* Common field patterns
+* 列ヘッダー名（完全一致または類似一致）
+* データ型の検出（日付、数値、メールアドレス）
+* 一般的なフィールドのパターン
 
-<Note>**Quick tip:** Export a few rows from the object you want to import. The exported file will have the exact column names Twenty expects, making automatic mapping seamless during import.</Note>
+<Note>**クイックヒント：** インポートしたいオブジェクトから数行をエクスポートしてください。 エクスポートしたファイルには、Twenty が想定する正確な列名が含まれているため、インポート時の自動マッピングがスムーズになります。</Note>
 
-### Manual Mapping Options
+### 手動マッピングのオプション
 
-For each column, you can:
+各列に対して、次の操作ができます：
 
-* **Map to a field**: Select the matching Twenty field from a dropdown
-* **Do not map**: Skip the column entirely (data won't be imported)
+* **フィールドにマップ**：ドロップダウンから一致する Twenty のフィールドを選択します
+* **マップしない**：その列をスキップします（データはインポートされません）
 
-<Note>**Fields must exist before import.** The import creates records, not fields. Create custom fields under **Settings → Data Model** before importing.</Note>
+<Note>**フィールドはインポート前に存在している必要があります。** インポートで作成されるのはフィールドではなくレコードです。 インポート前に **Settings → Data Model** でカスタムフィールドを作成してください。</Note>
 
-## Field Type Compatibility
+## フィールドタイプの互換性
 
-All field types available in the Data Model are supported for import.
+Data Model で利用可能なすべてのフィールドタイプはインポートに対応しています。
 
-You can also import `id` values to either assign a specific ID to new records or update existing ones.
+`id` 値をインポートして、新規レコードに特定の ID を割り当てるか、既存レコードを更新することもできます。
 
 <img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
 
-## Data Format Requirements
+## データ形式の要件
 
-<Note>**Some fields have special syntax.** We recommend downloading the sample file before preparing your import to see the expected syntax for each field type.</Note>
+<Note>**一部のフィールドには特別な書式があります。** インポートの準備をする前にサンプルファイルをダウンロードし、各フィールドタイプに期待される書式を確認することをおすすめします。</Note>
 
-### Address Fields
+### 住所フィールド
 
-Address is a nested field with multiple columns. Some can be left empty.
+住所は複数の列を持つネストされたフィールドです。 一部は空欄のままにできます。
 
-* **Address / Address 1**: Street address line 1
-* **Address / Address 2**: Street address line 2
-* **Address / City**: City name
-* **Address / State**: State or province
-* **Address / Country**: Country name
-* **Address / Post Code**: Postal/ZIP code
+* **Address / Address 1**：住所の1行目
+* **Address / Address 2**：住所の2行目
+* **Address / City**：市区町村名
+* **Address / State**：州または都道府県
+* **Address / Country**：国名
+* **Address / Post Code**：郵便番号／ZIP コード
 
-### Array Fields
+### 配列フィールド
 
-Use the following format:
+次の形式を使用します：
 
 ```
-["value1","value2"]
+[\"value1\",\"value2\"]
 ```
 
-### Boolean Fields
+### ブール型フィールド
 
-Use `TRUE` or `FALSE` (uppercase) - not `true` or `false`
+`TRUE` または `FALSE`（大文字）を使用します。`true` や `false` は使用しません
 
-### Currency Fields
+### 通貨フィールド
 
-Currency is a nested field with two columns that **both must be filled**:
+通貨は 2 列からなるネストされたフィールドで、**両方を必ず入力** する必要があります：
 
-* **Amount / Amount**: The numeric value (e.g., `1234.56`)
-* **Amount / Currency**: The currency code (e.g., `USD`, `EUR`)
+* **Amount / Amount**：数値（例：`1234.56`）
+* **Amount / Currency**：通貨コード（例：`USD`、`EUR`）
 
-### Date Fields
+### 日付フィールド
 
-Supported formats:
+サポートされている形式：
 
-* `YYYY-MM-DD` (recommended)
+* `YYYY-MM-DD`（推奨）
 * `MM/DD/YYYY`
 * `DD/MM/YYYY`
-* ISO 8601 format
+* ISO 8601 形式
 
-### Domain Fields
+### ドメインフィールド
 
-* It is recommended to use the format `https://domain.com` to avoid creating duplicates, as this is the format used for Companies created by the mailbox and calendar synchronizations
-* A `Domain Label` and `Domain URL` can be filled: best practice is to fill `domain.com` in the label and `https://domain.com` in the url
-* Domains must be unique within the Companies object
-* **Domains must be unique within the file to import**
+* 重複作成を避けるため、`https://domain.com` の形式を使用することを推奨します。これは、メールボックスおよびカレンダーの同期で作成される Companies オブジェクトでも使用される形式です
+* `Domain Label` と `Domain URL` を入力できます。ベストプラクティスは、ラベルには `domain.com`、URL には `https://domain.com` を入力することです
+* Companies オブジェクト内でドメインは一意である必要があります
+* **インポートするファイル内でもドメインは一意である必要があります**
 
-### Email Fields
+### メールアドレスフィールド
 
-* Must be valid email format
-* Emails must be unique within the People object
-* **Emails must be unique within the file to import**
-* For additional emails: use **Emails / Primary Email** for the main email, and **Emails / Additional Emails** with this format:
-
-```
-["jane@twenty.com","jane.doe@twenty.com"]
-```
-
-### Id Fields
-
-Specifying an `id` during import is optional. Twenty auto-generates one if not provided.
-
-Use cases for mapping an `id` column:
-
-* **Set a specific ID**: Choose the UUID for newly created records
-* **Update existing records**: Match against existing records to update them instead of creating duplicates. In that case, it is recommended to not map the other unique fields: mapping only one unique field ensures a smoother import.
-
-<Note>If you provide an `id`, it must be in UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
-
-### JSON Fields
-
-Use valid JSON format:
+* 有効なメールアドレス形式である必要があります
+* People オブジェクト内でメールアドレスは一意である必要があります
+* **インポートするファイル内でもメールアドレスは一意である必要があります**
+* 追加のメールアドレスについて：メインのメールには **Emails / Primary Email** を使用し、**Emails / Additional Emails** には次の形式を使用します：
 
 ```
-{"key":"value","key2":"value2"}
+[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
 ```
 
-### Links Fields
+### ID フィールド
 
-Similar to Domain fields:
+インポート時に `id` を指定するかどうかは任意です。 指定しない場合は、Twenty が自動生成します。
 
-* Fill both the label and URL columns: **Links / Link URL** and **Links / Link Label**
-* Use full URL format: `https://example.com`
-* For secondary links, use **Links / Secondary Links** column with this format:
+`id` 列をマッピングするユースケース：
+
+* **特定の ID を設定**：新規作成されるレコードの UUID を指定します
+* **既存レコードを更新**：既存レコードに照合して、重複を作成せずに更新します。 その場合、他の一意なフィールドはマッピングしないことを推奨します。唯一の一意フィールドのみをマッピングすることで、よりスムーズにインポートできます。
+
+<Note>`id` を指定する場合は UUID 形式（例：`c776ee49-f608-4a77-8cc8-6fe96ae1e43f`）である必要があります。</Note>
+
+### JSON フィールド
+
+有効な JSON 形式を使用します：
 
 ```
-[{"url":"https://twenty.com","label":"Twenty"}]
+{\"key\":\"value\",\"key2\":\"value2\"}
 ```
 
-### Multi-Select Fields
+### リンクフィールド
 
-Use the **API names** (not the display labels) in the following format:
+ドメインフィールドと同様に：
+
+* ラベル列と URL 列の両方を入力します：**Links / Link URL** と **Links / Link Label**
+* 完全な URL 形式（`https://example.com`）を使用します
+* セカンダリリンクには **Links / Secondary Links** 列を使用し、次の形式で入力します：
 
 ```
-["VALUE1","VALUE2"]
+[{\"url\":\"https://twenty.com\",\"label\":\"Twenty\"}]
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
+### マルチセレクトフィールド
 
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+表示ラベルではなく **API 名** を使用し、次の形式で指定します：
+
+```
+[\"VALUE1\",\"VALUE2\"]
+```
+
+API 名の確認方法は[こちら](#finding-api-names-for-select-fields)をご覧ください。
+
+<Note>新しい選択肢はインポートによって自動作成されません。 インポート前に **Settings → Data Model** で追加する必要があります。</Note>
 
 <Warning>
-  **Import overwrites, it does not add.**
+  **インポートは追加ではなく上書きです。**
 
-  If a record already has `VALUE2` and `VALUE3` selected, and you import `["VALUE1"]`, the record will only have `VALUE1` after import. The previous selections are replaced, not merged.
+  レコードにすでに `VALUE2` と `VALUE3` が選択されている状態で `[\"VALUE1\"]` をインポートすると、インポート後そのレコードは `VALUE1` のみになります。 以前の選択は結合されず、置き換えられます。
 </Warning>
 
-### Number Fields
+### 数値フィールド
 
-* Numbers only
-* Decimals use period: `1234.56`
-* No thousands separators
+* 数値のみ
+* 小数点はピリオドを使用：`1234.56`
+* 桁区切りは使用しないでください
 
-### Phone Fields
+### 電話番号フィールド
 
-Phone is a nested field with multiple columns that **must be filled**
+電話は複数の列からなるネストされたフィールドで、**必ず入力** する必要があります
 
-* **Phones / Primary Phone Number**: The phone number (e.g., `4159095555`)
-* **Phones / Primary Phone Country Code**: Country code (e.g., `US`)
-* **Phones / Primary Phone Calling Code**: Dialing code (e.g., `+1`)
+* **Phones / Primary Phone Number**：電話番号（例：`4159095555`）
+* **Phones / Primary Phone Country Code**：国コード（例：`US`）
+* **Phones / Primary Phone Calling Code**：ダイヤルコード（例：`+1`）
 
-### Rating Fields
+### 評価フィールド
 
-Use the API name format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4`, `RATING_5`
+API 名の形式（`RATING_1`、`RATING_2`、`RATING_3`、`RATING_4`、`RATING_5`）を使用します
 
-### Relation Fields
+### リレーションフィールド
 
-Please see our dedicated article: [Import Relations Between Objects](/l/ja/user-guide/data-migration/capabilities/import-relations)
+詳細は専用記事「[オブジェクト間のリレーションのインポート](/l/ja/user-guide/data-migration/capabilities/import-relations)」をご覧ください
 
-### Select Fields
+### 選択フィールド
 
-Use the **API name** of the option (not the display label):
+表示ラベルではなく、オプションの **API 名** を使用します：
 
 ```
 VALUE1
 ```
 
-See [here](#finding-api-names-for-select-fields) where to find the API names.
-<Note>New select options will not be created automatically by the import. They must be added under **Settings → Data Model** before importing.</Note>
+API 名の見つけ方は[こちら](#finding-api-names-for-select-fields)を参照してください。
+<Note>新しい Select オプションは、インポートによって自動的に作成されません。 インポート前に **設定 → データモデル** で追加する必要があります。</Note>
 
-### Text Fields
+### テキストフィールド
 
-* No special formatting required
-* Leading/trailing spaces are trimmed
+* 特別な書式設定は不要です
+* 先頭と末尾の空白は削除されます
 
-## Finding API Names
+## API 名の見つけ方
 
-For Select, Multi-Select, and Array fields with predefined options, you must use the **API names**, not the display labels.
+事前定義されたオプションを持つ Select、Multi-Select、Array フィールドでは、表示ラベルではなく、必ず **API 名** を使用してください。
 
-### How to Find API Names
+### API 名の確認方法
 
-1. Go to **Settings → Data Model**
-2. Select the object and field
-3. Enable **Advanced mode** (toggle at the bottom right of the settings page)
-4. View the API name for each option
+1. **設定 → データモデル** に移動する
+2. オブジェクトとフィールドを選択する
+3. **詳細モード** を有効にする（設定ページの右下にあるトグル）
+4. 各オプションの API 名を確認する
 
-<VimeoEmbed videoId="1144910809" title="Video demonstration" />
+<VimeoEmbed videoId="1144910809" title="デモ動画" />

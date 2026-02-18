@@ -22,7 +22,6 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -47,6 +46,7 @@ export class CreatePersonService {
 
         return createdPeople.raw;
       },
+      authContext,
     );
   }
 
@@ -61,7 +61,6 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -86,6 +85,7 @@ export class CreatePersonService {
 
         return restoredPeople.raw;
       },
+      authContext,
     );
   }
 

@@ -517,6 +517,23 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  throttleRetryAfter: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'throttleRetryAfter',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Throttle Retry After',
+      description: 'Throttle Retry After',
+      icon: 'IconClock',
+      isNullable: true,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   connectedAccount: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

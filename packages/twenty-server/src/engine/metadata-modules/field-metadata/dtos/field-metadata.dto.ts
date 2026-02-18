@@ -24,12 +24,11 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
-  FieldMetadataOptions,
-  FieldMetadataSettings,
+  type FieldMetadataOptions,
+  type FieldMetadataSettings,
   FieldMetadataType,
+  type FieldMetadataDefaultValue,
 } from 'twenty-shared/types';
-
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
@@ -150,6 +149,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
 
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  morphId?: string;
+
   @IsDateString(undefined, {
     message: ({ value }) =>
       `Field metadata created at is invalid got ${JSON.stringify(value)} isDate: ${value instanceof Date}`,
@@ -161,7 +165,6 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field()
   updatedAt: Date;
 
-  // TODO prastoin make non nullable once MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand has passed in production  @Field(() => UUIDScalarType, { nullable: true })
-  @Field(() => UUIDScalarType, { nullable: true })
-  applicationId?: string;
+  @Field(() => UUIDScalarType)
+  applicationId: string;
 }

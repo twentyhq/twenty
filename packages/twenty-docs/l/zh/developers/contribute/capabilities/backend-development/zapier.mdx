@@ -1,18 +1,18 @@
 ---
-title: Zapier App
+title: Zapier 应用
 ---
 
-Effortlessly sync Twenty with 3000+ apps using [Zapier](https://zapier.com/). Automate tasks, boost productivity, and supercharge your customer relationships!
+通过 [Zapier](https://zapier.com/) 无缝同步 Twenty 和 3000 多个应用。 自动化任务，提高生产力，提升客户关系！
 
-## About Zapier
+## 关于 Zapier
 
-Zapier is a tool that allows you to automate workflows by connecting the apps that your team uses every day. The fundamental concept of Zapier is automation workflows, called Zaps, and include triggers and actions.
+Zapier 是一款工具，可通过连接你的团队每天使用的应用来实现工作流自动化。 Zapier 的基本概念是称为 Zaps 的自动化工作流，包含触发器和操作。
 
-You can learn more about how Zapier works [here](https://zapier.com/how-it-works).
+您可以在[这里](https://zapier.com/how-it-works)了解更多关于 Zapier 的工作原理。
 
-## Setup
+## 设置
 
-### Step 1: Install Zapier packages
+### 步骤 1: 安装 Zapier 包
 
 ```bash
 cd packages/twenty-zapier
@@ -20,33 +20,33 @@ cd packages/twenty-zapier
 yarn
 ```
 
-### Step 2: Login with the CLI
+### 步骤 2: 使用 CLI 登录
 
-Use your Zapier credentials to log in using the CLI:
+使用您的 Zapier 凭证通过 CLI 登录：
 
 ```bash
 zapier login
 ```
 
-### Step 3: Set environment variables
+### 步骤 3: 设置环境变量
 
-From the `packages/twenty-zapier` folder, run:
+从 `packages/twenty-zapier` 文件夹运行：
 
 ```bash
 cp .env.example .env
 ```
 
-Run the application locally, go to [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), and generate an API key.
+在本地运行应用程序，访问 [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)，并生成一个 API 密钥。
 
-Replace the **YOUR_API_KEY** value in the `.env` file with the API key you just generated.
+将 `.env` 文件中的 **YOUR_API_KEY** 值替换为你刚刚生成的 API 密钥。
 
-## Development
+## 开发
 
 <Warning>
-  Make sure to run `yarn build` before any `zapier` command.
+  确保在执行任何 `zapier` 命令前运行 `yarn build`。
 </Warning>
 
-### Test
+### 测试
 
 ```bash
 yarn test
@@ -58,25 +58,25 @@ yarn test
 yarn format
 ```
 
-### Watch and compile as you edit code
+### 编辑代码时监视并编译
 
 ```bash
 yarn watch
 ```
 
-### Validate your Zapier app
+### 验证您的 Zapier 应用
 
 ```bash
 yarn validate
 ```
 
-### Deploy your Zapier app
+### 部署您的 Zapier 应用
 
 ```bash
 yarn deploy
 ```
 
-### List all Zapier CLI commands
+### 列出所有 Zapier CLI 命令
 
 ```bash
 zapier

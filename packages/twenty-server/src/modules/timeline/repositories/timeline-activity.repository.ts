@@ -16,7 +16,6 @@ type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   })[];
   workspaceId: string;
   objectSingularName: string;
-  isFeatureFlagTimelineActivityMigrated: boolean;
 };
 
 @Injectable()
@@ -29,90 +28,78 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
-    isFeatureFlagTimelineActivityMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const recentTimelineActivities =
-          await this.findRecentTimelineActivities({
-            objectSingularName,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const recentTimelineActivities = await this.findRecentTimelineActivities({
+        objectSingularName,
+        workspaceId,
+        payloads,
+      });
+
+      const payloadsWithDiff = payloads
+        .filter(({ properties }) => {
+          const isDiffEmpty =
+            properties.diff !== null &&
+            properties.diff &&
+            Object.keys(properties.diff).length === 0;
+
+          return !isDiffEmpty;
+        })
+        .map(({ properties, ...rest }) => ({
+          ...rest,
+          properties: isDefined(properties.diff)
+            ? { diff: properties.diff }
+            : {},
+        }));
+
+      const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
+        [];
+
+      const timelineActivityPropertyName =
+        await this.getTimelineActivityPropertyName(objectSingularName);
+
+      for (const payload of payloadsWithDiff) {
+        const recentTimelineActivity = recentTimelineActivities.find(
+          (timelineActivity) =>
+            timelineActivity[timelineActivityPropertyName] ===
+              payload.recordId &&
+            timelineActivity.workspaceMemberId === payload.workspaceMemberId &&
+            (!isDefined(payload.linkedRecordId) ||
+              timelineActivity.linkedRecordId === payload.linkedRecordId) &&
+            timelineActivity.name === payload.name,
+        );
+
+        if (recentTimelineActivity) {
+          const mergedProperties = objectRecordDiffMerge(
+            recentTimelineActivity.properties,
+            payload.properties,
+          );
+
+          await this.updateTimelineActivity({
+            id: recentTimelineActivity.id,
+            properties: mergedProperties,
+            workspaceMemberId: payload.workspaceMemberId,
             workspaceId,
-            payloads,
-            isFeatureFlagTimelineActivityMigrated,
           });
-
-        const payloadsWithDiff = payloads
-          .filter(({ properties }) => {
-            const isDiffEmpty =
-              properties.diff !== null &&
-              properties.diff &&
-              Object.keys(properties.diff).length === 0;
-
-            return !isDiffEmpty;
-          })
-          .map(({ properties, ...rest }) => ({
-            ...rest,
-            properties: isDefined(properties.diff)
-              ? { diff: properties.diff }
-              : {},
-          }));
-
-        const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
-          [];
-
-        const timelineActivityPropertyName =
-          await this.getTimelineActivityPropertyName(
-            objectSingularName,
-            isFeatureFlagTimelineActivityMigrated,
-          );
-
-        for (const payload of payloadsWithDiff) {
-          const recentTimelineActivity = recentTimelineActivities.find(
-            (timelineActivity) =>
-              timelineActivity[timelineActivityPropertyName] ===
-                payload.recordId &&
-              timelineActivity.workspaceMemberId ===
-                payload.workspaceMemberId &&
-              (!isDefined(payload.linkedRecordId) ||
-                timelineActivity.linkedRecordId === payload.linkedRecordId) &&
-              timelineActivity.name === payload.name,
-          );
-
-          if (recentTimelineActivity) {
-            const mergedProperties = objectRecordDiffMerge(
-              recentTimelineActivity.properties,
-              payload.properties,
-            );
-
-            await this.updateTimelineActivity({
-              id: recentTimelineActivity.id,
-              properties: mergedProperties,
-              workspaceMemberId: payload.workspaceMemberId,
-              workspaceId,
-            });
-          } else {
-            payloadsToInsert.push(payload);
-          }
+        } else {
+          payloadsToInsert.push(payload);
         }
+      }
 
-        await this.insertTimelineActivities({
-          objectSingularName,
-          payloads: payloadsToInsert,
-          workspaceId,
-          isFeatureFlagTimelineActivityMigrated,
-        });
-      },
-    );
+      await this.insertTimelineActivities({
+        objectSingularName,
+        payloads: payloadsToInsert,
+        workspaceId,
+      });
+    }, authContext);
   }
 
   private async findRecentTimelineActivities({
     objectSingularName,
     workspaceId,
     payloads,
-    isFeatureFlagTimelineActivityMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const timelineActivityTypeORMRepository =
       await this.globalWorkspaceOrmManager.getRepository(
@@ -126,10 +113,7 @@ export class TimelineActivityRepository {
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
     const timelineActivityPropertyName =
-      await this.getTimelineActivityPropertyName(
-        objectSingularName,
-        isFeatureFlagTimelineActivityMigrated,
-      );
+      await this.getTimelineActivityPropertyName(objectSingularName);
 
     const whereConditions: Record<string, unknown> = {
       [timelineActivityPropertyName]: In(
@@ -153,7 +137,6 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
-    isFeatureFlagTimelineActivityMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     if (payloads.length === 0) {
       return;
@@ -169,10 +152,7 @@ export class TimelineActivityRepository {
       );
 
     const timelineActivityPropertyName =
-      await this.getTimelineActivityPropertyName(
-        objectSingularName,
-        isFeatureFlagTimelineActivityMigrated,
-      );
+      await this.getTimelineActivityPropertyName(objectSingularName);
 
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
@@ -213,12 +193,7 @@ export class TimelineActivityRepository {
     });
   }
 
-  private async getTimelineActivityPropertyName(
-    objectSingularName: string,
-    isFeatureFlagTimelineActivityMigrated: boolean,
-  ) {
-    return isFeatureFlagTimelineActivityMigrated
-      ? `${buildTimelineActivityRelatedMorphFieldMetadataName(objectSingularName)}Id`
-      : `${objectSingularName}Id`;
+  private async getTimelineActivityPropertyName(objectSingularName: string) {
+    return `${buildTimelineActivityRelatedMorphFieldMetadataName(objectSingularName)}Id`;
   }
 }

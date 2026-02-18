@@ -18,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
-import { type WidgetConfiguration } from '~/generated/graphql';
+import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type ChartManualSortSubMenuContentProps = {
@@ -101,7 +101,7 @@ export const ChartManualSortSubMenuContent = ({
                   isDragDisabled={sortedOptions.length === 1}
                   itemComponent={
                     <MenuItemDraggable
-                      showGrip
+                      gripMode="always"
                       isDragDisabled={sortedOptions.length === 1}
                       text={
                         <Tag

@@ -7,16 +7,15 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   unique: true,
 })
 export abstract class SyncableEntity extends WorkspaceRelatedEntity {
-  @Column({ nullable: true, type: 'uuid' })
-  // TODO should not be nullable
+  @Column({ nullable: false, type: 'uuid' })
   universalIdentifier: string;
 
-  @Column({ nullable: true, type: 'uuid' })
-  applicationId: string | null;
+  @Column({ nullable: false, type: 'uuid' })
+  applicationId: string;
 
   @ManyToOne('ApplicationEntity', {
     onDelete: 'CASCADE',
-    nullable: true,
+    nullable: false,
   })
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;

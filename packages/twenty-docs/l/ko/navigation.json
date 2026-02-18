@@ -1,72 +1,72 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "사용자 안내서",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "Twenty 알아보기",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "dataModel": {
-          "label": "Data Model",
+          "label": "데이터 모델",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "데이터 마이그레이션",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "캘린더 및 이메일",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "workflows": {
-          "label": "Workflows",
+          "label": "워크플로우",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "사용 방법",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "CRM 자동화"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "다른 도구에 연결하기"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "고급 설정"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "추가 도움이 필요하십니까"
                 }
               }
             }
@@ -76,122 +76,122 @@
           "label": "AI",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "뷰 및 파이프라인",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "dashboards": {
-          "label": "Dashboards",
+          "label": "대시보드",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "권한 및 접근",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "billing": {
-          "label": "Billing",
+          "label": "청구",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         },
         "settings": {
-          "label": "Settings",
+          "label": "설정",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "사용 방법"
             }
           }
         }
       }
     },
     "developers": {
-      "label": "Developers",
+      "label": "개발자",
       "groups": {
         "developersGroup": {
-          "label": "Developers"
+          "label": "개발자"
         },
         "extend": {
-          "label": "Extend",
+          "label": "확장",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "셀프 호스팅",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "기능"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "기여",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "기능",
               "groups": {
                 "frontendDevelopment": {
-                  "label": "Frontend Development",
+                  "label": "프론트엔드 개발",
                   "groups": {
                     "twentyUi": {
                       "label": "Twenty UI",
                       "groups": {
                         "display": {
-                          "label": "Display"
+                          "label": "표시"
                         },
                         "feedback": {
-                          "label": "Feedback"
+                          "label": "피드백"
                         },
                         "input": {
-                          "label": "Input"
+                          "label": "입력"
                         },
                         "navigation": {
-                          "label": "Navigation"
+                          "label": "네비게이션"
                         }
                       }
                     }
                   }
                 },
                 "backendDevelopment": {
-                  "label": "Backend Development"
+                  "label": "백엔드 개발"
                 }
               }
             }

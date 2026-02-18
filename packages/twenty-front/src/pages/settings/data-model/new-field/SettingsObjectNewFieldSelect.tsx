@@ -43,6 +43,7 @@ export const SettingsObjectNewFieldSelect = () => {
       type: FieldMetadataType.TEXT,
     },
   });
+
   const excludedFieldTypes: FieldType[] = (
     [
       FieldMetadataType.NUMERIC,

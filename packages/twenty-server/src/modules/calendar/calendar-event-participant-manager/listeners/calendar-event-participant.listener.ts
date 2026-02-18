@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -75,17 +74,10 @@ export class CalendarEventParticipantListener {
         .filter(isDefined);
     });
 
-    const isFeatureFlagTimelineActivityMigrated =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
-        batchEvent.workspaceId,
-      );
-
     await this.timelineActivityRepository.upsertTimelineActivities({
       objectSingularName: 'person',
       workspaceId: batchEvent.workspaceId,
       payloads: timelineActivityPayloads.filter(isDefined),
-      isFeatureFlagTimelineActivityMigrated,
     });
   }
 }

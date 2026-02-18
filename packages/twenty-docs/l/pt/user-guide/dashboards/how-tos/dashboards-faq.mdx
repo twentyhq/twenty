@@ -1,59 +1,55 @@
 ---
-title: Dashboards FAQ
-description: Frequently asked questions about dashboards in Twenty.
+title: Perguntas frequentes sobre painéis
+description: Perguntas frequentes sobre painéis na Twenty.
 ---
 
 <AccordionGroup>
-  <Accordion title="Can I create private dashboards?">
-    No, dashboards are currently visible to everyone with access to your Twenty workspace. Private dashboards are not yet available.
+  <Accordion title="Posso criar painéis privados?">
+    Não, os painéis atualmente são visíveis para todos que têm acesso ao seu espaço de trabalho da Twenty. Painéis privados ainda não estão disponíveis.
   </Accordion>
 
-  <Accordion title="Why do my metrics look different from my colleague's?">
-    Dashboards currently display data based on the viewer's timezone. If you're in different regions (e.g., APAC vs. US), you may see slightly different numbers for the same dashboard. We're working on adding a timezone setting per dashboard to ensure consistent data across teams.
+  <Accordion title="Por que minhas métricas parecem diferentes das do meu colega?">
+    Atualmente, os painéis exibem dados com base no fuso horário de quem está visualizando. Se vocês estiverem em regiões diferentes (por exemplo, APAC vs. EUA), poderão ver números ligeiramente diferentes para o mesmo painel. Estamos trabalhando para adicionar uma configuração de fuso horário por painel para garantir dados consistentes entre as equipes.
   </Accordion>
 
-  <Accordion title="Can I export my dashboard?">
-    Exporting dashboards is not available at the moment. This feature is on our roadmap.
+  <Accordion title="Posso exportar meu painel?">
+    A exportação de painéis não está disponível no momento. Este recurso está em nosso roadmap.
   </Accordion>
 
-  <Accordion title="Can I share dashboards with external users?">
-    No, sharing dashboards with users outside your Twenty workspace (non-Twenty users) is not currently supported.
+  <Accordion title="Posso compartilhar painéis com usuários externos?">
+    Não, compartilhar painéis com usuários fora do seu espaço de trabalho da Twenty (usuários que não são da Twenty) não é suportado no momento.
   </Accordion>
 
-  <Accordion title="How do I add a dashboard to my favorites?">
-    Open the dashboard you want to favorite, then click the star icon. Favorites are personal—they won't affect other users.
+  <Accordion title="Como adiciono um painel aos meus favoritos?">
+    Abra o painel que você quer adicionar aos favoritos e clique no ícone de estrela. Os favoritos são pessoais — não afetam outros usuários.
   </Accordion>
 
-  <Accordion title="What's the difference between tabs and widgets?">
-    * **Tabs** organize your dashboard into sections (like pages within the dashboard)
-    * **Widgets** are the individual visualizations (charts, numbers, iFrames) within each tab
+  <Accordion title="Qual é a diferença entre abas e widgets?">
+    * **Abas** organizam seu painel em seções (como páginas dentro do painel)
+    * **Widgets** são as visualizações individuais (gráficos, números, iFrames) dentro de cada aba
 
-    Structure: Dashboard → Tabs → Widgets
+    Estrutura: Painel → Abas → Widgets
   </Accordion>
 
-  <Accordion title="Why do I see 'Undisplayed data' warning on my bar chart?">
-    Bar charts have display limits: 100 bars for horizontal charts, 50 for vertical. If your data exceeds this, add filters to narrow down the results or change the grouping (e.g., group by week instead of day).
+  <Accordion title="Posso filtrar um painel inteiro de uma só vez?">
+    Filtros no nível do painel ainda não estão disponíveis, mas este recurso está em nosso roadmap. No momento, é preciso aplicar filtros a cada widget individualmente.
   </Accordion>
 
-  <Accordion title="Can I filter an entire dashboard at once?">
-    Dashboard-level filters are not available yet, but this feature is on our roadmap. Currently, you need to apply filters to each widget individually.
+  <Accordion title="Gráficos de medidor ou tabelas estão disponíveis?">
+    Ainda não. Gráficos de medidor e tabelas estão em nosso roadmap e serão adicionados em uma versão futura.
   </Accordion>
 
-  <Accordion title="Are gauge charts or tables available?">
-    Not yet. Gauge charts and tables are on our roadmap and will be added in a future release.
+  <Accordion title="Como duplico um painel?">
+    1. Certifique-se de que está no modo de visualização (não de edição)
+    2. Abra a barra de comandos com **Cmd + K** (ou **Ctrl + K** no Windows)
+    3. Selecione **Duplicar painel**
   </Accordion>
 
-  <Accordion title="How do I duplicate a dashboard?">
-    1. Make sure you're in view mode (not editing)
-    2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
-    3. Select **Duplicate dashboard**
-  </Accordion>
+  <Accordion title="Com que frequência os dados do painel são atualizados?">
+    Os widgets são atualizados automaticamente conforme seus dados de CRM mudam:
 
-  <Accordion title="How often does dashboard data refresh?">
-    Widgets update automatically as your CRM data changes:
-
-    * Real-time updates for most metrics
-    * Use the refresh button for a manual update if needed
-    * Historical data is preserved for trend analysis
+    * Atualizações em tempo real para a maioria das métricas
+    * Use o botão Atualizar para uma atualização manual, se necessário
+    * Os dados históricos são preservados para análise de tendências
   </Accordion>
 </AccordionGroup>

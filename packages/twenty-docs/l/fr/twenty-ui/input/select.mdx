@@ -1,16 +1,16 @@
 ---
-title: Select
+title: Sélectionner
 image: /images/user-guide/what-is-twenty/20.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="En-tête" />
 </Frame>
 
-Allows users to pick a value from a list of predefined options.
+Permet aux utilisateurs de choisir une valeur parmi une liste d'options prédéfinies.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Utilisation">
     ```jsx
     import { RecoilRoot } from 'recoil';
     import { IconTwentyStar } from 'twenty-ui/display';
@@ -24,7 +24,7 @@ Allows users to pick a value from a list of predefined options.
           <Select
             className
             disabled={false}
-            label="Select an option"
+            label="Sélectionnez une option"
             options={[
               { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
               { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
@@ -38,14 +38,14 @@ Allows users to pick a value from a list of predefined options.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type     | Description                                                                                                                                                                                              |
-    | --------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className | string   | Optional CSS class for additional styling                                                                                                                                                                |
-    | disabled  | boolean  | When set to `true`, disables user interaction with the component                                                                                                                                         |
-    | label     | string   | The label to describe the purpose of the `Select` component                                                                                                                                              |
-    | onChange  | function | The function called when the selected values change                                                                                                                                                      |
-    | options   | array    | Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon` |
-    | value     | string   | Represents the currently selected value. It should match one of the `value` properties in the `options` array                                                                                            |
+  <Tab title="Propriétés">
+    | Propriétés  | Type     | Description                                                                                                                                                                                                                                            |
+    | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | nomDeClasse | chaîne   | Classe CSS facultative pour le style supplémentaire                                                                                                                                                                                                    |
+    | désactivé   | booléen  | Lorsqu'il est défini sur `true`, désactive l'interaction de l'utilisateur avec le composant                                                                                                                                                            |
+    | étiquette   | chaîne   | Le libellé décrivant la finalité du composant `Select`                                                                                                                                                                                                 |
+    | onChange    | fonction | La fonction appelée lorsque les valeurs sélectionnées changent                                                                                                                                                                                         |
+    | options     | tableau  | Représente les options disponibles pour le composant `Selected`. C'est un tableau d'objets où chaque objet possède une propriété `value` (l'identifiant unique), une propriété `label` (l'identifiant unique) et, éventuellement, une propriété `Icon` |
+    | valeur      | chaîne   | Représente la valeur actuellement sélectionnée. Elle doit correspondre à l'une des propriétés `value` du tableau `options`                                                                                                                             |
   </Tab>
 </Tabs>

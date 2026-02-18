@@ -1,5 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { graphql, type GraphQLQuery, http, HttpResponse } from 'msw';
+import { parse, type FieldNode } from 'graphql';
+import { graphql, http, HttpResponse, type GraphQLQuery } from 'msw';
 
 import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
@@ -39,6 +40,39 @@ import { mockedViewFieldsData } from './mock-data/view-fields';
 const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesRecordConnectionMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
+
+const getRootFieldNamesFromQuery = (query: string) => {
+  try {
+    const document = parse(query);
+    const operationDefinition = document.definitions.find(
+      (definition) => definition.kind === 'OperationDefinition',
+    );
+
+    if (
+      !operationDefinition ||
+      operationDefinition.kind !== 'OperationDefinition'
+    ) {
+      return [];
+    }
+
+    return operationDefinition.selectionSet.selections
+      .filter((selection): selection is FieldNode => selection.kind === 'Field')
+      .map((selection) => selection.name.value);
+  } catch {
+    return [];
+  }
+};
+
+const createEmptyRecordConnection = () => ({
+  edges: [],
+  pageInfo: {
+    hasNextPage: false,
+    hasPreviousPage: false,
+    startCursor: null,
+    endCursor: null,
+  },
+  totalCount: 0,
+});
 
 export const metadataGraphql = graphql.link(
   `${REACT_APP_SERVER_BASE_URL}/metadata`,
@@ -227,6 +261,17 @@ export const graphqlMocks = {
           },
         },
       });
+    }),
+    graphql.query('CombinedFindManyRecords', ({ query }) => {
+      const rootFieldNames = getRootFieldNamesFromQuery(query ?? '');
+      const data = Object.fromEntries(
+        rootFieldNames.map((fieldName) => [
+          fieldName,
+          createEmptyRecordConnection(),
+        ]),
+      );
+
+      return HttpResponse.json({ data });
     }),
     graphql.query('FindManyViews', ({ variables }) => {
       const objectMetadataId = variables.filter?.objectMetadataId?.eq;

@@ -3,37 +3,12 @@
 exports[`Page layout tab creation should fail when pageLayoutId references non-existent layout 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "pageLayoutTab": [
-        {
-          "errors": [
-            {
-              "code": "PAGE_LAYOUT_NOT_FOUND",
-              "message": "Page layout not found",
-              "userFriendlyMessage": "Page layout not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "title": "Tab With Non-Existent Layout",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "pageLayoutTab",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 pageLayoutTab",
-    "summary": {
-      "pageLayoutTab": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating page layout tab",
-  "name": "GraphQLError",
+  "message": "Could not find pageLayout for given pageLayoutId",
+  "name": "NotFoundError",
 }
 `;
 

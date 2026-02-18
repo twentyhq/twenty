@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -31,11 +32,15 @@ export const prefillWorkflows = async (
     throw new Error('Company or person object metadata not found');
   }
 
-  const companyObjectMetadata =
-    flatObjectMetadataMaps.byId[companyObjectMetadataId];
+  const companyObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: companyObjectMetadataId,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
-  const personObjectMetadata =
-    flatObjectMetadataMaps.byId[personObjectMetadataId];
+  const personObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: personObjectMetadataId,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
   if (!isDefined(companyObjectMetadata) || !isDefined(personObjectMetadata)) {
     throw new Error('Company or person object metadata not found');

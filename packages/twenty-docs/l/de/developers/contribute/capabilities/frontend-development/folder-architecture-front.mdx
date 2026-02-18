@@ -24,7 +24,7 @@ front
 
 ## Seiten
 
-Enthält die Top-Level-Komponenten, die durch die Anwendungsrouten definiert werden. They import more low-level components from the modules folder (more details below).
+Enthält die Top-Level-Komponenten, die durch die Anwendungsrouten definiert werden. Sie importieren weitere Low-Level-Komponenten aus dem Ordner modules (weitere Details unten).
 
 ## Module
 
@@ -52,7 +52,7 @@ module1
 
 ### Kontexte
 
-A context is a way to pass data through the component tree without having to pass props down manually at every level.
+Ein Context ist eine Möglichkeit, Daten durch den Komponentenbaum weiterzugeben, ohne props auf jeder Ebene manuell weitergeben zu müssen.
 
 Weitere Details finden Sie unter [React Context](https://react.dev/reference/react#context-hooks).
 
@@ -64,7 +64,7 @@ Weitere Details finden Sie unter [GraphQL](https://graphql.org/learn/).
 
 * Fragmente
 
-Ein Fragment ist ein wiederverwendbares Stück einer Abfrage, das an verschiedenen Stellen verwendet werden kann. By using fragments, it's easier to avoid duplicating code.
+Ein Fragment ist ein wiederverwendbares Stück einer Abfrage, das an verschiedenen Stellen verwendet werden kann. Durch die Verwendung von Fragmenten lässt sich doppelter Code leichter vermeiden.
 
 Weitere Details finden Sie unter [GraphQL Fragmente](https://graphql.org/learn/queries/#fragments).
 
@@ -82,7 +82,7 @@ Weitere Details finden Sie unter [Hooks](https://react.dev/learn/reusing-logic-w
 
 ### Zustände
 
-Contains the state management logic. [RecoilJS](https://recoiljs.org) übernimmt dies.
+Enthält die State-Management-Logik. [RecoilJS](https://recoiljs.org) übernimmt dies.
 
 * Selektoren: Weitere Einzelheiten finden Sie unter [RecoilJS Selektoren](https://recoiljs.org/docs/basic-tutorial/selectors).
 
@@ -102,7 +102,7 @@ Indem Sie die UI-Komponenten von den anderen Komponenten im `modules`-Ordner tre
 
 ## Schnittstelle und Abhängigkeiten
 
-Sie können Code anderer Module aus jedem Modul importieren, mit Ausnahme des `ui`-Ordners. This will keep its code easy to test.
+Sie können Code anderer Module aus jedem Modul importieren, mit Ausnahme des `ui`-Ordners. Dadurch bleibt der Code leicht testbar.
 
 ### Intern
 

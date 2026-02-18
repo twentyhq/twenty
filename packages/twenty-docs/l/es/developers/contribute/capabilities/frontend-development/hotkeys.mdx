@@ -1,42 +1,42 @@
 ---
-title: Hotkeys
+title: Atajos de teclado
 ---
 
-## Introduction
+## Introducción
 
-When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
+Cuando necesitas escuchar una tecla de acceso rápido, normalmente usarías el evento `onKeyDown`.
 
-In `twenty-front` however, you might have conflicts between same hotkeys that are used in different components, mounted at the same time.
+En `twenty-front`, sin embargo, podrías tener conflictos entre los mismos atajos de teclado utilizados en diferentes componentes, montados al mismo tiempo.
 
-For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
+Por ejemplo, si tienes una página que escucha la tecla Enter y un modal que escucha la tecla Enter, con un componente Select dentro de ese modal que también escucha la tecla Enter, podrías tener un conflicto cuando todos están montados al mismo tiempo.
 
-## The `useScopedHotkeys` hook
+## El gancho `useScopedHotkeys`
 
-To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
+Para manejar este problema, tenemos un gancho personalizado que hace posible escuchar atajos de teclado sin ningún conflicto.
 
-You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+Lo colocas en un componente, y escuchará los atajos de teclado solo cuando el componente está montado Y cuando el **ámbito del atajo de teclado** especificado está activo.
 
-## How to listen for hotkeys in practice?
+## ¿Cómo escuchar atajos de teclado en la práctica?
 
-There are two steps involved in setting up hotkey listening :
+Hay dos pasos involucrados en configurar la escucha de atajos de teclado:
 
-1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
-2. Use the `useScopedHotkeys` hook to listen to hotkeys
+1. Establece el [ámbito del atajo de teclado](#qué-es-un-ambito-de-atajo-de-teclado-) que escuchará los atajos de teclado
+2. Usa el gancho `useScopedHotkeys` para escuchar atajos de teclado
 
-Setting up hotkey scopes is required even in simple pages, because other UI elements like left menu or command menu might also listen to hotkeys.
+Configurar los ámbitos de atajos de teclado es necesario incluso en páginas simples, porque otros elementos de la interfaz de usuario como el menú lateral o el menú de comandos también podrían escuchar atajos de teclado.
 
-## Use cases for hotkeys
+## Casos de uso para atajos de teclado
 
-In general, you'll have two use cases that require hotkeys :
+En general, tendrás dos casos de uso que requieren atajos de teclado:
 
-1. In a page or a component mounted in a page
-2. In a modal-type component that takes the focus due to a user action
+1. En una página o un componente montado en una página
+2. En un componente tipo modal que toma el enfoque debido a la acción del usuario
 
-The second use case can happen recursively : a dropdown in a modal for example.
+El segundo caso de uso puede ocurrir recursivamente: un desplegable en un modal, por ejemplo.
 
-### Listening to hotkeys in a page
+### Escuchando atajos de teclado en una página
 
-Example :
+Ejemplo:
 
 ```tsx
 const PageListeningEnter = () => {
@@ -71,11 +71,11 @@ const PageListeningEnter = () => {
 };
 ```
 
-### Listening to hotkeys in a modal-type component
+### Escuchando atajos de teclado en un componente tipo modal
 
-For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+Para este ejemplo utilizaremos un componente modal que escucha la tecla Escape para indicar a su padre que lo cierre.
 
-Here the user interaction is changing the scope.
+Aquí la interacción del usuario está cambiando el ámbito.
 
 ```tsx
 const ExamplePageWithModal = () => {
@@ -108,7 +108,7 @@ const ExamplePageWithModal = () => {
 };
 ```
 
-Then in the modal component :
+Luego, en el componente modal:
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
@@ -131,15 +131,15 @@ It's important to use this pattern when you're not sure that just using a useEff
 
 Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
-## What is a hotkey scope?
+## ¿Qué es un ámbito de atajo de teclado?
 
-A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
+Un ámbito de atajo de teclado es una cadena que representa un contexto en el que los atajos de teclado están activos. Por lo general, se codifica como un enum.
 
-When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
+Cuando cambias el ámbito del atajo de teclado, se habilitarán los atajos que están escuchando este ámbito y se deshabilitarán los atajos que escuchan otros ámbitos.
 
-You can set only one scope at a time.
+Solo puedes establecer un ámbito a la vez.
 
-As an example, the hotkey scopes for each page are defined in the `PageHotkeyScope` enum:
+Como ejemplo, los ámbitos de atajos de teclado para cada página se definen en el enum `PageHotkeyScope`:
 
 ```tsx
 export enum PageHotkeyScope {
@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
+Internamente, el ámbito seleccionado se almacena en un estado de Recoil que se comparte en toda la aplicación:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
+¡Pero este estado de Recoil nunca debe manejarse manualmente! Veremos cómo usarlo en la siguiente sección.
 
-## How is it working internally?
+## ¿Cómo funciona internamente?
 
-We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
+Hicimos un contenedor delgado sobre [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que lo hace más eficiente y evita renders innecesarios.
 
-We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.
+También creamos un estado de Recoil para manejar el estado del ámbito de atajos de teclado y hacerlo disponible en toda la aplicación.

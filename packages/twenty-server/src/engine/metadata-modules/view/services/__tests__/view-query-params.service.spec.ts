@@ -1,14 +1,18 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 describe('ViewQueryParamsService', () => {
   let viewQueryParamsService: ViewQueryParamsService;
@@ -21,30 +25,37 @@ describe('ViewQueryParamsService', () => {
   const mockFieldMetadataId = 'field-metadata-id';
 
   const mockFlatObjectMetadataMaps = {
-    byId: {
-      [mockObjectMetadataId]: {
+    byUniversalIdentifier: {
+      'object-universal-id': {
         id: mockObjectMetadataId,
         nameSingular: 'company',
         namePlural: 'companies',
         labelSingular: 'Company',
         labelPlural: 'Companies',
+        universalIdentifier: 'object-universal-id',
       },
     },
-    byNameSingular: {},
-    byNamePlural: {},
+    universalIdentifierById: {
+      [mockObjectMetadataId]: 'object-universal-id',
+    },
+    universalIdentifiersByApplicationId: {},
   };
 
   const mockFlatFieldMetadataMaps = {
-    byId: {
-      [mockFieldMetadataId]: {
+    byUniversalIdentifier: {
+      'field-universal-id': {
         id: mockFieldMetadataId,
         name: 'name',
         type: FieldMetadataType.TEXT,
         label: 'Name',
         options: null,
+        universalIdentifier: 'field-universal-id',
       },
     },
-    byNameAndObjectId: {},
+    universalIdentifierById: {
+      [mockFieldMetadataId]: 'field-universal-id',
+    },
+    universalIdentifiersByApplicationId: {},
   };
 
   beforeEach(async () => {
@@ -61,6 +72,12 @@ describe('ViewQueryParamsService', () => {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
+          },
+        },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: {
+            getRepository: jest.fn(),
           },
         },
       ],

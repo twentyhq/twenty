@@ -103,6 +103,7 @@ export type WorkflowRunDiagramNodeData = Exclude<
 export type WorkflowDiagramEdgeLabelOptions = {
   position: Position;
   label: MessageDescriptor;
+  elseIfIndex?: number;
 };
 
 export type WorkflowDiagramEdgePathStrategy =

@@ -114,7 +114,7 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     **Option 2:** Wenn Sie Docker installiert haben:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -170,10 +170,17 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
 
     Dadurch wird eine Superuser-Rolle namens `postgres` mit Anmeldezugriff erstellt.
 
+    ```bash
+    Rollenname | Attribute  | Mitglied von
+    -----------+-------------+-----------
+    postgres  | Superuser   | {}
+    john      | Superuser   | {}
+    ```
+
     **Option 2:** Wenn Sie Docker installiert haben:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -194,7 +201,7 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     Verwenden Sie diese Option nur, wenn Sie mit den zusätzlichen Schritten vertraut sind, einschließlich der Aktivierung von [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -213,7 +220,7 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten
     **Option 2:** Wenn Sie Docker installiert haben:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -230,18 +237,18 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten
     **Option 2:** Wenn Sie Docker installiert haben:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
   <Tab title="Windows (WSL)">
-    **Option 1:** To provision your Redis locally:
-    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    **Option 1:** Um Redis lokal bereitzustellen:
+    Verwenden Sie den folgenden Link, um Redis auf Ihrer Linux-VM zu installieren: [Redis-Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
     **Option 2:** Wenn Sie Docker installiert haben:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
@@ -250,7 +257,7 @@ Wenn Sie eine Client-GUI benötigen, empfehlen wir [redis insight](https://redis
 
 ## Schritt 5: Einrichten von Umgebungsvariablen
 
-Verwenden Sie Umgebungsvariablen oder `.env`-Dateien, um Ihr Projekt zu konfigurieren. More info [here](/l/de/developers/self-host/capabilities/setup)
+Verwenden Sie Umgebungsvariablen oder `.env`-Dateien, um Ihr Projekt zu konfigurieren. Weitere Informationen [hier](/l/de/developers/self-host/capabilities/setup)
 
 Kopieren Sie die `.env.example`-Dateien in `/front` und `/server`:
 
@@ -260,7 +267,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/de/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **Multi-Workspace-Modus:** Standardmäßig läuft Twenty im Einzel-Workspace-Modus, in dem nur ein Workspace erstellt werden kann. Um die Multi-Workspace-Unterstützung zu aktivieren (nützlich zum Testen von Subdomain-basierten Funktionen), setzen Sie `IS_MULTIWORKSPACE_ENABLED=true` in der `.env`-Datei Ihres Servers. Siehe [Multi-Workspace-Modus](/l/de/developers/self-host/capabilities/setup#multi-workspace-mode) für Details.
 </Info>
 
 ## Schritt 6: Abhängigkeiten installieren

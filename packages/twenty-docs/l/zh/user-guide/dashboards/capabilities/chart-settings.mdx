@@ -1,0 +1,275 @@
+---
+title: 图表设置
+description: 配置您的图表，使其按您的需求准确显示数据。
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## 访问图表设置
+
+1. 单击仪表盘右上角的 **编辑** 按钮
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="编辑模式" />
+
+2. 仪表盘进入编辑模式
+3. 单击任意小部件以选择它
+4. 右侧将打开设置面板
+
+设置分为以下部分：
+
+* **数据**：要提取哪些数据以及如何筛选
+* **X 轴**：如何对类别进行分组和排序（柱状图/折线图）
+* **Y 轴**：要度量什么以及如何显示（柱状图/折线图）
+* **样式**：颜色、标签和视觉选项
+
+<Note>
+  某些设置仅在配置了其他设置时才会出现。 例如，仅当您选择了日期字段时，才会显示 **日期粒度**。
+</Note>
+
+---
+
+## 数据设置
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />来源 </span>
+
+选择要从哪个对象提取数据。
+
+1. 单击 **来源**
+2. 选择一个对象（商机、人员、公司等）
+
+您所有的标准对象和自定义对象都可用。 更改来源会重置其他设置，因为字段选项取决于所选对象。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="来源" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />筛选器 </span>
+
+限定图表中包含的记录。
+
+1. 单击 **Filter**
+2. 将打开筛选器构建器
+3. 单击 **+ 添加筛选器**
+4. 选择字段、条件和值
+5. 根据需要添加更多筛选器
+
+筛选器的用法与表格视图中的相同。 使用它们聚焦于数据的特定分段。
+
+**示例**：筛选阶段等于“赢单”的商机，仅显示已成交的交易。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="过滤" />
+
+<Tip>
+  对于日期字段，尝试使用 **相对** 来创建会自动更新的动态筛选，如“过去 7 天”或“本月”。
+</Tip>
+
+<Tip>
+  支持高级筛选——可添加多个筛选规则，并使用 **And** 或 **Or** 逻辑进行组合。
+</Tip>
+
+---
+
+## X 轴设置
+
+这些设置用于控制柱状图和折线图的横轴——通常用于定义数据如何分组为各个类别。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />显示的数据 </span>
+
+选择用于对数据分组的字段。 这将决定 X 轴上显示的类别。
+
+**示例**：选择“阶段”以按销售流程阶段分组查看数据；或选择“创建日期”以按时间查看数据。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="显示的数据" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />日期粒度 </span>
+
+按日期字段分组时，选择用于分组的时间粒度。
+
+| 选项         | 分组方式     | 示例输出                      |
+| ---------- | -------- | ------------------------- |
+| **日**      | 按日历中的每一天 | 1 月 1 日、1 月 2 日、1 月 3 日…… |
+| **周**      | 按日历周     | 第 1 周、第 2 周、第 3 周……       |
+| **月**      | 按日历月     | 1 月、2 月、3 月……             |
+| **季度**     | 按财务季度    | Q1、Q2、Q3、Q4               |
+| **年**      | 按日历年     | 2023、2024、2025            |
+| **星期几**    | 星期几（汇总）  | 星期一、星期二…… （将所有星期一合并）      |
+| **年份中的月份** | 月份（汇总）   | 1 月、2 月…… （将所有 1 月合并）     |
+| **年度的季度**  | 季度（汇总）   | Q1、Q2、Q3、Q4（将所有 Q1 合并）    |
+
+“周/年中”的选项会跨所有时间进行汇总。 使用 **星期几** 查看通常哪一天的成交量最多。 使用 **月份** 按月查看趋势。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />排序方式 </span>
+
+控制 X 轴上类别的顺序。
+
+* **位置** – 使用您在选择字段设置中定义的顺序
+* **按字母顺序** – A 到 Z（对于日期为按时间顺序）
+* **按数值** – 按度量值排序（最高或最低优先）
+* **手动** – 通过拖动设置自定义顺序
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="排序" />
+
+**提示**：对于销售流程阶段，使用 **位置** 按您的销售流程顺序显示各阶段（线索 → 合格 → 方案 → 赢单）。
+
+<Note>
+  显示的选项取决于字段类型。 选择字段包含所有选项；日期和文本字段的选项较少。
+</Note>
+
+<Tip>
+  使用 **手动** 排序时，可拖动类别以创建自定义顺序——非常适合突出特定分段或用数据讲述故事。
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />省略零值 </span>
+
+隐藏值为零或没有数据的类别。
+
+* **开启**：隐藏没有记录的类别
+* **关闭**：显示所有类别，即便为空
+
+使用此选项可清理数据稀疏的图表。
+
+---
+
+## Y 轴设置
+
+这些设置控制要度量的内容及其显示方式。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />显示的数据 </span>
+
+选择字段和运算来计算度量值。
+
+* **计数** – 计数全部、计数为空、计数非空、计数唯一值
+* **数学** – 求和、平均值、最小值、最大值（数字字段）
+* **百分比** – 空值百分比、非空百分比
+
+布尔字段会增加“计数 true/false”。 带日期字段的汇总图表会显示“最早/最晚”。
+
+**示例**：选择“金额”并使用“求和”以查看每个类别的交易总额，或使用“计数全部”查看交易数量。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="显示的数据" />
+
+<Note>
+  显示的选项取决于您的字段和图表类型。 如果未看到预期的运算，请检查字段类型。
+</Note>
+
+### 比例
+
+对于选择、多选或布尔字段，您可以计算特定取值所占的百分比。
+
+1. 选择一个选择、多选或布尔字段
+2. 启用 **比率**
+3. 选择要度量的选项
+
+**示例**：将“赢单”交易显示为占所有商机的百分比。 如果共有 50 个且其中 10 个为赢单，则图表显示 20%。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />分组依据 </span>
+
+添加第二个维度以创建多个系列（多根柱/多条线）。
+
+1. 先设置 X 轴字段
+2. 单击 **分组依据**
+3. 选择第二个字段
+
+**示例**：按阶段（X 轴）和所有者（分组依据）对交易进行分组，以并排查看每个人的销售流程拆分。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="分组依据" />
+
+设置“分组依据”后，图表将显示多种颜色，并出现图例。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />日期粒度 </span>
+
+当“分组依据”为日期字段时，选择时间粒度（与 X 轴相同的选项）。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />排序方式 </span>
+
+设置 **分组依据** 后，可控制分组系列的顺序（例如在每个类别中哪个所有者的柱先显示）。
+
+与 X 轴排序的选项相同——位置、按字母顺序和手动——但对于二级分组，**不提供基于数值的排序**。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />累计 </span>
+
+显示累计总和，而非单个值。
+
+* **关闭**：每个柱/点显示自身的数值
+* **开启**：每个柱/点显示其自身与之前所有数值之和
+
+**示例**：1 月 = 10，2 月 = 15
+
+* 关闭累计：显示 10 和 15
+* 开启累计：显示 10 和 25（10 + 15）
+
+使用累计可随时间跟踪目标进展。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="累计" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />最小范围 / <ChartIcon icon="math-max" />最大范围 </span>
+
+为 Y 轴设置固定的最小值和最大值。
+
+* 留空以自动缩放
+* 输入数字以固定边界
+
+**适用场景：**
+
+* 将最小值设为 0 以进行准确的视觉比较
+* 同时设置两者以在多个图表间保持一致的刻度
+* 同时设置两者以聚焦特定数值范围
+
+---
+
+## 样式设置
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />颜色 </span>
+
+为图表设置配色方案。 可从多种颜色调色板中选择。
+
+<Note>
+  按选择字段分组时，图表会自动使用字段设置中为各选项定义的颜色。
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />轴名称 </span>
+
+选择要显示的轴标签：**无**、**X 轴**、**Y 轴** 或 **两者**（仅适用于柱状图和折线图）。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />堆叠柱/堆叠线 </span>
+
+设置“分组依据”后，选择多个系列的显示方式。
+
+* **关闭（分组显示）**：系列并排显示。 适用于比较各组之间的确切数值。
+* **开启（堆叠）**：系列相互堆叠显示。 适用于展示构成——各部分如何组成整体。
+
+**示例**：按阶段统计的交易，按所有者分组
+
+* 分组显示：并排查看每位所有者的确切数值
+* 堆叠显示：查看各阶段的交易总量，并叠加展示每位所有者的贡献
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />数据标签 </span>
+
+在图表元素（柱、点、扇区）上直接显示数值。
+
+* **开启**：在图表上显示数值
+* **关闭**：不显示数值（更简洁）
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />图例 </span>
+
+显示或隐藏图例（仅在设置了“分组依据”时出现）。
+
+* **开启**：图例显示每种颜色所代表的含义
+* **关闭**：不显示图例
+
+<Tip>
+  将鼠标**悬停**在图例项上可高亮显示该分组。 **单击** 可在图表中临时隐藏该分组。
+</Tip>
+
+---
+
+## 图表特定说明
+
+### 饼图
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **每个扇区表示** – 定义扇区的分组方式
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **隐藏空类别** – 移除零值扇区
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **在中心显示数值** – 显示汇总值（求和、平均、计数等）
+
+### 汇总图表
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **前缀** – 在数字前添加文本（例如“$”）
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **后缀** – 在数字后添加文本（例如“%”）

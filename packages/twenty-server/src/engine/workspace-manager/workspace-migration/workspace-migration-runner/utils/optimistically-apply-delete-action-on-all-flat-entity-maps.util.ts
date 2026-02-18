@@ -1,43 +1,33 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
-type DeleteAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['actions']['delete'];
-
-export type OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs<
-  TMetadataName extends AllMetadataName,
-> = {
-  action: DeleteAction<TMetadataName>;
+export type OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs = {
+  flatAction: AllFlatWorkspaceMigrationAction<'delete'>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
-  TMetadataName extends AllMetadataName,
->({
-  action,
+export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
+  flatAction,
   allFlatEntityMaps,
-}: OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
-  switch (action.metadataName) {
+}: OptimisticallyApplyDeleteActionOnAllFlatEntityMapsArgs): AllFlatEntityMaps => {
+  switch (flatAction.metadataName) {
     case 'fieldMetadata':
     case 'objectMetadata':
     case 'view':
     case 'viewField':
     case 'viewGroup':
+    case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
     case 'viewFilterGroup':
     case 'index':
-    case 'serverlessFunction':
-    case 'cronTrigger':
-    case 'databaseEventTrigger':
-    case 'routeTrigger':
+    case 'logicFunction':
     case 'viewFilter':
     case 'role':
     case 'roleTarget':
@@ -45,25 +35,31 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     case 'skill':
     case 'pageLayout':
     case 'pageLayoutWidget':
-    case 'pageLayoutTab': {
+    case 'pageLayoutTab':
+    case 'commandMenuItem':
+    case 'frontComponent':
+    case 'navigationMenuItem':
+    case 'webhook': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
-        MetadataFlatEntity<typeof action.metadataName>
+        MetadataFlatEntity<typeof flatAction.metadataName>
       >({
-        flatEntityId: action.entityId,
+        flatEntityId: flatAction.entityId,
         flatEntityMaps:
-          allFlatEntityMaps[getMetadataFlatEntityMapsKey(action.metadataName)],
+          allFlatEntityMaps[
+            getMetadataFlatEntityMapsKey(flatAction.metadataName)
+          ],
       });
 
       deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatEntityToDelete,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
+        metadataName: flatAction.metadataName,
       });
 
       return allFlatEntityMaps;
     }
     default: {
-      assertUnreachable(action);
+      assertUnreachable(flatAction);
     }
   }
 };

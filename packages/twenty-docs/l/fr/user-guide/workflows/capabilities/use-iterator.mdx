@@ -1,180 +1,176 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Utiliser l'itérateur
+description: Parcourez des tableaux d'enregistrements pour exécuter des actions sur chaque élément.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+L'itérateur vous permet de parcourir un tableau d'enregistrements et d'exécuter des actions sur chacun. Il est essentiel pour les workflows qui doivent traiter plusieurs enregistrements renvoyés par Rechercher des enregistrements ou reçus via des webhooks.
 
-<Note>
-  Iterator is currently in beta. Activate it under **Settings → Releases → Lab**.
-</Note>
+## Quand utiliser l'itérateur
 
-## When to Use Iterator
+| Scénario                               | Exemple                                                            |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| **Traiter les résultats de recherche** | Envoyer un e-mail à chaque personne trouvée                        |
+| **Gérer les tableaux de webhooks**     | Créer des enregistrements pour chaque élément, dans l'ordre        |
+| **Mises à jour en masse**              | Mettre à jour plusieurs enregistrements avec des valeurs calculées |
+| **Notifications**                      | Avertir plusieurs personnes d'un événement                         |
 
-| Scenario                   | Example                                        |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+## Comprendre l'itérateur
 
-## Understanding Iterator
+L'itérateur attend un **tableau** en entrée. Il va ensuite :
 
-Iterator expects an **array** as input. It then:
+1. Prend le premier élément du tableau
+2. Exécute toutes les actions à l'intérieur de l'itérateur avec cet élément
+3. Passe à l'élément suivant
+4. Répète jusqu'à ce que tous les éléments soient traités
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+## Configuration de base
 
-## Basic Setup
+### Exemple : envoyer un e-mail à toutes les personnes dans les résultats de recherche
 
-### Example: Email Everyone in Search Results
+**Objectif** : Trouver tous les contacts d'une entreprise spécifique et envoyer à chacun un e-mail personnalisé.
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+### Étape 1 : Rechercher des enregistrements
 
-### Step 1: Search for Records
+1. Ajoutez l'action **Rechercher des enregistrements**
+2. Objet : **Personnes**
+3. Filtre : Entreprise égale à "Acme Inc"
+4. Cela renvoie un tableau de personnes
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+### Étape 2 : Vérifier que des résultats existent
 
-### Step 2: Check Results Exist
+1. Ajoutez l'action **Filtre**
+2. Condition : `{{searchRecords.length}}` est supérieur à 0
+3. Cela évite les erreurs de l'itérateur sur des résultats vides
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+### Étape 3 : Ajouter un itérateur
 
-### Step 3: Add Iterator
+1. Ajoutez une action **Itérateur**
+2. Entrée du tableau : sélectionnez `{{searchRecords}}`
+3. Cela crée une boucle
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+### Étape 4 : Ajouter des actions dans l'itérateur
 
-### Step 4: Add Actions Inside Iterator
+Les actions placées dans l'itérateur s'exécutent pour chaque élément :
 
-Actions placed after Iterator run for each item:
+1. Ajoutez une action **Envoyer un e-mail** (dans l'itérateur)
+2. À : `{{iterator.currentItem.email}}`
+3. Objet : Bonjour `{{iterator.currentItem.firstName}}` !
+4. Corps : Message personnalisé utilisant les champs de l'élément en cours
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+### Résultat
 
-### Result
+Si l'action Rechercher des enregistrements renvoie 5 personnes, l'itérateur :
 
-If Search Records returns 5 people, the Iterator:
+* Envoie un e-mail à la personne 1
+* Envoie un e-mail à la personne 2
+* ... continue pour les 5
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+## Accéder aux données de l'élément en cours
 
-## Accessing Current Item Data
+Dans l'itérateur, utilisez `{{iterator.currentItem}}` pour accéder à l'enregistrement en cours :
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+| Variable                                | Description                                               |
+| --------------------------------------- | --------------------------------------------------------- |
+| `{{iterator.currentItem}}`              | L'objet de l'enregistrement en cours dans son intégralité |
+| `{{iterator.currentItem.id}}`           | ID de l'enregistrement                                    |
+| `{{iterator.currentItem.email}}`        | Champ e-mail                                              |
+| `{{iterator.currentItem.company.name}}` | Nom de l'entreprise associée                              |
+| `{{iterator.index}}`                    | Position actuelle dans le tableau (indexé à partir de 0)  |
 
-| Variable                                | Description                         |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+## Modèles courants
 
-## Common Patterns
+### Mettre à jour plusieurs enregistrements
 
-### Update Multiple Records
-
-**Goal**: Mark all overdue tasks as "Late"
+**Objectif** : Marquer toutes les tâches en retard comme "En retard"
 
 ```
-1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
-2. Filter (length > 0)
-3. Iterator (searchRecords)
-   └── Update Record
-       - Object: Tasks
-       - Record: {{iterator.currentItem.id}}
-       - Status: Late
+1. Rechercher des enregistrements (Tâches, Date d'échéance < Aujourd'hui, Statut ≠ Terminé)
+2. Filtre (longueur > 0)
+3. Itérateur (searchRecords)
+   └── Mettre à jour l'enregistrement
+       - Objet : Tâches
+       - Enregistrement : {{iterator.currentItem.id}}
+       - Statut : En retard
 ```
 
-### Create Records from Array
+### Créer des enregistrements à partir d'un tableau
 
-**Goal**: Webhook receives order with multiple items, create a record for each
-
-```
-1. Webhook Trigger (receives items array)
-2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
-   └── Create Record
-       - Object: Order Items
-       - Name: {{iterator.currentItem.name}}
-       - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
-```
-
-### Conditional Processing Inside Loop
-
-**Goal**: Only send email to contacts with valid emails
+**Objectif** : Le webhook reçoit une commande avec plusieurs éléments, créer un enregistrement pour chacun
 
 ```
-1. Search Records (People)
-2. Iterator (searchRecords)
-   └── Filter (currentItem.email is not empty)
-       └── Send Email
-           - To: {{iterator.currentItem.email}}
+1. Déclencheur Webhook (reçoit un tableau d'éléments)
+2. Filtre (items.length > 0)
+3. Itérateur (trigger.body.items)
+   └── Créer un enregistrement
+       - Objet : Articles de commande
+       - Nom : {{iterator.currentItem.name}}
+       - Quantité : {{iterator.currentItem.qty}}
+       - Commande associée : {{trigger.body.orderId}}
 ```
 
-## Troubleshooting
+### Traitement conditionnel dans la boucle
 
-### "Iterator expects an array"
-
-**Cause**: You passed a single record instead of an array.
-
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**Objectif** : N'envoyer un e-mail qu'aux contacts avec des adresses valides
 
 ```
-✅ Correct: {{searchRecords}}
-❌ Wrong: {{searchRecords[0]}}
+1. Rechercher des enregistrements (Personnes)
+2. Itérateur (searchRecords)
+   └── Filtre (currentItem.email n'est pas vide)
+       └── Envoyer un e-mail
+           - À : {{iterator.currentItem.email}}
 ```
 
-### Iterator Doesn't Run
+## Résolution des problèmes
 
-**Cause**: The array is empty.
+### "L'itérateur attend un tableau"
 
-**Fix**: Add a Filter before Iterator to check array length:
+**Cause** : Vous avez passé un seul enregistrement au lieu d'un tableau.
+
+**Correctif** : Assurez-vous de passer le résultat de Rechercher des enregistrements ou un champ de type tableau, pas un seul enregistrement.
 
 ```
-Filter: {{searchRecords.length}} > 0
+✅ Correct : {{searchRecords}}
+❌ Incorrect : {{searchRecords[0]}}
 ```
 
-### Actions Run Too Many Times
+### L'itérateur ne s'exécute pas
 
-**Cause**: Search Records returned more records than expected.
+**Cause** : Le tableau est vide.
 
-**Fix**:
+**Correctif** : Ajoutez un filtre avant l'itérateur pour vérifier la longueur du tableau :
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+```
+Filtre : {{searchRecords.length}} > 0
+```
 
-## Performance Considerations
+### Les actions s'exécutent trop de fois
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+**Cause** : Rechercher des enregistrements a renvoyé plus d'enregistrements que prévu.
 
-## Best Practices
+**Correctif** :
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+* Ajoutez des filtres plus spécifiques à Rechercher des enregistrements
+* Définissez une limite sur Rechercher des enregistrements (max 200)
+* Ajoutez un filtre dans l'itérateur pour des conditions supplémentaires
 
-## Related
+## Considérations relatives aux performances
 
-* [Workflow Actions](/l/fr/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/fr/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* **Utilisation de crédits** : Chaque itération consomme des crédits pour ses actions
+* **Temps** : Les grands tableaux prennent plus de temps à traiter
+* **Limites** : Envisagez de traiter par lots les opérations très volumineuses
+* **Limites de débit** : Les appels d'API externes peuvent atteindre des limites de débit avec de nombreuses itérations
+
+## Meilleures pratiques
+
+1. **Vérifiez toujours la longueur du tableau** avant l'itérateur pour éviter les erreurs
+2. **Ajoutez des filtres dans les boucles** quand tous les éléments n'ont pas besoin d'être traités
+3. **Renommez votre étape Itérateur** pour décrire ce qu'elle parcourt
+4. **Testez avec de petits tableaux** avant de traiter de grands ensembles de données
+5. **Surveillez l'exécution des workflows** pour vous assurer que les itérations se terminent comme prévu
+
+## Articles connexes
+
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Comment utiliser les branches](/l/fr/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [FAQ sur les workflows](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq)

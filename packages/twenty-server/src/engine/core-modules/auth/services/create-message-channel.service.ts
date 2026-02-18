@@ -47,7 +47,6 @@ export class CreateMessageChannelService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageChannelRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
@@ -93,6 +92,7 @@ export class CreateMessageChannelService {
 
         return newMessageChannelId;
       },
+      authContext,
     );
   }
 }

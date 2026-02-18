@@ -22,9 +22,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
   const { objectNameSingular, objectMetadataItem, recordTableId } =
     useRecordTableContextOrThrow();
 
-  const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
-    objectNameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { openModal } = useModal();
 
@@ -105,7 +103,8 @@ export const useProcessTableWithGroupRecordDrop = () => {
           selectedRecordIds,
           recordIdsByGroupFamilyState: recordIdsByGroupFamilyState,
           onUpdateRecord: ({ recordId, position }) => {
-            updateOneRow({
+            updateOneRecord({
+              objectNameSingular,
               idToUpdate: recordId,
               updateOneRecordInput: {
                 position,
@@ -116,6 +115,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
         });
       },
     [
+      objectNameSingular,
       objectMetadataItem.fields,
       originalDragSelectionCallbackState,
       isDraggingRecordCallbackState,
@@ -124,7 +124,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       recordIdsByGroupFamilyState,
       groupFieldMetadata?.id,
       openModal,
-      updateOneRow,
+      updateOneRecord,
     ],
   );
 

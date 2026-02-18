@@ -1,0 +1,67 @@
+---
+title: Domande frequenti sui widget
+description: Domande comuni e messaggi di errore spiegati.
+---
+
+<AccordionGroup>
+  <Accordion title="Come faccio a mostrare le percentuali invece dei conteggi?">
+    Tre opzioni:
+
+    * **Percentuale vuoti/non vuoti**: In Dati visualizzati, seleziona Percentuale di valori vuoti oppure Percentuale di valori non vuoti
+    * **Rapporto**: Per i campi Selezione o Casella di controllo, abilita Rapporto per mostrare un'opzione specifica come percentuale di tutti i record
+    * **Suffisso**: Per i grafici aggregati, aggiungi `%` come suffisso nelle impostazioni di stile
+  </Accordion>
+
+  <Accordion title="Qual è la differenza tra barre raggruppate e impilate?">
+    Quando usi **Raggruppa per**, puoi visualizzare le serie in due modi:
+
+    * **Raggruppate**: Barre affiancate—ideale per confrontare valori esatti
+    * **Impilate**: Barre una sopra l'altra—ideale per mostrare la composizione
+
+    Attiva/disattiva **Impilato** nelle impostazioni di stile per cambiare.
+  </Accordion>
+
+  <Accordion title="Perché non vedo le opzioni Somma o Media?">
+    Le operazioni disponibili dipendono dal **tipo di campo**:
+
+    * **Campi numerici**: Somma, Media, Minimo, Massimo
+    * **Campi data**: Più antico, Più recente (solo grafici aggregati)
+    * **Campi casella di controllo**: Conta valori veri, Conta valori falsi
+
+    Se non vedi un'opzione, verifica di aver selezionato un tipo di campo compatibile.
+  </Accordion>
+
+  <Accordion title="Perché alcune impostazioni sono disattivate o non disponibili?">
+    Molte impostazioni compaiono solo quando sono soddisfatti i prerequisiti:
+
+    * **Granularità della data**: seleziona prima un campo data
+    * **Raggruppa per, Legenda, Impilato**: imposta prima Origine
+    * **Interruttori Legenda e Impilato**: imposta prima Raggruppa per
+
+    Se un'impostazione non è presente, configura prima il relativo prerequisito.
+  </Accordion>
+
+  <Accordion title="Cosa significa 'Nessun dato'?">
+    Il grafico non ha trovato record che corrispondono alla tua configurazione.
+
+    **Per risolvere:** Rimuovi o modifica i filtri, verifica di aver selezionato l'oggetto Origine corretto o controlla che esistano record per il tuo intervallo di date.
+  </Accordion>
+
+  <Accordion title="Cosa significa 'Configurazione non valida'?">
+    Manca un'impostazione obbligatoria o è incompatibile.
+
+    **Per risolvere:** Assicurati che Origine sia impostata, che Dati visualizzati sia configurato e che eventuali campi di raggruppamento richiesti siano selezionati.
+  </Accordion>
+
+  <Accordion title="Cosa significa 'Dati non visualizzati'?">
+    I tuoi dati superano i limiti di visualizzazione (100 barre, 100 punti dati o 100 spicchi).
+
+    **Per risolvere:** Aggiungi filtri per restringere i dati oppure cambia la granularità della data da Giorno a Settimana o Mese.
+  </Accordion>
+
+  <Accordion title="Perché un asse non mostra dati?">
+    Il campo selezionato non ha valori per i record nel tuo filtro oppure il tipo di campo non corrisponde ai dati previsti.
+
+    **Per risolvere:** Prova un campo diverso oppure verifica che i record abbiano valori per il campo selezionato.
+  </Accordion>
+</AccordionGroup>

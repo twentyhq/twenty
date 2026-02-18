@@ -6,7 +6,10 @@ import {
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
-import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from 'twenty-shared/workflow';
+import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
+  parseVariablePath,
+} from 'twenty-shared/workflow';
 
 const getRecordObjectLabel = (
   recordSchema: RecordOutputSchemaV2,
@@ -160,7 +163,7 @@ const parseVariableName = (rawVariableName: string) => {
     (_, variableName) => variableName,
   );
 
-  const parts = variableWithoutBrackets.split('.');
+  const parts = parseVariablePath(variableWithoutBrackets);
 
   return {
     stepId: parts.at(0),

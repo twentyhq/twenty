@@ -38,10 +38,12 @@ export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
+export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumericKind';
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
+export { extractFolderPathFilenameAndTypeOrThrow } from './files/extractFolderPathFilenameAndTypeOrThrow.util';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
 export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
 export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
@@ -54,7 +56,7 @@ export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
 export { addUnitToZonedDateTime } from './filter/dates/utils/addUnitToZonedDateTime';
 export { convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek } from './filter/dates/utils/convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek';
 export { convertFirstDayOfTheWeekToCalendarStartDayNumber } from './filter/dates/utils/convertFirstDayOfTheWeekToCalendarStartDayNumber';
-export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
+export type { FirstDayOfTheWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
 export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
 export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
 export { getFirstDayOfTheWeekAsISONumber } from './filter/dates/utils/getFirstDayOfTheWeekAsISONumber';
@@ -103,12 +105,27 @@ export { generateILikeFiltersForCompositeFields } from './filter/utils/generateI
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
+export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
+export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
+export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';
+export { isMatchingDateFilter } from './filter/utils/isMatchingDateFilter';
+export { isMatchingFilesFilter } from './filter/utils/isMatchingFilesFilter';
+export { isMatchingFloatFilter } from './filter/utils/isMatchingFloatFilter';
+export { isMatchingMultiSelectFilter } from './filter/utils/isMatchingMultiSelectFilter';
+export { isMatchingRatingFilter } from './filter/utils/isMatchingRatingFilter';
+export { isMatchingRawJsonFilter } from './filter/utils/isMatchingRawJsonFilter';
+export { isMatchingRichTextV2Filter } from './filter/utils/isMatchingRichTextV2Filter';
+export { isMatchingSelectFilter } from './filter/utils/isMatchingSelectFilter';
+export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
+export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
+export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
+export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';
@@ -129,7 +146,11 @@ export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeD
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
+export { camelToSnakeCase } from './strings/camelToSnakeCase';
 export { capitalize } from './strings/capitalize';
+export { pascalCase } from './strings/pascalCase';
+export { pascalToKebab } from './strings/pascalToKebab';
+export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export type {
   TipTapMarkType,
@@ -145,6 +166,9 @@ export {
 export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
+export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
+export { isPlainObject } from './typeguard/isPlainObject';
+export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { buildSignedPath } from './url/buildSignedPath';

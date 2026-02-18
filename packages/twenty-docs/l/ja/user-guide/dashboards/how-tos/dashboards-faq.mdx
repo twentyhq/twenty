@@ -1,59 +1,55 @@
 ---
-title: Dashboards FAQ
-description: Frequently asked questions about dashboards in Twenty.
+title: ダッシュボードFAQ​
+description: Twenty のダッシュボードに関するよくある質問。
 ---
 
 <AccordionGroup>
-  <Accordion title="Can I create private dashboards?">
-    No, dashboards are currently visible to everyone with access to your Twenty workspace. Private dashboards are not yet available.
+  <Accordion title="プライベートなダッシュボードを作成できますか？">
+    いいえ、現在ダッシュボードは、あなたの Twenty ワークスペースへアクセスできるすべてのユーザーに表示されます。 プライベートダッシュボードはまだ利用できません。
   </Accordion>
 
-  <Accordion title="Why do my metrics look different from my colleague's?">
-    Dashboards currently display data based on the viewer's timezone. If you're in different regions (e.g., APAC vs. US), you may see slightly different numbers for the same dashboard. We're working on adding a timezone setting per dashboard to ensure consistent data across teams.
+  <Accordion title="自分の指標が同僚のものと異なって見えるのはなぜですか？">
+    現在、ダッシュボードは閲覧者のタイムゾーンに基づいてデータを表示します。 異なる地域（例: APAC と US）にいる場合、同じダッシュボードでも数値がわずかに異なることがあります。 チーム間でデータを一貫させるため、ダッシュボードごとのタイムゾーン設定の追加に取り組んでいます。
   </Accordion>
 
-  <Accordion title="Can I export my dashboard?">
-    Exporting dashboards is not available at the moment. This feature is on our roadmap.
+  <Accordion title="ダッシュボードをエクスポートできますか？">
+    現時点では、ダッシュボードのエクスポートは利用できません。 この機能はロードマップに含まれています。
   </Accordion>
 
-  <Accordion title="Can I share dashboards with external users?">
-    No, sharing dashboards with users outside your Twenty workspace (non-Twenty users) is not currently supported.
+  <Accordion title="ダッシュボードを外部ユーザーと共有できますか？">
+    いいえ、現在は Twenty ワークスペース外のユーザー（Twenty を利用していないユーザー）とのダッシュボード共有には対応していません。
   </Accordion>
 
-  <Accordion title="How do I add a dashboard to my favorites?">
-    Open the dashboard you want to favorite, then click the star icon. Favorites are personal—they won't affect other users.
+  <Accordion title="ダッシュボードをお気に入りに追加するにはどうすればよいですか？">
+    お気に入りに追加したいダッシュボードを開き、星形アイコンをクリックします。 お気に入りは個人設定であり、他のユーザーには影響しません。
   </Accordion>
 
-  <Accordion title="What's the difference between tabs and widgets?">
-    * **Tabs** organize your dashboard into sections (like pages within the dashboard)
-    * **Widgets** are the individual visualizations (charts, numbers, iFrames) within each tab
+  <Accordion title="タブとウィジェットの違いは何ですか？">
+    * **タブ** はダッシュボードをセクションに整理します（ダッシュボード内のページのようなもの）
+    * **ウィジェット** は各タブ内の個々の可視化要素（グラフ、数値、iFrame）です
 
-    Structure: Dashboard → Tabs → Widgets
+    構造: ダッシュボード → タブ → ウィジェット
   </Accordion>
 
-  <Accordion title="Why do I see 'Undisplayed data' warning on my bar chart?">
-    Bar charts have display limits: 100 bars for horizontal charts, 50 for vertical. If your data exceeds this, add filters to narrow down the results or change the grouping (e.g., group by week instead of day).
+  <Accordion title="ダッシュボード全体に一括でフィルターを適用できますか？">
+    ダッシュボードレベルのフィルターはまだ利用できませんが、この機能はロードマップに含まれています。 現在は、各ウィジェットごとに個別にフィルターを適用する必要があります。
   </Accordion>
 
-  <Accordion title="Can I filter an entire dashboard at once?">
-    Dashboard-level filters are not available yet, but this feature is on our roadmap. Currently, you need to apply filters to each widget individually.
+  <Accordion title="ゲージチャートやテーブルは利用できますか？">
+    まだできません。 ゲージチャートとテーブルはロードマップに含まれており、今後のリリースで追加されます。
   </Accordion>
 
-  <Accordion title="Are gauge charts or tables available?">
-    Not yet. Gauge charts and tables are on our roadmap and will be added in a future release.
+  <Accordion title="ダッシュボードを複製するにはどうすればよいですか？">
+    1. 閲覧モードであることを確認してください（編集中ではないこと）。
+    2. コマンドバーを **Cmd + K**（Windows の場合は **Ctrl + K**）で開きます。
+    3. 「**Duplicate dashboard**」を選択します。
   </Accordion>
 
-  <Accordion title="How do I duplicate a dashboard?">
-    1. Make sure you're in view mode (not editing)
-    2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
-    3. Select **Duplicate dashboard**
-  </Accordion>
+  <Accordion title="ダッシュボードのデータはどのくらいの頻度で更新されますか？">
+    CRM データの変更に合わせてウィジェットは自動的に更新されます:
 
-  <Accordion title="How often does dashboard data refresh?">
-    Widgets update automatically as your CRM data changes:
-
-    * Real-time updates for most metrics
-    * Use the refresh button for a manual update if needed
-    * Historical data is preserved for trend analysis
+    * ほとんどの指標はリアルタイムで更新されます
+    * 必要に応じて、更新ボタンで手動更新できます
+    * トレンド分析のために履歴データは保持されます
   </Accordion>
 </AccordionGroup>

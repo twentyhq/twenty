@@ -198,7 +198,7 @@ const updateStepsWithOptions = ({
                 initialLoopStepIds: [
                   ...new Set([
                     ...(step.settings.input.initialLoopStepIds?.filter(
-                      (id) => id !== nextStepId,
+                      (id: string) => id !== nextStepId,
                     ) || []),
                     insertedStepId,
                   ]),

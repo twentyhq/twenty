@@ -1,120 +1,120 @@
 ---
-title: Set Up a Sales Pipeline
-description: Configure your sales pipeline to track opportunities through stages.
+title: 设置销售管道
+description: 配置您的销售管道，以通过各个阶段跟踪机会。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-A sales pipeline in Twenty is a Kanban view of your Opportunities object, where each column represents a stage in your sales process.
+在 Twenty 中，销售管道是您的机会对象的看板视图，其中每一列代表销售流程中的一个阶段。
 
-## Step 1: Configure Your Stages
+## 步骤 1：配置您的阶段
 
-Stages are defined in the Opportunities object's **Stage** field.
+阶段在“机会”对象的 **Stage** 字段中定义。
 
-1. Go to **Settings → Data Model**
-2. Select **Opportunities**
-3. Find and click the **Stage** field
-4. Add, remove, or rename stages to match your process
+1. 进入 **设置 → 数据模型**
+2. 选择 **机会**
+3. 找到并单击 **Stage** 字段
+4. 添加、删除或重命名阶段以匹配您的流程
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="视频演示" />
 
-### Recommended Stages
+### 推荐阶段
 
-| Stage           | Purpose                             |
-| --------------- | ----------------------------------- |
-| **New**         | Fresh opportunities just identified |
-| **Qualified**   | Confirmed as a good fit             |
-| **Meeting**     | Engaged in discussions              |
-| **Proposal**    | Proposal sent                       |
-| **Negotiation** | Working on terms                    |
-| **Closed Won**  | Deal successful                     |
-| **Closed Lost** | Deal unsuccessful                   |
+| 阶段     | 目的       |
+| ------ | -------- |
+| **新**  | 刚识别出的新机会 |
+| **合格** | 已确认契合良好  |
+| **会议** | 已展开讨论    |
+| **提案** | 已发送提案    |
+| **谈判** | 正在协商条款   |
+| **赢单** | 交易成功     |
+| **丢单** | 交易失败     |
 
 <Note>
-  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **5-7 个阶段最优。** 阶段过多会使管道难以浏览；过少则会降低对交易进展的可见性。
 </Note>
 
-## Step 2: Create a Pipeline View
+## 步骤 2：创建管道视图
 
-1. Go to **Opportunities**
-2. Click the view dropdown → **+ Add view**
-3. Name it "Sales Pipeline"
-4. Click **Create**
-5. Open **Options** and select **Kanban** as the layout
+1. 前往 **机会**
+2. 单击视图下拉菜单 → **+ 添加视图**
+3. 将其命名为 "销售管道"
+4. 单击 **创建**
+5. 打开 **选项**，并选择 **看板** 作为布局
 
-The view automatically uses the Stage field for columns.
+该视图会自动使用 Stage 字段作为列。
 
-## Step 3: Configure Your View
+## 步骤 3：配置您的视图
 
-### Show Key Fields
+### 显示关键字段
 
-1. Click **Options → Fields**
-2. Look for fields in the "Hidden Fields" section
-3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
+1. 单击 **选项 → 字段**
+2. 在 "隐藏字段" 部分查找字段
+3. 单击 **眼睛图标** 以显示：Company、Amount、Close Date、Owner
 
-### Enable Aggregations
+### 启用聚合
 
-Show totals at the top of each column:
+在每列顶部显示总计：
 
-1. Click the number displayed next to a Stage name at the top of a column
-2. Select the aggregation type (Count, Sum, Average, etc.)
-3. Choose the field to aggregate (e.g., Amount)
+1. 单击列顶部显示在某个 Stage 名称旁边的数字
+2. 选择聚合类型（计数、求和、平均值等）
+3. 选择要聚合的字段（例如，Amount）
 
-**Example:** Show total deal value per stage by aggregating Amount with Sum.
+**示例：** 通过对 Amount 进行求和来显示每个阶段的交易总金额。
 
-### Use Compact View (Optional)
+### 使用紧凑视图（可选）
 
-For a high-level overview with minimal card content:
+若需以更少卡片内容获得高层次概览：
 
-1. Click **Options**
-2. Turn on the toggle for **Compact view**
+1. 单击 **选项**
+2. 打开 **紧凑视图** 开关
 
-## Step 4: Create Personal and Team Views
+## 步骤 4：创建个人和团队视图
 
-### "My Pipeline"
+### "我的管道"
 
-* **Filter**: Owner = Me
-* **Visibility**: Unlisted (personal view)
+* **筛选**：Owner = Me
+* **可见性**：未列出（个人视图）
 
-### "Team Pipeline"
+### "团队管道"
 
-* **Filter**: None (show all)
-* **Visibility**: Workspace (shared view)
+* **筛选**：无（显示全部）
+* **可见性**：工作区（共享视图）
 
-### "Closing This Month"
+### "本月关闭"
 
-* **Type**: Table
-* **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
-* **Sort**: Close Date ascending
+* **类型**：表格
+* **筛选**：Close Date = This month，Stage ≠ Closed Won，Stage ≠ Closed Lost
+* **排序**：Close Date 升序
 
-## Working with Opportunities
+## 处理机会
 
-### Creating Opportunities
+### 创建机会
 
-* Click **+ New** in the Opportunities view
-* Or click **+** in a specific stage column
+* 在“机会”视图中单击 **+ 新建**
+* 或在特定阶段的列中单击 **+**
 
-### Moving Through Stages
+### 在各阶段间移动
 
-Drag and drop opportunity cards between columns to update their stage.
+在列之间拖放机会卡片以更新其阶段。
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="视频演示" />
 
-## Best Practices
+## 最佳实践
 
-### Pipeline Hygiene
+### 管道卫生
 
-* Update deals daily as they progress
-* Move or close stale deals promptly
-* Keep close dates realistic
+* 随进展每日更新交易
+* 及时移动或关闭停滞的交易
+* 确保关闭日期切合实际
 
-### Stage Discipline
+### 阶段纪律
 
-* Define clear criteria for each stage
-* Move deals promptly when criteria are met
-* Don't let deals sit in stages too long
+* 为每个阶段定义清晰的判定标准
+* 当满足标准时及时移动交易
+* 不要让交易在阶段中停留过久
 
-## Related
+## 相关内容
 
-* [Kanban Views](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — aggregations and compact view
-* [Filters and Sorting](/l/zh/user-guide/views-pipelines/capabilities/filters-and-sorting) — creating filtered views
+* [看板视图](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — 聚合与紧凑视图
+* [筛选与排序](/l/zh/user-guide/views-pipelines/capabilities/filters-and-sorting) — 创建筛选视图

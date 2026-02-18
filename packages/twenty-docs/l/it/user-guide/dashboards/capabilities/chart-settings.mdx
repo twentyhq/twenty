@@ -1,0 +1,275 @@
+---
+title: Impostazioni del grafico
+description: Configura i tuoi grafici per visualizzare i dati esattamente come ti serve.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Accesso alle impostazioni del grafico
+
+1. Fai clic sul pulsante **Modifica** nell'angolo in alto a destra della dashboard
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Modalità modifica" />
+
+2. La dashboard entra in modalità modifica
+3. Fai clic su qualsiasi widget per selezionarlo
+4. Il pannello delle impostazioni si apre a destra
+
+Le impostazioni sono organizzate in sezioni:
+
+* **Dati**: quali dati recuperare e come filtrarli
+* **Asse X**: come raggruppare e ordinare le categorie (grafici a barre/a linee)
+* **Asse Y**: cosa misurare e come visualizzarlo (grafici a barre/a linee)
+* **Stile**: colori, etichette e opzioni di visualizzazione
+
+<Note>
+  Alcune impostazioni compaiono solo quando ne sono configurate altre. Ad esempio, **Granularità della data** compare solo quando selezioni un campo data.
+</Note>
+
+---
+
+## Impostazioni dati
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Origine </span>
+
+Scegli da quale oggetto recuperare i dati.
+
+1. Fai clic su **Origine**
+2. Seleziona un oggetto (Opportunità, Persone, Aziende, ecc.)
+
+Tutti i tuoi oggetti standard e personalizzati sono disponibili. Modificare l'origine reimposta le altre impostazioni, poiché le opzioni dei campi dipendono dall'oggetto selezionato.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Fonte" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtro </span>
+
+Limita quali record sono inclusi nel grafico.
+
+1. Fai clic su **Filtro**
+2. Si apre il generatore di filtri
+3. Fai clic su **+ Aggiungi filtro**
+4. Seleziona un campo, una condizione e un valore
+5. Aggiungi altri filtri secondo necessità
+
+I filtri funzionano come nelle viste tabellari. Usali per concentrarti su segmenti specifici dei tuoi dati.
+
+**Esempio**: filtra le opportunità in cui la Fase è uguale a "Vinta" per mostrare solo le trattative chiuse.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtro" />
+
+<Tip>
+  Per i campi data, prova **È relativo** per creare filtri dinamici come "Ultimi 7 giorni" o "Questo mese" che si aggiornano automaticamente.
+</Tip>
+
+<Tip>
+  Sono supportati filtri avanzati: aggiungi più regole di filtro e combinane la logica con **E** o **O**.
+</Tip>
+
+---
+
+## Impostazioni asse X
+
+Queste impostazioni controllano l'asse orizzontale dei grafici a barre e a linee: in genere come i dati vengono raggruppati in categorie.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Dati visualizzati </span>
+
+Seleziona il campo in base al quale raggruppare i dati. Questo determina le categorie mostrate sull'asse X.
+
+**Esempio**: seleziona "Fase" per vedere i dati raggruppati per fase della pipeline oppure "Data di creazione" per vedere i dati nel tempo.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Dati visualizzati" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularità della data </span>
+
+Quando raggruppi per un campo data, scegli il periodo temporale per il raggruppamento.
+
+| Opzione                    | Raggruppa i dati per               | Esempio di output                                        |
+| -------------------------- | ---------------------------------- | -------------------------------------------------------- |
+| **Giorno**                 | Ogni giorno di calendario          | 1 gen, 2 gen, 3 gen...                                   |
+| **Settimana**              | Settimane di calendario            | Settimana 1, Settimana 2, Settimana 3...                 |
+| **Mese**                   | Mesi di calendario                 | gennaio, febbraio, marzo...                              |
+| **Trimestre**              | Trimestri fiscali                  | T1, T2, T3, T4                                           |
+| **Anno**                   | Anni di calendario                 | 2023, 2024, 2025                                         |
+| **Giorno della settimana** | Giorno della settimana (aggregato) | lunedì, martedì... (tutti i lunedì combinati)            |
+| **Mese dell'anno**         | Mese (aggregato)                   | gennaio, febbraio... (tutti i mesi di gennaio combinati) |
+| **Trimestre dell'anno**    | Trimestre (aggregato)              | T1, T2, T3, T4 (tutti i T1 combinati)                    |
+
+Le opzioni "della settimana/dell'anno" aggregano su tutto il periodo. Usa **Giorno della settimana** per vedere quale giorno della settimana in genere ottiene più trattative. Usa **Mese** per vedere le tendenze mese per mese.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Ordina per </span>
+
+Controlla l'ordine delle categorie sull'asse X.
+
+* **Posizione** – usa l'ordine definito nelle impostazioni del campo Selezione
+* **Alfabetico** – dalla A alla Z (o cronologico per le date)
+* **Per valore** – ordinato per metrica (prima il più alto o il più basso)
+* **Manuale** – trascina per impostare un ordine personalizzato
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Ordina per" />
+
+**Suggerimento**: per le fasi della pipeline, usa **Posizione** per mostrare le fasi nell'ordine del processo di vendita (Lead → Qualificata → Proposta → Vinta).
+
+<Note>
+  Le opzioni mostrate dipendono dal tipo di campo. I campi Selezione hanno tutte le opzioni; i campi data e testo ne mostrano di meno.
+</Note>
+
+<Tip>
+  Con l'ordinamento **Manuale**, trascina le categorie per creare un ordine personalizzato: perfetto per evidenziare segmenti specifici o raccontare una storia con i tuoi dati.
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Ometti i valori zero </span>
+
+Nascondi le categorie che hanno zero dati o nessun dato.
+
+* **Attivo**: le categorie senza record vengono nascoste
+* **Disattivo**: tutte le categorie vengono mostrate, anche se vuote
+
+Usalo per ripulire grafici con dati scarsi.
+
+---
+
+## Impostazioni asse Y
+
+Queste impostazioni controllano cosa stai misurando e come viene visualizzato.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Dati visualizzati </span>
+
+Seleziona il campo e l'operazione per calcolare la tua metrica.
+
+* **Conteggi** – Conta tutti, Conta vuoti, Conta non vuoti, Conta valori univoci
+* **Matematica** – Somma, Media, Min, Max (campi numerici)
+* **Percentuali** – Percentuale vuoti, Percentuale non vuoti
+
+I campi booleani aggiungono Conta vero/falso. I grafici aggregati con campi data mostrano Più antico/Più recente.
+
+**Esempio**: seleziona "Importo" con Somma per vedere il valore totale delle trattative per categoria, oppure Conta tutti per vedere il numero di trattative.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Dati visualizzati" />
+
+<Note>
+  Le opzioni mostrate dipendono dal tipo di campo e di grafico. Se non vedi un'operazione prevista, verifica il tipo di campo.
+</Note>
+
+### Rapporto
+
+Per i campi Selezione, Selezione multipla o Booleano, puoi calcolare la percentuale di un valore specifico.
+
+1. Seleziona un campo di tipo Selezione, Selezione multipla o Booleano
+2. Abilita **Rapporto**
+3. Scegli l'opzione da misurare
+
+**Esempio**: mostra le trattative "Vinte" come percentuale di tutte le opportunità. Se hai 10 Vinte su 50 totali, il grafico mostra il 20%.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Raggruppa per </span>
+
+Aggiungi una seconda dimensione per creare più serie (più barre o linee).
+
+1. Imposta prima il campo dell'asse X
+2. Fai clic su **Raggruppa per**
+3. Seleziona un secondo campo
+
+**Esempio**: raggruppa le trattative per Fase (asse X) E per Proprietario (Raggruppa per) per vedere affiancato il dettaglio della pipeline di ciascuna persona.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Raggruppa per" />
+
+Quando Raggruppa per è impostato, vedrai più colori nel grafico e comparirà una legenda.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularità della data </span>
+
+Quando Raggruppa per è un campo data, scegli il periodo temporale (stesse opzioni dell'asse X).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Ordina per </span>
+
+Quando **Raggruppa per** è impostato, controlla l'ordine delle serie raggruppate (ad es., quale barra del proprietario appare per prima in ogni categoria).
+
+Stesse opzioni dell'ordinamento dell'asse X — Posizione, Alfabetico e Manuale — tranne che **l'ordinamento basato sul valore non è disponibile** per il raggruppamento secondario.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Cumulativo </span>
+
+Mostra totali progressivi invece dei valori individuali.
+
+* **Disattivo**: ogni barra/punto mostra il proprio valore
+* **Attivo**: ogni barra/punto mostra la somma di tutti i valori precedenti più il proprio
+
+**Esempio**: gennaio = 10, febbraio = 15
+
+* Cumulativo disattivo: mostra 10 e 15
+* Cumulativo attivo: mostra 10 e 25 (10 + 15)
+
+Usa il cumulativo per monitorare i progressi verso un obiettivo nel tempo.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Cumulativo" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Intervallo minimo / <ChartIcon icon="math-max" />Intervallo massimo </span>
+
+Imposta valori minimi e massimi fissi per l'asse Y.
+
+* Lascia vuoto per la scalatura automatica
+* Inserisci un numero per fissare il limite
+
+**Quando usarlo:**
+
+* Imposta Min a 0 per confronti visivi accurati
+* Imposta entrambi per scale coerenti su più grafici
+* Concentrati su un intervallo di valori specifico impostando entrambi
+
+---
+
+## Impostazioni stile
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Colori </span>
+
+Imposta la combinazione di colori per il grafico. Scegli tra una varietà di palette di colori.
+
+<Note>
+  Quando raggruppi per un campo Selezione, il grafico usa automaticamente i colori definiti per ogni opzione nelle impostazioni del campo.
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Nome asse </span>
+
+Scegli quali etichette degli assi mostrare: **Nessuno**, **Asse X**, **Asse Y** o **Entrambi** (solo grafici a barre e a linee).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Barre impilate / Linee impilate </span>
+
+Quando Raggruppa per è impostato, scegli come visualizzare le serie multiple.
+
+* **Disattivo (Raggruppate)**: le serie appaiono affiancate. Usa quando confronti valori esatti tra gruppi.
+* **Attivo (Impilate)**: le serie si impilano una sull'altra. Usa quando mostri la composizione, cioè come le parti costituiscono un insieme.
+
+**Esempio**: trattative per fase, raggruppate per proprietario
+
+* Raggruppate: vedi i numeri esatti di ciascun proprietario affiancati
+* Impilate: vedi il totale delle trattative per fase, con il contributo di ciascun proprietario impilato
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Etichette dati </span>
+
+Mostra i valori direttamente sugli elementi del grafico (barre, punti, sezioni).
+
+* **Attivo**: i valori compaiono nel grafico
+* **Disattivo**: nessun valore mostrato (aspetto più pulito)
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legenda </span>
+
+Mostra o nascondi la legenda (compare solo quando Raggruppa per è impostato).
+
+* **Attivo**: la legenda mostra cosa rappresenta ciascun colore
+* **Disattivo**: nessuna legenda visualizzata
+
+<Tip>
+  **Passa il mouse** su un elemento della legenda per evidenziare quel gruppo. **Fai clic** per nasconderlo temporaneamente dal grafico.
+</Tip>
+
+---
+
+## Note specifiche del grafico
+
+### Grafici a torta
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Ogni fetta rappresenta** – Definisci come vengono raggruppate le fette
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Nascondi categoria vuota** – Rimuovi le fette a valore zero
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Mostra il valore al centro** – Visualizza il valore aggregato (somma, media, conteggio, ecc.)
+
+### Grafici aggregati
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefisso** – Aggiungi testo prima del numero (ad es., `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffisso** – Aggiungi testo dopo il numero (ad es., `%`)

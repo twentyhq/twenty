@@ -1,56 +1,56 @@
 ---
-title: Detect Stale Opportunities
-description: Automatically notify managers when opportunities haven't been updated.
+title: 停滞した商談を検出
+description: 商談が更新されていない場合にマネージャーに自動的に通知します。
 ---
 
-Keep your pipeline healthy by alerting managers when opportunities go stale. This workflow checks for opportunities that haven't been updated in a specified number of days.
+商談が停滞したときにマネージャーにアラートを送信して、パイプラインの健全性を保ちましょう。 このワークフローは、指定した日数の間更新されていない商談をチェックします。
 
-## The Problem
+## 問題
 
-Opportunities sitting without updates lead to:
+更新されずに放置された商談は次のような事態を招きます:
 
-* Deals going cold
-* Unreliable forecasts
-* Lost revenue
+* 商談が冷え込む
+* 予測の信頼性低下
+* 収益の損失
 
-## The Solution
+## 解決策
 
-Create a scheduled workflow that finds stale opportunities and emails their managers.
+停滞した商談を見つけ、マネージャーにメールを送信する定期実行のワークフローを作成します。
 
-## Step-by-Step Setup
+## ステップバイステップの設定
 
-### Step 1: Create the Workflow
+### ステップ 1: ワークフローを作成
 
-1. Go to **Settings → Workflows**
-2. Click **+ New Workflow**
-3. Name it "Stale Opportunity Alert"
+1. 「**Settings → Workflows**」に移動
+2. 「**+ New Workflow**」をクリック
+3. 名前を "停滞商談アラート" にします
 
-### Step 2: Configure the Trigger
+### ステップ 2: トリガーを設定
 
-1. Select **On a Schedule**
-2. Set to run daily (e.g., every day at 8 AM)
+1. 「**On a Schedule**」を選択
+2. 毎日実行に設定 (例: 毎朝 8 時)
 
-### Step 3: Search for Stale Opportunities
+### ステップ 3: 停滞した商談を検索
 
-1. Add **Search Records** action
-2. Configure:
+1. 「**Search Records**」アクションを追加
+2. 設定:
 
-| Field      | Value                                           |
+| フィールド      | 値                                               |
 | ---------- | ----------------------------------------------- |
-| **Object** | Opportunities                                   |
-| **Filter** | Updated At is before (today - 7 days)           |
-| **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit**  | 100                                             |
+| **オブジェクト** | 商談                                              |
+| **フィルター**  | Updated At が (today - 7 days) より前               |
+| **フィルター**  | Stage が "Closed Won" ではなく、かつ "Closed Lost" でもない |
+| **制限**     | 100                                             |
 
-### Step 4: Check If Any Found
+### ステップ 4: 該当があるか確認
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. If no stale opportunities, the workflow stops here
+1. 「**Filter**」アクションを追加
+2. 条件: `{{searchRecords.length}}` が 0 より大きい
+3. 停滞した商談がない場合、ワークフローはここで停止します
 
-### Step 5: Format the Alert (Code Action)
+### ステップ 5: アラートを整形 (コードアクション)
 
-Add a **Code** action to format the email:
+メールを整形するために「**Code**」アクションを追加します:
 
 ```javascript
 export const main = async (params) => {
@@ -88,49 +88,49 @@ export const main = async (params) => {
 };
 ```
 
-### Step 6: Send Alert Email
+### ステップ 6: アラートメールを送信
 
-Add **Send Email** action:
+「**Send Email**」アクションを追加:
 
-| Field       | Value                                                       |
-| ----------- | ----------------------------------------------------------- |
-| **To**      | sales-manager@yourcompany.com                               |
-| **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body**    | `{{code.summary}}`                                          |
+| フィールド  | 値                                    |
+| ------ | ------------------------------------ |
+| **宛先** | sales-manager@yourcompany.com        |
+| **件名** | `🚨 要対応の停滞商談が {{code.totalCount}} 件` |
+| **本文** | `{{code.summary}}`                   |
 
-### Step 7: Test and Activate
+### ステップ 7: テストして有効化
 
-1. Click **Test** to run the workflow
-2. Check that the email contains the right data
-3. Activate when ready
+1. ワークフローを実行するには「**Test**」をクリック
+2. メールに正しいデータが含まれていることを確認します
+3. 準備ができたら有効化します
 
-## Customization Options
+## カスタマイズオプション
 
-### Change Staleness Threshold
+### 停滞のしきい値を変更
 
-Modify the Search Records filter to change from 7 days to your preferred period:
+「**Search Records**」フィルターを編集し、7 日を希望の期間に変更します:
 
-* 3 days for high-velocity sales
-* 14 days for enterprise deals
-* 30 days for long sales cycles
+* 高回転の営業には 3 日
+* エンタープライズの商談には 14 日
+* 長いセールスサイクルには 30 日
 
-### Alert Individual Reps
+### 個々の担当者にアラート
 
-Instead of one manager email, use **Iterator** to send personalized emails to each rep about their own stale deals.
+マネージャー宛ての 1 通のメールではなく、**Iterator** を使用して、各担当者に自分の停滞中の商談についてのパーソナライズされたメールを送信します。
 
-### Add Escalation
+### エスカレーションを追加
 
-Create multiple workflows with increasing severity:
+深刻度を段階的に上げた複数のワークフローを作成します:
 
-1. Day 7: Email to rep
-2. Day 14: Email to rep + manager
-3. Day 21: Create task for manager to intervene
+1. 7 日目: 担当者にメール
+2. 14 日目: 担当者 + マネージャーにメール
+3. 21 日目: マネージャーが介入できるようタスクを作成
 
-### Include in Slack
+### Slack にも通知
 
-Use **HTTP Request** to post to a Slack webhook instead of or in addition to email.
+メールの代わりに、またはメールに加えて、**HTTP Request** を使用して Slack の Webhook に投稿します。
 
-## Related
+## 関連
 
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [Send Emails from Workflows](/l/ja/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [ワークフローからメールを送信](/l/ja/user-guide/workflows/capabilities/send-emails-from-workflows)

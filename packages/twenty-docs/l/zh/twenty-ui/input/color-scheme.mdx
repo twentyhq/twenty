@@ -1,18 +1,18 @@
 ---
-title: Color Scheme
+title: 配色方案
 image: /images/user-guide/fields/field.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/field.png" alt="Header" />
+  <img src="/images/user-guide/fields/field.png" alt="标题" />
 </Frame>
 
-## Color Scheme Card
+## 配色方案卡片
 
-Represents different color schemes and is specially tailored for light and dark themes.
+代表不同的颜色方案，并专为浅色和深色主题量身定制。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { ColorSchemeCard } from "twenty-ui/display";
 
@@ -27,21 +27,21 @@ Represents different color schemes and is specially tailored for light and dark 
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props            | Type                                    | Description                                                             | Default |
-    | ---------------- | --------------------------------------- | ----------------------------------------------------------------------- | ------- |
-    | variant          | string                                  | The color scheme variant. Options include `Dark`, `Light`, and `System` | light   |
-    | selected         | boolean                                 | If `true`, displays a checkmark to indicate the selected color scheme   |         |
-    | additional props | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props                                       |         |
+  <Tab title="属性">
+    | 属性   | 类型                                      | 描述                              | 默认 |
+    | ---- | --------------------------------------- | ------------------------------- | -- |
+    | 变体   | 字符串                                     | 颜色方案的变体。 选项包括 `深色`, `浅色` 和 `系统` | 浅色 |
+    | 已选择  | 布尔值                                     | 如果 `true`，显示一个选中标记以指示选定的颜色方案。   |    |
+    | 额外属性 | `React.ComponentPropsWithoutRef<'div'>` | 标准 HTML `div` 元素属性              |    |
   </Tab>
 </Tabs>
 
-## Color Scheme Picker
+## 颜色方案选择器
 
-Allows users to choose between different color schemes.
+允许用户在不同的颜色方案之间进行选择。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { ColorSchemePicker } from "twenty-ui/display";
 
@@ -54,10 +54,10 @@ Allows users to choose between different color schemes.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type           | Description                                                                  |
-    | -------- | -------------- | ---------------------------------------------------------------------------- |
-    | value    | `Color Scheme` | The currently selected color scheme                                          |
-    | onChange | function       | The callback function you want to trigger when a user selects a color scheme |
+  <Tab title="属性">
+    | 属性       | 类型     | 描述                     |
+    | -------- | ------ | ---------------------- |
+    | 值        | `配色方案` | 当前选定的颜色方案              |
+    | onChange | 函数     | 当用户选择颜色方案时，触发您想要的回调函数。 |
   </Tab>
 </Tabs>

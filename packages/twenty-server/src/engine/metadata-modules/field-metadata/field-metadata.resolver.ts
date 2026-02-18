@@ -1,16 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, ResolveField } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -33,7 +27,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
-@Resolver(() => FieldMetadataDTO)
+@MetadataResolver(() => FieldMetadataDTO)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,

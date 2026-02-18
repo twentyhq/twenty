@@ -4,8 +4,8 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export type DeleteFlatEntityFromFlatEntityMapsThroughMutationOrThrowArgs<
   T extends SyncableFlatEntity,
@@ -20,31 +20,33 @@ export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
   flatEntityMapsToMutate,
   entityToDeleteId,
 }: DeleteFlatEntityFromFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  const entityToDelete = flatEntityMapsToMutate.byId[entityToDeleteId];
+  const universalIdentifierToDelete =
+    flatEntityMapsToMutate.universalIdentifierById[entityToDeleteId];
 
-  if (!isDefined(entityToDelete)) {
+  if (!isDefined(universalIdentifierToDelete)) {
     throw new FlatEntityMapsException(
       'deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow: entity to delete not found',
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
     );
   }
 
-  delete flatEntityMapsToMutate.byId[entityToDeleteId];
+  const entityToDelete =
+    flatEntityMapsToMutate.byUniversalIdentifier[universalIdentifierToDelete];
 
-  delete flatEntityMapsToMutate.idByUniversalIdentifier[
-    entityToDelete.universalIdentifier
+  delete flatEntityMapsToMutate.byUniversalIdentifier[
+    universalIdentifierToDelete
   ];
 
-  if (isDefined(entityToDelete.applicationId)) {
+  delete flatEntityMapsToMutate.universalIdentifierById[entityToDeleteId];
+
+  if (isDefined(entityToDelete?.applicationId)) {
     const universalIdentifiers =
       flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         entityToDelete.applicationId
       ];
 
     if (isDefined(universalIdentifiers)) {
-      const index = universalIdentifiers.indexOf(
-        entityToDelete.universalIdentifier,
-      );
+      const index = universalIdentifiers.indexOf(universalIdentifierToDelete);
 
       if (index !== -1) {
         universalIdentifiers.splice(index, 1);

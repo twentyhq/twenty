@@ -1,60 +1,60 @@
 ---
-title: Create Relation Fields
-description: Step-by-step guide to connecting objects with relation fields.
+title: Créer des champs de relation
+description: Guide étape par étape pour connecter des objets à l'aide de champs de relation.
 ---
 
-Relation fields connect records from different objects—for example, linking People to Companies.
+Les champs de relation relient des enregistrements provenant d'objets différents — par exemple, relier des Personnes à des Entreprises.
 
 <Note>
-  **Relation names cannot be changed after creation** (they affect the API). Plan your names carefully.
+  **Les noms de relation ne peuvent pas être modifiés après leur création** (ils affectent l'API). Planifiez soigneusement les noms.
 </Note>
 
-## Before You Start
+## Avant de démarrer
 
-Decide:
+Décidez :
 
-* Which objects are you connecting? (e.g., People → Companies)
-* Which is the "one" side? (e.g., Company)
-* Which is the "many" side? (e.g., People — many people work at one company)
-* What should the field be named on each side?
+* Quels objets connectez-vous ? (p. ex. : Personnes → Entreprises)
+* Quel est le côté "un" ? (p. ex. : Entreprise)
+* Quel est le côté "plusieurs" ? (p. ex. : Personnes — de nombreuses personnes travaillent dans une seule entreprise)
+* Comment le champ doit-il s'appeler de chaque côté ?
 
-See [Relation Fields](/l/fr/user-guide/data-model/capabilities/relation-fields) for relation types explained.
+Voir [Champs de relation](/l/fr/user-guide/data-model/capabilities/relation-fields) pour une explication des types de relation.
 
-## Steps
+## Étapes
 
-1. Go to **Settings → Data Model**
-2. Select the object where you want the relation (typically the "many" side)
-3. Click **+ Add Field**
-4. Select **Relation** as the field type
-5. Choose the **target object**
-6. Select **One-to-Many** or **Many-to-One**
-7. Enter field names for **both sides** of the relation
-8. Click **Save**
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l'objet où vous voulez la relation (généralement le côté "plusieurs")
+3. Cliquez sur **+ Ajouter un champ**
+4. Sélectionnez **Relation** comme type de champ
+5. Choisissez l'**objet cible**
+6. Sélectionnez **Un-à-plusieurs** ou **Plusieurs-à-un**
+7. Saisissez des noms de champ pour **les deux côtés** de la relation
+8. Cliquez sur **Enregistrer**
 
-## Example: People → Companies
+## Exemple : Personnes → Entreprises
 
-* Go to **Settings → Data Model → People**
-* Add a Relation field
-* Target: **Companies**
-* Type: **Many-to-One**
-* Field on People: **Company**
-* Field on Companies: **Employees**
+* Allez dans **Paramètres → Modèle de données → Personnes**
+* Ajoutez un champ de relation
+* Cible : **Entreprises**
+* Type : **Plusieurs-à-un**
+* Champ dans Personnes : **Entreprise**
+* Champ dans Entreprises : **Employés**
 
-Now each Person can be linked to a Company, and each Company shows its People.
+Désormais, chaque Personne peut être liée à une Entreprise, et chaque Entreprise affiche ses Personnes.
 
-## Deleting a Relation
+## Suppression d'une relation
 
-1. Go to **Settings → Data Model**
-2. Find the relation field
-3. Click **⋮ → Deactivate**
+1. Allez dans **Paramètres → Modèle de données**
+2. Recherchez le champ de relation
+3. Cliquez sur **⋮ → Désactiver**
 
-Links are preserved but hidden. Reactivate to restore.
+Les liens sont conservés mais masqués. Réactivez pour restaurer.
 
 <Note>
-  **Deleting a relation doesn't delete records.** Only the link between them is removed.
+  **La suppression d'une relation ne supprime pas les enregistrements.** Seul le lien entre eux est supprimé.
 </Note>
 
-## Related
+## Connexes
 
-* [Relation Fields](/l/fr/user-guide/data-model/capabilities/relation-fields) — types and limitations
-* [How to Import Relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bulk import linked records
+* [Champs de relation](/l/fr/user-guide/data-model/capabilities/relation-fields) — types et limitations
+* [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importation en masse d'enregistrements liés

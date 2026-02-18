@@ -52,32 +52,29 @@ export class DashboardToPageLayoutSyncService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const dashboardRepository =
-          await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
-            workspaceId,
-            'dashboard',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const dashboards = await dashboardRepository.find({
-          where: {
-            id: In(dashboardIds),
-          },
-          withDeleted: true,
-        });
-
-        const pageLayoutIds = dashboards
-          .map((dashboard) => dashboard.pageLayoutId)
-          .filter(isDefined);
-
-        await this.pageLayoutService.destroyMany({
-          ids: pageLayoutIds,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const dashboardRepository =
+        await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
           workspaceId,
-        });
-      },
-    );
+          'dashboard',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const dashboards = await dashboardRepository.find({
+        where: {
+          id: In(dashboardIds),
+        },
+        withDeleted: true,
+      });
+
+      const pageLayoutIds = dashboards
+        .map((dashboard) => dashboard.pageLayoutId)
+        .filter(isDefined);
+
+      await this.pageLayoutService.destroyMany({
+        ids: pageLayoutIds,
+        workspaceId,
+      });
+    }, authContext);
   }
 }

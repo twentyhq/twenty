@@ -5,6 +5,7 @@ import { type MenuItemAccent } from '../types/MenuItemAccent';
 import { type IconComponent } from '@ui/display';
 import { LightIconButtonGroup } from '@ui/input';
 import { type ReactNode } from 'react';
+import { type MenuItemDraggableGripMode } from '../types/MenuItemDraggableGripMode';
 import { type MenuItemIconButton } from './MenuItem';
 
 export type MenuItemDraggableProps = {
@@ -17,7 +18,7 @@ export type MenuItemDraggableProps = {
   text: ReactNode;
   className?: string;
   isIconDisplayedOnHoverOnly?: boolean;
-  showGrip?: boolean;
+  gripMode?: MenuItemDraggableGripMode;
   isDragDisabled?: boolean;
   isHoverDisabled?: boolean;
 };
@@ -32,15 +33,12 @@ export const MenuItemDraggable = ({
   isDragDisabled = false,
   className,
   isIconDisplayedOnHoverOnly = true,
-  showGrip = false,
+  gripMode = 'never',
 }: MenuItemDraggableProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
-  const cursorType = showGrip
-    ? isDragDisabled
-      ? 'default'
-      : 'drag'
-    : 'default';
+  const cursorType =
+    gripMode !== 'never' ? (isDragDisabled ? 'default' : 'drag') : 'default';
 
   return (
     <StyledHoverableMenuItemBase
@@ -55,7 +53,7 @@ export const MenuItemDraggable = ({
         text={text}
         withIconContainer={withIconContainer}
         disabled={isDragDisabled}
-        showGrip={showGrip}
+        gripMode={gripMode}
       />
       {showIconButtons && (
         <LightIconButtonGroup

@@ -98,6 +98,9 @@ describe('ClientConfigController', () => {
         isImapSmtpCaldavEnabled: false,
         calendarBookingPageId: undefined,
         isTwoFactorAuthenticationEnabled: false,
+        allowRequestsToTwentyIcons: true,
+        isCloudflareIntegrationEnabled: false,
+        isClickHouseConfigured: false,
       };
 
       jest

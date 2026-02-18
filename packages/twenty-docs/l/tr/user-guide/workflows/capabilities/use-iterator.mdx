@@ -1,88 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Yineleyici Kullanın
+description: Kayıt dizileri üzerinde döngü yaparak her öğe üzerinde eylemler gerçekleştirin.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+Yineleyici, bir kayıt dizisi üzerinde döngü yapmanızı ve her biri için eylemler gerçekleştirmenizi sağlar. Search Records tarafından döndürülen veya Webhook'lar aracılığıyla alınan birden çok kaydı işlemeyi gerektiren iş akışları için gereklidir.
 
-## When to Use Iterator
+## Yineleyici Ne Zaman Kullanılır
 
-| Scenario                   | Örnek                                          |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+| Senaryo                        | Örnek                                              |
+| ------------------------------ | -------------------------------------------------- |
+| **Arama sonuçlarını işleyin**  | Bulunan her kişiye e-posta gönderin                |
+| **Webhook dizilerini yönetin** | Her öğe için sırayla kayıtlar oluşturun            |
+| **Toplu güncellemeler**        | Birden çok kaydı hesaplanan değerlerle güncelleyin |
+| **Bildirimler**                | Bir etkinlik hakkında birden fazla kişiyi uyarın   |
 
-## Understanding Iterator
+## Yineleyiciyi Anlama
 
-Iterator expects an **array** as input. It then:
+Yineleyici, girdi olarak bir **dizi** bekler. Ardından:
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+1. Diziden ilk öğeyi alır
+2. Yineleyicinin içindeki tüm eylemleri o öğeyle çalıştırır
+3. Sonraki öğeye geçer
+4. Tüm öğeler işlenene kadar tekrarlar
 
-## Basic Setup
+## Temel Kurulum
 
-### Example: Email Everyone in Search Results
+### Örnek: Arama Sonuçlarındaki Herkese E-posta Gönderme
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+**Hedef**: Belirli bir şirketteki tüm kişileri bulun ve her birine kişiselleştirilmiş bir e-posta gönderin.
 
-### Step 1: Search for Records
+### Adım 1: Kayıt Ara
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+1. **Kayıt Ara** eylemini ekleyin
+2. Nesne: **Kişiler**
+3. Filtre: Şirket "Acme Inc"'e eşit
+4. Bu, bir kişi dizisi döndürür
 
-### Step 2: Check Results Exist
+### Adım 2: Sonuçların Mevcut Olduğunu Kontrol Edin
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+1. **Filtre** eylemi ekleyin
+2. Koşul: `{{searchRecords.length}}` 0'dan büyüktür
+3. Bu, boş sonuçlarda Yineleyici hatalarını önler
 
-### Step 3: Add Iterator
+### Adım 3: Yineleyici Ekleyin
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+1. **Yineleyici** eylemini ekleyin
+2. Dizi girişi: `{{searchRecords}}` öğesini seçin
+3. Bu bir döngü oluşturur
 
-### Step 4: Add Actions Inside Iterator
+### Adım 4: Yineleyici İçine Eylemler Ekleyin
 
-Actions placed after Iterator run for each item:
+Yineleyiciden sonra yerleştirilen eylemler her öğe için çalışır:
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+1. Bir **E-posta Gönder** eylemi ekleyin (yineleyici içinde)
+2. Kime: `{{iterator.currentItem.email}}`
+3. Konu: Merhaba `{{iterator.currentItem.firstName}}`!
+4. Gövde: Mevcut öğenin alanlarını kullanarak kişiselleştirilmiş mesaj
 
 ### Sonuç
 
-If Search Records returns 5 people, the Iterator:
+Search Records 5 kişi döndürürse, Yineleyici:
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+* 1. kişiye e-posta gönderir
+* 2. kişiye e-posta gönderir
+* ... tüm 5'i için de devam eder
 
-## Accessing Current Item Data
+## Geçerli Öğe Verilerine Erişim
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+Yineleyici içinde, geçerli kayda erişmek için `{{iterator.currentItem}}` kullanın:
 
-| Variable                                | Açıklama                            |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+| Değişken                                | Açıklama                          |
+| --------------------------------------- | --------------------------------- |
+| `{{iterator.currentItem}}`              | Geçerli kayıt nesnesinin tamamı   |
+| `{{iterator.currentItem.id}}`           | Kayıt Kimliği                     |
+| `{{iterator.currentItem.email}}`        | E-posta alanı                     |
+| `{{iterator.currentItem.company.name}}` | İlgili şirket adı                 |
+| `{{iterator.index}}`                    | Dizideki mevcut konum (0 tabanlı) |
 
-## Common Patterns
+## Yaygın Kalıplar
 
-### Update Multiple Records
+### Birden Çok Kaydı Güncelleyin
 
-**Goal**: Mark all overdue tasks as "Late"
+**Hedef**: Vadesi geçmiş tüm görevleri "Geç" olarak işaretleyin
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -94,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### Diziden Kayıtlar Oluşturun
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**Hedef**: Webhook birden çok öğe içeren bir sipariş aldığında, her bir öğe için bir kayıt oluşturun
 
 ```
 1. Webhook Trigger (receives items array)
@@ -109,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### Döngü İçinde Koşullu İşleme
 
-**Goal**: Only send email to contacts with valid emails
+**Hedef**: Yalnızca geçerli e-postası olan kişilere e-posta gönderin
 
 ```
 1. Search Records (People)
@@ -125,52 +125,52 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 
 ### "Iterator expects an array"
 
-**Cause**: You passed a single record instead of an array.
+**Neden**: Bir dizi yerine tek bir kayıt geçtiniz.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**Düzeltme**: Tek bir kayıt değil, Search Records sonucunu veya bir dizi alanını geçtiğinizden emin olun.
 
 ```
 ✅ Correct: {{searchRecords}}
 ❌ Wrong: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### Yineleyici Çalışmıyor
 
-**Cause**: The array is empty.
+**Neden**: Dizi boş.
 
-**Fix**: Add a Filter before Iterator to check array length:
+**Düzeltme**: Dizi uzunluğunu kontrol etmek için Yineleyiciden önce bir Filtre ekleyin:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### Eylemler Çok Fazla Kez Çalıştırılıyor
 
-**Cause**: Search Records returned more records than expected.
+**Neden**: Search Records beklenenden daha fazla kayıt döndürdü.
 
-**Fix**:
+**Düzeltme**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Search Records'a daha spesifik filtreler ekleyin
+* Search Records için bir sınır belirleyin (en fazla 200)
+* Ek koşullar için Yineleyici içinde Filtre ekleyin
 
-## Performance Considerations
+## Performansla İlgili Hususlar
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **Kredi kullanımı**: Her yineleme, eylemleri için kredi tüketir
+* **Zaman**: Büyük dizilerin işlenmesi daha uzun sürer
+* **Sınırlar**: Çok büyük işlemleri toplu olarak çalıştırmayı düşünün
+* **Oran sınırlamaları**: Çok sayıda yinelemede harici API çağrıları oran sınırlarına takılabilir
 
 ## En İyi Uygulamalar
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. Hatalardan kaçınmak için Yineleyiciden önce **dizi uzunluğunu her zaman kontrol edin**
+2. Tüm öğelerin işlenmesine gerek olmadığında **döngülerin içine filtreler ekleyin**
+3. Neyin üzerinden döngü yaptığını açıklamak için **Yineleyici adımınızı yeniden adlandırın**
+4. Büyük veri kümelerini işlemeye başlamadan önce **küçük dizilerle test edin**
+5. Yinelemelerin beklendiği gibi tamamlandığından emin olmak için **iş akışı çalıştırmalarını izleyin**
 
-## Related
+## İlgili
 
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/tr/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Dalları Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [İş Akışları SSS](/l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq)

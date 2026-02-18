@@ -1,5 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { WidgetType } from '~/generated/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 
 describe('getTabsWithVisibleWidgets', () => {
@@ -36,6 +36,7 @@ describe('getTabsWithVisibleWidgets', () => {
     widgets: PageLayoutTab['widgets'],
   ): PageLayoutTab => ({
     __typename: 'PageLayoutTab',
+    applicationId: '',
     id,
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,

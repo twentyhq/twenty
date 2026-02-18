@@ -1,7 +1,6 @@
 // @ts-ignore
 import path from 'path';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 // @ts-ignore
 import packageJson from './package.json';
@@ -36,22 +35,28 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
 };
 
 export default defineConfig(() => {
-  const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
+    resolve: {
+      alias: {
+        '@/': path.resolve(__dirname, 'src') + '/',
+      },
+    },
     plugins: [
       tsconfigPaths({
-        root: __dirname
+        root: __dirname,
       }),
-      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
     ],
     build: {
+      emptyOutDir: false,
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-shared' },
       rollupOptions: {
-        external: Object.keys((packageJson as any).dependencies || {}),
+        external: [
+          ...Object.keys((packageJson as any).dependencies || {}),
+          'typescript',
+        ],
         output: [
           {
             format: 'es',

@@ -18,9 +18,9 @@ import {
 import {
   type AccessTokenJwtPayload,
   type ApiKeyTokenJwtPayload,
-  ApplicationTokenJwtPayload,
+  ApplicationAccessTokenJwtPayload,
   type AuthContext,
-  type FileTokenJwtPayload,
+  FileTokenJwtPayloadLegacy,
   type JwtPayload,
   JwtTokenTypeEnum,
   type WorkspaceAgnosticTokenJwtPayload,
@@ -31,9 +31,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -50,14 +48,14 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     @InjectRepository(ApiKeyEntity)
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly permissionsService: PermissionsService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
     // @ts-expect-error legacy noImplicitAny
     const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
       try {
         const decodedToken = jwtWrapperService.decode<
-          | FileTokenJwtPayload
+          | FileTokenJwtPayloadLegacy
           | AccessTokenJwtPayload
           | WorkspaceAgnosticTokenJwtPayload
         >(rawJwtToken);
@@ -199,37 +197,27 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       return context;
     }
 
-    const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        buildSystemAuthContext(workspace.id),
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatWorkspaceMemberMaps',
+      ]);
 
-          const workspaceMember = await workspaceMemberRepository.findOne({
-            where: {
-              userId: user.id,
-            },
-          });
+    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
 
-          assertIsDefinedOrThrow(
-            workspaceMember,
-            new AuthException(
-              'User is not a member of the workspace',
-              AuthExceptionCode.FORBIDDEN_EXCEPTION,
-              {
-                userFriendlyMessage: msg`User is not a member of the workspace.`,
-              },
-            ),
-          );
+    const workspaceMember = isDefined(workspaceMemberId)
+      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+      : undefined;
 
-          return workspaceMember;
+    assertIsDefinedOrThrow(
+      workspaceMember,
+      new AuthException(
+        'User is not a member of the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`User is not a member of the workspace.`,
         },
-      );
+      ),
+    );
 
     return {
       ...context,
@@ -345,7 +333,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   private async validateApplicationToken(
-    payload: ApplicationTokenJwtPayload,
+    payload: ApplicationAccessTokenJwtPayload,
   ): Promise<AuthContext> {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.workspaceId,
@@ -371,6 +359,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
+    // TODO: Token carries userId/userWorkspaceId but they are unused.
+    // Compute the intersection of user and application permissions instead.
     return {
       application,
       workspace,
@@ -400,7 +390,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       return await this.validateAccessToken(payload);
     }
 
-    if (payload.type === JwtTokenTypeEnum.APPLICATION) {
+    if (payload.type === JwtTokenTypeEnum.APPLICATION_ACCESS) {
       return await this.validateApplicationToken(payload);
     }
 

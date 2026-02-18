@@ -1,80 +1,80 @@
 ---
-title: Create a Kanban View for Projects
-description: Track projects through stages using a visual board.
+title: プロジェクト用のカンバンビューを作成
+description: ビジュアルボードでプロジェクトをステージごとに追跡します。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Use a Kanban view to visualize your projects (or any object with stages) as cards moving through columns.
+カンバンビューを使って、プロジェクト（またはステージのある任意のオブジェクト）を、列間を移動するカードとして可視化します。
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="デモ動画" />
 
-## Prerequisites
+## 前提条件
 
-Your object needs a **Select field** to use as columns (e.g., Status, Stage, Phase).
+列として使用するには、対象のオブジェクトに **選択フィールド**（例: ステータス、ステージ、フェーズ）が必要です。
 
-If you don't have one:
+まだない場合:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Add a Select field with your stage options
+1. **設定 → データモデル** に移動します
+2. 対象のオブジェクトを選択します
+3. ステージの選択肢を持つ選択フィールドを追加します
 
-## Steps
+## 手順
 
-1. Navigate to your object (e.g., Projects, Tasks)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Project Board")
-4. Click **Create**
-5. Click **Options** and select **Kanban** as the layout
-6. The view uses your Select field for columns automatically
-7. Click **Save**
+1. 対象のオブジェクト（例: プロジェクト、タスク）に移動します
+2. ビューのドロップダウンをクリックし、**+ ビューを追加**を選択します
+3. ビューに名前を付けます（例: "プロジェクト ボード"）
+4. **作成** をクリックします
+5. **オプション** をクリックし、レイアウトとして **カンバン** を選択します
+6. ビューは選択フィールドを列として自動的に使用します
+7. **保存**をクリック
 
-## Configure Your Board
+## ボードを構成する
 
-### Show Key Fields on Cards
+### カードに主要フィールドを表示
 
-1. Click **Options → Fields**
-2. Find fields in the "Hidden Fields" section
-3. Click the **eye icon** to display them on cards
-4. Drag to reorder
+1. **オプション → フィールド** をクリックします
+2. 「非表示フィールド」セクションでフィールドを探します
+3. カードに表示するには、**目のアイコン**をクリックします
+4. ドラッグして並べ替えます
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-### Enable Compact View
+### コンパクトビューを有効にする
 
-For a high-level overview:
+全体をざっと確認したい場合:
 
-1. Click **Options**
-2. Turn on **Compact view**
+1. **オプション** をクリックします
+2. **コンパクトビュー** をオンにします
 
-Cards show only the record name.
+カードにはレコード名のみが表示されます。
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-### Add Aggregations
+### 集計を追加
 
-Show counts or totals at the top of each column:
+各列の上部に件数や合計を表示します:
 
-1. Click the number next to a column name
-2. Select an aggregation (Count, Sum, etc.)
-3. Choose a field if needed
+1. 列名の横の数値をクリックします
+2. 集計方法（件数、合計 など）を選択します
+3. 必要に応じてフィールドを選択します
 
-## Moving Cards
+## カードの移動
 
-Drag and drop cards between columns to update their status.
+列間でカードをドラッグ＆ドロップして、ステータスを更新します。
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="デモ動画" />
 
-## Example: Task Board
+## 例: タスクボード
 
-| Column (Status) | Cards             |
-| --------------- | ----------------- |
-| **To Do**       | New tasks         |
-| **In Progress** | Active work       |
-| **Review**      | Awaiting approval |
-| **Done**        | Completed         |
+| 列（ステータス） | カード    |
+| -------- | ------ |
+| **未着手**  | 新規タスク  |
+| **進行中**  | 進行中の作業 |
+| **レビュー** | 承認待ち   |
+| **完了**   | 完了     |
 
-## Related
+## 関連
 
-* [Kanban Views](/l/ja/user-guide/views-pipelines/capabilities/kanban-views) — aggregations, compact view, stages
-* [How to Set Up a Sales Pipeline](/l/ja/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban for Opportunities
+* [カンバンビュー](/l/ja/user-guide/views-pipelines/capabilities/kanban-views) — 集計、コンパクトビュー、ステージ
+* [セールスパイプラインの設定方法](/l/ja/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — 商談向けのカンバン

@@ -17,7 +17,7 @@ export const generateObjectRecordFields = ({
 
   const result: Record<string, FieldOutputSchema> = {};
 
-  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+  for (const fieldId of flatObjectMetadata.fieldIds) {
     const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: fieldId,

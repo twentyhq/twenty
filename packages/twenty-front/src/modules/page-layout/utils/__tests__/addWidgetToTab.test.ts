@@ -1,11 +1,11 @@
-import { WidgetType } from '~/generated-metadata/graphql';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
   WidgetConfigurationType,
+  WidgetType,
   type PageLayoutWidget,
-} from '~/generated/graphql';
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+} from '~/generated-metadata/graphql';
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {
@@ -30,6 +30,7 @@ describe('addWidgetToTab', () => {
   const mockTabs: PageLayoutTab[] = [
     {
       id: 'tab-1',
+      applicationId: '',
       title: 'Tab 1',
       position: 0,
       pageLayoutId: 'layout-1',
@@ -40,6 +41,7 @@ describe('addWidgetToTab', () => {
     },
     {
       id: 'tab-2',
+      applicationId: '',
       title: 'Tab 2',
       position: 1,
       pageLayoutId: 'layout-1',

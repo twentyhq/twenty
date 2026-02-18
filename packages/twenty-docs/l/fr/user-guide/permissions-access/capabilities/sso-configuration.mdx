@@ -1,125 +1,125 @@
 ---
-title: SSO Configuration
-description: Configure Single Sign-On for secure enterprise authentication.
+title: Configuration du SSO
+description: Configurez l'authentification unique (SSO) pour une authentification d'entreprise sécurisée.
 ---
 
-## About SSO
+## À propos du SSO
 
-Single Sign-On (SSO) allows your team members to log into Twenty using your organization's identity provider. This provides:
+L'authentification unique (SSO) permet aux membres de votre équipe de se connecter à Twenty en utilisant le fournisseur d'identité de votre organisation. Cela offre :
 
-* **Centralized access control**: Manage access from one place
-* **Enhanced security**: Leverage your existing security policies
-* **Better user experience**: One set of credentials for all tools
+* **Contrôle d'accès centralisé** : Gérez les accès depuis un seul endroit
+* **Sécurité renforcée** : Exploitez vos politiques de sécurité existantes
+* **Meilleure expérience utilisateur** : Un seul jeu d'identifiants pour tous les outils
 
-## Supported Providers
+## Fournisseurs pris en charge
 
-Twenty supports SSO with:
+Twenty prend en charge le SSO avec :
 
-* **SAML 2.0**: Works with most enterprise identity providers
-* **Google Workspace**: For organizations using Google
-* **Microsoft Entra ID**: (formerly Azure AD) For Microsoft environments
+* **SAML 2.0** : Fonctionne avec la plupart des fournisseurs d'identité d'entreprise
+* **Google Workspace** : Pour les organisations utilisant Google
+* **Microsoft Entra ID** : (anciennement Azure AD) Pour les environnements Microsoft
 
-## Setting Up SSO
+## Configuration du SSO
 
-### Prerequisites
+### Prérequis
 
-* Organization plan (cloud and self-hosted workspaces)
-* Admin access to your identity provider
-* Admin access to Twenty workspace
+* Offre Organization (espaces de travail cloud et auto-hébergés)
+* Accès administrateur à votre fournisseur d'identité
+* Accès administrateur à l'espace de travail Twenty
 
 <Note>
-  **For self-hosting users willing to set up SSO**, reach out to contact@twenty.com
+  **Pour les utilisateurs en auto-hébergement souhaitant configurer le SSO**, contactez contact@twenty.com
 </Note>
 
-### Configuration Steps
+### Étapes de configuration
 
-#### 1. Access SSO Settings
+#### 1. Accédez aux paramètres du SSO
 
-1. Go to **Settings → Security**
-2. Find the **SSO Configuration** section
-3. Click **Configure SSO**
+1. Allez dans **Paramètres → Sécurité**
+2. Retrouvez la section Configuration du SSO
+3. Cliquez sur **Configurer le SSO**
 
-#### 2) Choose Your Provider
+#### 2) Choisissez votre fournisseur
 
-Select your identity provider from the list or choose "Custom SAML" for other providers.
+Sélectionnez votre fournisseur d'identité dans la liste ou choisissez "Custom SAML" pour d'autres fournisseurs.
 
-#### 3. Configure Your Identity Provider
+#### 3. Configurez votre fournisseur d'identité
 
-You'll need to configure your identity provider with:
+Vous devrez configurer votre fournisseur d'identité avec :
 
-* **Entity ID**: Provided by Twenty
-* **ACS URL**: The callback URL for authentication
-* **Certificate**: For secure communication
+* **Entity ID** : Fourni par Twenty
+* **URL ACS** : L'URL de rappel pour l'authentification
+* **Certificat** : Pour une communication sécurisée
 
-#### 4. Enter Provider Details in Twenty
+#### 4. Saisissez les informations du fournisseur dans Twenty
 
-* **SSO URL**: Login URL from your provider
-* **Entity ID**: Your provider's identifier
-* **Certificate**: X.509 certificate from your provider
+* **URL SSO** : L'URL de connexion fournie par votre fournisseur
+* **Entity ID** : L'identifiant de votre fournisseur
+* **Certificat** : Certificat X.509 de votre fournisseur
 
-#### 5. Test and Enable
+#### 5. Tester et activer
 
-1. Click **Test Configuration** to verify setup
-2. Enable SSO when testing is successful
-3. Configure user provisioning preferences
+1. Cliquez sur **Tester la configuration** pour vérifier la configuration
+2. Activez le SSO lorsque le test est réussi
+3. Configurez les préférences d'approvisionnement des utilisateurs
 
-## User Provisioning
+## Approvisionnement des utilisateurs
 
-### Just-in-Time (JIT) Provisioning
+### Approvisionnement Just-in-Time (JIT)
 
-* Users are created automatically on first login
-* Assigned default role automatically
-* No manual user creation needed
+* Les utilisateurs sont créés automatiquement lors de la première connexion
+* Le rôle par défaut est attribué automatiquement
+* Aucune création manuelle d'utilisateurs nécessaire
 
-### Manual Provisioning
+### Approvisionnement manuel
 
-* Invite users before they can log in
-* Pre-assign specific roles
-* More control over who can access
+* Invitez les utilisateurs avant qu'ils ne puissent se connecter
+* Préattribuez des rôles spécifiques
+* Plus de contrôle sur les personnes autorisées à accéder
 
-## Managing SSO Users
+## Gestion des utilisateurs SSO
 
-### Role Assignment
+### Attribution des rôles
 
-SSO users can be assigned roles like regular users:
+Les utilisateurs SSO peuvent se voir attribuer des rôles comme les utilisateurs classiques :
 
-1. Go to **Settings → Members**
-2. Find the user
-3. Change their role as needed
+1. Allez dans **Paramètres → Membres**
+2. Recherchez l'utilisateur
+3. Modifiez leur rôle selon les besoins
 
-### Access Revocation
+### Révocation de l'accès
 
-To remove access for SSO users:
+Pour supprimer l'accès des utilisateurs SSO :
 
-* Remove them from your identity provider, or
-* Remove them from the Twenty workspace
+* Retirez-les de votre fournisseur d'identité, ou
+* Retirez-les de l'espace de travail Twenty
 
-## Best Practices
+## Meilleures pratiques
 
-### Security
+### Sécurité
 
-* **Require SSO**: Disable password login for SSO users
-* **Regular audits**: Review access periodically
-* **Strong IdP policies**: Enforce MFA at the identity provider
+* **Exiger le SSO** : Désactivez la connexion par mot de passe pour les utilisateurs SSO
+* **Audits réguliers** : Passez en revue les accès régulièrement
+* **Politiques IdP strictes** : Imposez l'AMF au niveau du fournisseur d'identité
 
-### User Management
+### Gestion des utilisateurs
 
-* **Clear naming**: Use consistent naming from your directory
-* **Group mapping**: Map IdP groups to Twenty roles (if available)
-* **Offboarding process**: Include Twenty in your deprovisioning workflow
+* Utilisez un nommage cohérent avec votre annuaire
+* **Correspondance de groupes** : Faites correspondre les groupes IdP aux rôles Twenty (si disponible)
+* **Processus de départ** : Incluez Twenty dans votre workflow de déprovisionnement
 
-## Troubleshooting
+## Résolution des problèmes
 
-### Common Issues
+### Problèmes courants
 
-* **Certificate errors**: Ensure certificate hasn't expired
-* **URL mismatches**: Verify ACS URL matches exactly
-* **User not found**: Check JIT provisioning settings
+* **Erreurs de certificat** : Assurez-vous que le certificat n'a pas expiré
+* **Incohérences d'URL** : Vérifiez que l'URL ACS correspond exactement
+* **Utilisateur introuvable** : Vérifiez les paramètres d'approvisionnement JIT
 
-### Getting Help
+### Obtenir de l'aide
 
-If you encounter issues, contact support with:
+Si vous rencontrez des problèmes, contactez le support avec :
 
-* Error messages received
-* Identity provider being used
-* Configuration details (without sensitive data)
+* Messages d'erreur reçus
+* Fournisseur d'identité utilisé
+* Détails de configuration (sans données sensibles)

@@ -1,29 +1,29 @@
 ---
-title: Data Model FAQ
-description: Frequently asked questions about Twenty's data model.
+title: Nejčastější dotazy k datovému modelu
+description: Často kladené otázky k datovému modelu Twenty.
 ---
 
 ## Správa objektů
 
 <AccordionGroup>
-  <Accordion title="Can I delete a custom object?">
-    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  <Accordion title="Mohu smazat vlastní objekt?">
+    Ano, vlastní objekty lze smazat. Můžete je také nejprve deaktivovat, čímž se objekt a jeho data skryjí v rozhraní, přičemž data zůstanou zachována.
   </Accordion>
 
   <Accordion title="Mohu smazat standardní objekty (Lidé, Společnosti, atd.)?">
-    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+    Ne, standardní objekty nelze smazat. Můžete je pouze deaktivovat, což je skryje v rozhraní, ale zachová data.
   </Accordion>
 
-  <Accordion title="How many custom objects can I create?">
-    You can create as many custom objects and fields as you need — the price doesn't change.
+  <Accordion title="Kolik vlastních objektů mohu vytvořit?">
+    Můžete vytvořit tolik vlastních objektů a polí, kolik potřebujete — cena se nemění.
   </Accordion>
 
-  <Accordion title="Can I rename a standard object?">
-    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  <Accordion title="Mohu přejmenovat standardní objekt?">
+    U standardních objektů (Lidé, Společnosti, Příležitosti) můžete přejmenovat štítek, ale ne jejich názvy API. Názvy API jsou pevně dané kvůli konzistenci napříč všemi pracovními prostory Twenty.
   </Accordion>
 
-  <Accordion title="Can I change an object's icon?">
-    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  <Accordion title="Mohu změnit ikonu objektu?">
+    Ano, ikonu pro standardní i vlastní objekty můžete změnit v **Nastavení → Datový model**.
   </Accordion>
 
   <Accordion title="Mohu přerovnat objekty v levém navigačním panelu?">
@@ -31,15 +31,15 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 
   <Accordion title="Mohu skrýt objekty z levého navigačního panelu?">
-    Všechny aktivní objekty se zobrazují v navigaci. You can deactivate objects you don't need under **Settings → Data Model**.
+    Všechny aktivní objekty se zobrazují v navigaci. Objekty, které nepotřebujete, můžete deaktivovat v **Nastavení → Datový model**.
   </Accordion>
 </AccordionGroup>
 
 ## Možnosti polí
 
 <AccordionGroup>
-  <Accordion title="Can I change a field type after creation?">
-    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  <Accordion title="Mohu po vytvoření změnit typ pole?">
+    Ne, typy polí nelze po vytvoření změnit. Pokud potřebujete jiný typ, vytvořte nové pole se správným typem, migrujte svá data a poté staré pole deaktivujte.
   </Accordion>
 
   <Accordion title="Proč potřebuji různé jednotné a množné názvy?">
@@ -55,25 +55,25 @@ description: Frequently asked questions about Twenty's data model.
     Některé názvy polí, jako `Typ` nebo `Aplikace`, jsou vyhrazeny pro systémové použití. Zvolte alternativní názvy jako `Kategorie` nebo `Klasifikace`.
   </Accordion>
 
-  <Accordion title="What happens when I deactivate a field?">
-    * The field is hidden from the interface
-    * Existing data is preserved
-    * You can still access the field via API
-    * Existing relations remain but you can't create new ones
-    * You can reactivate the field later
+  <Accordion title="Co se stane, když deaktivuji pole?">
+    * Pole je skryto v rozhraní
+    * Stávající data jsou zachována
+    * K poli můžete nadále přistupovat přes API
+    * Stávající relace zůstávají, ale nemůžete vytvářet nové
+    * Pole můžete později znovu aktivovat
   </Accordion>
 
-  <Accordion title="Can I make a field required?">
-    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  <Accordion title="Mohu nastavit pole jako povinné?">
+    Aktuálně nelze nastavit vlastní pole jako povinná. Všechna pole přijímají prázdné hodnoty. Pomocí pracovních postupů můžete vynucovat povinná pole zasíláním upozornění nebo blokováním akcí, když jsou pole prázdná.
   </Accordion>
 
-  <Accordion title="What's the difference between unique and required?">
-    * **Unique**: No two records can have the same value in this field
-    * **Required**: The field must have a value (not currently supported for custom fields)
+  <Accordion title="Jaký je rozdíl mezi jedinečným a povinným?">
+    * **Jedinečné**: Žádné dva záznamy nemohou mít v tomto poli stejnou hodnotu
+    * **Povinné**: Pole musí mít hodnotu (aktuálně není podporováno pro vlastní pole)
   </Accordion>
 
-  <Accordion title="Can I create formula fields?">
-    Formula fields are coming in **Q1 2026**. Mezitím můžete použít pracovní postupy pro automatické výpočty a aktualizace hodnot polí.
+  <Accordion title="Mohu vytvořit vzorcová pole?">
+    Vzorcová pole přijdou v **Q1 2026**. Mezitím můžete použít pracovní postupy pro automatické výpočty a aktualizace hodnot polí.
   </Accordion>
 
   <Accordion title="Mohu mít v mých objektech vnořená pole?">
@@ -81,44 +81,44 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 
   <Accordion title="Mohu přerovnat pole v objektech?">
-    Přerovnávání polí bude dostupné s vlastními rozloženími ve **Q4 2025**. Currently, fields appear in alphabetical order.
+    Přerovnávání polí bude dostupné s vlastními rozloženími ve **Q4 2025**. Aktuálně se pole zobrazují v abecedním pořadí.
   </Accordion>
 </AccordionGroup>
 
 ## Vztahy
 
 <AccordionGroup>
-  <Accordion title="Can I have a relation pointing to the same object?">
-    Ano! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  <Accordion title="Mohu mít relaci odkazující na tentýž objekt?">
+    Ano! Samo-referenční relace jsou podporovány a doporučeny pro případy použití, jako jsou hierarchie účtů. Například vytvořte relaci ze Společností na Společnosti, abyste sledovali nadřazené/podřízené účty.
   </Accordion>
 
   <Accordion title="Mohu vytvořit mnoho-mnoho vztahů?">
-    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+    Vztahy mnoho-mnoho přijdou v **H1 2026**. Aktuálně jako řešení vytvořte mezilehlý objekt se dvěma vztahy jedno-mnoho.
 
-    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+    Například pro propojení Lidí a Projektů (mnoho-mnoho) vytvořte objekt "Přiřazení k projektům" s:
 
-    * A relation to People (many assignments → one person)
-    * A relation to Projects (many assignments → one project)
+    * Relaci k Lidem (mnoho přiřazení → jedna osoba)
+    * Relaci k Projektům (mnoho přiřazení → jeden projekt)
   </Accordion>
 
-  <Accordion title="What are relations to multiple object types (Morph relationships)?">
-    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+  <Accordion title="Co jsou relace k více typům objektů (morfní relace)?">
+    Umožňují jednomu objektu navázat vztah k více různým typům objektů prostřednictvím jediného pole. Například Poznámky lze současně připojit k Lidem, Společnostem a Příležitostem.
 
-    Each Note links to one Person, one Company, and one Opportunity at the same time.
+    Každá Poznámka je současně propojena s jednou Osobou, jednou Společností a jednou Příležitostí.
 
-    Learn more in [Relation Fields](/l/cs/user-guide/data-model/capabilities/relation-fields).
+    Více se dozvíte v [Relačních polích](/l/cs/user-guide/data-model/capabilities/relation-fields).
   </Accordion>
 
-  <Accordion title="Can I have multiple relations between the same objects?">
-    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  <Accordion title="Mohu mít více relací mezi stejnými objekty?">
+    Ano, můžete vytvořit více relací mezi stejnými dvěma objekty. Například Společnost může mít k Lidem relaci jak "Primární kontakt", tak "Fakturační kontakt".
   </Accordion>
 
-  <Accordion title="What happens to relations when I delete a record?">
-    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  <Accordion title="Co se stane s relacemi, když smažu záznam?">
+    Když smažete záznam, odkaz relace je z příslušných záznamů odstraněn. Samotné související záznamy nejsou smazány.
   </Accordion>
 
-  <Accordion title="Can I create circular relations?">
-    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  <Accordion title="Mohu vytvořit kruhové relace?">
+    Ačkoliv jsou technicky možné, kruhovým relacím (A → B → C → A) je vhodné se vyhnout, protože mohou způsobovat nejasnosti a potenciální problémy s výkonem.
   </Accordion>
 </AccordionGroup>
 
@@ -126,30 +126,30 @@ description: Frequently asked questions about Twenty's data model.
 
 <AccordionGroup>
   <Accordion title="Kde mohu vidět a editovat svůj model dat?">
-    Go to **Settings → Data Model** to view and edit all your objects and fields.
+    Přejděte do **Nastavení → Datový model**, kde můžete zobrazit a upravovat všechny své objekty a pole.
   </Accordion>
 
   <Accordion title="Proč nevidím model dat v Nastavení?">
-    Reach out to your workspace administrator. Přístup k modelu dat je obvykle omezen pouze na správce.
+    Obraťte se na administrátora svého pracovního prostoru. Přístup k modelu dat je obvykle omezen pouze na správce.
   </Accordion>
 </AccordionGroup>
 
-## Data Management
+## Správa dat
 
 <AccordionGroup>
-  <Accordion title="Is there a limit to how many records I can have?">
-    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  <Accordion title="Existuje nějaký limit počtu záznamů, které mohu mít?">
+    Neexistuje pevný limit počtu záznamů. Velmi velké datové sady však mohou ovlivnit výkon v některých zobrazeních. K efektivní správě velkých datových sad použijte filtry a zobrazení.
   </Accordion>
 
-  <Accordion title="Can I import data into custom objects?">
-    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  <Accordion title="Mohu importovat data do vlastních objektů?">
+    Ano, data CSV můžete importovat do libovolného objektu, včetně vlastních objektů. Proces importu podporuje mapování polí pro vlastní pole. Viz [Jak připravit své soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
   </Accordion>
 
-  <Accordion title="Can I export my data model configuration?">
-    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  <Accordion title="Mohu exportovat konfiguraci svého datového modelu?">
+    Aktuálně neexistuje vestavěný export konfigurace datového modelu. Pokud potřebujete migrovat svůj datový model mezi pracovními prostory, kontaktujte podporu.
   </Accordion>
 </AccordionGroup>
 
 ## Potřebujete další pomoc?
 
-Check our [Implementation Services](/l/cs/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.
+Podívejte se na naše [implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services) pro pomoc s návrhem komplexního datového modelu.

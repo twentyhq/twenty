@@ -114,7 +114,7 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
     **Možnost 2:** Pokud máte nainstalován docker:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -169,10 +169,17 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
 
     Tím vytvoříte superuživatelskou roli pojmenovanou `postgres` s přístupovými právy.
 
+    ```bash
+    Jméno role | Vlastnosti  | Členem
+    -----------+-------------+-----------
+    postgres  | Superuživatel   | {}
+    john      | Superuživatel   | {}
+    ```
+
     **Možnost 2:** Pokud máte nainstalován docker:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -193,7 +200,7 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
     Použijte tuto možnost pouze pokud si jste jisti extra kroky včetně zapnutí [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -212,7 +219,7 @@ Twenty vyžaduje ke svému provozu Redis cache pro zajištění nejlepšího vý
     **Možnost 2:** Pokud máte nainstalován docker:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -229,7 +236,7 @@ Twenty vyžaduje ke svému provozu Redis cache pro zajištění nejlepšího vý
     **Možnost 2:** Pokud máte nainstalován docker:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -240,7 +247,7 @@ Twenty vyžaduje ke svému provozu Redis cache pro zajištění nejlepšího vý
     **Možnost 2:** Pokud máte nainstalován docker:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
@@ -259,7 +266,7 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/cs/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **Režim více pracovních prostorů:** Ve výchozím nastavení běží Twenty v režimu jednoho pracovního prostoru, ve kterém lze vytvořit pouze jeden pracovní prostor. Chcete-li povolit podporu více pracovních prostorů (užitečné pro testování funkcí založených na subdoménách), nastavte v serverovém souboru `.env` hodnotu `IS_MULTIWORKSPACE_ENABLED=true`. Podrobnosti viz [Režim více pracovních prostorů](/l/cs/developers/self-host/capabilities/setup#multi-workspace-mode).
 </Info>
 
 ## Krok 6: Instalace závislostí

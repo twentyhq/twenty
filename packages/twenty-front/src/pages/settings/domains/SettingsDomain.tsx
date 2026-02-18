@@ -13,7 +13,7 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -25,6 +25,7 @@ import { useState } from 'react';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/get-subdomain-validation-schema';
 import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
+import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
   'subdomain-change-confirmation-modal';
@@ -33,6 +34,9 @@ export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
   const { t } = useLingui();
+  const isCloudflareIntegrationEnabled = useRecoilValue(
+    isCloudflareIntegrationEnabledState,
+  );
 
   const validationSchema = z
     .object({
@@ -226,7 +230,7 @@ export const SettingsDomain = () => {
           >
             <SettingsPageContainer>
               <SettingsSubdomain />
-              <SettingsCustomDomain />
+              {isCloudflareIntegrationEnabled && <SettingsCustomDomain />}
             </SettingsPageContainer>
           </SubMenuTopBarContainer>
         </FormProvider>

@@ -4,8 +4,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useRecoilValue } from 'recoil';
-import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
+import { viewableRichTextComponentStateV2 } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -35,8 +35,8 @@ const LoadingSkeleton = () => {
 };
 
 export const CommandMenuEditRichTextPage = () => {
-  const { activityId, activityObjectNameSingular } = useRecoilValue(
-    viewableRichTextComponentState,
+  const { activityId, activityObjectNameSingular } = useRecoilValueV2(
+    viewableRichTextComponentStateV2,
   );
 
   if (

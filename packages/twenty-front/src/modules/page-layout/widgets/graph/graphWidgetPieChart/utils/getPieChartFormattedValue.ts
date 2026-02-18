@@ -5,11 +5,11 @@ import {
 import { type ComputedDatum } from '@nivo/pie';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 
 type GetPieChartFormattedValueParams = {
-  datum: ComputedDatum<PieChartDataItem>;
+  datum: ComputedDatum<PieChartDataItemWithColor>;
   enrichedData: PieChartEnrichedData[];
   formatOptions: GraphValueFormatOptions;
   displayType?: string;

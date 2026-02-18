@@ -1,28 +1,30 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getSubFlatEntityMapsByApplicationIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-id-or-throw.util';
+import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { FromToAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
 export class TwentyStandardApplicationService {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -38,24 +40,21 @@ export class TwentyStandardApplicationService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
+        );
 
-        const favoriteCount = await favoriteRepository.count();
-        const favoriteToCreate = flatViews.map((flatView, index) => ({
-          viewId: flatView.id,
-          position: favoriteCount + index,
-        }));
+      const favoriteCount = await favoriteRepository.count();
+      const favoriteToCreate = flatViews.map((flatView, index) => ({
+        viewId: flatView.id,
+        position: favoriteCount + index,
+      }));
 
-        await favoriteRepository.insert(favoriteToCreate);
-      },
-    );
+      await favoriteRepository.insert(favoriteToCreate);
+    }, authContext);
   }
 
   async synchronizeTwentyStandardApplicationOrThrow({
@@ -74,24 +73,31 @@ export class TwentyStandardApplicationService {
         ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ]);
-    const toTwentyStandardAllFlatEntityMaps =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
+    const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
+      'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
+    );
 
-    const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
+    const {
+      allFlatEntityMaps: toTwentyStandardAllFlatEntityMaps,
+      idByUniversalIdentifierByMetadataName,
+    } = computeTwentyStandardApplicationAllFlatEntityMaps({
+      now: new Date().toISOString(),
+      workspaceId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      shouldIncludeRecordPageLayouts,
+    });
+
+    const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
 
     for (const metadataName of TWENTY_STANDARD_ALL_METADATA_NAME) {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
       const fromFlatEntityMaps =
         fromTwentyStandardAllFlatEntityMaps[flatEntityMapsKey];
       const fromTo = {
-        from: getSubFlatEntityMapsByApplicationIdOrThrow<
+        from: getSubFlatEntityMapsByApplicationIdsOrThrow<
           MetadataFlatEntity<typeof metadataName>
         >({
-          applicationId: twentyStandardFlatApplication.id,
+          applicationIds: [twentyStandardFlatApplication.id],
           flatEntityMaps: fromFlatEntityMaps,
         }),
         to: toTwentyStandardAllFlatEntityMaps[flatEntityMapsKey],
@@ -113,10 +119,13 @@ export class TwentyStandardApplicationService {
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while synchronizing twenty-standard application',

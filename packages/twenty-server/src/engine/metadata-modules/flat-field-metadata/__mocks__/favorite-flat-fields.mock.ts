@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const FAVORITE_FLAT_FIELDS_MOCK = {
   position: getFlatFieldMetadataMock({
     id: '64dbf3ef-a352-44bb-9055-f95822f18d0a',
-    standardId: '20202020-dd26-42c6-8c3c-2a7598c204f6',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.NUMBER,
     name: 'position',
@@ -36,7 +35,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   id: getFlatFieldMetadataMock({
     id: '49f58497-4e7c-49e6-b3bc-c91d4b8a8ddc',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -60,7 +58,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '0606a76c-8a72-48ca-90c6-526c729c25eb',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -84,7 +81,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: 'fb202982-0c8e-4917-8dda-acb8248be749',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -108,7 +104,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: 'ef52e151-a974-470f-bbe7-f345fd4eca65',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -132,7 +127,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   forWorkspaceMember: getFlatFieldMetadataMock({
     id: '07f2c3ba-63d1-4e44-bac4-bc4591e51bac',
-    standardId: '20202020-ce63-49cb-9676-fdc0c45892cd',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'forWorkspaceMember',
@@ -160,7 +154,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   person: getFlatFieldMetadataMock({
     id: '013cec20-e9cc-42db-b9b9-ff6bd0f52abd',
-    standardId: '20202020-c428-4f40-b6f3-86091511c41c',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'person',
@@ -188,7 +181,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   company: getFlatFieldMetadataMock({
     id: '9a11532c-6839-46ed-a2f5-ed03f88b86f6',
-    standardId: '20202020-cff5-4682-8bf9-069169e08279',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'company',
@@ -216,7 +208,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   favoriteFolder: getFlatFieldMetadataMock({
     id: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
-    standardId: '20202020-f658-4d12-8b4d-248356aa4bd9',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'favoriteFolder',
@@ -244,7 +235,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   opportunity: getFlatFieldMetadataMock({
     id: '6380cf8e-4327-4d1e-ad21-1826ce4ecf05',
-    standardId: '20202020-dabc-48e1-8318-2781a2b32aa2',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'opportunity',
@@ -272,7 +262,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   workflow: getFlatFieldMetadataMock({
     id: '12c20527-9b1d-4922-9650-00cc31b26387',
-    standardId: '20202020-b11b-4dc8-999a-6bd0a947b463',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'workflow',
@@ -300,7 +289,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   workflowVersion: getFlatFieldMetadataMock({
     id: '5cb92f25-c067-4e19-afb3-c7cc038ed1a4',
-    standardId: '20202020-e1b8-4caf-b55a-3ab4d4cbcd21',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'workflowVersion',
@@ -328,7 +316,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   workflowRun: getFlatFieldMetadataMock({
     id: 'a4bdd0d8-c36f-4519-812b-be4800ab14b0',
-    standardId: '20202020-db5a-4fe4-9a13-9afa22b1e762',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'workflowRun',
@@ -356,7 +343,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   task: getFlatFieldMetadataMock({
     id: 'db16ab78-ea3f-4b67-93e3-6ad9ab1b7273',
-    standardId: '20202020-1b1b-4b3b-8b1b-7f8d6a1d7d5c',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'task',
@@ -384,7 +370,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   note: getFlatFieldMetadataMock({
     id: 'a61baf0f-2d43-4fda-9baf-efb000c17ecd',
-    standardId: '20202020-1f25-43fe-8b00-af212fdde824',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'note',
@@ -412,7 +397,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   view: getFlatFieldMetadataMock({
     id: 'accd216c-790e-4bd2-83bb-0700e06d0e5c',
-    standardId: '20202020-5a93-4fa9-acce-e73481a0bbdf',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'view',
@@ -440,7 +424,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   rocket: getFlatFieldMetadataMock({
     id: '9448627d-725d-499e-a071-90fd5cfcf0ea',
-    standardId: '20202020-78f7-4d7d-86e9-7562ced0b381',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'rocket',
@@ -468,7 +451,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   pet: getFlatFieldMetadataMock({
     id: 'd34b4048-bf0c-4c61-8ffe-59f1838a2cc4',
-    standardId: '20202020-1bd7-4d10-80dc-968b9f5d1a8a',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'pet',
@@ -496,7 +478,6 @@ export const FAVORITE_FLAT_FIELDS_MOCK = {
   }),
   surveyResult: getFlatFieldMetadataMock({
     id: '9cdfb5a1-bb9c-4a59-811d-f5a1034a8f8b',
-    standardId: '20202020-d049-4912-80ee-43b09fe3b0ac',
     objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     type: FieldMetadataType.RELATION,
     name: 'surveyResult',

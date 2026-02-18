@@ -1,90 +1,90 @@
 ---
-title: Import Contacts via CSV
-description: Complete step-by-step guide to importing people/contacts into Twenty.
+title: 通过 CSV 导入联系人
+description: 将人员/联系人导入 Twenty 的完整分步指南。
 ---
 
-## Overview
+## 概览
 
-This guide walks you through importing your contacts (People) into Twenty. **Import Companies first** if you want to link People to Companies.
+本指南将引导您将联系人（People）导入 Twenty。 **请先导入公司**，如果您想将 People 关联到公司。
 
-## Before You Start
+## 开始之前
 
-### Prerequisites Checklist
+### 先决条件清单
 
 <Check>
-  Your file is CSV, XLSX, or XLS format
+  您的文件为 CSV、XLSX 或 XLS 格式
 </Check>
 
 <Check>
-  File has fewer than 10,000 records
+  文件包含少于 10,000 条记录
 </Check>
 
 <Check>
-  No duplicate email addresses in your file
+  您的文件中没有重复的电子邮件地址
 </Check>
 
 <Check>
-  **Companies imported first** (if linking People to Companies)
+  **先导入公司**（如果要将 People 关联到公司）
 </Check>
 
 <Check>
-  All custom fields exist in **Settings → Data Model**
+  所有自定义字段已存在于 **设置 → 数据模型**
 </Check>
 
 <Warning>
-  **Import Companies Before People**
+  **先导入公司，再导入 People**
 
-  If you want to link People to Companies, import Companies first. The Company must exist before you can reference it.
+  如果您想将 People 关联到公司，请先导入公司。 在引用之前，公司必须已存在。
 </Warning>
 
-## Step 1: Prepare Your Contact Data
+## 步骤 1：准备您的联系人数据
 
-### Required and Recommended Fields
+### 必填与推荐字段
 
-| Field             | Required?   | Format            | Notes                     |
-| ----------------- | ----------- | ----------------- | ------------------------- |
-| **Email**         | Recommended | `name@domain.com` | Must be unique            |
-| **First Name**    | Recommended | Text              |                           |
-| **Last Name**     | Recommended | Text              |                           |
-| **Company**       | Optional    | Domain or ID      | Links to existing Company |
-| **Phone**         | Optional    | Multiple columns  | See below                 |
-| **Job Title**     | Optional    | Text              |                           |
-| **Custom fields** | Optional    | Varies            | Must exist in Data Model  |
+| 字段        | 是否必填？ | 格式                | 备注         |
+| --------- | ----- | ----------------- | ---------- |
+| **电子邮件**  | 推荐    | `name@domain.com` | 必须唯一       |
+| **名字**    | 推荐    | 文本                |            |
+| **姓氏**    | 推荐    | 文本                |            |
+| **公司**    | 可选    | 域名或 ID            | 链接到现有公司    |
+| **电话**    | 可选    | 多列                | 详见下文       |
+| **职位**    | 可选    | 文本                |            |
+| **自定义字段** | 可选    | 因情况而异             | 必须存在于数据模型中 |
 
-### Email Format
+### 电子邮件格式
 
-* Must be valid email format: `name@domain.com`
-* **Must be unique** — no duplicates in your file or in Twenty
-* For additional emails, use the **Emails / Additional Emails** column:
+* 必须为有效的电子邮件格式：`name@domain.com`
+* **必须唯一** — 您的文件或 Twenty 中不得重复
+* 对于附加电子邮件，请使用 **Emails / Additional Emails** 列：
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
-### Phone Format
+### 电话格式
 
-Phone is a **nested field** requiring multiple columns:
+电话是一个 **嵌套字段**，需要多列：
 
-| Column                                  | Example      |
+| 列                                       | 示例           |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
 | **Phones / Primary Phone Calling Code** | `+1`         |
 
-### Linking to Companies
+### 关联到公司
 
-Add a column with the Company's unique identifier:
+添加包含公司唯一标识符的列：
 
-| Column Name     | Format     | Example                                |
-| --------------- | ---------- | -------------------------------------- |
-| `companyDomain` | URL format | `https://acme.com`                     |
-| `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| 列名              | 格式     | 示例                                     |
+| --------------- | ------ | -------------------------------------- |
+| `companyDomain` | URL 格式 | `https://acme.com`                     |
+| `companyId`     | UUID   | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Use Domain URL format** (`https://acme.com`), not the label. This matches how Companies are stored in Twenty.
+  **使用域名 URL 格式**（`https://acme.com`），而不是标签。 这与公司在 Twenty 中的存储方式一致。
 </Note>
 
-### Sample CSV Structure
+### 示例 CSV 结构
 
 ```csv
 firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
@@ -93,150 +93,150 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Pro tip:** Click **Download sample file** during import or export a few existing People to see the exact column names Twenty expects.
+  **专业提示：** 在导入过程中单击 **Download sample file**，或导出现有的一些 People，以查看 Twenty 期望的确切列名。
 </Note>
 
-## Step 2: Access the Import Feature
+## 步骤 2：进入导入功能
 
-**Option 1: From the People View**
+**选项 1：从 People 视图**
 
-1. Navigate to **People** in the left sidebar
-2. Click the **⋮** icon on the top right
-3. Select **Import records**
+1. 在左侧边栏中导航到 **People**
+2. 单击右上角的 **⋮** 图标
+3. 选择 **Import records**
 
-**Option 2: Using Command Menu**
+**选项 2：使用命令菜单**
 
-1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows)
-2. Type "import"
-3. Select **Import records**
-4. Choose **People**
+1. 按 `Cmd + K`（Mac）或 `Ctrl + K`（Windows）
+2. 输入 "import"
+3. 选择 **Import records**
+4. 选择 **People**
 
-## Step 3: Upload Your File
+## 步骤 3：上传您的文件
 
-1. Click **Select file**
-2. Choose your CSV, XLSX, or XLS file
-3. Wait for Twenty to analyze your file
+1. 单击 **Select file**
+2. 选择您的 CSV、XLSX 或 XLS 文件
+3. 等待 Twenty 分析您的文件
 
-## Step 4: Map Your Columns
+## 步骤 4：映射您的列
 
-Twenty automatically tries to match your columns to fields. Review and adjust:
+Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
 
-1. **Check automatic mappings** — verify they're correct
-2. **Fix incorrect mappings** — click the dropdown to select the right field
-3. **Skip columns** — select **Do not map** for columns you don't want to import
+1. **检查自动映射** — 核实其是否正确
+2. **修正不正确的映射** — 单击下拉菜单选择正确的字段
+3. **跳过列** — 对不想导入的列选择 **Do not map**
 
-### Important Mapping Rules
+### 重要的映射规则
 
-| Column Type       | Map To                         | Notes                              |
-| ----------------- | ------------------------------ | ---------------------------------- |
-| Company reference | **Company** relation field     | Use domain OR id, not both         |
-| Email             | **Email**                      | Primary email address              |
-| Additional emails | **Emails / Additional Emails** | Array format                       |
-| Phone             | Separate columns               | Number, Country Code, Calling Code |
+| 列类型    | 映射到                            | 备注                 |
+| ------ | ------------------------------ | ------------------ |
+| 公司引用   | **Company** 关系字段               | 仅使用域名或 ID，不要同时使用二者 |
+| 电子邮件   | **电子邮件**                       | 主要电子邮件地址           |
+| 附加电子邮件 | **Emails / Additional Emails** | 数组格式               |
+| 电话     | 分列                             | 号码、国家代码、拨号代码       |
 
 <img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
 
-### Mapping the Company Relation
+### 映射公司关系
 
-When mapping the company column:
+当映射公司列时：
 
-1. Find your company reference column (e.g., `companyDomain`)
-2. Map it to the **Company** relation field
-3. Twenty will link each Person to the matching Company
+1. 找到您的公司引用列（例如，`companyDomain`）
+2. 将其映射到 **Company** 关系字段
+3. Twenty 会将每个 Person 关联到匹配的 Company
 
 <Warning>
-  **Map only ONE unique identifier for relations.**
+  **仅为关系映射一个唯一标识符。**
 
-  Don't map both `companyId` AND `companyDomain`. Choose one—preferably domain since it's human-readable.
+  不要同时映射 `companyId` 和 `companyDomain`。 选择其一——最好使用域名，因为它更易读。
 </Warning>
 
-## Step 5: Map Select Field Values
+## 步骤 5：映射选择字段的值
 
-If you have Select or Multi-Select fields (like Lead Source):
+如果您有选择或多选字段（如 Lead Source）：
 
-1. Twenty shows your values alongside existing options
-2. Match each value in your file to a Twenty option
-3. Or create new options if needed
+1. Twenty 会将您的值与现有选项并列显示
+2. 将文件中的每个值与一个 Twenty 选项匹配
+3. 或在需要时创建新选项
 
 <Note>
-  Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.
+  选择型选项使用 **API 名称**，而不是显示标签。 在 **Settings → Data Model** 中启用 **Advanced mode** 以查看 API 名称。
 </Note>
 
-## Step 6: Review and Fix Errors
+## 步骤 6：检查并修复错误
 
-Before completing the import, Twenty validates your data:
+在完成导入之前，Twenty 会验证您的数据：
 
-1. Click **Next Steps**
-2. Rows with errors are highlighted in **yellow**
-3. **Fix errors directly** — click a cell and edit the value
-4. **Remove problematic rows** — click the X to skip that row
+1. 单击 **Next Steps**
+2. 有错误的行会被高亮为**黄色**
+3. **直接修复错误** — 单击单元格并编辑其值
+4. **移除有问题的行** — 单击 X 以跳过该行
 
-### Common Contact Import Errors
+### 常见联系人导入错误
 
-| Error                      | Cause                                  | Solution                                    |
-| -------------------------- | -------------------------------------- | ------------------------------------------- |
-| **Duplicate email**        | Email already exists in Twenty or file | Remove duplicate or update existing record  |
-| **Invalid email format**   | Email format incorrect                 | Fix to `name@domain.com`                    |
-| **Relation not found**     | Company doesn't exist                  | Import Companies first or fix the reference |
-| **Missing required field** | Required field is empty                | Fill in the value or remove the row         |
+| 错误           | 原因                   | 解决方案                  |
+| ------------ | -------------------- | --------------------- |
+| **电子邮件重复**   | 电子邮件在 Twenty 或文件中已存在 | 删除重复项或更新现有记录          |
+| **电子邮件格式无效** | 电子邮件格式不正确            | 更正为 `name@domain.com` |
+| **未找到关系**    | 公司不存在                | 先导入公司，或修复引用           |
+| **缺少必填字段**   | 必填字段为空               | 填写该值或删除该行             |
 
-## Step 7: Complete the Import
+## 步骤 7：完成导入
 
-1. Review the import summary
-2. Click **Confirm** to import
-3. Wait for the import to complete
-4. Verify by checking a few records and their Company links
+1. 查看导入摘要
+2. 单击 **确认** 以进行导入
+3. 等待导入完成
+4. 通过检查一些记录及其公司关联来验证
 
-## After Importing Contacts
+## 导入联系人之后
 
-Your contacts are now in Twenty! Next steps:
+您的联系人现已在 Twenty 中！ 后续步骤：
 
-1. **Verify Company links** — open a few People records to confirm they're linked to the right Company
-2. **Import Opportunities** — if needed, link them to People and Companies
-3. **Set up email sync** — connect your mailbox to see email history on contact records
+1. **验证公司关联** — 打开一些 People 记录，确认它们已关联到正确的公司
+2. **导入机会** — 如有需要，将其关联到 People 和 Companies
+3. **设置电子邮件同步** — 连接您的邮箱，以在联系人记录中查看电子邮件历史
 
-## Updating Existing Contacts
+## 更新现有联系人
 
-To update contacts instead of creating new ones:
+若要更新联系人而非创建新联系人：
 
-1. Include the `email` or `id` column in your file
-2. Twenty matches records by this unique identifier
-3. Existing contacts are updated; new ones are created
+1. 在文件中包含 `email` 或 `id` 列
+2. Twenty 将根据此唯一标识符匹配记录
+3. 现有联系人会被更新；新的联系人会被创建
 
-See [How to Update Existing Records](/l/zh/user-guide/data-migration/how-tos/update-existing-records-via-import) for details.
+详情请参见 [如何更新现有记录](/l/zh/user-guide/data-migration/how-tos/update-existing-records-via-import)。
 
-## FAQ
+## 常见问题
 
 <AccordionGroup>
-  <Accordion title="Why can't two People have the same email?">
-    Email is a unique identifier in Twenty. This prevents duplicate contacts and ensures email sync correctly links emails to the right person.
+  <Accordion title="为什么两个 People 不能使用相同的电子邮件？">
+    在 Twenty 中，电子邮件是唯一标识符。 这可防止重复联系人，并确保电子邮件同步将邮件正确关联到对应的人。
   </Accordion>
 
-  <Accordion title="What if I have people without an email?">
-    You can leave the email empty. However, we recommend adding emails when possible for better data quality and email sync functionality.
+  <Accordion title="如果有人员没有电子邮件怎么办？">
+    您可以将电子邮件留空。 不过，我们建议在可能的情况下添加电子邮件，以获得更好的数据质量和电子邮件同步功能。
   </Accordion>
 
-  <Accordion title="How do I link People to Companies during import?">
-    Add a column with the Company's domain (e.g., `https://acme.com`) or ID. During mapping, connect this column to the Company relation field.
+  <Accordion title="在导入过程中如何将 People 关联到 Companies？">
+    添加包含公司域名（例如 `https://acme.com`）或 ID 的列。 在映射过程中，将此列连接到 Company 关系字段。
   </Accordion>
 
-  <Accordion title="What if the Company doesn't exist yet?">
-    Import Companies first, then import People. The Company must exist before you can reference it.
+  <Accordion title="如果该 Company 还不存在怎么办？">
+    先导入 Companies，再导入 People。 在引用之前，该 Company 必须已存在。
   </Accordion>
 
-  <Accordion title="Can I import the ID from my previous CRM?">
-    Yes! Create a custom field marked as "unique" in your data model to store the external ID. Note: the field name `id` is reserved for Twenty's internal ID.
+  <Accordion title="我可以导入之前 CRM 中的 ID 吗？">
+    是! 在您的数据模型中创建一个标记为“唯一”的自定义字段，用于存储外部 ID。 注意：字段名 `id` 保留给 Twenty 的内部 ID。
   </Accordion>
 
-  <Accordion title="How do I fix 'relation not found' errors?">
-    The Company you're referencing doesn't exist. Either import the Company first, or check that the domain/ID exactly matches an existing Company.
+  <Accordion title="如何修复“未找到关系”的错误？">
+    您引用的 Company 不存在。 先导入该 Company，或检查域名/ID 是否与现有 Company 完全匹配。
   </Accordion>
 </AccordionGroup>
 
-## Troubleshooting
+## 故障排除
 
-Having issues? Check:
+遇到问题？ 请查看：
 
-* [How to Fix Import Errors](/l/zh/user-guide/data-migration/how-tos/fix-import-errors)
-* [How to Import Relations](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Field Mapping Reference](/l/zh/user-guide/data-migration/capabilities/field-mapping)
+* [如何修复导入错误](/l/zh/user-guide/data-migration/how-tos/fix-import-errors)
+* [如何导入关系](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [字段映射参考](/l/zh/user-guide/data-migration/capabilities/field-mapping)

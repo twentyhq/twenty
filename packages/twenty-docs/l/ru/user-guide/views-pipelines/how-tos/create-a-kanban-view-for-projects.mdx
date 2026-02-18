@@ -1,80 +1,80 @@
 ---
-title: Create a Kanban View for Projects
-description: Track projects through stages using a visual board.
+title: Создайте канбан-представление для проектов
+description: Отслеживайте проекты по стадиям с помощью визуальной доски.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Use a Kanban view to visualize your projects (or any object with stages) as cards moving through columns.
+Используйте канбан-представление, чтобы визуализировать ваши проекты (или любой объект со стадиями) в виде карточек, перемещающихся между столбцами.
 
 <VimeoEmbed videoId="927888627" title="Видеодемонстрация" />
 
 ## Требования
 
-Your object needs a **Select field** to use as columns (e.g., Status, Stage, Phase).
+Вашему объекту нужно **поле Select**, которое будет использоваться в качестве столбцов (например, Статус, Стадия, Этап).
 
-If you don't have one:
+Если его нет:
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Add a Select field with your stage options
+1. Перейдите в **Настройки → Модель данных**
+2. Выберите ваш объект
+3. Добавьте поле Select с вариантами стадий
 
-## Steps
+## Шаги
 
-1. Navigate to your object (e.g., Projects, Tasks)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Project Board")
-4. Click **Create**
-5. Click **Options** and select **Kanban** as the layout
-6. The view uses your Select field for columns automatically
+1. Перейдите к вашему объекту (например, Проекты, Задачи)
+2. Откройте выпадающее меню представления → **+ Добавить представление**
+3. Назовите представление (например, "Доска проекта")
+4. Нажмите **Создать**
+5. Нажмите **Параметры** и выберите **Kanban** в качестве макета
+6. Представление автоматически использует ваше поле Select в качестве столбцов
 7. Нажмите **Сохранить**
 
-## Configure Your Board
+## Настройка вашей доски
 
-### Show Key Fields on Cards
+### Отображение ключевых полей на карточках
 
-1. Click **Options → Fields**
-2. Find fields in the "Hidden Fields" section
-3. Click the **eye icon** to display them on cards
-4. Drag to reorder
+1. Нажмите **Параметры → Поля**
+2. Найдите поля в разделе «Скрытые поля»
+3. Нажмите **значок глаза**, чтобы отобразить их на карточках
+4. Перетащите, чтобы изменить порядок
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-### Enable Compact View
+### Включение компактного вида
 
-For a high-level overview:
+Для общего обзора:
 
-1. Click **Options**
-2. Turn on **Compact view**
+1. Нажмите **Параметры**
+2. Включите **Компактный вид**
 
-Cards show only the record name.
+Карточки показывают только название записи.
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-### Add Aggregations
+### Добавление агрегаций
 
-Show counts or totals at the top of each column:
+Показывайте количество или итоги вверху каждого столбца:
 
-1. Click the number next to a column name
-2. Select an aggregation (Count, Sum, etc.)
-3. Choose a field if needed
+1. Нажмите на число рядом с названием столбца
+2. Выберите агрегацию (Count, Sum и т. д.)
+3. Выберите поле, если нужно
 
-## Moving Cards
+## Перемещение карточек
 
-Drag and drop cards between columns to update their status.
+Перетаскивайте карточки между столбцами, чтобы обновить их статус.
 
 <VimeoEmbed videoId="927888627" title="Видеодемонстрация" />
 
-## Example: Task Board
+## Пример: доска задач
 
-| Column (Status) | Cards             |
-| --------------- | ----------------- |
-| **To Do**       | New tasks         |
-| **In Progress** | Active work       |
-| **Review**      | Awaiting approval |
-| **Done**        | Завершено         |
+| Столбец (статус) | Карточки            |
+| ---------------- | ------------------- |
+| **К выполнению** | Новые задачи        |
+| **В процессе**   | Активная работа     |
+| **Проверка**     | Ожидает утверждения |
+| **Готово**       | Завершено           |
 
-## Related
+## Связанные материалы
 
-* [Kanban Views](/l/ru/user-guide/views-pipelines/capabilities/kanban-views) — aggregations, compact view, stages
-* [How to Set Up a Sales Pipeline](/l/ru/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban for Opportunities
+* [Канбан-представления](/l/ru/user-guide/views-pipelines/capabilities/kanban-views) — агрегации, компактный вид, стадии
+* [Как настроить воронку продаж](/l/ru/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Канбан для возможностей

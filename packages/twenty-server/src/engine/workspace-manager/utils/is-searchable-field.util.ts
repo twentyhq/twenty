@@ -8,6 +8,7 @@ const SEARCHABLE_FIELD_TYPES = [
   FieldMetadataType.PHONES,
   FieldMetadataType.RICH_TEXT,
   FieldMetadataType.RICH_TEXT_V2,
+  FieldMetadataType.UUID,
 ] as const;
 
 export type SearchableFieldType = (typeof SEARCHABLE_FIELD_TYPES)[number];

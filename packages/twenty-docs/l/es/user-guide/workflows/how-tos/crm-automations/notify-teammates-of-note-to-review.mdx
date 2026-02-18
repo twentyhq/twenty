@@ -1,0 +1,127 @@
+---
+title: Notificar a los compañeros de equipo que hay una nota para revisar
+description: Enviar notificaciones de correo electrónico automáticas al asignar a un colega para revisar una nota.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **Etiquetar directamente a los compañeros de equipo en las notas aún no está disponible.** Esta función está prevista para la segunda mitad de 2026. Mientras tanto, este flujo de trabajo ofrece una solución alternativa práctica.
+</Note>
+
+## El desafío
+
+Desea etiquetar a un colega en una nota para que reciba una notificación para revisarla. Actualmente, Twenty no admite @mentions en notas ni tareas.
+
+## La solución alternativa
+
+En lugar de etiquetar en el texto de la nota, puede:
+
+1. Cree un campo de relación **Reviewer** en el objeto Notes
+2. Asigne al revisor al crear o editar la nota
+3. Un flujo de trabajo envía automáticamente un correo electrónico al revisor con un enlace a la nota
+
+<Warning>
+  **Limitación**: Este enfoque permite asignar un revisor por campo. Si necesita notificar a varias personas, cree campos de relación adicionales (p. ej., Reviewer 1, Reviewer 2). Esto no escalará bien si necesita etiquetar a muchos colaboradores a la vez.
+</Warning>
+
+## Configuración paso a paso
+
+### Paso 1: Crear el campo Reviewer
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. Vaya a **Configuración → Modelo de datos → Notes**
+2. Haga clic en **Add Field**
+3. Configurar:
+
+| Configuración      | Valor                             |
+| ------------------ | --------------------------------- |
+| **Name**           | Reviewer                          |
+| **Tipo**           | Relación                          |
+| **Related Object** | Miembro del espacio de trabajo    |
+| **Relation Type**  | Many Notes → One Workspace Member |
+
+4. Guarde el campo
+
+### Paso 2: Crear el flujo de trabajo
+
+<VimeoEmbed videoId="1151897168" title="Demostración en video" />
+
+#### Cree el disparador del flujo de trabajo
+
+1. Vaya a la vista principal y cree un nuevo flujo de trabajo
+2. Seleccione **Record Updated** como el disparador
+3. Elija **Note** como objeto y especifique el campo Reviewer.
+4. Esto se activará cada vez que se actualice el revisor de una nota.
+
+#### Agregue un filtro para comprobar que el revisor se acaba de asignar
+
+Añada una acción **Filter** para asegurarse de que el flujo de trabajo solo continúe cuando se asigne un revisor:
+
+| Condición    | Valor         |
+| ------------ | ------------- |
+| **Reviewer** | no está vacío |
+
+#### Busque al miembro del espacio de trabajo
+
+1. Añada una acción **Search Records**
+2. Seleccione **Workspace Member** (en Advanced Objects)
+3. Añada un filtro:
+
+| Condición | Valor                         |
+| --------- | ----------------------------- |
+| **ID**    | igual a `{{note.reviewerId}}` |
+
+Esto recupera el registro completo del miembro del espacio de trabajo, incluida su dirección de correo electrónico y su nombre.
+
+#### Enviar el correo electrónico de notificación
+
+1. Añada una acción **Send Email**
+2. Configurar:
+
+| Campo      | Valor                                               |
+| ---------- | --------------------------------------------------- |
+| **Para**   | Search Record → First Workspace Member → User Email |
+| **Asunto** | Una nota requiere su revisión                       |
+| **Cuerpo** | Consulte el ejemplo a continuación                  |
+
+**Ejemplo de cuerpo del correo:**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  Reemplace `yourSubDomain` por el subdominio real de su espacio de trabajo de Twenty.
+</Note>
+
+#### Probar y activar
+
+1. Haga clic en **Test** para ejecutar el flujo de trabajo manualmente
+2. Cree o edite una nota y asigne un revisor
+3. Compruebe la bandeja de entrada del revisor para ver el correo electrónico de notificación
+4. Active el flujo de trabajo
+
+## Uso
+
+Una vez configurado, su equipo puede usar este flujo de trabajo de la siguiente manera:
+
+1. Crear una nueva nota (o editar una existente)
+2. Seleccionar a un colega en el campo **Reviewer**
+3. El colega recibe automáticamente un correo electrónico con un enlace directo a la nota
+
+## Relacionado
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields)
+* [Crear campos de relación](/l/es/user-guide/data-model/how-tos/create-relation-fields)

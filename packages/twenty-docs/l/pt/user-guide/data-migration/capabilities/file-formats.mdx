@@ -1,48 +1,48 @@
 ---
-title: Supported File Formats
-description: File formats supported for data import in Twenty.
+title: Formatos de Ficheiro Suportados
+description: Formatos de ficheiro suportados para importação de dados no Twenty.
 ---
 
-## Supported Formats
+## Formatos Suportados
 
-Twenty supports three file formats for import:
+O Twenty suporta três formatos de ficheiro para importação:
 
-| Format             | Extension | Notes                        |
-| ------------------ | --------- | ---------------------------- |
-| **CSV**            | .csv      | Recommended, most compatible |
-| **Excel**          | .xlsx     | Modern Excel format          |
-| **Excel (Legacy)** | .xls      | Older Excel format           |
+| Formato            | Extensão | Notas                        |
+| ------------------ | -------- | ---------------------------- |
+| **CSV**            | .csv     | Recomendado, mais compatível |
+| **Excel**          | .xlsx    | Formato moderno do Excel     |
+| **Excel (Legado)** | .xls     | Formato antigo do Excel      |
 
-## File Requirements
+## Requisitos do Ficheiro
 
-| Requirement      | Value                                 |
-| ---------------- | ------------------------------------- |
-| **Encoding**     | UTF-8 recommended                     |
-| **Record limit** | 10,000 records per file               |
-| **Structure**    | First row must contain column headers |
-| **Content**      | One object type per file              |
+| Requisito              | Valor                                                  |
+| ---------------------- | ------------------------------------------------------ |
+| **Codificação**        | UTF-8 recomendado                                      |
+| **Limite de registos** | 10 000 registos por ficheiro                           |
+| **Estrutura**          | A primeira linha deve conter os cabeçalhos das colunas |
+| **Conteúdo**           | Um tipo de objeto por ficheiro                         |
 
-## CSV Best Practices
+## Melhores Práticas para CSV
 
-* **Delimiter**: Use comma (`,`) or semicolon (`;`)
-* **Text qualifier**: Use double quotes (`"`) for text containing commas
-* **Line endings**: Windows (CRLF) or Unix (LF) both supported
-* **Empty values**: Leave cells empty, don't use "NULL" or "N/A"
+* **Delimitador**: Utilize vírgula (`,`) ou ponto e vírgula (`;`)
+* **Qualificador de texto**: Utilize aspas duplas (`\"`) para texto que contenha vírgulas
+* **Finais de linha**: Windows (CRLF) ou Unix (LF), ambos são suportados
+* **Valores vazios**: Deixe as células em branco, não utilize "NULL" ou "N/A"
 
-## Excel Best Practices
+## Melhores Práticas para o Excel
 
-When exporting from Excel:
+Ao exportar do Excel:
 
-* Remove formulas (export values only)
-* Delete empty rows at the end
-* Ensure no merged cells
-* Use the first sheet only
+* Remova as fórmulas (exporte apenas valores)
+* Elimine as linhas vazias no final
+* Garanta que não existam células combinadas
+* Utilize apenas a primeira folha
 
-## Large Datasets
+## Grandes Conjuntos de Dados
 
-For datasets larger than 10,000 records:
+Para conjuntos de dados com mais de 10 000 registos:
 
-* Split into multiple files
-* Or use the [API import](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) for unlimited records
+* Divida em vários ficheiros
+* Ou utilize a [importação via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) para registos ilimitados
 
-<Note>For very large migrations (100,000+ records), the API is significantly faster and more reliable than CSV imports.</Note>
+<Note>Para migrações muito grandes (100 000+ registos), a API é significativamente mais rápida e fiável do que as importações em CSV.</Note>

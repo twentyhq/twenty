@@ -1,209 +1,209 @@
 ---
-title: Export Your Data
-description: Complete step-by-step guide to exporting data from Twenty.
+title: データをエクスポート
+description: Twenty からデータをエクスポートするための完全なステップバイステップガイド。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Overview
+## 概要
 
-Export your workspace data to CSV for backups, reporting, or migration.
+バックアップ、レポート作成、または移行のために、ワークスペースのデータを CSV にエクスポートします。
 
-**Use cases:**
+**ユースケース：**
 
-* **Regular backups** — keep copies of your data
-* **External reporting** — analyze data in Excel, Google Sheets, or BI tools
-* **Migration** — move data to another system
-* **Bulk updates** — export, edit, and re-import to update records
+* **定期的なバックアップ** — データのコピーを保持
+* **外部レポーティング** — Excel、Google スプレッドシート、BI ツールでデータを分析
+* **移行** — データを別のシステムに移す
+* **一括更新** — エクスポートして編集し、再インポートしてレコードを更新
 
-## What You Need to Know
+## 知っておくべきこと
 
-### Export Limits
+### エクスポートの制限
 
-* **Maximum 20,000 records** per export
-* Only **visible columns** are exported
-* Only **filtered records** are exported (based on your current view)
+* 1 回のエクスポートにつき **最大 20,000 件のレコード**
+* **表示されている列**のみがエクスポートされます
+* **フィルターで絞り込まれたレコード**のみがエクスポートされます（現在のビューに基づきます）
 
-<Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/ja/developers/extend/capabilities/apis).</Note>
+<Note>大規模なエクスポート（20,000 件超）では、フィルターを使ってバッチに分けてエクスポートするか、[API](/l/ja/developers/extend/capabilities/apis) を使用してください。</Note>
 
-### Permissions
+### 権限
 
-You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
+データをエクスポートするには **"Export CSV"** 権限が必要です。 このオプションがない場合は、ワークスペース管理者に連絡してください。
 
-## Step 1: Navigate to the Object
+## ステップ 1：対象オブジェクトに移動
 
-Go to the object you want to export:
+エクスポートしたいオブジェクトに移動します：
 
-* **People** — for contacts
-* **Companies** — for organizations
-* **Opportunities** — for deals
-* **Custom objects** — any object you've created
+* **People** — 連絡先
+* **Companies** — 組織
+* **Opportunities** — 商談
+* **カスタムオブジェクト** — 作成した任意のオブジェクト
 
-## Step 2: Configure Your View
+## ステップ 2：ビューを設定
 
-**Important:** The export includes only what's visible in your current view.
+**重要:** エクスポートには現在のビューで表示されているもののみが含まれます。
 
-### Add/Remove Columns
+### 列の追加/削除
 
-1. Click **Options → Fields** (or the **+** at the end of columns)
-2. Check the fields you want to export
-3. Uncheck fields you don't need
+1. **Options → Fields** をクリックします（または列の末尾の **+** をクリックします）
+2. エクスポートしたいフィールドにチェックを入れる
+3. 不要なフィールドのチェックを外す
 
-### Filter Records (Optional)
+### レコードをフィルター（任意）
 
-If you only need a subset of data:
+データの一部だけが必要な場合：
 
-1. Click **Filter**
-2. Add filter conditions (e.g., "Created date > January 1, 2024")
-3. Only matching records will be exported
+1. **Filter** をクリックします
+2. フィルター条件を追加します（例："Created date > January 1, 2024"）
+3. 条件に一致するレコードのみがエクスポートされます
 
-### Sort Records (Optional)
+### レコードを並べ替え（任意）
 
-1. Click a column header to sort
-2. The export will follow your sort order
+1. 列ヘッダーをクリックして並べ替えます
+2. エクスポートは並べ替え順に従います
 
-<Note>**Create a dedicated export view.** Save a view specifically configured for exports so you don't need to reconfigure each time.</Note>
+<Note>**エクスポート専用のビューを作成しましょう。** エクスポート用に設定したビューを保存しておくと、毎回再設定する必要がありません。</Note>
 
-## Step 3: Export the Data
+## ステップ 3：データをエクスポート
 
-1. Click the **⋮** icon on the top right of the table
-2. Select **Export view**
-3. Choose where to save the CSV file
-4. Wait for the download to complete
+1. テーブル右上の **⋮** アイコンをクリックします
+2. **Export view** を選択します
+3. CSV ファイルの保存場所を選択します
+4. ダウンロードの完了を待ちます
 
-## What Gets Exported
+## エクスポートされる内容
 
-| Included                         | Not Included           |
-| -------------------------------- | ---------------------- |
-| All visible columns              | Hidden columns         |
-| Records matching current filters | Filtered-out records   |
-| Custom field values              | Fields not in the view |
-| Record IDs                       | File attachments       |
-| Relation IDs                     | Images                 |
+| 含まれるもの            | 含まれないもの          |
+| ----------------- | ---------------- |
+| 表示されているすべての列      | 非表示の列            |
+| 現在のフィルターに一致するレコード | フィルターで除外されたレコード  |
+| カスタムフィールドの値       | ビューに含まれていないフィールド |
+| レコード ID           | 添付ファイル           |
+| リレーション ID         | 画像               |
 
-### Relation Fields
+### リレーションフィールド
 
-Relation IDs are only exported on the **"many" side** of a relationship:
+リレーション ID はリレーションシップの **"many" 側** でのみエクスポートされます：
 
-* **People export** includes a `companyId` column (People → Company relation)
-* **Companies export** does NOT include `peopleIds` (Companies is the "one" side)
+* **People のエクスポート** には `companyId` 列が含まれます（People → Company のリレーション）
+* **Companies のエクスポート** には `peopleIds` は含まれません（Companies は "one" 側です）
 
-This means you can use the People export to re-import and maintain the Company link, but you'll need to re-import People after Companies to recreate the relationships.
+つまり、People のエクスポートを使用して再インポートすれば Company とのリンクを維持できますが、関係を再作成するには Companies の後に People を再インポートする必要があります。
 
-## Exporting for Specific Purposes
+## 目的別のエクスポート
 
-### For Backups
+### バックアップの場合
 
-1. Create a view with **all fields** visible
-2. Remove all filters to include all records
-3. Export each object type separately
-4. Store exports in a secure location
-5. Set a recurring reminder (weekly/monthly)
+1. **すべてのフィールド** を表示したビューを作成
+2. すべてのフィルターを解除して全レコードを含める
+3. 各オブジェクトタイプを個別にエクスポート
+4. エクスポートファイルを安全な場所に保管
+5. 定期的なリマインダーを設定（毎週/毎月）
 
-### For External Reporting
+### 外部レポーティングの場合
 
-1. Include only the fields you need for analysis
-2. Apply filters to focus on relevant data
-3. Consider sorting by the field you'll analyze
+1. 分析に必要なフィールドのみを含める
+2. フィルターを適用して関連データに絞り込む
+3. 分析対象のフィールドで並べ替えることを検討
 
-### For Bulk Updates
+### 一括更新の場合
 
-1. Export the records you want to update
-2. Include the unique identifier (`email`, `domain`, or `id`)
-3. Edit the exported file
-4. Re-import to update records
-   See: [How to Update Existing Records](/l/ja/user-guide/data-migration/how-tos/update-existing-records-via-import)
+1. 更新したいレコードをエクスポート
+2. 一意の識別子（`email`、`domain`、または `id`）を含める
+3. エクスポートしたファイルを編集
+4. 再インポートしてレコードを更新します
+   参照：[既存レコードを更新する方法](/l/ja/user-guide/data-migration/how-tos/update-existing-records-via-import)
 
-### For Migration
+### マイグレーションの場合
 
-If you're exporting to migrate to another system:
+別のシステムへマイグレーションするためにエクスポートする場合：
 
-1. **Export each object separately** — People, Companies, Opportunities, etc.
-2. **Include ID fields** — these help maintain relationships
-3. **Document field mappings** — note how Twenty fields map to your target system
+1. **各オブジェクトを個別にエクスポート** — People、Companies、Opportunities など
+2. **ID フィールドを含める** — 関係の維持に役立ちます
+3. **フィールドのマッピングを文書化** — Twenty のフィールドが対象システムにどのように対応するかを記録
 
-## Handling Large Datasets (20,000+ Records)
+## 大規模データセットの扱い（20,000 件超）
 
-The export limit is 20,000 records. For larger datasets:
+エクスポートの上限は 20,000 件です。 より大きなデータセットの場合：
 
-### Option 1: Export in Batches
+### オプション 1：バッチでエクスポート
 
-1. Add a filter (e.g., "Created date" ranges)
-2. Export the first batch
-3. Change the filter
-4. Export the next batch
-5. Combine files in your spreadsheet
+1. フィルターを追加（例："Created date" の範囲）
+2. 最初のバッチをエクスポート
+3. フィルターを変更
+4. 次のバッチをエクスポート
+5. スプレッドシートでファイルを結合
 
-**Example filters for batching:**
+**バッチ分割の例となるフィルター：**
 
-* By date range (January, February, March...)
-* By owner (Team member A, Team member B...)
-* By status (Active, Inactive...)
+* 日付範囲別（1月、2月、3月...）
+* 担当者別（チームメンバー A、チームメンバー B...）
+* ステータス別（Active、Inactive...）
 
-### Option 2: Use the API
+### オプション 2：API を使用
 
-The API has no record limit:
+API にはレコード数の上限がありません：
 
-1. Get your API key from **Settings → Developers**
-2. Use the GraphQL API to query records
-3. Process results in your application
+1. **Settings → Developers** から API キーを取得
+2. GraphQL API を使用してレコードをクエリします
+3. アプリケーションで結果を処理
 
-See: [API Documentation](/l/ja/developers/extend/capabilities/apis)
+参照：[API ドキュメント](/l/ja/developers/extend/capabilities/apis)
 
-## Tips and Best Practices
+## ヒントとベストプラクティス
 
-### Create Export Views
+### エクスポート用ビューを作成
 
-Save views configured specifically for exports:
+エクスポート用に設定したビューを保存します：
 
-1. Configure columns and filters
-2. Click **View options** → **Save as new view**
-3. Name it "Export - [Purpose]"
+1. 列とフィルターを設定
+2. **View options** → **Save as new view** をクリック
+3. 名前を "Export - [Purpose]" にします
 
-### Secure Your Exports
+### エクスポートを安全に管理
 
-Exported files may contain sensitive data:
+エクスポートされたファイルには機密データが含まれる場合があります：
 
-* Store in secure locations
-* Delete old exports when no longer needed
-* Be careful sharing export files
+* 安全な場所に保管する
+* 不要になった古いエクスポートを削除する
+* エクスポートファイルの共有に注意する
 
-### Check Before Exporting
+### エクスポート前の確認
 
-<Check>Correct columns are visible</Check>
-<Check>Filters are set correctly (or removed for full export)</Check>
-<Check>You have Export permission</Check>
+<Check>正しい列が表示されている</Check>
+<Check>フィルターが正しく設定されている（または全件エクスポートのために解除済み）</Check>
+<Check>エクスポート権限がある</Check>
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Why are some columns missing from my export?">
-    Only visible columns are exported. Add the columns you need via **Options → Fields** before exporting.
+  <Accordion title="エクスポートに一部の列が含まれていないのはなぜですか？">
+    表示されている列のみがエクスポートされます。 エクスポート前に **Options → Fields** から必要な列を追加してください。
   </Accordion>
 
-  <Accordion title="Why doesn't my export have all records?">
-    Check your filters. The export only includes records matching your current view filters. Remove filters to export all records.
+  <Accordion title="エクスポートにすべてのレコードが含まれないのはなぜですか？">
+    フィルターを確認してください。 エクスポートには、現在のビューのフィルターに一致するレコードのみが含まれます。 すべてのレコードをエクスポートするにはフィルターを解除してください。
   </Accordion>
 
-  <Accordion title="Can I export more than 20,000 records?">
-    Not in a single export. Use filters to export in batches, or use the API for larger datasets.
+  <Accordion title="20,000 件を超えるレコードをエクスポートできますか？">
+    1 回のエクスポートではできません。 フィルターを使ってバッチに分けてエクスポートするか、より大きなデータセットには API を使用してください。
   </Accordion>
 
-  <Accordion title="What format is the export file?">
-    CSV (Comma Separated Values). Opens in Excel, Google Sheets, or any spreadsheet application.
+  <Accordion title="エクスポートファイルの形式は何ですか？">
+    CSV（カンマ区切り形式）です。 Excel、Google スプレッドシート、その他のスプレッドシートアプリで開けます。
   </Accordion>
 
-  <Accordion title="Are relation IDs included?">
-    Yes, but only on the "many" side of relationships. For example, a People export includes `companyId`, but a Companies export does not include people IDs.
+  <Accordion title="リレーション ID は含まれますか？">
+    はい。ただし、リレーションシップの "many" 側のみです。 たとえば、People のエクスポートには `companyId` が含まれますが、Companies のエクスポートには People の ID は含まれません。
   </Accordion>
 
-  <Accordion title="Can I automate exports?">
-    Not directly through the UI. Use the API to build automated export workflows.
+  <Accordion title="エクスポートを自動化できますか？">
+    UI から直接はできません。 API を使用して自動エクスポートのワークフローを構築してください。
   </Accordion>
 </AccordionGroup>
 
-## Next Steps
+## 次のステップ
 
-* [How to Update Existing Records](/l/ja/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
-* [How to Import Data via API](/l/ja/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets
-* [API Documentation](/l/ja/developers/extend/capabilities/apis) — build custom export workflows
+* [既存レコードを更新する方法](/l/ja/user-guide/data-migration/how-tos/update-existing-records-via-import) — エクスポートを編集して再インポート
+* [API でデータをインポートする方法](/l/ja/user-guide/data-migration/how-tos/import-data-via-api) — 大規模データセット向け
+* [API ドキュメント](/l/ja/developers/extend/capabilities/apis) — カスタムのエクスポートワークフローを構築

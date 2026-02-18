@@ -1,16 +1,16 @@
 ---
-title: Image Input
+title: Entrada de Imagem
 image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="Cabeçalho" />
 </Frame>
 
-Allows users to upload and remove an image.
+Permite que os usuários façam upload e removam uma imagem.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { ImageInput } from "@/ui/input/components/ImageInput";
 
@@ -20,15 +20,15 @@ Allows users to upload and remove an image.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type     | Description                                                                                       |
-    | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
-    | picture      | string   | The image source URL                                                                              |
-    | onUpload     | function | The function called when a user uploads a new image. It receives the `File` object as a parameter |
-    | onRemove     | function | The function called when the user clicks on the remove button                                     |
-    | onAbort      | function | The function called when a user clicks on the abort button during image upload                    |
-    | isUploading  | boolean  | Indicates whether an image is currently being uploaded                                            |
-    | errorMessage | string   | An optional error message to display below the image input                                        |
-    | disabled     | boolean  | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo     | Descrição                                                                                                   |
+    | ------------ | -------- | ----------------------------------------------------------------------------------------------------------- |
+    | imagem       | string   | A URL de origem da imagem                                                                                   |
+    | onUpload     | função   | A função chamada quando um usuário faz upload de uma nova imagem. Ela recebe o objeto `File` como parâmetro |
+    | onRemove     | função   | A função chamada quando o usuário clica no botão de remoção                                                 |
+    | onAbort      | função   | A função chamada quando o usuário clica no botão de cancelamento durante o upload da imagem                 |
+    | isUploading  | booleano | Indica se uma imagem está sendo enviada no momento                                                          |
+    | errorMessage | string   | An optional error message to display below the image input                                                  |
+    | desativado   | booleano | Se `true`, a entrada inteira está desativada e os botões não são clicáveis                                  |
   </Tab>
 </Tabs>

@@ -12,15 +12,23 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
+export type UserContext = {
+  firstName: string;
+  lastName: string;
+  locale: string;
+  timezone: string | null;
+};
+
 export type AgentActorContext = {
   actorContext: ActorMetadata;
   roleId: string;
   userId: string;
   userWorkspaceId: string;
+  userContext: UserContext;
 };
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class AgentActorContextService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -46,7 +54,6 @@ export class AgentActorContextService {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -61,6 +68,7 @@ export class AgentActorContextService {
             },
           });
         },
+        authContext,
       );
 
     if (!workspaceMember) {
@@ -87,11 +95,19 @@ export class AgentActorContextService {
       workspaceMemberId: workspaceMember.id,
     });
 
+    const userContext: UserContext = {
+      firstName: workspaceMember.name?.firstName ?? '',
+      lastName: workspaceMember.name?.lastName ?? '',
+      locale: userWorkspace.locale,
+      timezone: workspaceMember.timeZone ?? null,
+    };
+
     return {
       actorContext,
       roleId,
       userId: userWorkspace.userId,
       userWorkspaceId,
+      userContext,
     };
   }
 }

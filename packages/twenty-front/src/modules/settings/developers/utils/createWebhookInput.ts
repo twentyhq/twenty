@@ -12,14 +12,10 @@ export const createWebhookCreateInput = (formValues: WebhookFormValues) => {
   };
 };
 
-export const createWebhookUpdateInput = (
-  formValues: WebhookFormValues,
-  webhookId: string,
-) => {
+export const createWebhookUpdateInput = (formValues: WebhookFormValues) => {
   const cleanedOperations = cleanAndFormatOperations(formValues.operations);
 
   return {
-    id: webhookId,
     targetUrl: formValues.targetUrl.trim(),
     operations: cleanedOperations,
     description: formValues.description,

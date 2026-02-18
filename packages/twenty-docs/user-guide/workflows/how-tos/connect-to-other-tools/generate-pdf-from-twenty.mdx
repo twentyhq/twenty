@@ -7,7 +7,7 @@ Automatically generate or fetch a PDF and attach it to a record in Twenty. This 
 
 ## Overview
 
-This workflow uses a **Manual Trigger** so users can generate a PDF on demand for any selected record. A **Serverless Function** handles:
+This workflow uses a **Manual Trigger** so users can generate a PDF on demand for any selected record. A **Logic Function** handles:
 1. Downloading the PDF from a URL (from a PDF generation service)
 2. Uploading the file to Twenty
 3. Creating an Attachment linked to the record
@@ -16,7 +16,7 @@ This workflow uses a **Manual Trigger** so users can generate a PDF on demand fo
 
 Before setting up the workflow:
 
-1. **Create an API Key**: Go to **Settings → APIs** and create a new API key. You'll need this token for the serverless function.
+1. **Create an API Key**: Go to **Settings → APIs** and create a new API key. You'll need this token for the logic function.
 2. **Set up a PDF generation service** (optional): If you want to dynamically generate PDFs (e.g., quotes), use a service like Carbone, PDFMonkey, or DocuSeal to create the PDF and get a download URL.
 
 ## Step-by-Step Setup
@@ -31,9 +31,9 @@ Before setting up the workflow:
 With a Manual Trigger, users can run this workflow using a button that appears on the top right once a record is selected, to generate and attach a PDF.
 </Tip>
 
-### Step 2: Add a Serverless Function
+### Step 2: Add a Logic Function
 
-1. Add a **Serverless Function** action
+1. Add a **Code** action (logic function)
 2. Create a new function with the code below
 3. Configure the input parameters
 
@@ -44,10 +44,10 @@ With a Manual Trigger, users can run this workflow using a button that appears o
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the serverless function.
+If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### Serverless Function Code
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -170,7 +170,7 @@ Update both the function parameter and the `variables.data` object in the attach
 
 If using a PDF generation service, you can:
 1. First make an HTTP Request action to generate the PDF
-2. Pass the returned PDF URL to the serverless function as a parameter
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -209,7 +209,7 @@ For creating dynamic quotes or invoices:
 - **DocuSeal** - Document automation platform
 - **Documint** - API-first document generation
 
-Each service provides an API that returns a PDF URL, which you can then pass to the serverless function.
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## Troubleshooting
 
@@ -222,6 +222,6 @@ Each service provides an API that returns a PDF URL, which you can then pass to 
 ## Related
 
 - [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
-- [Serverless Functions](/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+- [Logic Functions](/user-guide/workflows/capabilities/workflow-actions#code)
 - [Generate a Quote or Invoice from Twenty](/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
 

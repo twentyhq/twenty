@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: Formül Alanları
+description: Yerel destek sunulana kadar iş akışlarını kullanarak formül alanları oluşturun.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+Twenty henüz yerel formül alanlarını desteklemiyor (2026'da geliyor), ancak aynı sonuca iş akışlarını kullanarak ulaşabilirsiniz. Bu geçici çözüm, basit birleştirmelerden karmaşık iş mantığına kadar alan değerlerini otomatik olarak hesaplayıp doldurmanızı sağlar.
 
 ## Ortak Kullanım Durumları
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| Kullanım Senaryosu       | Formül Örneği                     |
+| ------------------------ | --------------------------------- |
+| **Ad Soyad**             | First Name + " " + Last Name      |
+| **Beklenen tutar**       | Amount × Probability              |
+| **Son tarihe kalan gün** | Due Date - Today                  |
+| **Aşamadaki gün sayısı** | Today - Stage Entry Date          |
+| **Lead skoru**           | Birden çok kritere dayalı puanlar |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/tr/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Boru hattı aşamalarında zamanı izlemeye dair eksiksiz bir örnek için bkz. [Fırsatların Her Aşamada Ne Kadar Kaldığını İzleme](/l/tr/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
-## Basic Formula: Concatenation
+## Temel Formül: Birleştirme
 
-### Example: Auto-Fill Full Name
+### Örnek: Ad Soyad'ı Otomatik Doldur
 
-**Goal**: Automatically combine first and last name into a full name field.
+**Amaç**: Ad ve soyadı otomatik olarak bir Ad Soyad alanında birleştirmek.
 
 ### Kurulum
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **Tetikleyici**: Kayıt Güncellenir veya Oluşturulur (Kişiler)
 
-2. **Filter**: Check that first name or last name changed
+2. **Filtre**: Adın veya soyadın değişip değişmediğini kontrol edin
 
-3. **Code action**:
+3. **Kod eylemi**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **Kaydı Güncelle**: Ad Soyad'ı `{{code.fullName}}` olarak ayarla
 
-## Numeric Formula: Expected Amount
+## Sayısal Formül: Beklenen Tutar
 
-### Example: Calculate Expected Revenue
+### Örnek: Beklenen Geliri Hesapla
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**Amaç**: Beklenen tutarı elde etmek için fırsat tutarını olasılıkla çarpın.
 
-See [How to Show Expected Amount in Pipeline](/l/tr/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+Tam iş akışı için [Boru Hattında Beklenen Tutar Nasıl Gösterilir](/l/tr/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) bölümüne bakın.
 
-### Quick Setup
+### Hızlı Kurulum
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **Tetikleyici**: Kayıt Güncellenir (Fırsatlar, Tutar VEYA Olasılık alanı)
 
-2. **Code action**:
+2. **Kod eylemi**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **Kaydı Güncelle**: Beklenen Tutar'ı `{{code.expectedAmount}}` olarak ayarla
 
-## Date Formula: Days Calculation
+## Tarih Formülü: Gün Hesaplaması
 
-### Example: Days Until Task Due
+### Örnek: Görevin Son Tarihine Kalan Gün Sayısı
 
-**Goal**: Calculate how many days remain until a task's due date.
+**Amaç**: Bir görevin son tarihine kaç gün kaldığını hesaplamak.
 
 ### Kurulum
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **Tetikleyici**: Kayıt Güncellenir veya Oluşturulur (Görevler, Son Tarih alanı)
 
-2. **Code action**:
+2. **Kod eylemi**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **Kaydı Güncelle**: Son Tarihe Kalan Gün'ü `{{code.daysUntilDue}}` olarak ayarla
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  Negatif değerler, vadesi geçmiş görevleri belirtir. Bu alanı, görevleri aciliyetine göre filtrelemek veya sıralamak için kullanabilirsiniz.
 </Note>
 
-## Conditional Formula: Lead Score
+## Koşullu Formül: Lead Skoru
 
-### Example: Calculate Lead Score Based on Criteria
+### Örnek: Kriterlere Göre Lead Skoru Hesapla
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**Amaç**: Şirket büyüklüğü, sektör ve etkileşime göre lead'leri puanlamak.
 
 ### Kurulum
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **Tetikleyici**: Kayıt Güncellenir (Kişiler veya Şirketler)
 
-2. **Code action**:
+2. **Kod eylemi**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **Kaydı Güncelle**: Lead Skorunu `{{code.leadScore}}` olarak ayarla
 
-## Text Formula: Domain Extraction
+## Metin Formülü: Alan Adı Çıkarma
 
-### Example: Extract Domain from Email
+### Örnek: E-postadan Alan Adı Çıkar
 
-**Goal**: Automatically extract and store the email domain.
+**Amaç**: E-posta alan adını otomatik olarak çıkarmak ve saklamak.
 
 ### Kurulum
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **Tetikleyici**: Kayıt Güncellenir (Kişiler, E-posta alanı)
 
-2. **Code action**:
+2. **Kod eylemi**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **Kaydı Güncelle**: Alan Adı alanını `{{code.domain}}` olarak ayarla
 
 ## En İyi Uygulamalar
 
-### Performance
+### Performans
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* Yalnızca ilgili alan değişikliklerinde tetikleyin
+* Hesaplama gerektirmeyen kayıtları atlamak için filtreler kullanın
+* Yüksek hacimli iş akışlarında karmaşık hesaplamalardan kaçının
 
-### Error Handling
+### Hata Yönetimi
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* Hesaplamalardan önce null/undefined değerleri kontrol edin
+* Veri eksikse varsayılan değerleri kullanın
+* Hesaplamalar başarısız olduğunda açık hata mesajları döndürün
 
 ### Test
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* Sınır durumlarıyla test edin (boş alanlar, sıfır değerler)
+* Etkinleştirmeden önce hesaplamaları manuel olarak doğrulayın
+* Beklenmeyen sonuçlar için iş akışı çalıştırmalarını izleyin
 
-## Related
+## İlgili
 
-* [How to Show Expected Amount in Pipeline](/l/tr/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/tr/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Boru Hattında Beklenen Tutar Nasıl Gösterilir](/l/tr/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [Aşamadaki Süre Nasıl İzlenir](/l/tr/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)

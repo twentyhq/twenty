@@ -24,7 +24,19 @@ describe('isSyncStale', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false if syncStageStartedAt is invalid', () => {
+  it('should return true if syncStageStartedAt is undefined', () => {
+    const result = isSyncStale(undefined);
+
+    expect(result).toBe(true);
+  });
+
+  it('should return true if syncStageStartedAt is null', () => {
+    const result = isSyncStale(null);
+
+    expect(result).toBe(true);
+  });
+
+  it('should throw an error if syncStageStartedAt is invalid', () => {
     const syncStageStartedAt = 'invalid-date';
 
     expect(() => {

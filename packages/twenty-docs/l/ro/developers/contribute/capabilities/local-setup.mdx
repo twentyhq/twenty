@@ -114,7 +114,7 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     **Opțiunea 2:** Dacă aveți docker instalat:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -170,10 +170,17 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
 
     Acest lucru creează un rol de superutilizator numit `postgres` cu drept de autentificare.
 
+    ```bash
+    Nume rol | Atribute  | Membru al
+    -----------+-------------+-----------
+    postgres  | Superutilizator   | {}
+    john      | Superutilizator   | {}
+    ```
+
     **Opțiunea 2:** Dacă aveți docker instalat:
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
@@ -194,7 +201,7 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     Folosiți această opțiune doar dacă sunteți confortabil cu pașii suplimentari implicați, inclusiv activarea [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -213,7 +220,7 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
     **Opțiunea 2:** Dacă aveți docker instalat:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -230,7 +237,7 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
     **Opțiunea 2:** Dacă aveți docker instalat:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
@@ -241,7 +248,7 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță
     **Opțiunea 2:** Dacă aveți docker instalat:
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>

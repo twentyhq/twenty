@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: Vincoli di unicità
+description: Come Twenty applica l'unicità dei dati durante l'importazione.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Panoramica
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Twenty applica l'unicità su determinati campi per prevenire record duplicati e garantire l'integrità dei dati. Comprendere questi vincoli è essenziale per importazioni riuscite.
 
-## Default Unique Fields
+## Campi univoci predefiniti
 
-| Oggetto                    | Unique Fields          |
-| -------------------------- | ---------------------- |
-| **People**                 | `id`, `email`          |
-| **Aziende**                | `id`, `domain`         |
-| **Oggetti personalizzati** | `id` only (by default) |
+| Oggetto                    | Campi univoci                            |
+| -------------------------- | ---------------------------------------- |
+| **Persone**                | `id`, `email`                            |
+| **Aziende**                | `id`, `domain`                           |
+| **Oggetti personalizzati** | Solo `id` (per impostazione predefinita) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Il campo `id` è l'identificatore interno di Twenty, generato automaticamente per ciascun record. Utilizza il formato UUID (ad es., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## Campi univoci personalizzati
 
-You can define additional unique fields under **Settings → Data Model**:
+Puoi definire campi univoci aggiuntivi in **Impostazioni → Modello dati**:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto
+3. Fai clic su un campo
+4. Abilita **Univoco** nelle impostazioni del campo
 
-### Use Cases for Custom Unique Fields
+### Casi d'uso per campi univoci personalizzati
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **ID esterni**: Memorizza ID provenienti da altri sistemi (Salesforce ID, HubSpot ID)
+* **Identificativi aziendali**: numeri dei dipendenti, codici cliente
+* **Informazioni di contatto alternative**: profilo LinkedIn, numero di telefono
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>Il nome del campo `id` è riservato all'ID interno di Twenty. Usa un nome diverso come `externalId` o `legacyId` per gli identificatori esterni.</Note>
 
-## Import Behavior
+## Comportamento dell'importazione
 
-### Creating New Records
+### Creazione di nuovi record
 
-If a unique field value doesn't exist, a new record is created.
+Se il valore di un campo univoco non esiste, viene creato un nuovo record.
 
-### Updating Existing Records
+### Aggiornamento dei record esistenti
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+Se il valore di un campo univoco corrisponde a un record esistente, quel record viene **aggiornato** con i nuovi dati.
+<Warning>Per **aggiornare i record esistenti**, si consiglia di **associare un solo campo univoco**.</Warning>
 
-### Soft-Deleted Records
+### Record eliminati in modo non definitivo
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **I record eliminati contano ai fini dell'unicità.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  I record eliminati in modo non definitivo (visibili in Menu Comandi → Vedi record eliminati) sono inclusi nei controlli di unicità. Se importi un record con lo stesso valore univoco di un record eliminato, il record eliminato verrà **ripristinato** con i nuovi dati.
 </Warning>
 
-## Duplicate Detection During Import
+## Rilevamento dei duplicati durante l'importazione
 
-During the validation phase:
+Durante la fase di convalida:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* I duplicati presenti nel tuo file sono evidenziati in giallo
+* Puoi modificare o rimuovere le righe duplicate dall'interfaccia utente prima di avviare l'importazione
 
-<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+<VimeoEmbed videoId="1145246326" title="Dimostrazione video" />
 
 ## Migliori Pratiche
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. **Rimuovi i duplicati** dal tuo file prima di importare
+2. **Verifica la presenza di record esistenti** in Twenty prima di importare
+3. **Usa ID esterni** quando esegui una migrazione da altri sistemi
+4. **Includi campi univoci** se vuoi aggiornare i record esistenti

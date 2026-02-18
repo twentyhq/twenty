@@ -11,7 +11,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 
-import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +34,7 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const morphFieldValueWithObjectName = useRecordFieldValue<{
+  const morphFieldValueWithObjectName = useRecordFieldValueV2<{
     objectNameSingular: string;
     value: ObjectRecord;
   }>(recordId, fieldDefinition.metadata.fieldName, fieldDefinition);

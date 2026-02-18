@@ -91,7 +91,9 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     globalWorkspaceOrmManager = {
       executeInWorkspaceContext: jest
         .fn()
-        .mockImplementation(async (_authContext, callback) => callback()),
+        .mockImplementation(async (callback: () => any, _authContext?: any) =>
+          callback(),
+        ),
       getRepository: jest
         .fn()
         .mockResolvedValue(mockWorkflowVersionWorkspaceRepository),

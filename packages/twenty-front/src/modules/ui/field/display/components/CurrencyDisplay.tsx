@@ -8,9 +8,8 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
-import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyDisplayProps = {

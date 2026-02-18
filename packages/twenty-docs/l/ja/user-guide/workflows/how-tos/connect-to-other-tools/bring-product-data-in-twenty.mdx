@@ -1,31 +1,31 @@
 ---
-title: Bring Product Data into Twenty
-description: Sync product catalog data from a data warehouse into your CRM on a schedule.
+title: 製品データを Twenty に取り込む
+description: データウェアハウスの製品カタログデータをスケジュールに基づいてCRMに同期します。
 ---
 
-Use this pattern to keep Twenty in sync with product data from your data warehouse (e.g., Snowflake, BigQuery, PostgreSQL).
+このパターンを使用して、データウェアハウス（例: Snowflake、BigQuery、PostgreSQL）の製品データとTwentyの同期を維持します。
 
-## Workflow Structure
+## ワークフローの構成
 
-1. **Trigger**: On a Schedule
-2. **Code**: Query your data warehouse
-3. **Code** (optional): Format data as array
-4. **Iterator**: Loop through each product
-5. **Upsert Record**: Create or update in Twenty
+1. **トリガー**: スケジュール実行
+2. **Code**: データウェアハウスをクエリする
+3. **Code**（任意）：データを配列として整形
+4. **Iterator**: 各製品をループ処理する
+5. **Upsert Record**: Twentyで作成または更新
 
 <img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
 
-## Step 1: Schedule the Trigger
+## ステップ 1: トリガーをスケジュールする
 
-Set the workflow to run at a frequency matching your data freshness needs:
+データの鮮度要件に合わせた頻度でワークフローを実行するよう設定します:
 
-* Every 5 minutes for near real-time sync
-* Every hour for less critical data
-* Daily for batch updates
+* ほぼリアルタイム同期用に5分ごと
+* 重要度の低いデータには1時間ごと
+* バッチ更新には毎日
 
-## Step 2: Query Your Data Warehouse
+## ステップ 2: データウェアハウスをクエリする
 
-Add a **Code** action to fetch recent data:
+直近のデータを取得するために「**Code**」アクションを追加します:
 
 ```javascript
 export const main = async () => {
@@ -54,14 +54,14 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filter by `updated_at >= last X minutes` to retrieve only recently changed records. This keeps the sync efficient.
+  `updated_at >= last X minutes` でフィルタリングして、最近変更されたレコードのみを取得します。 これにより同期が効率的になります。
 </Tip>
 
-## Step 3: Format Data (Optional)
+## ステップ 3: データを整形（任意）
 
-If your warehouse returns data in a format that needs transformation, add another **Code** action. Common transformations include type conversions, field renaming, and data cleanup.
+ウェアハウスが変換を要する形式でデータを返す場合は、別の「**Code**」アクションを追加します。 一般的な変換には、型変換、フィールド名の変更、データのクリーンアップなどがあります。
 
-### Example: User Data with Boolean and Status Fields
+### 例: 真偽値およびステータスフィールドを含むユーザーデータ
 
 ```javascript
 export const main = async (params: {
@@ -86,7 +86,7 @@ export const main = async (params: {
 };
 ```
 
-### Example: Product Data with Type Conversions
+### 例: 型変換を含む製品データ
 
 ```javascript
 export const main = async (params: { products: any }) => {
@@ -107,7 +107,7 @@ export const main = async (params: { products: any }) => {
 };
 ```
 
-### Example: Date and Currency Formatting
+### 例: 日付および通貨の整形
 
 ```javascript
 export const main = async (params: { deals: any }) => {
@@ -131,52 +131,52 @@ export const main = async (params: { deals: any }) => {
 };
 ```
 
-### Common Transformations
+### 一般的な変換
 
-| Source Format        | Target Format    | Code                                     |
+| ソース形式                | ターゲット形式          | コード                                      |
 | -------------------- | ---------------- | ---------------------------------------- |
 | `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
 | `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
 | `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
-| `1704067200` (Unix)  | ISO date         | `new Date(v * 1000).toISOString()`       |
+| `1704067200` (Unix)  | ISO 日付           | `new Date(v * 1000).toISOString()`       |
 | `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
 | `null` / `undefined` | `""`             | `value \|\| ""`                          |
 
-## Step 4: Iterate Through Products
+## ステップ 4: 製品をループ処理する
 
-Add an **Iterator** action:
+「**Iterator**」アクションを追加します:
 
-* Input: `{{code.products}}`
+* 入力: `{{code.products}}`
 
-This loops through each product in the array.
+配列内の各製品をループ処理します。
 
-## Step 5: Upsert Each Record
+## ステップ 5: 各レコードをアップサートする
 
-Inside the iterator, add an **Upsert Record** action:
+Iterator 内で「**Upsert Record**」アクションを追加します:
 
-| Setting      | Value                                  |
-| ------------ | -------------------------------------- |
-| **Object**   | Your custom Product object             |
-| **Match by** | External ID or SKU (unique identifier) |
-| **Name**     | `{{iterator.item.name}}`               |
-| **SKU**      | `{{iterator.item.sku}}`                |
-| **Price**    | `{{iterator.item.price}}`              |
+| 設定         | 値                         |
+| ---------- | ------------------------- |
+| **オブジェクト** | カスタムの Product オブジェクト      |
+| **一致条件**   | 外部IDまたはSKU（一意の識別子）        |
+| **名前**     | `{{iterator.item.name}}`  |
+| **SKU**    | `{{iterator.item.sku}}`   |
+| **価格**     | `{{iterator.item.price}}` |
 
 <Tip>
-  Use **Upsert** (update or create) instead of building separate branches for create vs. update. It's faster to build and easier to debug.
+  作成と更新で分岐を作る代わりに、**Upsert**（更新または作成）を使用します。 その方が構築が速く、デバッグも容易です。
 </Tip>
 
-## Example Use Cases
+## ユースケース例
 
-| Source                  | Data                                |
-| ----------------------- | ----------------------------------- |
-| **ERP system**          | Product catalog, pricing, inventory |
-| **E-commerce platform** | Orders, customers, product updates  |
-| **Data warehouse**      | Aggregated metrics, enriched data   |
-| **Inventory system**    | Stock levels, reorder alerts        |
+| ソース               | データ                 |
+| ----------------- | ------------------- |
+| **ERP システム**      | 製品カタログ、価格設定、在庫      |
+| **Eコマースプラットフォーム** | 受注、顧客、製品更新          |
+| **データウェアハウス**     | 集計メトリクス、エンリッチされたデータ |
+| **在庫管理システム**      | 在庫水準、再発注アラート        |
 
-## Related
+## 関連
 
-* [Workflow Triggers](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [Handle Arrays in Code Actions](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [Code アクションで配列を扱う](/l/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

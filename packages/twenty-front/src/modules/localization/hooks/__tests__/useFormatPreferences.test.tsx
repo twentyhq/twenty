@@ -145,6 +145,7 @@ describe('useFormatPreferences', () => {
 
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: mockCurrentWorkspaceMember.id,
+      objectNameSingular: 'workspaceMember',
       updateOneRecordInput: { timeZone: newTimeZone },
     });
   });
@@ -166,6 +167,7 @@ describe('useFormatPreferences', () => {
     expect(mockDetectTimeZone).toHaveBeenCalled();
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: mockCurrentWorkspaceMember.id,
+      objectNameSingular: 'workspaceMember',
       updateOneRecordInput: { timeZone: 'SYSTEM' },
     });
   });
@@ -190,6 +192,7 @@ describe('useFormatPreferences', () => {
 
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: mockCurrentWorkspaceMember.id,
+      objectNameSingular: 'workspaceMember',
       updateOneRecordInput: { timeZone: 'Europe/Paris' },
     });
   });

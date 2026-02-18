@@ -56,7 +56,6 @@ export const RecordFieldList = ({
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
-    objectRecordId,
   });
 
   const isRecordReadOnly = useIsRecordReadOnly({
@@ -75,7 +74,7 @@ export const RecordFieldList = ({
 
   const {
     inlineFieldMetadataItems,
-    inlineRelationFieldMetadataItems,
+    legacyActivityTargetFieldMetadataItems,
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
@@ -95,7 +94,7 @@ export const RecordFieldList = ({
           <PropertyBoxSkeletonLoader />
         ) : (
           <>
-            {inlineRelationFieldMetadataItems?.map(
+            {legacyActivityTargetFieldMetadataItems?.map(
               (fieldMetadataItem, index) => (
                 <FieldContext.Provider
                   key={objectRecordId + fieldMetadataItem.id}
@@ -180,7 +179,8 @@ export const RecordFieldList = ({
                   }),
                   onMouseEnter: () =>
                     handleMouseEnter(
-                      index + (inlineRelationFieldMetadataItems?.length ?? 0),
+                      index +
+                        (legacyActivityTargetFieldMetadataItems?.length ?? 0),
                     ),
                   anchorId: `${getRecordFieldInputInstanceId({
                     recordId: objectRecordId,

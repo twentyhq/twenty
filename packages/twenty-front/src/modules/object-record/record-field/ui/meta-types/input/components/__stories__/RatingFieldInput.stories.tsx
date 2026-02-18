@@ -17,7 +17,6 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType, type FieldRatingValue } from 'twenty-shared/types';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
   getFieldInputEventContextProviderWithJestMocks();
@@ -112,7 +111,7 @@ const meta: Meta = {
   argTypes: {
     onSubmit: { control: false },
   },
-  decorators: [I18nFrontDecorator, clearMocksDecorator],
+  decorators: [clearMocksDecorator],
   parameters: {
     clearMocks: true,
   },

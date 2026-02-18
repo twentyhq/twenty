@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
 import path from 'path';
@@ -8,13 +7,13 @@ import {
   type CodeExecutionFile,
   type CodeExecutionState,
 } from 'twenty-shared/ai';
+import { FileFolder } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import {
   type InputFile,
   type OutputFile,
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import {
   type AccessTokenJwtPayload,
@@ -24,6 +23,7 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
 import { type CodeInterpreterInput } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
@@ -33,7 +33,6 @@ import {
   type Tool,
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
-import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -50,7 +49,7 @@ export class CodeInterpreterTool implements Tool {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly fileStorageService: FileStorageService,
     private readonly fileService: FileService,
-    private readonly httpService: HttpService,
+    private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
@@ -227,7 +226,9 @@ export class CodeInterpreterTool implements Tool {
 
       const executionTimeMs = Date.now() - startTime;
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error
+          ? error.message
+          : `Unexpected error: ${String(error)}`;
 
       onCodeExecutionUpdate?.(
         this.buildExecutionState(
@@ -274,15 +275,16 @@ export class CodeInterpreterTool implements Tool {
           continue;
         }
 
-        // Allow requests to the server's own URL (for internal file downloads)
-        // but block all other private/internal IPs to prevent SSRF attacks
+        // Internal file downloads (from the server itself) use a plain client;
+        // external URLs go through the SSRF-protected client
         const isInternalFileUrl = file.url.startsWith(serverUrl);
-        const adapter = isInternalFileUrl ? undefined : getSecureAdapter();
+        const httpClient = isInternalFileUrl
+          ? this.secureHttpClientService.getInternalHttpClient()
+          : this.secureHttpClientService.getHttpClient();
 
-        const response = await this.httpService.axiosRef.get(file.url, {
+        const response = await httpClient.get(file.url, {
           responseType: 'arraybuffer',
           timeout: 30_000,
-          adapter,
         });
 
         inputFiles.push({
@@ -353,7 +355,7 @@ export class CodeInterpreterTool implements Tool {
     const sanitizedFilename = path.basename(file.filename);
 
     try {
-      await this.fileStorageService.write({
+      await this.fileStorageService.writeFileLegacy({
         file: file.content,
         name: sanitizedFilename,
         mimeType: file.mimeType,
@@ -402,7 +404,7 @@ export class CodeInterpreterTool implements Tool {
       }
 
       try {
-        await this.fileStorageService.write({
+        await this.fileStorageService.writeFileLegacy({
           file: file.content,
           name: sanitizedFilename,
           mimeType: file.mimeType,

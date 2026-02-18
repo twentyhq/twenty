@@ -42,13 +42,12 @@ export const FieldContextProvider = ({
     (field) => field.name === fieldMetadataName,
   );
 
-  const useUpdateOneObjectMutation: RecordUpdateHook = () => {
-    const { updateOneRecord } = useUpdateOneRecord({
-      objectNameSingular,
-    });
+  const { updateOneRecord } = useUpdateOneRecord();
 
+  const useUpdateOneObjectMutation: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
+      updateOneRecord({
+        objectNameSingular,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });

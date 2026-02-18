@@ -40,11 +40,20 @@ export const RecordBoardContainer = ({
   );
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
-  const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
+  const { updateOneRecord: updateOneRecordHook } = useUpdateOneRecord();
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular,
     shouldMatchRootQueryFilter: true,
   });
+
+  const updateOneRecord = (args: {
+    idToUpdate: string;
+    updateOneRecordInput: Record<string, unknown>;
+  }) =>
+    updateOneRecordHook({
+      objectNameSingular,
+      ...args,
+    });
 
   const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,

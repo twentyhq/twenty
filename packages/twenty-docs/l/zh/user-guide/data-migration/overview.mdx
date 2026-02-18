@@ -1,89 +1,89 @@
 ---
-title: Data Migration
-description: Import and export your CRM data via CSV files or API.
+title: 数据迁移
+description: 通过 CSV 文件或 API 导入和导出您的 CRM 数据。
 image: /images/user-guide/import-export-data/cloud.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Frame>
-  <img src="/images/user-guide/import-export-data/cloud.png" alt="Data Migration" />
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="数据迁移" />
 </Frame>
 
-## Import Methods
+## 导入方法
 
-Twenty supports two main methods for importing data:
+Twenty 支持两种主要的数据导入方法：
 
-| Method         | Best For                             | Volume Limit            |
-| -------------- | ------------------------------------ | ----------------------- |
-| **CSV Import** | Standard migrations, regular updates | 10,000 records per file |
-| **API Import** | Large-scale migrations, automation   | Unlimited               |
+| 方法         | 最佳适用      | 数量上限            |
+| ---------- | --------- | --------------- |
+| **CSV 导入** | 标准迁移，定期更新 | 每个文件 10,000 条记录 |
+| **API 导入** | 大规模迁移，自动化 | 无限制             |
 
-<Note>For very large datasets (hundreds of thousands of records), use the API. Our [implementation partners](/l/zh/user-guide/getting-started/capabilities/implementation-services) can help run these scripts if needed.</Note>
+<Note>对于非常大的数据集（数十万条记录），请使用 API。 我们的[实施合作伙伴](/l/zh/user-guide/getting-started/capabilities/implementation-services)如有需要，可帮助运行这些脚本。</Note>
 
-## CSV Import Basics
+## CSV 导入基础知识
 
-You can import data for any object using CSV, XLSX, or XLS files. Each file should contain **only one type of object** (e.g., only People records).
+您可以使用 CSV、XLSX 或 XLS 文件导入任何对象的数据。 每个文件应**仅包含一种对象类型**（例如，仅包含“人员”记录）。
 
-<Note>**Fields must exist before import.** Uploading a CSV creates records but does not create fields. If you need custom fields, create them first under **Settings → Data Model**.</Note>
+<Note>**字段必须在导入前已存在。** 上传 CSV 会创建记录，但不会创建字段。 如果您需要自定义字段，请先在**设置 → 数据模型**中创建它们。</Note>
 
-### Steps
+### 步骤
 
-1. Navigate to the object where you want to import data
-2. Click the **⋮** icon on the top right (this is the Command Menu) and click on **Import records**
-3. Download the template file to ensure your data is in the expected format
-4. Upload your formatted CSV file
-5. Map your columns to Twenty fields
-6. Review errors (highlighted in yellow) and fix them, directly editing in the UI
-7. Confirm the import
+1. 导航到您要导入数据的对象
+2. 点击右上角的 **⋮** 图标（命令菜单），然后点击 **导入记录**
+3. 下载模板文件以确保您的数据符合预期格式
+4. 上传已按格式整理的 CSV 文件
+5. 将您的列映射到 Twenty 字段
+6. 检查错误（以黄色高亮），并在 UI 中直接编辑进行修复
+7. 确认导入
 
-### Importing relations between objects
+### 导入对象之间的关系
 
-You can import relations between objects using the csv import function. You need to reference the related object using a unique field from this object: the `id`, the `email` for People and Workspace Members, the `domain` for companies, any other field set as unique in the data model for any other object.
+您可以使用 CSV 导入功能来导入对象之间的关系。 您需要使用此对象中的唯一字段来引用相关对象：`id`；对于人员和工作区成员，使用 `email`；对于公司，使用 `domain`；对于其他对象，则使用数据模型中设置为唯一的任何字段。
 
-<Note>**Deleted records count toward uniqueness.** Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be restored.</Note>
+<Note>**已删除的记录也计入唯一性。** 软删除的记录（在“命令菜单 → 查看已删除记录”下可见）会包含在唯一性检查中。 如果您导入的记录与某个已删除记录具有相同的唯一值，该已删除记录将被还原。</Note>
 
 <Warning>
-  **Import Order Matters!**
+  **导入顺序很重要！**
 
-  When importing related objects, upload files in this order:
+  在导入相关对象时，请按以下顺序上传文件：
 
-  1. **Companies** first (the "one" side of relationships)
-  2. **People** second (linked to companies via companyId)
-  3. **Opportunities** third (linked to companies/people)
-  4. **Custom objects** with relations last
+  1. 首先导入**公司**（关系中的“一”端）
+  2. 其次导入**人员**（通过 companyId 关联到公司）
+  3. 第三导入**商机**（关联到公司/人员）
+  4. 最后导入有关系的**自定义对象**
 
-  Why? The "one" side of a one-to-many relationship must exist before you can reference it. For example, the Company record must exist before you import a Person with that company's ID.
+  为什么？ 在一对多关系中，“一”端必须先存在，才能被引用。 例如，在导入带有该公司 ID 的人员之前，必须先存在该公司的记录。
 </Warning>
 
-Please refer to [this article](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for a step-by-step guide on how to proceed.
+有关操作的分步指南，请参阅[这篇文章](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)。
 
-## Export Data
+## 导出数据
 
-Export your workspace data for backups, reporting, or migration.
+导出您的工作区数据，用于备份、报告或迁移。
 
-### Steps
+### 步骤
 
-1. Navigate to the object you want to export
-2. Configure the view with the columns you need
-3. Click **⋮** → **Export view**
-4. Save the CSV file
+1. 导航到您要导出的对象
+2. 在视图中配置所需的列
+3. 点击 **⋮** → **导出视图**
+4. 保存该 CSV 文件
 
-<Note>**Only visible columns are exported.** The CSV file will only contain the columns displayed in your current view. Add or hide columns before exporting to control what data is included.</Note>
+<Note>**仅导出可见列。** CSV 文件只包含当前视图中显示的列。 导出前添加或隐藏列以控制包含的数据。</Note>
 
-<Note>**Export limits**: Up to 20,000 records per export.</Note>
+<Note>**导出限制**：每次导出最多 20,000 条记录。</Note>
 
-## Permissions
+## 权限
 
-Data import and export require specific permissions:
+数据导入和导出需要特定权限：
 
-* **Import**: Requires "Import CSV" permission
-* **Export**: Requires "Export CSV" permission
+* **导入**：需要“导入 CSV”权限
+* **导出**：需要“导出 CSV”权限
 
-Contact your workspace admin if you don't have these permissions.
+如果您没有这些权限，请联系您的工作区管理员。
 
-## Next Steps
+## 下一步
 
-* [Prepare your CSV files](/l/zh/user-guide/data-migration/how-tos/prepare-your-csv-files)
-* [Import relations between objects](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Import via API for large datasets](/l/zh/user-guide/data-migration/how-tos/import-data-via-api)
+* [准备您的 CSV 文件](/l/zh/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [通过 CSV 导入对象之间的关系](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [通过 API 导入大型数据集](/l/zh/user-guide/data-migration/how-tos/import-data-via-api)

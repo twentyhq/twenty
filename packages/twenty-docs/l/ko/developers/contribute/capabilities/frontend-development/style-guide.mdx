@@ -1,24 +1,24 @@
 ---
-title: Style Guide
+title: 스타일 가이드
 ---
 
-This document includes the rules to follow when writing code.
+이 문서에는 코드 작성 시 따라야 할 규칙이 포함되어 있습니다.
 
-The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
+여기서 목표는 읽기 쉽고 유지 관리가 쉬운 일관된 코드베이스를 갖는 것입니다.
 
-For this, it's better to be a bit more verbose than to be too concise.
+이를 위해서는 너무 간결하기보다는 약간 더 장황한 것이 낫습니다.
 
-Always keep in mind that people read code more often than they write it, specially on an open source project, where anyone can contribute.
+항상 사람들이 코드를 작성하는 것보다 더 자주 읽는다는 점을 염두에 두십시오. 특히 누구나 기여할 수 있는 오픈 소스 프로젝트에서 그렇습니다.
 
-There are a lot of rules that are not defined here, but that are automatically checked by linters.
+여기에 정의되지 않은 많은 규칙이 있지만 린터에 의해 자동으로 확인됩니다.
 
-## React
+## 리액트
 
-### Use functional components
+### 함수형 컴포넌트 사용
 
-Always use TSX functional components.
+항상 TSX 함수형 컴포넌트를 사용하십시오.
 
-Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
+기본 `import`를 `const`와 함께 사용하지 마십시오. 읽기 어렵고 코드 자동 완성으로 import하기 어렵습니다.
 
 ```tsx
 // ❌ Bad, harder to read, harder to import with code completion
@@ -34,11 +34,11 @@ export function MyComponent() {
 };
 ```
 
-### Props
+### 프로퍼티
 
-Create the type of the props and call it `(ComponentName)Props` if there's no need to export it.
+props의 유형을 만들고 내보낼 필요가 없으면 `(ComponentName)Props`라고 명명하십시오.
 
-Use props destructuring.
+props 구조 분해를 사용하십시오.
 
 ```tsx
 // ❌ Bad, no type
@@ -52,7 +52,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-#### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types
+#### prop 유형을 정의하기 위해 `React.FC` 또는 `React.FunctionComponent`를 사용하지 마십시오.
 
 ```tsx
 /* ❌ - Bad, defines the component type annotations with `FC`
@@ -67,10 +67,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - 좋음, 별도의 타입(OwnProps)을 명시적으로 정의합니다
+ *      컴포넌트의 props에 대해
+ *    - 이 방법은 children prop을 자동으로 포함하지 않습니다. 포함하려면
+ *      OwnProps에 명시해야 합니다.
  */
 type EmailFieldProps = {
   value: string;
@@ -81,9 +81,9 @@ const EmailField = ({ value }: EmailFieldProps) => (
 );
 ```
 
-#### No Single Variable Prop Spreading in JSX Elements
+#### JSX 요소에서 단일 변수 prop 확산 방지
 
-Avoid using single variable prop spreading in JSX elements, like `{...props}`. This practice often results in code that is less readable and harder to maintain because it's unclear which props the component is receiving.
+JSX 요소에서 `{...props}`와 같은 단일 변수 prop 확산을 피하십시오. 이 관행은 구성 요소가 수신되는 props를 명확하게 하지 않아 가독성과 유지 관리가 어려운 코드를 생성하는 경우가 많습니다.
 
 ```tsx
 /* ❌ - Bad, spreads a single variable prop into the underlying component
@@ -94,23 +94,23 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - 좋음, 모든 props를 명시적으로 나열합니다
+ *    - 가독성과 유지 보수성을 향상합니다
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
 };
 ```
 
-Rationale:
+이유:
 
-* At a glance, it's clearer which props the code passes down, making it easier to understand and maintain.
-* It helps to prevent tight coupling between components via their props.
-* Linting tools make it easier to identify misspelled or unused props when you list props explicitly.
+* 한눈에 코드가 전달하는 props를 명확하게 하여 이해하고 유지하기 쉽습니다.
+* 이것은 구성 요소가 각자의 props로 긴밀하게 결합되는 것을 방지하는 데 도움이 됩니다.
+* props를 명시적으로 나열하면 Linting 도구에서 잘못된 철자나 사용되지 않는 props를 쉽게 식별할 수 있습니다.
 
-## JavaScript
+## 자바스크립트
 
-### Use nullish-coalescing operator `??`
+### nullish 병합 연산자 `??` 사용
 
 ```tsx
 // ❌ Bad, can return 'default' even if value is 0 or ''
@@ -120,21 +120,21 @@ const value = process.env.MY_VALUE || 'default';
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
-### Use optional chaining `?.`
+### 옵셔널 체이닝 `?.` 사용
 
 ```tsx
-// ❌ Bad
+// ❌ 나쁨
 onClick && onClick();
 
-// ✅ Good
+// ✅ 좋음
 onClick?.();
 ```
 
-## TypeScript
+## 타입스크립트
 
-### Use `type` instead of `interface`
+### `interface` 대신 `type` 사용
 
-Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+항상 `interface` 대신 `type`을 사용하십시오. 두 개의 기능은 거의 항상 중첩되며, `type`이 더 유연합니다.
 
 ```tsx
 // ❌ Bad
@@ -148,11 +148,11 @@ type MyType = {
 };
 ```
 
-### Use string literals instead of enums
+### 열거형 대신 문자열 리터럴 사용
 
-[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, specially with code completion.
+[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)는 TypeScript에서 열거형과 같은 값을 처리하는 주요 방법입니다. 그들은 Pick와 Omit으로 확장하기 쉬우며, 특히 코드 완성 기능을 사용할 때 더 나은 사용자 경험을 제공합니다.
 
-You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+타입스크립트가 열거형 사용을 피하도록 권장하는 이유는 [여기](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)에서 확인할 수 있습니다.
 
 ```tsx
 // ❌ Bad, utilizes an enum
@@ -171,13 +171,13 @@ let color = Color.Red;
 let color: "red" | "green" | "blue" = "red";
 ```
 
-#### GraphQL and internal libraries
+#### GraphQL 및 내부 라이브러리
 
-You should use enums that GraphQL codegen generates.
+GraphQL 코드 생성기가 생성한 열거형을 사용해야 합니다.
 
-It's also better to use an enum when using an internal library, so the internal library doesn't have to expose a string literal type that is not related to the internal API.
+내부 라이브러리를 사용할 때도 열거형을 사용하는 것이 좋으며, 내부 API와 관련이 없는 문자열 리터럴 유형을 노출할 필요가 없습니다.
 
-Example:
+예시:
 
 ```TSX
 const {
@@ -190,11 +190,11 @@ setHotkeyScopeAndMemorizePreviousScope(
 );
 ```
 
-## Styling
+## 스타일링
 
-### Use StyledComponents
+### StyledComponents 사용
 
-Style the components with [styled-components](https://emotion.sh/docs/styled).
+[styled-components](https://emotion.sh/docs/styled)로 구성 요소를 스타일링하십시오.
 
 ```tsx
 // ❌ Bad
@@ -208,7 +208,7 @@ const StyledTitle = styled.div`
 `;
 ```
 
-Prefix styled components with "Styled" to differentiate them from "real" components.
+스타일드 컴포넌트 앞에 "Styled"를 붙여 실제 컴포넌트와 구분하십시오.
 
 ```tsx
 // ❌ Bad
@@ -224,17 +224,17 @@ const StyledTitle = styled.div`
 `;
 ```
 
-### Theming
+### 테마
 
-Utilizing the theme for the majority of component styling is the preferred approach.
+대부분의 구성 요소 스타일링에는 테마를 활용하는 것이 선호되는 접근 방식입니다.
 
-#### Units of measurement
+#### 측정 단위
 
-Avoid using `px` or `rem` values directly within the styled components. The necessary values are generally already defined in the theme, so it’s recommended to make use of the theme for these purposes.
+스타일드 컴포넌트 내에서 `px` 또는 `rem` 값을 직접 사용하는 것을 피하십시오. 필요한 값은 일반적으로 테마에 이미 정의되어 있으므로 이러한 목적으로 테마를 활용하는 것이 좋습니다.
 
-#### Colors
+#### 색상
 
-Refrain from introducing new colors; instead, use the existing palette from the theme. Should there be a situation where the palette does not align, please leave a comment so that the team can rectify it.
+새로운 색상을 도입하지 말고 테마에서 기존 팔레트를 사용하십시오. 팔레트가 맞지 않는 경우가 있다면 팀이 수정할 수 있도록 댓글을 남겨야 합니다.
 
 ```tsx
 // ❌ Bad, directly specifies style values without utilizing the theme
@@ -258,9 +258,9 @@ const StyledButton = styled.button`
 `;
 ```
 
-## Enforcing No-Type Imports
+## No-Type Import 강제 실행
 
-Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
+타입 import를 피하십시오. 이 표준을 강화하기 위해 ESLint 규칙이 모든 타입 import를 확인하고 보고합니다. 이는 TypeScript 코드의 일관성과 가독성을 유지하는 데 도움이 됩니다.
 
 ```tsx
 // ❌ Bad
@@ -273,18 +273,18 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Meta, StoryObj } from '@storybook/react';
 ```
 
-### Why No-Type Imports
+### No-Type Import의 이유
 
-* **Consistency**: By avoiding type imports and using a single approach for both type and value imports, the codebase remains consistent in its module import style.
+* **일관성**: 타입 import를 피하고, 타입과 값 import 모두의 단일 접근 방식을 사용하여 모듈 import 스타일의 일관성을 유지합니다.
 
-* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+* **가독성**: No-Type Import는 값을 가져오거나 타입을 가져오는 것을 명확히 하여 코드 가독성을 향상시킵니다. 이는 모호성을 줄이고 가져온 기호의 목적을 이해하기 쉽게 만듭니다.
 
-* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+* **유지관리성**: 이는 코드베이스 유지관리를 향상시킵니다. 개발자가 코드를 검토하거나 수정할 때 타입 전용 import를 식별하고 찾을 수 있습니다.
 
-### ESLint Rule
+### ESLint 규칙
 
-An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+ESLint 규칙인 `@typescript-eslint/consistent-type-imports`는 타입 없는 import 표준을 강제합니다. 이 규칙은 모든 타입 import 위반에 대해 오류나 경고를 생성합니다.
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+이 규칙은 의도치 않은 타입 import가 발생하는 드문 경계 사례를 구체적으로 다룹니다. 타입스크립트 자체는 [TypeScript 3.8 릴리스 노트](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)에서 이 관행을 권장하지 않습니다. 대부분의 상황에서 타입 전용 import를 사용할 필요가 없습니다.
 
-To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
+이 규칙을 준수하는 코드를 보장하기 위해 ESLint를 개발 워크플로의 일부로 실행하십시오.

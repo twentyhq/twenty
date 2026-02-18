@@ -1,8 +1,9 @@
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_VIEW_FIELD_EDITABLE_PROPERTIES = [
   'isVisible',
   'size',
   'position',
   'aggregateOperation',
-] as const satisfies (keyof FlatViewField)[];
+  'viewFieldGroupId',
+] as const satisfies MetadataEntityPropertyName<'viewField'>[];

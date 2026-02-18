@@ -1,0 +1,180 @@
+---
+title: Crear relaciones de muchos a muchos
+description: Conecta registros en los que muchos elementos en ambos lados pueden vincularse entre sí mediante objetos de unión.
+---
+
+Las relaciones de muchos a muchos te permiten conectar varios registros en ambos lados. Por ejemplo: muchas personas pueden trabajar en muchos proyectos, y cada proyecto puede tener muchas personas.
+
+<Warning>
+  **Función de laboratorio**: Las relaciones de unión están actualmente en el Lab. Actívalas en **Settings → Updates → Lab** antes de seguir esta guía.
+</Warning>
+
+<Note>
+  Esta función también requiere que **Advanced mode** esté activado (interruptor en la esquina inferior derecha de Settings).
+</Note>
+
+## Cuándo usar relaciones de muchos a muchos
+
+Usa relaciones de muchos a muchos cuando ambos lados de una relación pueden tener varias conexiones:
+
+| Relación          | Ejemplo                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| People ↔ Projects | Una persona trabaja en varios proyectos; un proyecto tiene varios miembros del equipo    |
+| Companies ↔ Tags  | Una empresa puede tener varias etiquetas; una etiqueta puede aplicarse a varias empresas |
+| Products ↔ Orders | Un producto puede estar en varios pedidos; un pedido contiene varios productos           |
+
+## Cómo Funciona
+
+Twenty utiliza un patrón de **objeto de unión** para las relaciones de muchos a muchos. Un objeto de unión se sitúa entre dos objetos y contiene las conexiones:
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+El objeto **Project Assignments** (unión) tiene:
+
+* Una relación con People (muchos a uno)
+* Una relación con Projects (muchos a uno)
+
+Cuando activas el interruptor de relación de unión, Twenty muestra los registros vinculados directamente en lugar de mostrar los registros intermedios de unión.
+
+## Prerrequisitos
+
+1. **Habilita Junction Relations en Lab**: Ve a **Settings → Updates → Lab** y habilita **Junction Relations**
+2. **Activa Advanced mode**: Activa **Advanced mode** en la parte inferior derecha de la barra lateral de Settings
+3. Planifica tu modelo de datos:
+   * ¿Qué dos objetos estás conectando?
+   * ¿Cómo debería llamarse el objeto de unión?
+
+## Paso 1: Crear el objeto de unión
+
+Primero, crea el objeto intermedio que contendrá las conexiones.
+
+1. Vaya a **Configuración → Modelo de datos**
+2. Haga clic en **+ New object**
+3. Asígnale un nombre descriptivo (p. ej., "Project Assignment", "Team Member", "Product Order")
+4. Haga clic en **Guardar**
+
+<Tip>
+  **Convención de nombres**: Usa un nombre que describa la relación, como "Project Assignment" o "Team Membership". Esto hace que el modelo de datos sea más fácil de entender.
+</Tip>
+
+## Paso 2: Crear relaciones desde el objeto de unión
+
+Agrega campos de relación desde el objeto de unión a ambos objetos que quieres conectar.
+
+### Primera relación (Unión → Objeto A)
+
+1. Selecciona tu objeto de unión en **Settings → Data Model**
+2. Haga clic en **+ Add Field**
+3. Elige **Relation** como tipo de campo
+4. Selecciona el primer objeto (p. ej., "People")
+5. Configura el tipo de relación como **Many-to-One** (muchas asignaciones pueden vincularse a una persona)
+6. Nombra los campos:
+   * Campo en unión: p. ej., "Person"
+   * Campo en People: p. ej., "Project Assignments"
+7. Haga clic en **Guardar**
+
+### Segunda relación (Unión → Objeto B)
+
+1. Aún en el objeto de unión, haz clic en **+ Add Field**
+2. Elige **Relation** como tipo de campo
+3. Selecciona el segundo objeto (p. ej., "Projects")
+4. Configura el tipo de relación como **Many-to-One**
+5. Nombra los campos:
+   * Campo en unión: p. ej., "Project"
+   * Campo en Projects: p. ej., "Team Members"
+6. Haga clic en **Guardar**
+
+## Paso 3: Configurar la visualización de la relación de unión
+
+Ahora configura los objetos de origen para mostrar los registros vinculados directamente, omitiendo el objeto de unión intermedio.
+
+1. Vaya a **Configuración → Modelo de datos**
+2. Selecciona el primer objeto (p. ej., "People")
+3. Encuentra el campo de relación que apunta al objeto de unión (p. ej., "Project Assignments")
+4. Haz clic para editar el campo
+5. Activa **"This is a relation to a Junction Object"**
+6. Selecciona la **Target relation** (p. ej., "Project" — el campo en la unión que apunta al otro lado)
+7. Haga clic en **Guardar**
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+Repite para el otro objeto:
+
+1. Selecciona "Projects" en Data Model
+2. Edita el campo de relación "Team Members"
+3. Activa el interruptor de unión
+4. Selecciona "Person" como la relación de destino
+5. Guardar
+
+## Resultado
+
+Después de la configuración:
+
+* En un registro de **Person**, el campo "Project Assignments" muestra **Projects** directamente (no registros de asignación)
+* En un registro de **Project**, el campo "Team Members" muestra **People** directamente
+
+El objeto de unión sigue existiendo y almacena las conexiones, pero la interfaz presenta una vista de muchos a muchos más limpia.
+
+## Ejemplo: People ↔ Projects
+
+Aquí tienes una guía completa paso a paso:
+
+### Crear el objeto de unión
+
+* Nombre: **Project Assignment**
+* Descripción: "Vincula a las personas con los proyectos en los que trabajan"
+
+### Agregar relaciones
+
+1. **Project Assignment → People**
+   * Tipo: Many-to-One
+   * Campo en Assignment: "Person"
+   * Campo en People: "Project Assignments"
+
+2. **Project Assignment → Projects**
+   * Tipo: Many-to-One
+   * Campo en Assignment: "Project"
+   * Campo en Projects: "Team Members"
+
+### Configurar la visualización de la unión
+
+1. En el objeto **People**:
+   * Edita el campo "Project Assignments"
+   * Activa el interruptor de unión
+   * Destino: "Project"
+
+2. En el objeto **Projects**:
+   * Edita el campo "Team Members"
+   * Activa el interruptor de unión
+   * Destino: "Person"
+
+### Úsalo
+
+* Abre un registro de Person → Ve sus Projects directamente
+* Abre un registro de Project → Ve los miembros del equipo directamente
+* Crea nuevas conexiones desde cualquiera de los dos lados
+
+## Agregar datos adicionales a las conexiones
+
+Como el objeto de unión es un objeto real, puedes agregar campos personalizados para almacenar información sobre la relación:
+
+* **Rol**: "Desarrollador", "Diseñador", "Gerente"
+* **Fecha de inicio**: Cuando se unieron al proyecto
+* **Horas asignadas**: Horas semanales en este proyecto
+
+Para acceder a estos datos, navega directamente al objeto de unión o consúltalo mediante la API.
+
+## Limitaciones
+
+* **Importación/Exportación CSV**: No se admite importar relaciones de muchos a muchos directamente. En su lugar, importa registros al objeto de unión.
+* **Filtros**: Filtrar por relaciones de muchos a muchos puede tener opciones limitadas.
+
+## Relacionado
+
+* [Campos de relación](/l/es/user-guide/data-model/capabilities/relation-fields) — tipos de relaciones explicados
+* [Crear objetos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-objects) — cómo crear objetos
+* [Crear campos de relación](/l/es/user-guide/data-model/how-tos/create-relation-fields) — configuración básica de relaciones

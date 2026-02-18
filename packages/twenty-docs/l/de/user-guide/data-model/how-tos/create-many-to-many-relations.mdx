@@ -1,0 +1,180 @@
+---
+title: Viele-zu-Viele-Beziehungen erstellen
+description: Verbinden Sie Datensätze, bei denen auf beiden Seiten viele Elemente mithilfe von Verknüpfungsobjekten miteinander verknüpft werden können.
+---
+
+Viele-zu-Viele-Beziehungen ermöglichen es Ihnen, auf beiden Seiten mehrere Datensätze zu verknüpfen. Beispiel: Viele Personen können an vielen Projekten arbeiten, und jedes Projekt kann viele Personen haben.
+
+<Warning>
+  **Lab-Funktion**: Verknüpfungsbeziehungen befinden sich derzeit im Lab. Aktivieren Sie sie unter **Einstellungen → Updates → Lab**, bevor Sie dieser Anleitung folgen.
+</Warning>
+
+<Note>
+  Für diese Funktion muss außerdem der **Erweiterte Modus** aktiviert sein (Schalter unten rechts in den Einstellungen).
+</Note>
+
+## Wann Viele-zu-Viele-Beziehungen verwenden
+
+Verwenden Sie Viele-zu-Viele-Beziehungen, wenn beide Seiten einer Beziehung mehrere Verknüpfungen haben können:
+
+| Beziehung               | Beispiel                                                                                           |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| Personen ↔ Projekte     | Eine Person arbeitet an mehreren Projekten; ein Projekt hat mehrere Teammitglieder                 |
+| Unternehmen ↔ Tags      | Ein Unternehmen kann mehrere Tags haben; ein Tag kann für mehrere Unternehmen gelten               |
+| Produkte ↔ Bestellungen | Ein Produkt kann in mehreren Bestellungen enthalten sein; eine Bestellung enthält mehrere Produkte |
+
+## Wie es funktioniert
+
+Twenty verwendet für Viele-zu-Viele-Beziehungen ein Muster mit **Verknüpfungsobjekt**. Ein Verknüpfungsobjekt sitzt zwischen zwei Objekten und speichert die Verknüpfungen:
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+Das Objekt **Projektzuweisungen** (Verknüpfung) hat:
+
+* Eine Beziehung zu Personen (Viele-zu-Eins)
+* Eine Beziehung zu Projekten (Viele-zu-Eins)
+
+Wenn Sie den Schalter für die Verknüpfungsbeziehung aktivieren, zeigt Twenty verknüpfte Datensätze direkt an, anstatt die zwischengeschalteten Verknüpfungsdatensätze anzuzeigen.
+
+## Voraussetzungen
+
+1. **Verknüpfungsbeziehungen im Lab aktivieren**: Gehen Sie zu **Einstellungen → Updates → Lab** und aktivieren Sie **Verknüpfungsbeziehungen**
+2. **Erweiterten Modus aktivieren**: Aktivieren Sie den **Erweiterten Modus** unten rechts in der Seitenleiste der Einstellungen
+3. Planen Sie Ihr Datenmodell:
+   * Welche zwei Objekte verbinden Sie?
+   * Wie soll das Verknüpfungsobjekt heißen?
+
+## Schritt 1: Verknüpfungsobjekt erstellen
+
+Erstellen Sie zunächst das Zwischenobjekt, das die Verknüpfungen speichert.
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Klicken Sie auf **+ Neues Objekt**
+3. Benennen Sie es aussagekräftig (z. B. "Projektzuweisung", "Teammitglied", "Produktbestellung")
+4. Klicken Sie auf **Speichern**
+
+<Tip>
+  **Namenskonvention**: Verwenden Sie einen Namen, der die Beziehung beschreibt, z. B. "Projektzuweisung" oder "Teammitgliedschaft". Das macht das Datenmodell leichter verständlich.
+</Tip>
+
+## Schritt 2: Beziehungen vom Verknüpfungsobjekt erstellen
+
+Fügen Sie vom Verknüpfungsobjekt aus Beziehungsfelder zu beiden Objekten hinzu, die Sie verbinden möchten.
+
+### Erste Beziehung (Verknüpfung → Objekt A)
+
+1. Wählen Sie Ihr Verknüpfungsobjekt unter **Einstellungen → Datenmodell** aus
+2. Klicken Sie auf **+ Feld hinzufügen**
+3. Wählen Sie **Relation** als Feldtyp
+4. Wählen Sie das erste Objekt aus (z. B. "Personen")
+5. Legen Sie den Beziehungstyp auf **Viele-zu-Eins** fest (viele Zuweisungen können mit einer Person verknüpft werden)
+6. Benennen Sie die Felder:
+   * Feld auf der Verknüpfung: z. B. "Person"
+   * Feld bei Personen: z. B. "Projektzuweisungen"
+7. Klicken Sie auf **Speichern**
+
+### Zweite Beziehung (Verknüpfung → Objekt B)
+
+1. Bleiben Sie im Verknüpfungsobjekt und klicken Sie auf **+ Feld hinzufügen**
+2. Wählen Sie **Relation** als Feldtyp
+3. Wählen Sie das zweite Objekt aus (z. B. "Projekte")
+4. Legen Sie den Beziehungstyp auf **Viele-zu-Eins** fest
+5. Benennen Sie die Felder:
+   * Feld auf der Verknüpfung: z. B. "Projekt"
+   * Feld bei Projekten: z. B. "Teammitglieder"
+6. Klicken Sie auf **Speichern**
+
+## Schritt 3: Anzeige der Verknüpfungsbeziehung konfigurieren
+
+Konfigurieren Sie nun die Quellobjekte so, dass verknüpfte Datensätze direkt angezeigt werden, wobei das zwischengeschaltete Verknüpfungsobjekt übersprungen wird.
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie das erste Objekt aus (z. B. "Personen")
+3. Suchen Sie das Beziehungsfeld, das auf das Verknüpfungsobjekt zeigt (z. B. "Projektzuweisungen")
+4. Klicken Sie, um das Feld zu bearbeiten
+5. Aktivieren Sie **"Dies ist eine Beziehung zu einem Verknüpfungsobjekt"**
+6. Wählen Sie die **Zielbeziehung** aus (z. B. "Projekt" — das Feld an der Verknüpfung, das auf die andere Seite zeigt)
+7. Klicken Sie auf **Speichern**
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+Wiederholen Sie dies für das andere Objekt:
+
+1. Wählen Sie "Projekte" im Datenmodell aus
+2. Bearbeiten Sie das Beziehungsfeld "Teammitglieder"
+3. Aktivieren Sie den Verknüpfungsschalter
+4. Wählen Sie "Person" als Zielbeziehung aus
+5. Speichern
+
+## Ergebnis
+
+Nach der Konfiguration:
+
+* In einem **Person**-Datensatz zeigt das Feld "Projektzuweisungen" **Projekte** direkt an (keine Zuweisungsdatensätze)
+* In einem **Projekt**-Datensatz zeigt das Feld "Teammitglieder" **Personen** direkt an
+
+Das Verknüpfungsobjekt existiert weiterhin und speichert die Verknüpfungen, aber die UI präsentiert eine übersichtlichere Viele-zu-Viele-Ansicht.
+
+## Beispiel: Personen ↔ Projekte
+
+Hier ist eine vollständige Schritt-für-Schritt-Anleitung:
+
+### Verknüpfungsobjekt erstellen
+
+* Name: **Projektzuweisung**
+* Beschreibung: "Verknüpft Personen mit den Projekten, an denen sie arbeiten"
+
+### Beziehungen hinzufügen
+
+1. **Projektzuweisung → Personen**
+   * Typ: Viele-zu-Eins
+   * Feld bei Zuweisung: "Person"
+   * Feld bei Personen: "Projektzuweisungen"
+
+2. **Projektzuweisung → Projekte**
+   * Typ: Viele-zu-Eins
+   * Feld bei Zuweisung: "Projekt"
+   * Feld bei Projekten: "Teammitglieder"
+
+### Verknüpfungsanzeige konfigurieren
+
+1. Am Objekt **Personen**:
+   * Feld "Projektzuweisungen" bearbeiten
+   * Verknüpfungsschalter aktivieren
+   * Ziel: "Projekt"
+
+2. Am Objekt **Projekte**:
+   * Feld "Teammitglieder" bearbeiten
+   * Verknüpfungsschalter aktivieren
+   * Ziel: "Person"
+
+### Verwendung
+
+* Öffnen Sie einen Person-Datensatz → Sehen Sie deren Projekte direkt
+* Öffnen Sie einen Projekt-Datensatz → Sehen Sie Teammitglieder direkt
+* Erstellen Sie neue Verknüpfungen von beiden Seiten
+
+## Zusätzliche Daten zu Verknüpfungen hinzufügen
+
+Da das Verknüpfungsobjekt ein echtes Objekt ist, können Sie benutzerdefinierte Felder hinzufügen, um Informationen über die Beziehung zu speichern:
+
+* **Rolle**: "Entwickler", "Designer", "Manager"
+* **Startdatum**: Wann sie dem Projekt beigetreten sind
+* **Zugeordnete Stunden**: Wöchentliche Stunden für dieses Projekt
+
+Um auf diese Daten zuzugreifen, navigieren Sie direkt zum Verknüpfungsobjekt oder greifen Sie per API-Abfrage darauf zu.
+
+## Einschränkungen
+
+* **CSV-Import/-Export**: Das direkte Importieren von Viele-zu-Viele-Beziehungen wird nicht unterstützt. Importieren Sie stattdessen Datensätze in das Verknüpfungsobjekt.
+* **Filter**: Das Filtern nach Viele-zu-Viele-Beziehungen bietet möglicherweise nur begrenzte Optionen.
+
+## Verwandt
+
+* [Beziehungsfelder](/l/de/user-guide/data-model/capabilities/relation-fields) — Beziehungstypen erklärt
+* [Benutzerdefinierte Objekte erstellen](/l/de/user-guide/data-model/how-tos/create-custom-objects) — so erstellen Sie Objekte
+* [Beziehungsfelder erstellen](/l/de/user-guide/data-model/how-tos/create-relation-fields) — grundlegende Einrichtung von Beziehungen

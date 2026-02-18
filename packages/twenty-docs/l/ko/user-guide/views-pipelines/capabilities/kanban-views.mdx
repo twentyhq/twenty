@@ -1,99 +1,99 @@
 ---
-title: Kanban Board Views
-description: Learn how to use Kanban views to visualize and manage your workflows.
+title: 칸반 보드 보기
+description: 칸반 보기를 사용하여 워크플로를 시각화하고 관리하는 방법을 알아보세요.
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## About Kanban Views
+## 칸반 보기에 대하여
 
-Kanban views visually map out process flows, where each column stands for a distinct stage and each card represents a record.
+칸반 뷰는 각 열이 개별 단계를 나타내고 각 카드가 레코드를 나타내는 프로세스 흐름을 시각적으로 나타냅니다.
 
-## Move Cards between Stages
+## 단계 간 카드 이동
 
-You can move each card between stages as it goes through your workflow by dragging and dropping. To proceed, hold your click on a card and move it to the next stage.
+작업 흐름을 진행하면서 각 카드를 드래그 앤 드롭으로 단계 간에 이동할 수 있습니다. 계속하려면 카드를 클릭한 상태에서 다음 단계로 이동하세요.
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="동영상 시연" />
 
-## Add and Delete Stages
+## 단계 추가 및 삭제
 
-You can tailor your workflow to suit your needs using stages, which represent a value in a Select Field:
+단계를 사용하여 워크플로우를 요구에 맞게 조정할 수 있으며, 각 단계는 선택 필드의 값을 나타냅니다.
 
-### Add Stages
+### 단계 추가
 
-To add a stage, access the Select field settings by navigating to Settings > Data Model, selecting your object, and then the field your Kanban board depends on.
+단계를 추가하려면 설정 > 데이터 모델로 이동하여 개체를 선택한 다음, 칸반 보드가 의존하는 필드를 선택하여 선택 필드 설정에 액세스하세요.
 
-<VimeoEmbed videoId="927890428" title="Video demonstration" />
+<VimeoEmbed videoId="927890428" title="동영상 시연" />
 
-### Remove Stages
+### 단계 제거
 
-To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select field settings, and then click **Delete** next to the relevant stage.
+단계를 제거하려면 단계 이름 또는 `⋮` 아이콘 위로 마우스를 올린 다음, 선택 필드 설정에서 `설정에서 편집`을 클릭하고 해당 단계 옆의 **삭제**를 클릭하세요.
 
-## Display Fields
+## 필드 표시
 
-You can configure your Kanban board to display some fields and hide others. To hide a field, click on **Options** on the top right, then on **Fields** to bring up the list of options. Look for the field needed in the Hidden Fields section and click on the eye button to display the field.
+칸반 보드에서 일부 필드를 표시하고 다른 필드를 숨기도록 구성할 수 있습니다. 필드를 숨기려면 오른쪽 상단의 **옵션**을 클릭한 다음 **필드**를 클릭하여 옵션 목록을 표시합니다. 숨겨진 필드 섹션에서 필요한 필드를 찾아 눈 모양 버튼을 클릭하여 해당 필드를 표시하세요.
 
-You can also rearrange the order of fields by holding down the field name and dragging it to where you want it.
+필드명을 누른 상태로 끌어서 원하는 위치로 이동시키면 필드의 순서를 변경할 수 있습니다.
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-## Compact View
+## 컴팩트 보기
 
-You can hide all the fields and get an overview of all records at a glance. To enable:
+모든 필드를 숨겨 모든 레코드를 한눈에 파악할 수 있습니다. 활성화하려면:
 
-1. Click **Options** on the top right
-2. Turn on the toggle for **Compact view**
+1. 오른쪽 상단의 **옵션**을 클릭하세요
+2. **Compact view** 토글을 켜세요
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-## Column Aggregations
+## 열 집계
 
-Each column in a Kanban view can display aggregated values at the top, helping you understand your data at a glance.
+칸반 보기의 각 열은 상단에 집계 값을 표시할 수 있어 데이터를 한눈에 파악하는 데 도움이 됩니다.
 
-### Available Aggregations
+### 사용 가능한 집계
 
-| Aggregation | Description                                   |
-| ----------- | --------------------------------------------- |
-| **Count**   | Number of records in the column               |
-| **Sum**     | Total of a numeric field (e.g., deal amounts) |
-| **Average** | Average value of a numeric field              |
-| **Min**     | Lowest value                                  |
-| **Max**     | Highest value                                 |
+| 집계     | 설명                  |
+| ------ | ------------------- |
+| **개수** | 해당 열의 레코드 수         |
+| **합계** | 숫자 필드의 총합(예: 거래 금액) |
+| **평균** | 숫자 필드의 평균값          |
+| **최소** | 최솟값                 |
+| **최대** | 최댓값                 |
 
-### Configuring Aggregations
+### 집계 구성
 
-1. Click on the number displayed next to the Stage value, at the top of a column
-2. Select the aggregation type
-3. Choose the field to aggregate
+1. 열 상단의 단계 값 옆에 표시된 숫자를 클릭하세요
+2. 집계 유형을 선택하세요
+3. 집계할 필드를 선택하세요
 
-**Example:** Show total deal value per stage by aggregating the Amount field with Sum.
+**예시:** Amount를 Sum으로 집계하여 단계별 총 거래 금액을 표시합니다.
 
-## When to Use Kanban Views
+## 칸반 보기를 사용할 때
 
-Kanban views are ideal for:
+칸반 보기는 다음에 적합합니다:
 
-* **Sales pipelines**: Track deals through stages from lead to close
-* **Project management**: Monitor tasks through workflow states
-* **Recruitment**: Track candidates through hiring stages
-* **Any staged process**: Visualize any workflow with defined stages
+* **영업 파이프라인**: 리드부터 계약 성사까지 단계별로 거래를 추적합니다
+* **프로젝트 관리**: 워크플로 상태를 통해 작업을 모니터링합니다
+* **채용**: 채용 단계 전반에서 지원자를 추적합니다
+* **단계가 있는 모든 프로세스**: 정의된 단계가 있는 워크플로를 시각화합니다
 
-## Best Practices
+## 모범 사례
 
-### Organize Your Stages
+### 단계 정리
 
-* **Limit stages**: 5-7 stages is ideal for visibility
-* **Clear naming**: Use descriptive stage names
-* **Logical order**: Arrange stages in process order
+* **단계 수 제한**: 가시성을 위해 5~7개 단계가 이상적입니다
+* **명확한 이름 지정**: 설명적인 단계 이름을 사용하세요
+* **논리적 순서**: 프로세스 순서대로 단계를 배열하세요
 
-### Optimize Card Display
+### 카드 표시 최적화
 
-* **Show key fields**: Display only the most important information
-* **Use compact view**: For high-level overviews
-* **Color coding**: Use stage colors to quickly identify status
+* **핵심 필드 표시**: 가장 중요한 정보만 표시하세요
+* **컴팩트 뷰 사용**: 상위 수준 개요에 적합합니다
+* **색상 구분**: 상태를 빠르게 파악할 수 있도록 단계 색상을 사용하세요
 
-### Maintain Data Quality
+### 데이터 품질 유지
 
-* **Update regularly**: Keep cards moving through stages
-* **Archive completed**: Move closed items out of active view
-* **Review stale cards**: Follow up on cards stuck in stages
+* **정기적으로 업데이트**: 카드가 단계별로 진행되도록 유지하세요
+* **완료 항목 보관**: 종료된 항목을 활성 뷰에서 제외하세요
+* **오래된 카드 검토**: 단계에 정체된 카드에 후속 조치를 취하세요

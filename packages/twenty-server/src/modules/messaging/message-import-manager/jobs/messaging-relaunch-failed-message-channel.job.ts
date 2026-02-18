@@ -31,40 +31,37 @@ export class MessagingRelaunchFailedMessageChannelJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const messageChannel = await messageChannelRepository.findOne({
-          where: {
-            id: messageChannelId,
+      const messageChannel = await messageChannelRepository.findOne({
+        where: {
+          id: messageChannelId,
+        },
+        relations: {
+          connectedAccount: {
+            accountOwner: true,
           },
-          relations: {
-            connectedAccount: {
-              accountOwner: true,
-            },
-          },
-        });
+        },
+      });
 
-        if (
-          !messageChannel ||
-          messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
-          messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
-        ) {
-          return;
-        }
+      if (
+        !messageChannel ||
+        messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
+        messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
+      ) {
+        return;
+      }
 
-        await messageChannelRepository.update(messageChannelId, {
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          syncStatus: MessageChannelSyncStatus.ACTIVE,
-        });
-      },
-    );
+      await messageChannelRepository.update(messageChannelId, {
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        syncStatus: MessageChannelSyncStatus.ACTIVE,
+      });
+    }, authContext);
   }
 }

@@ -1,180 +1,180 @@
 ---
-title: Data Model
-description: Learn what a data model is and how to design one that fits your business.
+title: Modelo de dados
+description: Saiba o que é um modelo de dados e como projetar um que se ajuste ao seu negócio.
 image: /images/user-guide/fields/custom_data_model.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/fields/custom_data_model.png" alt="Data Model" />
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Modelo de dados" />
 </Frame>
 
-## What is a Data Model?
+## O que é um modelo de dados?
 
-A data model is the structure that defines how information is organized in your CRM. Think of it as the **blueprint** of your customer data — you design it once, then fill it with your actual data.
+Um modelo de dados é a estrutura que define como as informações são organizadas em seu CRM. Pense nisso como a **planta** dos dados dos seus clientes — você o projeta uma vez e depois o preenche com seus dados reais.
 
-## Key Concepts
+## Conceitos principais
 
-### Objects
+### Objetos
 
-**Objects** are the main categories of data in your CRM. Each object represents a type of thing you want to track.
+**Objetos** são as principais categorias de dados no seu CRM. Cada objeto representa um tipo de coisa que você quer acompanhar.
 
-Twenty comes with standard objects:
+O Twenty vem com objetos padrão:
 
-* **People** — individuals (contacts, leads, partners)
-* **Companies** — organizations
-* **Opportunities** — deals or sales
-* **Notes** — attached notes on records
-* **Tasks** — to-dos linked to records
+* **Pessoas** — indivíduos (contatos, leads, parceiros)
+* **Empresas** — organizações
+* **Oportunidades** — negócios ou vendas
+* **Notas** — notas anexadas aos registros
+* **Tarefas** — afazeres vinculados aos registros
 
-You can also create **custom objects** for anything specific to your business (e.g., Projects, Subscriptions, Events).
+Você também pode criar **objetos personalizados** para qualquer coisa específica do seu negócio (por exemplo, Projetos, Assinaturas, Eventos).
 
-### Fields
+### Campos
 
-**Fields** are the properties or attributes that describe each object. They store the actual information.
+**Campos** são as propriedades ou atributos que descrevem cada objeto. Eles armazenam as informações reais.
 
-For example, the **People** object has fields like:
+Por exemplo, o objeto **Pessoas** tem campos como:
 
-* Name
-* Email
-* Phone
-* Job Title
-* Company (a relation to the Companies object)
+* Nome
+* E-mail
+* Telefone
+* Título do Emprego
+* Empresa (uma relação com o objeto Empresas)
 
-Fields have different **types**: text, number, date, select, multi-select, relation, and more. You can add custom fields to any object.
+Os campos têm diferentes **tipos**: texto, número, data, seleção, seleção múltipla, relação e muito mais. Você pode adicionar campos personalizados a qualquer objeto.
 
-### Records
+### Registros
 
-**Records** are the individual entries within an object — the actual data you create and manage.
+**Registros** são as entradas individuais dentro de um objeto — os dados reais que você cria e gerencia.
 
-For example:
+Por exemplo:
 
-* "John Smith" is a **record** in the People object
-* "Acme Corp" is a **record** in the Companies object
+* "John Smith" é um **registro** no objeto Pessoas
+* "Acme Corp" é um **registro** no objeto Empresas
 
-**An analogy:**
+**Uma analogia:**
 
-| Data Model Concept | Real-World Analogy                         |
-| ------------------ | ------------------------------------------ |
-| **Objects**        | Sections in a book (the categories)        |
-| **Fields**         | Columns in a spreadsheet (the properties)  |
-| **Records**        | Rows in a spreadsheet (the actual entries) |
+| Conceito do Modelo de Dados | Analogia do mundo real                     |
+| --------------------------- | ------------------------------------------ |
+| **Objetos**                 | Seções em um livro (as categorias)         |
+| **Campos**                  | Colunas em uma planilha (as propriedades)  |
+| **Registros**               | Linhas em uma planilha (as entradas reais) |
 
-You design the data model (objects + fields) once, then create many records within that structure.
+Você projeta o modelo de dados (objetos + campos) uma vez e, em seguida, cria muitos registros dentro dessa estrutura.
 
-## Why Customize Your Data Model?
+## Por que personalizar seu modelo de dados?
 
-Every business works differently. Customizing your data model means you can shape Twenty around **your** processes instead of forcing yours into a rigid system.
+Cada empresa trabalha de maneira diferente. Personalizar seu modelo de dados significa que você pode moldar o Twenty em torno dos **seus** processos, em vez de forçar os seus a caber em um sistema rígido.
 
-Twenty offers full flexibility:
+O Twenty oferece total flexibilidade:
 
-* Create as many custom objects as you need
-* Add unlimited custom fields
-* The price doesn't change based on customization
+* Crie quantos objetos personalizados precisar
+* Adicione um número ilimitado de campos personalizados
+* O preço não muda com base na personalização
 
-## Tips to Design Your Data Model
+## Dicas para projetar seu modelo de dados
 
-### 1. Start with Your Core Objects
+### 1. Comece com seus objetos principais
 
-Identify the main concepts you work with. Twenty already provides:
+Identifique os principais conceitos com os quais você trabalha. O Twenty já oferece:
 
-* **People** — your contacts
-* **Companies** — your accounts
-* **Opportunities** — your deals
+* **Pessoas** — seus contatos
+* **Empresas** — suas contas
+* **Oportunidades** — seus negócios
 
-Think about what else you might need:
+Pense no que mais você pode precisar:
 
-* Stripe would need a `Subscriptions` object
-* Airbnb would need a `Trips` object
-* An accelerator would need a `Batches` object
+* Stripe precisaria de um objeto `Subscriptions`
+* Airbnb precisaria de um objeto `Trips`
+* Uma aceleradora precisaria de um objeto `Batches`
 
-### 2. Use Fields for Variations, Not New Objects
+### 2. Use campos para variações, não novos objetos
 
-If something is just a characteristic of an existing object, make it a **field**.
+Se algo for apenas uma característica de um objeto existente, faça dele um **campo**.
 
-**Use fields for:**
+**Use campos para:**
 
-* Categories and labels (e.g., `Industry` for Companies)
-* Status values (e.g., `Stage` for Opportunities)
-* Attributes and properties
+* Categorias e rótulos (por exemplo, `Industry` para Empresas)
+* Valores de status (por exemplo, `Stage` para Oportunidades)
+* Atributos e propriedades
 
-### 3. Create an Object When It Stands on Its Own
+### 3. Crie um objeto quando ele se sustentar por si só
 
-If the concept has its own lifecycle, properties, or relationships, it deserves an object.
+Se o conceito tem seu próprio ciclo de vida, propriedades ou relacionamentos, ele merece um objeto.
 
-**Create an object for:**
+**Crie um objeto para:**
 
-* **Projects** — have deadlines, owners, and tasks
-* **Subscriptions** — connect companies, products, and invoices
-* **Events** — involve attendees and follow-up actions
+* **Projetos** — têm prazos, responsáveis e tarefas
+* **Assinaturas** — conectam empresas, produtos e faturas
+* **Eventos** — envolvem participantes e ações de acompanhamento
 
-These go beyond a single field because they carry their own data and relationships.
+Estes vão além de um único campo, pois carregam seus próprios dados e relações.
 
-### 4. Create an Object When Records Are Open-Ended
+### 4. Crie um objeto quando os registros forem em quantidade indefinida
 
-If something can be linked multiple times and you don't know how many, use an object.
+Se algo puder ser vinculado várias vezes e você não souber quantas vezes, use um objeto.
 
-**Bad approach:**
-Creating fields like `Product 1`, `Product 2`, `Product 3`...
+**Abordagem ruim:**
+Criar campos como `Product 1`, `Product 2`, `Product 3`...
 
-**Good approach:**
-Create a `Products` object and relate it to records. This supports one, two, or a hundred products without changing your model.
+**Boa abordagem:**
+Crie um objeto `Products` e relacione-o aos registros. Dessa forma, você pode suportar um, dois ou cem produtos sem alterar seu modelo.
 
-### 5. Keep It Simple First
+### 5. Mantenha simples no início
 
-Start with fields. Move to new objects only when you feel the limits:
+Comece pelos campos. Passe para novos objetos apenas quando perceber as limitações:
 
-* Too many fields on one object
-* Repeated records that should be separate
-* Relationships that don't fit neatly
+* Muitos campos em um único objeto
+* Registros repetidos que deveriam ser separados
+* Relacionamentos que não se encaixam bem
 
-## Special Note on People, Companies, and Opportunities
+## Nota especial sobre Pessoas, Empresas e Oportunidades
 
 <Warning>
-  **Email and calendar sync only works with People, Companies, and Opportunities.**
+  **A sincronização de e-mail e calendário funciona apenas com Pessoas, Empresas e Oportunidades.**
 
-  These are the only objects where you can access synchronized emails and meetings from your mailbox/calendar. We recommend using them as much as possible.
+  Estes são os únicos objetos nos quais você pode acessar e-mails e reuniões sincronizados da sua caixa de entrada/calendário. Recomendamos usá-los o máximo possível.
 </Warning>
 
-**Best practices:**
+**Melhores Práticas:**
 
-* If you need categories of People, use fields (not new objects)
-* Example: Use a `Person Type` field with values "Prospect" and "Partner" instead of creating separate objects
-* Create different **views** to filter: one showing partners, another showing prospects
+* Se você precisar de categorias de Pessoas, use campos (não novos objetos)
+* Exemplo: Use um campo `Person Type` com os valores "Prospecto" e "Parceiro" em vez de criar objetos separados
+* Crie **exibições** diferentes para filtrar: uma mostrando parceiros, outra mostrando prospectos
 
-**It's okay to have fields that don't apply to every record.** For example, a `Referral Link` field on People that only applies when `Person Type = Partner`. Hide this field from views where it's not relevant.
+**Não há problema em ter campos que não se apliquem a todos os registros.** Por exemplo, um campo `Referral Link` em Pessoas que só se aplica quando `Person Type = Partner`. Oculte esse campo das exibições onde ele não for relevante.
 
-## Questions to Guide Your Choice
+## Perguntas para guiar sua escolha
 
-Ask yourself:
+Pergunte a si mesmo:
 
-<Check>Is this just a property of something I already have, or does it need its own properties?</Check>
-<Check>Will I ever need to track multiple of these per record, without knowing how many?</Check>
-<Check>Does this concept connect to several different objects, not just one?</Check>
-<Check>Will it have its own lifecycle (stages, start/end dates)?</Check>
+<Check>É apenas uma propriedade de algo que já tenho, ou precisa ter suas próprias propriedades?</Check>
+<Check>Alguma vez precisarei acompanhar vários desses por registro, sem saber quantos de antemão?</Check>
+<Check>Este conceito se conecta a vários objetos diferentes, não apenas a um?</Check>
+<Check>Terá seu próprio ciclo de vida (estágios, datas de início/fim)?</Check>
 
-If the answer is "yes" to one or more, it's probably time for a new object.
+Se a resposta for "sim" para uma ou mais dessas, provavelmente é hora de um novo objeto.
 
-## Accessing Your Data Model
+## Acessando seu Modelo de Dados
 
-1. Go to **Settings** in the left sidebar
-2. Click **Data Model**
-3. View all your objects (standard and custom)
-4. Click any object to see and edit its fields
+1. Acesse **Configurações** na barra lateral esquerda
+2. Clique em **Modelo de Dados**
+3. Veja todos os seus objetos (padrões e personalizados)
+4. Clique em qualquer objeto para ver e editar seus campos
 
 <Note>
-  **Don't see Data Model in Settings?**
+  **Não vê o Modelo de Dados em Configurações?**
 
-  Access to the data model is usually restricted to administrators. Contact your workspace admin if you need access.
+  O acesso ao modelo de dados é geralmente restrito apenas aos administradores. Entre em contato com o administrador do seu espaço de trabalho se precisar de acesso.
 </Note>
 
-## Next Steps
+## Próximos Passos
 
-Once you've planned your data model:
+Depois de planejar seu modelo de dados:
 
-* [How to Create Custom Objects](/l/pt/user-guide/data-model/how-tos/create-custom-objects)
-* [How to Create Custom Fields](/l/pt/user-guide/data-model/how-tos/create-custom-fields)
-* [How to Create Relation Fields](/l/pt/user-guide/data-model/how-tos/create-relation-fields)
+* [Como criar objetos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-objects)
+* [Como criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields)
+* [Como criar campos de relação](/l/pt/user-guide/data-model/how-tos/create-relation-fields)
 
-## Need Help?
+## Precisa de ajuda?
 
-Our team can help you design and create the data model you need. Discover our [Implementation Services](/l/pt/user-guide/getting-started/capabilities/implementation-services).
+Nossa equipe pode ajudar você a projetar e criar o modelo de dados de que você precisa. Descubra nossos [serviços de implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services).

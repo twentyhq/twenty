@@ -113,7 +113,10 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
             centerX={labelX}
             centerY={labelY}
           >
-            <WorkflowDiagramEdgeLabel label={i18n._(data.labelOptions.label)} />
+            <WorkflowDiagramEdgeLabel
+              label={i18n._(data.labelOptions.label)}
+              elseIfIndex={data.labelOptions.elseIfIndex}
+            />
           </WorkflowDiagramEdgeLabelContainer>
         )}
 

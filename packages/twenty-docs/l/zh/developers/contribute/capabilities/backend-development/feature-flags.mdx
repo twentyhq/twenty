@@ -1,12 +1,12 @@
 ---
-title: Feature Flags
+title: 功能标志
 ---
 
-Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
+功能标志用于隐藏实验性功能。 对于 Twenty，它们是在工作区级别设置的，而不是在用户级别。
 
-## Adding a new feature flag
+## 添加新的功能标志
 
-In `FeatureFlagKey.ts` add the feature flag:
+在 `FeatureFlagKey.ts` 中添加功能标志:
 
 ```ts
 type FeatureFlagKey =
@@ -14,7 +14,7 @@ type FeatureFlagKey =
   | ...;
 ```
 
-Also add it to the enum in `feature-flag.entity.ts`:
+还要将其添加到 `feature-flag.entity.ts` 中的枚举：
 
 ```ts
 enum FeatureFlagKeys {
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+要在 **后端** 功能上应用功能标志，请使用:
 
 ```ts
 @Gate({
@@ -31,16 +31,16 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+要在 **前端** 功能上应用功能标志，请使用:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## 配置部署的功能标志
 
-Change the corresponding record in the Table `core.featureFlag`:
+更改 Table `core.featureFlag` 中的相应记录：
 
-| id     | key                      | workspaceId | value  |
-| ------ | ------------------------ | ----------- | ------ |
-| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |
+| iD | 键                        | workspaceId | 值   |
+| -- | ------------------------ | ----------- | --- |
+| 随机 | `IS_FEATURENAME_ENABLED` | 工作区 ID      | `真` |

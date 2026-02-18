@@ -1,74 +1,74 @@
 ---
-title: Display Number of Emails Received
-description: Create a workflow to automatically count and display the number of emails received from each contact.
+title: 受信メール数を表示
+description: 各連絡先から受信したメール数を自動的にカウントして表示するワークフローを作成します。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
 
-## Overview
+## 概要
 
-This workflow triggers every time a new email is received and updates a custom field on the Person record with the total count of emails from that sender.
+このワークフローは新しいメールを受信するたびにトリガーされ、その送信者からのメールの合計数で Person レコード上のカスタムフィールドを更新します。
 
-## Prerequisites
+## 前提条件
 
-Before setting up this workflow, create a custom field on the **People** object:
+このワークフローを設定する前に、**People** オブジェクトにカスタムフィールドを作成します:
 
-1. Go to **Settings → Data Model → People**
-2. Add a new **Number** field
-3. Name it something like "Number of emails received from this person"
+1. 「**設定 → データモデル → People**」に移動します
+2. 新しい **Number** フィールドを追加します
+3. 「この人物から受信したメール数」などの名前を付けます
 
-## Step-by-Step Setup
+## ステップバイステップの設定
 
-<VimeoEmbed videoId="1148700336" title="Video demonstration" />
+<VimeoEmbed videoId="1148700336" title="デモ動画" />
 
-### Step 1: Configure the Trigger
+### ステップ 1: トリガーを設定
 
-1. Go to **Workflows** and create a new workflow
-2. Select **Record is Created** as the trigger
-3. Choose **Message Participants** (available under Advanced objects)
-
-<Note>
-  A Message Participant is a combination of a message ID and a person ID, creating one unique record per message. This is easier to track than Messages directly because we can access the `handle` field, which contains the sender's (or recipient's) email address.
-</Note>
-
-### Step 2: Filter on Role
-
-1. Add a **Filter** action
-2. Set the condition: **Role** equals **FROM**
-
-This ensures you only count messages sent by this person, not messages sent to them.
-
-### Step 3: Search All Message Participants with Same Handle
-
-1. Add a **Search Records** action
-2. Select **Message Participants** as the object
-3. Add filters: **Handle** equals the handle from the trigger (the sender's email address) and **Role** equals **FROM**
-4. Increase the **Limit** from 1 to **200** (the maximum)
-
-This finds all messages from this email address to get the total count.
+1. 「**Workflows**」に移動し、新しいワークフローを作成します
+2. トリガーとして **Record is Created** を選択します
+3. **Message Participants**（Advanced objects 内にあります）を選択します
 
 <Note>
-  The Search Records action is limited to returning 200 records maximum. However, since you're only using the `totalCount` value (not the individual records), this step will return the total number of emails sent by this person.
+  Message Participant は、メッセージ ID と person ID の組み合わせで、メッセージごとに一意のレコードを作成します。 これは、送信者（または受信者）のメールアドレスを含む `handle` フィールドにアクセスできるため、Messages を直接扱うよりも追跡が容易です。
 </Note>
 
-### Step 4: Update the Person Record with a Create or Update Record action
+### ステップ 2: Role でフィルター
 
-1. Add a **Create or Update Record** action
+1. 「**Filter**」アクションを追加します
+2. 条件を設定します: **Role** が **FROM** と等しい
+
+これにより、この人物が送信したメッセージのみをカウントし、相手宛てに送られたメッセージは含めないようにします。
+
+### ステップ 3: 同じ Handle を持つすべての Message Participants を検索
+
+1. 「**Search Records**」アクションを追加します
+2. オブジェクトとして **Message Participants** を選択します
+3. フィルターを追加します: **Handle** がトリガーの handle（送信者のメールアドレス）と等しい、かつ **Role** が **FROM** と等しい
+4. **Limit** を 1 から **200**（最大値）に増やします
+
+これにより、このメールアドレスからのすべてのメッセージを見つけ、合計数を取得します。
+
+<Note>
+  Search Records アクションは、返せるレコードが最大 200 件に制限されています。 ただし、個々のレコードではなく `totalCount` の値のみを使用するため、このステップではこの人物が送信したメールの総数が返されます。
+</Note>
+
+### ステップ 4: Create or Update Record アクションで Person レコードを更新
+
+1. 「**Create or Update Record**」アクションを追加します
 
 <Warning>
-  Use **Upsert Record** instead of **Update Record** here. This lets you identify the person by their email address (the `handle` field) rather than requiring a record ID from a previous step.
+  ここでは **Update Record** の代わりに **Upsert Record** を使用します。 これにより、前のステップからレコード ID を取得する必要はなく、メールアドレス（`handle` フィールド）で人物を特定できます。
 </Warning>
 
-2. Select **People** as the object
-3. Find the person by matching their email to the `handle` from the Message Participant
-4. Set your custom "Number of emails received" field to `{{searchRecords.totalCount}}`
+2. オブジェクトとして **People** を選択します
+3. Message Participant の `handle` とメールアドレスを照合して該当の人物を特定します
+4. カスタムの「受信メール数」フィールドを `{{searchRecords.totalCount}}` に設定します
 
-The `totalCount` value from the Search Records action represents the total number of emails received from this person.
+Search Records アクションの `totalCount` の値は、この人物から受信したメールの総数を表します。
 
-## Related
+## 関連
 
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [Create Custom Fields](/l/ja/user-guide/data-model/how-tos/customize-your-data-model)
-* [Search Records Action](/l/ja/user-guide/workflows/capabilities/workflow-actions#search-records)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [カスタムフィールドの作成方法](/l/ja/user-guide/data-model/how-tos/customize-your-data-model)
+* [Search Records アクション](/l/ja/user-guide/workflows/capabilities/workflow-actions#search-records)

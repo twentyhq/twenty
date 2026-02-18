@@ -1,0 +1,180 @@
+---
+title: Créer des relations plusieurs-à-plusieurs
+description: Reliez des enregistrements lorsque de nombreux éléments des deux côtés peuvent être associés ensemble au moyen d'objets de jonction.
+---
+
+Les relations plusieurs-à-plusieurs vous permettent de relier plusieurs enregistrements des deux côtés. Par exemple : de nombreuses Personnes peuvent travailler sur de nombreux Projets, et chaque Projet peut avoir de nombreuses Personnes.
+
+<Warning>
+  **Fonctionnalité Lab** : Les relations de jonction sont actuellement dans le Lab. Activez-les dans **Paramètres → Mises à jour → Lab** avant de suivre ce guide.
+</Warning>
+
+<Note>
+  Cette fonctionnalité exige également que le **mode avancé** soit activé (bascule en bas à droite des Paramètres).
+</Note>
+
+## Quand utiliser les relations plusieurs-à-plusieurs
+
+Utilisez plusieurs-à-plusieurs lorsque les deux côtés d'une relation peuvent avoir plusieurs connexions :
+
+| Relation                 | Exemple                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Personnes ↔ Projets      | Une personne travaille sur plusieurs projets ; un projet a plusieurs membres de l'équipe                |
+| Entreprises ↔ Étiquettes | Une entreprise peut avoir plusieurs étiquettes ; une étiquette peut s'appliquer à plusieurs entreprises |
+| Produits ↔ Commandes     | Un produit peut se trouver dans plusieurs commandes ; une commande contient plusieurs produits          |
+
+## Comment ça marche
+
+Twenty utilise un modèle d'**objet de jonction** pour les relations plusieurs-à-plusieurs. Un objet de jonction se situe entre deux objets et conserve les connexions :
+
+```
+People ←→ Project Assignments ←→ Projects
+```
+
+L'objet **Affectations de projet** (jonction) comporte :
+
+* Une relation vers Personnes (plusieurs-à-un)
+* Une relation vers Projets (plusieurs-à-un)
+
+Lorsque vous activez la bascule de relation de jonction, Twenty affiche directement les enregistrements liés au lieu d'afficher les enregistrements de jonction intermédiaires.
+
+## Prérequis
+
+1. **Activer les relations de jonction dans Lab** : Allez dans **Paramètres → Mises à jour → Lab** et activez **Relations de jonction**
+2. **Activer le mode avancé** : Activez le **mode avancé** via la bascule en bas à droite de la barre latérale des Paramètres
+3. Planifiez votre modèle de données :
+   * Quels sont les deux objets que vous connectez ?
+   * Comment doit s'appeler l'objet de jonction ?
+
+## Étape 1 : Créer l'objet de jonction
+
+D'abord, créez l'objet intermédiaire qui contiendra les connexions.
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Cliquez sur **+ Nouvel objet**
+3. Donnez-lui un nom explicite (p. ex., "Affectation de projet", "Membre de l'équipe", "Commande de produit")
+4. Cliquez sur **Enregistrer**
+
+<Tip>
+  **Convention de nommage** : Utilisez un nom qui décrit la relation, comme "Affectation de projet" ou "Appartenance à l'équipe". Cela rend le modèle de données plus facile à comprendre.
+</Tip>
+
+## Étape 2 : Créer des relations à partir de l'objet de jonction
+
+Ajoutez des champs de relation depuis l'objet de jonction vers les deux objets que vous souhaitez connecter.
+
+### Première relation (Jonction → Objet A)
+
+1. Sélectionnez votre objet de jonction dans **Paramètres → Modèle de données**
+2. Cliquez sur **+ Ajouter un champ**
+3. Choisissez **Relation** comme type de champ
+4. Sélectionnez le premier objet (p. ex., "Personnes")
+5. Définissez le type de relation sur **Plusieurs-à-un** (de nombreuses affectations peuvent être liées à une personne)
+6. Nommez les champs :
+   * Champ sur la jonction : p. ex., "Personne"
+   * Champ sur Personnes : p. ex., "Affectations de projet"
+7. Cliquez sur **Enregistrer**
+
+### Deuxième relation (Jonction → Objet B)
+
+1. Toujours sur l'objet de jonction, cliquez sur **+ Ajouter un champ**
+2. Choisissez **Relation** comme type de champ
+3. Sélectionnez le deuxième objet (p. ex., "Projets")
+4. Définissez le type de relation sur **Plusieurs-à-un**
+5. Nommez les champs :
+   * Champ sur la jonction : p. ex., "Projet"
+   * Champ sur Projets : p. ex., "Membres de l'équipe"
+6. Cliquez sur **Enregistrer**
+
+## Étape 3 : Configurer l'affichage de la relation de jonction
+
+Configurez maintenant les objets sources pour afficher directement les enregistrements liés, en ignorant l'objet de jonction intermédiaire.
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez le premier objet (p. ex., "Personnes")
+3. Recherchez le champ de relation pointant vers l'objet de jonction (p. ex., "Affectations de projet")
+4. Cliquez pour modifier le champ
+5. Activez **"Il s'agit d'une relation vers un objet de jonction"**
+6. Sélectionnez la **relation cible** (p. ex., "Projet" — le champ sur la jonction qui pointe vers l'autre côté)
+7. Cliquez sur **Enregistrer**
+
+{/* TODO: Add image
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+*/}
+
+Répétez pour l'autre objet :
+
+1. Sélectionnez "Projets" dans Modèle de données
+2. Modifiez le champ de relation "Membres de l'équipe"
+3. Activez la bascule de jonction
+4. Sélectionnez "Personne" comme relation cible
+5. Enregistrer
+
+## Résultat
+
+Après configuration :
+
+* Sur un enregistrement **Personne**, le champ "Affectations de projet" affiche directement les **Projets** (et non les enregistrements d'affectation)
+* Sur un enregistrement **Projet**, le champ "Membres de l'équipe" affiche directement les **Personnes**
+
+L'objet de jonction existe toujours et stocke les connexions, mais l'interface présente une vue plusieurs-à-plusieurs plus épurée.
+
+## Exemple : Personnes ↔ Projets
+
+Voici un guide complet :
+
+### Créer l'objet de jonction
+
+* Nom : **Affectation de projet**
+* Description : "Associe les personnes aux projets sur lesquels elles travaillent"
+
+### Ajouter des relations
+
+1. **Affectation de projet → Personnes**
+   * Type : Plusieurs-à-un
+   * Champ sur Affectation : "Personne"
+   * Champ sur Personnes : "Affectations de projet"
+
+2. **Affectation de projet → Projets**
+   * Type : Plusieurs-à-un
+   * Champ sur Affectation : "Projet"
+   * Champ sur Projets : "Membres de l'équipe"
+
+### Configurer l'affichage de la jonction
+
+1. Sur l'objet **Personnes** :
+   * Modifiez le champ "Affectations de projet"
+   * Activez la bascule de jonction
+   * Cible : "Projet"
+
+2. Sur l'objet **Projets** :
+   * Modifiez le champ "Membres de l'équipe"
+   * Activez la bascule de jonction
+   * Cible : "Personne"
+
+### Utilisez-le
+
+* Ouvrez un enregistrement Personne → Voyez directement ses Projets
+* Ouvrez un enregistrement Projet → Voyez directement les membres de l'équipe
+* Créez de nouvelles connexions depuis les deux côtés
+
+## Ajout de données supplémentaires aux connexions
+
+Comme l'objet de jonction est un véritable objet, vous pouvez ajouter des champs personnalisés pour stocker des informations sur la relation :
+
+* **Rôle** : "Développeur", "Designer", "Responsable"
+* **Date de début** : Lorsqu'ils ont rejoint le projet
+* **Heures allouées** : Heures hebdomadaires sur ce projet
+
+Pour accéder à ces données, accédez directement à l'objet de jonction ou interrogez-le via l'API.
+
+## Limitations
+
+* **Import/Export CSV** : L'importation directe de relations plusieurs-à-plusieurs n'est pas prise en charge. Importez plutôt des enregistrements dans l'objet de jonction.
+* **Filtres** : Le filtrage par relations plusieurs-à-plusieurs peut offrir des options limitées.
+
+## Articles connexes
+
+* [Champs de relation](/l/fr/user-guide/data-model/capabilities/relation-fields) — types de relation expliqués
+* [Créer des objets personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-objects) — comment créer des objets
+* [Créer des champs de relation](/l/fr/user-guide/data-model/how-tos/create-relation-fields) — configuration de base des relations

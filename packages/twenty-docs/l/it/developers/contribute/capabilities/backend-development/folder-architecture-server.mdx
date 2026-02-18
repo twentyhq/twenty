@@ -3,7 +3,7 @@ title: Architettura delle Cartelle
 info: Uno sguardo dettagliato alla nostra architettura di cartelle del server
 ---
 
-The backend directory structure is as follows:
+La struttura della directory del backend è la seguente:
 
 ```
 server
@@ -37,9 +37,9 @@ Include filtri di eccezione per gestire le eccezioni che potrebbero verificarsi 
 
 ## Guards
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+Vedi [guards](https://docs.nestjs.com/guards) per ulteriori dettagli.
 
-## Health
+## Stato di salute
 
 Include un'API REST pubblicamente disponibile (healthz) che restituisce un JSON per confermare se il database funziona correttamente.
 
@@ -51,7 +51,7 @@ Definisce oggetti personalizzati e rende disponibile un'API GraphQL (graphql/met
 
 Genera e serve schemi GraphQL personalizzati basati sui metadati.
 
-### Workspace Directory Structure
+### Struttura della directory dello spazio di lavoro
 
 ```
 workspace
@@ -87,11 +87,11 @@ La radice della directory di lavoro include il `workspace.factory.ts`, un file c
 
 Questa strategia non riguarda solo l'organizzazione, ma aiuta anche con l'ottimizzazione, come la memorizzazione nella cache delle definizioni di tipo generate per migliorare le prestazioni e la scalabilità.
 
-### Workspace Schema builder
+### Generatore dello schema dello spazio di lavoro
 
 Genera lo schema GraphQL e include:
 
-#### Factories:
+#### Factory:
 
 Costruttori specializzati per generare costrutti correlati a GraphQL.
 
@@ -100,7 +100,7 @@ Costruttori specializzati per generare costrutti correlati a GraphQL.
 
 #### Tipi GraphQL
 
-Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+Include enumerazioni, input, oggetti e scalari e funge da base per la costruzione dello schema.
 
 #### Interfacce e Definizioni di Oggetti
 
@@ -108,18 +108,18 @@ Contiene i progetti per le entità GraphQL e include tipi predefiniti e personal
 
 #### Servizi
 
-Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+Contiene il servizio responsabile dell'associazione di FieldMetadataType al relativo scalare GraphQL o ai modificatori di query.
 
-#### Storage
+#### Archiviazione
 
 Include la classe `TypeDefinitionsStorage` che contiene definizioni di tipo riutilizzabili, evitando la duplicazione di tipi GraphQL.
 
-### Workspace Resolver Builder
+### Generatore di resolver dello spazio di lavoro
 
 Crea funzioni di risolutore per interrogare e modificare lo schema GraphQL.
 
-Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+Ogni factory in questa directory è responsabile della produzione di un tipo di resolver distinto, come `FindManyResolverFactory`, progettato per un'applicazione adattabile su varie tabelle.
 
-### Workspace Query Runner
+### Esecutore di query dello spazio di lavoro
 
 Esegue le query generate sul database e analizza il risultato.

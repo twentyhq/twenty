@@ -1,5 +1,5 @@
 import { type GraphWidgetLegendItem } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartPercentage';
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
@@ -10,7 +10,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useMemo } from 'react';
 
 type UsePieChartDataProps = {
-  data: PieChartDataItem[];
+  data: PieChartDataItemWithColor[];
   colorRegistry: GraphColorRegistry;
   colorMode: GraphColorMode;
 };

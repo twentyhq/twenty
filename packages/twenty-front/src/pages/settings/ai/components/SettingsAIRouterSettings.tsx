@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
@@ -10,11 +10,11 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import {
-  StyledSettingsOptionCardContent,
-  StyledSettingsOptionCardDescription,
-  StyledSettingsOptionCardIcon,
-  StyledSettingsOptionCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
+  StyledSettingsCardContent,
+  StyledSettingsCardDescription,
+  StyledSettingsCardIcon,
+  StyledSettingsCardTitle,
+} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
@@ -22,6 +22,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconBolt, IconBrain } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledSelectContainer = styled.div`
   justify-content: flex-end;
@@ -42,7 +43,7 @@ export const SettingsAIRouterSettings = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
   const activeModelOptions = useAiModelOptions();
   const fastModelLabel = useAiModelLabel(currentWorkspace?.fastModel);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel);
@@ -161,25 +162,23 @@ export const SettingsAIRouterSettings = () => {
 
       {noModelsAvailable ? (
         <Card rounded>
-          <StyledSettingsOptionCardContent>
+          <StyledSettingsCardContent>
             <StyledErrorMessage>
               {t`No models available. Please configure AI models in your workspace settings.`}
             </StyledErrorMessage>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
         </Card>
       ) : (
         <Card rounded>
-          <StyledSettingsOptionCardContent>
-            <StyledSettingsOptionCardIcon>
+          <StyledSettingsCardContent>
+            <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={IconBolt} />
-            </StyledSettingsOptionCardIcon>
+            </StyledSettingsCardIcon>
             <div>
-              <StyledSettingsOptionCardTitle>
-                {t`Fast Model`}
-              </StyledSettingsOptionCardTitle>
-              <StyledSettingsOptionCardDescription>
+              <StyledSettingsCardTitle>{t`Fast Model`}</StyledSettingsCardTitle>
+              <StyledSettingsCardDescription>
                 {t`Quick model for routing decisions`}
-              </StyledSettingsOptionCardDescription>
+              </StyledSettingsCardDescription>
             </div>
             <StyledSelectContainer>
               <Select
@@ -190,19 +189,19 @@ export const SettingsAIRouterSettings = () => {
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
 
-          <StyledSettingsOptionCardContent>
-            <StyledSettingsOptionCardIcon>
+          <StyledSettingsCardContent>
+            <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={IconBrain} />
-            </StyledSettingsOptionCardIcon>
+            </StyledSettingsCardIcon>
             <div>
-              <StyledSettingsOptionCardTitle>
+              <StyledSettingsCardTitle>
                 {t`Smart Model`}
-              </StyledSettingsOptionCardTitle>
-              <StyledSettingsOptionCardDescription>
+              </StyledSettingsCardTitle>
+              <StyledSettingsCardDescription>
                 {t`Advanced model for complex planning`}
-              </StyledSettingsOptionCardDescription>
+              </StyledSettingsCardDescription>
             </div>
             <StyledSelectContainer>
               <Select
@@ -213,7 +212,7 @@ export const SettingsAIRouterSettings = () => {
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
         </Card>
       )}
     </Section>

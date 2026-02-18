@@ -17,6 +17,7 @@ export class CreateFieldInput extends OmitType(
     'updatedAt',
     'standardOverrides',
     'applicationId',
+    'morphId',
   ] as const,
   InputType,
 ) {
@@ -26,9 +27,6 @@ export class CreateFieldInput extends OmitType(
 
   @HideField()
   universalIdentifier?: string;
-
-  @HideField()
-  standardId?: string;
 
   @HideField()
   applicationId?: string;

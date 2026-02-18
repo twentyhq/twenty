@@ -1,10 +1,10 @@
 ---
-title: Feature Flags
+title: Флаги функций
 ---
 
-Feature flags are used to hide experimental features. Для Twenty они устанавливаются на уровне рабочей области, а не на уровне пользователя.
+Флаги функций используются для скрытия экспериментальных функций. Для Twenty они устанавливаются на уровне рабочей области, а не на уровне пользователя.
 
-## Adding a new feature flag
+## Добавление нового флага функции
 
 В `FeatureFlagKey.ts` добавьте флаг функции:
 
@@ -23,7 +23,7 @@ enum FeatureFlagKeys {
 }
 ```
 
-To apply a feature flag on a **backend** feature use:
+Чтобы применить флаг функции к **бэкенд**-функции, используйте:
 
 ```ts
 @Gate({
@@ -31,13 +31,13 @@ To apply a feature flag on a **backend** feature use:
 })
 ```
 
-To apply a feature flag on a **frontend** feature use:
+Чтобы применить флаг функции к **фронтенд**-функции, используйте:
 
 ```ts
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-## Configure feature flags for the deployment
+## Настройте флаги функций для развертывания
 
 Измените соответствующую запись в таблице `core.featureFlag`:
 

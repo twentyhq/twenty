@@ -7,7 +7,7 @@ image: /images/user-guide/notes/notes_header.png
   <img src="/images/user-guide/notes/notes_header.png" alt="Hlavička" />
 </Frame>
 
-## Text Input
+## Textové pole
 
 Umožňuje uživatelům zadávat a upravovat text.
 
@@ -54,7 +54,7 @@ Umožňuje uživatelům zadávat a upravovat text.
     | fullWidth      | booleovská hodnota | Udává, zda by měl vstup zabírat 100 % šířky                                                                               |
     | disableHotkeys | booleovská hodnota | Indikuje, zda jsou pro vstup povoleny horké klávesy                                                                       |
     | chyba          | řetězec            | Reprezentuje chybovou zprávu, která se má zobrazit. Pokud je poskytnuta, také přidává ikonu chyby na pravou stranu vstupu |
-    | onKeyDown      | funkce             | Called when a key is pressed down while the input field is focused. Přijímá `React.KeyboardEvent` jako argument           |
+    | onKeyDown      | funkce             | Volá se při stisknutí klávesy, když je vstupní pole ve fokusu. Přijímá `React.KeyboardEvent` jako argument                |
     | Pravá Ikona    | Ikonová komponenta | Volitelná komponenta ikony zobrazená na pravé straně vstupu                                                               |
 
     Komponenta také přijímá jiné vlastnosti HTML vstupního prvku.
@@ -90,15 +90,15 @@ Textová vstupní komponenta, která automaticky přizpůsobuje svou výšku na 
   </Tab>
 
   <Tab title="Vlastnosti">
-    | Vlastnosti    | Typ     | Popis                                                                       |
-    | ------------- | ------- | --------------------------------------------------------------------------- |
-    | onValidate    | funkce  | The callback function you want to trigger when the user validates the input |
-    | minRows       | číslo   | Minimální počet řádků pro textovou oblast                                   |
-    | zástupný text | řetězec | Náhradní text, který chcete zobrazit, když je textová oblast prázdná        |
-    | onFocus       | funkce  | The callback function you want to trigger when the text area gains focus    |
-    | varianta      | řetězec | Varianta vstupu. Možnosti zahrnují: `výchozí`, `ikona`, a `tlačítko`        |
-    | buttonTitle   | řetězec | Název pro tlačítko (pouze pro variantu tlačítka)                            |
-    | hodnota       | řetězec | Úvodní hodnota pro textovou oblast                                          |
+    | Vlastnosti    | Typ     | Popis                                                                   |
+    | ------------- | ------- | ----------------------------------------------------------------------- |
+    | onValidate    | funkce  | Callback funkce, kterou chcete spustit, když uživatel potvrdí vstup     |
+    | minRows       | číslo   | Minimální počet řádků pro textovou oblast                               |
+    | zástupný text | řetězec | Náhradní text, který chcete zobrazit, když je textová oblast prázdná    |
+    | onFocus       | funkce  | Callback funkce, kterou chcete spustit, když textová oblast získá fokus |
+    | varianta      | řetězec | Varianta vstupu. Možnosti zahrnují: `výchozí`, `ikona`, a `tlačítko`    |
+    | buttonTitle   | řetězec | Název pro tlačítko (pouze pro variantu tlačítka)                        |
+    | hodnota       | řetězec | Úvodní hodnota pro textovou oblast                                      |
   </Tab>
 </Tabs>
 
@@ -126,12 +126,12 @@ Umožňuje vytvoření víceřádkových textových vstupů.
   </Tab>
 
   <Tab title="Vlastnosti">
-    | Vlastnosti    | Typ                | Popis                                                          |
-    | ------------- | ------------------ | -------------------------------------------------------------- |
-    | neaktivní     | booleovská hodnota | Naznačuje, zda je textová oblast deaktivovaná                  |
-    | minRows       | číslo              | Minimální počet viditelných řádků pro textovou oblast.         |
-    | onChange      | funkce             | Callback function triggered when the text area content changes |
-    | zástupný text | řetězec            | Zástupný text zobrazený, když je textová oblast prázdná        |
-    | hodnota       | řetězec            | Aktuální hodnota textové oblasti                               |
+    | Vlastnosti    | Typ                | Popis                                                     |
+    | ------------- | ------------------ | --------------------------------------------------------- |
+    | neaktivní     | booleovská hodnota | Naznačuje, zda je textová oblast deaktivovaná             |
+    | minRows       | číslo              | Minimální počet viditelných řádků pro textovou oblast.    |
+    | onChange      | funkce             | Callback funkce spuštěná při změně obsahu textové oblasti |
+    | zástupný text | řetězec            | Zástupný text zobrazený, když je textová oblast prázdná   |
+    | hodnota       | řetězec            | Aktuální hodnota textové oblasti                          |
   </Tab>
 </Tabs>

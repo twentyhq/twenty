@@ -159,6 +159,12 @@ You should run all commands in the following steps from the root of the project.
       CREATE ROLE postgres WITH SUPERUSER LOGIN;
     ```
     This creates a superuser role named `postgres` with login access.
+      ```bash
+      Role name | Attributes  | Member of
+      -----------+-------------+-----------
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
+    ```
 
     **Option 2:** If you have docker installed:
     ```bash

@@ -35,28 +35,25 @@ export class UpdateConnectedAccountOnReconnectService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        await connectedAccountRepository.update(
-          {
-            id: connectedAccountId,
-          },
-          {
-            accessToken,
-            refreshToken,
-            scopes,
-            authFailedAt: null,
-          },
-          manager,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
         );
-      },
-    );
+
+      await connectedAccountRepository.update(
+        {
+          id: connectedAccountId,
+        },
+        {
+          accessToken,
+          refreshToken,
+          scopes,
+          authFailedAt: null,
+        },
+        manager,
+      );
+    }, authContext);
   }
 }

@@ -1,9 +1,9 @@
 ---
-title: Folder Architecture
-info: A detailed look into our server folder architecture
+title: Architecture des Dossiers
+info: Un regard détaillé sur l'architecture des dossiers de notre serveur
 ---
 
-The backend directory structure is as follows:
+La structure du répertoire backend est la suivante :
 
 ```
 server
@@ -23,35 +23,35 @@ server
 
 ## Ability
 
-Defines permissions and includes handlers for each entity.
+Définit les permissions et inclut des gestionnaires pour chaque entité.
 
-## Decorators
+## Décorateurs
 
-Defines custom decorators in NestJS for added functionality.
+Définit des décorateurs personnalisés dans NestJS pour des fonctionnalités supplémentaires.
 
 See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
 
-## Filters
+## Filtres
 
-Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+Inclut des filtres d'exception pour gérer les exceptions qui pourraient se produire dans les points de terminaison GraphQL.
 
 ## Guards
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+Voir [gardiens](https://docs.nestjs.com/guards) pour plus de détails.
 
-## Health
+## Santé
 
-Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
+Inclut une API REST disponible publiquement (healthz) qui renvoie un JSON pour confirmer si la base de données fonctionne comme prévu.
 
-## Metadata
+## Métadonnées
 
-Defines custom objects and makes available a GraphQL API (graphql/metadata).
+Définit des objets personnalisés et met une API GraphQL à disposition (graphql/metadata).
 
-## Workspace
+## Espace de travail
 
-Generates and serves custom GraphQL schema based on the metadata.
+Génère et sert un schéma GraphQL personnalisé basé sur les métadonnées.
 
-### Workspace Directory Structure
+### Structure du répertoire de l'espace de travail
 
 ```
 workspace
@@ -83,43 +83,43 @@ workspace
   └───workspace.factory.ts
 ```
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
+La racine du répertoire de l'espace de travail inclut le fichier `workspace.factory.ts`, qui contient la fonction `createGraphQLSchema`. Cette fonction génère un schéma spécifique à l'espace de travail en utilisant les métadonnées pour adapter un schéma pour chaque espace de travail. En séparant la construction du schéma et du résolveur, nous utilisons la fonction `makeExecutableSchema`, qui combine ces éléments distincts.
 
-This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+Cette stratégie n'est pas seulement une question d'organisation, mais aide également à l'optimisation, comme la mise en cache des définitions de type générées pour améliorer les performances et la scalabilité.
 
-### Workspace Schema builder
+### Constructeur de schéma d'espace de travail
 
-Generates the GraphQL schema, and includes:
+Génère le schéma GraphQL, et inclut :
 
-#### Factories:
+#### Usines :
 
-Specialised constructors to generate GraphQL-related constructs.
+Constructeurs spécialisés pour générer des constructions liées à GraphQL.
 
-* The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
-* The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+* La type.factory traduit les métadonnées de champs en types GraphQL en utilisant le `TypeMapperService`.
+* La type-definition.factory crée des objets d'entrée ou de sortie GraphQL dérivés de `objectMetadata`.
 
-#### GraphQL Types
+#### Types GraphQL
 
-Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+Inclut des énumérations, des entrées, des objets et des scalaires, et sert de blocs de construction pour la construction du schéma.
 
-#### Interfaces and Object Definitions
+#### Interfaces et définitions d'objets
 
-Contains the blueprints for GraphQL entities, and includes both predefined and custom types like `MONEY` or `URL`.
+Contient les plans pour les entités GraphQL, et inclut à la fois des types prédéfinis et personnalisés comme `MONEY` ou `URL`.
 
 #### Services
 
-Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+Contient le service responsable de l'association du FieldMetadataType avec son type scalaire ou modificateur de requête GraphQL approprié.
 
-#### Storage
+#### Stockage
 
-Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
+Inclut la classe `TypeDefinitionsStorage` qui contient des définitions de type réutilisables, empêchant la duplication des types GraphQL.
 
-### Workspace Resolver Builder
+### Constructeur de résolveur d'espace de travail
 
-Creates resolver functions for querying and mutating the GraphQL schema.
+Crée des fonctions de résolveur pour interroger et modifier le schéma GraphQL.
 
-Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+Chaque usine de ce répertoire est responsable de la production d'un type de résolveur distinct, comme le `FindManyResolverFactory`, conçu pour une application adaptable à plusieurs tables.
 
-### Workspace Query Runner
+### Exécuteur de requêtes d'espace de travail
 
-Runs the generated queries on the database and parses the result.
+Exécute les requêtes générées sur la base de données et analyse le résultat.

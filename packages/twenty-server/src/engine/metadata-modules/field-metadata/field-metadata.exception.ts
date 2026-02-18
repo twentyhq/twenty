@@ -14,6 +14,7 @@ export const FieldMetadataExceptionCode = appendCommonExceptionCode({
   FIELD_MUTATION_NOT_ALLOWED: 'FIELD_MUTATION_NOT_ALLOWED',
   FIELD_ALREADY_EXISTS: 'FIELD_ALREADY_EXISTS',
   OBJECT_METADATA_NOT_FOUND: 'OBJECT_METADATA_NOT_FOUND',
+  APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
   FIELD_METADATA_RELATION_NOT_ENABLED: 'FIELD_METADATA_RELATION_NOT_ENABLED',
   FIELD_METADATA_RELATION_MALFORMED: 'FIELD_METADATA_RELATION_MALFORMED',
   LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
@@ -43,6 +44,8 @@ const getFieldMetadataExceptionUserFriendlyMessage = (
       return msg`A field with this name already exists.`;
     case FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
       return msg`Object not found.`;
+    case FieldMetadataExceptionCode.APPLICATION_NOT_FOUND:
+      return msg`Application not found.`;
     case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
       return msg`Relation is not enabled for this field.`;
     case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:

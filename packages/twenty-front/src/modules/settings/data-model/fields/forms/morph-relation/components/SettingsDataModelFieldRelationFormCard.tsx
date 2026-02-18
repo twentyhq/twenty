@@ -7,12 +7,18 @@ import {
   SettingsDataModelFieldRelationForm,
   type SettingsDataModelFieldMorphRelationFormValues,
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationJunctionForm } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm';
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationType,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldRelationFormCardProps = {
@@ -31,8 +37,19 @@ export const SettingsDataModelFieldRelationFormCard = ({
       SettingsDataModelFieldEditFormValues
   >();
   const isMobile = useIsMobile();
+  const isJunctionRelationsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
+
+  if (!sourceObjectMetadataItem) {
+    throw new Error('Object not found.');
+  }
 
   const relationObjectMetadataIds: string[] = watch(
     'morphRelationObjectMetadataIds',
@@ -70,6 +87,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType,
+                joinColumnName: 'previewJoinColumnId',
               },
             }}
             shrink
@@ -93,6 +111,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType: oppositeRelationType,
+                joinColumnName: 'previewJoinColumnId',
               },
             }}
             shrink
@@ -107,10 +126,18 @@ export const SettingsDataModelFieldRelationFormCard = ({
         </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
-        <SettingsDataModelFieldRelationForm
-          existingFieldMetadataId={existingFieldMetadataId}
-          disabled={disabled}
-        />
+        <>
+          <SettingsDataModelFieldRelationForm
+            existingFieldMetadataId={existingFieldMetadataId}
+            sourceObjectMetadataId={sourceObjectMetadataItem?.id}
+            disabled={disabled}
+          />
+          {isJunctionRelationsEnabled && (
+            <SettingsDataModelFieldRelationJunctionForm
+              objectNameSingular={objectNameSingular}
+            />
+          )}
+        </>
       }
     />
   );

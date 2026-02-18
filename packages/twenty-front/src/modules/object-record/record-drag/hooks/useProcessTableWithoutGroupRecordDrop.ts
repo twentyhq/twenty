@@ -24,9 +24,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useProcessTableWithoutGroupRecordDrop = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
-    objectNameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const allRecordIdsWithoutGroupCallbackSelector =
     useRecoilComponentCallbackState(allRecordIdsWithoutGroupsComponentSelector);
@@ -116,7 +114,8 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             singleDragResult,
           ]);
 
-          updateOneRow({
+          updateOneRecord({
+            objectNameSingular,
             idToUpdate: singleDragResult.id,
             updateOneRecordInput: {
               position: singleDragResult.position,
@@ -151,7 +150,8 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
           );
 
           for (const update of multiDragResult.recordUpdates) {
-            updateOneRow({
+            updateOneRecord({
+              objectNameSingular,
               idToUpdate: update.id,
               updateOneRecordInput: {
                 position: update.position,
@@ -161,8 +161,9 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
         }
       },
     [
+      objectNameSingular,
       selectedRowIdsSelector,
-      updateOneRow,
+      updateOneRecord,
       openModal,
       currentRecordSorts,
       originalDragSelectionCallbackState,

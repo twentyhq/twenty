@@ -37,7 +37,9 @@ export class TrashCleanupService {
         },
       );
 
-    const objectNames = Object.values(flatObjectMetadataMaps.byId ?? {})
+    const objectNames = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier ?? {},
+    )
       .map((metadata) => metadata?.nameSingular)
       .filter(isDefined);
 
@@ -100,7 +102,6 @@ export class TrashCleanupService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const repository = await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
@@ -137,6 +138,7 @@ export class TrashCleanupService {
 
         return deleted;
       },
+      authContext,
     );
   }
 

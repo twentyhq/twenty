@@ -18,12 +18,12 @@ Krátká zpráva, která zobrazí další informace, když uživatel interaguje 
       return (
         <>
           <p id="hoverText" style={{ display: "inline-block" }}>
-            Customer Insights
+            Zákaznické přehledy
           </p>
           <AppTooltip
             className
             anchorSelect="#hoverText"
-            content="Explore customer behavior and preferences"
+            content="Prozkoumejte chování a preference zákazníků"
             delayHide={0}
             offset={6}
             noArrow={false}
@@ -38,17 +38,17 @@ Krátká zpráva, která zobrazí další informace, když uživatel interaguje 
   </Tab>
 
   <Tab title="Vlastnosti">
-    | Vlastnosti       | Typ                                            | Popis                                                                                                                                                                                      |
-    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | className        | řetězec                                        | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                               |
-    | anchorSelect     | CSS selektor                                   | Selektor pro kotvu tooltipu (prvek, který spouští tooltip).                                                                                                                                |
-    | obsah            | textový řetězec                                | Obsah, který chcete zobrazit v rámci tooltipu.                                                                                                                                             |
-    | delayHide        | číslo                                          | Zpoždění v sekundách před skrytím tooltipu poté, co kurzor opustí kotvu.                                                                                                                   |
-    | odsazení         | číslo                                          | Odsazení v pixelech pro umístění tooltipu.                                                                                                                                                 |
-    | noArrow          | booleovská hodnota                             | Pokud je `true`, skrývá šipku na tooltipu.                                                                                                                                                 |
-    | isOpen           | booleovská hodnota                             | Pokud je `true`, tooltip je výchozím způsobem otevřen.                                                                                                                                     |
-    | umístění         | řetězec `PlacesType` z `react-tooltipu`        | Určuje umístění tooltipu. Hodnoty zahrnují `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, a `left-end`. |
-    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Strategie umístění pro tooltip. Má dvě hodnoty: `absolute` a `fixed`.                                                                                                                      |
+    | Vlastnosti       | Typ                                           | Popis                                                                                                                                                                                      |
+    | ---------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | className        | řetězec                                       | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                               |
+    | anchorSelect     | CSS selektor                                  | Selektor pro kotvu tooltipu (prvek, který spouští tooltip).                                                                                                                                |
+    | obsah            | textový řetězec                               | Obsah, který chcete zobrazit v rámci tooltipu.                                                                                                                                             |
+    | delayHide        | číslo                                         | Zpoždění v sekundách před skrytím tooltipu poté, co kurzor opustí kotvu.                                                                                                                   |
+    | odsazení         | číslo                                         | Odsazení v pixelech pro umístění tooltipu.                                                                                                                                                 |
+    | noArrow          | booleovská hodnota                            | Pokud je `true`, skrývá šipku na tooltipu.                                                                                                                                                 |
+    | isOpen           | booleovská hodnota                            | Pokud je `true`, tooltip je výchozím způsobem otevřen.                                                                                                                                     |
+    | umístění         | řetězec `PlacesType` z `react-tooltipu`       | Určuje umístění tooltipu. Hodnoty zahrnují `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, a `left-end`. |
+    | positionStrategy | řetězec `PositionStrategy` z `react-tooltipu` | Strategie umístění pro tooltip. Má dvě hodnoty: `absolute` a `fixed`.                                                                                                                      |
   </Tab>
 </Tabs>
 
@@ -63,7 +63,7 @@ Krátká zpráva, která zobrazí další informace, když uživatel interaguje 
 
     export const MyComponent = () => {
       const crmTaskDescription =
-        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+        'Kontaktujte klienta ohledně jeho nedávného dotazu na produkt. Proberte cenové možnosti, vyřešte případné obavy a poskytněte další informace o produktu. Zaznamenejte podrobnosti rozhovoru do systému CRM pro budoucí potřebu.';
 
       return <OverflowingTextWithTooltip text={crmTaskDescription} />;
     };

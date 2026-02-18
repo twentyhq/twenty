@@ -1,72 +1,72 @@
 ---
-title: Uniqueness Constraints
-description: How Twenty enforces data uniqueness during import.
+title: Eindeutigkeitsbeschränkungen
+description: Wie Twenty während des Imports die Dateneindeutigkeit erzwingt.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Überblick
 
-Twenty enforces uniqueness on certain fields to prevent duplicate records and ensure data integrity. Understanding these constraints is essential for successful imports.
+Twenty erzwingt die Eindeutigkeit bei bestimmten Feldern, um doppelte Datensätze zu verhindern und die Datenintegrität sicherzustellen. Das Verständnis dieser Einschränkungen ist für erfolgreiche Importe entscheidend.
 
-## Default Unique Fields
+## Standardmäßige eindeutige Felder
 
-| Objekt                         | Unique Fields          |
-| ------------------------------ | ---------------------- |
-| **People**                     | `id`, `email`          |
-| **Companies**                  | `id`, `domain`         |
-| **Benutzerdefinierte Objekte** | `id` only (by default) |
+| Objekt                         | Eindeutige Felder        |
+| ------------------------------ | ------------------------ |
+| **Personen**                   | `id`, `email`            |
+| **Unternehmen**                | `id`, `domain`           |
+| **Benutzerdefinierte Objekte** | nur `id` (standardmäßig) |
 
-<Note>The `id` field is Twenty's internal identifier, auto-generated for each record. It uses UUID format (e.g., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>Das Feld `id` ist die interne Kennung von Twenty und wird für jeden Datensatz automatisch generiert. Es verwendet das UUID-Format (z. B. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
 
-## Custom Unique Fields
+## Benutzerdefinierte eindeutige Felder
 
-You can define additional unique fields under **Settings → Data Model**:
+Sie können unter **Einstellungen → Datenmodell** zusätzliche eindeutige Felder definieren:
 
-1. Go to **Settings → Data Model**
-2. Select the object
-3. Click on a field
-4. Enable **Unique** in field settings
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie ein Objekt aus
+3. Klicken Sie auf ein Feld
+4. Aktivieren Sie **Eindeutig** in den Feldeinstellungen
 
-### Use Cases for Custom Unique Fields
+### Anwendungsfälle für benutzerdefinierte eindeutige Felder
 
-* **External IDs**: Store IDs from other systems (Salesforce ID, HubSpot ID)
-* **Business identifiers**: Employee numbers, customer codes
-* **Alternative contact info**: LinkedIn profile, phone number
+* **Externe IDs**: IDs aus anderen Systemen speichern (Salesforce-ID, HubSpot-ID)
+* **Geschäftskennungen**: Mitarbeiternummern, Kundencodes
+* **Alternative Kontaktinformationen**: LinkedIn-Profil, Telefonnummer
 
-<Note>The field name `id` is reserved for Twenty's internal ID. Use a different name like `externalId` or `legacyId` for external identifiers.</Note>
+<Note>Der Feldname `id` ist für die interne ID von Twenty reserviert. Verwenden Sie für externe Kennungen einen anderen Namen wie `externalId` oder `legacyId`.</Note>
 
-## Import Behavior
+## Importverhalten
 
-### Creating New Records
+### Erstellen neuer Datensätze
 
-If a unique field value doesn't exist, a new record is created.
+Wenn ein eindeutiger Feldwert nicht existiert, wird ein neuer Datensatz erstellt.
 
-### Updating Existing Records
+### Aktualisieren vorhandener Datensätze
 
-If a unique field value matches an existing record, that record is **updated** with the new data.
-<Warning>To **update existing records**, it is recommended to **only match one unique field**.</Warning>
+Wenn ein eindeutiger Feldwert mit einem vorhandenen Datensatz übereinstimmt, wird dieser Datensatz mit den neuen Daten **aktualisiert**.
+<Warning>Um **vorhandene Datensätze zu aktualisieren**, wird empfohlen, **nur ein eindeutiges Feld abzugleichen**.</Warning>
 
-### Soft-Deleted Records
+### Soft-gelöschte Datensätze
 
 <Warning>
-  **Deleted records count toward uniqueness.**
+  **Gelöschte Datensätze zählen für die Eindeutigkeit.**
 
-  Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be **restored** with the new data.
+  Soft-gelöschte Datensätze (sichtbar unter Befehlsmenü → Gelöschte Datensätze anzeigen) werden in die Eindeutigkeitsprüfungen einbezogen. Wenn Sie einen Datensatz mit demselben eindeutigen Wert wie ein gelöschter Datensatz importieren, wird der gelöschte Datensatz mit den neuen Daten **wiederhergestellt**.
 </Warning>
 
-## Duplicate Detection During Import
+## Duplikaterkennung während des Imports
 
-During the validation phase:
+Während der Validierungsphase:
 
-* Duplicates within your file are highlighted in yellow
-* You can edit or remove duplicate rows from the UI before starting the import
+* Duplikate in Ihrer Datei werden gelb hervorgehoben
+* Sie können doppelte Zeilen in der Benutzeroberfläche bearbeiten oder entfernen, bevor Sie den Import starten
 
-<VimeoEmbed videoId="1145246326" title="Video demonstration" />
+<VimeoEmbed videoId="1145246326" title="Video-Demonstration" />
 
 ## Beste Praktiken
 
-1. **Remove duplicates** from your file before importing
-2. **Check for existing records** in Twenty before importing
-3. **Use external IDs** when migrating from other systems
-4. **Include unique fields** if you want to update existing records
+1. **Entfernen Sie Duplikate** aus Ihrer Datei vor dem Import
+2. **Prüfen Sie vorhandene Datensätze** in Twenty vor dem Import
+3. **Verwenden Sie externe IDs**, wenn Sie aus anderen Systemen migrieren
+4. **Fügen Sie eindeutige Felder hinzu**, wenn Sie vorhandene Datensätze aktualisieren möchten

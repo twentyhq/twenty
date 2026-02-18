@@ -10,33 +10,34 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
-  workspaceId: string;
-  workspaceCustomApplicationId: string;
-} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
+  flatApplication: FlatApplication;
+} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   createFieldInput: rawCreateFieldInput,
-  workspaceId,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-  workspaceCustomApplicationId,
+  flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+  flatApplication,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
-    flatFieldMetadatas: FlatFieldMetadata[];
-    indexMetadatas: FlatIndexMetadata[];
+    flatFieldMetadatas: UniversalFlatFieldMetadata[];
+    indexMetadatas: UniversalFlatIndexMetadata[];
   }>
 > => {
   if (rawCreateFieldInput.isRemoteCreation) {
@@ -56,8 +57,10 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       rawCreateFieldInput,
       ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
     );
-  const parentFlatObjectMetadata =
-    existingFlatObjectMetadataMaps.byId[createFieldInput.objectMetadataId];
+  const parentFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: createFieldInput.objectMetadataId,
+    flatEntityMaps: existingFlatObjectMetadataMaps,
+  });
 
   if (!isDefined(parentFlatObjectMetadata)) {
     return {
@@ -72,12 +75,11 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     };
   }
 
-  const fieldMetadataId = v4();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createFieldInput,
-    workspaceId,
-    fieldMetadataId,
-    workspaceCustomApplicationId,
+    flatApplication,
+    objectMetadataUniversalIdentifier:
+      parentFlatObjectMetadata.universalIdentifier,
   });
 
   switch (createFieldInput.type) {
@@ -88,21 +90,21 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           type: createFieldInput.type,
         },
         existingFlatObjectMetadataMaps,
+        existingFlatFieldMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
-        workspaceId,
-        workspaceCustomApplicationId,
+        flatApplication,
       });
     }
     case FieldMetadataType.RELATION: {
       return await fromRelationCreateFieldInputToFlatFieldMetadatas({
         existingFlatObjectMetadataMaps,
+        existingFlatFieldMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
         createFieldInput: {
           ...createFieldInput,
           type: createFieldInput.type,
         },
-        workspaceId,
-        workspaceCustomApplicationId,
+        flatApplication,
       });
     }
     case FieldMetadataType.RATING: {
@@ -113,10 +115,12 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
             {
               ...commonFlatFieldMetadata,
               type: createFieldInput.type,
-              settings: null,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
               options: generateRatingOptions(),
-            } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
+              universalSettings: null,
+            } satisfies UniversalFlatFieldMetadata<
+              typeof createFieldInput.type
+            >,
           ],
           indexMetadatas: [],
         },
@@ -143,8 +147,10 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
               options,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
-              settings: null,
-            } satisfies FlatFieldMetadata<typeof createFieldInput.type>,
+              universalSettings: null,
+            } satisfies UniversalFlatFieldMetadata<
+              typeof createFieldInput.type
+            >,
           ],
           indexMetadatas: [],
         },
@@ -172,6 +178,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.LINKS:
     case FieldMetadataType.CURRENCY:
+    case FieldMetadataType.FILES:
     case FieldMetadataType.FULL_NAME:
     case FieldMetadataType.POSITION:
     case FieldMetadataType.ADDRESS:
@@ -180,14 +187,13 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RICH_TEXT_V2:
     case FieldMetadataType.ACTOR:
     case FieldMetadataType.ARRAY: {
-      const indexMetadatas: FlatIndexMetadata[] = [];
+      const indexMetadatas: UniversalFlatIndexMetadata[] = [];
 
       if (commonFlatFieldMetadata.isUnique) {
         indexMetadatas.push(
           generateIndexForFlatFieldMetadata({
             flatFieldMetadata: commonFlatFieldMetadata,
             flatObjectMetadata: parentFlatObjectMetadata,
-            workspaceId,
           }),
         );
       }

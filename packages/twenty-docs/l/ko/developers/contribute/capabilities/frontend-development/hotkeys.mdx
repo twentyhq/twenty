@@ -1,42 +1,42 @@
 ---
-title: Hotkeys
+title: 단축키
 ---
 
-## Introduction
+## 소개
 
-When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
+단축키를 들으려면 일반적으로 `onKeyDown` 이벤트 리스너를 사용합니다.
 
-In `twenty-front` however, you might have conflicts between same hotkeys that are used in different components, mounted at the same time.
+그러나 `twenty-front`에서는 동일한 시점에 장착된 다른 구성 요소에서 사용되는 같은 단축키 간에 충돌이 발생할 수 있습니다.
 
-For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
+예를 들어, Enter 키를 듣는 페이지가 있고, Enter 키를 듣는 모달이 있으며, 그 모달 내에서 Enter 키를 듣는 Select 구성요소가 있다면, 모두 동시에 마운트될 때 충돌이 발생할 수 있습니다.
 
-## The `useScopedHotkeys` hook
+## `useScopedHotkeys` 훅
 
-To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
+이 문제를 해결하기 위해, 우리는 충돌 없이 단축키를 들을 수 있게 하는 커스텀 훅을 만들었습니다.
 
-You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+이를 구성 요소에 배치하면 구성 요소가 마운트될 때 및 지정한 **단축키 스코프**가 활성화될 때만 단축키를 듣습니다.
 
-## How to listen for hotkeys in practice?
+## 실제로 단축키를 감지하려면 어떻게 하나요?
 
-There are two steps involved in setting up hotkey listening :
+단축키 청취를 설정하는 데 두 가지 단계가 있습니다:
 
-1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
-2. Use the `useScopedHotkeys` hook to listen to hotkeys
+1. 단축키를 들을 [단축키 스코프](#what-is-a-hotkey-scope-)를 설정합니다.
+2. 단축키를 듣기 위해 `useScopedHotkeys` 훅을 사용합니다.
 
-Setting up hotkey scopes is required even in simple pages, because other UI elements like left menu or command menu might also listen to hotkeys.
+기본 페이지에서도 단축키 스코프를 설정해야 합니다. 왼쪽 메뉴나 명령 메뉴와 같은 다른 UI 요소도 단축키를 들을 수 있기 때문입니다.
 
-## Use cases for hotkeys
+## 단축키 사용 사례
 
-In general, you'll have two use cases that require hotkeys :
+일반적으로, 두 가지 단축키를 필요로 하는 사용 사례가 있습니다:
 
-1. In a page or a component mounted in a page
-2. In a modal-type component that takes the focus due to a user action
+1. 페이지 또는 페이지에 마운트된 구성 요소
+2. 사용자 작업으로 인해 포커스를 차지하는 모달 형 구성 요소
 
-The second use case can happen recursively : a dropdown in a modal for example.
+두 번째 사용 사례는 재귀적으로 발생할 수 있습니다: 예를 들어, 모달의 드롭다운.
 
-### Listening to hotkeys in a page
+### 페이지에서 단축키 듣기
 
-Example :
+예시:
 
 ```tsx
 const PageListeningEnter = () => {
@@ -71,11 +71,11 @@ const PageListeningEnter = () => {
 };
 ```
 
-### Listening to hotkeys in a modal-type component
+### 모달 형 구성 요소에서 단축키 듣기
 
-For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+이 예시에서는 부모에게 모달을 닫으라고 알리기 위해 Escape 키를 듣는 모달 구성 요소를 사용합니다.
 
-Here the user interaction is changing the scope.
+여기서 사용자 상호작용은 범위를 변경합니다.
 
 ```tsx
 const ExamplePageWithModal = () => {
@@ -108,7 +108,7 @@ const ExamplePageWithModal = () => {
 };
 ```
 
-Then in the modal component :
+그러면 모달 구성 요소에서:
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
@@ -131,15 +131,15 @@ It's important to use this pattern when you're not sure that just using a useEff
 
 Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
 
-## What is a hotkey scope?
+## 단축키 스코프란 무엇인가요?
 
-A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
+단축키 스코프는 단축키가 활성 상태인 컨텍스트를 나타내는 문자열입니다. 일반적으로 열거형으로 인코딩됩니다.
 
-When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
+단축키 스코프를 변경하면 해당 스코프를 듣고 있는 단축키는 활성화되고 다른 스코프를 듣고 있는 단축키는 비활성화됩니다.
 
-You can set only one scope at a time.
+한 번에 하나의 스코프만 설정할 수 있습니다.
 
-As an example, the hotkey scopes for each page are defined in the `PageHotkeyScope` enum:
+예를 들어 각 페이지의 단축키 스코프는 `PageHotkeyScope` 열거형에 정의되어 있습니다:
 
 ```tsx
 export enum PageHotkeyScope {
@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
+내부적으로, 현재 선택한 스코프는 애플리케이션 전반에 걸쳐 공유되는 Recoil 상태에 저장됩니다:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
+하지만 이 Recoil 상태는 수동으로 처리해서는 안 됩니다! 다음 섹션에서 사용하는 방법을 배웁니다.
 
-## How is it working internally?
+## 내부적으로 어떻게 작동합니까?
 
-We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
+[react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) 위에 얇은 래퍼를 만들어 성능을 높이고 불필요한 재랜더링을 방지합니다.
 
-We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.
+또한 핫키 스코프 상태를 처리하고 애플리케이션 전반에서 사용할 수 있도록 한 Recoil 상태를 만듭니다.

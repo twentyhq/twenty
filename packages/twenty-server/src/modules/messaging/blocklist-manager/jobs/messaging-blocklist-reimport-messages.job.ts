@@ -36,37 +36,32 @@ export class BlocklistReimportMessagesJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+          workspaceId,
+          'messageChannel',
+        );
 
-        for (const eventPayload of data.events) {
-          const workspaceMemberId =
-            eventPayload.properties.before.workspaceMemberId;
+      for (const eventPayload of data.events) {
+        const workspaceMemberId =
+          eventPayload.properties.before.workspaceMemberId;
 
-          const messageChannels = await messageChannelRepository.find({
-            select: ['id'],
-            where: {
-              connectedAccount: {
-                accountOwnerId: workspaceMemberId,
-              },
-              syncStage: Not(
-                MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-              ),
+        const messageChannels = await messageChannelRepository.find({
+          select: ['id'],
+          where: {
+            connectedAccount: {
+              accountOwnerId: workspaceMemberId,
             },
-          });
+            syncStage: Not(MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING),
+          },
+        });
 
-          await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
-            messageChannels.map((messageChannel) => messageChannel.id),
-            workspaceId,
-          );
-        }
-      },
-    );
+        await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+          messageChannels.map((messageChannel) => messageChannel.id),
+          workspaceId,
+        );
+      }
+    }, authContext);
   }
 }

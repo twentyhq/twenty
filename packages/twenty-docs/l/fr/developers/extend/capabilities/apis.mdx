@@ -1,147 +1,147 @@
 ---
-title: APIs
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+title: API
+description: Interrogez et modifiez vos données CRM par programmation à l'aide de REST ou de GraphQL.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
+Twenty a été conçu pour être convivial pour les développeurs, offrant des API puissantes qui s'adaptent à votre modèle de données personnalisé. Nous fournissons quatre types d'API distincts pour répondre à différents besoins d'intégration.
 
-## Developer-First Approach
+## Approche axée sur les développeurs
 
-Twenty generates APIs specifically for your data model:
+Twenty génère des API spécifiquement pour votre modèle de données :
 
-* **No long IDs required**: Use your object and field names directly in endpoints
-* **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
-* **Dedicated endpoints**: Each object and field gets its own API endpoint
-* **Custom documentation**: Generated specifically for your workspace's data model
+* **Pas besoin d'ID longs** : Utilisez directement les noms de vos objets et champs dans les points de terminaison
+* **Objets standard et personnalisés traités à égalité** : Vos objets personnalisés bénéficient du même traitement API que ceux intégrés
+* **Points de terminaison dédiés** : Chaque objet et champ a son propre point de terminaison API
+* **Documentation personnalisée** : Générée spécifiquement pour le modèle de données de votre espace de travail
 
 <Note>
-  Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  Votre documentation API personnalisée est disponible sous **Paramètres → API & Webhooks** après la création d'une clé API. Comme Twenty génère des API qui correspondent à votre modèle de données personnalisé, la documentation est propre à votre espace de travail.
 </Note>
 
-## The Two API Types
+## Les deux types d'API
 
-### Core API
+### API principale
 
-Accessed on `/rest/` or `/graphql/`
+Accessible sur `/rest/` ou `/graphql/`
 
-Work with your actual **records** (the data):
+Travaillez avec vos **enregistrements** réels (les données) :
 
-* Create, read, update, delete People, Companies, Opportunities, etc.
-* Query and filter data
-* Manage record relationships
+* Créer, lire, mettre à jour, supprimer People, Companies, Opportunities, etc.
+* Interroger et filtrer les données
+* Gérer les relations entre les enregistrements
 
-### Metadata API
+### API de métadonnées
 
-Accessed on `/rest/metadata/` or `/metadata/`
+Accessible sur `/rest/metadata/` ou `/metadata/`
 
-Manage your **workspace and data model**:
+Gérez votre **espace de travail et votre modèle de données** :
 
-* Create, modify, or delete objects and fields
-* Configure workspace settings
-* Define relationships between objects
+* Créer, modifier ou supprimer des objets et des champs
+* Configurer les paramètres de l'espace de travail
+* Définir les relations entre les objets
 
 ## REST vs GraphQL
 
-Both Core and Metadata APIs are available in REST and GraphQL formats:
+Les API Core et Metadata sont disponibles aux formats REST et GraphQL :
 
-| Format      | Available Operations                                       |
-| ----------- | ---------------------------------------------------------- |
-| **REST**    | CRUD, batch operations, upserts                            |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
+| Format      | Opérations disponibles                                                  |
+| ----------- | ----------------------------------------------------------------------- |
+| **REST**    | CRUD, opérations par lot, upserts                                       |
+| **GraphQL** | Identique + **upserts par lot**, requêtes de relations en un seul appel |
 
-Choose based on your needs — both formats access the same data.
+Choisissez selon vos besoins — les deux formats accèdent aux mêmes données.
 
-## API Endpoints
+## Points d'accès API
 
-| Environment     | Base URL                  |
-| --------------- | ------------------------- |
-| **Cloud**       | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/`  |
+| Environnement    | URL de base               |
+| ---------------- | ------------------------- |
+| **Cloud**        | `https://api.twenty.com/` |
+| **Auto-hébergé** | `https://{your-domain}/`  |
 
-## Authentication
+## Authentification
 
-Every API request requires an API key in the header:
+Chaque requête API nécessite une clé API dans l'en-tête :
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Create an API Key
+### Créer une clé API
 
-1. Go to **Settings → APIs & Webhooks**
-2. Click **+ Create key**
-3. Configure:
-   * **Name**: Descriptive name for the key
-   * **Expiration Date**: When the key expires
-4. Click **Save**
-5. **Copy immediately** — the key is only shown once
+1. Allez dans **Paramètres → API & Webhooks**
+2. Cliquez sur **+ Créer une clé**
+3. Configurer:
+   * **Nom** : Nom descriptif pour la clé
+   * **Date d'expiration** : Date à laquelle la clé expire
+4. Cliquez sur **Enregistrer**
+5. **Copiez immédiatement** — la clé n'est affichée qu'une seule fois
 
-<VimeoEmbed videoId="928786722" title="Creating API key" />
+<VimeoEmbed videoId="928786722" title="Création d'une clé API" />
 
 <Warning>
-  Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  Votre clé API donne accès à des données sensibles. Ne la partagez pas avec des services non fiables. Si elle est compromise, désactivez-la immédiatement et générez-en une nouvelle.
 </Warning>
 
-### Assign a Role to an API Key
+### Attribuer un rôle à une clé API
 
-For better security, assign a specific role to limit access:
+Pour une meilleure sécurité, attribuez un rôle spécifique pour limiter l'accès :
 
-1. Go to **Settings → Roles**
-2. Click on the role to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle à attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Sous **Clés API**, cliquez sur **+ Attribuer à une clé API**
+5. Sélectionnez la clé API
 
-The key will inherit that role's permissions. See [Permissions](/l/fr/user-guide/permissions-access/capabilities/permissions) for details.
+La clé héritera des autorisations de ce rôle. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions) pour plus de détails.
 
-### Manage API Keys
+### Gérer les clés API
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Régénérer** : Paramètres → API & Webhooks → Cliquez sur la clé → **Régénérer**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Supprimer** : Paramètres → API & Webhooks → Cliquez sur la clé → **Supprimer**
 
-## API Playground
+## Bac à sable API
 
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
+Testez vos API directement dans le navigateur avec notre bac à sable intégré — disponible pour **REST** et **GraphQL**.
 
-### Access the Playground
+### Accéder au bac à sable
 
-1. Go to **Settings → APIs & Webhooks**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
+1. Allez dans **Paramètres → API & Webhooks**
+2. Créer une clé API (obligatoire)
+3. Cliquez sur **REST API** ou **GraphQL API** pour ouvrir le bac à sable
 
-### What You Get
+### Ce que vous obtenez
 
-* **Interactive documentation**: Generated for your specific data model
-* **Live testing**: Execute real API calls against your workspace
-* **Schema explorer**: Browse available objects, fields, and relationships
-* **Request builder**: Construct queries with autocomplete
+* **Documentation interactive** : Générée pour votre modèle de données spécifique
+* **Tests en direct** : Exécutez de véritables appels API sur votre espace de travail
+* **Explorateur de schéma** : Parcourez les objets, champs et relations disponibles
+* **Générateur de requêtes** : Construisez des requêtes avec l'autocomplétion
 
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
+Le bac à sable reflète vos objets et champs personnalisés, de sorte que la documentation est toujours précise pour votre espace de travail.
 
-## Batch Operations
+## Opérations par Lot
 
-Both REST and GraphQL support batch operations:
+REST et GraphQL prennent en charge les opérations par lot :
 
-* **Batch size**: Up to 60 records per request
-* **Operations**: Create, update, delete multiple records
+* **Taille du lot** : Jusqu'à 60 enregistrements par requête
+* **Opérations** : Créer, mettre à jour, supprimer plusieurs enregistrements
 
-**GraphQL-only features:**
+**Fonctionnalités spécifiques à GraphQL :**
 
-* **Batch Upsert**: Create or update in one call
-* Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+* **Upsert par lot** : Créer ou mettre à jour en un seul appel
+* Utilisez des noms d'objets au pluriel (par exemple, `CreateCompanies` au lieu de `CreateCompany`)
 
-## Rate Limits
+## Limites de débit
 
-API requests are throttled to ensure platform stability:
+Les requêtes API sont limitées pour garantir la stabilité de la plateforme :
 
-| Limit          | Value                |
-| -------------- | -------------------- |
-| **Requests**   | 100 calls per minute |
-| **Batch size** | 60 records per call  |
+| Limite            | Valeur                       |
+| ----------------- | ---------------------------- |
+| **Requêtes**      | 100 appels par minute        |
+| **Taille du lot** | 60 enregistrements par appel |
 
 <Tip>
-  Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  Utilisez les opérations par lot pour maximiser le débit — traitez jusqu'à 60 enregistrements dans un seul appel API au lieu d'effectuer des requêtes individuelles.
 </Tip>

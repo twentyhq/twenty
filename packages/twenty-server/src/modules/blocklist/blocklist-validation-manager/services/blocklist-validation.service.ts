@@ -88,7 +88,6 @@ export class BlocklistValidationService {
 
     const currentWorkspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -100,6 +99,7 @@ export class BlocklistValidationService {
             userId,
           });
         },
+        authContext,
       );
 
     const currentBlocklist =
@@ -145,7 +145,6 @@ export class BlocklistValidationService {
 
     const currentWorkspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -157,6 +156,7 @@ export class BlocklistValidationService {
             userId,
           });
         },
+        authContext,
       );
 
     const currentBlocklist =

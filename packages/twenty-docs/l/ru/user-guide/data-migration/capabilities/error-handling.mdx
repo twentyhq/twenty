@@ -1,76 +1,76 @@
 ---
-title: Error Handling & Validation
-description: Review and fix import errors directly in the UI before confirming.
+title: Обработка ошибок и проверка
+description: Просматривайте и исправляйте ошибки импорта прямо в интерфейсе перед подтверждением.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Pre-Import Validation
+## Предварительная проверка импорта
 
-After uploading your file and mapping fields, Twenty validates your data **before** importing. This allows you to catch and fix errors without affecting your existing data.
+После загрузки файла и сопоставления полей Twenty проверяет ваши данные **перед** импортом. Это позволяет обнаруживать и исправлять ошибки, не затрагивая ваши существующие данные.
 
 ## Как это работает
 
-1. **Upload** your CSV file
-2. **Map** your columns to Twenty fields
-3. **Review** the potential errors highlighted in yellow
-4. **Fix errors** directly in the UI
-5. **Confirm** the import
+1. **Загрузите** ваш CSV-файл
+2. **Сопоставьте** столбцы с полями Twenty
+3. **Просмотрите** потенциальные ошибки, выделенные желтым
+4. **Исправляйте ошибки** прямо в интерфейсе
+5. **Подтвердите** импорт
 
 <VimeoEmbed videoId="1145273857" title="Видеодемонстрация" />
 
-## Error Display
+## Отображение ошибок
 
-Rows with issues are highlighted in **yellow**. You can:
+Строки с ошибками выделены **желтым**. Вы можете:
 
-* **Edit the cell directly** to fix the error
-* **Remove the row** to skip it entirely
+* **Отредактируйте ячейку напрямую**, чтобы исправить ошибку
+* **Удалите строку**, чтобы пропустить её целиком
 
-This inline editing saves time—no need to go back to your spreadsheet, fix errors, and re-upload.
+Такое встроенное редактирование экономит время — не нужно возвращаться к таблице, исправлять ошибки и загружать файл заново.
 
-## Common Error Types
+## Распространённые типы ошибок
 
-### Duplicate Values
+### Дублирующиеся значения
 
-**Cause**: A unique field (email, domain) already exists in Twenty or appears twice in your file.
+**Причина**: значение уникального поля (email, домен) уже есть в Twenty или встречается дважды в вашем файле.
 
-**Fix**:
+**Решение**:
 
-* Edit the duplicate value in the import UI
-* Remove one of the duplicate rows
+* Отредактируйте дублирующееся значение в интерфейсе импорта
+* Удалите одну из строк-дубликатов
 
-See [Uniqueness Constraints](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints) for more details on how uniqueness is enforced.
+См. [Ограничения уникальности](/l/ru/user-guide/data-migration/capabilities/uniqueness-constraints) для подробностей о том, как обеспечивается уникальность.
 
-### Invalid Format
+### Недопустимый формат
 
-**Cause**: Data doesn't match the expected format (e.g., invalid email, wrong date format).
+**Причина**: данные не соответствуют ожидаемому формату (например, некорректный email, неверный формат даты).
 
-**Fix**: Edit the cell to use the correct format.
+**Решение**: отредактируйте ячейку, указав правильный формат.
 
-See [Field Mapping](/l/ru/user-guide/data-migration/capabilities/field-mapping) for the expected format of each field type.
+См. [Сопоставление полей](/l/ru/user-guide/data-migration/capabilities/field-mapping), чтобы узнать ожидаемый формат для каждого типа поля.
 
-### Missing Required Fields
+### Отсутствуют обязательные поля
 
-**Cause**: A required field is empty.
+**Причина**: обязательное поле пусто.
 
-**Fix**: Enter a value in the required field or remove the row.
+**Решение**: введите значение в обязательное поле или удалите строку.
 
-### Relation Not Found
+### Связь не найдена
 
-**Cause**: The referenced record doesn't exist (e.g., a Company domain that wasn't imported).
+**Причина**: ссылочная запись не существует (например, домен компании, который не был импортирован).
 
-**Fix**:
+**Решение**:
 
-* Import the parent records first
-* Or correct the reference value
+* Сначала импортируйте родительские записи
+* Или исправьте ссылочное значение
 
-See [Import Relations](/l/ru/user-guide/data-migration/capabilities/import-relations) for the correct import order and how to link records.
+См. [Импорт связей](/l/ru/user-guide/data-migration/capabilities/import-relations) для правильного порядка импорта и способов связывания записей.
 
-## Tips for Fewer Errors
+## Советы для уменьшения количества ошибок
 
-1. **Download the template** to see expected format prior to importing your file
-2. **Clean your data** in the spreadsheet first
-3. **Import files in correct order** to import relations (Companies → People → Opportunities)
-4. **Test with small batches** before full import
-5. **Check for duplicates** before uploading
-6. **Limit the size of your file to 10,000 records** per file
+1. **Скачайте шаблон**, чтобы увидеть ожидаемый формат перед импортом файла
+2. **Очистите данные** сначала в таблице
+3. **Импортируйте файлы в правильном порядке**, чтобы импортировать связи (Компании → Контакты → Сделки)
+4. **Протестируйте на небольших партиях** перед полным импортом
+5. **Проверьте наличие дублей** перед загрузкой
+6. **Ограничьте размер каждого файла 10 000 записями**

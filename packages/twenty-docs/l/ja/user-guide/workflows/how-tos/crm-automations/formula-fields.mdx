@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: 数式フィールド
+description: ネイティブ対応が提供されるまで、ワークフローを使って数式フィールドを作成します。
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+Twenty は現時点でネイティブの数式フィールドをまだサポートしていません（2026 年に提供予定）ですが、ワークフローを使えば同等の結果を実現できます。 この回避策により、単純な連結から複雑なビジネスロジックまで、フィールド値を自動計算して入力できます。
 
-## Common Use Cases
+## 一般的な使用例
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| ユースケース       | 数式例                          |
+| ------------ | ---------------------------- |
+| **氏名**       | First Name + " " + Last Name |
+| **見込み金額**    | Amount × Probability         |
+| **期日までの日数**  | Due Date - Today             |
+| **ステージ滞在日数** | Today - Stage Entry Date     |
+| **リードスコア**   | 複数の基準に基づくポイント                |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/ja/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  パイプラインのステージでの時間を追跡する完全な例については、[商談が各ステージにとどまる時間を追跡](/l/ja/user-guide/views-pipelines/how-tos/track-time-in-stage) を参照してください。
 </Tip>
 
-## Basic Formula: Concatenation
+## 基本の式：連結
 
-### Example: Auto-Fill Full Name
+### 例：氏名を自動入力
 
-**Goal**: Automatically combine first and last name into a full name field.
+**目的**: 名と姓を自動的に結合して氏名フィールドにする。
 
-### Setup
+### セットアップ
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **トリガー**: レコードが更新または作成される（People）
 
-2. **Filter**: Check that first name or last name changed
+2. **フィルター**: 名または姓が変更されたかを確認
 
-3. **Code action**:
+3. **コードアクション**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **レコードを更新**: 氏名を `{{code.fullName}}` に設定
 
-## Numeric Formula: Expected Amount
+## 数値の式：見込み金額
 
-### Example: Calculate Expected Revenue
+### 例：見込み収益を計算
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**目的**: 商談金額に確度を掛けて見込み金額を算出する。
 
-See [How to Show Expected Amount in Pipeline](/l/ja/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+ワークフロー全体については、[パイプラインで見込み金額を表示する方法](/l/ja/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) を参照してください。
 
-### Quick Setup
+### クイックセットアップ
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **トリガー**: レコードが更新される（Opportunities、Amount または Probability フィールド）
 
-2. **Code action**:
+2. **コードアクション**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **レコードを更新**: 見込み金額を `{{code.expectedAmount}}` に設定
 
-## Date Formula: Days Calculation
+## 日付の式：日数計算
 
-### Example: Days Until Task Due
+### 例：タスクの期日までの日数
 
-**Goal**: Calculate how many days remain until a task's due date.
+**目的**: タスクの期日まで残り何日かを計算する。
 
-### Setup
+### セットアップ
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **トリガー**: レコードが更新または作成される（Tasks、Due Date フィールド）
 
-2. **Code action**:
+2. **コードアクション**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **レコードを更新**: 期日までの日数を `{{code.daysUntilDue}}` に設定
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  負の値は期限超過のタスクを示します。 このフィールドを使用して、緊急度でタスクをフィルターまたは並べ替えることができます。
 </Note>
 
-## Conditional Formula: Lead Score
+## 条件付き式：リードスコア
 
-### Example: Calculate Lead Score Based on Criteria
+### 例：条件に基づいてリードスコアを計算
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**目的**: 企業規模、業種、エンゲージメントに基づいてリードにスコアを付与する。
 
-### Setup
+### セットアップ
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **トリガー**: レコードが更新される（People または Companies）
 
-2. **Code action**:
+2. **コードアクション**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **レコードを更新**: リードスコアを `{{code.leadScore}}` に設定
 
-## Text Formula: Domain Extraction
+## テキストの式：ドメイン抽出
 
-### Example: Extract Domain from Email
+### 例：メールからドメインを抽出
 
-**Goal**: Automatically extract and store the email domain.
+**目的**: メールのドメインを自動抽出して保存する。
 
-### Setup
+### セットアップ
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **トリガー**: レコードが更新される（People、Email フィールド）
 
-2. **Code action**:
+2. **コードアクション**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **レコードを更新**: ドメインフィールドを `{{code.domain}}` に設定
 
-## Best Practices
+## ベストプラクティス
 
-### Performance
+### パフォーマンス
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* 関連するフィールド変更時のみトリガーする
+* 計算が不要なレコードをスキップするためにフィルターを使用する
+* 大量のワークフローでは複雑な計算を避ける
 
-### Error Handling
+### エラーハンドリング
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* 計算の前に null/undefined の値を確認する
+* データが欠落している場合はデフォルト値を使用する
+* 計算が失敗したときは明確なエラーメッセージを返す
 
-### Testing
+### テスト
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* エッジケース（空のフィールド、ゼロ値）でテストする
+* 有効化する前に計算を手動で検証する
+* 意図しない結果がないかワークフローの実行を監視する
 
-## Related
+## 関連
 
-* [How to Show Expected Amount in Pipeline](/l/ja/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/ja/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [パイプラインで見込み金額を表示する方法](/l/ja/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [ステージ内の時間を追跡する方法](/l/ja/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)

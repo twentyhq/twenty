@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
+import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconX } from 'twenty-ui/display';
@@ -51,8 +52,8 @@ export const NavigationDrawerBackButton = ({
   const setIsNavigationDrawerExpanded = useSetRecoilState(
     isNavigationDrawerExpandedState,
   );
-  const navigationDrawerExpandedMemorized = useRecoilValue(
-    navigationDrawerExpandedMemorizedState,
+  const navigationDrawerExpandedMemorized = useRecoilValueV2(
+    navigationDrawerExpandedMemorizedStateV2,
   );
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(

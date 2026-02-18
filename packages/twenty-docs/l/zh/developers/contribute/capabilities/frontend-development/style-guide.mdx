@@ -1,24 +1,24 @@
 ---
-title: Style Guide
+title: 样式指南
 ---
 
-This document includes the rules to follow when writing code.
+本文档包含编写代码时需要遵循的规则。
 
-The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
+这里的目标是拥有一个一致的代码库，易于阅读和维护。
 
-For this, it's better to be a bit more verbose than to be too concise.
+为此，比起过于简洁，冗长一些更好。
 
-Always keep in mind that people read code more often than they write it, specially on an open source project, where anyone can contribute.
+请始终记住，人们阅读代码的次数远多于他们编写代码的次数，特别是在开源项目中，任何人都可以贡献。
 
-There are a lot of rules that are not defined here, but that are automatically checked by linters.
+有很多规则没有在此定义，但可以通过linters自动检查。
 
 ## React
 
-### Use functional components
+### 使用函数组件
 
-Always use TSX functional components.
+始终使用 TSX 函数组件。
 
-Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
+不要使用带有`const`的默认`import`，因为它更难阅读，并且更难通过代码补全功能导入。
 
 ```tsx
 // ❌ Bad, harder to read, harder to import with code completion
@@ -34,11 +34,11 @@ export function MyComponent() {
 };
 ```
 
-### Props
+### 属性
 
-Create the type of the props and call it `(ComponentName)Props` if there's no need to export it.
+创建props类型并称为`(ComponentName)Props`，如果不需要导出它。
 
-Use props destructuring.
+使用props解构。
 
 ```tsx
 // ❌ Bad, no type
@@ -52,7 +52,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-#### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types
+#### 避免使用 `React.FC` 或 `React.FunctionComponent` 适用于属性类型的定义
 
 ```tsx
 /* ❌ - Bad, defines the component type annotations with `FC`
@@ -67,10 +67,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - 良好，明确定义组件的
+ *      属性类型 (OwnProps)
+ *    - 此方法不会自动包含 children 属性。如果
+ *      您想要包含它，您必须在 OwnProps 中指定它。
  */
 type EmailFieldProps = {
   value: string;
@@ -81,9 +81,9 @@ const EmailField = ({ value }: EmailFieldProps) => (
 );
 ```
 
-#### No Single Variable Prop Spreading in JSX Elements
+#### JSX元素中禁止单变量属性传播
 
-Avoid using single variable prop spreading in JSX elements, like `{...props}`. This practice often results in code that is less readable and harder to maintain because it's unclear which props the component is receiving.
+避免在JSX元素中使用单个变量属性传播，如`{...props}`。 这种做法通常会导致代码不易读且难以维护，因为不清楚组件接收了哪些属性。
 
 ```tsx
 /* ❌ - Bad, spreads a single variable prop into the underlying component
@@ -94,23 +94,23 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - 良好，明确列出所有属性
+ *    - 增强可读性和可维护性
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
 };
 ```
 
-Rationale:
+理由：
 
-* At a glance, it's clearer which props the code passes down, making it easier to understand and maintain.
-* It helps to prevent tight coupling between components via their props.
-* Linting tools make it easier to identify misspelled or unused props when you list props explicitly.
+* 一目了然，它更清楚哪个属性代码传递下来，这使得理解和维护更容易。
+* 这有助于防止组件间通过属性的紧密耦合。
+* Linting工具使显式列出属性时更易于识别拼写错误或未使用的属性。
 
 ## JavaScript
 
-### Use nullish-coalescing operator `??`
+### 使用nullish 合并运算符 `??`
 
 ```tsx
 // ❌ Bad, can return 'default' even if value is 0 or ''
@@ -120,21 +120,21 @@ const value = process.env.MY_VALUE || 'default';
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
-### Use optional chaining `?.`
+### 使用可选链 `?.`
 
 ```tsx
-// ❌ Bad
+// ❌ 糟糕
 onClick && onClick();
 
-// ✅ Good
+// ✅ 良好
 onClick?.();
 ```
 
 ## TypeScript
 
-### Use `type` instead of `interface`
+### 使用 `type` 替代 `interface`
 
-Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+总是使用 `type` 而不是 `interface`，因为它们几乎总是重叠，而 `type` 更灵活。
 
 ```tsx
 // ❌ Bad
@@ -148,11 +148,11 @@ type MyType = {
 };
 ```
 
-### Use string literals instead of enums
+### 使用字符串字面量代替枚举
 
-[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, specially with code completion.
+[字符串字面量](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)是TypeScript中处理枚举值的首选方式。 它们可以更轻松地使用Pick和Omit扩展，并提供更好的开发者体验，特别是在代码补全时。
 
-You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+您可以查看[这里](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)了解为什么TypeScript建议避免使用枚举。
 
 ```tsx
 // ❌ Bad, utilizes an enum
@@ -171,13 +171,13 @@ let color = Color.Red;
 let color: "red" | "green" | "blue" = "red";
 ```
 
-#### GraphQL and internal libraries
+#### GraphQL和内部库
 
-You should use enums that GraphQL codegen generates.
+应使用GraphQL codegen生成的枚举。
 
-It's also better to use an enum when using an internal library, so the internal library doesn't have to expose a string literal type that is not related to the internal API.
+在使用内部库时, 使用枚举更好，这样内部库不必暴露不属于内部API的字符串文字类型。
 
-Example:
+示例：
 
 ```TSX
 const {
@@ -190,11 +190,11 @@ setHotkeyScopeAndMemorizePreviousScope(
 );
 ```
 
-## Styling
+## 样式
 
-### Use StyledComponents
+### 使用StyledComponents
 
-Style the components with [styled-components](https://emotion.sh/docs/styled).
+使用[styled-components](https://emotion.sh/docs/styled)对组件进行样式化。
 
 ```tsx
 // ❌ Bad
@@ -208,7 +208,7 @@ const StyledTitle = styled.div`
 `;
 ```
 
-Prefix styled components with "Styled" to differentiate them from "real" components.
+在“真实”组件和Styled 组件之间的区别，前置“Styled”命名。
 
 ```tsx
 // ❌ Bad
@@ -224,17 +224,17 @@ const StyledTitle = styled.div`
 `;
 ```
 
-### Theming
+### 主题
 
-Utilizing the theme for the majority of component styling is the preferred approach.
+大多数组件样式首选利用主题。
 
-#### Units of measurement
+#### 测量单位
 
-Avoid using `px` or `rem` values directly within the styled components. The necessary values are generally already defined in the theme, so it’s recommended to make use of the theme for these purposes.
+避免在样式化组件中直接使用`px`或`rem`值。 所需的值通常已在主题中定义，因此建议为此目的使用主题。
 
-#### Colors
+#### 颜色
 
-Refrain from introducing new colors; instead, use the existing palette from the theme. Should there be a situation where the palette does not align, please leave a comment so that the team can rectify it.
+避免引入新颜色;而是使用来自主题的现有调色板。 如果遇到调色板不匹配的情况，请留下评论以便团队纠正。
 
 ```tsx
 // ❌ Bad, directly specifies style values without utilizing the theme
@@ -258,9 +258,9 @@ const StyledButton = styled.button`
 `;
 ```
 
-## Enforcing No-Type Imports
+## 强制不允许类型导入
 
-Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
+避免类型导入。 为强制实施此标准，ESLint规则检查并报告所有类型导入。 这有助于在TypeScript代码中保持一致性和可读性。
 
 ```tsx
 // ❌ Bad
@@ -273,18 +273,18 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Meta, StoryObj } from '@storybook/react';
 ```
 
-### Why No-Type Imports
+### 为什么不允许类型导入
 
-* **Consistency**: By avoiding type imports and using a single approach for both type and value imports, the codebase remains consistent in its module import style.
+* **一致性**：通过避免类型导入并为类型和值导入使用单一方法，代码库在其模块导入风格上保持一致性。
 
-* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+* **可读性**：无类型导入提高代码可读性，使得在导入值或类型时更显而易见。 这减少了歧义，并使理解导入符号的用途更容易。
 
-* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+* **可维护性**：它增强了代码库的可维护性，因为开发人员可以在审查或修改代码时识别和定位仅类型导入。
 
-### ESLint Rule
+### ESLint规则
 
-An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+ESLint规则，`@typescript-eslint/consistent-type-imports`，强制执行不允许类型导入标准。 该规则会生成错误或警告以提示任何类型导入的违规。
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+请注意，此规则专门针对在罕见的边缘情况中发生的非预期类型导入。 TypeScript 本身也不鼓励这种做法，如[TypeScript 3.8 发行说明](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)所述。 在大多数情况下，您不需要使用仅类型导入。
 
-To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
+为确保您的代码符合此规则，请确保在开发工作流程中运行ESLint。

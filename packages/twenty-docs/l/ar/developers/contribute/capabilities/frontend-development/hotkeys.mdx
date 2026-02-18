@@ -14,9 +14,9 @@ title: مفاتيح الاختصار
 
 لمعالجة هذه المشكلة، لدينا خطاف مخصص يمكن من الاستماع لمفاتيح الاختصار دون أي تعارض.
 
-You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+تضعه داخل مكوّن، ولن يستمع إلى مفاتيح الاختصار إلا عندما يكون المكوّن مُركّبًا وعندما يكون **نطاق مفاتيح الاختصار** المحدّد نشطًا.
 
-## How to listen for hotkeys in practice?
+## كيف تستمع إلى مفاتيح الاختصار عمليًا؟
 
 هناك خطوتان متضمنتان في إعداد الاستماع لمفاتيح الاختصار:
 
@@ -73,9 +73,9 @@ const PageListeningEnter = () => {
 
 ### الاستماع لمفاتيح الاختصار في مكون من نوع مودال
 
-For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+في هذا المثال سنستخدم مكوّن نافذة منبثقة يستمع لمفتاح Escape ليطلب من المكوّن الأب إغلاقه.
 
-Here the user interaction is changing the scope.
+هنا يتمثّل تفاعل المستخدم في تغيير النطاق.
 
 ```tsx
 const ExamplePageWithModal = () => {

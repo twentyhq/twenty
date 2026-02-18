@@ -1,72 +1,72 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "用户指南",
       "groups": {
         "discoverTwenty": {
-          "label": "Discover Twenty",
+          "label": "发现 Twenty",
           "groups": {
             "gettingStartedCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "gettingStartedHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "dataModel": {
-          "label": "Data Model",
+          "label": "数据模型",
           "groups": {
             "dataModelCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "dataModelHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "dataMigration": {
-          "label": "Data Migration",
+          "label": "数据迁移",
           "groups": {
             "dataMigrationCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "dataMigrationHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "calendarEmails": {
-          "label": "Calendar & Emails",
+          "label": "日历与电子邮件",
           "groups": {
             "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "calendarEmailsHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "workflows": {
-          "label": "Workflows",
+          "label": "工作流",
           "groups": {
             "workflowsCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "workflowsHowTos": {
-              "label": "How-Tos",
+              "label": "操作指南",
               "groups": {
                 "crmAutomations": {
-                  "label": "CRM Automations"
+                  "label": "CRM 自动化"
                 },
                 "connectToOtherTools": {
-                  "label": "Connect to Other Tools"
+                  "label": "连接到其他工具"
                 },
                 "advancedConfigurations": {
-                  "label": "Advanced Configurations"
+                  "label": "高级配置"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "需要更多帮助"
                 }
               }
             }
@@ -76,122 +76,122 @@
           "label": "AI",
           "groups": {
             "aiCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "aiHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "视图与管道",
           "groups": {
             "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "viewsPipelinesHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "dashboards": {
-          "label": "Dashboards",
+          "label": "仪表板",
           "groups": {
             "dashboardsCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "dashboardsHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "permissionsAccess": {
-          "label": "Permissions & Access",
+          "label": "权限与访问",
           "groups": {
             "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "permissionsAccessHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "billing": {
-          "label": "Billing",
+          "label": "账单",
           "groups": {
             "billingCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "billingHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         },
         "settings": {
-          "label": "Settings",
+          "label": "设置",
           "groups": {
             "settingsCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             },
             "settingsHowTos": {
-              "label": "How-Tos"
+              "label": "操作指南"
             }
           }
         }
       }
     },
     "developers": {
-      "label": "Developers",
+      "label": "开发者",
       "groups": {
         "developersGroup": {
-          "label": "Developers"
+          "label": "开发者"
         },
         "extend": {
-          "label": "Extend",
+          "label": "扩展",
           "groups": {
             "extendCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             }
           }
         },
         "selfHost": {
-          "label": "Self-Host",
+          "label": "自托管",
           "groups": {
             "selfHostCapabilities": {
-              "label": "Capabilities"
+              "label": "功能"
             }
           }
         },
         "contribute": {
-          "label": "Contribute",
+          "label": "贡献",
           "groups": {
             "contributeCapabilities": {
-              "label": "Capabilities",
+              "label": "功能",
               "groups": {
                 "frontendDevelopment": {
-                  "label": "Frontend Development",
+                  "label": "前端开发",
                   "groups": {
                     "twentyUi": {
                       "label": "Twenty UI",
                       "groups": {
                         "display": {
-                          "label": "Display"
+                          "label": "展示"
                         },
                         "feedback": {
-                          "label": "Feedback"
+                          "label": "反馈"
                         },
                         "input": {
-                          "label": "Input"
+                          "label": "输入"
                         },
                         "navigation": {
-                          "label": "Navigation"
+                          "label": "导航"
                         }
                       }
                     }
                   }
                 },
                 "backendDevelopment": {
-                  "label": "Backend Development"
+                  "label": "后端开发"
                 }
               }
             }

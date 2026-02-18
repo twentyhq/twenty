@@ -85,7 +85,7 @@ export class CalendarEventImportErrorHandlerService {
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    this.logger.log(
+    this.logger.debug(
       `CalendarChannelId: ${calendarChannel.id} - Sync cursor error, resetting and rescheduling`,
     );
 
@@ -112,7 +112,7 @@ export class CalendarEventImportErrorHandlerService {
       );
 
       const calendarEventImportException = new CalendarEventImportException(
-        `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id.slice(0, 5)}... in workspace ${workspaceId} with throttleFailureCount ${calendarChannel.throttleFailureCount}`,
+        `Temporary error occurred ${CALENDAR_THROTTLE_MAX_ATTEMPTS} times while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId} with throttleFailureCount ${calendarChannel.throttleFailureCount}`,
         CalendarEventImportExceptionCode.UNKNOWN,
       );
 
@@ -121,6 +121,8 @@ export class CalendarEventImportErrorHandlerService {
         {
           additionalData: {
             calendarChannelId: calendarChannel.id,
+            syncStep,
+            throttleFailureCount: calendarChannel.throttleFailureCount,
           },
           workspace: {
             id: workspaceId,
@@ -133,26 +135,23 @@ export class CalendarEventImportErrorHandlerService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
-
-        await calendarChannelRepository.increment(
-          {
-            id: calendarChannel.id,
-          },
-          'throttleFailureCount',
-          1,
-          undefined,
-          ['throttleFailureCount', 'id'],
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
         );
-      },
-    );
+
+      await calendarChannelRepository.increment(
+        {
+          id: calendarChannel.id,
+        },
+        'throttleFailureCount',
+        1,
+        undefined,
+        ['throttleFailureCount', 'id'],
+      );
+    }, authContext);
 
     switch (syncStep) {
       case CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH:
@@ -197,17 +196,17 @@ export class CalendarEventImportErrorHandlerService {
     );
 
     const calendarEventImportException = new CalendarEventImportException(
-      `Unknown error importing calendar events for calendar channel ${calendarChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception.message}`,
+      `Unknown error importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${exception.message}`,
       CalendarEventImportExceptionCode.UNKNOWN,
     );
 
-    this.logger.log(exception);
+    this.logger.error(exception);
     this.exceptionHandlerService.captureExceptions(
       [calendarEventImportException],
       {
         additionalData: {
           calendarChannelId: calendarChannel.id,
-          exception,
+          exceptionMessage: exception.message,
         },
         workspace: {
           id: workspaceId,

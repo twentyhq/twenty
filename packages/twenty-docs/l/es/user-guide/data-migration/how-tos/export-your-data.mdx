@@ -1,209 +1,209 @@
 ---
-title: Export Your Data
-description: Complete step-by-step guide to exporting data from Twenty.
+title: Exporta tus datos
+description: Guía completa paso a paso para exportar datos desde Twenty.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Overview
+## Resumen
 
-Export your workspace data to CSV for backups, reporting, or migration.
+Exporta los datos de tu espacio de trabajo a CSV para copias de seguridad, informes o migración.
 
-**Use cases:**
+**Casos de uso:**
 
-* **Regular backups** — keep copies of your data
-* **External reporting** — analyze data in Excel, Google Sheets, or BI tools
-* **Migration** — move data to another system
-* **Bulk updates** — export, edit, and re-import to update records
+* **Copias de seguridad periódicas** — mantén copias de tus datos
+* **Informes externos** — analiza los datos en Excel, Google Sheets o herramientas de BI
+* **Migración** — mueve datos a otro sistema
+* **Actualizaciones masivas** — exporta, edita y vuelve a importar para actualizar registros
 
-## What You Need to Know
+## Lo que necesitas saber
 
-### Export Limits
+### Límites de exportación
 
-* **Maximum 20,000 records** per export
-* Only **visible columns** are exported
-* Only **filtered records** are exported (based on your current view)
+* **Máximo 20.000 registros** por exportación
+* Solo se exportan las **columnas visibles**
+* Solo se exportan los **registros filtrados** (según tu vista actual)
 
-<Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/es/developers/extend/capabilities/apis).</Note>
+<Note>Para exportaciones más grandes (más de 20.000 registros), usa filtros para exportar por lotes o usa la [API](/l/es/developers/extend/capabilities/apis).</Note>
 
-### Permissions
+### Permisos
 
-You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
+Necesitas el permiso **"Export CSV"** para exportar datos. Contacta con el administrador de tu espacio de trabajo si no tienes esta opción.
 
-## Step 1: Navigate to the Object
+## Paso 1: Navega al objeto
 
-Go to the object you want to export:
+Ve al objeto que quieres exportar:
 
-* **People** — for contacts
-* **Companies** — for organizations
-* **Opportunities** — for deals
-* **Custom objects** — any object you've created
+* **Personas** — para contactos
+* **Empresas** — para organizaciones
+* **Oportunidades** — para negocios
+* **Objetos personalizados** — cualquier objeto que hayas creado
 
-## Step 2: Configure Your View
+## Paso 2: Configura tu vista
 
-**Important:** The export includes only what's visible in your current view.
+**Importante:** La exportación solo incluye lo que es visible en tu vista actual.
 
-### Add/Remove Columns
+### Agregar/Quitar columnas
 
-1. Click **Options → Fields** (or the **+** at the end of columns)
-2. Check the fields you want to export
-3. Uncheck fields you don't need
+1. Haz clic en **Opciones → Campos** (o en el **+** al final de las columnas)
+2. Marca los campos que quieres exportar
+3. Desmarca los campos que no necesitas
 
-### Filter Records (Optional)
+### Filtrar registros (opcional)
 
-If you only need a subset of data:
+Si solo necesitas un subconjunto de datos:
 
-1. Click **Filter**
-2. Add filter conditions (e.g., "Created date > January 1, 2024")
-3. Only matching records will be exported
+1. Haz clic en **Filtrar**
+2. Añade condiciones de filtro (p. ej., "Created date > January 1, 2024")
+3. Solo se exportarán los registros coincidentes
 
-### Sort Records (Optional)
+### Ordenar registros (opcional)
 
-1. Click a column header to sort
-2. The export will follow your sort order
+1. Haz clic en el encabezado de una columna para ordenar
+2. La exportación seguirá tu orden de clasificación
 
-<Note>**Create a dedicated export view.** Save a view specifically configured for exports so you don't need to reconfigure each time.</Note>
+<Note>**Crea una vista de exportación dedicada.** Guarda una vista configurada específicamente para exportaciones, así no tendrás que reconfigurar cada vez.</Note>
 
-## Step 3: Export the Data
+## Paso 3: Exporta los datos
 
-1. Click the **⋮** icon on the top right of the table
-2. Select **Export view**
-3. Choose where to save the CSV file
-4. Wait for the download to complete
+1. Haz clic en el icono **⋮** en la parte superior derecha de la tabla
+2. Selecciona **Exportar vista**
+3. Elige dónde guardar el archivo CSV
+4. Espera a que la descarga finalice
 
-## What Gets Exported
+## Qué se exporta
 
-| Included                         | Not Included           |
-| -------------------------------- | ---------------------- |
-| All visible columns              | Hidden columns         |
-| Records matching current filters | Filtered-out records   |
-| Custom field values              | Fields not in the view |
-| Record IDs                       | File attachments       |
-| Relation IDs                     | Images                 |
+| Incluido                                         | No incluido                         |
+| ------------------------------------------------ | ----------------------------------- |
+| Todas las columnas visibles                      | Columnas ocultas                    |
+| Registros que coinciden con los filtros actuales | Registros excluidos por los filtros |
+| Valores de campos personalizados                 | Campos que no están en la vista     |
+| ID de registro                                   | Archivos adjuntos                   |
+| ID de relación                                   | Imágenes                            |
 
-### Relation Fields
+### Campos de Relación
 
-Relation IDs are only exported on the **"many" side** of a relationship:
+Los ID de relación solo se exportan en el **lado "muchos"** de una relación:
 
-* **People export** includes a `companyId` column (People → Company relation)
-* **Companies export** does NOT include `peopleIds` (Companies is the "one" side)
+* **La exportación de Personas** incluye una columna `companyId` (relación Personas → Empresa)
+* **La exportación de Empresas** NO incluye `peopleIds` (Empresas es el lado "uno")
 
-This means you can use the People export to re-import and maintain the Company link, but you'll need to re-import People after Companies to recreate the relationships.
+Esto significa que puedes usar la exportación de Personas para volver a importar y mantener el vínculo con Empresa, pero necesitarás volver a importar Personas después de Empresas para recrear las relaciones.
 
-## Exporting for Specific Purposes
+## Exportación para fines específicos
 
-### For Backups
+### Para copias de seguridad
 
-1. Create a view with **all fields** visible
-2. Remove all filters to include all records
-3. Export each object type separately
-4. Store exports in a secure location
-5. Set a recurring reminder (weekly/monthly)
+1. Crea una vista con **todos los campos** visibles
+2. Elimina todos los filtros para incluir todos los registros
+3. Exporta cada tipo de objeto por separado
+4. Guarda las exportaciones en un lugar seguro
+5. Configura un recordatorio recurrente (semanal/mensual)
 
-### For External Reporting
+### Para informes externos
 
-1. Include only the fields you need for analysis
-2. Apply filters to focus on relevant data
-3. Consider sorting by the field you'll analyze
+1. Incluye solo los campos que necesitas para el análisis
+2. Aplica filtros para concentrarte en los datos relevantes
+3. Considera ordenar por el campo que analizarás
 
-### For Bulk Updates
+### Para actualizaciones masivas
 
-1. Export the records you want to update
-2. Include the unique identifier (`email`, `domain`, or `id`)
-3. Edit the exported file
-4. Re-import to update records
-   See: [How to Update Existing Records](/l/es/user-guide/data-migration/how-tos/update-existing-records-via-import)
+1. Exporta los registros que quieres actualizar
+2. Incluye el identificador único (`email`, `domain` o `id`)
+3. Edita el archivo exportado
+4. Vuelve a importar para actualizar registros
+   Consulta: [Cómo actualizar registros existentes](/l/es/user-guide/data-migration/how-tos/update-existing-records-via-import)
 
-### For Migration
+### Para migración
 
-If you're exporting to migrate to another system:
+Si estás exportando para migrar a otro sistema:
 
-1. **Export each object separately** — People, Companies, Opportunities, etc.
-2. **Include ID fields** — these help maintain relationships
-3. **Document field mappings** — note how Twenty fields map to your target system
+1. **Exporta cada objeto por separado** — Personas, Empresas, Oportunidades, etc.
+2. **Incluye los campos de ID** — ayudan a mantener las relaciones
+3. **Documenta las asignaciones de campos** — anota cómo los campos de Twenty se asignan a tu sistema de destino
 
-## Handling Large Datasets (20,000+ Records)
+## Gestión de conjuntos de datos grandes (más de 20.000 registros)
 
-The export limit is 20,000 records. For larger datasets:
+El límite de exportación es de 20.000 registros. Para conjuntos de datos más grandes:
 
-### Option 1: Export in Batches
+### Opción 1: Exportar por lotes
 
-1. Add a filter (e.g., "Created date" ranges)
-2. Export the first batch
-3. Change the filter
-4. Export the next batch
-5. Combine files in your spreadsheet
+1. Añade un filtro (p. ej., rangos de "Created date")
+2. Exporta el primer lote
+3. Cambia el filtro
+4. Exporta el siguiente lote
+5. Combina los archivos en tu hoja de cálculo
 
-**Example filters for batching:**
+**Filtros de ejemplo para dividir en lotes:**
 
-* By date range (January, February, March...)
-* By owner (Team member A, Team member B...)
-* By status (Active, Inactive...)
+* Por rango de fechas (enero, febrero, marzo...)
+* Por propietario (miembro del equipo A, miembro del equipo B...)
+* Por estado (Activo, Inactivo...)
 
-### Option 2: Use the API
+### Opción 2: Usar la API
 
-The API has no record limit:
+La API no tiene límite de registros:
 
-1. Get your API key from **Settings → Developers**
-2. Use the GraphQL API to query records
-3. Process results in your application
+1. Obtén tu clave de API en **Ajustes → Desarrolladores**
+2. Usa la API de GraphQL para consultar registros
+3. Procesa los resultados en tu aplicación
 
-See: [API Documentation](/l/es/developers/extend/capabilities/apis)
+Consulta: [Documentación de la API](/l/es/developers/extend/capabilities/apis)
 
-## Tips and Best Practices
+## Consejos y mejores prácticas
 
-### Create Export Views
+### Crea vistas de exportación
 
-Save views configured specifically for exports:
+Guarda vistas configuradas específicamente para exportaciones:
 
-1. Configure columns and filters
-2. Click **View options** → **Save as new view**
-3. Name it "Export - [Purpose]"
+1. Configura columnas y filtros
+2. Haz clic en **Opciones de vista** → **Guardar como nueva vista**
+3. Ponle el nombre "Exportación - [Propósito]"
 
-### Secure Your Exports
+### Protege tus exportaciones
 
-Exported files may contain sensitive data:
+Los archivos exportados pueden contener datos sensibles:
 
-* Store in secure locations
-* Delete old exports when no longer needed
-* Be careful sharing export files
+* Guárdalos en ubicaciones seguras
+* Elimina las exportaciones antiguas cuando ya no sean necesarias
+* Ten cuidado al compartir archivos de exportación
 
-### Check Before Exporting
+### Verifica antes de exportar
 
-<Check>Correct columns are visible</Check>
-<Check>Filters are set correctly (or removed for full export)</Check>
-<Check>You have Export permission</Check>
+<Check>Las columnas correctas están visibles</Check>
+<Check>Los filtros están configurados correctamente (o eliminados para exportación completa)</Check>
+<Check>Tienes permiso de exportación</Check>
 
-## FAQ
+## Preguntas frecuentes
 
 <AccordionGroup>
-  <Accordion title="Why are some columns missing from my export?">
-    Only visible columns are exported. Add the columns you need via **Options → Fields** before exporting.
+  <Accordion title="¿Por qué faltan algunas columnas en mi exportación?">
+    Solo se exportan las columnas visibles. Añade las columnas que necesitas desde **Opciones → Campos** antes de exportar.
   </Accordion>
 
-  <Accordion title="Why doesn't my export have all records?">
-    Check your filters. The export only includes records matching your current view filters. Remove filters to export all records.
+  <Accordion title="¿Por qué mi exportación no tiene todos los registros?">
+    Revisa tus filtros. La exportación solo incluye los registros que coinciden con los filtros de tu vista actual. Elimina los filtros para exportar todos los registros.
   </Accordion>
 
-  <Accordion title="Can I export more than 20,000 records?">
-    Not in a single export. Use filters to export in batches, or use the API for larger datasets.
+  <Accordion title="¿Puedo exportar más de 20.000 registros?">
+    No en una sola exportación. Usa filtros para exportar por lotes o usa la API para conjuntos de datos más grandes.
   </Accordion>
 
-  <Accordion title="What format is the export file?">
-    CSV (Comma Separated Values). Opens in Excel, Google Sheets, or any spreadsheet application.
+  <Accordion title="¿En qué formato está el archivo de exportación?">
+    CSV (valores separados por comas). Se abre en Excel, Google Sheets o cualquier aplicación de hoja de cálculo.
   </Accordion>
 
-  <Accordion title="Are relation IDs included?">
-    Yes, but only on the "many" side of relationships. For example, a People export includes `companyId`, but a Companies export does not include people IDs.
+  <Accordion title="¿Se incluyen los ID de relación?">
+    Sí, pero solo en el lado "muchos" de las relaciones. Por ejemplo, una exportación de Personas incluye `companyId`, pero una exportación de Empresas no incluye ID de personas.
   </Accordion>
 
-  <Accordion title="Can I automate exports?">
-    Not directly through the UI. Use the API to build automated export workflows.
+  <Accordion title="¿Puedo automatizar las exportaciones?">
+    No directamente a través de la interfaz de usuario. Usa la API para crear flujos de trabajo de exportación automatizados.
   </Accordion>
 </AccordionGroup>
 
-## Next Steps
+## Próximos Pasos
 
-* [How to Update Existing Records](/l/es/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
-* [How to Import Data via API](/l/es/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets
-* [API Documentation](/l/es/developers/extend/capabilities/apis) — build custom export workflows
+* [Cómo actualizar registros existentes](/l/es/user-guide/data-migration/how-tos/update-existing-records-via-import) — edita y vuelve a importar tu exportación
+* [Cómo importar datos mediante la API](/l/es/user-guide/data-migration/how-tos/import-data-via-api) — para conjuntos de datos grandes
+* [Documentación de la API](/l/es/developers/extend/capabilities/apis) — crea flujos de trabajo de exportación personalizados

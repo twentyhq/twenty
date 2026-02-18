@@ -34,11 +34,20 @@ export class RefreshTokenService {
   ) {}
 
   async verifyRefreshToken(refreshToken: string) {
-    const coolDown = this.twentyConfigService.get('REFRESH_TOKEN_COOL_DOWN');
+    const reuseGracePeriod = this.twentyConfigService.get(
+      'REFRESH_TOKEN_REUSE_GRACE_PERIOD',
+    );
 
     await this.jwtWrapperService.verifyJwtToken(refreshToken);
     const jwtPayload =
       this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
+
+    if (jwtPayload.type !== JwtTokenTypeEnum.REFRESH) {
+      throw new AuthException(
+        'Expected a refresh token',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
 
     if (!(jwtPayload.jti && jwtPayload.sub)) {
       throw new AuthException(
@@ -70,29 +79,36 @@ export class RefreshTokenService {
       );
     }
 
-    // Check if revokedAt is less than coolDown
-    if (
-      token.revokedAt &&
-      token.revokedAt.getTime() <= Date.now() - ms(coolDown)
-    ) {
-      // Revoke all user refresh tokens
-      await Promise.all(
-        user.appTokens.map(async ({ id, type }) => {
-          if (type === AppTokenType.RefreshToken) {
-            await this.appTokenRepository.update(
-              { id },
-              {
-                revokedAt: new Date(),
-              },
-            );
-          }
-        }),
-      );
+    if (token.revokedAt) {
+      const wasRevokedBeforeGracePeriod =
+        token.revokedAt.getTime() <= Date.now() - ms(reuseGracePeriod);
 
-      throw new AuthException(
-        'Suspicious activity detected, this refresh token has been revoked. All tokens have been revoked.',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+      if (wasRevokedBeforeGracePeriod) {
+        // Token was revoked long ago and is being reused -- suspicious.
+        // Revoke all user refresh tokens as a safety measure.
+        await Promise.all(
+          user.appTokens.map(async ({ id, type }) => {
+            if (type === AppTokenType.RefreshToken) {
+              await this.appTokenRepository.update(
+                { id },
+                {
+                  revokedAt: new Date(),
+                },
+              );
+            }
+          }),
+        );
+
+        throw new AuthException(
+          'Suspicious activity detected, this refresh token has been revoked. All tokens have been revoked.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      // Token was revoked recently (within grace period). This is expected
+      // when concurrent requests (e.g. two browser tabs) race to refresh
+      // at the same time. Allow it but don't reset the original revokedAt
+      // timestamp so the grace window stays anchored and cannot be extended.
     }
 
     return {

@@ -11,6 +11,8 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import jsoncParser from 'jsonc-eslint-parser';
 
+const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -34,6 +36,7 @@ export default [
       'unused-imports': unusedImportsPlugin,
       'unicorn': unicornPlugin,
       '@next/next': nextPlugin,
+      'twenty': { rules: twentyRules },
     },
     rules: {
       // Next.js recommended rules
@@ -190,7 +193,7 @@ export default [
           },
         },
       ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      'twenty/max-consts-per-file': ['error', { max: 1 }],
     },
   },
 

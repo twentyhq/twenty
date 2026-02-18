@@ -1,9 +1,11 @@
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { RelationType } from 'twenty-shared/types';
+import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -35,7 +37,9 @@ export const joinColumnNameForManyToOneMorphRelationField1 =
     targetObjectMetadataNamePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
   }) + 'Id';
 
-export const setupTestObjectsWithAllFieldTypes = async () => {
+export const setupTestObjectsWithAllFieldTypes = async (
+  withFilesField: boolean = false,
+) => {
   const createdObjectMetadata = await createOneObjectMetadata({
     input: {
       nameSingular: TEST_OBJECT_METADATA_NAME_SINGULAR,
@@ -76,10 +80,17 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
     targetObjectMetadata2Id,
   );
 
+  let filesFieldMetadataId: string | undefined;
+
   for (const input of fieldMetadataCreationInputs) {
-    await createOneFieldMetadata({
+    const result = await createOneFieldMetadata({
       input,
+      gqlFields: 'id name type',
     });
+
+    if (input.type === FieldMetadataType.FILES) {
+      filesFieldMetadataId = result.data.createOneField.id;
+    }
   }
 
   await makeGraphqlAPIRequest(
@@ -94,6 +105,37 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
       ],
     }),
   );
+
+  let uploadedFileId: string | undefined;
+
+  if (withFilesField) {
+    jest.useRealTimers();
+
+    if (!filesFieldMetadataId) {
+      throw new Error('FILES field metadata was not created');
+    }
+
+    const testFileContent = 'Test document content';
+    const testFileName = 'Document.txt';
+    const testMimeType = 'text/plain';
+
+    const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
+      {
+        query: uploadFilesFieldFileMutation,
+        variables: { file: null, fieldMetadataId: filesFieldMetadataId },
+      },
+      {
+        field: 'file',
+        buffer: Buffer.from(testFileContent),
+        filename: testFileName,
+        contentType: testMimeType,
+      },
+    );
+
+    jest.useFakeTimers();
+
+    uploadedFileId = uploadResponse.body.data.uploadFilesFieldFile.id;
+  }
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({
@@ -163,6 +205,16 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
             test: 'test',
           },
           arrayField: ['test'],
+          ...(withFilesField && uploadedFileId
+            ? {
+                filesField: [
+                  {
+                    fileId: uploadedFileId,
+                    label: 'Document.pdf',
+                  },
+                ],
+              }
+            : {}),
         },
         {
           id: v4(),

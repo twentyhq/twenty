@@ -1,26 +1,27 @@
 ---
-title: Troubleshooting
+title: トラブルシューティング
 ---
 
-## Troubleshooting
+## トラブルシューティング
 
-If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
-here are some solutions for common problems.
+開発環境のセットアップ、バージョンアップまたはセルフホスティング中に問題が発生した場合、こちらによくある問題の解決策を示しています。
 
-### Self-hosting
+### セルフホスティング
 
-#### First install results in `password authentication failed for user "postgres"`
+#### 初回インストールに`ユーザー "postgres" のパスワード認証失敗`と表示される
 
-🚨 **IMPORTANT: This solution is ONLY for fresh installations** 🚨
-If you have an existing Twenty instance with production data, **DO NOT** follow these steps as they will permanently delete your database!
+🚨 **重要: この解決策は新規インストールの場合のみ適用されます** 🚨
+すでに稼働中のTwentyインスタンスに本番データがある場合、これらの手順に従うとデータベースが完全に削除されますので、絶対に従わないでください。
 
-While installing Twenty for the first time, you might want to change the default database password.
-The password you set during the first installation becomes permanently stored in the database volume. If you later try to change this password in your configuration without removing the old volume, you'll get authentication errors because the database is still using the original password.
+Twentyを初めてインストールする際には、デフォルトのデータベースパスワードを変更する必要があるかもしれません。
+初回インストール時に設定されたパスワードはデータベースボリュームに永久に保存されます。 後になってこのパスワードを構成で変更しようとしても、古いボリュームを削除しない限り認証エラーが発生します。データベースが元のパスワードを使用しているためです。
+初回インストール時に設定されたパスワードはデータベースボリュームに永久に保存されます。 後になってこのパスワードを構成で変更しようとしても、古いボリュームを削除しない限り認証エラーが発生します。データベースが元のパスワードを使用しているためです。
+初回インストール時に設定されたパスワードはデータベースボリュームに永久に保存されます。 後になってこのパスワードを構成で変更しようとしても、古いボリュームを削除しない限り認証エラーが発生します。データベースが元のパスワードを使用しているためです。
 
-⚠️ WARNING: Following steps will PERMANENTLY DELETE all database data! ⚠️
-Only proceed if this is a fresh installation with no important data.
+⚠️ 警告: 以下のステップを実行すると、データベース内のすべてのデータが完全に削除されます! ⚠️
+これは重要なデータのない新規インストールの場合のみ進めてください。
 
-In order to update the `PG_DATABASE_PASSWORD` you need to:
+`PG_DATABASE_PASSWORD`を更新するには、以下が必要です:
 
 ```sh
 # Update the PG_DATABASE_PASSWORD in .env
@@ -28,33 +29,35 @@ docker compose down --volumes
 docker compose up -d
 ```
 
-#### CR line breaks found [Windows]
+#### CR行区切り[Windows]が見つかる
 
-This is due to the line break characters of Windows and the git configuration. Try running:
+これはWindowsの改行文字とgit構成のためです。 次を実行してみてください: 次を実行してみてください: 次を実行してみてください:
 
 ```
 git config --global core.autocrlf false
 ```
 
-Then delete the repository and clone it again.
+その後、リポジトリを削除して再クローンします。
 
-#### Missing metadata schema
+#### メタデータスキーマが見つかりません
 
-During Twenty installation, you need to provision your postgres database with the right schemas, extensions, and users.
-If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
-If you don't, make sure you don't have more than one postgres instance running on your computer.
+Twentyのインストール中に、postgresデータベースを適切なスキーマ、拡張、およびユーザーで準備する必要があります。
+この準備がうまくいけば、あなたのデータベースに`default`と`metadata`スキーマがあるはずです。
+そうでない場合は、同じコンピュータ上で複数のpostgresインスタンスを実行していないことを確認してください。
+この準備がうまくいけば、あなたのデータベースに`default`と`metadata`スキーマがあるはずです。
+そうでない場合は、同じコンピュータ上で複数のpostgresインスタンスを実行していないことを確認してください。
 
-#### Cannot find module 'twenty-emails' or its corresponding type declarations.
+#### モジュール'twenty-emails' またはその対応する型宣言が見つかりません。
 
-You have to build the package `twenty-emails` before running the initialization of the database with `npx nx run twenty-emails:build`
+データベースの初期化を実行する前に`npx nx run twenty-emails:build`でtwenty-emailsパッケージをビルドする必要があります。
 
-#### Missing twenty-x package
+#### twenty-xパッケージが見つかりません
 
-Make sure to run yarn in the root directory and then run `npx nx server:dev twenty-server`. If this still doesn't work try building the missing package manually.
+ルートディレクトリでyarnを実行し、その後 `npx nx server:dev twenty-server`を実行してください。 それでも動作しない場合は、足りないパッケージを手動でビルドしてみてください。 それでも動作しない場合は、足りないパッケージを手動でビルドしてみてください。 それでも動作しない場合は、足りないパッケージを手動でビルドしてみてください。
 
-#### Lint on Save not working
+#### 保存時のLintが機能しない
 
-This should work out of the box with the eslint extension installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
+eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 eslint拡張子がインストールされている場合、これは標準設定で動作するはずです。 もしこれが機能しない場合、vscode設定で以下を追加してみてください（開発コンテナ範囲内で）。
 
 ```
 "editor.codeActionsOnSave": {
@@ -64,85 +67,88 @@ This should work out of the box with the eslint extension installed. If this doe
 }
 ```
 
-#### While running `npx nx start` or `npx nx start twenty-front`, Out of memory error is thrown
+#### `npx nx start` または `npx nx start twenty-front` 実行中にメモリエラーが発生
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+`packages/twenty-front/.env`で`VITE_DISABLE_TYPESCRIPT_CHECKER=true` と `VITE_DISABLE_ESLINT_CHECKER=true` をコメント解除して、バックグラウンドチェックを無効化し、必要なRAMの量を減らします。
 
-**If it does not work:**
-Run only the services you need, instead of `npx nx start`. For instance, if you work on the server, run only `npx nx worker twenty-server`
+**うまくいかない場合:**
+`npx nx start` の代わりに、必要なサービスだけを実行してください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。
 
-**If it does not work:**
-If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+**うまくいかない場合:**
+WSL 上で `npx nx run twenty-server:start` だけを実行しようとして、以下のメモリエラーで失敗する場合:
 
 `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
 
-Workaround is to execute below command in terminal or add it in .bashrc profile to get setup automatically:
+以下のコマンドをターミナルで実行するか、.bashrcプロファイルに追加して自動セットアップします:
 
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
-The --max-old-space-size=8192 flag sets an upper limit of 8GB for the Node.js heap; usage scales with application demand.
-Reference: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+\--max-old-space-size=8192 フラグはNode.jsヒープの上限を8GBに設定します; 使用量はアプリケーションの要求に応じてスケールします。
+参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+参考: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
-**If it does not work:**
-Investigate which processes are taking you most of your machine RAM. At Twenty, we noticed that some VScode extensions were taking a lot of RAM so we temporarily disable them.
+**うまくいかない場合:**
+マシンの RAM を最も消費しているプロセスを調査してください。 **これが機能しない場合:**\
+あなたのマシンのRAMを最も使用しているプロセスを調査してください。 Twentyでは、一部のVScode拡張機能が多くのRAMを使用していることに気付き、一時的に無効化しました。
 
-**If it does not work:**
-Restart your machine helps to clean up ghost processes.
+**うまくいかない場合:**
+マシンを再起動すると、ゴーストプロセスのクリーンアップに役立ちます。
 
-#### While running `npx nx start` there are weird [0] and [1] in logs
+#### `npx nx start`を実行中にログに謎の[0]や[1]が表示される
 
-That's expected as command `npx nx start` is running more commands under the hood
+`npx nx start`コマンドが複数のコマンドを裏で実行しているため、これは予想された挙動です。
 
-#### No emails are sent
+#### メールが送信されない
 
-Most of the time, it's because the `worker` is not running in the background. Try to run
+ほとんどの場合、バックグラウンドで`worker`が動作していないのが原因です。 実行してみてください 実行してみてください 実行してみてください
 
 ```
 npx nx worker twenty-server
 ```
 
-#### Cannot connect my Microsoft 365 account
+#### Microsoft 365アカウントに接続できない
 
-Most of the time, it's because your admin has not enabled the Microsoft 365 Licence for your account. Check [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+ほとんどの場合、管理者があなたのアカウントのMicrosoft 365ライセンスを有効化していないことが原因です。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)を確認してください。
 
-If you have an error code `AADSTS50020`, it probably means that you are using a personal Microsoft account. This is not supported yet. More info [here](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 エラーコード`AADSTS50020`を受け取った場合、おそらく個人のMicrosoftアカウントを使用しています。 これはまだサポートされていません。 詳細は[こちら](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
-#### While running `yarn` warnings appear in console
+#### `yarn`実行中の警告がコンソールに表示される
 
-Warnings are informing about pulling additional dependencies which aren't explicitly stated in `package.json`, so as long as no breaking error appears, everything should work as expected.
+警告は、`package.json`に明示的に記載されていない追加依存関係の取得を伝えており、破損するエラーがない限り、すべてが期待通りに動作するはずです。
 
-#### When user accesses login page, error about unauthorized user trying to access workspace appears in logs
+#### ログインページにアクセスした際、未認証ユーザーの作業スペースへのアクセスに関するエラーがログに表示される
 
-That's expected as user is unauthorized when logged out since its identity is not verified.
+これは予想された挙動で、ログアウト中のユーザーはアイデンティティが確認されていないため未認証です。
 
-#### How to check if your worker is running?
+#### ワーカーが稼働しているかどうかを確認するには?
 
-* Go to [webhook-test.com](https://webhook-test.com/) and copy **Your Unique Webhook URL**.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
-</div>
-
-* Open your Twenty app, navigate to `/settings`, and enable the **Advanced** toggle at the bottom left of the screen.
-* Create a new webhook.
-* Paste **Your Unique Webhook URL** in the **Endpoint Url** field in Twenty. Set the **Filters** to `Companies` and `Created`.
+* [webhook-test.com](https://webhook-test.com/)にアクセスし、**Your Unique Webhook URL**をコピーします。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhookテスト" />
 </div>
 
-* Go to `/objects/companies` and create a new company record.
-* Return to [webhook-test.com](https://webhook-test.com/) and check if a new **POST request** has been received.
+* Twentyアプリを開き、`/settings`に移動し、画面左下の**Advanced**トグルを有効にします。
+* 新しいWebhookを作成します。
+* **Your Unique Webhook URL**をTwentyの**Endpoint Url**フィールドに貼り付けます。 **Filters**を`Companies`と`Created`に設定します。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook設定" />
 </div>
 
-* If a **POST request** is received, your worker is running successfully. Otherwise, you need to troubleshoot your worker.
+* `/objects/companies`にアクセスし、新しい企業レコードを作成します。
+* [webhook-test.com](https://webhook-test.com/)に戻り、新しい**POSTリクエスト**が受信されたか確認します。
 
-#### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on a command line
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhookテスト結果" />
+</div>
 
-Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+* **POSTリクエスト**が受信された場合、あなたのワーカーは正常に稼働しています。 そうでない場合は、ワーカーのトラブルシューティングが必要です。
+
+#### フロントエンドが起動に失敗し、エラーTS5042: オプション'プロジェクト'はコマンドライン上でソースファイルと一緒に使用できません
+
+例のように`packages/twenty-ui/vite-config.ts`内のチェッカープラグインをコメントアウトします
 
 ```
 plugins: [
@@ -166,62 +172,62 @@ plugins: [
     ],
 ```
 
-#### Admin panel not accessible
+#### 管理パネルにアクセスできない
 
-Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in database container to get access to admin panel.
+adminパネルにアクセスするには、データベースコンテナで`UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`を実行します。
 
-### 1-click Docker compose
+### 1クリックでDocker構成
 
-#### Unable to Log In
+#### ログインできない
 
-If you can't log in after setup:
+セットアップ後にログインできない場合:
 
-1. Run the following commands:
+1. 次のコマンドを実行してください:
    ```bash
    docker exec -it twenty-server-1 yarn
    docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
    ```
-2. Restart the Docker containers:
+2. Dockerコンテナを再起動してください:
    ```bash
    docker compose down
    docker compose up -d
    ```
 
-Note the database:reset command will completely erase your database and recreate it from scratch.
+database:resetコマンドはデータベースを完全に消去し、最初から再構築します。
 
-#### Connection Issues Behind a Reverse Proxy
+#### リバースプロキシの背後での接続問題
 
-If you're running Twenty behind a reverse proxy and experiencing connection issues:
+リバースプロキシの背後でTwentyを実行し、接続問題が発生している場合:
 
-1. **Verify SERVER_URL:**
+1. **SERVER_URLの確認:**
 
-   Ensure `SERVER_URL` in your `.env` file matches your external access URL, including `https` if SSL is enabled.
+   `.env`ファイルの`SERVER_URL`が外部アクセスURLと一致するようにし、SSLが有効なら`https`を含めます。
 
-2. **Check Reverse Proxy Settings:**
+2. **リバースプロキシ設定の確認:**
 
-   * Confirm that your reverse proxy is correctly forwarding requests to the Twenty server.
-   * Ensure headers like `X-Forwarded-For` and `X-Forwarded-Proto` are properly set.
+   * リバースプロキシがTwentyサーバーへのリクエストを正しく転送していることを確認してください。
+   * `X-Forwarded-For`や`X-Forwarded-Proto`といったヘッダーが正しく設定されていることを確認してください。
 
-3. **Restart Services:**
+3. **サービスの再起動:**
 
-   After making changes, restart both the reverse proxy and Twenty containers.
+   変更を行った後に、リバースプロキシとTwentyコンテナの両方を再起動します。
 
-#### Error when uploading an image - permission denied
+#### 画像のアップロード時にエラー - アクセス許可が拒否されました
 
-Switching the data folder ownership on the host from root to another user and group resolves this problem.
+ホストでのデータフォルダの所有権をrootから他のユーザーとグループに切り替えると、この問題が解決されます。
 
-## Getting Help
+## サポートを受ける
 
-If you encounter issues not covered in this guide:
+このガイドにカバーされていない問題がある場合:
 
-* Check Logs:
+* ログを確認:
 
-  View container logs for error messages:
+  コンテナログを表示してエラーメッセージを確認します:
 
   ```bash
   docker compose logs
   ```
 
-* Community Support:
+* コミュニティサポート:
 
-  Reach out to the [Twenty community](https://github.com/twentyhq/twenty/issues) or [support channels](https://discord.gg/cx5n4Jzs57) for assistance.
+  [Twentyコミュニティ](https://github.com/twentyhq/twenty/issues)または[サポートチャンネル](https://discord.gg/cx5n4Jzs57)に連絡してサポートを受けてください。

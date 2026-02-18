@@ -1,16 +1,16 @@
 import { renderHook } from '@testing-library/react';
 
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
   WorkspaceActivationStatus,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -50,6 +50,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
         metadata: {},
         phases: [],
       },
+      billingEntitlements: [],
       billingSubscriptions: [
         {
           id: '1',
@@ -60,6 +61,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       ],
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
+      eventLogRetentionDays: 365 * 3,
       fastModel: DEFAULT_FAST_MODEL,
       smartModel: DEFAULT_SMART_MODEL,
     });

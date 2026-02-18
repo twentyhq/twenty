@@ -1,4 +1,5 @@
 import { type GraphWidgetTooltipItem } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import {
@@ -8,9 +9,9 @@ import {
 
 type GetBarChartTooltipDataParameters = {
   slice: BarChartSlice;
+  dataByIndexValue: Map<string, BarChartDatum>;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
-  layout?: 'vertical' | 'horizontal';
 };
 
 type BarChartTooltipData = {
@@ -20,21 +21,18 @@ type BarChartTooltipData = {
 
 export const getBarChartTooltipData = ({
   slice,
+  dataByIndexValue,
   enrichedKeys,
   formatOptions,
-  layout = 'vertical',
 }: GetBarChartTooltipDataParameters): BarChartTooltipData | null => {
-  if (slice.bars.length === 0) {
+  const dataRow = dataByIndexValue.get(slice.indexValue);
+
+  if (!dataRow) {
     return null;
   }
 
-  const firstBar = slice.bars[0];
-
-  const keysToProcess =
-    layout === 'vertical' ? [...enrichedKeys].reverse() : enrichedKeys;
-
-  const tooltipItems = keysToProcess.map((enrichedKey) => {
-    const seriesValue = Number(firstBar.data.data[enrichedKey.key] ?? 0);
+  const tooltipItems = enrichedKeys.map((enrichedKey) => {
+    const seriesValue = Number(dataRow[enrichedKey.key] ?? 0);
     return {
       key: enrichedKey.key,
       label: enrichedKey.label,

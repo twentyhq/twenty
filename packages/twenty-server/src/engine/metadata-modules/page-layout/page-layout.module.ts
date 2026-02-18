@@ -18,7 +18,7 @@ import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/servi
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.module';
 
@@ -44,7 +44,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     PageLayoutDuplicationService,
     PageLayoutResolver,
     PageLayoutUpdateService,
-    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
   exports: [PageLayoutService, PageLayoutDuplicationService],
 })

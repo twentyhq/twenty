@@ -71,53 +71,6 @@ describe('parseAndValidateVariableFriendlyStringifiedJson', () => {
     });
   });
 
-  describe('Invalid keys with whitespace', () => {
-    it('should reject key with space', () => {
-      const result = parseAndValidateVariableFriendlyStringifiedJson(
-        '{"key with space": "value"}',
-      );
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toBe('JSON keys cannot contain spaces');
-    });
-
-    it('should reject key with leading space', () => {
-      const result = parseAndValidateVariableFriendlyStringifiedJson(
-        '{" leadingSpace": "value"}',
-      );
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toBe('JSON keys cannot contain spaces');
-    });
-
-    it('should reject key with trailing space', () => {
-      const result = parseAndValidateVariableFriendlyStringifiedJson(
-        '{"trailingSpace ": "value"}',
-      );
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toBe('JSON keys cannot contain spaces');
-    });
-
-    it('should reject key with tab character', () => {
-      const result = parseAndValidateVariableFriendlyStringifiedJson(
-        '{"key\\twith\\ttab": "value"}',
-      );
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toBe('JSON keys cannot contain spaces');
-    });
-
-    it('should reject when one of multiple keys has space', () => {
-      const result = parseAndValidateVariableFriendlyStringifiedJson(
-        '{"validKey": "value", "invalid key": "another"}',
-      );
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toBe('JSON keys cannot contain spaces');
-    });
-  });
-
   describe('Malformed JSON', () => {
     it('should reject invalid JSON syntax', () => {
       const result =

@@ -35,7 +35,6 @@ export class TimelineMessagingService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageThreadRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
@@ -99,6 +98,7 @@ export class TimelineMessagingService {
           totalNumberOfThreads,
         };
       },
+      authContext,
     );
   }
 
@@ -111,7 +111,6 @@ export class TimelineMessagingService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageParticipantRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
@@ -198,6 +197,7 @@ export class TimelineMessagingService {
           {},
         );
       },
+      authContext,
     );
   }
 
@@ -211,7 +211,6 @@ export class TimelineMessagingService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const messageThreadRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
@@ -267,6 +266,7 @@ export class TimelineMessagingService {
 
         return threadVisibilityByThreadId;
       },
+      authContext,
     );
   }
 }

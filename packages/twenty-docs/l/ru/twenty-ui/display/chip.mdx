@@ -18,7 +18,7 @@ image: /images/user-guide/github/github-header.png
       return (
         <Chip
           size="large"
-          label="Clickable Chip"
+          label="Кликабельный чип"
           clickable={true}
           variant="highlighted"
           accent="text-primary"
@@ -39,7 +39,7 @@ image: /images/user-guide/github/github-header.png
     | linkToEntity | строка                   | Ссылка на объект                                                                                 |
     | entityId     | строка                   | Уникальный идентификатор для объекта                                                             |
     | имя          | строка                   | Имя объекта                                                                                      |
-    | pictureUrl   | строка                   | s picture",                                                                                      |
+    | pictureUrl   | строка                   | изображение",                                                                                    |
     | avatarType   | Тип аватара              | Тип аватара, который вы хотите отобразить. Есть два варианта: `округлый` и `квадратный`          |
     | вариант      | `EntityChipVariant` enum | Вариант элемента чипа, который вы хотите отобразить. Есть два варианта: `обычный` и `прозрачный` |
     | LeftIcon     | ИконкаКомпонент          | React-компонент, представляющий иконку. Отображается на левой стороне чипа                       |
@@ -57,7 +57,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Transparent Disabled Chip"
+      label="Прозрачный неактивный чип"
       clickable={false}
       variant="rounded"
       accent="text-secondary"
@@ -82,7 +82,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="Неактивный чип, который показывает подсказку при переполнении."
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -112,7 +112,7 @@ export const MyComponent = () => {
           <Chip
             linkToEntity="/entity-link"
             entityId="entityTest"
-            name="Entity name"
+            name="Название сущности"
             pictureUrl=""
             avatarType="rounded"
             variant="regular"
@@ -130,7 +130,7 @@ export const MyComponent = () => {
     | linkToEntity | строка                   | Ссылка на объект                                                                                 |
     | entityId     | строка                   | Уникальный идентификатор для объекта                                                             |
     | имя          | строка                   | Имя объекта                                                                                      |
-    | pictureUrl   | строка                   | s picture",                                                                                      |
+    | pictureUrl   | строка                   | изображение",                                                                                    |
     | avatarType   | Тип аватара              | Тип аватара, который вы хотите отобразить. Есть два варианта: `округлый` и `квадратный`          |
     | вариант      | `EntityChipVariant` enum | Вариант элемента чипа, который вы хотите отобразить. Есть два варианта: `обычный` и `прозрачный` |
     | LeftIcon     | ИконкаКомпонент          | React-компонент, представляющий иконку. Отображается на левой стороне чипа                       |

@@ -13,6 +13,9 @@
   "dependencies": {
     "mintlify": "latest"
   },
+  "devDependencies": {
+    "twenty-shared": "workspace:*"
+  },
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",

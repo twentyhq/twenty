@@ -12,6 +12,7 @@ import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -26,6 +27,7 @@ import {
   FieldMetadataType,
   OrderByDirection,
   RelationType,
+  ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +36,6 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -874,7 +875,7 @@ describe('group-by resolver (integration)', () => {
       viewId = createViewData.createCoreView.id;
 
       // create a filter group and a filter for the view
-      const viewFilterGroupResponse = await makeGraphqlAPIRequest(
+      const viewFilterGroupResponse = await makeMetadataAPIRequest(
         createViewFilterGroupOperationFactory({
           data: {
             viewId,
@@ -1554,11 +1555,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPetId,
               name: 'Pet 1',
-              ownerRocketId: testRocketId,
+              polymorphicOwnerRocketId: testRocketId,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1567,11 +1568,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPet2Id,
               name: 'Pet 2',
-              ownerRocketId: testRocketId,
+              polymorphicOwnerRocketId: testRocketId,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1580,11 +1581,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPet3Id,
               name: 'Pet 3',
-              ownerRocketId: testRocket2Id,
+              polymorphicOwnerRocketId: testRocket2Id,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1615,14 +1616,14 @@ describe('group-by resolver (integration)', () => {
         }
       });
 
-      it('groups by morph relation field - ownerRocket name', async () => {
+      it('groups by morph relation field - polymorphicOwnerRocket name', async () => {
         const response = await makeGraphqlAPIRequest(
           groupByOperationFactory({
             objectMetadataSingularName: 'pet',
             objectMetadataPluralName: 'pets',
             groupBy: [
               {
-                ownerRocket: {
+                polymorphicOwnerRocket: {
                   name: true,
                 },
               },
@@ -1673,7 +1674,7 @@ describe('group-by resolver (integration)', () => {
         };
 
         const rolesResponse = await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(getRolesQuery);
 
@@ -1726,7 +1727,7 @@ describe('group-by resolver (integration)', () => {
         };
 
         const createRoleResponse =
-          await makeGraphqlAPIRequest(createRoleOperation);
+          await makeMetadataAPIRequest(createRoleOperation);
 
         customRoleId = createRoleResponse.body.data.createOneRole.id;
 
@@ -1769,7 +1770,7 @@ describe('group-by resolver (integration)', () => {
           },
         };
 
-        await makeGraphqlAPIRequest(upsertObjectPermissionsOperation);
+        await makeMetadataAPIRequest(upsertObjectPermissionsOperation);
 
         // Assign the custom role to a workspace member
         await updateWorkspaceMemberRole({
@@ -1794,11 +1795,11 @@ describe('group-by resolver (integration)', () => {
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
-            gqlFields: 'id name ownerRocket { id name }',
+            gqlFields: 'id name polymorphicOwnerRocket { id name }',
             data: {
               id: testPetId,
               name: 'Test Pet',
-              ownerRocketId: testRocketId,
+              polymorphicOwnerRocketId: testRocketId,
               createdAt: '2025-03-03T09:30:00.000Z',
             },
           }),
@@ -1839,7 +1840,7 @@ describe('group-by resolver (integration)', () => {
         };
 
         await client
-          .post('/graphql')
+          .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(restoreMemberRoleQuery);
 
@@ -1849,7 +1850,7 @@ describe('group-by resolver (integration)', () => {
         }
       });
 
-      it('should throw a permission error when grouping by ownerRocket field without read permission', async () => {
+      it('should throw a permission error when grouping by polymorphicOwnerRocket field without read permission', async () => {
         const filter2025 = {
           and: [
             {
@@ -1871,7 +1872,7 @@ describe('group-by resolver (integration)', () => {
             objectMetadataPluralName: 'pets',
             groupBy: [
               {
-                ownerRocket: {
+                polymorphicOwnerRocket: {
                   name: true,
                 },
               },

@@ -66,7 +66,7 @@ export class ImapSyncService {
     const { maxUid } = mailboxState;
 
     if (canUseQresync(client, previousCursor, mailboxState)) {
-      this.logger.log(`Using QRESYNC for folder ${folderPath}`);
+      this.logger.debug(`Using QRESYNC for folder ${folderPath}`);
 
       try {
         return await this.fetchWithQresync(
@@ -81,7 +81,7 @@ export class ImapSyncService {
       }
     }
 
-    this.logger.log(`Using UID range fetch for folder ${folderPath}`);
+    this.logger.debug(`Using UID range fetch for folder ${folderPath}`);
 
     return this.fetchWithUidRange(client, lastSyncedUid, maxUid);
   }
@@ -122,7 +122,7 @@ export class ImapSyncService {
       return [];
     }
 
-    this.logger.log(`QRESYNC found ${uids.length} new/modified messages`);
+    this.logger.debug(`QRESYNC found ${uids.length} new/modified messages`);
 
     return uids;
   }

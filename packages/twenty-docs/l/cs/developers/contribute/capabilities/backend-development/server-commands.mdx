@@ -5,7 +5,7 @@ title: Příkazy backendu
 ## Užitečné příkazy
 
 Tyto příkazy by měly být vykonávány z adresáře packages/twenty-server.
-From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+Z jakéhokoli jiného adresáře můžete spustit `npx nx {command} twenty-server` (nebo `npx nx run twenty-server:{command}`).
 
 ### První nastavení
 
@@ -36,7 +36,7 @@ Poznámka: můžete spustit `npx nx run twenty-server:test:integration:with-db-r
 
 ### Obnovení databáze
 
-If you want to reset and seed the database, you can run the following command:
+Pokud chcete resetovat a naplnit databázi daty, můžete spustit následující příkaz:
 
 ```bash
 npx nx run twenty-server:database:reset
@@ -59,9 +59,9 @@ npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  Tímto se databáze smaže a znovu se spustí migrace a seedování.
 
-  Make sure to back up any data you want to keep before running this command.
+  Před spuštěním tohoto příkazu si nezapomeňte zálohovat všechna data, která chcete zachovat.
 </Warning>
 
 ## Technologický stack

@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -125,6 +126,27 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  file: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'file',
+      type: FieldMetadataType.FILES,
+      label: 'File',
+      description: 'Attachment file',
+      icon: 'IconFileUpload',
+      isNullable: true,
+      isUIReadOnly: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  //deprecated
   fullPath: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -134,6 +156,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Full path',
       description: 'Attachment full path',
       icon: 'IconLink',
+      isSystem: true,
       isNullable: true,
       isUIReadOnly: true,
     },
@@ -142,6 +165,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  //deprecated
   fileCategory: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -151,6 +175,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'File category',
       description: 'Attachment file category',
       icon: 'IconList',
+      isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: "'OTHER'",
@@ -231,16 +256,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
   }),
 
   // Relation fields
-  task: createStandardRelationFieldFlatMetadata({
+  targetTask: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'task',
-      label: 'Task',
-      description: 'Attachment task',
-      icon: 'IconNotes',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetTask',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'task',
@@ -248,7 +273,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'taskId',
+        joinColumnName: 'targetTaskId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -256,16 +281,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  note: createStandardRelationFieldFlatMetadata({
+  targetNote: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'note',
-      label: 'Note',
-      description: 'Attachment note',
-      icon: 'IconNotes',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetNote',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'note',
@@ -273,7 +298,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'noteId',
+        joinColumnName: 'targetNoteId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -281,16 +306,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  person: createStandardRelationFieldFlatMetadata({
+  targetPerson: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'person',
-      label: 'Person',
-      description: 'Attachment person',
-      icon: 'IconUser',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetPerson',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'person',
@@ -298,7 +323,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'personId',
+        joinColumnName: 'targetPersonId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -306,16 +331,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  company: createStandardRelationFieldFlatMetadata({
+  targetCompany: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'company',
-      label: 'Company',
-      description: 'Attachment company',
-      icon: 'IconBuildingSkyscraper',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetCompany',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'company',
@@ -323,7 +348,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'companyId',
+        joinColumnName: 'targetCompanyId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -331,16 +356,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  opportunity: createStandardRelationFieldFlatMetadata({
+  targetOpportunity: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'opportunity',
-      label: 'Opportunity',
-      description: 'Attachment opportunity',
-      icon: 'IconBuildingSkyscraper',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetOpportunity',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'opportunity',
@@ -348,7 +373,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'opportunityId',
+        joinColumnName: 'targetOpportunityId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -356,16 +381,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  dashboard: createStandardRelationFieldFlatMetadata({
+  targetDashboard: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'dashboard',
-      label: 'Dashboard',
-      description: 'Attachment dashboard',
-      icon: 'IconLayout',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetDashboard',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'dashboard',
@@ -373,7 +398,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'dashboardId',
+        joinColumnName: 'targetDashboardId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -381,16 +406,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  workflow: createStandardRelationFieldFlatMetadata({
+  targetWorkflow: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'workflow',
-      label: 'Workflow',
-      description: 'Attachment workflow',
-      icon: 'IconSettingsAutomation',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetWorkflow',
+      label: 'Target',
+      description: 'Attachment target',
+      icon: 'IconArrowUpRight',
       isNullable: true,
       isUIReadOnly: true,
       targetObjectName: 'workflow',
@@ -398,7 +423,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowId',
+        joinColumnName: 'targetWorkflowId',
       },
     },
     standardObjectMetadataRelatedEntityIds,

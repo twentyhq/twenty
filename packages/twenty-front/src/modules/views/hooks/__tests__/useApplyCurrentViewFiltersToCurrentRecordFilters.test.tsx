@@ -14,7 +14,7 @@ import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import {
   type CoreViewFilter,
   ViewFilterOperand as CoreViewFilterOperand,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import {
   mockedCoreViewsData,

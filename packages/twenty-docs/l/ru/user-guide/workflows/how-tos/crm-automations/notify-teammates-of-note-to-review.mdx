@@ -1,92 +1,92 @@
 ---
-title: Notify Teammates of a Note to Review
-description: Send automatic email notifications when assigning a colleague to review a note.
+title: Уведомление коллег о заметке для проверки
+description: Отправляйте автоматические уведомления по email при назначении коллеги на проверку заметки.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-  **Tagging teammates directly in notes is not yet supported.** This feature is planned for the second half of 2026. In the meantime, this workflow provides a practical workaround.
+  **Прямое упоминание коллег в заметках пока не поддерживается.** Эта функция запланирована на вторую половину 2026 года. Тем временем этот рабочий процесс предоставляет практичный обходной путь.
 </Note>
 
-## The Challenge
+## Проблема
 
-You want to tag a colleague in a note so they receive a notification to review it. Today, Twenty doesn't support @mentions in notes or tasks.
+Вы хотите упомянуть коллегу в заметке, чтобы коллеге пришло уведомление о необходимости её проверить. На данный момент Twenty не поддерживает @упоминания в заметках или задачах.
 
-## The Workaround
+## Обходной путь
 
-Instead of tagging in the note text, you can:
+Вместо упоминания в тексте заметки вы можете:
 
-1. Create a **Reviewer** relation field on the Notes object
-2. Assign the reviewer when creating or editing the note
-3. A workflow automatically sends an email to the reviewer with a link to the note
+1. Создайте поле связи **Reviewer** в объекте «Заметки»
+2. Назначайте проверяющего при создании или редактировании заметки
+3. Рабочий процесс автоматически отправляет проверяющему письмо с ссылкой на заметку
 
 <Warning>
-  **Limitation**: This approach allows assigning one reviewer per field. If you need to notify multiple people, create additional relation fields (e.g., Reviewer 1, Reviewer 2). This won't scale well if you need to tag many collaborators at once.
+  **Ограничение**: этот подход позволяет назначать по одному проверяющему на поле. Если нужно уведомить нескольких людей, создайте дополнительные поля связи (например, Reviewer 1, Reviewer 2). Это плохо масштабируется, если нужно упомянуть сразу многих участников.
 </Warning>
 
 ## Пошаговая настройка
 
-### Step 1: Create the Reviewer Field
+### Шаг 1: Создайте поле Reviewer
 
 <img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
 
-1. Go to **Settings → Data Model → Notes**
-2. Click **Add Field**
+1. Перейдите в **Настройки → Модель данных → Заметки**
+2. Нажмите **Добавить поле**
 3. Настроить:
 
-| Настройка          | Значение                          |
-| ------------------ | --------------------------------- |
-| **Name**           | Reviewer                          |
-| **Тип**            | Связь                             |
-| **Related Object** | Участник рабочего пространства    |
-| **Relation Type**  | Many Notes → One Workspace Member |
+| Настройка            | Значение                                            |
+| -------------------- | --------------------------------------------------- |
+| **Название**         | Reviewer                                            |
+| **Тип**              | Связь                                               |
+| **Связанный объект** | Участник рабочего пространства                      |
+| **Тип связи**        | Много заметок → Один участник рабочего пространства |
 
-4. Save the field
+4. Сохраните поле
 
 ### Шаг 2: Создайте рабочий процесс
 
 <VimeoEmbed videoId="1151897168" title="Видеодемонстрация" />
 
-#### Create the Workflow Trigger
+#### Создайте триггер рабочего процесса
 
-1. Go to the main view and create a new workflow
-2. Select **Record Updated** as the trigger
-3. Choose **Note** as the object and specify the Reviewer field.
-4. This will trigger whenever the reviewer of a note is updated.
+1. Перейдите в основной вид и создайте новый рабочий процесс
+2. Выберите **Record Updated** в качестве триггера
+3. Выберите **Note** в качестве объекта и укажите поле Reviewer.
+4. Это сработает каждый раз, когда у заметки обновляется проверяющий.
 
-#### Add a Filter to Check Reviewer Was Just Assigned
+#### Добавьте фильтр, чтобы проверить, что проверяющий только что назначен
 
-Add a **Filter** action to ensure the workflow only continues when a reviewer is assigned:
+Добавьте действие **Фильтр**, чтобы рабочий процесс продолжался только когда назначен проверяющий:
 
-| Condition    | Значение |
+| Условие      | Значение |
 | ------------ | -------- |
 | **Reviewer** | не пусто |
 
-#### Search for the Workspace Member
+#### Найдите участника рабочего пространства
 
-1. Add a **Search Records** action
-2. Select **Workspace Member** (under Advanced Objects)
-3. Add a filter:
+1. Добавьте действие **Search Records**
+2. Выберите **Workspace Member** (в разделе расширенных объектов)
+3. Добавьте фильтр:
 
-| Condition | Значение                     |
-| --------- | ---------------------------- |
-| **ID**    | equals `{{note.reviewerId}}` |
+| Условие | Значение                    |
+| ------- | --------------------------- |
+| **ID**  | равно `{{note.reviewerId}}` |
 
-This retrieves the full workspace member record, including their email address and name.
+Это извлечёт полную запись участника рабочего пространства, включая адрес email и имя.
 
-#### Send the Notification Email
+#### Отправьте уведомление по email
 
-1. Add a **Send Email** action
+1. Добавьте действие **Send Email**
 2. Настроить:
 
 | Поле      | Значение                                            |
 | --------- | --------------------------------------------------- |
 | **Кому**  | Search Record → First Workspace Member → User Email |
-| **Тема**  | A note needs your review                            |
-| **Текст** | See example below                                   |
+| **Тема**  | Заметка требует вашей проверки                      |
+| **Текст** | См. пример ниже                                     |
 
-**Email body example:**
+**Пример текста письма:**
 
 ```text
 Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
@@ -101,27 +101,27 @@ Twenty
 ```
 
 <Note>
-  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Замените `yourSubDomain` на фактический поддомен рабочего пространства Twenty.
 </Note>
 
-#### Test and Activate
+#### Протестируйте и активируйте
 
-1. Click **Test** to run the workflow manually
-2. Create or edit a note and assign a reviewer
-3. Check the reviewer's inbox for the notification email
-4. Activate the workflow
+1. Нажмите **Test**, чтобы запустить рабочий процесс вручную
+2. Создайте или отредактируйте заметку и назначьте проверяющего
+3. Проверьте почтовый ящик проверяющего на письмо-уведомление
+4. Активируйте рабочий процесс
 
 ## Использование
 
-Once set up, your team can use this workflow by:
+После настройки ваша команда сможет использовать этот рабочий процесс, выполняя следующее:
 
-1. Creating a new note (or editing an existing one)
-2. Selecting a colleague in the **Reviewer** field
-3. The colleague automatically receives an email with a direct link to the note
+1. Создание новой заметки (или редактирование существующей)
+2. Выбор коллеги в поле **Reviewer**
+3. Коллега автоматически получает письмо с прямой ссылкой на заметку
 
 ## Связанные материалы
 
 * [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Send Emails from Workflows](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Create Custom Fields](/l/ru/user-guide/data-model/how-tos/create-custom-fields)
-* [Create Relation Fields](/l/ru/user-guide/data-model/how-tos/create-relation-fields)
+* [Отправка писем из рабочих процессов](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Как создать пользовательские поля](/l/ru/user-guide/data-model/how-tos/create-custom-fields)
+* [Создание полей связи](/l/ru/user-guide/data-model/how-tos/create-relation-fields)

@@ -1,74 +1,74 @@
 ---
-title: Display Number of Emails Received
-description: Create a workflow to automatically count and display the number of emails received from each contact.
+title: Mostrar el número de correos electrónicos recibidos
+description: Cree un flujo de trabajo para contar y mostrar automáticamente el número de correos electrónicos recibidos de cada contacto.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
 
-## Overview
+## Resumen
 
-This workflow triggers every time a new email is received and updates a custom field on the Person record with the total count of emails from that sender.
+Este flujo de trabajo se activa cada vez que se recibe un nuevo correo electrónico y actualiza un campo personalizado en el registro de Person con el recuento total de correos electrónicos de ese remitente.
 
-## Prerequisites
+## Prerrequisitos
 
-Before setting up this workflow, create a custom field on the **People** object:
+Antes de configurar este flujo de trabajo, cree un campo personalizado en el objeto **People**:
 
-1. Go to **Settings → Data Model → People**
-2. Add a new **Number** field
-3. Name it something like "Number of emails received from this person"
+1. Vaya a **Configuración → Modelo de datos → People**
+2. Añada un nuevo campo **Number**
+3. Asígnele un nombre como "Número de correos electrónicos recibidos de esta persona"
 
-## Step-by-Step Setup
+## Configuración paso a paso
 
-<VimeoEmbed videoId="1148700336" title="Video demonstration" />
+<VimeoEmbed videoId="1148700336" title="Demostración en video" />
 
-### Step 1: Configure the Trigger
+### Paso 1: Configurar el disparador
 
-1. Go to **Workflows** and create a new workflow
-2. Select **Record is Created** as the trigger
-3. Choose **Message Participants** (available under Advanced objects)
-
-<Note>
-  A Message Participant is a combination of a message ID and a person ID, creating one unique record per message. This is easier to track than Messages directly because we can access the `handle` field, which contains the sender's (or recipient's) email address.
-</Note>
-
-### Step 2: Filter on Role
-
-1. Add a **Filter** action
-2. Set the condition: **Role** equals **FROM**
-
-This ensures you only count messages sent by this person, not messages sent to them.
-
-### Step 3: Search All Message Participants with Same Handle
-
-1. Add a **Search Records** action
-2. Select **Message Participants** as the object
-3. Add filters: **Handle** equals the handle from the trigger (the sender's email address) and **Role** equals **FROM**
-4. Increase the **Limit** from 1 to **200** (the maximum)
-
-This finds all messages from this email address to get the total count.
+1. Vaya a **Flujos de trabajo** y cree un nuevo flujo de trabajo
+2. Seleccione **Record is Created** como el disparador
+3. Elija **Message Participants** (disponible en objetos avanzados)
 
 <Note>
-  The Search Records action is limited to returning 200 records maximum. However, since you're only using the `totalCount` value (not the individual records), this step will return the total number of emails sent by this person.
+  Un Message Participant es una combinación de un ID de mensaje y un ID de persona, creando un registro único por mensaje. Esto es más fácil de rastrear que Messages directamente porque podemos acceder al campo `handle`, que contiene la dirección de correo electrónico del remitente (o del destinatario).
 </Note>
 
-### Step 4: Update the Person Record with a Create or Update Record action
+### Paso 2: Filtrar por Rol
 
-1. Add a **Create or Update Record** action
+1. Añada una acción **Filter**
+2. Establezca la condición: **Role** es igual a **FROM**
+
+Esto garantiza que solo cuente los mensajes enviados por esta persona, no los mensajes enviados a esa persona.
+
+### Paso 3: Buscar todos los Message Participants con el mismo Handle
+
+1. Añada una acción **Search Records**
+2. Seleccione **Message Participants** como el objeto
+3. Añada filtros: **Handle** es igual al handle del disparador (la dirección de correo electrónico del remitente) y **Role** es igual a **FROM**
+4. Aumente el **Limit** de 1 a **200** (el máximo)
+
+Esto encuentra todos los mensajes de esta dirección de correo electrónico para obtener el recuento total.
+
+<Note>
+  La acción Search Records está limitada a devolver un máximo de 200 registros. Sin embargo, dado que solo está utilizando el valor `totalCount` (no los registros individuales), este paso devolverá el número total de correos electrónicos enviados por esta persona.
+</Note>
+
+### Paso 4: Actualizar el registro de Person con una acción Create or Update Record
+
+1. Añada una acción **Create or Update Record**
 
 <Warning>
-  Use **Upsert Record** instead of **Update Record** here. This lets you identify the person by their email address (the `handle` field) rather than requiring a record ID from a previous step.
+  Utilice **Upsert Record** en lugar de **Update Record** aquí. Esto le permite identificar a la persona por su dirección de correo electrónico (el campo `handle`) en lugar de requerir un ID de registro de un paso anterior.
 </Warning>
 
-2. Select **People** as the object
-3. Find the person by matching their email to the `handle` from the Message Participant
-4. Set your custom "Number of emails received" field to `{{searchRecords.totalCount}}`
+2. Seleccione **People** como el objeto
+3. Busque a la persona haciendo coincidir su correo electrónico con el `handle` del Message Participant
+4. Establezca su campo personalizado "Número de correos electrónicos recibidos" en `{{searchRecords.totalCount}}`
 
-The `totalCount` value from the Search Records action represents the total number of emails received from this person.
+El valor `totalCount` de la acción Search Records representa el número total de correos electrónicos recibidos de esta persona.
 
-## Related
+## Relacionado
 
-* [Workflow Actions](/l/es/user-guide/workflows/capabilities/workflow-actions)
-* [Create Custom Fields](/l/es/user-guide/data-model/how-tos/customize-your-data-model)
-* [Search Records Action](/l/es/user-guide/workflows/capabilities/workflow-actions#search-records)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/customize-your-data-model)
+* [Acción Search Records](/l/es/user-guide/workflows/capabilities/workflow-actions#search-records)

@@ -1,4 +1,4 @@
-import { ViewSortDirection } from '~/generated/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 import z from 'zod';
 
 export const sortUrlQueryParamsSchema = z.object({

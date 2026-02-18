@@ -1,4 +1,4 @@
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_SKILL_EDITABLE_PROPERTIES = [
   'name',
@@ -7,4 +7,4 @@ export const FLAT_SKILL_EDITABLE_PROPERTIES = [
   'description',
   'content',
   'isActive',
-] as const satisfies (keyof FlatSkill)[];
+] as const satisfies MetadataEntityPropertyName<'skill'>[];
