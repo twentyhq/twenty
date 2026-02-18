@@ -14,6 +14,7 @@ import {
   combineFilters,
   isDefined,
   isMetadataGqlOperationSignature,
+  isNonEmptyArray,
   isRecordGqlOperationSignature,
 } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
@@ -186,7 +187,7 @@ export class WorkspaceEventEmitterService {
         metadataEvent,
       );
 
-      if (matchedQueryIds.length === 0) {
+      if (!isNonEmptyArray(matchedQueryIds)) {
         continue;
       }
 
@@ -196,7 +197,7 @@ export class WorkspaceEventEmitterService {
       });
     }
 
-    if (metadataEventsWithQueryIds.length === 0) {
+    if (!isNonEmptyArray(metadataEventsWithQueryIds)) {
       return;
     }
 
