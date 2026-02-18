@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
+
 import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
@@ -152,7 +154,7 @@ describe('McpCoreController', () => {
             {
               name: 'testTool',
               description: 'A test tool',
-              inputSchema: { type: 'object', properties: {} },
+              inputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
             },
           ],
         },

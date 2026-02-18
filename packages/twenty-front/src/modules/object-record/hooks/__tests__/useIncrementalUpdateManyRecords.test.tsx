@@ -2,11 +2,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { renderHook } from '@testing-library/react';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
-jest.mock('@/object-record/utils/dispatchObjectRecordOperationBrowserEvent');
+jest.mock('@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent');
 jest.mock('@/object-record/hooks/useUpdateManyRecords', () => ({
   useUpdateManyRecords: jest.fn(),
 }));

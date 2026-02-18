@@ -4,7 +4,6 @@ import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/works
 export type UniversalFlatObjectMetadata = UniversalFlatEntityFrom<
   Omit<
     ObjectMetadataEntity,
-    | 'targetRelationFields'
     | 'dataSourceId'
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'

@@ -35,7 +35,7 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   currentRecordFilterGroupId,
 }: {
   filterValueDependencies: RecordFilterValueDependencies;
-  filters: RecordFilter[];
+  filters: Omit<RecordFilter, 'id'>[];
   fields: PartialFieldMetadataItem[];
   recordFilterGroups: RecordFilterGroup[];
   currentRecordFilterGroupId?: string;

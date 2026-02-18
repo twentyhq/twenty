@@ -56,7 +56,7 @@ Follow these skills in order:
 - Create TypeORM entity (extends `SyncableEntity`)
 - Define flat entity types
 - Define action types (universal + flat)
-- Register in 4 central constants
+- Register in 5 central constants
 
 **Why first:** Everything else depends on these types
 
@@ -177,9 +177,12 @@ packages/twenty-server/src/engine/metadata-modules/
 │   ├── services/
 │   └── utils/
 └── flat-entity/constant/                # Step 1 (central registries)
+    ├── all-entity-properties-configuration-by-metadata-name.constant.ts
+    ├── all-one-to-many-metadata-relations.constant.ts
+    ├── all-many-to-one-metadata-foreign-key.constant.ts
+    └── all-many-to-one-metadata-relations.constant.ts
 
 packages/twenty-server/src/engine/workspace-manager/workspace-migration/
-├── universal-flat-entity/constants/     # Step 1
 ├── workspace-migration-builder/         # Step 3
 │   ├── builders/my-entity/
 │   └── validators/services/
@@ -192,7 +195,7 @@ packages/twenty-server/src/engine/workspace-manager/workspace-migration/
 Before considering complete:
 - [ ] All 6 guides completed
 - [ ] TypeORM entity extends `SyncableEntity`
-- [ ] All constants registered (4 central registries)
+- [ ] All constants registered (5 central registries)
 - [ ] Cache service with correct decorator
 - [ ] Transform utils return universal flat entities
 - [ ] Validator never throws/mutates

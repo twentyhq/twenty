@@ -6,14 +6,15 @@ import {
   type LogicFunction,
 } from '~/generated-metadata/graphql';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
-export type LogicFunctionNewFormValues = {
+export type LogicFunctionFormValues = {
   name: string;
   description: string;
-};
-
-export type LogicFunctionFormValues = LogicFunctionNewFormValues & {
-  code: string;
+  isTool: boolean;
+  timeoutSeconds: number;
+  sourceHandlerCode: string;
+  toolInputSchema?: object;
 };
 
 type SetLogicFunctionFormValues = Dispatch<
@@ -33,10 +34,13 @@ export const useLogicFunctionUpdateFormState = ({
   const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
     name: '',
     description: '',
-    code: '',
+    isTool: false,
+    sourceHandlerCode: '',
+    timeoutSeconds: 300,
+    toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
   });
 
-  const { code: codeFromApi, loading: logicFunctionSourceCodeLoading } =
+  const { sourceHandlerCode, loading: logicFunctionSourceCodeLoading } =
     useGetLogicFunctionSourceCode({
       logicFunctionId,
     });
@@ -52,16 +56,22 @@ export const useLogicFunctionUpdateFormState = ({
             ...prevState,
             name: fn.name || '',
             description: fn.description || '',
+            isTool: fn.isTool ?? false,
+            timeoutSeconds: fn.timeoutSeconds ?? 300,
+            toolInputSchema: fn.toolInputSchema || DEFAULT_TOOL_INPUT_SCHEMA,
           }));
         }
       },
     });
 
   useEffect(() => {
-    if (isDefined(codeFromApi)) {
-      setFormValues((prev) => ({ ...prev, code: codeFromApi }));
+    if (isDefined(sourceHandlerCode)) {
+      setFormValues((prev) => ({
+        ...prev,
+        sourceHandlerCode,
+      }));
     }
-  }, [codeFromApi]);
+  }, [sourceHandlerCode]);
 
   return {
     formValues,

@@ -6,9 +6,7 @@ import { updateOneCoreViewFilterGroup } from 'test/integration/metadata/suites/v
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewFilterGroupLogicalOperator, ViewType } from 'twenty-shared/types';
 
 describe('View Filter Group update should fail with circular dependency', () => {
   let createdViewId: string;

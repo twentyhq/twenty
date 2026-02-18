@@ -9,7 +9,7 @@ import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/m
 import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
-import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
+import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -17,8 +17,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Label } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -72,8 +72,8 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const settingsAccountsSelectedMessageChannel = useRecoilValue(
-    settingsAccountsSelectedMessageChannelState,
+  const settingsAccountsSelectedMessageChannel = useRecoilValueV2(
+    settingsAccountsSelectedMessageChannelStateV2,
   );
 
   const { updateMessageFoldersSyncStatus } =

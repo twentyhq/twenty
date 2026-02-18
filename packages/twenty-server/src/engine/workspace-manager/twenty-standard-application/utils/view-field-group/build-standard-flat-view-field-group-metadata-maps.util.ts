@@ -8,6 +8,8 @@ import { computeStandardNoteViewFieldGroups } from 'src/engine/workspace-manager
 import { computeStandardOpportunityViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util';
 import { computeStandardPersonViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util';
 import { computeStandardTaskViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-task-view-field-groups.util';
+import { computeStandardWorkflowRunViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util';
+import { computeStandardWorkflowVersionViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util';
 import { type CreateStandardViewFieldGroupArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/create-standard-view-field-group-flat-metadata.util';
 
 type StandardViewFieldGroupBuilder<P extends AllStandardObjectName> = (
@@ -20,6 +22,8 @@ const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
   opportunity: computeStandardOpportunityViewFieldGroups,
   task: computeStandardTaskViewFieldGroups,
   note: computeStandardNoteViewFieldGroups,
+  workflowRun: computeStandardWorkflowRunViewFieldGroups,
+  workflowVersion: computeStandardWorkflowVersionViewFieldGroups,
 } as const satisfies {
   [P in AllStandardObjectName]?: StandardViewFieldGroupBuilder<P>;
 };

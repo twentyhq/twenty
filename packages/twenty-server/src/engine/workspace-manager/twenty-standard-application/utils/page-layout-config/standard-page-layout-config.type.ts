@@ -2,10 +2,10 @@ import {
   type PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
+  type GridPosition,
 } from 'twenty-shared/types';
 
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 export type StandardPageLayoutWidgetConfig = {

@@ -4,9 +4,12 @@ import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
 
 import { getSecureAxiosAdapter } from 'src/engine/core-modules/secure-http-client/utils/get-secure-axios-adapter.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
+import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { type OutboundRequestContext } from './outbound-request-context.type';
+
+const MAX_REDIRECTS = 5;
 
 @Injectable()
 export class SecureHttpClientService {
@@ -15,6 +18,8 @@ export class SecureHttpClientService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   // Returns an SSRF-protected HTTP client for external requests.
+  // Protection is enforced at the connection level via custom agents
+  // that validate resolved IPs, which covers redirects automatically.
   // When context is provided, outbound requests are logged with
   // workspace/user info for GuardDuty correlation.
   getHttpClient(
@@ -26,7 +31,15 @@ export class SecureHttpClientService {
     );
 
     const client = isSafeModeEnabled
-      ? axios.create({ ...config, adapter: getSecureAxiosAdapter() })
+      ? axios.create({
+          ...config,
+          httpAgent: createSsrfSafeAgent('http'),
+          httpsAgent: createSsrfSafeAgent('https'),
+          maxRedirects: Math.min(
+            config?.maxRedirects ?? MAX_REDIRECTS,
+            MAX_REDIRECTS,
+          ),
+        })
       : axios.create(config);
 
     if (context) {

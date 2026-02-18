@@ -20,5 +20,5 @@ export const useGetLogicFunctionSourceCode = ({
     skip: !logicFunctionId,
   });
 
-  return { code: data?.getLogicFunctionSourceCode, loading };
+  return { sourceHandlerCode: data?.getLogicFunctionSourceCode, loading };
 };

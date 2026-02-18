@@ -2,7 +2,6 @@ import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppDevCommand } from './app/app-dev';
-import { AppGenerateCommand } from './app/app-generate';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
@@ -63,7 +62,6 @@ export const registerCommands = (program: Command): void => {
   const devCommand = new AppDevCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
-  const generateCommand = new AppGenerateCommand();
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
 
@@ -102,13 +100,6 @@ export const registerCommands = (program: Command): void => {
       await addCommand.execute(entityType as SyncableEntity, options?.path);
     });
 
-  program
-    .command('app:generate [appPath]')
-    .description('Generate Twenty client')
-    .action(async (appPath?: string) => {
-      await generateCommand.execute(formatPath(appPath));
-    });
-
   // Function commands
   program
     .command('function:logs [appPath]')
@@ -138,6 +129,7 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('function:execute [appPath]')
+    .option('--postInstall', 'Execute post-install logic function if defined')
     .option(
       '-p, --payload <payload>',
       'JSON payload to send to the function',
@@ -156,15 +148,20 @@ export const registerCommands = (program: Command): void => {
       async (
         appPath?: string,
         options?: {
+          postInstall?: boolean;
           payload?: string;
           functionUniversalIdentifier?: string;
           functionName?: string;
         },
       ) => {
-        if (!options?.functionUniversalIdentifier && !options?.functionName) {
+        if (
+          !options?.postInstall &&
+          !options?.functionUniversalIdentifier &&
+          !options?.functionName
+        ) {
           console.error(
             chalk.red(
-              'Error: Either --functionName (-n) or --functionUniversalIdentifier (-u) is required.',
+              'Error: Either --postInstall or --functionName (-n) or --functionUniversalIdentifier (-u) is required.',
             ),
           );
           process.exit(1);

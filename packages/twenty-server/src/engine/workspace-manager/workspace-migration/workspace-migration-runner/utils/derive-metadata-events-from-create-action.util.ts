@@ -1,6 +1,7 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { METADATA_EVENTS_TO_EMIT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/metadata-event-to-emit.constant';
 import {
   type CreateMetadataEvent,
   type MetadataEvent,
@@ -10,9 +11,22 @@ import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/works
 export const deriveMetadataEventsFromCreateAction = (
   flatAction: AllFlatWorkspaceMigrationAction<'create'>,
 ): MetadataEvent[] => {
+  const events = deriveAllMetadataEventsFromCreateAction(flatAction);
+
+  return events.filter((event) => METADATA_EVENTS_TO_EMIT[event.metadataName]);
+};
+
+const deriveAllMetadataEventsFromCreateAction = (
+  flatAction: AllFlatWorkspaceMigrationAction<'create'>,
+): MetadataEvent[] => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata': {
-      return flatAction.flatFieldMetadatas.map(
+      const flatFieldMetadatas = [
+        flatAction.flatEntity,
+        flatAction.relatedFlatFieldMetadata,
+      ].filter(isDefined);
+
+      return flatFieldMetadatas.map(
         (flatFieldMetadata): CreateMetadataEvent<'fieldMetadata'> => ({
           type: 'created',
           recordId: flatFieldMetadata.id,

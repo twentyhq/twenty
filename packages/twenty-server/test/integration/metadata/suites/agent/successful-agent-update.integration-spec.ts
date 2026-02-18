@@ -1,3 +1,5 @@
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
@@ -148,7 +150,7 @@ describe('Agent update should succeed', () => {
         id: testAgentId,
         responseFormat: {
           type: 'json',
-          schema: { type: 'object', properties: {} },
+          schema: DEFAULT_TOOL_INPUT_SCHEMA as AgentResponseSchema,
         },
       },
     });
@@ -227,7 +229,7 @@ describe('Agent update should succeed', () => {
         modelId: 'gpt-4o-mini',
         responseFormat: {
           type: 'json',
-          schema: { type: 'object', properties: {} },
+          schema: DEFAULT_TOOL_INPUT_SCHEMA as AgentResponseSchema,
         },
         evaluationInputs: ['eval 1', 'eval 2'],
       },

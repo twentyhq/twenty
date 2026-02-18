@@ -28,9 +28,14 @@ export const unwrapDefineFrontComponentToDirectExport = (
       `$1 ${wrappedComponentName}`,
     );
 
+    transformedSource =
+      `import { createRoot as __createRoot } from 'react-dom/client';\n` +
+      `import { jsx as __frontComponentJsx } from 'react/jsx-runtime';\n` +
+      transformedSource;
+
     transformedSource = transformedSource.replace(
       DEFINE_FRONT_COMPONENT_EXPORT_PATTERN,
-      `export default globalThis.jsx(${wrappedComponentName}, {});`,
+      `export default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(${wrappedComponentName}, {})); }`,
     );
   }
 
