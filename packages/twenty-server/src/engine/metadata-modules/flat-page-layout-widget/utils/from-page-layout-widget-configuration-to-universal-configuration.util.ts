@@ -205,27 +205,27 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.FIELDS: {
       const { newFieldDefaultConfiguration, ...rest } = configuration;
 
-      if (
-        !isDefined(newFieldDefaultConfiguration) ||
-        !isDefined(newFieldDefaultConfiguration.viewFieldGroupId)
-      ) {
+      if (!isDefined(newFieldDefaultConfiguration)) {
         return configuration;
       }
 
-      const viewFieldGroupUniversalIdentifier =
-        viewFieldGroupUniversalIdentifierById[
-          newFieldDefaultConfiguration.viewFieldGroupId
-        ];
+      let viewFieldGroupUniversalIdentifier: string | null = null;
 
-      if (!isDefined(viewFieldGroupUniversalIdentifier)) {
-        if (shouldThrowOnMissingIdentifier) {
+      if (isDefined(newFieldDefaultConfiguration.viewFieldGroupId)) {
+        viewFieldGroupUniversalIdentifier =
+          viewFieldGroupUniversalIdentifierById[
+            newFieldDefaultConfiguration.viewFieldGroupId
+          ] ?? null;
+
+        if (
+          !isDefined(viewFieldGroupUniversalIdentifier) &&
+          shouldThrowOnMissingIdentifier
+        ) {
           throw new FlatEntityMapsException(
             `View field group universal identifier not found for id: ${newFieldDefaultConfiguration.viewFieldGroupId}`,
             FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
           );
         }
-
-        return configuration;
       }
 
       return {

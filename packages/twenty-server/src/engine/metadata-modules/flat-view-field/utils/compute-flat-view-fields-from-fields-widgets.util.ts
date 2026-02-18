@@ -97,6 +97,7 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
   applicationUniversalIdentifier: string;
 }): UniversalFlatViewField[] => {
   const flatViewFieldsToCreate: UniversalFlatViewField[] = [];
+  const now = new Date().toISOString();
 
   const objectMetadataUniversalIdentifiers = [
     ...new Set(
@@ -158,8 +159,6 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
         const position = nextPositionByKey.get(positionKey)!;
 
         nextPositionByKey.set(positionKey, position + 1);
-
-        const now = new Date().toISOString();
 
         flatViewFieldsToCreate.push({
           universalIdentifier: v4(),
