@@ -48,9 +48,6 @@ Da qui puoi:
 # Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn twenty entity:add
 
-# Genera un client Twenty tipizzato e i tipi di entità dell'area di lavoro
-yarn twenty app:generate
-
 # Monitora i log delle funzioni della tua applicazione
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:generate` creerà una cartella `generated/` (client Twenty tipizzato + tipi dello spazio di lavoro).
+* `yarn twenty app:dev` genererà automaticamente un client API tipizzato in `node_modules/twenty-sdk/generated` (client Twenty tipizzato + tipi dell'area di lavoro).
 * `yarn twenty entity:add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti, funzioni, componenti front-end o ruoli personalizzati.
 
 ## Autenticazione
@@ -662,7 +659,7 @@ Puoi creare nuovi componenti front-end in due modi:
 
 ### Client tipizzato generato
 
-Esegui `yarn twenty app:generate` per creare un client tipizzato locale in `generated/` basato sullo schema del tuo spazio di lavoro. Usalo nelle tue funzioni:
+Il client tipizzato è generato automaticamente da `yarn twenty app:dev` e salvato in `node_modules/twenty-sdk/generated` in base allo schema della tua area di lavoro. Usalo nelle tue funzioni:
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Il client viene rigenerato da `yarn twenty app:generate`. Eseguilo nuovamente dopo aver modificato i tuoi oggetti oppure quando effettui l'onboarding su un nuovo spazio di lavoro.
+Il client viene rigenerato automaticamente da `yarn twenty app:dev` ogni volta che i tuoi oggetti o campi cambiano.
 
 #### Credenziali di runtime nelle funzioni logiche
 
@@ -708,13 +705,13 @@ Quindi aggiungi uno script `twenty`:
 }
 ```
 
-Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, ecc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty help`, ecc.
 
 ## Risoluzione dei problemi
 
 * Errori di autenticazione: esegui `yarn twenty auth:login` e assicurati che la tua chiave API abbia i permessi richiesti.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Tipi o client mancanti/obsoleti: esegui `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty app:dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

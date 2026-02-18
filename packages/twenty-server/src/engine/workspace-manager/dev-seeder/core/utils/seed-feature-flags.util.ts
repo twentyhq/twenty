@@ -87,6 +87,11 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
+        key: FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IS_MARKETPLACE_ENABLED,
         workspaceId: workspaceId,
         value: true,

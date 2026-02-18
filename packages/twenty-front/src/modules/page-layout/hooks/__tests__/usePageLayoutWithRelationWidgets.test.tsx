@@ -32,6 +32,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
     tabs: [
       {
         __typename: 'PageLayoutTab',
+        applicationId: '',
         id: 'tab-1',
         title: 'Fields',
         icon: 'IconList',

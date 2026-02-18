@@ -17,7 +17,6 @@
     "app:dev": "twenty app dev",
     "app:sync": "twenty app sync",
     "entity:add": "twenty entity add",
-    "app:generate": "twenty app generate",
     "function:logs": "twenty function logs",
     "function:execute": "twenty function execute",
     "app:uninstall": "twenty app uninstall",

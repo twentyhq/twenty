@@ -22,25 +22,16 @@ describe('generateApplicationToken', () => {
       expectToFail: false,
     });
 
-    expect(data.generateApplicationToken).toBeDefined();
-    expect(
-      data.generateApplicationToken.applicationAccessToken.token,
-    ).toBeDefined();
-    expect(
-      typeof data.generateApplicationToken.applicationAccessToken.token,
-    ).toBe('string');
-    expect(
-      data.generateApplicationToken.applicationAccessToken.token.length,
-    ).toBeGreaterThan(0);
-    expect(
-      data.generateApplicationToken.applicationAccessToken.expiresAt,
-    ).toBeDefined();
-    expect(
-      data.generateApplicationToken.applicationRefreshToken.token,
-    ).toBeDefined();
-    expect(
-      data.generateApplicationToken.applicationRefreshToken.expiresAt,
-    ).toBeDefined();
+    const tokenPair = data.generateApplicationToken;
+
+    expect(tokenPair).toBeDefined();
+    expect(tokenPair.applicationAccessToken).toBeDefined();
+    expect(typeof tokenPair.applicationAccessToken.token).toBe('string');
+    expect(tokenPair.applicationAccessToken.token.length).toBeGreaterThan(0);
+    expect(tokenPair.applicationAccessToken.expiresAt).toBeDefined();
+    expect(tokenPair.applicationRefreshToken).toBeDefined();
+    expect(typeof tokenPair.applicationRefreshToken.token).toBe('string');
+    expect(tokenPair.applicationRefreshToken.expiresAt).toBeDefined();
   });
 
   it('should generate an application token with API key access token', async () => {
@@ -50,25 +41,16 @@ describe('generateApplicationToken', () => {
       token: API_KEY_ACCESS_TOKEN,
     });
 
-    expect(data.generateApplicationToken).toBeDefined();
-    expect(
-      data.generateApplicationToken.applicationAccessToken.token,
-    ).toBeDefined();
-    expect(
-      typeof data.generateApplicationToken.applicationAccessToken.token,
-    ).toBe('string');
-    expect(
-      data.generateApplicationToken.applicationAccessToken.token.length,
-    ).toBeGreaterThan(0);
-    expect(
-      data.generateApplicationToken.applicationAccessToken.expiresAt,
-    ).toBeDefined();
-    expect(
-      data.generateApplicationToken.applicationRefreshToken.token,
-    ).toBeDefined();
-    expect(
-      data.generateApplicationToken.applicationRefreshToken.expiresAt,
-    ).toBeDefined();
+    const tokenPair = data.generateApplicationToken;
+
+    expect(tokenPair).toBeDefined();
+    expect(tokenPair.applicationAccessToken).toBeDefined();
+    expect(typeof tokenPair.applicationAccessToken.token).toBe('string');
+    expect(tokenPair.applicationAccessToken.token.length).toBeGreaterThan(0);
+    expect(tokenPair.applicationAccessToken.expiresAt).toBeDefined();
+    expect(tokenPair.applicationRefreshToken).toBeDefined();
+    expect(typeof tokenPair.applicationRefreshToken.token).toBe('string');
+    expect(tokenPair.applicationRefreshToken.expiresAt).toBeDefined();
   });
 
   it('should fail with a non-existent application id', async () => {

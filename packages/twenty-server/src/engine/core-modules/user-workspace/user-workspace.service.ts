@@ -2,9 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, IsNull, Not, type Repository } from 'typeorm';
 import { FileFolder } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
@@ -17,7 +17,11 @@ import {
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -53,9 +57,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
+    private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -66,11 +72,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       workspaceId,
       isExistingUser,
       pictureUrl,
+      applicationUniversalIdentifier,
     }: {
       userId: string;
       workspaceId: string;
       isExistingUser: boolean;
       pictureUrl?: string;
+      applicationUniversalIdentifier?: string;
     },
     queryRunner?: QueryRunner,
   ): Promise<UserWorkspaceEntity> {
@@ -79,6 +87,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       workspaceId,
       isExistingUser,
       pictureUrl,
+      applicationUniversalIdentifier,
+      queryRunner,
     );
 
     const userWorkspace = this.userWorkspaceRepository.create({
@@ -382,6 +392,38 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     workspaceId: string,
     isExistingUser: boolean,
     pictureUrl?: string,
+    applicationUniversalIdentifier?: string,
+    queryRunner?: QueryRunner,
+  ) {
+    const isOtherFileMigrated = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
+      workspaceId,
+    );
+
+    if (isOtherFileMigrated) {
+      return this.computeDefaultAvatarUrlMigrated(
+        userId,
+        workspaceId,
+        isExistingUser,
+        pictureUrl,
+        applicationUniversalIdentifier,
+        queryRunner,
+      );
+    }
+
+    return this.computeDefaultAvatarUrlLegacy(
+      userId,
+      workspaceId,
+      isExistingUser,
+      pictureUrl,
+    );
+  }
+
+  private async computeDefaultAvatarUrlLegacy(
+    userId: string,
+    workspaceId: string,
+    isExistingUser: boolean,
+    pictureUrl?: string,
   ) {
     if (isExistingUser) {
       const userWorkspace = await this.userWorkspaceRepository.findOne({
@@ -426,6 +468,69 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     }
 
     return files[0].path;
+  }
+
+  private async computeDefaultAvatarUrlMigrated(
+    userId: string,
+    workspaceId: string,
+    isExistingUser: boolean,
+    pictureUrl?: string,
+    applicationUniversalIdentifier?: string,
+    queryRunner?: QueryRunner,
+  ) {
+    if (isExistingUser) {
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: {
+          userId,
+          defaultAvatarUrl: Not(IsNull()),
+        },
+        order: {
+          createdAt: 'ASC',
+        },
+      });
+
+      if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
+
+      const sourceFileId = extractFileIdFromUrl(
+        userWorkspace.defaultAvatarUrl,
+        FileFolder.CorePicture,
+      );
+
+      if (!isDefined(sourceFileId)) return;
+
+      try {
+        const savedFile =
+          await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
+            sourceWorkspaceId: userWorkspace.workspaceId,
+            sourceFileId,
+            targetWorkspaceId: workspaceId,
+            targetApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            queryRunner,
+          });
+
+        return savedFile.url;
+      } catch (error) {
+        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+          return;
+        }
+        throw error;
+      }
+    }
+
+    if (!isDefined(pictureUrl) || pictureUrl === '') return;
+
+    const savedFile =
+      await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(
+        {
+          imageUrl: pictureUrl,
+          workspaceId,
+          applicationUniversalIdentifier,
+          queryRunner,
+        },
+      );
+
+    return savedFile?.url;
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {

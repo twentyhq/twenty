@@ -3,9 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 import { resolveRelativeDateFilter } from '@/utils/filter/dates/utils/resolveRelativeDateFilter';
 
 describe('resolveRelativeDateFilter', () => {
-  const referenceZdt = Temporal.ZonedDateTime.from(
-    '2024-03-15T12:00:00[UTC]',
-  );
+  const referenceZdt = Temporal.ZonedDateTime.from('2024-03-15T12:00:00[UTC]');
 
   describe('NEXT direction', () => {
     it('should compute start and end for NEXT 7 DAY', () => {

@@ -2,10 +2,9 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, type GraphQLScalarType } from 'graphql';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getSubfieldsForAggregateOperation } from 'src/engine/twenty-orm/utils/get-subfields-for-aggregate-operation.util';
 

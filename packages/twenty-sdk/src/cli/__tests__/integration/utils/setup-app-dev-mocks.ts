@@ -2,42 +2,27 @@ import { vi } from 'vitest';
 
 const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
-  checkApplicationExist: vi
-    .fn()
-    .mockResolvedValue({ success: true, data: false }),
-  findOneApplicationByUniversalIdentifier: vi.fn().mockResolvedValue({
-    success: true,
-    data: {
-      id: 'mock-id',
-      universalIdentifier: '00000000-0000-0000-0000-000000000001',
-    },
-  }),
+  findOneApplication: vi.fn().mockResolvedValue({ success: true, data: null }),
   createApplication: vi
     .fn()
     .mockResolvedValue({ success: true, data: { id: 'mock-id' } }),
-  generateApplicationTokenPair: vi.fn().mockResolvedValue({
+  generateApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
-      applicationAccessToken: {
-        token: 'mock-application-access-token',
-        expiresAt: '2099-01-01T00:00:00.000Z',
-      },
-      applicationRefreshToken: {
-        token: 'mock-application-refresh-token',
-        expiresAt: '2099-01-01T00:00:00.000Z',
-      },
+      applicationAccessToken: { token: 'mock-access-token', expiresAt: '' },
+      applicationRefreshToken: { token: 'mock-refresh-token', expiresAt: '' },
     },
   }),
   renewApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
       applicationAccessToken: {
-        token: 'mock-renewed-application-access-token',
-        expiresAt: '2099-01-01T00:00:00.000Z',
+        token: 'mock-renewed-access-token',
+        expiresAt: '',
       },
       applicationRefreshToken: {
-        token: 'mock-renewed-application-refresh-token',
-        expiresAt: '2099-01-01T00:00:00.000Z',
+        token: 'mock-renewed-refresh-token',
+        expiresAt: '',
       },
     },
   }),
@@ -48,11 +33,9 @@ const mockApiService = {
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
-    checkApplicationExist = mockApiService.checkApplicationExist;
-    findOneApplicationByUniversalIdentifier =
-      mockApiService.findOneApplicationByUniversalIdentifier;
+    findOneApplication = mockApiService.findOneApplication;
     createApplication = mockApiService.createApplication;
-    generateApplicationTokenPair = mockApiService.generateApplicationTokenPair;
+    generateApplicationToken = mockApiService.generateApplicationToken;
     renewApplicationToken = mockApiService.renewApplicationToken;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
@@ -65,6 +48,6 @@ vi.mock('@/cli/utilities/file/file-uploader', () => ({
   },
 }));
 
-vi.mock('@/cli/utilities/dev/dev-ui', () => ({
+vi.mock('@/cli/utilities/dev/ui/components/dev-ui', () => ({
   renderDevUI: vi.fn().mockResolvedValue({ unmount: vi.fn() }),
 }));

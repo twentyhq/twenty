@@ -40,6 +40,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     name: 'Workflows',
+    icon: 'IconSettingsAutomation',
     position: 6,
   },
   workflowsFolderAllWorkflows: {

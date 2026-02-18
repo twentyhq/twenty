@@ -1,10 +1,9 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';

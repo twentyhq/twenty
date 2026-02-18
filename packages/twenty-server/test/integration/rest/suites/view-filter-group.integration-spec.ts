@@ -15,10 +15,12 @@ import {
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewFilterGroupStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ViewFilterGroupLogicalOperator,
+} from 'twenty-shared/types';
 
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import {
   generateViewFilterGroupExceptionMessage,
   ViewFilterGroupExceptionMessageKey,

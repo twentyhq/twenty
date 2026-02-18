@@ -1,5 +1,8 @@
 import { Avatar, type AvatarProps } from '@ui/display';
-import { type MenuItemIconButton, MenuItem } from '@ui/navigation/menu/menu-item/components/MenuItem';
+import {
+  type MenuItemIconButton,
+  MenuItem,
+} from '@ui/navigation/menu/menu-item/components/MenuItem';
 import { type MouseEvent, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type MenuItemAccent } from '../types/MenuItemAccent';

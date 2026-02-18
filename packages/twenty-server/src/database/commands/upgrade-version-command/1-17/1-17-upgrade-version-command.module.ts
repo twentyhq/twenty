@@ -7,7 +7,6 @@ import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
-import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-favorites-to-navigation-menu-items.command';
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
@@ -70,7 +69,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
   providers: [
     FixMorphRelationFieldNamesCommand,
     MigrateAttachmentToMorphRelationsCommand,
-    MigrateFavoritesToNavigationMenuItemsCommand,
     MigrateNoteTargetToMorphRelationsCommand,
     MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
@@ -84,7 +82,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
   exports: [
     FixMorphRelationFieldNamesCommand,
     MigrateAttachmentToMorphRelationsCommand,
-    MigrateFavoritesToNavigationMenuItemsCommand,
     MigrateNoteTargetToMorphRelationsCommand,
     MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
