@@ -58,9 +58,7 @@ export const runTypecheck = (appPath: string): Promise<TypecheckError[]> => {
   });
 };
 
-const toEsbuildErrors = (
-  errors: TypecheckError[],
-): esbuild.PartialMessage[] =>
+const toEsbuildErrors = (errors: TypecheckError[]): esbuild.PartialMessage[] =>
   errors.map((error) => ({
     text: error.text,
     location: {

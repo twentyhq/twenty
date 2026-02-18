@@ -6,10 +6,11 @@ import { BuildManifestOrchestratorStep } from '@/cli/utilities/dev/orchestrator/
 import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
 import { EnsureValidTokensOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/ensure-valid-tokens-orchestrator-step';
 import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
-import { type ApiClientGeneratedFile } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
 import { ResolveApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
-import { StartWatchersOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
-import { type FileBuiltEvent } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
+import {
+  StartWatchersOrchestratorStep,
+  type FileBuiltEvent,
+} from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import * as fs from 'fs-extra';
@@ -63,7 +64,6 @@ export class DevModeOrchestrator {
       ...stepDeps,
       clientService,
       configService,
-      onApiClientGenerated: this.handleApiClientGenerated.bind(this),
     });
     this.syncApplicationStep = new SyncApplicationOrchestratorStep({
       ...stepDeps,
@@ -100,12 +100,6 @@ export class DevModeOrchestrator {
         event.sourcePath,
         event.fileFolder,
       );
-    }
-  }
-
-  private handleApiClientGenerated(files: ApiClientGeneratedFile[]): void {
-    for (const file of files) {
-      this.handleFileBuilt(file);
     }
   }
 
@@ -169,8 +163,9 @@ export class DevModeOrchestrator {
       }
     }
 
-    const objectsOrFieldsChanged =
-      this.state.hasObjectsOrFieldsChanged(buildResult.manifest!);
+    const objectsOrFieldsChanged = this.state.hasObjectsOrFieldsChanged(
+      buildResult.manifest!,
+    );
 
     await this.uploadFilesStep.waitForUploads();
 
@@ -184,6 +179,10 @@ export class DevModeOrchestrator {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
       });
+
+      await this.uploadFilesStep.copyAndUploadApiClientFiles(
+        this.state.appPath,
+      );
     }
   }
 

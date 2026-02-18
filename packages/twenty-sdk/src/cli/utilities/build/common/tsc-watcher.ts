@@ -25,12 +25,7 @@ export class TscWatcher {
   }
 
   start(): void {
-    const tscPath = path.join(
-      this.appPath,
-      'node_modules',
-      '.bin',
-      'tsc',
-    );
+    const tscPath = path.join(this.appPath, 'node_modules', '.bin', 'tsc');
     const tsconfigPath = path.join(this.appPath, 'tsconfig.json');
 
     this.process = spawn(
@@ -66,8 +61,10 @@ export class TscWatcher {
   }
 
   private processLine(line: string): void {
-    if (line.includes('Starting compilation in watch mode...') ||
-        line.includes('Starting incremental compilation...')) {
+    if (
+      line.includes('Starting compilation in watch mode...') ||
+      line.includes('Starting incremental compilation...')
+    ) {
       this.pendingErrors = [];
 
       return;
