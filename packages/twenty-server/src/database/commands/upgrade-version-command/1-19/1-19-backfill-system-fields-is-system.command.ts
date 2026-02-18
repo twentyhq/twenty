@@ -26,7 +26,7 @@ const POSITION_FIELDS_TO_FIX_TYPE = [
 ];
 
 @Command({
-  name: 'upgrade:1-18:backfill-system-fields-is-system',
+  name: 'upgrade:1-19:backfill-system-fields-is-system',
   description:
     'Set isSystem to true for all field metadata matching system field names (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position, searchVector) and fix position field type for favorite/favoriteFolder',
 })

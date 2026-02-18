@@ -21,13 +21,13 @@ import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-v
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
-import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-system-fields-is-system.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
 import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
+import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -68,6 +68,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillStandardViewsAndFieldMetadataCommand: BackfillStandardViewsAndFieldMetadataCommand,
     protected readonly migrateWorkspacePicturesCommand: MigrateWorkspacePicturesCommand,
     protected readonly migrateWorkflowSendEmailAttachmentsCommand: MigrateWorkflowSendEmailAttachmentsCommand,
+
+    // 1.19 Commands
     protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
   ) {
     super(
@@ -103,6 +105,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillFileSizeAndMimeTypeCommand,
       this.backfillMessageChannelThrottleRetryAfterCommand,
       this.backfillStandardViewsAndFieldMetadataCommand,
+    ];
+
+    const commands_1190: VersionCommands = [
       this.backfillSystemFieldsIsSystemCommand,
     ];
 
@@ -110,6 +115,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.16.0': commands_1160,
       '1.17.0': commands_1170,
       '1.18.0': commands_1180,
+      '1.19.0': commands_1190,
     };
   }
 
