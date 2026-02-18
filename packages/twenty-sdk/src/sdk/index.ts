@@ -53,11 +53,9 @@ export type { PageLayoutConfig } from './page-layouts/page-layout-config';
 export {
   AggregateOperations,
   ObjectRecordGroupByDateGranularity,
-  PageLayoutTabLayoutMode
-} from './page-layouts/page-layout-widget-enums';
-export type {
-  PageLayoutWidgetUniversalConfiguration
-} from './page-layouts/page-layout-widget-types';
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
+export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
 export { defineView } from './views/define-view';
