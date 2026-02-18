@@ -11,7 +11,6 @@
   "scripts": {
     "create-entity": "twenty app add",
     "dev": "twenty app dev",
-    "generate": "twenty app generate",
     "sync": "twenty app sync",
     "uninstall": "twenty app uninstall",
     "auth": "twenty auth login"

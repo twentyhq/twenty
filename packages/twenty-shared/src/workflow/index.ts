@@ -74,6 +74,7 @@ export type {
   InputSchema,
 } from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
+export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,

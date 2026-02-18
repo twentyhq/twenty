@@ -16,6 +16,7 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       universalIdentifier: navigationMenuItemManifest.universalIdentifier,
       applicationUniversalIdentifier,
       name: navigationMenuItemManifest.name ?? null,
+      icon: navigationMenuItemManifest.icon ?? null,
       position: navigationMenuItemManifest.position,
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,

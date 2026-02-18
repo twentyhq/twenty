@@ -48,9 +48,6 @@ Odtud můžete:
 # Přidejte do vaší aplikace novou entitu (s průvodcem)
 yarn twenty entity:add
 
-# Vygenerujte typovaného klienta Twenty a typy entit pracovního prostoru
-yarn twenty app:generate
-
 # Sledujte logy funkcí vaší aplikace
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
 
 ## Ověření
@@ -662,7 +659,7 @@ Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 ### Generovaný typovaný klient
 
-Spusťte `yarn twenty app:generate` a vytvořte lokálního typovaného klienta v `generated/` na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Typovaný klient je automaticky generován pomocí `yarn twenty app:dev` a ukládá se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Klient je znovu generován příkazem `yarn twenty app:generate`. Spusťte znovu po změně vašich objektů nebo při připojování k novému pracovnímu prostoru.
+Klient se automaticky znovu generuje pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -708,13 +705,13 @@ Poté přidejte skript `twenty`:
 }
 ```
 
-Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` atd.
+Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty app:dev`, `yarn twenty help` atd.
 
 ## Řešení potíží
 
 * Chyby ověření: spusťte `yarn twenty auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
 * Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Typy nebo klient chybí nebo jsou zastaralé: spusťte `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Režim vývoje se nesynchronizuje: ujistěte se, že běží `yarn twenty app:dev` a že vaše prostředí změny neignoruje.
 
 Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

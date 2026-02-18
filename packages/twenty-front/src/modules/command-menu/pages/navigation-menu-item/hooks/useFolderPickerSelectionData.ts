@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -6,7 +5,8 @@ import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/ho
 import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 
 type FolderOption = {
@@ -47,8 +47,8 @@ export const useFolderPickerSelectionData = ({
 }: UseFolderPickerSelectionDataParams) => {
   const { closeCommandMenu } = useCommandMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
-  const selectedNavigationMenuItemInEditMode = useRecoilValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+    selectedNavigationMenuItemInEditModeStateV2,
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectedItemType = selectedItem?.itemType ?? null;

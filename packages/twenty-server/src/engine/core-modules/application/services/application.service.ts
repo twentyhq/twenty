@@ -130,20 +130,6 @@ export class ApplicationService {
     });
   }
 
-  async checkApplicationExist({
-    id,
-    universalIdentifier,
-    workspaceId,
-  }: {
-    id?: string;
-    universalIdentifier?: string;
-    workspaceId: string;
-  }) {
-    return isDefined(
-      await this.findOneApplication({ id, universalIdentifier, workspaceId }),
-    );
-  }
-
   async findOneApplication({
     id,
     universalIdentifier,
