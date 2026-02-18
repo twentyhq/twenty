@@ -20,6 +20,7 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
     | 'flatViewFieldGroupMaps'
+    | 'flatViewMaps'
   >;
 
 export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
@@ -30,6 +31,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatViewFieldGroupMaps,
+  flatViewMaps,
 }: FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs): FlatPageLayoutWidget => {
   const { pageLayoutTabId, ...createPageLayoutWidgetInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -82,6 +84,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
           flatFieldMetadataMaps.universalIdentifierById,
         viewFieldGroupUniversalIdentifierById:
           flatViewFieldGroupMaps.universalIdentifierById,
+        viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
         shouldThrowOnMissingIdentifier: true,
       }),
   };

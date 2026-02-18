@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
+    FlatEntityMapsException,
+    FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
@@ -43,11 +43,13 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
   viewFieldGroupUniversalIdentifierById = {},
+  viewUniversalIdentifierById = {},
   shouldThrowOnMissingIdentifier = false,
 }: {
   configuration: PageLayoutWidgetConfiguration;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
+  viewUniversalIdentifierById?: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalPageLayoutWidgetConfiguration => {
   switch (configuration.configurationType) {
@@ -203,10 +205,30 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const { newFieldDefaultConfiguration, ...rest } = configuration;
+      const { viewId, newFieldDefaultConfiguration, ...rest } = configuration;
+
+      let viewUniversalIdentifier: string | null = null;
+
+      if (isDefined(viewId)) {
+        viewUniversalIdentifier = viewUniversalIdentifierById[viewId] ?? null;
+
+        if (
+          !isDefined(viewUniversalIdentifier) &&
+          shouldThrowOnMissingIdentifier
+        ) {
+          throw new FlatEntityMapsException(
+            `View universal identifier not found for id: ${viewId}`,
+            FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+          );
+        }
+      }
 
       if (!isDefined(newFieldDefaultConfiguration)) {
-        return configuration;
+        return {
+          ...rest,
+          newFieldDefaultConfiguration,
+          viewId: viewUniversalIdentifier,
+        };
       }
 
       let viewFieldGroupUniversalIdentifier: string | null = null;
@@ -230,6 +252,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
 
       return {
         ...rest,
+        viewId: viewUniversalIdentifier,
         newFieldDefaultConfiguration: {
           isVisible: newFieldDefaultConfiguration.isVisible,
           viewFieldGroupId: viewFieldGroupUniversalIdentifier,

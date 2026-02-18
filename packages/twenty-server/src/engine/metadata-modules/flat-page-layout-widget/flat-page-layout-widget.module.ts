@@ -8,6 +8,7 @@ import { WorkspaceFlatPageLayoutWidgetMapCacheService } from 'src/engine/metadat
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-
       PageLayoutTabEntity,
       ObjectMetadataEntity,
       FieldMetadataEntity,
+      ViewEntity,
     ]),
   ],
   providers: [

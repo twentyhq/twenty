@@ -1,8 +1,8 @@
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
+    FlatEntityMapsException,
+    FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -13,6 +13,7 @@ type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
     fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
     viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
+    viewUniversalIdentifierById?: Partial<Record<string, string>>;
   };
 
 export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
@@ -22,6 +23,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   objectMetadataIdToUniversalIdentifierMap,
   fieldMetadataUniversalIdentifierById,
   viewFieldGroupUniversalIdentifierById,
+  viewUniversalIdentifierById,
 }: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
   const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
     pageLayoutWidgetEntity,
@@ -73,6 +75,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
       configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
       fieldMetadataUniversalIdentifierById,
       viewFieldGroupUniversalIdentifierById,
+      viewUniversalIdentifierById,
     });
 
   return {
