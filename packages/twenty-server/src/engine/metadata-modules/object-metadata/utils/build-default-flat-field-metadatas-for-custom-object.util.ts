@@ -41,6 +41,14 @@ const buildObjectSystemFlatFieldMetadatas = ({
   } = PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
 
   return {
+    id: {
+      ...id,
+      universalIdentifier: v4(),
+      applicationUniversalIdentifier,
+      objectMetadataUniversalIdentifier,
+      createdAt: now,
+      updatedAt: now,
+    },
     createdAt: {
       ...createdAt,
       universalIdentifier: v4(),
@@ -59,14 +67,6 @@ const buildObjectSystemFlatFieldMetadatas = ({
     },
     deletedAt: {
       ...deletedAt,
-      universalIdentifier: v4(),
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      createdAt: now,
-      updatedAt: now,
-    },
-    id: {
-      ...id,
       universalIdentifier: v4(),
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier,
@@ -164,13 +164,13 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
 
   return {
     fields: {
+      ...(nameField && { nameField }),
       ...buildObjectSystemFlatFieldMetadatas({
         applicationUniversalIdentifier,
         objectMetadataUniversalIdentifier,
         now,
         searchVectorUniversalSettings,
       }),
-      ...(nameField && { nameField }),
     },
   } as const satisfies {
     fields: Record<string, UniversalFlatFieldMetadata>;
