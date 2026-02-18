@@ -52,9 +52,7 @@ export function formatData<T>(
     });
 
     if (!fieldMetadata) {
-      throw new Error(
-        `Field metadata for field "${key}" is missing in object metadata ${flatObjectMetadata.nameSingular}`,
-      );
+      continue;
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
