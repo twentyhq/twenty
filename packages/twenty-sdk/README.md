@@ -130,14 +130,17 @@ Application development commands.
 
 - `twenty entity:add [entityType]` — Add a new entity to your application.
   - Arguments:
-    - `entityType`: one of `function`, `front-component`, `object`, or `role`. If omitted, an interactive prompt is shown.
+    - `entityType`: one of `object`, `field`, `function`, `front-component`, `role`, `view`, or `navigation-menu-item`. If omitted, an interactive prompt is shown.
   - Options:
     - `--path <path>`: The path where the entity file should be created (relative to the current directory).
   - Behavior:
     - `object`: prompts for singular/plural names and labels, then creates a `*.object.ts` definition file.
+    - `field`: prompts for name, label, type, and target object, then creates a `*.field.ts` definition file.
     - `function`: prompts for a name and scaffolds a `*.function.ts` logic function file.
     - `front-component`: prompts for a name and scaffolds a `*.front-component.tsx` file.
     - `role`: prompts for a name and scaffolds a `*.role.ts` role definition file.
+    - `view`: prompts for a name and target object, then creates a `*.view.ts` definition file.
+    - `navigation-menu-item`: prompts for a name and scaffolds a `*.navigation-menu-item.ts` file.
 
 ### Function
 
@@ -170,6 +173,12 @@ twenty entity:add function
 
 # Add a new front component
 twenty entity:add front-component
+
+# Add a new view
+twenty entity:add view
+
+# Add a new navigation menu item
+twenty entity:add navigation-menu-item
 
 # Uninstall the app from the workspace
 twenty app:uninstall

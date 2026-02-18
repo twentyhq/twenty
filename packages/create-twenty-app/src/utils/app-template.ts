@@ -73,6 +73,22 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  if (exampleOptions.includeExampleView) {
+    await createExampleView({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'views',
+      fileName: 'example-view.ts',
+    });
+  }
+
+  if (exampleOptions.includeExampleNavigationMenuItem) {
+    await createExampleNavigationMenuItem({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'navigation-menu-items',
+      fileName: 'example-navigation-menu-item.ts',
+    });
+  }
+
   await createDefaultPostInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
@@ -343,6 +359,64 @@ export default defineField({
   name: 'priority',
   label: 'Priority',
   description: 'Priority level for the example item (1-10)',
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleView = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineView } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+
+export default defineView({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'example-view',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleNavigationMenuItem = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineNavigationMenuItem } from 'twenty-sdk';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  position: 0,
+  // Link to a view:
+  // viewUniversalIdentifier: '...',
+  // Or link to an object:
+  // targetObjectUniversalIdentifier: '...',
+  // Or link to an external URL:
+  // link: 'https://example.com',
 });
 `;
 

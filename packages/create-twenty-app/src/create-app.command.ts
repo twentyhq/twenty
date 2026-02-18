@@ -112,6 +112,8 @@ export class CreateAppCommand {
         includeExampleField: false,
         includeExampleLogicFunction: false,
         includeExampleFrontComponent: false,
+        includeExampleView: false,
+        includeExampleNavigationMenuItem: false,
       };
     }
 
@@ -121,6 +123,8 @@ export class CreateAppCommand {
         includeExampleField: true,
         includeExampleLogicFunction: true,
         includeExampleFrontComponent: true,
+        includeExampleView: true,
+        includeExampleNavigationMenuItem: true,
       };
     }
 
@@ -150,17 +154,29 @@ export class CreateAppCommand {
             value: 'frontComponent',
             checked: true,
           },
+          {
+            name: 'Example view (saved view for the example object)',
+            value: 'view',
+            checked: true,
+          },
+          {
+            name: 'Example navigation menu item (sidebar link)',
+            value: 'navigationMenuItem',
+            checked: true,
+          },
         ],
       },
     ]);
 
     const includeField = selectedExamples.includes('field');
-    const includeObject = selectedExamples.includes('object') || includeField;
+    const includeView = selectedExamples.includes('view');
+    const includeObject =
+      selectedExamples.includes('object') || includeField || includeView;
 
-    if (includeField && !selectedExamples.includes('object')) {
+    if ((includeField || includeView) && !selectedExamples.includes('object')) {
       console.log(
         chalk.yellow(
-          'Note: Example object auto-included because example field depends on it.',
+          'Note: Example object auto-included because example field/view depends on it.',
         ),
       );
     }
@@ -170,6 +186,9 @@ export class CreateAppCommand {
       includeExampleField: includeField,
       includeExampleLogicFunction: selectedExamples.includes('logicFunction'),
       includeExampleFrontComponent: selectedExamples.includes('frontComponent'),
+      includeExampleView: includeView,
+      includeExampleNavigationMenuItem:
+        selectedExamples.includes('navigationMenuItem'),
     };
   }
 

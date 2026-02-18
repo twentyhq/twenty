@@ -5,4 +5,6 @@ export type ExampleOptions = {
   includeExampleField: boolean;
   includeExampleLogicFunction: boolean;
   includeExampleFrontComponent: boolean;
+  includeExampleView: boolean;
+  includeExampleNavigationMenuItem: boolean;
 };

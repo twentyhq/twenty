@@ -69,6 +69,8 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   logicFunctions: SyncableEntity.LogicFunction,
   frontComponents: SyncableEntity.FrontComponent,
   roles: SyncableEntity.Role,
+  views: SyncableEntity.View,
+  navigationMenuItems: SyncableEntity.NavigationMenuItem,
 };
 
 const MAX_EVENT_COUNT = 200;

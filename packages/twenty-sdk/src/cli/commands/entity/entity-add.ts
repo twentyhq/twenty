@@ -1,9 +1,11 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
+import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
+import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
@@ -107,6 +109,28 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getRoleBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.View: {
+        const entityData = await this.getViewData();
+
+        const name = entityData.name;
+
+        const file = getViewBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.NavigationMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getNavigationMenuItemBaseFile({
           name,
         });
 
@@ -281,6 +305,39 @@ export class EntityAddCommand {
         default: (answers: any) => {
           return convertToLabel(answers.namePlural);
         },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
+  }
+
+  private async getViewData() {
+    return inquirer.prompt<{
+      name: string;
+      objectUniversalIdentifier: string;
+    }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter a name for your view:',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'objectUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the object this view belongs to:',
+        default: 'fill-later',
         validate: (input: string) => {
           if (!input || input.trim().length === 0) {
             return 'Please enter a non empty string';

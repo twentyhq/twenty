@@ -44,7 +44,7 @@ yarn twenty app:dev
 The scaffolder supports three modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -113,8 +113,12 @@ my-twenty-app/
   ├── logic-functions/
   │   ├── hello-world.ts                # Example logic function
   │   └── post-install.ts               # Post-install logic function
-  └── front-components/
-      └── hello-world.tsx               # Example front component
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Example sidebar navigation link
 ```
 
 With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
@@ -141,6 +145,8 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 | `defineFrontComponent()` | Front component definitions |
 | `defineRole()` | Role definitions |
 | `defineField()` | Field extensions for existing objects |
+| `defineView()` | Saved view definitions |
+| `defineNavigationMenuItem()` | Navigation menu item definitions |
 
 <Note>
 **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
@@ -212,6 +218,8 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineFrontComponent()` | Define front components for custom UI |
 | `defineRole()` | Configure role permissions and object access |
 | `defineField()` | Extend existing objects with additional fields |
+| `defineView()` | Define saved views for objects |
+| `defineNavigationMenuItem()` | Define sidebar navigation links |
 
 These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 

@@ -21,6 +21,8 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleField: true,
   includeExampleLogicFunction: true,
   includeExampleFrontComponent: true,
+  includeExampleView: true,
+  includeExampleNavigationMenuItem: true,
 };
 
 const NO_EXAMPLES: ExampleOptions = {
@@ -28,6 +30,8 @@ const NO_EXAMPLES: ExampleOptions = {
   includeExampleField: false,
   includeExampleLogicFunction: false,
   includeExampleFrontComponent: false,
+  includeExampleView: false,
+  includeExampleNavigationMenuItem: false,
 };
 
 describe('copyBaseApplicationProject', () => {
@@ -356,6 +360,18 @@ describe('copyBaseApplicationProject', () => {
             join(srcPath, 'front-components', 'hello-world.tsx'),
           ),
         ).toBe(true);
+        expect(
+          await fs.pathExists(join(srcPath, 'views', 'example-view.ts')),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'navigation-menu-items',
+              'example-navigation-menu-item.ts',
+            ),
+          ),
+        ).toBe(true);
       });
     });
 
@@ -396,6 +412,18 @@ describe('copyBaseApplicationProject', () => {
             join(srcPath, 'front-components', 'hello-world.tsx'),
           ),
         ).toBe(false);
+        expect(
+          await fs.pathExists(join(srcPath, 'views', 'example-view.ts')),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'navigation-menu-items',
+              'example-navigation-menu-item.ts',
+            ),
+          ),
+        ).toBe(false);
       });
     });
 
@@ -411,6 +439,8 @@ describe('copyBaseApplicationProject', () => {
             includeExampleField: false,
             includeExampleLogicFunction: false,
             includeExampleFrontComponent: true,
+            includeExampleView: false,
+            includeExampleNavigationMenuItem: false,
           },
         });
 
@@ -445,6 +475,8 @@ describe('copyBaseApplicationProject', () => {
             includeExampleField: false,
             includeExampleLogicFunction: true,
             includeExampleFrontComponent: false,
+            includeExampleView: false,
+            includeExampleNavigationMenuItem: false,
           },
         });
 
@@ -573,6 +605,70 @@ describe('copyBaseApplicationProject', () => {
       );
       expect(content).toContain('FieldType.NUMBER');
       expect(content).toContain("name: 'priority'");
+    });
+  });
+
+  describe('example view', () => {
+    it('should create example-view.ts with defineView referencing the object', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const viewPath = join(
+        testAppDirectory,
+        'src',
+        'views',
+        'example-view.ts',
+      );
+
+      expect(await fs.pathExists(viewPath)).toBe(true);
+
+      const content = await fs.readFile(viewPath, 'utf8');
+
+      expect(content).toContain("import { defineView } from 'twenty-sdk'");
+      expect(content).toContain(
+        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
+      );
+      expect(content).toContain('export default defineView({');
+      expect(content).toContain(
+        'objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
+      );
+      expect(content).toContain("name: 'example-view'");
+    });
+  });
+
+  describe('example navigation menu item', () => {
+    it('should create example-navigation-menu-item.ts with defineNavigationMenuItem', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const navPath = join(
+        testAppDirectory,
+        'src',
+        'navigation-menu-items',
+        'example-navigation-menu-item.ts',
+      );
+
+      expect(await fs.pathExists(navPath)).toBe(true);
+
+      const content = await fs.readFile(navPath, 'utf8');
+
+      expect(content).toContain(
+        "import { defineNavigationMenuItem } from 'twenty-sdk'",
+      );
+      expect(content).toContain('export default defineNavigationMenuItem({');
+      expect(content).toContain("name: 'example-navigation-menu-item'");
+      expect(content).toContain("icon: 'IconList'");
+      expect(content).toContain('position: 0');
     });
   });
 });
