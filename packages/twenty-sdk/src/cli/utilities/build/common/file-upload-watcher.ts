@@ -48,11 +48,10 @@ export class FileUploadWatcher {
         stabilityThreshold: 100,
         pollInterval: 50,
       },
-      usePolling: true,
     });
 
     this.watcher.on('all', (event, filePath) => {
-      if (event === 'addDir') {
+      if (event === 'addDir' || event === 'unlinkDir') {
         return;
       }
 

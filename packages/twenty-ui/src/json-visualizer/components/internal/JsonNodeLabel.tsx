@@ -6,7 +6,6 @@ import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHig
 const StyledLabelContainer = styled.span<{
   highlighting?: JsonNodeHighlighting;
 }>`
-  align-items: center;
   background-color: ${({ theme, highlighting }) =>
     highlighting === 'blue'
       ? theme.color.blue3
@@ -28,15 +27,20 @@ const StyledLabelContainer = styled.span<{
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-style: solid;
   border-width: 1px;
+  column-gap: ${({ theme }) => theme.spacing(2)};
+  display: inline-flex;
+  align-items: center;
   height: 24px;
   box-sizing: border-box;
-  column-gap: ${({ theme }) => theme.spacing(2)};
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
+  font-size: ${({ theme }) => theme.font.size.md};
   white-space: nowrap;
-  padding-block: ${({ theme }) => theme.spacing(1)};
   padding-inline: ${({ theme }) => theme.spacing(2)};
+
+  > span {
+    align-items: center;
+    display: inline-flex;
+    line-height: 1;
+  }
 `;
 
 export const JsonNodeLabel = ({

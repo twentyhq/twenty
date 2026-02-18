@@ -1,4 +1,6 @@
+import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -7,12 +9,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPlus } from 'twenty-ui/display';
 
 import { NavigationItemDropTarget } from '@/navigation-menu-item/components/NavigationItemDropTarget';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
-import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import {
   type FlatWorkspaceItem,
   type NavigationMenuItemClickParams,
@@ -25,14 +27,20 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+
+const StyledWorkspaceDroppableList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
+`;
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
@@ -70,8 +78,14 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
+  const { addToNavigationFallbackDestination } = useContext(
+    NavigationDropTargetContext,
+  );
 
   const flatItems = items.filter((item) => !isDefined(item.folderId));
+  const isAddToNavigationDropTargetVisible =
+    addToNavigationFallbackDestination?.droppableId ===
+    NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
   const folderChildrenById = items.reduce<
     Map<string, ProcessedNavigationMenuItem[]>
   >((acc, item) => {
@@ -140,7 +154,10 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
     };
   };
 
-  if (flatItems.length === 0) {
+  const isAddMenuItemButtonVisible =
+    isEditMode && isDefined(onAddMenuItem) && !isDragging;
+
+  if (flatItems.length === 0 && !isAddToNavigationDropTargetVisible) {
     return null;
   }
 
@@ -154,7 +171,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           alwaysShowRightIcon={isEditMode}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {isNavigationSectionOpen && (
+      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) && (
         <Droppable
           droppableId={
             NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
@@ -162,7 +179,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           isDropDisabled={workspaceDropDisabled}
         >
           {(provided) => (
-            <div
+            <StyledWorkspaceDroppableList
               ref={provided.innerRef}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...provided.droppableProps}
@@ -189,6 +206,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                           <WorkspaceNavigationMenuItemsFolder
                             folderId={item.id}
                             folderName={item.name ?? 'Folder'}
+                            folderIconKey={item.Icon}
                             navigationMenuItems={
                               folderChildrenById.get(item.id) ?? []
                             }
@@ -308,9 +326,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                 folderId={null}
                 index={filteredItems.length}
                 sectionId={NavigationSections.WORKSPACE}
-                compact={!!(isEditMode && onAddMenuItem)}
+                compact={!isAddMenuItemButtonVisible}
               >
-                {isEditMode && onAddMenuItem && (
+                {isAddMenuItemButtonVisible && (
                   <NavigationDrawerItem
                     Icon={IconPlus}
                     label={t`Add menu item`}
@@ -319,8 +337,19 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                   />
                 )}
               </NavigationItemDropTarget>
+              {addToNavigationFallbackDestination?.droppableId ===
+                NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
+                addToNavigationFallbackDestination.index >
+                  filteredItems.length && (
+                  <NavigationItemDropTarget
+                    folderId={null}
+                    index={addToNavigationFallbackDestination.index}
+                    sectionId={NavigationSections.WORKSPACE}
+                    compact
+                  />
+                )}
               {provided.placeholder}
-            </div>
+            </StyledWorkspaceDroppableList>
           )}
         </Droppable>
       )}

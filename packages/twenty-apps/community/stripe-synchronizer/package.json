@@ -17,7 +17,6 @@
   },
   "scripts": {
     "auth": "twenty auth login",
-    "generate": "twenty app generate",
     "dev": "twenty app dev",
     "sync": "twenty app sync",
     "uninstall": "twenty app uninstall",

@@ -4,30 +4,21 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_UNIVERSAL_METADATA_RELATIONS } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant';
+import { ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 
-type ExtractForeignKeyAggregatorFromManyToOneRelations<
-  ManyToOneRelations,
-  TargetMetadataName extends AllMetadataName,
-> = {
-  [K in keyof ManyToOneRelations]: ManyToOneRelations[K] extends {
-    metadataName: TargetMetadataName;
-    universalFlatEntityForeignKeyAggregator: infer Agg;
+type ExtractUniversalForeignKeyAggregators<OneToManyRelations> = {
+  [K in keyof OneToManyRelations]: OneToManyRelations[K] extends {
+    universalFlatEntityForeignKeyAggregator: infer Agg extends string;
   }
-    ? Agg extends string
-      ? Agg
-      : never
+    ? Agg
     : never;
-}[keyof ManyToOneRelations];
+}[keyof OneToManyRelations];
 
 export type ExtractUniversalForeignKeyAggregatorForMetadataName<
   T extends AllMetadataName,
-> = {
-  [M in AllMetadataName]: ExtractForeignKeyAggregatorFromManyToOneRelations<
-    (typeof ALL_UNIVERSAL_METADATA_RELATIONS)[M]['manyToOne'],
-    T
-  >;
-}[AllMetadataName];
+> = ExtractUniversalForeignKeyAggregators<
+  (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[T]
+>;
 
 type UniversalFlatEntityForeignKeyAggregatorProperties = {
   [P in AllMetadataName]: ExtractUniversalForeignKeyAggregatorForMetadataName<P>[];
@@ -36,25 +27,20 @@ type UniversalFlatEntityForeignKeyAggregatorProperties = {
 const computeForeignKeyAggregatorProperties = <T extends AllMetadataName>(
   metadataName: T,
 ): ExtractUniversalForeignKeyAggregatorForMetadataName<T>[] => {
+  const oneToManyRelations = ALL_ONE_TO_MANY_METADATA_RELATIONS[metadataName];
+
   const aggregatorProperties: ExtractUniversalForeignKeyAggregatorForMetadataName<T>[] =
     [];
 
-  for (const relationsEntry of Object.values(
-    ALL_UNIVERSAL_METADATA_RELATIONS,
-  )) {
-    for (const relation of Object.values(relationsEntry.manyToOne)) {
-      if (!isDefined(relation)) {
-        continue;
-      }
+  for (const relation of Object.values(oneToManyRelations)) {
+    if (!isDefined(relation)) {
+      continue;
+    }
 
-      if (
-        relation.metadataName === metadataName &&
-        isDefined(relation.universalFlatEntityForeignKeyAggregator)
-      ) {
-        aggregatorProperties.push(
-          relation.universalFlatEntityForeignKeyAggregator as ExtractUniversalForeignKeyAggregatorForMetadataName<T>,
-        );
-      }
+    if (isDefined(relation.universalFlatEntityForeignKeyAggregator)) {
+      aggregatorProperties.push(
+        relation.universalFlatEntityForeignKeyAggregator as ExtractUniversalForeignKeyAggregatorForMetadataName<T>,
+      );
     }
   }
 

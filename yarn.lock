@@ -6129,6 +6129,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@genql/runtime@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "@genql/runtime@npm:2.10.0"
+  dependencies:
+    "@types/qs": "npm:^6.9.0"
+    "@types/ws": "npm:^6.0.1"
+    graphql-query-batcher: "npm:^1.0.1"
+    isomorphic-unfetch: "npm:^3.0.0"
+    lodash: "npm:^4.17.20"
+    subscriptions-transport-ws: "npm:^0.9.16"
+    tslib: "npm:^2.0.0"
+    utility-types: "npm:^3.10.0"
+    ws: "npm:^6.1.4"
+    zen-observable-ts: "npm:^0.8.21"
+  peerDependencies:
+    graphql: "*"
+  checksum: 10c0/e2a886c2469c933681e2b0ddd6a5b7f4cb12932251ba460e3cf2db4246817da79313ea4ba9769ec7cbe53ab9c1cb81ad8fcce6a969cd241185b79398d2a4f3c6
+  languageName: node
+  linkType: hard
+
 "@gitbeaker/core@npm:^38.12.1":
   version: 38.12.1
   resolution: "@gitbeaker/core@npm:38.12.1"
@@ -24878,6 +24898,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ws@npm:^6.0.1":
+  version: 6.0.4
+  resolution: "@types/ws@npm:6.0.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/fa958e64596ca9487c3ed6012834de70b47f25d971f1950cfb8e6a99cb77ff340ae82ac7627744e01b58010674ef8ede07d5a2ac29ca9ad0d67a430fcc69ae14
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:^8.0.0":
   version: 8.5.12
   resolution: "@types/ws@npm:8.5.12"
@@ -28909,6 +28938,13 @@ __metadata:
   bin:
     astring: bin/astring
   checksum: 10c0/e7519544d9824494e80ef0e722bb3a0c543a31440d59691c13aeaceb75b14502af536b23f08db50aa6c632dafaade54caa25f0788aa7550b6b2d6e2df89e0830
+  languageName: node
+  linkType: hard
+
+"async-limiter@npm:~1.0.0":
+  version: 1.0.1
+  resolution: "async-limiter@npm:1.0.1"
+  checksum: 10c0/0693d378cfe86842a70d4c849595a0bb50dc44c11649640ca982fa90cbfc74e3cc4753b5a0847e51933f2e9c65ce8e05576e75e5e1fd963a086e673735b35969
   languageName: node
   linkType: hard
 
@@ -38581,6 +38617,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-query-batcher@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "graphql-query-batcher@npm:1.0.1"
+  checksum: 10c0/804d0f4064721a2116a16b9eac422e9233e85f4ab5b250cb8f83662725658ffde35779a8ae8211037f3dd2f9717de8cb63b394ad8057ce22171a83db2471196a
+  languageName: node
+  linkType: hard
+
 "graphql-redis-subscriptions@npm:2.7.0":
   version: 2.7.0
   resolution: "graphql-redis-subscriptions@npm:2.7.0"
@@ -41475,6 +41518,16 @@ __metadata:
   version: 3.0.1
   resolution: "isobject@npm:3.0.1"
   checksum: 10c0/03344f5064a82f099a0cd1a8a407f4c0d20b7b8485e8e816c39f249e9416b06c322e8dec5b842b6bb8a06de0af9cb48e7bc1b5352f0fadc2f0abac033db3d4db
+  languageName: node
+  linkType: hard
+
+"isomorphic-unfetch@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "isomorphic-unfetch@npm:3.1.0"
+  dependencies:
+    node-fetch: "npm:^2.6.1"
+    unfetch: "npm:^4.2.0"
+  checksum: 10c0/d3b61fca06304db692b7f76bdfd3a00f410e42cfa7403c3b250546bf71589d18cf2f355922f57198e4cc4a9872d3647b20397a5c3edf1a347c90d57c83cf2a89
   languageName: node
   linkType: hard
 
@@ -56831,6 +56884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"subscriptions-transport-ws@npm:^0.9.16":
+  version: 0.9.19
+  resolution: "subscriptions-transport-ws@npm:0.9.19"
+  dependencies:
+    backo2: "npm:^1.0.2"
+    eventemitter3: "npm:^3.1.0"
+    iterall: "npm:^1.2.1"
+    symbol-observable: "npm:^1.0.4"
+    ws: "npm:^5.2.0 || ^6.0.0 || ^7.0.0"
+  peerDependencies:
+    graphql: ">=0.10.0"
+  checksum: 10c0/6f2ade56865f0ba291d3ff82c79781b051c2374873bac853286fedfdbc05001b8c4018ab7cba44af667ead7f573e48d18892d58a8f9ca8d90dfb4bff5c125045
+  languageName: node
+  linkType: hard
+
 "sucrase@npm:^3.35.0":
   version: 3.35.0
   resolution: "sucrase@npm:3.35.0"
@@ -58338,6 +58406,7 @@ __metadata:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
     "@genql/cli": "npm:^3.0.3"
+    "@genql/runtime": "npm:^2.10.0"
     "@mui/material": "npm:^7.3.8"
     "@prettier/sync": "npm:^0.5.2"
     "@quilted/threads": "npm:^4.0.1"
@@ -59373,6 +59442,13 @@ __metadata:
   dependencies:
     "@fastify/busboy": "npm:^2.0.0"
   checksum: 10c0/e4e4d631ca54ee0ad82d2e90e7798fa00a106e27e6c880687e445cc2f13b4bc87c5eba2a88c266c3eecffb18f26e227b778412da74a23acc374fca7caccec49b
+  languageName: node
+  linkType: hard
+
+"unfetch@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "unfetch@npm:4.2.0"
+  checksum: 10c0/a5c0a896a6f09f278b868075aea65652ad185db30e827cb7df45826fe5ab850124bf9c44c4dafca4bf0c55a0844b17031e8243467fcc38dd7a7d435007151f1b
   languageName: node
   linkType: hard
 
@@ -61688,6 +61764,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:^6.1.4":
+  version: 6.2.3
+  resolution: "ws@npm:6.2.3"
+  dependencies:
+    async-limiter: "npm:~1.0.0"
+  checksum: 10c0/56a35b9799993cea7ce2260197e7879f21bbbb194a967f31acbbda6f7f46ecda4365951966fb062044c95197e19fb2f053be6f65c172435455186835f494de41
+  languageName: node
+  linkType: hard
+
 "ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.18.0":
   version: 8.18.2
   resolution: "ws@npm:8.18.2"
@@ -62297,6 +62382,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"zen-observable-ts@npm:^0.8.21":
+  version: 0.8.21
+  resolution: "zen-observable-ts@npm:0.8.21"
+  dependencies:
+    tslib: "npm:^1.9.3"
+    zen-observable: "npm:^0.8.0"
+  checksum: 10c0/fe4a02f862b5f7e8ae0f86230c37b84c7d5611f5c206981afb4043e732d04cf7067a6cbe1ba82d20f18b735a3387937195a12542158a631d308ae3959a1d93c4
+  languageName: node
+  linkType: hard
+
 "zen-observable-ts@npm:^1.2.5":
   version: 1.2.5
   resolution: "zen-observable-ts@npm:1.2.5"
@@ -62306,7 +62401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zen-observable@npm:0.8.15":
+"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8

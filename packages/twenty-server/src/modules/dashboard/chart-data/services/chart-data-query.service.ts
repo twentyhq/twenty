@@ -2,15 +2,19 @@ import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
 import {
+  AggregateOperations,
   ObjectRecordGroupByDateGranularity,
   OrderByWithGroupBy,
 } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataArrayKind,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 
 import { ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -19,6 +23,11 @@ import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enu
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
+import {
+  ChartDataException,
+  ChartDataExceptionCode,
+  generateChartDataExceptionMessage,
+} from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
 import {
@@ -51,6 +60,7 @@ type ExecuteGroupByQueryParams = {
   secondaryDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisOrderBy?: GraphOrderBy;
   secondaryAxisOrderBy?: GraphOrderBy;
+  splitMultiValueFields?: boolean;
 };
 
 @Injectable()
@@ -79,6 +89,7 @@ export class ChartDataQueryService {
     secondaryGroupBySubFieldName,
     secondaryDateGranularity,
     secondaryAxisOrderBy,
+    splitMultiValueFields,
   }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
@@ -111,6 +122,12 @@ export class ChartDataQueryService {
     const shouldApplyPrimaryDateGranularity =
       isPrimaryFieldDate || isPrimaryNestedDate;
 
+    const shouldSplitMultiValueFields = splitMultiValueFields ?? true;
+
+    const shouldUnnestPrimary =
+      shouldSplitMultiValueFields &&
+      isFieldMetadataArrayKind(primaryGroupByField.type);
+
     const groupBy: GroupByFieldObject[] = [];
 
     groupBy.push(
@@ -123,6 +140,7 @@ export class ChartDataQueryService {
         firstDayOfTheWeek,
         isNestedDateField: isPrimaryNestedDate,
         timeZone: userTimezone,
+        shouldUnnest: shouldUnnestPrimary,
       }),
     );
 
@@ -162,6 +180,20 @@ export class ChartDataQueryService {
       const shouldApplySecondaryDateGranularity =
         isSecondaryFieldDate || isSecondaryNestedDate;
 
+      const shouldUnnestSecondary =
+        shouldSplitMultiValueFields &&
+        isFieldMetadataArrayKind(secondaryGroupByField.type);
+
+      if (shouldUnnestPrimary && shouldUnnestSecondary) {
+        throw new ChartDataException(
+          generateChartDataExceptionMessage(
+            ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+            'Split multiple values can only be enabled when one grouped field is multi-value.',
+          ),
+          ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+        );
+      }
+
       groupBy.push(
         buildGroupByFieldObject({
           fieldMetadata: secondaryGroupByField,
@@ -172,6 +204,7 @@ export class ChartDataQueryService {
           firstDayOfTheWeek,
           isNestedDateField: isSecondaryNestedDate,
           timeZone: userTimezone,
+          shouldUnnest: shouldUnnestSecondary,
         }),
       );
 

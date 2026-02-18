@@ -72,14 +72,22 @@ export const AddToNavigationDragHandle = ({
   const iconSize = theme.icon.size.md;
   const iconStroke = theme.icon.stroke.sm;
 
+  const showCustomContentWithoutWrapper = isDefined(customIconContent);
+
   return (
-    <StyledIconSlot $hasFixedSize={payloadHasBackgroundColor}>
+    <StyledIconSlot
+      $hasFixedSize={
+        payloadHasBackgroundColor || showCustomContentWithoutWrapper
+      }
+    >
       {isHovered ? (
         <IconGripVertical
           size={iconSize}
           stroke={iconStroke}
           color={theme.font.color.tertiary}
         />
+      ) : showCustomContentWithoutWrapper ? (
+        customIconContent
       ) : hasBackgroundColor ? (
         <StyledNavigationMenuItemIconContainer
           $backgroundColor={iconBackgroundColor}

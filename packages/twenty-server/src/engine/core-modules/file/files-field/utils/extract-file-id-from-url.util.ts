@@ -1,6 +1,10 @@
+import { type FileFolder } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-export const extractFileIdFromUrl = (url: string): string | null => {
+export const extractFileIdFromUrl = (
+  url: string,
+  fileFolder: FileFolder,
+): string | null => {
   let parsedUrl: URL;
 
   try {
@@ -10,13 +14,13 @@ export const extractFileIdFromUrl = (url: string): string | null => {
   }
 
   const pathname = parsedUrl.pathname;
-  const isLinkExternal = !pathname.startsWith('/files-field/');
+  const isLinkExternal = !pathname.startsWith(`/file/${fileFolder}/`);
 
   if (isLinkExternal) {
     return null;
   }
 
-  const fileId = pathname.match(/files-field\/([^/]+)/)?.[1];
+  const fileId = pathname.match(`/${fileFolder}/([^/]+)`)?.[1];
 
   return isDefined(fileId) && isValidUuid(fileId) ? fileId : null;
 };

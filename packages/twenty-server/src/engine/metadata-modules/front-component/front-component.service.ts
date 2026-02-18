@@ -129,10 +129,14 @@ export class FrontComponentService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatFrontComponentToCreate.id,
-      flatEntityMaps: recomputedFlatFrontComponentMaps,
-    });
+    const createdFlatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: flatFrontComponentToCreate.id,
+        flatEntityMaps: recomputedFlatFrontComponentMaps,
+      },
+    );
+
+    return createdFlatFrontComponent;
   }
 
   async updateOne({
@@ -200,10 +204,14 @@ export class FrontComponentService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatFrontComponentMaps,
-    });
+    const updatedFlatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatFrontComponentMaps,
+      },
+    );
+
+    return updatedFlatFrontComponent;
   }
 
   async destroyOne({

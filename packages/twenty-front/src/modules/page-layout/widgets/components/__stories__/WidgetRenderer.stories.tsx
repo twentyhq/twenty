@@ -145,6 +145,7 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
       position: 0,
@@ -1699,6 +1700,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             ? [
                 {
                   __typename: 'PageLayoutTab',
+                  applicationId: '',
                   id: 'pinned-tab',
                   title: 'Pinned Tab',
                   position: 0,
@@ -1710,6 +1712,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 },
                 {
                   __typename: 'PageLayoutTab',
+                  applicationId: '',
                   id: 'other-tab',
                   title: 'Other Tab',
                   position: 1,
@@ -1723,6 +1726,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             : [
                 {
                   __typename: 'PageLayoutTab',
+                  applicationId: '',
                   id: TAB_ID_OVERVIEW,
                   title: 'Overview',
                   position: 0,

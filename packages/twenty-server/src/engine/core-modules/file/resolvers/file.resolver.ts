@@ -6,6 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileMetadataService } from 'src/engine/core-modules/file/services/file-metadata.service';
@@ -15,7 +16,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -25,7 +25,9 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class FileResolver {
   constructor(private readonly fileMetadataService: FileMetadataService) {}
 
-  @Mutation(() => FileDTO)
+  @Mutation(() => FileDTO, {
+    deprecationReason: 'Use specific file service instead',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async createFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -43,7 +45,9 @@ export class FileResolver {
     });
   }
 
-  @Mutation(() => FileDTO)
+  @Mutation(() => FileDTO, {
+    deprecationReason: '',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async deleteFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

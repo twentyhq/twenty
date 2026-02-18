@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type DataSource, type QueryRunner, Repository } from 'typeorm';
+import { Repository, type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
@@ -379,53 +379,66 @@ export class SignInUpService {
     return savedUser;
   }
 
-  private async setDefaultImpersonateAndAccessFullAdminPanel() {
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const workspacesCount = await this.workspaceRepository.count();
+  private async isSignUpEnabled(): Promise<boolean> {
+    const workspaceCount = await this.workspaceRepository.count();
 
-      // let the creation of the first workspace
-      if (workspacesCount > 0) {
-        throw new AuthException(
-          'New workspace setup is disabled',
-          AuthExceptionCode.SIGNUP_DISABLED,
-        );
-      }
-
-      return { canImpersonate: true, canAccessFullAdminPanel: true };
-    }
-
-    return { canImpersonate: false, canAccessFullAdminPanel: false };
-  }
-
-  private isWorkspaceCreationLimitedToServerAdmins(): boolean {
-    return this.twentyConfigService.get(
-      'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+    return (
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
+      workspaceCount === 0
     );
   }
 
-  private async isFirstWorkspaceInSystem(): Promise<boolean> {
-    const count = await this.workspaceRepository.count();
-
-    return count === 0;
-  }
-
-  async checkWorkspaceCreationIsAllowedOrThrow(
-    currentUser: UserEntity,
-  ): Promise<void> {
-    if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
-
-    // Only allow bypass during initial system bootstrap (no workspaces exist yet)
-    if (await this.isFirstWorkspaceInSystem()) return;
-
-    if (!currentUser.canAccessFullAdminPanel) {
+  private async assertSignUpEnabled(): Promise<void> {
+    if (!(await this.isSignUpEnabled())) {
       throw new AuthException(
-        'Workspace creation is restricted to admins',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        {
-          userFriendlyMessage: msg`Workspace creation is restricted to admins`,
-        },
+        'New workspace setup is disabled',
+        AuthExceptionCode.SIGNUP_DISABLED,
       );
     }
+  }
+
+  private async hasServerAdmin(): Promise<boolean> {
+    const adminCount = await this.userRepository.count({
+      where: { canAccessFullAdminPanel: true },
+    });
+
+    return adminCount > 0;
+  }
+
+  private async assertWorkspaceCreationAllowed(
+    userData: ExistingUserOrPartialUserWithPicture['userData'],
+  ): Promise<void> {
+    await this.assertSignUpEnabled();
+
+    const workspaceCount = await this.workspaceRepository.count();
+
+    if (workspaceCount === 0) {
+      return;
+    }
+
+    if (
+      !this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      )
+    ) {
+      return;
+    }
+
+    const isExistingAdmin =
+      userData.type === 'existingUser' &&
+      userData.existingUser.canAccessFullAdminPanel;
+
+    if (isExistingAdmin) {
+      return;
+    }
+
+    throw new AuthException(
+      'Workspace creation is restricted to admins',
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      {
+        userFriendlyMessage: msg`Workspace creation is restricted to admins`,
+      },
+    );
   }
 
   async signUpOnNewWorkspace(
@@ -446,27 +459,9 @@ export class SignInUpService {
       );
     }
 
-    if (
-      this.isWorkspaceCreationLimitedToServerAdmins() &&
-      !(await this.isFirstWorkspaceInSystem())
-    ) {
-      const isExistingAdmin =
-        userData.type === 'existingUser' &&
-        userData.existingUser.canAccessFullAdminPanel;
+    await this.assertWorkspaceCreationAllowed(userData);
 
-      if (!isExistingAdmin) {
-        throw new AuthException(
-          'Workspace creation is restricted to admins',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-          {
-            userFriendlyMessage: msg`Workspace creation is restricted to admins`,
-          },
-        );
-      }
-    }
-
-    const { canImpersonate, canAccessFullAdminPanel } =
-      await this.setDefaultImpersonateAndAccessFullAdminPanel();
+    const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
@@ -509,13 +504,14 @@ export class SignInUpService {
         workspaceToCreate,
       );
 
-      await this.applicationService.createWorkspaceCustomApplication(
-        {
-          workspaceId,
-          applicationId: workspaceCustomApplicationId,
-        },
-        queryRunner,
-      );
+      const customApplication =
+        await this.applicationService.createWorkspaceCustomApplication(
+          {
+            workspaceId,
+            applicationId: workspaceCustomApplicationId,
+          },
+          queryRunner,
+        );
 
       const isExistingUser = userData.type === 'existingUser';
       const user = isExistingUser
@@ -523,8 +519,8 @@ export class SignInUpService {
         : await this.saveNewUser(
             userData.newUserWithPicture,
             {
-              canImpersonate,
-              canAccessFullAdminPanel,
+              canImpersonate: shouldGrantServerAdmin,
+              canAccessFullAdminPanel: shouldGrantServerAdmin,
             },
             queryRunner,
           );
@@ -537,6 +533,7 @@ export class SignInUpService {
           pictureUrl: isExistingUser
             ? undefined
             : userData.newUserWithPicture.picture,
+          applicationUniversalIdentifier: customApplication.universalIdentifier,
         },
         queryRunner,
       );
@@ -584,9 +581,16 @@ export class SignInUpService {
       );
     }
 
+    await this.assertSignUpEnabled();
+
+    const shouldGrantServerAdmin = !(await this.hasServerAdmin());
+
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
-      await this.setDefaultImpersonateAndAccessFullAdminPanel(),
+      {
+        canImpersonate: shouldGrantServerAdmin,
+        canAccessFullAdminPanel: shouldGrantServerAdmin,
+      },
     );
   }
 }

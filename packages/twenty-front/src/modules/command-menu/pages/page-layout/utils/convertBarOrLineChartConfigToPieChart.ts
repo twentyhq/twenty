@@ -15,9 +15,11 @@ export const convertBarOrLineChartConfigToPieChart = (
   }
 
   return {
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
     groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
     groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
     dateGranularity: configuration.primaryAxisDateGranularity,
     orderBy: configuration.primaryAxisOrderBy,
+    splitMultiValueFields: configuration.splitMultiValueFields,
   };
 };

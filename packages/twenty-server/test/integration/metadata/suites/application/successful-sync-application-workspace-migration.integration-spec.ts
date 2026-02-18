@@ -70,6 +70,7 @@ describe('syncApplication', () => {
         applicationVariables: {},
         packageJsonChecksum: null,
         yarnLockChecksum: null,
+        apiClientChecksum: null,
       },
       roles: [
         {
@@ -105,6 +106,8 @@ describe('syncApplication', () => {
       logicFunctions: [],
       frontComponents: [],
       publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
     };
 
     const { data: firstSyncData } = await syncApplication({

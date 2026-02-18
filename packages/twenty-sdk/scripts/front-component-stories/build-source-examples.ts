@@ -26,10 +26,7 @@ const twentyUiIndividualIndex = path.resolve(
   '../../../twenty-ui/dist/individual/individual-entry.js',
 );
 
-const sdkIndividualIndex = path.resolve(
-  dirname,
-  '../../dist/sdk/index.js',
-);
+const sdkIndividualIndex = path.resolve(dirname, '../../dist/sdk/index.js');
 
 const twentySharedIndividualDir = path.resolve(
   dirname,
@@ -107,19 +104,12 @@ type BundleSizeEntry = {
 const collectBundleSizes = (): BundleSizeEntry[] =>
   STORY_COMPONENTS.map((name) => {
     const reactFile = path.join(exampleSourcesBuiltDir, `${name}.mjs`);
-    const preactFile = path.join(
-      exampleSourcesBuiltPreactDir,
-      `${name}.mjs`,
-    );
+    const preactFile = path.join(exampleSourcesBuiltPreactDir, `${name}.mjs`);
 
     return {
       name,
-      reactBytes: fs.existsSync(reactFile)
-        ? fs.statSync(reactFile).size
-        : 0,
-      preactBytes: fs.existsSync(preactFile)
-        ? fs.statSync(preactFile).size
-        : 0,
+      reactBytes: fs.existsSync(reactFile) ? fs.statSync(reactFile).size : 0,
+      preactBytes: fs.existsSync(preactFile) ? fs.statSync(preactFile).size : 0,
     };
   });
 

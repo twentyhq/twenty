@@ -21,4 +21,5 @@ export type ApplicationManifest = SyncableEntityOptions & {
   marketplaceData?: ApplicationMarketplaceData;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
+  apiClientChecksum: string | null;
 };
