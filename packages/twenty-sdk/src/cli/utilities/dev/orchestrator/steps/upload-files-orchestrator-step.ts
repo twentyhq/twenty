@@ -116,6 +116,11 @@ export class UploadFilesOrchestratorStep {
       'twenty-sdk',
       'generated',
     );
+
+    if (!(await fs.pathExists(generatedDir))) {
+      return;
+    }
+
     const outputDir = join(appPath, OUTPUT_DIR, 'api-client');
 
     await fs.ensureDir(outputDir);
