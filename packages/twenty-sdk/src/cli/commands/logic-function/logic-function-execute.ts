@@ -10,11 +10,13 @@ export class LogicFunctionExecuteCommand {
 
   async execute({
     appPath = CURRENT_EXECUTION_DIRECTORY,
+    postInstall = false,
     functionUniversalIdentifier,
     functionName,
     payload = '{}',
   }: {
     appPath?: string;
+    postInstall?: boolean;
     functionUniversalIdentifier?: string;
     functionName?: string;
     payload?: string;
@@ -54,6 +56,12 @@ export class LogicFunctionExecuteCommand {
       );
 
       const targetFunction = appFunctions.find((fn) => {
+        if (postInstall) {
+          return (
+            fn.universalIdentifier ===
+            manifest.application.postInstallLogicFunctionUniversalIdentifier
+          );
+        }
         if (functionUniversalIdentifier) {
           return fn.universalIdentifier === functionUniversalIdentifier;
         }
@@ -64,7 +72,9 @@ export class LogicFunctionExecuteCommand {
       });
 
       if (!targetFunction) {
-        const identifier = functionUniversalIdentifier || functionName;
+        const identifier = postInstall
+          ? 'post install'
+          : functionUniversalIdentifier || functionName;
         console.error(
           chalk.red(`Function "${identifier}" not found in application.`),
         );
