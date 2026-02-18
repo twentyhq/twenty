@@ -1,14 +1,22 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-
-import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconPlus,
+  useIcons,
+} from 'twenty-ui/display';
+
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -20,6 +28,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
@@ -102,14 +111,37 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const currentViewPath = location.pathname + location.search;
   const isMobile = useIsMobile();
 
+  const { t } = useLingui();
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useRecoilStateV2(openNavigationMenuItemFolderIdsStateV2);
 
   const setCurrentFolderId = useSetRecoilStateV2(
     currentNavigationMenuItemFolderIdStateV2,
   );
+  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
+    addMenuItemInsertionContextStateV2,
+  );
+  const { navigateCommandMenu } = useNavigateCommandMenu();
 
   const isOpen = openNavigationMenuItemFolderIds.includes(folderId);
+
+  const folderContentLengthForTree =
+    isEditMode && isSelectedInEditMode
+      ? navigationMenuItems.length + 1
+      : navigationMenuItems.length;
+
+  const handleAddMenuItemToFolder = () => {
+    setAddMenuItemInsertionContext({
+      targetFolderId: folderId,
+      targetIndex: navigationMenuItems.length,
+    });
+    navigateCommandMenu({
+      page: CommandMenuPages.NavigationMenuAddItem,
+      pageTitle: t`New sidebar item`,
+      pageIcon: IconPlus,
+      resetNavigationStack: true,
+    });
+  };
 
   const handleToggle = () => {
     if (isMobile) {
@@ -280,8 +312,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                             }
                             subItemState={getNavigationSubItemLeftAdornment({
                               index,
-                              arrayLength:
-                                navigationMenuItemFolderContentLength,
+                              arrayLength: folderContentLengthForTree,
                               selectedIndex: selectedNavigationMenuItemIndex,
                             })}
                             isDragging={isContextDragging}
@@ -295,6 +326,19 @@ export const WorkspaceNavigationMenuItemsFolder = ({
                 </StyledFolderDroppableContent>
               )}
             </Droppable>
+            {isEditMode && isSelectedInEditMode && (
+              <NavigationDrawerSubItem
+                label={t`Add menu item`}
+                Icon={IconPlus}
+                onClick={handleAddMenuItemToFolder}
+                triggerEvent="CLICK"
+                subItemState={getNavigationSubItemLeftAdornment({
+                  index: navigationMenuItems.length,
+                  arrayLength: folderContentLengthForTree,
+                  selectedIndex: selectedNavigationMenuItemIndex,
+                })}
+              />
+            )}
           </AnimatedExpandableContainer>
         </StyledFolderExpandableWrapper>
       </NavigationDrawerItemsCollapsableContainer>
