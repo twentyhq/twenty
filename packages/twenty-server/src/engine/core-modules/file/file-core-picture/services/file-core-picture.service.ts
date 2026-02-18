@@ -64,7 +64,7 @@ export class FileCorePictureService {
 
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
-      resourcePath: `${FileFolder.CorePicture}/${finalName}`,
+      resourcePath: finalName,
       mimeType,
       fileFolder: FileFolder.CorePicture,
       applicationUniversalIdentifier: universalIdentifier,
@@ -182,6 +182,25 @@ export class FileCorePictureService {
     });
   }
 
+  private async fetchImageBufferFromUrl(
+    imageUrl: string,
+  ): Promise<{ buffer: Buffer; extension: string } | undefined> {
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
+      const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
+
+      const type = await FileType.fromBuffer(buffer);
+
+      if (!isDefined(type) || !type.mime.startsWith('image/')) {
+        return undefined;
+      }
+
+      return { buffer, extension: type.ext };
+    } catch {
+      return undefined;
+    }
+  }
+
   async uploadWorkspaceMemberProfilePictureFromUrl({
     imageUrl,
     workspaceId,
@@ -193,25 +212,22 @@ export class FileCorePictureService {
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileWithSignedUrlDto | undefined> {
-    const httpClient = this.secureHttpClientService.getHttpClient();
-    const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
+    const imageData = await this.fetchImageBufferFromUrl(imageUrl);
 
-    const type = await FileType.fromBuffer(buffer);
-
-    if (!isDefined(type) || !type.mime.startsWith('image/')) {
-      return;
+    if (!isDefined(imageData)) {
+      return undefined;
     }
 
     return this.uploadWorkspaceMemberProfilePicture({
-      file: buffer,
-      filename: `avatar.${type.ext}`,
+      file: imageData.buffer,
+      filename: `avatar.${imageData.extension}`,
       workspaceId,
       applicationUniversalIdentifier,
       queryRunner,
     });
   }
 
-  async uploadWorkspacePictureFromUrl({
+  async uploadWorkspaceLogoFromUrl({
     imageUrl,
     workspaceId,
     applicationUniversalIdentifier,
@@ -222,26 +238,19 @@ export class FileCorePictureService {
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileEntity | undefined> {
-    try {
-      const httpClient = this.secureHttpClientService.getHttpClient();
-      const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
+    const imageData = await this.fetchImageBufferFromUrl(imageUrl);
 
-      const type = await FileType.fromBuffer(buffer);
-
-      if (!isDefined(type) || !type.mime.startsWith('image/')) {
-        return undefined;
-      }
-
-      return this.uploadCorePicture({
-        file: buffer,
-        filename: `logo.${type.ext}`,
-        workspaceId,
-        applicationUniversalIdentifier,
-        queryRunner,
-      });
-    } catch {
+    if (!isDefined(imageData)) {
       return undefined;
     }
+
+    return this.uploadCorePicture({
+      file: imageData.buffer,
+      filename: `logo.${imageData.extension}`,
+      workspaceId,
+      applicationUniversalIdentifier,
+      queryRunner,
+    });
   }
 
   async copyWorkspaceMemberProfilePicture({

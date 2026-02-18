@@ -504,7 +504,7 @@ export class SignInUpService {
       if (isWorkEmailFound) {
         const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
         const logoFile =
-          await this.fileCorePictureService.uploadWorkspacePictureFromUrl({
+          await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
             imageUrl: logoUrl,
             workspaceId,
             applicationUniversalIdentifier:

@@ -158,107 +158,147 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
     );
 
     if (isInWorkspaceLogo) {
-      try {
-        const { type: fileExtension } = extractFolderPathFilenameAndTypeOrThrow(
-          workspace.logo,
-        );
-
-        const fileId = v4();
-        const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
-        const newResourcePath = `${FileFolder.CorePicture}/${newFilename}`;
-
-        if (!isDryRun) {
-          await this.fileStorageService.copyLegacy({
-            from: {
-              folderPath: `workspace-${workspaceId}`,
-              filename: workspace.logo,
-            },
-            to: {
-              folderPath: `${workspaceId}/${workspaceCustomFlatApplication.universalIdentifier}`,
-              filename: newResourcePath,
-            },
-          });
-
-          const fileEntity = fileRepository.create({
-            id: fileId,
-            path: newResourcePath,
-            workspaceId,
-            applicationId: workspaceCustomFlatApplication.id,
-            size: -1,
-            settings: {
-              isTemporaryFile: false,
-              toDelete: false,
-            },
-          });
-
-          await fileRepository.save(fileEntity);
-
-          await this.workspaceRepository.update(
-            { id: workspaceId },
-            { logoFileId: fileId },
-          );
-        }
-
-        this.logger.log(
-          `Migrated workspace logo for workspace ${workspaceId} (${workspace.logo} -> ${newResourcePath})`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to migrate workspace logo for workspace ${workspaceId}: ${error.message}`,
-        );
-        throw error;
-      }
+      await this.migrateWorkspaceLogoFromWorkspaceFolder({
+        workspaceId,
+        logoPath: workspace.logo,
+        isDryRun,
+        workspaceCustomFlatApplication,
+        fileRepository,
+      });
     }
 
     if (isTwentyIconLogo) {
-      try {
-        const httpClient = this.secureHttpClientService.getHttpClient();
-        const buffer = await getImageBufferFromUrl(workspace.logo, httpClient);
+      await this.migrateWorkspaceLogoFromTwentyIcons({
+        workspaceId,
+        logoUrl: workspace.logo,
+        isDryRun,
+        workspaceCustomFlatApplication,
+      });
+    }
+  }
 
-        const type = await FileType.fromBuffer(buffer);
+  private async migrateWorkspaceLogoFromWorkspaceFolder({
+    workspaceId,
+    logoPath,
+    isDryRun,
+    workspaceCustomFlatApplication,
+    fileRepository,
+  }: {
+    workspaceId: string;
+    logoPath: string;
+    isDryRun: boolean;
+    workspaceCustomFlatApplication: FlatApplication;
+    fileRepository: Repository<FileEntity>;
+  }): Promise<void> {
+    try {
+      const { type: fileExtension } =
+        extractFolderPathFilenameAndTypeOrThrow(logoPath);
 
-        if (!isDefined(type) || !type.mime.startsWith('image/')) {
-          this.logger.warn(
-            `Unable to detect image type for workspace logo ${workspace.logo}, skipping`,
-          );
+      const fileId = v4();
+      const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
+      const newResourcePath = `${FileFolder.CorePicture}/${newFilename}`;
 
-          return;
-        }
+      if (!isDryRun) {
+        await this.fileStorageService.copyLegacy({
+          from: {
+            folderPath: `workspace-${workspaceId}`,
+            filename: logoPath,
+          },
+          to: {
+            folderPath: `${workspaceId}/${workspaceCustomFlatApplication.universalIdentifier}`,
+            filename: newResourcePath,
+          },
+        });
 
-        const fileId = v4();
-        const newFilename = `${fileId}.${type.ext}`;
-        const newResourcePath = `${newFilename}`;
+        const fileEntity = fileRepository.create({
+          id: fileId,
+          path: newResourcePath,
+          workspaceId,
+          applicationId: workspaceCustomFlatApplication.id,
+          size: -1,
+          settings: {
+            isTemporaryFile: false,
+            toDelete: false,
+          },
+        });
 
-        if (!isDryRun) {
-          const fileEntity = await this.fileStorageService.writeFile({
-            workspaceId,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-            fileFolder: FileFolder.CorePicture,
-            resourcePath: newResourcePath,
-            sourceFile: buffer,
-            mimeType: type.mime,
-            fileId,
-            settings: {
-              isTemporaryFile: false,
-              toDelete: false,
-            },
-          });
+        await fileRepository.save(fileEntity);
 
-          await this.workspaceRepository.update(
-            { id: workspaceId },
-            { logoFileId: fileEntity.id },
-          );
-        }
-
-        this.logger.log(
-          `Migrated workspace logo from twenty-icons for workspace ${workspaceId} (${workspace.logo} -> ${FileFolder.CorePicture}/${newResourcePath})`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to migrate workspace logo from twenty-icons for workspace ${workspaceId}: ${error.message}`,
+        await this.workspaceRepository.update(
+          { id: workspaceId },
+          { logoFileId: fileId },
         );
       }
+
+      this.logger.log(
+        `Migrated workspace logo for workspace ${workspaceId} (${logoPath} -> ${newResourcePath})`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to migrate workspace logo for workspace ${workspaceId}: ${error.message}`,
+      );
+      throw error;
+    }
+  }
+
+  private async migrateWorkspaceLogoFromTwentyIcons({
+    workspaceId,
+    logoUrl,
+    isDryRun,
+    workspaceCustomFlatApplication,
+  }: {
+    workspaceId: string;
+    logoUrl: string;
+    isDryRun: boolean;
+    workspaceCustomFlatApplication: FlatApplication;
+  }): Promise<void> {
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
+      const buffer = await getImageBufferFromUrl(logoUrl, httpClient);
+
+      const type = await FileType.fromBuffer(buffer);
+
+      if (!isDefined(type) || !type.mime.startsWith('image/')) {
+        this.logger.warn(
+          `Unable to detect image type for workspace logo ${logoUrl}, skipping`,
+        );
+
+        return;
+      }
+
+      const fileId = v4();
+      const newFilename = `${fileId}.${type.ext}`;
+      const newResourcePath = `${newFilename}`;
+
+      if (!isDryRun) {
+        const fileEntity = await this.fileStorageService.writeFile({
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          fileFolder: FileFolder.CorePicture,
+          resourcePath: newResourcePath,
+          sourceFile: buffer,
+          mimeType: type.mime,
+          fileId,
+          settings: {
+            isTemporaryFile: false,
+            toDelete: false,
+          },
+        });
+
+        await this.workspaceRepository.update(
+          { id: workspaceId },
+          { logoFileId: fileEntity.id },
+        );
+      }
+
+      this.logger.log(
+        `Migrated workspace logo from twenty-icons for workspace ${workspaceId} (${logoUrl} -> ${FileFolder.CorePicture}/${newResourcePath})`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to migrate workspace logo from twenty-icons for workspace ${workspaceId}: ${error.message}`,
+      );
     }
   }
 
