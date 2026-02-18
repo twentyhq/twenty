@@ -136,6 +136,7 @@ const StyledAddFieldButtonContentContainer = styled.div`
 `;
 
 const StyledCalloutContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(7)};
   padding-right: ${({ theme }) => theme.spacing(7)};
   padding-top: ${({ theme }) => theme.spacing(2)};
