@@ -12,7 +12,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         universalIdentifier: 'widget-uuid-1',
         title: 'My Widget',
         type: WidgetType.VIEW,
-        configuration: {},
+        configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
       applicationUniversalIdentifier,
@@ -37,38 +37,40 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       columnSpan: 1,
     });
     expect(result.position).toBeNull();
-    expect(result.universalConfiguration).toEqual({});
+    expect(result.universalConfiguration).toEqual({
+      configurationType: 'VIEW',
+    });
   });
 
   it('should convert a fully specified page layout widget manifest', () => {
     const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
       pageLayoutWidgetManifest: {
         universalIdentifier: 'widget-uuid-2',
-        title: 'Chart Widget',
-        type: WidgetType.GRAPH,
+        title: 'Iframe Widget',
+        type: 'IFRAME',
         objectUniversalIdentifier: 'obj-uuid-1',
-        gridPosition: {
-          row: 1,
-          column: 2,
-          rowSpan: 2,
-          columnSpan: 3,
+        configuration: {
+          configurationType: 'IFRAME',
+          url: 'https://example.com',
         },
-        configuration: { chartType: 'bar' },
       },
       pageLayoutTabUniversalIdentifier,
       applicationUniversalIdentifier,
       now,
     });
 
-    expect(result.title).toBe('Chart Widget');
-    expect(result.type).toBe(WidgetType.GRAPH);
+    expect(result.title).toBe('Iframe Widget');
+    expect(result.type).toBe('IFRAME');
     expect(result.objectMetadataUniversalIdentifier).toBe('obj-uuid-1');
     expect(result.gridPosition).toEqual({
-      row: 1,
-      column: 2,
-      rowSpan: 2,
-      columnSpan: 3,
+      row: 0,
+      column: 0,
+      rowSpan: 1,
+      columnSpan: 1,
     });
-    expect(result.universalConfiguration).toEqual({ chartType: 'bar' });
+    expect(result.universalConfiguration).toEqual({
+      configurationType: 'IFRAME',
+      url: 'https://example.com',
+    });
   });
 });

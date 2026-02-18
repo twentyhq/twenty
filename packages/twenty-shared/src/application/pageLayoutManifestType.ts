@@ -3,6 +3,7 @@ import {
   type PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
+  type PageLayoutWidgetUniversalConfiguration,
 } from '@/types';
 
 export type PageLayoutWidgetManifest = SyncableEntityOptions & {
@@ -10,14 +11,8 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   type: string;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
-  gridPosition?: {
-    row: number;
-    column: number;
-    rowSpan: number;
-    columnSpan: number;
-  };
   position?: PageLayoutWidgetPosition;
-  configuration: Record<string, unknown>;
+  configuration: PageLayoutWidgetUniversalConfiguration;
 };
 
 export type PageLayoutTabManifest = SyncableEntityOptions & {

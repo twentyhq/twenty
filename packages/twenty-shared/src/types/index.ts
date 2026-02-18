@@ -143,6 +143,7 @@ export type {
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetPosition,
 } from './page-layout/page-layout-widget-position.type';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';

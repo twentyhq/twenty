@@ -19,16 +19,11 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     applicationUniversalIdentifier,
     pageLayoutTabUniversalIdentifier,
     title: pageLayoutWidgetManifest.title,
-    type: (pageLayoutWidgetManifest.type as WidgetType) ?? WidgetType.VIEW,
+    type: pageLayoutWidgetManifest.type as WidgetType,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
-    gridPosition: pageLayoutWidgetManifest.gridPosition ?? {
-      row: 0,
-      column: 0,
-      rowSpan: 1,
-      columnSpan: 1,
-    },
+    gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
     position: pageLayoutWidgetManifest.position ?? null,
     universalConfiguration:
       pageLayoutWidgetManifest.configuration as UniversalFlatPageLayoutWidget['universalConfiguration'],
