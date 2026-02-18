@@ -45,22 +45,22 @@ yarn twenty app:dev
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Monitora i log delle funzioni della tua applicazione
 yarn twenty function:logs
 
-# Execute a function by name
+# Esegui una funzione per nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the post-install function
+# Esegui la funzione post-installazione
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn twenty app:uninstall
 
-# Display commands' help
+# Mostra l'aiuto dei comandi
 yarn twenty help
 ```
 
@@ -73,7 +73,7 @@ Quando esegui `npx create-twenty-app@latest my-twenty-app`, lo scaffolder:
 * Copia un'applicazione base minimale in `my-twenty-app/`
 * Aggiunge una dipendenza locale `twenty-sdk` e la configurazione di Yarn 4
 * Crea file di configurazione e script collegati alla CLI `twenty`
-* Generates a default application config, a default function role, and a post-install function
+* Genera una configurazione applicativa predefinita, un ruolo funzione predefinito e una funzione post-installazione
 
 Un'app appena generata dallo scaffolder si presenta così:
 
@@ -89,16 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Cartella delle risorse pubbliche (immagini, font, ecc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obbligatorio - configurazione principale dell'applicazione
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Ruolo predefinito per le funzioni logiche
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Funzione logica di esempio
+  │   └── post-install.ts               # Funzione logica post-installazione
   └── front-components/
-      └── hello-world.tsx               # Example front component
+      └── hello-world.tsx               # Componente front-end di esempio
 ```
 
 A livello generale:
@@ -294,7 +294,7 @@ Ogni app ha un singolo file `application-config.ts` che descrive:
 * **Identità dell'app**: identificatori, nome visualizzato e descrizione.
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
-* **(Optional) post-install function**: a logic function that runs after the app is installed.
+* **(Opzionale) funzione post-installazione**: una funzione logica che viene eseguita dopo l'installazione dell'app.
 
 Usa `defineApplication()` per definire la configurazione della tua applicazione:
 
@@ -327,7 +327,7 @@ Note:
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
-* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
+* `postInstallLogicFunctionUniversalIdentifier` (opzionale) fa riferimento a una funzione logica che viene eseguita automaticamente dopo l'installazione dell'app. Vedi [Funzioni post-installazione](#post-install-functions).
 
 #### Ruoli e permessi
 
@@ -466,9 +466,9 @@ Note:
 * L'array `triggers` è facoltativo. Le funzioni senza trigger possono essere utilizzate come funzioni di utilità richiamate da altre funzioni.
 * Puoi combinare più tipi di trigger in un'unica funzione.
 
-### Post-install functions
+### Funzioni post-installazione
 
-A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+Una funzione post-installazione è una funzione logica che viene eseguita automaticamente dopo che la tua app è stata installata in uno spazio di lavoro. Questo è utile per attività di configurazione una tantum come il popolamento di dati predefiniti, la creazione di record iniziali o la configurazione delle impostazioni dello spazio di lavoro.
 
 When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
 

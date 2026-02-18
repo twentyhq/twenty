@@ -45,22 +45,22 @@ yarn twenty app:dev
 Odtud můžete:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Přidejte do vaší aplikace novou entitu (s průvodcem)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Sledujte logy funkcí vaší aplikace
 yarn twenty function:logs
 
-# Execute a function by name
+# Spusťte funkci podle názvu
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the post-install function
+# Spusťte postinstalační funkci
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Odinstalujte aplikaci z aktuálního pracovního prostoru
 yarn twenty app:uninstall
 
-# Display commands' help
+# Zobrazte nápovědu k příkazům
 yarn twenty help
 ```
 
@@ -73,7 +73,7 @@ Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
 * Zkopíruje minimální základní aplikaci do `my-twenty-app/`
 * Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
 * Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
-* Generates a default application config, a default function role, and a post-install function
+* Vygeneruje výchozí konfiguraci aplikace, výchozí roli funkcí a postinstalační funkci.
 
 Čerstvě vytvořená aplikace vypadá takto:
 
@@ -89,16 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Výchozí role pro logické funkce
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Ukázková logická funkce
+  │   └── post-install.ts               # Postinstalační logická funkce
   └── front-components/
-      └── hello-world.tsx               # Example front component
+      └── hello-world.tsx               # Ukázková front-endová komponenta
 ```
 
 V kostce:
@@ -294,7 +294,7 @@ Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
 * **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
-* **(Optional) post-install function**: a logic function that runs after the app is installed.
+* **(Volitelná) postinstalační funkce**: logická funkce, která se spouští po instalaci aplikace.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -327,7 +327,7 @@ Poznámky:
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
-* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
+* `postInstallLogicFunctionUniversalIdentifier` (volitelné) odkazuje na logickou funkci, která se automaticky spustí po instalaci aplikace. Viz [Postinstalační funkce](#post-install-functions).
 
 #### Role a oprávnění
 
@@ -466,9 +466,9 @@ Poznámky:
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
 
-### Post-install functions
+### Postinstalační funkce
 
-A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+Postinstalační funkce je logická funkce, která se automaticky spouští po instalaci vaší aplikace do pracovního prostoru. To je užitečné pro jednorázové úlohy nastavení, jako je naplnění výchozími daty, vytvoření počátečních záznamů nebo konfigurace nastavení pracovního prostoru.
 
 When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
 
