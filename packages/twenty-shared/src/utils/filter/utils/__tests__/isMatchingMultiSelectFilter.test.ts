@@ -1,6 +1,44 @@
 import { isMatchingMultiSelectFilter } from '@/utils/filter/utils/isMatchingMultiSelectFilter';
 
 describe('isMatchingMultiSelectFilter', () => {
+  describe('in', () => {
+    it('should return true when at least one value is in the filter list', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { in: ['A', 'B'] },
+          value: ['A', 'C'],
+        }),
+      ).toBe(true);
+    });
+
+    it('should return false when no value is in the filter list', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { in: ['A', 'B'] },
+          value: ['C', 'D'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false for null value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { in: ['A'] },
+          value: null,
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false for empty array value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { in: ['A'] },
+          value: [],
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('containsAny', () => {
     it('should return true when value contains all filter items', () => {
       expect(

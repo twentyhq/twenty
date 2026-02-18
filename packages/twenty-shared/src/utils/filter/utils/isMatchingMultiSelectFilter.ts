@@ -8,6 +8,12 @@ export const isMatchingMultiSelectFilter = ({
   value: string[] | null;
 }) => {
   switch (true) {
+    case multiSelectFilter.in !== undefined: {
+      return (
+        Array.isArray(value) &&
+        value.some((item) => multiSelectFilter.in!.includes(item))
+      );
+    }
     case multiSelectFilter.containsAny !== undefined: {
       return (
         Array.isArray(value) &&

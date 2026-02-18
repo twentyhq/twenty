@@ -125,6 +125,7 @@ export type SelectFilter = {
 
 export type MultiSelectFilter = {
   is?: IsFilter;
+  in?: string[];
   isEmptyArray?: boolean;
   containsAny?: string[];
 };
