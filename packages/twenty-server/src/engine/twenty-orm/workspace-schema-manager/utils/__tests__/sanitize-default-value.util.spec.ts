@@ -48,7 +48,7 @@ describe('sanitizeDefaultValue', () => {
       const inputWithBackslash = 'test\\value';
       const result = sanitizeDefaultValue(inputWithBackslash);
 
-      expect(result).toBe(" E'test\\\\value'");
+      expect(result).toBe("E'test\\\\value'");
     });
 
     it('should preserve comment-like patterns inside string literals (safe in SQL strings)', () => {

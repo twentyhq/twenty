@@ -9,6 +9,10 @@ export const removeSqlDDLInjection = (value: string): string => {
 // doubles any internal double-quote characters.
 // e.g. my"table → "my""table"
 export const escapeIdentifier = (identifier: string): string => {
+  if (identifier.includes('\0')) {
+    throw new Error('Null bytes are not allowed in PostgreSQL identifiers');
+  }
+
   return '"' + identifier.replace(/"/g, '""') + '"';
 };
 
@@ -17,6 +21,10 @@ export const escapeIdentifier = (identifier: string): string => {
 // backslashes are present (standard_conforming_strings safety).
 // e.g. it's → 'it''s'
 export const escapeLiteral = (value: string): string => {
+  if (value.includes('\0')) {
+    throw new Error('Null bytes are not allowed in PostgreSQL string literals');
+  }
+
   let hasBackslash = false;
   let escaped = "'";
 
@@ -34,7 +42,7 @@ export const escapeLiteral = (value: string): string => {
   escaped += "'";
 
   if (hasBackslash) {
-    escaped = ' E' + escaped;
+    escaped = 'E' + escaped;
   }
 
   return escaped;
