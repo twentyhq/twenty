@@ -11,16 +11,24 @@ export type NavigationMenuItemIconStyle = {
   borderColor: string;
 };
 
+const COLOR_SHADE_ICON = 10;
+const COLOR_SHADE_BACKGROUND = 5;
+const COLOR_SHADE_BORDER = 6;
+
+const getColorFromTheme = (
+  theme: Theme,
+  themeColor: ThemeColor,
+  shade: number,
+): string => {
+  const colorMap = theme.color as unknown as Record<string, string>;
+  const key = `${themeColor}${shade}`;
+  return colorMap[key] ?? theme.tag.text[themeColor];
+};
+
 export const getNavigationMenuItemIconBorderColor = (
   theme: Theme,
   themeColor: ThemeColor,
-): string => {
-  const colorKey = `${themeColor}5`;
-  const borderColor = (theme.color as unknown as Record<string, string>)[
-    colorKey
-  ];
-  return borderColor ?? theme.tag.text[themeColor];
-};
+): string => getColorFromTheme(theme, themeColor, COLOR_SHADE_BORDER);
 
 export const getNavigationMenuItemIconStyleFromColor = (
   theme: Theme,
@@ -28,8 +36,12 @@ export const getNavigationMenuItemIconStyleFromColor = (
 ): NavigationMenuItemIconStyle => {
   const themeColor = parseThemeColor(color ?? DEFAULT_NAV_ITEM_ICON_COLOR);
   return {
-    backgroundColor: theme.tag.background[themeColor],
-    iconColor: theme.tag.text[themeColor],
-    borderColor: getNavigationMenuItemIconBorderColor(theme, themeColor),
+    backgroundColor: getColorFromTheme(
+      theme,
+      themeColor,
+      COLOR_SHADE_BACKGROUND,
+    ),
+    iconColor: getColorFromTheme(theme, themeColor, COLOR_SHADE_ICON),
+    borderColor: getColorFromTheme(theme, themeColor, COLOR_SHADE_BORDER),
   };
 };
