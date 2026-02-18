@@ -26,6 +26,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -121,63 +122,67 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       );
     }
 
-    const attachmentRepository =
-      await this.twentyORMGlobalManager.getRepository<AttachmentWorkspaceEntity>(
+    const systemAuthContext = buildSystemAuthContext(workspaceId);
+
+    await this.twentyORMGlobalManager.executeInWorkspaceContext(async () => {
+      const attachmentRepository =
+        await this.twentyORMGlobalManager.getRepository<AttachmentWorkspaceEntity>(
+          workspaceId,
+          'attachment',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const noteRepository =
+        await this.twentyORMGlobalManager.getRepository<NoteWorkspaceEntity>(
+          workspaceId,
+          'note',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const taskRepository =
+        await this.twentyORMGlobalManager.getRepository<TaskWorkspaceEntity>(
+          workspaceId,
+          'task',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const fileRepository = this.coreDataSource.getRepository(FileEntity);
+
+      await this.migrateActivityTable({
+        activityRepository: noteRepository,
+        attachmentRepository,
+        fileRepository,
+        activityType: 'note',
+        targetColumnName: 'targetNoteId',
         workspaceId,
-        'attachment',
-        { shouldBypassPermissionChecks: true },
-      );
+        twentyStandardApplication: twentyStandardFlatApplication,
+        fileFieldMetadata: attachmentFileFieldMetadata,
+        isDryRun,
+      });
 
-    const noteRepository =
-      await this.twentyORMGlobalManager.getRepository<NoteWorkspaceEntity>(
+      await this.migrateActivityTable({
+        activityRepository: taskRepository,
+        attachmentRepository,
+        fileRepository,
+        activityType: 'task',
+        targetColumnName: 'targetTaskId',
         workspaceId,
-        'note',
-        { shouldBypassPermissionChecks: true },
+        twentyStandardApplication: twentyStandardFlatApplication,
+        fileFieldMetadata: attachmentFileFieldMetadata,
+        isDryRun,
+      });
+
+      if (!isDryRun) {
+        await this.featureFlagService.enableFeatureFlags(
+          [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
+          workspaceId,
+        );
+      }
+
+      this.logger.log(
+        `${isDryRun ? '[DRY RUN] ' : ''}Completed activity rich text attachment file IDs migration for workspace ${workspaceId}`,
       );
-
-    const taskRepository =
-      await this.twentyORMGlobalManager.getRepository<TaskWorkspaceEntity>(
-        workspaceId,
-        'task',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const fileRepository = this.coreDataSource.getRepository(FileEntity);
-
-    await this.migrateActivityTable({
-      activityRepository: noteRepository,
-      attachmentRepository,
-      fileRepository,
-      activityType: 'note',
-      targetColumnName: 'targetNoteId',
-      workspaceId,
-      twentyStandardApplication: twentyStandardFlatApplication,
-      fileFieldMetadata: attachmentFileFieldMetadata,
-      isDryRun,
-    });
-
-    await this.migrateActivityTable({
-      activityRepository: taskRepository,
-      attachmentRepository,
-      fileRepository,
-      activityType: 'task',
-      targetColumnName: 'targetTaskId',
-      workspaceId,
-      twentyStandardApplication: twentyStandardFlatApplication,
-      fileFieldMetadata: attachmentFileFieldMetadata,
-      isDryRun,
-    });
-
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
-        workspaceId,
-      );
-    }
-
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Completed activity rich text attachment file IDs migration for workspace ${workspaceId}`,
-    );
+    }, systemAuthContext);
   }
 
   private async migrateActivityTable({
@@ -444,7 +449,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
 
       return fileId;
     } catch (error) {
-      this.logger.error(
+      this.logger.warn(
         `Failed to create attachment from URL ${url}: ${error.message}`,
       );
 

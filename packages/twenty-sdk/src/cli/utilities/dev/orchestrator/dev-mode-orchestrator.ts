@@ -7,7 +7,10 @@ import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/st
 import { EnsureValidTokensOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/ensure-valid-tokens-orchestrator-step';
 import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
 import { ResolveApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
-import { StartWatchersOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
+import {
+  StartWatchersOrchestratorStep,
+  type FileBuiltEvent,
+} from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import * as fs from 'fs-extra';
@@ -69,7 +72,7 @@ export class DevModeOrchestrator {
     this.startWatchersStep = new StartWatchersOrchestratorStep({
       ...stepDeps,
       scheduleSync: this.scheduleSync.bind(this),
-      uploadFilesStep: this.uploadFilesStep,
+      onFileBuilt: this.handleFileBuilt.bind(this),
     });
   }
 
@@ -88,6 +91,16 @@ export class DevModeOrchestrator {
 
   getState(): OrchestratorState {
     return this.state;
+  }
+
+  private handleFileBuilt(event: FileBuiltEvent): void {
+    if (this.state.steps.uploadFiles.output.fileUploader) {
+      this.uploadFilesStep.uploadFile(
+        event.builtPath,
+        event.sourcePath,
+        event.fileFolder,
+      );
+    }
   }
 
   private scheduleSync(): void {
@@ -150,11 +163,9 @@ export class DevModeOrchestrator {
       }
     }
 
-    if (this.state.hasObjectsOrFieldsChanged(buildResult.manifest!)) {
-      await this.generateApiClientStep.execute({
-        appPath: this.state.appPath,
-      });
-    }
+    const objectsOrFieldsChanged = this.state.hasObjectsOrFieldsChanged(
+      buildResult.manifest!,
+    );
 
     await this.uploadFilesStep.waitForUploads();
 
@@ -163,6 +174,16 @@ export class DevModeOrchestrator {
       builtFileInfos: this.state.steps.uploadFiles.output.builtFileInfos,
       appPath: this.state.appPath,
     });
+
+    if (objectsOrFieldsChanged) {
+      await this.generateApiClientStep.execute({
+        appPath: this.state.appPath,
+      });
+
+      await this.uploadFilesStep.copyAndUploadApiClientFiles(
+        this.state.appPath,
+      );
+    }
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {

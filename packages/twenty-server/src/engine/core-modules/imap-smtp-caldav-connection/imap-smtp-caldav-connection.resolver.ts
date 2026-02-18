@@ -107,7 +107,7 @@ export class ImapSmtpCaldavResolver {
 
       if (params) {
         validatedParams[protocol] =
-          this.mailConnectionValidatorService.validateProtocolConnectionParams(
+          await this.mailConnectionValidatorService.validateProtocolConnectionParams(
             params,
           );
         const validatedProtocolParams = validatedParams[protocol];

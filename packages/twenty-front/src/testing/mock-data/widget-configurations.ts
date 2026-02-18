@@ -32,6 +32,7 @@ export const TEST_BAR_CHART_CONFIGURATION: TypedBarChartConfiguration = {
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
   axisNameDisplay: AxisNameDisplay.NONE,
+  splitMultiValueFields: false,
 };
 
 export const TEST_BAR_CHART_CONFIGURATION_HORIZONTAL: TypedBarChartConfiguration =
@@ -50,6 +51,7 @@ export const TEST_LINE_CHART_CONFIGURATION: TypedLineChartConfiguration = {
   primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
   displayDataLabel: true,
   axisNameDisplay: AxisNameDisplay.NONE,
+  splitMultiValueFields: false,
 };
 
 export const TEST_PIE_CHART_CONFIGURATION: TypedPieChartConfiguration = {
@@ -62,6 +64,7 @@ export const TEST_PIE_CHART_CONFIGURATION: TypedPieChartConfiguration = {
   dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
   orderBy: GraphOrderBy.VALUE_DESC,
   displayDataLabel: true,
+  splitMultiValueFields: false,
 };
 
 export const TEST_AGGREGATE_CHART_CONFIGURATION: TypedAggregateChartConfiguration =

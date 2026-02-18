@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
+import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { type OutboundRequestContext } from './outbound-request-context.type';
@@ -59,5 +60,29 @@ export class SecureHttpClientService {
   // (e.g., the server's own API endpoints). Not SSRF-protected.
   getInternalHttpClient(config?: CreateAxiosDefaults): AxiosInstance {
     return axios.create(config);
+  }
+
+  async getValidatedHost(hostnameOrUrl: string): Promise<string> {
+    if (!this.isSafeModeEnabled()) {
+      return hostnameOrUrl;
+    }
+
+    return resolveAndValidateHostname(hostnameOrUrl);
+  }
+
+  async getValidatedUrl(serverUrl: string): Promise<string> {
+    if (!this.isSafeModeEnabled()) {
+      return serverUrl;
+    }
+    const resolvedIp = await resolveAndValidateHostname(serverUrl);
+    const url = new URL(serverUrl);
+
+    url.hostname = resolvedIp;
+
+    return url.toString();
+  }
+
+  private isSafeModeEnabled(): boolean {
+    return this.twentyConfigService.get('OUTBOUND_HTTP_SAFE_MODE_ENABLED');
   }
 }

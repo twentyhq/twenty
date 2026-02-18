@@ -4,7 +4,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useListenToObjectRecordEventsForQuery } from '@/sse-db-event/hooks/useListenToObjectRecordEventsForQuery';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
@@ -26,7 +26,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
 
   const queryId = `record-table-virtualized-${objectMetadataItem.nameSingular}`;
 
-  useListenToObjectRecordEventsForQuery({
+  useListenToEventsForQuery({
     queryId,
     operationSignature: {
       objectNameSingular: objectMetadataItem.nameSingular,

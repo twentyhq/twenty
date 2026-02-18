@@ -1,9 +1,15 @@
 import { FieldType } from '@/sdk';
 import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+  ViewType,
+} from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  pageLayouts: [],
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',
@@ -28,6 +34,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
+    apiClientChecksum: null,
   },
   frontComponents: [
     {
@@ -70,6 +77,50 @@ export const EXPECTED_MANIFEST: Manifest = {
 
   fields: [
     {
+      label: 'Post Card',
+      name: 'postCard',
+      objectUniversalIdentifier: 'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      relationTargetObjectMetadataUniversalIdentifier:
+        '54b589ca-eeed-4950-a176-358418b85c05',
+      type: FieldType.RELATION,
+      universalIdentifier: 'a1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+      universalSettings: {
+        joinColumnName: 'postCardId',
+        onDelete: RelationOnDeleteAction.CASCADE,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      label: 'Post Card Recipients',
+      name: 'postCardRecipients',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'a1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.RELATION,
+      universalIdentifier: 'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      universalSettings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    {
+      label: 'Post Card Recipients',
+      name: 'postCardRecipients',
+      objectUniversalIdentifier: 'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'a1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.RELATION,
+      universalIdentifier: 'a1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+      universalSettings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    {
       objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
       description: 'Post card category',
       label: 'Category',
@@ -77,18 +128,21 @@ export const EXPECTED_MANIFEST: Manifest = {
       options: [
         {
           color: 'blue',
+          id: 'c1d2e3f4-0001-4000-8000-000000000001',
           label: 'Personal',
           position: 0,
           value: 'PERSONAL',
         },
         {
           color: 'green',
+          id: 'c1d2e3f4-0002-4000-8000-000000000002',
           label: 'Business',
           position: 1,
           value: 'BUSINESS',
         },
         {
           color: 'orange',
+          id: 'c1d2e3f4-0003-4000-8000-000000000003',
           label: 'Promotional',
           position: 2,
           value: 'PROMOTIONAL',
@@ -104,6 +158,22 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'priority',
       type: FieldType.NUMBER,
       universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+    },
+    {
+      label: 'Recipient',
+      name: 'recipient',
+      objectUniversalIdentifier: 'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'a1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      type: FieldType.RELATION,
+      universalIdentifier: 'a1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
+      universalSettings: {
+        joinColumnName: 'recipientId',
+        onDelete: RelationOnDeleteAction.CASCADE,
+        relationType: RelationType.MANY_TO_ONE,
+      },
     },
   ],
   objects: [
@@ -209,6 +279,104 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000001',
     },
     {
+      description: 'Junction object linking post cards to their recipients',
+      fields: [
+        {
+          defaultValue: null,
+          icon: 'IconClock',
+          isNullable: true,
+          label: 'Sent at',
+          name: 'sentAt',
+          type: FieldType.DATE_TIME,
+          universalIdentifier: 'e2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+        },
+        {
+          defaultValue: 'uuid',
+          description: 'Id',
+          icon: 'Icon123',
+          isNullable: false,
+          label: 'Id',
+          name: 'id',
+          type: FieldMetadataType.UUID,
+          universalIdentifier: '2809d745-deb3-5ac0-8328-ea6256ec22b3',
+        },
+        {
+          defaultValue: null,
+          description: 'Name',
+          icon: 'IconAbc',
+          isNullable: true,
+          label: 'Name',
+          name: 'name',
+          type: FieldMetadataType.TEXT,
+          universalIdentifier: 'a6ee6cc8-b9a0-5e23-a39e-bc3fee2aa3d3',
+        },
+        {
+          defaultValue: 'now',
+          description: 'Creation date',
+          icon: 'IconCalendar',
+          isNullable: false,
+          label: 'Creation date',
+          name: 'createdAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: '87ad23b6-b04e-5dc1-9907-c1eca54ea6d6',
+        },
+        {
+          defaultValue: 'now',
+          description: 'Last time the record was changed',
+          icon: 'IconCalendarClock',
+          isNullable: false,
+          label: 'Last update',
+          name: 'updatedAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: '6d7523dc-c097-5b75-96eb-37502d09cc19',
+        },
+        {
+          defaultValue: null,
+          description: 'Deletion date',
+          icon: 'IconCalendarClock',
+          isNullable: true,
+          label: 'Deleted at',
+          name: 'deletedAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: 'bd4fe2fa-373a-5fdd-ba09-cb5435781e4c',
+        },
+        {
+          defaultValue: {
+            name: "''",
+            source: "'MANUAL'",
+          },
+          description: 'The creator of the record',
+          icon: 'IconCreativeCommonsSa',
+          isNullable: false,
+          label: 'Created by',
+          name: 'createdBy',
+          type: FieldMetadataType.ACTOR,
+          universalIdentifier: 'c5026f20-ab7a-54e0-900e-37a2d5381aee',
+        },
+        {
+          defaultValue: {
+            name: "''",
+            source: "'MANUAL'",
+          },
+          description: 'The workspace member who last updated the record',
+          icon: 'IconUserCircle',
+          isNullable: false,
+          label: 'Updated by',
+          name: 'updatedBy',
+          type: FieldMetadataType.ACTOR,
+          universalIdentifier: '1dd75ff5-5fd0-51df-b3a3-a12e3aff30df',
+        },
+      ],
+      icon: 'IconLink',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'a6ee6cc8-b9a0-5e23-a39e-bc3fee2aa3d3',
+      labelPlural: 'Post Card Recipients',
+      labelSingular: 'Post Card Recipient',
+      namePlural: 'postCardRecipients',
+      nameSingular: 'postCardRecipient',
+      universalIdentifier: 'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+    },
+    {
       description: 'A post card object',
       fields: [
         {
@@ -241,24 +409,28 @@ export const EXPECTED_MANIFEST: Manifest = {
           options: [
             {
               color: 'gray',
+              id: 'a1b2c3d4-0001-4000-8000-000000000001',
               label: 'Draft',
               position: 0,
               value: 'DRAFT',
             },
             {
               color: 'orange',
+              id: 'a1b2c3d4-0002-4000-8000-000000000002',
               label: 'Sent',
               position: 1,
               value: 'SENT',
             },
             {
               color: 'green',
+              id: 'a1b2c3d4-0003-4000-8000-000000000003',
               label: 'Delivered',
               position: 2,
               value: 'DELIVERED',
             },
             {
               color: 'orange',
+              id: 'a1b2c3d4-0004-4000-8000-000000000004',
               label: 'Returned',
               position: 3,
               value: 'RETURNED',
@@ -362,6 +534,109 @@ export const EXPECTED_MANIFEST: Manifest = {
       nameSingular: 'postCard',
       universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
+    {
+      description: 'A person or organization that receives post cards',
+      fields: [
+        {
+          icon: 'IconMail',
+          label: 'Email',
+          name: 'email',
+          type: FieldType.EMAILS,
+          universalIdentifier: 'd2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          icon: 'IconHome',
+          label: 'Address',
+          name: 'address',
+          type: FieldType.ADDRESS,
+          universalIdentifier: 'd3a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          defaultValue: 'uuid',
+          description: 'Id',
+          icon: 'Icon123',
+          isNullable: false,
+          label: 'Id',
+          name: 'id',
+          type: FieldMetadataType.UUID,
+          universalIdentifier: '71aa41d7-54d0-5447-bf98-f37435b62bc4',
+        },
+        {
+          defaultValue: null,
+          description: 'Name',
+          icon: 'IconAbc',
+          isNullable: true,
+          label: 'Name',
+          name: 'name',
+          type: FieldMetadataType.TEXT,
+          universalIdentifier: 'ff07c707-df79-58fa-91a4-c60c31f90e6e',
+        },
+        {
+          defaultValue: 'now',
+          description: 'Creation date',
+          icon: 'IconCalendar',
+          isNullable: false,
+          label: 'Creation date',
+          name: 'createdAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: '8dd42a57-7aca-5e60-89c1-6e0e430dad43',
+        },
+        {
+          defaultValue: 'now',
+          description: 'Last time the record was changed',
+          icon: 'IconCalendarClock',
+          isNullable: false,
+          label: 'Last update',
+          name: 'updatedAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: 'a81e915c-f21d-5163-a547-f04029655bf0',
+        },
+        {
+          defaultValue: null,
+          description: 'Deletion date',
+          icon: 'IconCalendarClock',
+          isNullable: true,
+          label: 'Deleted at',
+          name: 'deletedAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: '33ba5fa8-dbc3-5a08-b0e0-d85b18ff15e0',
+        },
+        {
+          defaultValue: {
+            name: "''",
+            source: "'MANUAL'",
+          },
+          description: 'The creator of the record',
+          icon: 'IconCreativeCommonsSa',
+          isNullable: false,
+          label: 'Created by',
+          name: 'createdBy',
+          type: FieldMetadataType.ACTOR,
+          universalIdentifier: '7c377262-63b7-5a79-ba54-f7b8acd804dc',
+        },
+        {
+          defaultValue: {
+            name: "''",
+            source: "'MANUAL'",
+          },
+          description: 'The workspace member who last updated the record',
+          icon: 'IconUserCircle',
+          isNullable: false,
+          label: 'Updated by',
+          name: 'updatedBy',
+          type: FieldMetadataType.ACTOR,
+          universalIdentifier: '8da8e149-b60e-52e2-878d-73d05c8312b2',
+        },
+      ],
+      icon: 'IconUser',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'ff07c707-df79-58fa-91a4-c60c31f90e6e',
+      labelPlural: 'Recipients',
+      labelSingular: 'Recipient',
+      namePlural: 'recipients',
+      nameSingular: 'recipient',
+      universalIdentifier: 'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+    },
   ],
   roles: [
     {
@@ -409,8 +684,87 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],
-  views: [],
-  navigationMenuItems: [],
+  views: [
+    {
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            'e2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconLink',
+      name: 'All Post Card Recipients',
+      objectUniversalIdentifier: 'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      position: 2,
+      type: ViewType.TABLE,
+      universalIdentifier: 'b1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0001-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          fieldMetadataUniversalIdentifier:
+            '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+          isVisible: true,
+          position: 1,
+          size: 150,
+          universalIdentifier: 'bf1a2b3c-0002-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconMail',
+      name: 'All Post Cards',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      position: 0,
+      type: ViewType.TABLE,
+      universalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            'd2a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0003-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconUser',
+      name: 'All Recipients',
+      objectUniversalIdentifier: 'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      position: 1,
+      type: ViewType.TABLE,
+      universalIdentifier: 'b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+  ],
+  navigationMenuItems: [
+    {
+      position: 2,
+      universalIdentifier: 'c1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+      viewUniversalIdentifier: 'b1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      position: 0,
+      universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      position: 1,
+      universalIdentifier: 'c1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+      viewUniversalIdentifier: 'b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+  ],
   logicFunctions: [
     {
       builtHandlerChecksum: '[checksum]',
@@ -441,6 +795,39 @@ export const EXPECTED_MANIFEST: Manifest = {
         path: '/greet',
       },
       universalIdentifier: '9d412d9e-2caf-487c-8b66-d1585883dd4e',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
+      builtHandlerPath: 'src/logic-functions/lookup-recipient.function.mjs',
+      description: 'Look up a recipient by name to find their details',
+      handlerName: 'default.config.handler',
+      isTool: true,
+      name: 'lookup-recipient',
+      sourceHandlerPath: 'src/logic-functions/lookup-recipient.function.ts',
+      timeoutSeconds: 5,
+      toolInputSchema: {
+        type: 'object',
+        properties: {
+          recipientName: {
+            type: 'string',
+          },
+        },
+      },
+      universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
+      builtHandlerPath: 'src/logic-functions/on-post-card-created.function.mjs',
+      databaseEventTriggerSettings: {
+        eventName: 'postCard.created',
+      },
+      description: 'Triggered when a new post card is created',
+      handlerName: 'default.config.handler',
+      name: 'on-post-card-created',
+      sourceHandlerPath: 'src/logic-functions/on-post-card-created.function.ts',
+      timeoutSeconds: 5,
+      toolInputSchema: { type: 'object', properties: {} },
+      universalIdentifier: 'a1b2c3d4-db01-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
       builtHandlerChecksum: '[checksum]',

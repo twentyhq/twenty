@@ -1,6 +1,7 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { METADATA_EVENTS_TO_EMIT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/metadata-event-to-emit.constant';
 import {
   type CreateMetadataEvent,
   type MetadataEvent,
@@ -8,6 +9,14 @@ import {
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 export const deriveMetadataEventsFromCreateAction = (
+  flatAction: AllFlatWorkspaceMigrationAction<'create'>,
+): MetadataEvent[] => {
+  const events = deriveAllMetadataEventsFromCreateAction(flatAction);
+
+  return events.filter((event) => METADATA_EVENTS_TO_EMIT[event.metadataName]);
+};
+
+const deriveAllMetadataEventsFromCreateAction = (
   flatAction: AllFlatWorkspaceMigrationAction<'create'>,
 ): MetadataEvent[] => {
   switch (flatAction.metadataName) {

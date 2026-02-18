@@ -36,7 +36,7 @@ export class GmailMessagesImportErrorHandler {
     }
 
     throw new MessageImportDriverException(
-      'Unknown error',
+      `Gmail message import error: ${error instanceof Error ? error.message : String(error)}`,
       MessageImportDriverExceptionCode.UNKNOWN,
     );
   }

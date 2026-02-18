@@ -8,6 +8,7 @@ import {
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-plugin';
 import * as esbuild from 'esbuild';
 import path from 'path';
 import { OUTPUT_DIR, NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
@@ -214,7 +215,10 @@ export const createLogicFunctionsWatcher = (
       externalModules: LOGIC_FUNCTION_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
-      extraPlugins: [createSdkGeneratedResolverPlugin(options.appPath)],
+      extraPlugins: [
+        createTypecheckPlugin(options.appPath),
+        createSdkGeneratedResolverPlugin(options.appPath),
+      ],
       banner: NODE_ESM_CJS_BANNER,
     },
   });
@@ -229,6 +233,7 @@ export const createFrontComponentsWatcher = (
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
       extraPlugins: [
+        createTypecheckPlugin(options.appPath),
         createSdkGeneratedResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),
       ],

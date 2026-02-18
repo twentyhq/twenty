@@ -23,8 +23,8 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
@@ -64,7 +64,7 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
       showAuthModal ||
       isSettingsPage ||
       !isWorkspaceActive ||
-      isNavigationMenuItemEnabled,
+      isNavigationMenuItemEditingEnabled,
   });
 
   const { records: favoriteFolders } = useFindManyRecords({
@@ -75,7 +75,7 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
       showAuthModal ||
       isSettingsPage ||
       !isWorkspaceActive ||
-      isNavigationMenuItemEnabled,
+      isNavigationMenuItemEditingEnabled,
   });
 
   const setPrefetchFavoritesState = useRecoilCallback(
