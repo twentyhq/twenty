@@ -11,14 +11,4 @@ export default defineLogicFunction({
   timeoutSeconds: 5,
   handler,
   isTool: true,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      recipientName: {
-        type: 'string',
-        description: 'The name of the recipient to look up',
-      },
-    },
-    required: ['recipientName'],
-  },
 });

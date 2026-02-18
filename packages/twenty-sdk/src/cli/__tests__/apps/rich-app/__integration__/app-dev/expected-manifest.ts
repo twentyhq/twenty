@@ -809,11 +809,9 @@ export const EXPECTED_MANIFEST: Manifest = {
         type: 'object',
         properties: {
           recipientName: {
-            description: 'The name of the recipient to look up',
             type: 'string',
           },
         },
-        required: ['recipientName'],
       },
       universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
     },
