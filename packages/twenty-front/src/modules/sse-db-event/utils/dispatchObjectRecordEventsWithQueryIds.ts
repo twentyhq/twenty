@@ -1,22 +1,20 @@
 import { type ObjectRecordEventsByQueryId } from '@/sse-db-event/types/ObjectRecordEventsByQueryId';
 import { getObjectRecordEventsForQueryEventName } from '@/sse-db-event/utils/getObjectRecordEventsForQueryEventName';
 import { isDefined } from 'twenty-shared/utils';
-import { type EventWithQueryIds } from '~/generated-metadata/graphql';
+import { type ObjectRecordEventWithQueryIds } from '~/generated-metadata/graphql';
 
 export const dispatchObjectRecordEventsWithQueryIds = (
-  objectRecordEventsWithQueryIds: EventWithQueryIds[],
+  objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIds[],
 ) => {
   const objectRecordEventsByQueryId: ObjectRecordEventsByQueryId = {};
 
-  for (const objectRecordEventWithQueryIds of objectRecordEventsWithQueryIds) {
-    for (const queryId of objectRecordEventWithQueryIds.queryIds) {
+  for (const item of objectRecordEventsWithQueryIds) {
+    for (const queryId of item.queryIds) {
       if (!isDefined(objectRecordEventsByQueryId[queryId])) {
         objectRecordEventsByQueryId[queryId] = [];
       }
 
-      objectRecordEventsByQueryId[queryId].push(
-        objectRecordEventWithQueryIds.event,
-      );
+      objectRecordEventsByQueryId[queryId].push(item.objectRecordEvent);
     }
   }
 

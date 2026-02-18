@@ -116,6 +116,7 @@ export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
+export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignature';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export type { NonNullableRequired } from './NonNullableRequired';

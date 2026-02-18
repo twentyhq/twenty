@@ -139,7 +139,7 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn twenty app:dev` автоматически генерирует типизированный клиент Twenty в `node_modules/twenty-sdk/generated`.
+* `yarn twenty app:dev` автоматически сгенерирует типизированный клиент API в `node_modules/twenty-sdk/generated` (типизированный клиент Twenty + типы рабочего пространства).
 * `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов или ролей.
 
 ## Аутентификация
@@ -659,7 +659,7 @@ export default defineFrontComponent({
 
 ### Сгенерированный типизированный клиент
 
-Типизированный клиент автоматически генерируется командой `yarn twenty app:dev` и сохраняется в `node_modules/twenty-sdk/generated`. Используйте его в своих функциях:
+Типизированный клиент автоматически генерируется с помощью `yarn twenty app:dev` и сохраняется в `node_modules/twenty-sdk/generated` на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
 
 ```typescript
 import Twenty from '~/generated';
@@ -668,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Клиент автоматически перегенерируется при запуске `app:dev`.
+Клиент автоматически перегенерируется с помощью `yarn twenty app:dev` при изменении ваших объектов или полей.
 
 #### Учётные данные времени выполнения в логических функциях
 
@@ -711,7 +711,7 @@ yarn add -D twenty-sdk
 
 * Ошибки аутентификации: выполните `yarn twenty auth:login` и убедитесь, что у вашего ключа API есть необходимые права.
 * Не удаётся подключиться к серверу: проверьте URL API и доступность сервера Twenty.
-* Типы или клиент отсутствуют/устарели: перезапустите `yarn twenty app:dev`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Режим разработки не синхронизируется: убедитесь, что запущен `yarn twenty app:dev`, и что ваша среда не игнорирует изменения.
 
 Канал помощи в Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

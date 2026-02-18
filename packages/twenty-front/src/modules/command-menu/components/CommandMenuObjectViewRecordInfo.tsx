@@ -3,10 +3,9 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { ViewKey } from '@/views/types/ViewKey';
 
 export const CommandMenuObjectViewRecordInfo = () => {
   const { t } = useLingui();
@@ -22,19 +21,20 @@ export const CommandMenuObjectViewRecordInfo = () => {
     return null;
   }
 
-  const isViewOrRecord =
-    processedItem.itemType === NavigationMenuItemType.VIEW ||
-    processedItem.itemType === NavigationMenuItemType.RECORD;
+  const isViewOrRecord = [
+    NavigationMenuItemType.VIEW,
+    NavigationMenuItemType.RECORD,
+  ].includes(processedItem.itemType);
+
   if (!isViewOrRecord) {
     return null;
   }
 
-  const label =
-    processedItem.itemType === NavigationMenuItemType.RECORD
+  const label = isViewOrRecord
+    ? processedItem.itemType === NavigationMenuItemType.RECORD
       ? t`record`
-      : processedItem.viewKey === ViewKey.Index
-        ? t`object`
-        : t`view`;
+      : t`view`
+    : t`object`;
 
   return (
     <CommandMenuPageInfoLayout

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -14,7 +13,8 @@ import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
 
@@ -29,8 +29,8 @@ type CommandMenuPageInfoProps = {
 };
 
 export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
-  const selectedNavigationMenuItemInEditMode = useRecoilValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+    selectedNavigationMenuItemInEditModeStateV2,
   );
   const items = useWorkspaceSectionItems();
 

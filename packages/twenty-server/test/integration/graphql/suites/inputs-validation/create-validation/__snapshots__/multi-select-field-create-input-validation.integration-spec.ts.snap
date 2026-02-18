@@ -2,16 +2,4 @@
 
 exports[`Create input validation - MULTI_SELECT Gql create input - failure MULTI_SELECT - should fail with : {"multiSelectField":"not-a-select-option"} 1`] = `"Value "not-a-select-option" does not exist in "ApiInputValidationTestObjectMultiSelectFieldEnum" enum."`;
 
-exports[`Create input validation - MULTI_SELECT Gql create input - failure MULTI_SELECT - should fail with : {"multiSelectField":{}} 1`] = `"Enum "ApiInputValidationTestObjectMultiSelectFieldEnum" cannot represent non-string value: {}."`;
-
-exports[`Create input validation - MULTI_SELECT Gql create input - failure MULTI_SELECT - should fail with : {"multiSelectField":1} 1`] = `"Enum "ApiInputValidationTestObjectMultiSelectFieldEnum" cannot represent non-string value: 1."`;
-
-exports[`Create input validation - MULTI_SELECT Gql create input - failure MULTI_SELECT - should fail with : {"multiSelectField":true} 1`] = `"Enum "ApiInputValidationTestObjectMultiSelectFieldEnum" cannot represent non-string value: true."`;
-
 exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":"not-a-select-option"} 1`] = `"["Invalid value 'not-a-select-option' for multi select field \\"multiSelectField\\""]"`;
-
-exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":{}} 1`] = `"["Invalid value {} for field \\"multiSelectField - Array values need to be string\\""]"`;
-
-exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":1} 1`] = `"["Invalid value 1 for field \\"multiSelectField - Array values need to be string\\""]"`;
-
-exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":true} 1`] = `"["Invalid value true for field \\"multiSelectField - Array values need to be string\\""]"`;

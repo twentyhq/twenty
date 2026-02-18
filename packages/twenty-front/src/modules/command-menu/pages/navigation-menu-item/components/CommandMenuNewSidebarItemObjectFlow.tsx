@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView';
@@ -9,7 +8,9 @@ import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/page
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -33,11 +34,11 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const addMenuItemInsertionContext = useRecoilValue(
-    addMenuItemInsertionContextState,
+  const addMenuItemInsertionContext = useRecoilValueV2(
+    addMenuItemInsertionContextStateV2,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilState(
-    addMenuItemInsertionContextState,
+  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
+    addMenuItemInsertionContextStateV2,
   );
   const { views, objectMetadataIdsWithIndexView } =
     useNavigationMenuObjectMetadataFromDraft(currentDraft);

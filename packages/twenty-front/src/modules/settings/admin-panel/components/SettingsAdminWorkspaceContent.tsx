@@ -5,7 +5,7 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
+import { userLookupResultStateV2 } from '@/settings/admin-panel/states/userLookupResultStateV2';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,6 +18,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
@@ -69,7 +70,7 @@ export const SettingsAdminWorkspaceContent = ({
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useRecoilValue(userLookupResultState);
+  const userLookupResult = useRecoilValueV2(userLookupResultStateV2);
 
   const { t } = useLingui();
 

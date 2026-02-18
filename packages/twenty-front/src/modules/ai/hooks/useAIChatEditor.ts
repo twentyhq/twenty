@@ -6,11 +6,11 @@ import { Text } from '@tiptap/extension-text';
 import { Placeholder } from '@tiptap/extensions';
 import { useEditor } from '@tiptap/react';
 import { useCallback, useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
@@ -25,7 +25,7 @@ type UseAIChatEditorProps = {
 };
 
 export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
-  const setAgentChatInput = useSetRecoilState(agentChatInputState);
+  const setAgentChatInput = useSetRecoilStateV2(agentChatInputStateV2);
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

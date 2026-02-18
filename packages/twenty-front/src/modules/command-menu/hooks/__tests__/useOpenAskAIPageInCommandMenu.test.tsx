@@ -1,9 +1,12 @@
 import { renderHook, act } from '@testing-library/react';
-import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
+import { RecoilRoot } from 'recoil';
 
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconSparkles } from 'twenty-ui/display';
 
 const navigateCommandMenuMock = jest.fn();
@@ -17,22 +20,22 @@ jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
   }),
 }));
 
-const renderWithRecoil = (
-  initializeState?: (snapshot: MutableSnapshot) => void,
-) =>
-  renderHook(() => useOpenAskAIPageInCommandMenu(), {
-    wrapper: ({ children }) => (
-      <RecoilRoot initializeState={initializeState}>{children}</RecoilRoot>
-    ),
-  });
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>{children}</RecoilRoot>
+  </JotaiProvider>
+);
 
 describe('useOpenAskAIPageInCommandMenu', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jotaiStore.set(isCommandMenuOpenedStateV2.atom, false);
   });
 
   it('should navigate to AskAI page with correct defaults', () => {
-    const { result } = renderWithRecoil();
+    const { result } = renderHook(() => useOpenAskAIPageInCommandMenu(), {
+      wrapper: Wrapper,
+    });
 
     act(() => {
       result.current.openAskAIPage();
@@ -48,8 +51,10 @@ describe('useOpenAskAIPageInCommandMenu', () => {
   });
 
   it('should use resetNavigationStack from argument when provided', () => {
-    const { result } = renderWithRecoil((snapshot) => {
-      snapshot.set(isCommandMenuOpenedState, true);
+    jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+
+    const { result } = renderHook(() => useOpenAskAIPageInCommandMenu(), {
+      wrapper: Wrapper,
     });
 
     act(() => {
@@ -64,8 +69,10 @@ describe('useOpenAskAIPageInCommandMenu', () => {
   });
 
   it('should default resetNavigationStack to isCommandMenuOpened', () => {
-    const { result } = renderWithRecoil((snapshot) => {
-      snapshot.set(isCommandMenuOpenedState, true);
+    jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+
+    const { result } = renderHook(() => useOpenAskAIPageInCommandMenu(), {
+      wrapper: Wrapper,
     });
 
     act(() => {
