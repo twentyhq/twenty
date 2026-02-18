@@ -1,6 +1,8 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -18,10 +20,15 @@ import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/wor
 
 const SYSTEM_FIELD_NAMES = Object.keys(PARTIAL_SYSTEM_FLAT_FIELD_METADATAS);
 
+const POSITION_FIELDS_TO_FIX_TYPE = [
+  STANDARD_OBJECTS.favorite.fields.position.universalIdentifier,
+  STANDARD_OBJECTS.favoriteFolder.fields.position.universalIdentifier,
+];
+
 @Command({
   name: 'upgrade:1-18:backfill-system-fields-is-system',
   description:
-    'Set isSystem to true for all field metadata matching system field names (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position, searchVector)',
+    'Set isSystem to true for all field metadata matching system field names (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position, searchVector) and fix position field type for favorite/favoriteFolder',
 })
 export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -50,7 +57,7 @@ export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorksp
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would set isSystem=true for fields named [${SYSTEM_FIELD_NAMES.join(', ')}] in workspace ${workspaceId}. Skipping.`,
+        `[DRY RUN] Would set isSystem=true for fields named [${SYSTEM_FIELD_NAMES.join(', ')}] and fix position field types in workspace ${workspaceId}. Skipping.`,
       );
 
       return;
@@ -61,7 +68,9 @@ export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorksp
     await queryRunner.connect();
 
     try {
-      const result = await queryRunner.query(
+      let needsCacheInvalidation = false;
+
+      const isSystemResult = await queryRunner.query(
         `UPDATE core."fieldMetadata"
          SET "isSystem" = true
          WHERE "workspaceId" = $1
@@ -70,13 +79,39 @@ export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorksp
         [workspaceId, SYSTEM_FIELD_NAMES],
       );
 
-      const updatedCount = result?.[1] ?? 0;
+      const isSystemUpdatedCount = isSystemResult?.[1] ?? 0;
 
-      if (updatedCount > 0) {
+      if (isSystemUpdatedCount > 0) {
         this.logger.log(
-          `Set isSystem=true for ${updatedCount} field(s) in workspace ${workspaceId}`,
+          `Set isSystem=true for ${isSystemUpdatedCount} field(s) in workspace ${workspaceId}`,
         );
+        needsCacheInvalidation = true;
+      }
 
+      const positionTypeResult = await queryRunner.query(
+        `UPDATE core."fieldMetadata"
+         SET "type" = $1
+         WHERE "workspaceId" = $2
+           AND "universalIdentifier" = ANY($3)
+           AND "type" = $4`,
+        [
+          FieldMetadataType.POSITION,
+          workspaceId,
+          POSITION_FIELDS_TO_FIX_TYPE,
+          FieldMetadataType.NUMBER,
+        ],
+      );
+
+      const positionTypeUpdatedCount = positionTypeResult?.[1] ?? 0;
+
+      if (positionTypeUpdatedCount > 0) {
+        this.logger.log(
+          `Fixed type from NUMBER to POSITION for ${positionTypeUpdatedCount} field(s) in workspace ${workspaceId}`,
+        );
+        needsCacheInvalidation = true;
+      }
+
+      if (needsCacheInvalidation) {
         await this.invalidateCaches(workspaceId);
       } else {
         this.logger.log(
