@@ -17,9 +17,8 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { SerializedRelation } from 'twenty-shared/types';
+import { AggregateOperations, SerializedRelation } from 'twenty-shared/types';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -111,6 +110,11 @@ export class BarChartConfigurationDTO
   @IsBoolean()
   @IsOptional()
   omitNullValues?: boolean;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  splitMultiValueFields?: boolean;
 
   @Field(() => AxisNameDisplay, {
     nullable: true,

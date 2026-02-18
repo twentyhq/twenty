@@ -7,11 +7,10 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 const VIEW_WITH_CALENDAR_FIELDS = `
   id

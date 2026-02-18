@@ -3,18 +3,20 @@ import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-exec
 import chalk from 'chalk';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
+import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 
 export class LogicFunctionExecuteCommand {
   private apiService = new ApiService();
 
   async execute({
     appPath = CURRENT_EXECUTION_DIRECTORY,
+    postInstall = false,
     functionUniversalIdentifier,
     functionName,
     payload = '{}',
   }: {
     appPath?: string;
+    postInstall?: boolean;
     functionUniversalIdentifier?: string;
     functionName?: string;
     payload?: string;
@@ -30,7 +32,7 @@ export class LogicFunctionExecuteCommand {
         process.exit(1);
       }
 
-      const { manifest } = await buildManifest(appPath);
+      const manifest = await readManifestFromFile(appPath);
 
       if (!manifest) {
         console.error(chalk.red('Failed to build manifest.'));
@@ -54,6 +56,12 @@ export class LogicFunctionExecuteCommand {
       );
 
       const targetFunction = appFunctions.find((fn) => {
+        if (postInstall) {
+          return (
+            fn.universalIdentifier ===
+            manifest.application.postInstallLogicFunctionUniversalIdentifier
+          );
+        }
         if (functionUniversalIdentifier) {
           return fn.universalIdentifier === functionUniversalIdentifier;
         }
@@ -64,7 +72,9 @@ export class LogicFunctionExecuteCommand {
       });
 
       if (!targetFunction) {
-        const identifier = functionUniversalIdentifier || functionName;
+        const identifier = postInstall
+          ? 'post install'
+          : functionUniversalIdentifier || functionName;
         console.error(
           chalk.red(`Function "${identifier}" not found in application.`),
         );

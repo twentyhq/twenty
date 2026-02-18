@@ -9,6 +9,7 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export { AggregateOperations } from './AggregateOperations';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
@@ -115,6 +116,7 @@ export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
+export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignature';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -141,6 +143,7 @@ export type {
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetPosition,
 } from './page-layout/page-layout-widget-position.type';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
@@ -215,5 +218,9 @@ export type {
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
+export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
+export { ViewOpenRecordIn } from './ViewOpenRecordIn';
+export { ViewType } from './ViewType';
+export { ViewVisibility } from './ViewVisibility';

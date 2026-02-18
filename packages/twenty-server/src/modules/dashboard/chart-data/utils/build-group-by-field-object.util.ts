@@ -78,6 +78,7 @@ export type BuildGroupByFieldObjectParams = {
   firstDayOfTheWeek?: CalendarStartDay | null;
   isNestedDateField?: boolean;
   timeZone?: string;
+  shouldUnnest?: boolean;
 };
 
 export const buildGroupByFieldObject = ({
@@ -87,6 +88,7 @@ export const buildGroupByFieldObject = ({
   firstDayOfTheWeek,
   isNestedDateField,
   timeZone,
+  shouldUnnest,
 }: BuildGroupByFieldObjectParams): GroupByFieldObject => {
   const isRelation = isMorphOrRelationFlatFieldMetadata(fieldMetadata);
   const isComposite = isCompositeFieldMetadataType(fieldMetadata.type);
@@ -154,6 +156,10 @@ export const buildGroupByFieldObject = ({
     });
 
     return { [fieldMetadata.name]: dateGroupByObject };
+  }
+
+  if (shouldUnnest) {
+    return { [fieldMetadata.name]: { unnest: true } };
   }
 
   return { [fieldMetadata.name]: true };

@@ -179,6 +179,11 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           {hasAccess ? (
             <ErrorBoundary
               FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
+              resetKeys={[
+                widget.id,
+                widget.configuration,
+                widget.objectMetadataId,
+              ]}
             >
               <WidgetContentRenderer widget={widget} />
             </ErrorBoundary>

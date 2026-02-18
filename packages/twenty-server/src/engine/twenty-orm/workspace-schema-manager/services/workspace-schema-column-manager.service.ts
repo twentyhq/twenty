@@ -2,7 +2,7 @@ import { type ColumnType, type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaColumnManagerService {
   async addColumns({
@@ -18,12 +18,10 @@ export class WorkspaceSchemaColumnManagerService {
   }): Promise<void> {
     if (columnDefinitions.length === 0) return;
 
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
     const addColumnClauses = columnDefinitions.map(
       (column) => `ADD COLUMN ${buildSqlColumnDefinition(column)}`,
     );
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ${addColumnClauses.join(', ')}`;
+    const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ${addColumnClauses.join(', ')}`;
 
     await queryRunner.query(sql);
   }
@@ -43,15 +41,12 @@ export class WorkspaceSchemaColumnManagerService {
   }): Promise<void> {
     if (columnNames.length === 0) return;
 
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
     const cascadeClause = cascade ? ' CASCADE' : '';
-    const dropClauses = columnNames.map((name) => {
-      const safeName = removeSqlDDLInjection(name);
-
-      return `DROP COLUMN IF EXISTS "${safeName}"${cascadeClause}`;
-    });
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ${dropClauses.join(', ')}`;
+    const dropClauses = columnNames.map(
+      (name) =>
+        `DROP COLUMN IF EXISTS ${escapeIdentifier(name)}${cascadeClause}`,
+    );
+    const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ${dropClauses.join(', ')}`;
 
     await queryRunner.query(sql);
   }
@@ -69,11 +64,7 @@ export class WorkspaceSchemaColumnManagerService {
     oldColumnName: string;
     newColumnName: string;
   }): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
-    const safeNewColumnName = removeSqlDDLInjection(newColumnName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" RENAME COLUMN "${safeOldColumnName}" TO "${safeNewColumnName}"`;
+    const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} RENAME COLUMN ${escapeIdentifier(oldColumnName)} TO ${escapeIdentifier(newColumnName)}`;
 
     await queryRunner.query(sql);
   }
@@ -92,20 +83,21 @@ export class WorkspaceSchemaColumnManagerService {
     defaultValue?: string | number | boolean | null;
     columnType?: ColumnType;
   }): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeColumnName = removeSqlDDLInjection(columnName);
+    const tableRef = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
+    const columnRef = escapeIdentifier(columnName);
 
     const computeDefaultValueSqlQuery = () => {
       if (defaultValue === undefined) {
-        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" DROP DEFAULT`;
+        return `ALTER TABLE ${tableRef} ALTER COLUMN ${columnRef} DROP DEFAULT`;
       }
 
       if (defaultValue === null) {
-        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT NULL`;
+        return `ALTER TABLE ${tableRef} ALTER COLUMN ${columnRef} SET DEFAULT NULL`;
       }
 
-      return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${defaultValue}`;
+      // defaultValue here is pre-serialized by serializeDefaultValue which
+      // already applies escaping/sanitization to the value.
+      return `ALTER TABLE ${tableRef} ALTER COLUMN ${columnRef} SET DEFAULT ${defaultValue}`;
     };
 
     const sql = computeDefaultValueSqlQuery();

@@ -18,6 +18,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -88,6 +89,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-note',
       title: 'Note',
       icon: 'IconNotes',
@@ -132,6 +134,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-timeline',
       title: 'Timeline',
       icon: 'IconTimelineEvent',
@@ -169,6 +172,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
     },
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'note-tab-files',
       title: 'Files',
       icon: 'IconPaperclip',

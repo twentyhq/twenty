@@ -1,5 +1,10 @@
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import {
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from 'twenty-shared/types';
 
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -7,9 +12,6 @@ import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/e
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 export const findViewByIdWithRestApi = async (
   viewId: string,

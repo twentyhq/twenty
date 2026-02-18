@@ -356,6 +356,7 @@ export const NavigationDrawerItem = ({
         as={
           to ? (isExternalLink ? 'a' : Link) : rightOptions ? 'div' : undefined
         }
+        role={to ? undefined : rightOptions ? 'button' : undefined}
         to={isExternalLink ? undefined : to}
         href={isExternalLink ? to : undefined}
         target={isExternalLink ? '_blank' : undefined}

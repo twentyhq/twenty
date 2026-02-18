@@ -3,6 +3,7 @@ import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-c
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
@@ -107,6 +108,16 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getRoleBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.PageLayout: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutBaseFile({
           name,
         });
 

@@ -49,6 +49,12 @@ export const copyBaseApplicationProject = async ({
     fileName: 'hello-world.ts',
   });
 
+  await createDefaultPostInstallFunction({
+    appDirectory: sourceFolderPath,
+    fileFolder: 'logic-functions',
+    fileName: 'post-install.ts',
+  });
+
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
@@ -196,7 +202,6 @@ const handler = async (): Promise<{ message: string }> => {
   return { message: 'Hello, World!' };
 };
 
-// Logic function handler - rename and implement your logic
 export default defineLogicFunction({
   universalIdentifier: '${universalIdentifier}',
   name: 'hello-world-logic-function',
@@ -208,6 +213,38 @@ export default defineLogicFunction({
     httpMethod: 'GET',
     isAuthRequired: false,
   },
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createDefaultPostInstallFunction = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
 });
 `;
 
@@ -230,12 +267,14 @@ const createApplicationConfig = async ({
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 `;
 

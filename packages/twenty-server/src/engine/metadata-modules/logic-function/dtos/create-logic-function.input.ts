@@ -18,6 +18,8 @@ import {
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
+import type { InputJsonSchema } from 'twenty-shared/logic-function';
+
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -52,7 +54,7 @@ export class CreateLogicFunction {
 
   @Field(() => graphqlTypeJson, { nullable: false })
   @IsObject()
-  toolInputSchema: object;
+  toolInputSchema: InputJsonSchema;
 
   @IsBoolean()
   @Field({ nullable: true })

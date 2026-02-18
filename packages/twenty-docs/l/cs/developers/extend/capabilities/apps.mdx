@@ -45,22 +45,22 @@ yarn twenty app:dev
 Odtud můžete:
 
 ```bash filename="Terminal"
-# Přidejte do vaší aplikace novou entitu (s průvodcem)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Vygenerujte typovaného klienta Twenty a typy entit pracovního prostoru
-yarn twenty app:generate
-
-# Sledujte logy funkcí vaší aplikace
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Spusťte funkci podle názvu
+# Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Odinstalujte aplikaci z aktuálního pracovního prostoru
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Zobrazte nápovědu k příkazům
+# Display commands' help
 yarn twenty help
 ```
 
@@ -73,7 +73,7 @@ Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
 * Zkopíruje minimální základní aplikaci do `my-twenty-app/`
 * Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
 * Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
-* Vygeneruje výchozí konfiguraci aplikace a výchozí roli funkcí
+* Generates a default application config, a default function role, and a post-install function
 
 Čerstvě vytvořená aplikace vypadá takto:
 
@@ -89,15 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Výchozí role pro logické funkce
+  │   └── default-role.ts               # Default role for logic functions
   ├── logic-functions/
-  │   └── hello-world.ts                # Ukázková logická funkce
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   └── front-components/
-      └── hello-world.tsx               # Ukázková front-endová komponenta
+      └── hello-world.tsx               # Example front component
 ```
 
 V kostce:
@@ -142,7 +143,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:generate` vytvoří složku `generated/` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
 
 ## Ověření
@@ -279,7 +280,11 @@ Hlavní body:
 * Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
-  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole jako `name`, `createdAt`, `updatedAt`, `createdBy`, `position` a `deletedAt`. Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
+  jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
+  Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+  Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
+  ale to se nedoporučuje.
 </Note>
 
 ### Konfigurace aplikace (application-config.ts)
@@ -289,6 +294,7 @@ Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
 * **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
+* **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -296,6 +302,7 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -311,6 +318,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -319,6 +327,7 @@ Poznámky:
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
+* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### Role a oprávnění
 
@@ -457,6 +466,55 @@ Poznámky:
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
 
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Hlavní body:
+
+* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
+
 ### Payload spouštěče trasy
 
 <Warning>
@@ -554,6 +612,71 @@ Nové funkce můžete vytvářet dvěma způsoby:
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou logickou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
 * **Ruční**: Vytvořte nový soubor `*.logic-function.ts` a použijte `defineLogicFunction()` podle stejného vzoru.
 
+### Označení logické funkce jako nástroje
+
+Logické funkce lze zpřístupnit jako **nástroje** pro agenty AI a pracovní postupy. Když je funkce označena jako nástroj, stane se dohledatelnou funkcemi AI produktu Twenty a lze ji vybrat jako krok v automatizacích pracovních postupů.
+
+Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a poskytněte `toolInputSchema` popisující očekávané vstupní parametry pomocí [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Hlavní body:
+
+* **`isTool`** (`boolean`, výchozí: `false`): Když je nastaveno na `true`, funkce je zaregistrována jako nástroj a zpřístupní se agentům AI a automatizacím pracovních postupů.
+* **`toolInputSchema`** (`object`, volitelné): Objekt JSON Schema, který popisuje parametry, jež vaše funkce přijímá. Agenti AI používají toto schéma k pochopení toho, jaké vstupy nástroj očekává, a k ověřování volání. Pokud je vynecháno, schéma má výchozí podobu `{ type: 'object', properties: {} }` (žádné parametry).
+* Funkce s `isTool: false` (nebo není nastaveno) **nejsou** zpřístupněny jako nástroje. Stále je lze spouštět přímo nebo volat z jiných funkcí, ale neobjeví se ve vyhledávání nástrojů.
+* **Pojmenování nástrojů**: Když je funkce zpřístupněna jako nástroj, její název se automaticky normalizuje na `logic_function_<name>` (převedeno na malá písmena, nealfanumerické znaky jsou nahrazeny podtržítky). Například `enrich-company` se změní na `logic_function_enrich_company`.
+* Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) i spouštěna událostmi (cron, databázové události, routes).
+
+<Note>
+  **Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+</Note>
+
 ### Frontendové komponenty
 
 Frontendové komponenty vám umožňují vytvářet vlastní React komponenty, které se vykreslují v rozhraní Twenty. K definování komponent s vestavěnou validací použijte `defineFrontComponent()`:
@@ -593,7 +716,7 @@ Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 ### Generovaný typovaný klient
 
-Spusťte `yarn twenty app:generate` a vytvořte lokálního typovaného klienta v `generated/` na základě schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Typovaný klient je automaticky generován pomocí `yarn twenty app:dev` a ukládá se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +725,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Klient je znovu generován příkazem `yarn twenty app:generate`. Spusťte znovu po změně vašich objektů nebo při připojování k novému pracovnímu prostoru.
+Klient se automaticky znovu generuje pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -639,13 +762,13 @@ Poté přidejte skript `twenty`:
 }
 ```
 
-Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` atd.
+Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty app:dev`, `yarn twenty help` atd.
 
 ## Řešení potíží
 
 * Chyby ověření: spusťte `yarn twenty auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
 * Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Typy nebo klient chybí nebo jsou zastaralé: spusťte `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Režim vývoje se nesynchronizuje: ujistěte se, že běží `yarn twenty app:dev` a že vaše prostředí změny neignoruje.
 
 Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

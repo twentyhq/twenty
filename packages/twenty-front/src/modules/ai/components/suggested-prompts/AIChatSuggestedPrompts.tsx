@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
-import { useSetRecoilState } from 'recoil';
 import { LightButton } from 'twenty-ui/input';
 
 import {
   DEFAULT_SUGGESTED_PROMPTS,
   type SuggestedPrompt,
 } from '@/ai/components/suggested-prompts/default-suggested-prompts';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -19,14 +19,17 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitle = styled.div`
+  align-content: center;
   color: ${({ theme }) => theme.font.color.primary};
+  display: grid;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  height: 24px;
   padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
 const StyledSuggestedPromptButton = styled(LightButton)`
-  width: 100%;
+  align-self: flex-start;
 `;
 
 const pickRandom = <T,>(items: T[]): T =>
@@ -40,7 +43,7 @@ export const AIChatSuggestedPrompts = ({
   editor,
 }: AIChatSuggestedPromptsProps) => {
   const { t: resolveMessage } = useLingui();
-  const setAgentChatInput = useSetRecoilState(agentChatInputState);
+  const setAgentChatInput = useSetRecoilStateV2(agentChatInputStateV2);
 
   const handleClick = (prompt: SuggestedPrompt) => {
     const picked = pickRandom(prompt.prefillPrompts);

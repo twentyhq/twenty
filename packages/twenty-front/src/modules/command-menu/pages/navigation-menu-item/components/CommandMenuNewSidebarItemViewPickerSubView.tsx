@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
@@ -11,10 +10,13 @@ import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandM
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
+import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { type View } from '@/views/types/View';
@@ -35,11 +37,11 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
   const { closeCommandMenu } = useCommandMenu();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useRecoilValue(
-    addMenuItemInsertionContextState,
+  const addMenuItemInsertionContext = useRecoilValueV2(
+    addMenuItemInsertionContextStateV2,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilState(
-    addMenuItemInsertionContextState,
+  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
+    addMenuItemInsertionContextStateV2,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const { views } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
@@ -109,7 +111,21 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
                     onEnter={() => handleSelectView(view)}
                   >
                     <CommandMenuItemWithAddToNavigationDrag
-                      icon={getIcon(view.icon)}
+                      customIconContent={
+                        selectedObjectMetadataItem ? (
+                          <ObjectIconWithViewOverlay
+                            ObjectIcon={getIcon(
+                              selectedObjectMetadataItem.icon,
+                            )}
+                            ViewIcon={getIcon(view.icon)}
+                          />
+                        ) : undefined
+                      }
+                      icon={
+                        selectedObjectMetadataItem
+                          ? undefined
+                          : getIcon(view.icon)
+                      }
                       label={view.name}
                       id={view.id}
                       onClick={() => handleSelectView(view)}

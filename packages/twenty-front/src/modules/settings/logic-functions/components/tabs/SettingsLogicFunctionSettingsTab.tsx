@@ -7,7 +7,9 @@ export const SettingsLogicFunctionSettingsTab = ({
   onChange,
 }: {
   formValues: LogicFunctionFormValues;
-  onChange: (key: string) => (value: string) => void;
+  onChange: <TKey extends keyof LogicFunctionFormValues>(
+    key: TKey,
+  ) => (value: LogicFunctionFormValues[TKey]) => void;
 }) => {
   return (
     <>

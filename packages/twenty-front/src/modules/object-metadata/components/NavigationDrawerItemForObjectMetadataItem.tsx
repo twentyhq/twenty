@@ -1,3 +1,4 @@
+import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
@@ -12,6 +13,9 @@ import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -33,6 +37,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const theme = useTheme();
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+  );
   const iconColors = getNavigationMenuItemIconColors(theme);
   const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
     lastVisitedViewPerObjectMetadataItemState,
@@ -111,14 +118,18 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         />
       )
     : isViewWithCustomName && isDefined(navigationMenuItem?.Icon)
-      ? getIcon(navigationMenuItem.Icon)
+      ? () => (
+          <ObjectIconWithViewOverlay
+            ObjectIcon={getIcon(objectMetadataItem.icon)}
+            ViewIcon={getIcon(navigationMenuItem!.Icon!)}
+          />
+        )
       : getIcon(objectMetadataItem.icon);
 
-  const iconBackgroundColor = isRecord
-    ? undefined
-    : isViewWithCustomName
-      ? iconColors.view
-      : iconColors.object;
+  const iconBackgroundColor =
+    isNavigationMenuItemEditingEnabled && !isRecord && !isViewWithCustomName
+      ? iconColors.object
+      : undefined;
 
   const secondaryLabel =
     isRecord || isViewWithCustomName

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { FileFolder } from 'twenty-shared/types';
 import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { FileFolder } from 'twenty-shared/types';
 
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -20,6 +20,9 @@ export class FileMetadataService {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
+  /**
+   * @deprecated
+   */
   async createFile({
     file,
     filename,
@@ -54,6 +57,9 @@ export class FileMetadataService {
     return savedFile;
   }
 
+  /**
+   * @deprecated
+   */
   async deleteFileById(
     id: string,
     workspaceId: string,

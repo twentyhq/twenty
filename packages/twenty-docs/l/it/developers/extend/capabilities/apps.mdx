@@ -45,22 +45,22 @@ yarn twenty app:dev
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Aggiungi una nuova entità alla tua applicazione (guidata)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Genera un client Twenty tipizzato e i tipi di entità dell'area di lavoro
-yarn twenty app:generate
-
-# Monitora i log delle funzioni della tua applicazione
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Esegui una funzione per nome
-yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Disinstalla l'applicazione dallo spazio di lavoro corrente
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Mostra l'aiuto dei comandi
+# Display commands' help
 yarn twenty help
 ```
 
@@ -73,7 +73,7 @@ Quando esegui `npx create-twenty-app@latest my-twenty-app`, lo scaffolder:
 * Copia un'applicazione base minimale in `my-twenty-app/`
 * Aggiunge una dipendenza locale `twenty-sdk` e la configurazione di Yarn 4
 * Crea file di configurazione e script collegati alla CLI `twenty`
-* Genera una configurazione applicativa predefinita e un ruolo funzione predefinito
+* Generates a default application config, a default function role, and a post-install function
 
 Un'app appena generata dallo scaffolder si presenta così:
 
@@ -89,15 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Cartella delle risorse pubbliche (immagini, font, ecc.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Obbligatorio - configurazione principale dell'applicazione
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Ruolo predefinito per le funzioni logiche
+  │   └── default-role.ts               # Default role for logic functions
   ├── logic-functions/
-  │   └── hello-world.ts                # Funzione logica di esempio
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   └── front-components/
-      └── hello-world.tsx               # Componente front-end di esempio
+      └── hello-world.tsx               # Example front component
 ```
 
 A livello generale:
@@ -142,7 +143,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:generate` creerà una cartella `generated/` (client Twenty tipizzato + tipi dello spazio di lavoro).
+* `yarn twenty app:dev` genererà automaticamente un client API tipizzato in `node_modules/twenty-sdk/generated` (client Twenty tipizzato + tipi dell'area di lavoro).
 * `yarn twenty entity:add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti, funzioni, componenti front-end o ruoli personalizzati.
 
 ## Autenticazione
@@ -279,7 +280,11 @@ Punti chiave:
 * Puoi generare nuovi oggetti con `yarn twenty entity:add`, che ti guida nella denominazione, nei campi e nelle relazioni.
 
 <Note>
-  **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard come `name`, `createdAt`, `updatedAt`, `createdBy`, `position` e `deletedAt`. Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
+  **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard
+  come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+  Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
+  Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel tuo array `fields`,
+  ma non è consigliato.
 </Note>
 
 ### Configurazione dell'applicazione (application-config.ts)
@@ -289,6 +294,7 @@ Ogni app ha un singolo file `application-config.ts` che descrive:
 * **Identità dell'app**: identificatori, nome visualizzato e descrizione.
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
+* **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Usa `defineApplication()` per definire la configurazione della tua applicazione:
 
@@ -296,6 +302,7 @@ Usa `defineApplication()` per definire la configurazione della tua applicazione:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -311,6 +318,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -319,6 +327,7 @@ Note:
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
+* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### Ruoli e permessi
 
@@ -457,6 +466,55 @@ Note:
 * L'array `triggers` è facoltativo. Le funzioni senza trigger possono essere utilizzate come funzioni di utilità richiamate da altre funzioni.
 * Puoi combinare più tipi di trigger in un'unica funzione.
 
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Punti chiave:
+
+* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
+
 ### Payload del trigger di route
 
 <Warning>
@@ -554,6 +612,71 @@ Puoi creare nuove funzioni in due modi:
 * **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere una nuova funzione logica. Questo genera un file iniziale con un handler e una configurazione.
 * **Manuale**: Crea un nuovo file `*.logic-function.ts` e usa `defineLogicFunction()`, seguendo lo stesso schema.
 
+### Contrassegnare una funzione logica come strumento
+
+Le funzioni logiche possono essere esposte come **strumenti** per gli agenti di IA e i flussi di lavoro. Quando una funzione è contrassegnata come strumento, diventa individuabile dalle funzionalità di IA di Twenty e può essere selezionata come passaggio nelle automazioni dei flussi di lavoro.
+
+Per contrassegnare una funzione logica come strumento, imposta `isTool: true` e fornisci un `toolInputSchema` che descriva i parametri di input attesi utilizzando [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Punti chiave:
+
+* **`isTool`** (`boolean`, predefinito: `false`): Quando impostato su `true`, la funzione viene registrata come strumento e diventa disponibile per gli agenti IA e le automazioni dei flussi di lavoro.
+* **`toolInputSchema`** (`object`, opzionale): Un oggetto JSON Schema che descrive i parametri accettati dalla funzione. Gli agenti IA utilizzano questo schema per capire quali input si aspetta lo strumento e per convalidare le chiamate. Se omesso, lo schema assume il valore predefinito `{ type: 'object', properties: {} }` (nessun parametro).
+* Le funzioni con `isTool: false` (o non impostato) **non** vengono esposte come strumenti. Possono comunque essere eseguite direttamente o chiamate da altre funzioni, ma non compariranno nell'individuazione degli strumenti.
+* **Denominazione dello strumento**: Quando esposta come strumento, il nome della funzione viene normalizzato automaticamente in `logic_function_<name>` (in minuscolo, i caratteri non alfanumerici vengono sostituiti da trattini bassi). Ad esempio, `enrich-company` diventa `logic_function_enrich_company`.
+* È possibile combinare `isTool` con i trigger — una funzione può essere sia uno strumento (invocabile dagli agenti IA) sia attivata da eventi (cron, eventi del database, routes) contemporaneamente.
+
+<Note>
+  **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
+</Note>
+
 ### Componenti front-end
 
 I componenti front-end ti consentono di creare componenti React personalizzati che vengono renderizzati all'interno dell'interfaccia di Twenty. Usa `defineFrontComponent()` per definire componenti con convalida integrata:
@@ -593,7 +716,7 @@ Puoi creare nuovi componenti front-end in due modi:
 
 ### Client tipizzato generato
 
-Esegui `yarn twenty app:generate` per creare un client tipizzato locale in `generated/` basato sullo schema del tuo spazio di lavoro. Usalo nelle tue funzioni:
+Il client tipizzato è generato automaticamente da `yarn twenty app:dev` e salvato in `node_modules/twenty-sdk/generated` in base allo schema della tua area di lavoro. Usalo nelle tue funzioni:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +725,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Il client viene rigenerato da `yarn twenty app:generate`. Eseguilo nuovamente dopo aver modificato i tuoi oggetti oppure quando effettui l'onboarding su un nuovo spazio di lavoro.
+Il client viene rigenerato automaticamente da `yarn twenty app:dev` ogni volta che i tuoi oggetti o campi cambiano.
 
 #### Credenziali di runtime nelle funzioni logiche
 
@@ -639,13 +762,13 @@ Quindi aggiungi uno script `twenty`:
 }
 ```
 
-Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, ecc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty help`, ecc.
 
 ## Risoluzione dei problemi
 
 * Errori di autenticazione: esegui `yarn twenty auth:login` e assicurati che la tua chiave API abbia i permessi richiesti.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Tipi o client mancanti/obsoleti: esegui `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty app:dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

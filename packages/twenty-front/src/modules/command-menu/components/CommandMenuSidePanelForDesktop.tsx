@@ -7,11 +7,12 @@ import {
   commandMenuWidthState,
 } from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
 import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -54,7 +55,7 @@ const StyledModalContainer = styled.div`
 const GAP_WIDTH = 8;
 
 export const CommandMenuSidePanelForDesktop = () => {
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
   const isCommandMenuClosing = useRecoilValue(isCommandMenuClosingState);
   const [commandMenuWidth, setCommandMenuWidth] = useRecoilState(
     commandMenuWidthState,

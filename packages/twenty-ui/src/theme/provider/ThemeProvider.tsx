@@ -10,12 +10,10 @@ type ThemeProviderProps = {
   children: ReactNode;
 };
 
-const ThemeProvider = ({ theme, children }: ThemeProviderProps) => {
+export const ThemeProvider = ({ theme, children }: ThemeProviderProps) => {
   return (
     <EmotionThemeProvider theme={theme}>
       <ThemeContextProvider theme={theme}>{children}</ThemeContextProvider>
     </EmotionThemeProvider>
   );
 };
-
-export default ThemeProvider;
