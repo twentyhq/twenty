@@ -54,6 +54,9 @@ yarn twenty function:logs
 # Execută o funcție după nume
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
+# Execută funcția post-instalare
+yarn twenty function:execute --postInstall
+
 # Dezinstalează aplicația din spațiul de lucru curent
 yarn twenty app:uninstall
 
@@ -70,7 +73,7 @@ Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
 * Copiază o aplicație de bază minimală în `my-twenty-app/`
 * Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
 * Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
-* Generează o configurație implicită a aplicației și un rol implicit pentru funcții
+* Generează o configurație implicită a aplicației, un rol implicit pentru funcții și o funcție post-instalare
 
 O aplicație nou generată arată astfel:
 
@@ -86,15 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obligatoriu - configurația principală a aplicației
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Rol implicit pentru funcțiile logice
   ├── logic-functions/
-  │   └── hello-world.ts                # Example logic function
+  │   ├── hello-world.ts                # Exemplu de funcție logică
+  │   └── post-install.ts               # Funcție logică post-instalare
   └── front-components/
-      └── hello-world.tsx               # Example front component
+      └── hello-world.tsx               # Exemplu de componentă de interfață
 ```
 
 Pe scurt:
@@ -290,6 +294,7 @@ Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
 * **Cine este aplicația**: identificatori, nume de afișare și descriere.
 * **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
 * **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
+* **(Opțional) funcție post-instalare**: o funcție logică care rulează după instalarea aplicației.
 
 Folosiți `defineApplication()` pentru a defini configurația aplicației:
 
@@ -297,6 +302,7 @@ Folosiți `defineApplication()` pentru a defini configurația aplicației:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +318,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +327,7 @@ Notițe:
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
+* `postInstallLogicFunctionUniversalIdentifier` (opțional) indică o funcție logică care rulează automat după instalarea aplicației. Vezi [Funcții post-instalare](#post-install-functions).
 
 #### Roluri și permisiuni
 
@@ -457,6 +465,55 @@ Notițe:
 
 * Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
 * Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
+
+### Funcții post-instalare
+
+O funcție post-instalare este o funcție logică care rulează automat după instalarea aplicației într-un spațiu de lucru. Aceasta este utilă pentru sarcini de configurare unice, cum ar fi popularea cu date implicite, crearea înregistrărilor inițiale sau configurarea setărilor spațiului de lucru.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Puncte cheie:
+
+* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
 ### Payload-ul declanșatorului de rută
 
