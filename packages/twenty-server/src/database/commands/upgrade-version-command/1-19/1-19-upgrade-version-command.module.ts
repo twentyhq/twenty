@@ -16,11 +16,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     WorkspaceMigrationModule,
   ],
-  providers: [
-    BackfillMessageChannelMessageAssociationMessageFolderCommand,
-  ],
-  exports: [
-    BackfillMessageChannelMessageAssociationMessageFolderCommand,
-  ],
+  providers: [BackfillMessageChannelMessageAssociationMessageFolderCommand],
+  exports: [BackfillMessageChannelMessageAssociationMessageFolderCommand],
 })
 export class V1_19_UpgradeVersionCommandModule {}
