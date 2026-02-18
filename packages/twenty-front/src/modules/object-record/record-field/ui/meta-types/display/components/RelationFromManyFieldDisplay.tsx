@@ -9,7 +9,6 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
-import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
@@ -133,8 +132,6 @@ export const RelationFromManyFieldDisplay = () => {
       includeRecord: true,
     });
 
-    const hasJunctionRecords = fieldValue.some(isDefined);
-
     const targetRecordsWithMetadata = extractedRecords
       .map((extracted) => {
         const objectMetadata = objectMetadataItems.find(
@@ -146,10 +143,6 @@ export const RelationFromManyFieldDisplay = () => {
         return { record: extracted.record, objectMetadata };
       })
       .filter(isDefined);
-
-    if (hasJunctionRecords && targetRecordsWithMetadata.length === 0) {
-      return <ForbiddenFieldDisplay />;
-    }
 
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
