@@ -24,6 +24,8 @@ const buildBaseManifest = (
   overrides: Pick<Manifest, 'objects' | 'fields'>,
 ): Manifest => ({
   application: {
+    apiClientChecksum: '',
+    marketplaceData: undefined,
     universalIdentifier: TEST_APP_ID,
     defaultRoleUniversalIdentifier: TEST_ROLE_ID,
     displayName: 'Test System Fields App',
