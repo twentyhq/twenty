@@ -95,6 +95,7 @@ export const SSEQuerySubscribeEffect = () => {
         } catch (error) {
           if (error instanceof ApolloError) {
             const subCode = error.graphQLErrors[0]?.extensions?.subCode;
+            const errorMessage = error.graphQLErrors[0]?.message;
 
             switch (subCode) {
               case 'EVENT_STREAM_DOES_NOT_EXIST':
@@ -104,6 +105,15 @@ export const SSEQuerySubscribeEffect = () => {
                 return;
               }
               default: {
+                if (
+                  errorMessage === 'Schema version mismatch.' ||
+                  errorMessage === 'App version mismatch.'
+                ) {
+                  set(activeQueryListenersState, []);
+                  set(shouldDestroyEventStreamState, true);
+                  return;
+                }
+
                 throw new Error(
                   `Unhandled error for event stream: ${error.message}`,
                 );
