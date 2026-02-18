@@ -7,6 +7,7 @@ import { type FindOneOptions, type Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -29,6 +30,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -338,6 +340,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+      featureFlagsMap: existingFeatureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -345,6 +348,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       'flatViewFieldMaps',
       'flatViewMaps',
       'flatViewFieldGroupMaps',
+      'featureFlagsMap',
     ]);
 
     const allTranspiledTranspilationInputs: Awaited<
@@ -381,19 +385,29 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       { flatFieldMetadatas: [], indexMetadatas: [] },
     );
 
-    const flatViewFieldsToCreate = computeFlatViewFieldsFromFieldsWidgets({
-      fieldsToCreate: flatFieldMetadatasToCreate.map((flatFieldMetadata) => ({
-        objectMetadataUniversalIdentifier:
-          flatFieldMetadata.objectMetadataUniversalIdentifier,
-        fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-      })),
-      flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-      applicationUniversalIdentifier:
-        resolvedOwnerFlatApplication.universalIdentifier,
-    });
+    let flatViewFieldsToCreate: UniversalFlatViewField[] = [];
+
+    if (
+      existingFeatureFlagsMap[
+        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
+      ] ??
+      false
+    ) {
+      flatViewFieldsToCreate = computeFlatViewFieldsFromFieldsWidgets({
+        fieldsToCreate: flatFieldMetadatasToCreate.map((flatFieldMetadata) => ({
+          objectMetadataUniversalIdentifier:
+            flatFieldMetadata.objectMetadataUniversalIdentifier,
+          fieldMetadataUniversalIdentifier:
+            flatFieldMetadata.universalIdentifier,
+        })),
+        flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+        flatViewFieldMaps: existingFlatViewFieldMaps,
+        flatViewMaps: existingFlatViewMaps,
+        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+        applicationUniversalIdentifier:
+          resolvedOwnerFlatApplication.universalIdentifier,
+      });
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

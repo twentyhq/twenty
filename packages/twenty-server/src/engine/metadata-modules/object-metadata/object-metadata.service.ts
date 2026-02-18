@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { v4 as uuidv4, v4 } from 'uuid';
 import {
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { v4 as uuidv4, v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -443,7 +443,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     };
 
     if (
-      this.twentyConfigService.get('SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS')
+      existingFeatureFlagsMap[
+        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
+      ] ??
+      false
     ) {
       flatRecordPageFieldsViewToCreate =
         this.computeFlatRecordPageFieldsViewToCreate({

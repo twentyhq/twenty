@@ -65,10 +65,9 @@ const computeNextPosition = ({
       (viewField: FlatViewField) =>
         !isDefined(viewField.deletedAt) && viewField.viewId === viewId,
     )
-    .filter((viewField: FlatViewField) =>
-      isDefined(viewFieldGroupId)
-        ? viewField.viewFieldGroupId === viewFieldGroupId
-        : true,
+    .filter(
+      (viewField: FlatViewField) =>
+        viewField.viewFieldGroupId === viewFieldGroupId,
     );
 
   if (existingViewFields.length === 0) {
