@@ -38,12 +38,10 @@ const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
-  const hostApi =
-    ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
-
   if (isDefined(renderContext.apiUrl)) {
     setupFetchInterceptor({
-      requestRefresh: () => hostApi.requestAccessTokenRefresh(),
+      requestRefresh: () =>
+        frontComponentWorkerThread.imports.requestAccessTokenRefresh(),
       trustedBaseUrl: renderContext.apiUrl,
     });
   }
@@ -100,9 +98,7 @@ const render: WorkerExports['render'] = async (
 
 const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
   async () => {
-    const hostApi =
-      ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
-    setNavigate(hostApi.navigate);
+    setNavigate(frontComponentWorkerThread.imports.navigate);
   };
 
 const updateAccessToken: WorkerExports['updateAccessToken'] = async (
@@ -117,9 +113,14 @@ const updateContext: WorkerExports['updateContext'] = async (
   setFrontComponentExecutionContext(context);
 };
 
-ThreadWebWorker.self.export({
-  render,
-  initializeHostCommunicationApi,
-  updateAccessToken,
-  updateContext,
+const frontComponentWorkerThread = ThreadWebWorker.self<
+  FrontComponentHostCommunicationApi,
+  WorkerExports
+>({
+  exports: {
+    render,
+    initializeHostCommunicationApi,
+    updateAccessToken,
+    updateContext,
+  },
 });

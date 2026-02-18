@@ -1,5 +1,49 @@
 import { setWorkerEnv } from './setWorkerEnv';
 
+type GraphqlErrorExtension = {
+  code?: string;
+  subCode?: string;
+};
+
+type GraphqlErrorLike = {
+  extensions?: GraphqlErrorExtension;
+};
+
+const hasUnauthenticatedGraphqlError = (payload: unknown) => {
+  if (
+    typeof payload !== 'object' ||
+    payload === null ||
+    !('errors' in payload) ||
+    !Array.isArray(payload.errors)
+  ) {
+    return false;
+  }
+
+  return payload.errors.some((error) => {
+    const maybeGraphqlError = error as GraphqlErrorLike;
+    const code = maybeGraphqlError.extensions?.code;
+    const subCode = maybeGraphqlError.extensions?.subCode;
+
+    return code === 'UNAUTHENTICATED' || subCode === 'UNAUTHENTICATED';
+  });
+};
+
+const isGraphqlUnauthenticatedResponse = async (response: Response) => {
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (!contentType.includes('application/json')) {
+    return false;
+  }
+
+  try {
+    const payload = await response.clone().json();
+
+    return hasUnauthenticatedGraphqlError(payload);
+  } catch {
+    return false;
+  }
+};
+
 const isTrustedRequestUrl = ({
   requestUrl,
   trustedUrl,
@@ -57,10 +101,18 @@ export const setupFetchInterceptor = ({
     const requestCloneForRetry =
       input instanceof Request ? input.clone() : null;
     const response = await originalFetch(input, init);
+    const isTrustedRequest = isTrustedRequestUrl({
+      requestUrl: url,
+      trustedUrl,
+    });
+    const shouldRefreshBecause401 = response.status === 401;
+    const shouldRefreshBecauseGraphqlUnauthenticated =
+      !shouldRefreshBecause401 &&
+      (await isGraphqlUnauthenticatedResponse(response));
 
     if (
-      response.status !== 401 ||
-      !isTrustedRequestUrl({ requestUrl: url, trustedUrl })
+      !isTrustedRequest ||
+      (!shouldRefreshBecause401 && !shouldRefreshBecauseGraphqlUnauthenticated)
     ) {
       return response;
     }

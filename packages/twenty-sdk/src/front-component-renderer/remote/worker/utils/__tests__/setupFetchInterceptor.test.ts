@@ -62,6 +62,46 @@ describe('setupFetchInterceptor', () => {
     expect(processEnvironment['TWENTY_APP_ACCESS_TOKEN']).toBe('new-token');
   });
 
+  it('should refresh and retry once for trusted GraphQL UNAUTHENTICATED responses', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ data: { ok: true } }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+    const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch('https://api.example.com/graphql');
+
+    expect(response.status).toBe(200);
+    expect(requestRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+
+    const retryHeaders = new Headers(fetchMock.mock.calls[1][1]?.headers);
+
+    expect(retryHeaders.get('Authorization')).toBe('Bearer new-token');
+  });
+
   it('should ignore 401 responses for external URLs', async () => {
     const fetchMock = vi
       .fn()

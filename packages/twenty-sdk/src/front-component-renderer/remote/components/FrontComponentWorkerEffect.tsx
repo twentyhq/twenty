@@ -66,6 +66,7 @@ export const FrontComponentWorkerEffect = ({
 
     return () => {
       setThread(null);
+      setReceiver(null);
       worker.terminate();
     };
   }, [componentUrl, apiUrl, setError, setReceiver, setThread]);
