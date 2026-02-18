@@ -12,7 +12,11 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { MessageChannelType } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import {
+  MessageChannelType,
+  SEARCH_FIELDS_FOR_MESSAGE_CHANNEL,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export const buildMessageChannelStandardFlatFieldMetadatas = ({
   now,
@@ -181,6 +185,12 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_MESSAGE_CHANNEL,
+        ),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
