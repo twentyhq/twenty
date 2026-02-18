@@ -3,12 +3,15 @@ import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/co
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type FieldsConfiguration } from '~/generated-metadata/graphql';
+import {
+  type FieldsConfiguration,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 const StyledOuterContainer = styled.div`
   display: flex;
@@ -32,19 +35,27 @@ export const CommandMenuPageLayoutFieldsLayout = () => {
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const defaultFieldsConfiguration = useTemporaryFieldsConfiguration();
-  const [fieldsConfiguration, setFieldsConfiguration] =
-    useState<FieldsConfiguration>(defaultFieldsConfiguration);
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+  const temporaryFieldsConfiguration = useTemporaryFieldsConfiguration();
 
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
 
+  const widgetConfiguration = widgetInEditMode.configuration;
+
+  const fieldsConfiguration: FieldsConfiguration =
+    isDefined(widgetConfiguration) &&
+    widgetConfiguration.configurationType === WidgetConfigurationType.FIELDS
+      ? (widgetConfiguration as FieldsConfiguration)
+      : temporaryFieldsConfiguration;
+
   const handleConfigurationChange = (
     updatedConfiguration: FieldsConfiguration,
   ) => {
-    // TODO: replace with a call to updatePageLayoutWidget
-    setFieldsConfiguration(updatedConfiguration);
+    updatePageLayoutWidget(widgetInEditMode.id, {
+      configuration: updatedConfiguration,
+    });
   };
 
   return (
