@@ -102,8 +102,7 @@ export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorksp
         [workspaceId, RELATION_FIELD_TYPES],
       );
 
-      const relationIsSystemUpdatedCount =
-        relationIsSystemResult?.[1] ?? 0;
+      const relationIsSystemUpdatedCount = relationIsSystemResult?.[1] ?? 0;
 
       if (relationIsSystemUpdatedCount > 0) {
         this.logger.log(
