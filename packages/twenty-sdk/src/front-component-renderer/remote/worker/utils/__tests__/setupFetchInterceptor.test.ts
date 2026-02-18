@@ -1,6 +1,9 @@
 import { isObject } from '@sniptt/guards';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { setupFetchInterceptor } from '../setupFetchInterceptor';
+import {
+  resetFetchInterceptor,
+  setupFetchInterceptor,
+} from '../setupFetchInterceptor';
 
 describe('setupFetchInterceptor', () => {
   const originalFetch = globalThis.fetch;
@@ -19,13 +22,70 @@ describe('setupFetchInterceptor', () => {
   });
 
   afterEach(() => {
+    resetFetchInterceptor();
+    vi.restoreAllMocks();
     globalThis.fetch = originalFetch;
+
     if (originalProcess) {
       (globalThis as Record<string, unknown>)['process'] = originalProcess;
       return;
     }
 
     delete (globalThis as Record<string, unknown>)['process'];
+  });
+
+  it('should install the interceptor only once when setup is called twice', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }));
+    const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch('https://api.example.com/resource');
+
+    expect(response.status).toBe(200);
+    expect(requestRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('should apply updated configuration when setup is called again', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }));
+    const firstRequestRefresh = vi.fn().mockResolvedValue('first-token');
+    const secondRequestRefresh = vi.fn().mockResolvedValue('second-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh: firstRequestRefresh,
+      trustedBaseUrl: 'https://api-first.example.com',
+    });
+    setupFetchInterceptor({
+      requestRefresh: secondRequestRefresh,
+      trustedBaseUrl: 'https://api-second.example.com',
+    });
+
+    const response = await globalThis.fetch(
+      'https://api-second.example.com/resource',
+    );
+
+    expect(response.status).toBe(200);
+    expect(firstRequestRefresh).not.toHaveBeenCalled();
+    expect(secondRequestRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it('should refresh and retry once for trusted 401 responses', async () => {
@@ -58,6 +118,29 @@ describe('setupFetchInterceptor', () => {
     const processEnvironment = processObject['env'] as Record<string, string>;
 
     expect(processEnvironment['TWENTY_APP_ACCESS_TOKEN']).toBe('new-token');
+  });
+
+  it('should refresh and retry once when URL object input is trusted', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }))
+      .mockResolvedValueOnce(new Response('ok', { status: 200 }));
+    const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch(
+      new URL('https://api.example.com/resource'),
+    );
+
+    expect(response.status).toBe(200);
+    expect(requestRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it.each([
@@ -141,6 +224,52 @@ describe('setupFetchInterceptor', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it('should skip auth checks for untrusted GraphQL responses', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      new Response(JSON.stringify({ errors: [{ message: 'Unauthorized' }] }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch('https://evil.example.com/graphql');
+
+    expect(response.status).toBe(200);
+    expect(requestRefresh).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should skip GraphQL auth detection for non-json responses', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      new Response('<html>Unauthorized</html>', {
+        status: 200,
+        headers: { 'Content-Type': 'text/html' },
+      }),
+    );
+    const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch('https://api.example.com/graphql');
+
+    expect(response.status).toBe(200);
+    expect(requestRefresh).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('should ignore 401 responses for external URLs', async () => {
     const fetchMock = vi
       .fn()
@@ -170,6 +299,27 @@ describe('setupFetchInterceptor', () => {
       .mockResolvedValueOnce(
         new Response('still unauthorized', { status: 401 }),
       );
+    const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    setupFetchInterceptor({
+      requestRefresh,
+      trustedBaseUrl: 'https://api.example.com',
+    });
+
+    const response = await globalThis.fetch('https://api.example.com/resource');
+
+    expect(response.status).toBe(401);
+    expect(requestRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('should return original 401 response when retry request throws', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('unauthorized', { status: 401 }))
+      .mockRejectedValueOnce(new Error('Network error'));
     const requestRefresh = vi.fn().mockResolvedValue('new-token');
 
     globalThis.fetch = fetchMock as typeof fetch;

@@ -13,7 +13,12 @@ export const FrontComponentUpdateAccessTokenEffect = ({
   applicationAccessToken,
 }: FrontComponentUpdateAccessTokenEffectProps) => {
   useEffect(() => {
-    thread.imports.updateAccessToken(applicationAccessToken).catch(() => {});
+    thread.imports.updateAccessToken(applicationAccessToken).catch((error) => {
+      console.error(
+        '[FrontComponentUpdateAccessTokenEffect] Failed to update access token:',
+        error,
+      );
+    });
   }, [applicationAccessToken, thread]);
 
   return null;

@@ -68,10 +68,16 @@ export const FrontComponentRenderer = ({
   const queriedApplicationTokenPair =
     data?.frontComponent?.applicationTokenPair;
 
-  const applicationTokenPair =
-    refreshedTokenOverride?.frontComponentId === frontComponentId
-      ? refreshedTokenOverride.applicationTokenPair
-      : (queriedApplicationTokenPair ?? null);
+  const shouldUseRefreshedTokenOverride =
+    isDefined(refreshedTokenOverride) &&
+    refreshedTokenOverride.frontComponentId === frontComponentId &&
+    (!isDefined(queriedApplicationTokenPair) ||
+      refreshedTokenOverride.applicationTokenPair.applicationRefreshToken
+        .token === queriedApplicationTokenPair.applicationRefreshToken.token);
+
+  const applicationTokenPair = shouldUseRefreshedTokenOverride
+    ? refreshedTokenOverride.applicationTokenPair
+    : (queriedApplicationTokenPair ?? null);
 
   const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
     if (!isDefined(applicationTokenPair)) {
@@ -84,6 +90,14 @@ export const FrontComponentRenderer = ({
           applicationTokenPair.applicationRefreshToken.token,
       },
     });
+
+    if (isDefined(result.errors) && result.errors.length > 0) {
+      const errorMessage = result.errors
+        .map((error) => error.message)
+        .join(', ');
+
+      throw new Error(`Token renewal failed: ${errorMessage}`);
+    }
 
     const renewedApplicationTokenPair = result.data?.renewApplicationToken;
 

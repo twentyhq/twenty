@@ -1,12 +1,14 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
+  applicationAccessToken?: string;
   apiUrl?: string;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -21,12 +23,16 @@ type FrontComponentWorkerEffectProps = {
 
 export const FrontComponentWorkerEffect = ({
   componentUrl,
+  applicationAccessToken,
   apiUrl,
   frontComponentHostCommunicationApi,
   setReceiver,
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
+  const applicationAccessTokenRef = useRef(applicationAccessToken);
+  applicationAccessTokenRef.current = applicationAccessToken;
+
   const frontComponentHostCommunicationApiRef = useRef(
     frontComponentHostCommunicationApi,
   );
@@ -61,10 +67,36 @@ export const FrontComponentWorkerEffect = ({
       exports: stableFrontComponentHostCommunicationApi,
     });
     setThread(thread);
-
     setReceiver(newReceiver);
+    let isEffectCancelled = false;
+
+    const initializeAndRender = async () => {
+      try {
+        await thread.imports.initializeHostCommunicationApi();
+
+        const currentApplicationAccessToken = applicationAccessTokenRef.current;
+
+        if (isDefined(currentApplicationAccessToken)) {
+          await thread.imports.updateAccessToken(currentApplicationAccessToken);
+        }
+
+        await thread.imports.render(newReceiver.connection, {
+          componentUrl,
+          apiUrl,
+        });
+      } catch (error) {
+        if (isEffectCancelled) {
+          return;
+        }
+
+        setError(error instanceof Error ? error : new Error(String(error)));
+      }
+    };
+
+    void initializeAndRender();
 
     return () => {
+      isEffectCancelled = true;
       setThread(null);
       setReceiver(null);
       worker.terminate();

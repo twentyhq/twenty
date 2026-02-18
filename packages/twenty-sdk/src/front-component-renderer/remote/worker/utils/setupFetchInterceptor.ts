@@ -4,6 +4,20 @@ import { setWorkerEnv } from './setWorkerEnv';
 
 const isAuthenticationError = (response: Response) => response.status === 401;
 
+type FetchInterceptorState = {
+  originalFetch: typeof globalThis.fetch | null;
+  trustedUrl: URL | null;
+  requestRefresh: (() => Promise<string>) | null;
+  refreshPromise: Promise<string> | null;
+};
+
+const fetchInterceptorState: FetchInterceptorState = {
+  originalFetch: null,
+  trustedUrl: null,
+  requestRefresh: null,
+  refreshPromise: null,
+};
+
 const hasGraphqlAuthenticationError = (payload: unknown) => {
   if (
     !isDefined(payload) ||
@@ -49,30 +63,92 @@ const isTrustedRequestUrl = ({
   requestUrl: string;
   trustedUrl: URL;
 }) => {
-  let parsedRequestUrl: URL;
-
   try {
-    parsedRequestUrl = new URL(requestUrl, trustedUrl);
+    const parsedRequestUrl = new URL(requestUrl, trustedUrl);
+
+    return parsedRequestUrl.origin === trustedUrl.origin;
   } catch {
     return false;
   }
+};
 
-  if (parsedRequestUrl.origin !== trustedUrl.origin) {
-    return false;
+const extractUrlFromInput = (input: RequestInfo | URL): string => {
+  if (input instanceof Request) {
+    return input.url;
   }
 
-  if (trustedUrl.pathname === '/') {
-    return true;
+  if (input instanceof URL) {
+    return input.toString();
   }
 
-  const normalizedTrustedPathname = trustedUrl.pathname.endsWith('/')
-    ? trustedUrl.pathname.slice(0, -1)
-    : trustedUrl.pathname;
+  return String(input);
+};
 
-  return (
-    parsedRequestUrl.pathname === normalizedTrustedPathname ||
-    parsedRequestUrl.pathname.startsWith(`${normalizedTrustedPathname}/`)
+export const resetFetchInterceptor = () => {
+  if (isDefined(fetchInterceptorState.originalFetch)) {
+    globalThis.fetch = fetchInterceptorState.originalFetch;
+  }
+
+  fetchInterceptorState.originalFetch = null;
+  fetchInterceptorState.trustedUrl = null;
+  fetchInterceptorState.requestRefresh = null;
+  fetchInterceptorState.refreshPromise = null;
+};
+
+const refreshAccessToken = async (): Promise<string | null> => {
+  if (!isDefined(fetchInterceptorState.requestRefresh)) {
+    return null;
+  }
+
+  if (!isDefined(fetchInterceptorState.refreshPromise)) {
+    fetchInterceptorState.refreshPromise = fetchInterceptorState
+      .requestRefresh()
+      .then((newToken) => {
+        setWorkerEnv({ TWENTY_APP_ACCESS_TOKEN: newToken });
+
+        return newToken;
+      })
+      .finally(() => {
+        fetchInterceptorState.refreshPromise = null;
+      });
+  }
+
+  return fetchInterceptorState.refreshPromise.catch(() => null);
+};
+
+const retryWithRefreshedToken = async ({
+  baseFetch,
+  input,
+  init,
+  requestCloneForRetry,
+  token,
+}: {
+  baseFetch: typeof globalThis.fetch;
+  input: RequestInfo | URL;
+  init?: RequestInit;
+  requestCloneForRetry: Request | null;
+  token: string;
+}): Promise<Response | null> => {
+  const retryHeaders = new Headers(
+    init?.headers ?? (input instanceof Request ? input.headers : undefined),
   );
+
+  retryHeaders.set('Authorization', `Bearer ${token}`);
+
+  try {
+    if (isDefined(requestCloneForRetry)) {
+      const retryRequest = new Request(requestCloneForRetry, {
+        ...init,
+        headers: retryHeaders,
+      });
+
+      return await baseFetch(retryRequest);
+    }
+
+    return await baseFetch(input, { ...init, headers: retryHeaders });
+  } catch {
+    return null;
+  }
 };
 
 export const setupFetchInterceptor = ({
@@ -82,75 +158,61 @@ export const setupFetchInterceptor = ({
   requestRefresh: () => Promise<string>;
   trustedBaseUrl: string;
 }) => {
-  const originalFetch = globalThis.fetch;
-  const trustedUrl = new URL(trustedBaseUrl);
-  let refreshPromise: Promise<string> | null = null;
+  fetchInterceptorState.trustedUrl = new URL(trustedBaseUrl);
+  fetchInterceptorState.requestRefresh = requestRefresh;
+
+  if (isDefined(fetchInterceptorState.originalFetch)) {
+    return;
+  }
+
+  const baseFetch = globalThis.fetch;
+  fetchInterceptorState.originalFetch = baseFetch;
 
   globalThis.fetch = async (
     input: RequestInfo | URL,
     init?: RequestInit,
   ): Promise<Response> => {
-    const url =
-      input instanceof Request
-        ? input.url
-        : input instanceof URL
-          ? input.toString()
-          : String(input);
+    const trustedUrl = fetchInterceptorState.trustedUrl;
+
+    if (!isDefined(trustedUrl)) {
+      return baseFetch(input, init);
+    }
+
+    const url = extractUrlFromInput(input);
+
+    if (!isTrustedRequestUrl({ requestUrl: url, trustedUrl })) {
+      return baseFetch(input, init);
+    }
+
     const requestCloneForRetry =
       input instanceof Request ? input.clone() : null;
-    const response = await originalFetch(input, init);
-    const isTrustedRequest = isTrustedRequestUrl({
-      requestUrl: url,
-      trustedUrl,
-    });
+    const response = await baseFetch(input, init);
     const shouldRefreshBecause401 = isAuthenticationError(response);
     const shouldRefreshBecauseGraphqlAuthenticationError =
       !shouldRefreshBecause401 &&
       (await isGraphqlAuthenticationErrorResponse(response));
 
     if (
-      !isTrustedRequest ||
-      (!shouldRefreshBecause401 &&
-        !shouldRefreshBecauseGraphqlAuthenticationError)
+      !shouldRefreshBecause401 &&
+      !shouldRefreshBecauseGraphqlAuthenticationError
     ) {
       return response;
     }
 
-    // Deduplicate concurrent refreshes
-    if (!refreshPromise) {
-      refreshPromise = requestRefresh()
-        .then((newToken) => {
-          setWorkerEnv({ TWENTY_APP_ACCESS_TOKEN: newToken });
-
-          return newToken;
-        })
-        .finally(() => {
-          refreshPromise = null;
-        });
-    }
-
-    const newToken = await refreshPromise.catch(() => null);
+    const newToken = await refreshAccessToken();
 
     if (!newToken) {
       return response;
     }
 
-    // Retry once with new token
-    const retryHeaders = new Headers(
-      init?.headers ?? (input instanceof Request ? input.headers : undefined),
-    );
+    const retryResponse = await retryWithRefreshedToken({
+      baseFetch,
+      input,
+      init,
+      requestCloneForRetry,
+      token: newToken,
+    });
 
-    retryHeaders.set('Authorization', `Bearer ${newToken}`);
-
-    if (requestCloneForRetry) {
-      const retryRequest = new Request(requestCloneForRetry, {
-        ...init,
-        headers: retryHeaders,
-      });
-
-      return originalFetch(retryRequest);
-    }
-
-    return originalFetch(input, { ...init, headers: retryHeaders });
+    return retryResponse ?? response;
   };
 };

@@ -1,4 +1,3 @@
-import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   type FrontComponentExecutionContext,
@@ -11,44 +10,38 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = (): {
   executionContext: FrontComponentExecutionContext;
-  frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  frontComponentHostCommunicationApi: Pick<
+    FrontComponentHostCommunicationApi,
+    'navigate'
+  >;
 } => {
   const currentUser = useRecoilValue(currentUserState);
   const navigateApp = useNavigateApp();
 
-  const navigate = useCallback<FrontComponentHostCommunicationApi['navigate']>(
-    async (to, params, queryParams, options) => {
-      navigateApp(
-        to as AppPath,
-        params as Parameters<typeof navigateApp>[1],
-        queryParams,
-        options,
-      );
-    },
-    [navigateApp],
-  );
-
-  const executionContext = useMemo<FrontComponentExecutionContext>(
-    () => ({
-      userId: currentUser?.id ?? null,
-    }),
-    [currentUser?.id],
-  );
-
-  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
-    throw new Error(
-      'requestAccessTokenRefresh must be provided by FrontComponentRenderer',
+  const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
+    to,
+    params,
+    queryParams,
+    options,
+  ) => {
+    navigateApp(
+      to as AppPath,
+      params as Parameters<typeof navigateApp>[1],
+      queryParams,
+      options,
     );
-  }, []);
+  };
 
-  const frontComponentHostCommunicationApi =
-    useMemo<FrontComponentHostCommunicationApi>(
-      () => ({
-        navigate,
-        requestAccessTokenRefresh,
-      }),
-      [navigate, requestAccessTokenRefresh],
-    );
+  const executionContext: FrontComponentExecutionContext = {
+    userId: currentUser?.id ?? null,
+  };
+
+  const frontComponentHostCommunicationApi: Pick<
+    FrontComponentHostCommunicationApi,
+    'navigate'
+  > = {
+    navigate,
+  };
 
   return {
     executionContext,
