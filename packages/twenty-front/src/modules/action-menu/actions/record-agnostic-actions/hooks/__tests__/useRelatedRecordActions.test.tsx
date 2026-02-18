@@ -218,10 +218,11 @@ describe('useRelatedRecordActions', () => {
     expect(result.current['create-related-company'].position).toBe(19);
   });
 
-  it('should filter out system fields', () => {
+  it('should filter out hidden system fields', () => {
     const fields = [
       {
         type: 'RELATION',
+        name: 'position',
         relation: {
           type: 'ONE_TO_MANY',
           targetObjectMetadata: {
