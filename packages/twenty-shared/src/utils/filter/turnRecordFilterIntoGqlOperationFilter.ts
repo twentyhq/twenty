@@ -63,7 +63,7 @@ type FieldShared = {
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
-  recordFilter: RecordFilter;
+  recordFilter: Omit<RecordFilter, 'id'>;
   fieldMetadataItems: FieldShared[];
 };
 

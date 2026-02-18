@@ -36,8 +36,6 @@ const createFilterConfigs = (
 ) => {
   const groupId = v4();
 
-  const filterIds = filters.map(() => v4());
-
   const recordFilterGroups = [
     {
       id: groupId,
@@ -47,8 +45,7 @@ const createFilterConfigs = (
 
   return {
     configuration: {
-      recordFilters: filters.map((filter, index) => ({
-        id: filterIds[index],
+      recordFilters: filters.map((filter) => ({
         type: filter.type,
         label: filter.label,
         value: filter.value,
@@ -60,8 +57,7 @@ const createFilterConfigs = (
       recordFilterGroups,
     },
     universal: {
-      recordFilters: filters.map((filter, index) => ({
-        id: filterIds[index],
+      recordFilters: filters.map((filter) => ({
         type: filter.type,
         label: filter.label,
         value: filter.value,
