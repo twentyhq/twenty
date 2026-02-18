@@ -20,7 +20,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldsWidgetCellEditModePortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellEditModePortal';
 import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellHoveredPortal';
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
-import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
+import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -91,7 +91,8 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   const fieldsConfiguration = widget.configuration as FieldsConfiguration;
 
-  const { groups } = useFieldsWidgetGroups({
+  const { groups } = useFieldsWidgetGroupsForDisplay({
+    widgetId: widget.id,
     viewId: fieldsConfiguration.viewId ?? null,
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
