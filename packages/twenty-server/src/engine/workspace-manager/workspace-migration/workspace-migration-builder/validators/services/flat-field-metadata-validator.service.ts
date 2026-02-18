@@ -74,6 +74,29 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
     };
 
+    const SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES: string[] = [
+      'settings',
+      'isActive',
+    ];
+
+    if (
+      !buildOptions.isSystemBuild &&
+      existingFlatFieldMetadataToUpdate.isSystem
+    ) {
+      const disallowedProperties = Object.keys(flatEntityUpdate).filter(
+        (property) =>
+          !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(property),
+      );
+
+      if (disallowedProperties.length > 0) {
+        validationResult.errors.push({
+          code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+          message: `System fields only allow updating: ${SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.join(', ')}. Forbidden properties: ${disallowedProperties.join(', ')}`,
+          userFriendlyMessage: msg`System fields cannot be updated`,
+        });
+      }
+    }
+
     const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
