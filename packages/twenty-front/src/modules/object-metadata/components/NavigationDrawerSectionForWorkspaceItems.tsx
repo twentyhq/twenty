@@ -1,5 +1,4 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
@@ -66,7 +65,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Workspace');

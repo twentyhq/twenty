@@ -67,7 +67,9 @@ export const CommandMenuObjectMenuItem = ({
           Icon={() => (
             <NavigationMenuItemStyleIcon
               Icon={Icon}
-              color={getStandardObjectIconColor(objectMetadataItem.nameSingular)}
+              color={getStandardObjectIconColor(
+                objectMetadataItem.nameSingular,
+              )}
             />
           )}
           label={objectMetadataItem.labelPlural}
