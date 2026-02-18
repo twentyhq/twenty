@@ -17,7 +17,11 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { AggregateOperations, SerializedRelation } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  type LineChartConfiguration,
+  SerializedRelation,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
@@ -25,12 +29,9 @@ import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
-import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('LineChartConfiguration')
-export class LineChartConfigurationDTO
-  implements PageLayoutWidgetConfigurationBase
-{
+export class LineChartConfigurationDTO implements LineChartConfiguration {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.LINE_CHART])
   @IsNotEmpty()

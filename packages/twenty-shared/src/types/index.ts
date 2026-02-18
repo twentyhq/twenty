@@ -143,7 +143,35 @@ export type {
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetPosition,
 } from './page-layout/page-layout-widget-position.type';
-export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
+export type {
+  ChartRecordFilter,
+  ChartRecordFilterGroup,
+  ChartFilter,
+  RatioAggregateConfig,
+  AggregateChartConfiguration,
+  GaugeChartConfiguration,
+  PieChartConfiguration,
+  BarChartConfiguration,
+  LineChartConfiguration,
+  ViewConfiguration,
+  FieldConfiguration,
+  FieldsConfiguration,
+  FieldRichTextConfiguration,
+  StandaloneRichTextConfiguration,
+  IframeConfiguration,
+  FrontComponentConfiguration,
+  TimelineConfiguration,
+  TasksConfiguration,
+  NotesConfiguration,
+  FilesConfiguration,
+  EmailsConfiguration,
+  CalendarConfiguration,
+  WorkflowConfiguration,
+  WorkflowVersionConfiguration,
+  WorkflowRunConfiguration,
+  PageLayoutWidgetConfiguration,
+  PageLayoutWidgetUniversalConfiguration,
+} from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';

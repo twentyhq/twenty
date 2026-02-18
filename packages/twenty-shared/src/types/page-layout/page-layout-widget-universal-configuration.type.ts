@@ -1,8 +1,11 @@
 import { type AggregateOperations } from '../AggregateOperations';
+import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSerializedRelationProperties.type';
+import { type ObjectRecordGroupByDateGranularity } from '../ObjectRecordGroupByDateGranularity';
+import { type SerializedRelation } from '../SerializedRelation.type';
 
-type ChartFilterRecordFilter = {
+export type ChartRecordFilter = {
   id: string;
-  fieldMetadataUniversalIdentifier: string;
+  fieldMetadataId: string;
   operand: string;
   value?: string | null;
   type?: string;
@@ -10,34 +13,34 @@ type ChartFilterRecordFilter = {
   subFieldName?: string | null;
 };
 
-type ChartFilterRecordFilterGroup = {
+export type ChartRecordFilterGroup = {
   id: string;
   logicalOperator: string;
   parentRecordFilterGroupId?: string | null;
 };
 
-type UniversalChartFilter = {
-  recordFilters?: ChartFilterRecordFilter[];
-  recordFilterGroups?: ChartFilterRecordFilterGroup[];
+export type ChartFilter = {
+  recordFilters?: ChartRecordFilter[];
+  recordFilterGroups?: ChartRecordFilterGroup[];
 };
 
-type RatioAggregateConfig = {
-  fieldMetadataUniversalIdentifier: string | null;
+export type RatioAggregateConfig = {
+  fieldMetadataId: SerializedRelation;
   optionValue: string;
 };
 
-type BaseChartFields = {
-  aggregateFieldMetadataUniversalIdentifier: string | null;
+type BaseChartConfiguration = {
+  aggregateFieldMetadataId: SerializedRelation;
   aggregateOperation: AggregateOperations;
   displayDataLabel?: boolean;
   description?: string;
   color?: string;
-  filter?: UniversalChartFilter;
+  filter?: ChartFilter;
   timezone?: string;
   firstDayOfTheWeek?: number;
 };
 
-type AggregateChartUniversalConfiguration = BaseChartFields & {
+export type AggregateChartConfiguration = BaseChartConfiguration & {
   configurationType: 'AGGREGATE_CHART';
   label?: string;
   format?: string;
@@ -46,15 +49,15 @@ type AggregateChartUniversalConfiguration = BaseChartFields & {
   ratioAggregateConfig?: RatioAggregateConfig;
 };
 
-type GaugeChartUniversalConfiguration = BaseChartFields & {
+export type GaugeChartConfiguration = BaseChartConfiguration & {
   configurationType: 'GAUGE_CHART';
 };
 
-type PieChartUniversalConfiguration = BaseChartFields & {
+export type PieChartConfiguration = BaseChartConfiguration & {
   configurationType: 'PIE_CHART';
-  groupByFieldMetadataUniversalIdentifier: string | null;
+  groupByFieldMetadataId: SerializedRelation;
   groupBySubFieldName?: string;
-  dateGranularity?: string;
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
   orderBy?: string;
   manualSortOrder?: string[];
   showCenterMetric?: boolean;
@@ -63,16 +66,16 @@ type PieChartUniversalConfiguration = BaseChartFields & {
   splitMultiValueFields?: boolean;
 };
 
-type BarChartUniversalConfiguration = BaseChartFields & {
+export type BarChartConfiguration = BaseChartConfiguration & {
   configurationType: 'BAR_CHART';
-  primaryAxisGroupByFieldMetadataUniversalIdentifier: string | null;
+  primaryAxisGroupByFieldMetadataId: SerializedRelation;
   primaryAxisGroupBySubFieldName?: string;
-  primaryAxisDateGranularity?: string;
+  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisOrderBy?: string;
   primaryAxisManualSortOrder?: string[];
-  secondaryAxisGroupByFieldMetadataUniversalIdentifier?: string | null;
+  secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
   secondaryAxisGroupBySubFieldName?: string;
-  secondaryAxisGroupByDateGranularity?: string;
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
   secondaryAxisOrderBy?: string;
   secondaryAxisManualSortOrder?: string[];
   omitNullValues?: boolean;
@@ -86,16 +89,16 @@ type BarChartUniversalConfiguration = BaseChartFields & {
   isCumulative?: boolean;
 };
 
-type LineChartUniversalConfiguration = BaseChartFields & {
+export type LineChartConfiguration = BaseChartConfiguration & {
   configurationType: 'LINE_CHART';
-  primaryAxisGroupByFieldMetadataUniversalIdentifier: string | null;
+  primaryAxisGroupByFieldMetadataId: SerializedRelation;
   primaryAxisGroupBySubFieldName?: string;
-  primaryAxisDateGranularity?: string;
+  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisOrderBy?: string;
   primaryAxisManualSortOrder?: string[];
-  secondaryAxisGroupByFieldMetadataUniversalIdentifier?: string | null;
+  secondaryAxisGroupByFieldMetadataId?: SerializedRelation;
   secondaryAxisGroupBySubFieldName?: string;
-  secondaryAxisGroupByDateGranularity?: string;
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
   secondaryAxisOrderBy?: string;
   secondaryAxisManualSortOrder?: string[];
   omitNullValues?: boolean;
@@ -108,28 +111,30 @@ type LineChartUniversalConfiguration = BaseChartFields & {
   isCumulative?: boolean;
 };
 
-type ViewUniversalConfiguration = {
+export type ViewConfiguration = {
   configurationType: 'VIEW';
 };
 
-type FieldUniversalConfiguration = {
+export type FieldConfiguration = {
   configurationType: 'FIELD';
 };
 
-type FieldsUniversalConfiguration = {
-  configurationType: 'FIELDS';
-  viewId?: string | null;
-  newFieldDefaultConfiguration?: {
-    isVisible: boolean;
-    viewFieldGroupId: string | null;
-  } | null;
+type NewFieldDefaultConfiguration = {
+  isVisible: boolean;
+  viewFieldGroupId: string | null;
 };
 
-type FieldRichTextUniversalConfiguration = {
+export type FieldsConfiguration = {
+  configurationType: 'FIELDS';
+  viewId?: string | null;
+  newFieldDefaultConfiguration?: NewFieldDefaultConfiguration | null;
+};
+
+export type FieldRichTextConfiguration = {
   configurationType: 'FIELD_RICH_TEXT';
 };
 
-type StandaloneRichTextUniversalConfiguration = {
+export type StandaloneRichTextConfiguration = {
   configurationType: 'STANDALONE_RICH_TEXT';
   body: {
     blocknote?: string | null;
@@ -137,71 +142,74 @@ type StandaloneRichTextUniversalConfiguration = {
   };
 };
 
-type IframeUniversalConfiguration = {
+export type IframeConfiguration = {
   configurationType: 'IFRAME';
   url?: string;
 };
 
-type FrontComponentUniversalConfiguration = {
+export type FrontComponentConfiguration = {
   configurationType: 'FRONT_COMPONENT';
   frontComponentId: string;
 };
 
-type TimelineUniversalConfiguration = {
+export type TimelineConfiguration = {
   configurationType: 'TIMELINE';
 };
 
-type TasksUniversalConfiguration = {
+export type TasksConfiguration = {
   configurationType: 'TASKS';
 };
 
-type NotesUniversalConfiguration = {
+export type NotesConfiguration = {
   configurationType: 'NOTES';
 };
 
-type FilesUniversalConfiguration = {
+export type FilesConfiguration = {
   configurationType: 'FILES';
 };
 
-type EmailsUniversalConfiguration = {
+export type EmailsConfiguration = {
   configurationType: 'EMAILS';
 };
 
-type CalendarUniversalConfiguration = {
+export type CalendarConfiguration = {
   configurationType: 'CALENDAR';
 };
 
-type WorkflowUniversalConfiguration = {
+export type WorkflowConfiguration = {
   configurationType: 'WORKFLOW';
 };
 
-type WorkflowVersionUniversalConfiguration = {
+export type WorkflowVersionConfiguration = {
   configurationType: 'WORKFLOW_VERSION';
 };
 
-type WorkflowRunUniversalConfiguration = {
+export type WorkflowRunConfiguration = {
   configurationType: 'WORKFLOW_RUN';
 };
 
+export type PageLayoutWidgetConfiguration =
+  | AggregateChartConfiguration
+  | GaugeChartConfiguration
+  | PieChartConfiguration
+  | BarChartConfiguration
+  | LineChartConfiguration
+  | ViewConfiguration
+  | FieldConfiguration
+  | FieldsConfiguration
+  | FieldRichTextConfiguration
+  | StandaloneRichTextConfiguration
+  | IframeConfiguration
+  | FrontComponentConfiguration
+  | TimelineConfiguration
+  | TasksConfiguration
+  | NotesConfiguration
+  | FilesConfiguration
+  | EmailsConfiguration
+  | CalendarConfiguration
+  | WorkflowConfiguration
+  | WorkflowVersionConfiguration
+  | WorkflowRunConfiguration;
+
 export type PageLayoutWidgetUniversalConfiguration =
-  | AggregateChartUniversalConfiguration
-  | GaugeChartUniversalConfiguration
-  | PieChartUniversalConfiguration
-  | BarChartUniversalConfiguration
-  | LineChartUniversalConfiguration
-  | ViewUniversalConfiguration
-  | FieldUniversalConfiguration
-  | FieldsUniversalConfiguration
-  | FieldRichTextUniversalConfiguration
-  | StandaloneRichTextUniversalConfiguration
-  | IframeUniversalConfiguration
-  | FrontComponentUniversalConfiguration
-  | TimelineUniversalConfiguration
-  | TasksUniversalConfiguration
-  | NotesUniversalConfiguration
-  | FilesUniversalConfiguration
-  | EmailsUniversalConfiguration
-  | CalendarUniversalConfiguration
-  | WorkflowUniversalConfiguration
-  | WorkflowVersionUniversalConfiguration
-  | WorkflowRunUniversalConfiguration;
+  FormatRecordSerializedRelationProperties<PageLayoutWidgetConfiguration>;
