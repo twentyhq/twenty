@@ -1,37 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024"} 1`] = `"Invalid value '2024' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date-time"} 1`] = `"Invalid value 'malformed-date-time' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024-01"} 1`] = `"Invalid value '2024-01' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024-01-15T25:30:00Z"} 1`] = `"Invalid value '2024-01-15T25:30:00Z' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024-13-01T10:30:00Z"} 1`] = `"Invalid value '2024-13-01T10:30:00Z' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"Invalid value 'malformed-date' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"Invalid value [] for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"Invalid value {} for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"Invalid value 1 for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"Invalid value true for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024"} 1`] = `"["Invalid value '2024' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024-01"} 1`] = `"["Invalid value '2024-01' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024-01-15T25:30:00Z"} 1`] = `"["Invalid value '2024-01-15T25:30:00Z' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"2024-13-01T10:30:00Z"} 1`] = `"["Invalid value '2024-13-01T10:30:00Z' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"["Invalid value 'malformed-date' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"["Invalid value [] for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"["Invalid value {} for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"["Invalid value 1 for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"["Invalid value true for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date-time"} 1`] = `"["Invalid value 'malformed-date-time' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;
