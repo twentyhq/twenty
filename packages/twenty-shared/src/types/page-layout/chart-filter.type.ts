@@ -2,7 +2,6 @@ import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSe
 import { type SerializedRelation } from '../SerializedRelation.type';
 
 export type ChartRecordFilter = {
-  id: string;
   fieldMetadataId: SerializedRelation;
   operand: string;
   value?: string | null;
