@@ -1,5 +1,6 @@
-import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 export const ADD_MISSING_SYSTEM_FIELDS_TO_STANDARD_OBJECTS_1771420702241 = {
   applicationUniversalIdentifier: '20202020-64aa-4b6f-b003-9c74b97cee20',

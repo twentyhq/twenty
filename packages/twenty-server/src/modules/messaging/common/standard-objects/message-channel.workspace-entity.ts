@@ -1,4 +1,5 @@
 import { registerEnumType } from '@nestjs/graphql';
+
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';

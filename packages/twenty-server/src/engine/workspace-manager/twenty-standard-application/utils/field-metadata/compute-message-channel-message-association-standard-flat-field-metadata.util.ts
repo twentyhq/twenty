@@ -176,24 +176,24 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
       twentyStandardApplicationId,
       now,
     }),
-  searchVector: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'searchVector',
-      type: FieldMetadataType.TS_VECTOR,
-      label: 'Search vector',
-      description: 'Field used for full-text search',
-      icon: 'IconUser',
-      isSystem: true,
-      isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION,
-        ),
+    searchVector: createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'searchVector',
+        type: FieldMetadataType.TS_VECTOR,
+        label: 'Search vector',
+        description: 'Field used for full-text search',
+        icon: 'IconUser',
+        isSystem: true,
+        isNullable: true,
+        settings: {
+          generatedType: 'STORED',
+          asExpression: getTsVectorColumnExpressionFromFields(
+            SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION,
+          ),
+        },
       },
-    },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
       twentyStandardApplicationId,
