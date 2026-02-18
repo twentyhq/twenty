@@ -189,7 +189,7 @@ export class SearchService {
     });
 
     if (
-      tsvectorResults.length > limit ||
+      tsvectorResults.length >= limit ||
       !isNonEmptyString(searchInput.trim())
     ) {
       return tsvectorResults;
@@ -378,7 +378,7 @@ export class SearchService {
       queryBuilder.andWhere('id NOT IN (:...excludeIds)', { excludeIds });
     }
 
-    return await queryBuilder.take(limit).getRawMany();
+    return await queryBuilder.orderBy('"id"', 'ASC').take(limit).getRawMany();
   }
 
   computeCursorWhereCondition({
