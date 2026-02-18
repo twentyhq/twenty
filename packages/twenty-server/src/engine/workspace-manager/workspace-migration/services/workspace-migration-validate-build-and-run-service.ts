@@ -292,7 +292,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     });
 
     return await this.validateBuildAndRunWorkspaceMigrationFromTo({
-      applicationUniversalIdentifier,
       buildOptions: {
         isSystemBuild,
         inferDeletionFromMissingEntities,

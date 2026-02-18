@@ -86,8 +86,6 @@ export class ApplicationManifestMigrationService {
           fromToAllFlatEntityMaps,
           workspaceId,
           additionalCacheDataMaps: { featureFlagsMap },
-          applicationUniversalIdentifier:
-            ownerFlatApplication.universalIdentifier,
         },
       );
 
