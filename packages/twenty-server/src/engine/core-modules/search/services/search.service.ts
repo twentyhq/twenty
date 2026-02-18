@@ -220,10 +220,9 @@ export class SearchService {
       .addSelect(tsRankExpr, 'tsRank');
 
     if (isNonEmptyString(searchTerms)) {
-      const labelColumns = this.getLabelIdentifierColumns(
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      );
+      const labelColumns = fieldsToSelect
+        .map((field) => field.replace(/"/g, ''))
+        .filter((field) => field !== 'id' && field !== imageIdentifierField);
 
       queryBuilder.andWhere(
         new Brackets((qb) => {
