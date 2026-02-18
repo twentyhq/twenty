@@ -101,6 +101,7 @@ export const buildManifest = async (
           ...extract.config,
           yarnLockChecksum: null,
           packageJsonChecksum: null,
+          apiClientChecksum: null,
         };
         errors.push(...extract.errors);
         applicationFilePaths.push(relativePath);

@@ -10,6 +10,7 @@ import { ResolveApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestr
 import { StartWatchersOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
@@ -61,6 +62,7 @@ export class DevModeOrchestrator {
       ...stepDeps,
       clientService,
       configService,
+      uploadFilesStep: this.uploadFilesStep,
     });
     this.syncApplicationStep = new SyncApplicationOrchestratorStep({
       ...stepDeps,
@@ -150,11 +152,8 @@ export class DevModeOrchestrator {
       }
     }
 
-    if (this.state.hasObjectsOrFieldsChanged(buildResult.manifest!)) {
-      await this.generateApiClientStep.execute({
-        appPath: this.state.appPath,
-      });
-    }
+    const objectsOrFieldsChanged =
+      this.state.hasObjectsOrFieldsChanged(buildResult.manifest!);
 
     await this.uploadFilesStep.waitForUploads();
 
@@ -163,6 +162,24 @@ export class DevModeOrchestrator {
       builtFileInfos: this.state.steps.uploadFiles.output.builtFileInfos,
       appPath: this.state.appPath,
     });
+
+    if (objectsOrFieldsChanged) {
+      await this.generateApiClientStep.execute({
+        appPath: this.state.appPath,
+      });
+
+      const typecheckErrors = await runTypecheck(this.state.appPath);
+
+      if (typecheckErrors.length > 0) {
+        this.state.applyStepEvents(
+          typecheckErrors.map((error) => ({
+            message: `Type error in ${error.file}(${error.line},${error.column}): ${error.text}`,
+            status: 'error' as const,
+          })),
+        );
+        this.state.notify();
+      }
+    }
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {
