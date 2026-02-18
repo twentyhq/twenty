@@ -27,7 +27,7 @@ Mit Apps können Sie Twenty-Anpassungen **als Code** erstellen und verwalten. An
 Erstellen Sie mit dem offiziellen Scaffolder eine neue App, authentifizieren Sie sich und beginnen Sie mit der Entwicklung:
 
 ```bash filename="Terminal"
-# Eine neue App erstellen
+# Eine neue App erstellen (enthält standardmäßig alle Beispiele)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -40,6 +40,19 @@ yarn twenty auth:login
 
 # Dev-Modus starten: synchronisiert lokale Änderungen automatisch mit deinem Arbeitsbereich
 yarn twenty app:dev
+```
+
+Das Scaffolding-Tool unterstützt drei Modi, um zu steuern, welche Beispieldateien enthalten sind:
+
+```bash filename="Terminal"
+# Standard (umfassend): alle Beispiele (Objekt, Feld, Logikfunktion, Frontend-Komponente, View, Navigationsmenüeintrag)
+npx create-twenty-app@latest my-app
+
+# Minimal: nur Kerndateien (application-config.ts und default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interaktiv: wähle aus, welche Beispiele enthalten sein sollen
+npx create-twenty-app@latest my-app --interactive
 ```
 
 Von hier aus können Sie:
@@ -73,9 +86,9 @@ Wenn Sie `npx create-twenty-app@latest my-twenty-app` ausführen, erledigt der S
 * Kopiert eine minimale Basisanwendung nach `my-twenty-app/`
 * Fügt eine lokale `twenty-sdk`-Abhängigkeit und die Yarn-4-Konfiguration hinzu
 * Erstellt Konfigurationsdateien und Skripte, die an die `twenty`-CLI angebunden sind
-* Generiert eine Standard-Anwendungskonfiguration, eine Standard-Funktionsrolle und eine Post-Installationsfunktion
+* Erzeugt Kerndateien (Anwendungskonfiguration, Standardrolle für Logikfunktionen, Post-Installationsfunktion) sowie Beispieldateien entsprechend dem Scaffolding-Modus
 
-Eine frisch erzeugte App sieht so aus:
+Eine frisch erstellte App mit dem Standardmodus `--exhaustive` sieht so aus:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -91,15 +104,25 @@ my-twenty-app/
   README.md
   public/                           # Ordner für öffentliche Assets (Bilder, Schriftarten usw.)
   src/
-  ├── application-config.ts           # Erforderlich – Hauptkonfiguration der Anwendung
-  ├── roles/
-  │   └── default-role.ts               # Standardrolle für Logikfunktionen
-  ├── logic-functions/
-  │   ├── hello-world.ts                # Beispiel für eine Logikfunktion
-  │   └── post-install.ts               # Post-Installations-Logikfunktion
-  └── front-components/
-      └── hello-world.tsx               # Beispiel für eine Frontend-Komponente
+  application-config.ts           # Erforderlich  Hauptkonfiguration der Anwendung
+  roles/
+     default-role.ts               # Standardrolle für Logikfunktionen
+  objects/
+     example-object.ts             # Beispiel für eine benutzerdefinierte Objektdefinition
+  fields/
+     example-field.ts              # Beispiel für eine eigenständige Felddefinition
+  logic-functions/
+     hello-world.ts                # Beispiel für eine Logikfunktion
+     post-install.ts               # Post-Installations-Logikfunktion
+  front-components/
+     hello-world.tsx               # Beispiel für eine Frontend-Komponente
+  views/
+     example-view.ts                # Beispiel für eine gespeicherte View-Definition
+  navigation-menu-items/
+      example-navigation-menu-item.ts # Beispiel für einen Navigationslink in der Seitenleiste
 ```
+
+Mit `--minimal` werden nur die Kerndateien erstellt (`application-config.ts`, `roles/default-role.ts` und `logic-functions/post-install.ts`). Mit `--interactive` wählst du aus, welche Beispieldateien enthalten sein sollen.
 
 Auf hoher Ebene:
 
@@ -116,13 +139,15 @@ Auf hoher Ebene:
 
 Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von **`export default define<Entity>({...})`** parst. Für jeden Entitätstyp gibt es eine entsprechende Hilfsfunktion, die aus `twenty-sdk` exportiert wird:
 
-| Hilfsfunktion            | Entitätstyp                              |
-| ------------------------ | ---------------------------------------- |
-| `defineObject()`         | Benutzerdefinierte Objektdefinitionen    |
-| `defineLogicFunction()`  | Definitionen von Logikfunktionen         |
-| `defineFrontComponent()` | Definitionen von Frontend-Komponenten    |
-| `defineRole()`           | Rollendefinitionen                       |
-| `defineField()`          | Felderweiterungen für bestehende Objekte |
+| Hilfsfunktion                | Entitätstyp                               |
+| ---------------------------- | ----------------------------------------- |
+| `defineObject()`             | Benutzerdefinierte Objektdefinitionen     |
+| `defineLogicFunction()`      | Definitionen von Logikfunktionen          |
+| `defineFrontComponent()`     | Definitionen von Frontend-Komponenten     |
+| `defineRole()`               | Rollendefinitionen                        |
+| `defineField()`              | Felderweiterungen für bestehende Objekte  |
+| `defineView()`               | Gespeicherte View-Definitionen            |
+| `defineNavigationMenuItem()` | Definitionen von Navigationsmenüeinträgen |
 
 <Note>
   **Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
@@ -187,14 +212,16 @@ Das twenty-sdk stellt typisierte Bausteine und Hilfsfunktionen bereit, die Sie i
 
 Das SDK stellt Hilfsfunktionen bereit, um die Entitäten Ihrer App zu definieren. Wie in [Entitätserkennung](#entity-detection) beschrieben, müssen Sie `export default define<Entity>({...})` verwenden, damit Ihre Entitäten erkannt werden:
 
-| Funktion                 | Zweck                                                          |
-| ------------------------ | -------------------------------------------------------------- |
-| `defineApplication()`    | Anwendungsmetadaten konfigurieren (erforderlich, eine pro App) |
-| `defineObject()`         | Benutzerdefinierte Objekte mit Feldern definieren              |
-| `defineLogicFunction()`  | Logikfunktionen mit Handlern definieren                        |
-| `defineFrontComponent()` | Frontend-Komponenten für benutzerdefinierte UI definieren      |
-| `defineRole()`           | Rollenberechtigungen und Objektzugriff konfigurieren           |
-| `defineField()`          | Bestehende Objekte mit zusätzlichen Feldern erweitern          |
+| Funktion                     | Zweck                                                          |
+| ---------------------------- | -------------------------------------------------------------- |
+| `defineApplication()`        | Anwendungsmetadaten konfigurieren (erforderlich, eine pro App) |
+| `defineObject()`             | Benutzerdefinierte Objekte mit Feldern definieren              |
+| `defineLogicFunction()`      | Logikfunktionen mit Handlern definieren                        |
+| `defineFrontComponent()`     | Frontend-Komponenten für benutzerdefinierte UI definieren      |
+| `defineRole()`               | Rollenberechtigungen und Objektzugriff konfigurieren           |
+| `defineField()`              | Bestehende Objekte mit zusätzlichen Feldern erweitern          |
+| `defineView()`               | Gespeicherte Views für Objekte definieren                      |
+| `defineNavigationMenuItem()` | Seitenleisten-Navigationslinks definieren                      |
 
 Diese Funktionen validieren Ihre Konfiguration zur Build-Zeit und bieten IDE-Autovervollständigung sowie Typsicherheit.
 
@@ -470,7 +497,7 @@ Notizen:
 
 Eine Post-Installationsfunktion ist eine Logikfunktion, die automatisch ausgeführt wird, nachdem Ihre App in einem Arbeitsbereich installiert wurde. Dies ist nützlich für einmalige Einrichtungsvorgänge wie das Befüllen mit Standarddaten, das Erstellen erster Datensätze oder das Konfigurieren von Arbeitsbereichseinstellungen.
 
-When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+Wenn du mit `create-twenty-app` eine neue App erstellst, wird für dich eine Post-Installationsfunktion unter `src/logic-functions/post-install.ts` erzeugt:
 
 ```typescript
 // src/logic-functions/post-install.ts
@@ -491,7 +518,7 @@ export default defineLogicFunction({
 });
 ```
 
-The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+Die Funktion wird in deine App eingebunden, indem ihr universeller Bezeichner in `application-config.ts` referenziert wird:
 
 ```typescript
 import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
@@ -502,7 +529,7 @@ export default defineApplication({
 });
 ```
 
-You can also manually execute the post-install function at any time using the CLI:
+Du kannst die Post-Installationsfunktion auch jederzeit manuell über die CLI ausführen:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --postInstall
@@ -510,10 +537,10 @@ yarn twenty function:execute --postInstall
 
 Hauptpunkte:
 
-* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
-* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
+* Post-Installationsfunktionen sind Standard-Logikfunktionen — sie verwenden `defineLogicFunction()` wie jede andere Funktion.
+* Das Feld `postInstallLogicFunctionUniversalIdentifier` in `defineApplication()` ist optional. Wenn es weggelassen wird, wird nach der Installation keine Funktion ausgeführt.
+* Das standardmäßige Timeout ist auf 300 Sekunden (5 Minuten) festgelegt, um längere Einrichtungsvorgänge wie Daten-Seeding zu ermöglichen.
+* Post-Installationsfunktionen benötigen keine Trigger — sie werden von der Plattform während der Installation oder manuell über `function:execute --postInstall` aufgerufen.
 
 ### Routen-Trigger-Payload
 

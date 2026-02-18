@@ -1,6 +1,5 @@
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -24,8 +23,8 @@ import {
 import { MenuItem } from 'twenty-ui/navigation';
 import {
   FeatureFlagKey,
-  ViewVisibility,
   PermissionFlagType,
+  ViewVisibility,
 } from '~/generated-metadata/graphql';
 
 type ViewPickerOptionDropdownProps = {
@@ -63,10 +62,9 @@ export const ViewPickerOptionDropdown = ({
 
   const { sortedFavorites: favorites } = useFavorites();
   const { createFavorite } = useCreateFavorite();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const { createNavigationMenuItem } = useCreateNavigationMenuItem();
   const { navigationMenuItems, currentWorkspaceMemberId } =
     usePrefetchedNavigationMenuItemsData();
 
@@ -75,7 +73,7 @@ export const ViewPickerOptionDropdown = ({
   const canEditView =
     hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
 
-  const isFavorite = isNavigationMenuItemEnabled
+  const isFavorite = isNavigationMenuItemEditingEnabled
     ? navigationMenuItems.some(
         (item) =>
           item.viewId === view.id &&
@@ -94,11 +92,7 @@ export const ViewPickerOptionDropdown = ({
 
   const handleAddToFavorites = () => {
     if (!isFavorite) {
-      if (isNavigationMenuItemEnabled) {
-        createNavigationMenuItem(view, 'view');
-      } else {
-        createFavorite(view, 'view');
-      }
+      createFavorite(view, 'view');
     } else {
       setViewPickerReferenceViewId(view.id);
       setViewPickerMode('favorite-folders-picker');

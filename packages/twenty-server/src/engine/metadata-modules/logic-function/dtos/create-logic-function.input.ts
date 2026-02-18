@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
   Min,
 } from 'class-validator';
@@ -71,6 +72,9 @@ export class CreateLogicFunction {
   checksum?: string;
 
   @IsString()
+  @Matches(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
+    message: 'handlerName must be a valid JavaScript identifier',
+  })
   @Field({ nullable: false })
   handlerName: string;
 

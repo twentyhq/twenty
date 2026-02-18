@@ -20,8 +20,8 @@ type NavbarDragProviderProps = {
 };
 
 export const NavbarDragProvider = ({ children }: NavbarDragProviderProps) => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const [isDragging, setIsDragging] = useState(false);
   const [sourceDroppableId, setSourceDroppableId] = useState<string | null>(
@@ -42,7 +42,7 @@ export const NavbarDragProvider = ({ children }: NavbarDragProviderProps) => {
     setIsDragging(false);
     setSourceDroppableId(null);
 
-    if (isNavigationMenuItemEnabled) {
+    if (isNavigationMenuItemEditingEnabled) {
       const isWorkspaceDrop =
         (result.source?.droppableId?.startsWith('workspace-') ?? false) &&
         (result.destination?.droppableId?.startsWith('workspace-') ?? false);
