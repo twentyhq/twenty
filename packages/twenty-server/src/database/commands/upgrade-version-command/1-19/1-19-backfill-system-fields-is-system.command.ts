@@ -25,10 +25,15 @@ const POSITION_FIELDS_TO_FIX_TYPE = [
   STANDARD_OBJECTS.favoriteFolder.fields.position.universalIdentifier,
 ];
 
+const RELATION_FIELD_TYPES = [
+  FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
+];
+
 @Command({
   name: 'upgrade:1-19:backfill-system-fields-is-system',
   description:
-    'Set isSystem to true for all field metadata matching system field names (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position, searchVector) and fix position field type for favorite/favoriteFolder',
+    'Set isSystem to true for system field names, set isSystem to false for relation/morph_relation fields, and fix position field type for favorite/favoriteFolder',
 })
 export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -57,7 +62,7 @@ export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorksp
 
     if (dryRun) {
       this.logger.log(
-        `[DRY RUN] Would set isSystem=true for fields named [${SYSTEM_FIELD_NAMES.join(', ')}] and fix position field types in workspace ${workspaceId}. Skipping.`,
+        `[DRY RUN] Would set isSystem=true for fields named [${SYSTEM_FIELD_NAMES.join(', ')}], set isSystem=false for relation fields, and fix position field types in workspace ${workspaceId}. Skipping.`,
       );
 
       return;
@@ -84,6 +89,25 @@ export class BackfillSystemFieldsIsSystemCommand extends ActiveOrSuspendedWorksp
       if (isSystemUpdatedCount > 0) {
         this.logger.log(
           `Set isSystem=true for ${isSystemUpdatedCount} field(s) in workspace ${workspaceId}`,
+        );
+        needsCacheInvalidation = true;
+      }
+
+      const relationIsSystemResult = await queryRunner.query(
+        `UPDATE core."fieldMetadata"
+         SET "isSystem" = false
+         WHERE "workspaceId" = $1
+           AND "type" = ANY($2)
+           AND "isSystem" = true`,
+        [workspaceId, RELATION_FIELD_TYPES],
+      );
+
+      const relationIsSystemUpdatedCount =
+        relationIsSystemResult?.[1] ?? 0;
+
+      if (relationIsSystemUpdatedCount > 0) {
+        this.logger.log(
+          `Set isSystem=false for ${relationIsSystemUpdatedCount} relation field(s) in workspace ${workspaceId}`,
         );
         needsCacheInvalidation = true;
       }
