@@ -74,17 +74,49 @@ export class LocalDriver implements StorageDriver {
 
     await this.createFolder(folderPath);
 
-    await fs.writeFile(filePath, params.sourceFile);
+    const realFolderPath = realpathSync(folderPath);
+    const realFilePath = path.join(realFolderPath, path.basename(filePath));
+
+    this.assertRealPathIsWithinStorage(realFilePath);
+
+    try {
+      const stats = await fs.lstat(realFilePath);
+
+      if (stats.isSymbolicLink()) {
+        throw new FileStorageException(
+          'Access denied',
+          FileStorageExceptionCode.ACCESS_DENIED,
+        );
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw error;
+      }
+    }
+
+    await fs.writeFile(realFilePath, params.sourceFile);
   }
 
   async downloadFile(params: {
     onStoragePath: string;
     localPath: string;
   }): Promise<void> {
-    const filePath = path.resolve(
+    const resolvedPath = path.resolve(
       this.options.storagePath,
       params.onStoragePath,
     );
+    let filePath: string;
+
+    try {
+      filePath = realpathSync(resolvedPath);
+    } catch {
+      throw new FileStorageException(
+        'File not found',
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    this.assertRealPathIsWithinStorage(filePath);
 
     await this.createFolder(dirname(params.localPath));
 
@@ -97,26 +129,57 @@ export class LocalDriver implements StorageDriver {
     onStoragePath: string;
     localPath: string;
   }): Promise<void> {
-    const rootFolderPath = path.resolve(
+    const resolvedPath = path.resolve(
       this.options.storagePath,
       params.onStoragePath,
     );
+    let rootFolderPath: string;
+
+    try {
+      rootFolderPath = realpathSync(resolvedPath);
+    } catch {
+      throw new FileStorageException(
+        'File not found',
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    this.assertRealPathIsWithinStorage(rootFolderPath);
 
     await this.createFolder(params.localPath);
 
-    const resources = await fs.readdir(rootFolderPath);
+    await this.downloadFolderFromRealPath({
+      rootFolderPath,
+      localPath: params.localPath,
+    });
+  }
+
+  private async downloadFolderFromRealPath(params: {
+    rootFolderPath: string;
+    localPath: string;
+  }): Promise<void> {
+    await this.createFolder(params.localPath);
+
+    const resources = await fs.readdir(params.rootFolderPath);
 
     for (const resource of resources) {
-      const resourcePath = path.join(rootFolderPath, resource);
-      const stats = await fs.stat(resourcePath);
+      const resourcePath = path.join(params.rootFolderPath, resource);
+      const stats = await fs.lstat(resourcePath);
+
+      if (stats.isSymbolicLink()) {
+        throw new FileStorageException(
+          'Access denied',
+          FileStorageExceptionCode.ACCESS_DENIED,
+        );
+      }
 
       if (stats.isFile()) {
         const content = await fs.readFile(resourcePath);
 
         await fs.writeFile(path.join(params.localPath, resource), content);
       } else {
-        await this.downloadFolder({
-          onStoragePath: path.join(params.onStoragePath, resource),
+        await this.downloadFolderFromRealPath({
+          rootFolderPath: resourcePath,
           localPath: path.join(params.localPath, resource),
         });
       }

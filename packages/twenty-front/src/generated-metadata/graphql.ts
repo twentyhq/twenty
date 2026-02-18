@@ -4881,7 +4881,6 @@ export type User = {
   lastName: Scalars['String'];
   locale: Scalars['String'];
   onboardingStatus?: Maybe<OnboardingStatus>;
-  passwordHash?: Maybe<Scalars['String']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   userVars?: Maybe<Scalars['JSONObject']>;

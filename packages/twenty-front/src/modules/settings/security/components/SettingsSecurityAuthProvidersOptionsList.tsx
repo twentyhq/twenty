@@ -175,12 +175,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               description={t`Allow the invitation of new users by sharing an invite link.`}
               checked={currentWorkspace.isPublicInviteLinkEnabled}
               advancedMode
+              divider
               onChange={() =>
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }
             />
-          </Card>
-          <Card rounded>
             <Toggle2FA />
           </Card>
         </>
