@@ -35,8 +35,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
         name: 'Dashboard Layout',
         type: PageLayoutType.DASHBOARD,
         objectUniversalIdentifier: 'obj-uuid-1',
-        defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
-          'tab-uuid-1',
+        defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: 'tab-uuid-1',
       },
       applicationUniversalIdentifier,
       now,
