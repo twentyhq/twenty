@@ -7,6 +7,7 @@ import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/ho
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -30,6 +31,7 @@ import {
   type TriggerEventType,
   useMouseDownNavigation,
 } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -310,6 +312,9 @@ export const NavigationDrawerItem = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+  );
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
 
@@ -382,7 +387,7 @@ export const NavigationDrawerItem = ({
           )}
 
           {Icon &&
-            (iconColor != null && iconColor !== '' ? (
+            (isNavigationMenuItemEditingEnabled ? (
               <StyledIcon>
                 <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
               </StyledIcon>
