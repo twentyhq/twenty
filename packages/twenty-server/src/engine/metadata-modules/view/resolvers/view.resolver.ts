@@ -10,6 +10,7 @@ import {
 
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewVisibility } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -41,7 +42,6 @@ import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/cr
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 

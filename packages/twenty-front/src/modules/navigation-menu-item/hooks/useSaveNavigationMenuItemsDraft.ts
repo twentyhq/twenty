@@ -1,15 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import {
+  type CreateNavigationMenuItemInput,
+  useCreateNavigationMenuItemMutation,
+} from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 export const useSaveNavigationMenuItemsDraft = () => {
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
@@ -22,9 +26,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
   const saveDraft = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const draft = snapshot
-          .getLoadable(navigationMenuItemsDraftState)
-          .getValue();
+        const draft = jotaiStore.get(navigationMenuItemsDraftStateV2.atom);
         const prefetch = snapshot
           .getLoadable(prefetchNavigationMenuItemsState)
           .getValue();
@@ -82,17 +84,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
         ];
 
         for (const draftItem of idsToCreateIncludingRecreated) {
-          const input: {
-            position: number;
-            folderId?: string | null;
-            name?: string;
-            link?: string;
-            icon?: string | null;
-            color?: string | null;
-            viewId?: string;
-            targetObjectMetadataId?: string;
-            targetRecordId?: string;
-          } = {
+          const input: CreateNavigationMenuItemInput = {
             position: Math.max(0, Math.round(draftItem.position)),
           };
 

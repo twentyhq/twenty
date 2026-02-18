@@ -20,11 +20,11 @@ import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/hooks/useHa
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
 import { getDropTargetIdFromDestination } from '@/navigation-menu-item/utils/getDropTargetIdFromDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -48,8 +48,10 @@ export const PageDragDropProvider = ({
   const [forbiddenDropTargetId, setForbiddenDropTargetId] = useState<
     string | null
   >(null);
-  const [addToNavFallbackDestination, setAddToNavFallbackDestination] =
-    useState<{ droppableId: string; index: number } | null>(null);
+  const [
+    addToNavigationFallbackDestination,
+    setAddToNavigationFallbackDestination,
+  ] = useState<{ droppableId: string; index: number } | null>(null);
 
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
@@ -72,13 +74,13 @@ export const PageDragDropProvider = ({
           NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS,
         index: orphanItemCount,
       };
-      setAddToNavFallbackDestination(defaultDestination);
+      setAddToNavigationFallbackDestination(defaultDestination);
       setActiveDropTargetId(getDropTargetIdFromDestination(defaultDestination));
     }
   };
 
   const handleDragUpdate = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ((update: Parameters<OnDragUpdateResponder>[0]) => {
         const { source, destination } = update;
         if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
@@ -88,14 +90,14 @@ export const PageDragDropProvider = ({
           destination !== null &&
           isWorkspaceDroppableId(destination.droppableId)
         ) {
-          setAddToNavFallbackDestination(destination);
+          setAddToNavigationFallbackDestination(destination);
           const dropTargetId = getDropTargetIdFromDestination(destination);
           setActiveDropTargetId(dropTargetId);
 
           const payload =
-            getSnapshotValue(snapshot, addToNavPayloadRegistryState).get(
-              update.draggableId,
-            ) ?? null;
+            jotaiStore
+              .get(addToNavPayloadRegistryStateV2.atom)
+              .get(update.draggableId) ?? null;
           const folderId = validateAndExtractWorkspaceFolderId(
             destination.droppableId,
           );
@@ -104,30 +106,32 @@ export const PageDragDropProvider = ({
           setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
         } else {
           setForbiddenDropTargetId(null);
-          const fallback = addToNavFallbackDestination;
+          const fallback = addToNavigationFallbackDestination;
           setActiveDropTargetId(
             fallback ? getDropTargetIdFromDestination(fallback) : null,
           );
         }
       }) as OnDragUpdateResponder,
-    [addToNavFallbackDestination],
+    [addToNavigationFallbackDestination],
   );
 
   const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
-    const isAddToNavSource =
+    const isAddToNavigationSource =
       result.source.droppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
     const effectiveResult: DropResult =
-      isAddToNavSource && !result.destination && addToNavFallbackDestination
-        ? { ...result, destination: addToNavFallbackDestination }
+      isAddToNavigationSource &&
+      !result.destination &&
+      addToNavigationFallbackDestination
+        ? { ...result, destination: addToNavigationFallbackDestination }
         : result;
 
     setIsDragging(false);
     setSourceDroppableId(null);
     setActiveDropTargetId(null);
     setForbiddenDropTargetId(null);
-    setAddToNavFallbackDestination(null);
+    setAddToNavigationFallbackDestination(null);
 
-    if (isAddToNavSource) {
+    if (isAddToNavigationSource) {
       handleAddToNavigationDrop(effectiveResult, provided);
       return;
     }
@@ -156,7 +160,7 @@ export const PageDragDropProvider = ({
               setActiveDropTargetId,
               forbiddenDropTargetId,
               setForbiddenDropTargetId,
-              addToNavFallbackDestination,
+              addToNavigationFallbackDestination,
             }}
           >
             <DragDropContext

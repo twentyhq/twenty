@@ -1,3 +1,3 @@
-import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest-to-common-args-handlers/selected-fields-handler';
+import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 
-export const restToCommonArgsHandlers = [RestToCommonSelectedFieldsHandler];
+export const restToCommonArgsHandlers = [CommonSelectFieldsHelper];

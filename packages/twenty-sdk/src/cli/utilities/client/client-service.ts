@@ -1,61 +1,44 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { ConfigService } from '@/cli/utilities/config/config-service';
 import { generate } from '@genql/cli';
-import chalk from 'chalk';
 import * as fs from 'fs-extra';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
 
-export const GENERATED_FOLDER_NAME = 'generated';
-
 export class ClientService {
-  private configService: ConfigService;
   private apiService: ApiService;
 
   constructor() {
-    this.configService = new ConfigService();
-    this.apiService = new ApiService();
+    this.apiService = new ApiService({ disableInterceptors: true });
   }
 
-  async generate(appPath: string): Promise<void> {
-    const outputPath = join(appPath, GENERATED_FOLDER_NAME);
+  async generate({
+    appPath,
+    authToken,
+  }: {
+    appPath: string;
+    authToken?: string;
+  }): Promise<void> {
+    const outputPath = this.resolveGeneratedPath(appPath);
 
-    console.log(chalk.blue('📦 Generating Twenty client...'));
-    console.log(chalk.gray(`📁 Output Path: ${outputPath}`));
-    console.log('');
-    const config = await this.configService.getConfig();
-
-    const url = config.apiUrl;
-    const token = config.apiKey;
-
-    if (!url || !token) {
-      console.log(
-        chalk.yellow(
-          '⚠️  Skipping Client generation: API URL or token not configured',
-        ),
-      );
-      return;
-    }
-
-    console.log(chalk.gray(`API URL: ${url}`));
-    console.log(chalk.gray(`Output: ${outputPath}`));
-
-    const getSchemaResponse = await this.apiService.getSchema();
+    const getSchemaResponse = await this.apiService.getSchema({ authToken });
 
     if (!getSchemaResponse.success) {
-      return;
+      throw new Error(
+        `Failed to introspect schema: ${JSON.stringify(getSchemaResponse.error)}`,
+      );
     }
 
     const { data: schema } = getSchemaResponse;
 
-    const output = resolve(outputPath);
+    await fs.ensureDir(outputPath);
+    await fs.emptyDir(outputPath);
 
     await generate({
       schema,
-      output,
+      output: outputPath,
       scalarTypes: {
         DateTime: 'string',
         JSON: 'Record<string, unknown>',
@@ -63,17 +46,18 @@ export class ClientService {
       },
     });
 
-    await this.injectTwentyClient(output);
+    await this.injectTwentyClient(outputPath);
+  }
 
-    console.log(chalk.green('✓ Client generated successfully!'));
-    console.log(chalk.gray(`Generated files at: ${outputPath}`));
+  private resolveGeneratedPath(appPath: string): string {
+    return join(appPath, 'node_modules', 'twenty-sdk', 'generated');
   }
 
   private async injectTwentyClient(output: string) {
     const twentyClientContent = `
 
 // ----------------------------------------------------
-// ✨ Custom Twenty client (auto-injected)
+// Custom Twenty client (auto-injected)
 // ----------------------------------------------------
 
 const defaultOptions: ClientOptions = {

@@ -37,7 +37,7 @@ import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constant
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,7 +49,7 @@ import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
-import { getFunctionInputFromInputSchema } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getFunctionInputFromInputSchema';
+import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -289,10 +289,6 @@ export const WorkflowEditActionCode = ({
       Icon: IconPlayerPlay,
     },
   ];
-
-  useEffect(() => {
-    setFunctionInput(action.settings.input.logicFunctionInput);
-  }, [action]);
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],

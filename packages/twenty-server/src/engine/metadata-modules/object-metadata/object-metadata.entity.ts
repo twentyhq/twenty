@@ -117,12 +117,6 @@ export class ObjectMetadataEntity
   })
   indexMetadatas: Relation<IndexMetadataEntity[]>;
 
-  @OneToMany(
-    () => FieldMetadataEntity,
-    (field) => field.relationTargetObjectMetadataId,
-  )
-  targetRelationFields: Relation<FieldMetadataEntity[]>;
-
   @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
     onDelete: 'CASCADE',
   })

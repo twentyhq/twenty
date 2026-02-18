@@ -29,7 +29,8 @@ export type RegularFieldManifest<
 // Relation-specific universal settings (relationType, onDelete, joinColumnName)
 // are provided through the `universalSettings` field.
 export type RelationFieldManifest<
-  T extends RelationAndMorphRelationFieldMetadataType = RelationAndMorphRelationFieldMetadataType,
+  T extends
+    RelationAndMorphRelationFieldMetadataType = RelationAndMorphRelationFieldMetadataType,
 > = RegularFieldManifest<T> & {
   relationTargetFieldMetadataUniversalIdentifier: string;
   relationTargetObjectMetadataUniversalIdentifier: string;

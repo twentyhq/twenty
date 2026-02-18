@@ -77,13 +77,13 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
-  const { addToNavFallbackDestination } = useContext(
+  const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
   );
 
   const flatItems = items.filter((item) => !isDefined(item.folderId));
-  const isAddToNavDropTargetVisible =
-    addToNavFallbackDestination?.droppableId ===
+  const isAddToNavigationDropTargetVisible =
+    addToNavigationFallbackDestination?.droppableId ===
     NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
   const folderChildrenById = items.reduce<
     Map<string, ProcessedNavigationMenuItem[]>
@@ -156,7 +156,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const isAddMenuItemButtonVisible =
     isEditMode && isDefined(onAddMenuItem) && !isDragging;
 
-  if (flatItems.length === 0 && !isAddToNavDropTargetVisible) {
+  if (flatItems.length === 0 && !isAddToNavigationDropTargetVisible) {
     return null;
   }
 
@@ -170,7 +170,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           alwaysShowRightIcon={isEditMode}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {(isNavigationSectionOpen || isAddToNavDropTargetVisible) && (
+      {(isNavigationSectionOpen || isAddToNavigationDropTargetVisible) && (
         <Droppable
           droppableId={
             NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
@@ -335,12 +335,13 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                   />
                 )}
               </NavigationItemDropTarget>
-              {addToNavFallbackDestination?.droppableId ===
+              {addToNavigationFallbackDestination?.droppableId ===
                 NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
-                addToNavFallbackDestination.index > filteredItems.length && (
+                addToNavigationFallbackDestination.index >
+                  filteredItems.length && (
                   <NavigationItemDropTarget
                     folderId={null}
-                    index={addToNavFallbackDestination.index}
+                    index={addToNavigationFallbackDestination.index}
                     sectionId={NavigationSections.WORKSPACE}
                     compact
                   />

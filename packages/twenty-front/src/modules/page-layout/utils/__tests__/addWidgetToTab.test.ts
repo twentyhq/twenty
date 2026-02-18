@@ -30,6 +30,7 @@ describe('addWidgetToTab', () => {
   const mockTabs: PageLayoutTab[] = [
     {
       id: 'tab-1',
+      applicationId: '',
       title: 'Tab 1',
       position: 0,
       pageLayoutId: 'layout-1',
@@ -40,6 +41,7 @@ describe('addWidgetToTab', () => {
     },
     {
       id: 'tab-2',
+      applicationId: '',
       title: 'Tab 2',
       position: 1,
       pageLayoutId: 'layout-1',

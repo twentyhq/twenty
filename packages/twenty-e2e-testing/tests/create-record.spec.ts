@@ -111,8 +111,8 @@ test('Create and update record', async ({ page }) => {
 
     await companyRelationWidget.hover();
     await companyRelationWidget.locator('.tabler-icon-pencil').click();
-    await page.getByRole('textbox', { name: 'Search' }).fill('Goog');
-    await expect(page.getByRole('option', { name: 'Google' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Search' }).fill('VMw');
+    await expect(page.getByRole('option', { name: 'VMware' })).toBeVisible();
     const [updatePersonResponse] = await Promise.all([
       page.waitForResponse(async (response) => {
         if (!response.url().endsWith('/graphql')) {
@@ -123,7 +123,7 @@ test('Create and update record', async ({ page }) => {
 
         return requestBody.operationName === 'UpdateOnePerson';
       }),
-      await page.getByRole('option', { name: 'Google' }).click({force: true})
+      await page.getByRole('option', { name: 'VMware' }).click({force: true})
     ]);
 
     const body = await updatePersonResponse.json()
@@ -153,6 +153,6 @@ test('Create and update record', async ({ page }) => {
     expect(findOnePersonReponseBody.data.person.linkedinLink.primaryLinkUrl).toBe('linkedin.com/johndoe');
     expect(findOnePersonReponseBody.data.person.phones.primaryPhoneNumber).toBe('611223344');
     expect(findOnePersonReponseBody.data.person.workPreference).toEqual(['HYBRID']);
-    expect(findOnePersonReponseBody.data.person.company.name).toBe('Google');
+    expect(findOnePersonReponseBody.data.person.company.name).toBe('VMware');
 
 });

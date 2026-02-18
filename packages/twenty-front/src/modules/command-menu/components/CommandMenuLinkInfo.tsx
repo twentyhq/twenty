@@ -9,9 +9,10 @@ import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/N
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const CommandMenuLinkInfo = () => {
   const { t } = useLingui();
@@ -21,8 +22,8 @@ export const CommandMenuLinkInfo = () => {
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );
-  const selectedNavigationMenuItemInEditMode = useRecoilValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+    selectedNavigationMenuItemInEditModeStateV2,
   );
   const items = useWorkspaceSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();

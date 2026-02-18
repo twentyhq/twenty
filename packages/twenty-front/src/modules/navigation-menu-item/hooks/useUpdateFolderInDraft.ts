@@ -1,7 +1,6 @@
-import { useSetRecoilState } from 'recoil';
-
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 export type UpdateFolderInDraftUpdates = {
   name?: string;
@@ -9,8 +8,8 @@ export type UpdateFolderInDraftUpdates = {
 };
 
 export const useUpdateFolderInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilState(
-    navigationMenuItemsDraftState,
+  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+    navigationMenuItemsDraftStateV2,
   );
 
   const updateFolderInDraft = (

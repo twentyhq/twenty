@@ -1,11 +1,15 @@
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  FileFolder,
+  type ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -34,7 +38,7 @@ export class RichTextV2FieldQueryResultGetterHandler
 {
   constructor(
     private readonly fileService: FileService,
-    private readonly filesFieldService: FilesFieldService,
+    private readonly fileUrlService: FileUrlService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -92,15 +96,19 @@ export class RichTextV2FieldQueryResultGetterHandler
   ): RichTextBlock[] => {
     return blocknoteBlocks.map((block: RichTextBlock) => {
       if (isFilesFieldMigrated && isDefined(block.props?.url)) {
-        const fileIdFromUrl = extractFileIdFromUrl(block.props.url);
+        const fileIdFromUrl = extractFileIdFromUrl(
+          block.props.url,
+          FileFolder.FilesField,
+        );
 
         if (!isDefined(fileIdFromUrl)) {
           return block;
         }
 
-        const url = this.filesFieldService.signFileUrl({
+        const url = this.fileUrlService.signFileByIdUrl({
           fileId: fileIdFromUrl,
           workspaceId,
+          fileFolder: FileFolder.FilesField,
         });
 
         return {

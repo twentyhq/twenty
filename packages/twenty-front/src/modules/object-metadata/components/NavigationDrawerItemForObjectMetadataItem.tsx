@@ -11,6 +11,9 @@ import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -31,6 +34,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   onActiveItemClickWhenNotInEditMode,
   isDragging = false,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
+  );
   const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -117,7 +123,10 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : getIcon(objectMetadataItem.icon);
 
-  const iconThemeColor = isRecord ? undefined : navigationMenuItem?.color;
+  const iconThemeColor =
+    isNavigationMenuItemEditingEnabled && !isRecord
+      ? navigationMenuItem?.color
+      : undefined;
 
   const secondaryLabel =
     isRecord || isViewWithCustomName

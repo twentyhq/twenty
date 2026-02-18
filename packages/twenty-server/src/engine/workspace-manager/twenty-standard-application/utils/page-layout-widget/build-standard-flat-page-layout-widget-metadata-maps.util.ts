@@ -69,6 +69,8 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   opportunity: 'opportunityRecordPageFields',
   task: 'taskRecordPageFields',
   note: 'noteRecordPageFields',
+  workflowRun: 'workflowRunRecordPageFields',
+  workflowVersion: 'workflowVersionRecordPageFields',
 };
 
 const buildRecordPageWidgetConfigurations = ({

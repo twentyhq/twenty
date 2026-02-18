@@ -1,16 +1,16 @@
-import { useSetRecoilState } from 'recoil';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
-import type { NavigationMenuItem } from '~/generated-metadata/graphql';
-
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-
-export type UpdateNavigationMenuItemInDraftUpdates = Partial<
-  Pick<NavigationMenuItem, 'color'>
->;
+export type UpdateNavigationMenuItemInDraftUpdates = {
+  color?: string;
+  name?: string;
+  icon?: string;
+  link?: string;
+};
 
 export const useUpdateNavigationMenuItemInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilState(
-    navigationMenuItemsDraftState,
+  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+    navigationMenuItemsDraftStateV2,
   );
 
   const updateNavigationMenuItemInDraft = (

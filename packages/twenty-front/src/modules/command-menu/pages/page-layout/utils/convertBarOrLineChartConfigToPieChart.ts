@@ -19,5 +19,6 @@ export const convertBarOrLineChartConfigToPieChart = (
     groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
     dateGranularity: configuration.primaryAxisDateGranularity,
     orderBy: configuration.primaryAxisOrderBy,
+    splitMultiValueFields: configuration.splitMultiValueFields,
   };
 };

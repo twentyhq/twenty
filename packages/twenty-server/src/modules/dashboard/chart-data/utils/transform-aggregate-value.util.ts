@@ -1,7 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 
 const PERCENT_AGGREGATE_OPERATIONS = new Set([
   AggregateOperations.PERCENTAGE_EMPTY,

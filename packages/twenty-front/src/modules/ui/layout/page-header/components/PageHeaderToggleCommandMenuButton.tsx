@@ -1,15 +1,15 @@
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
@@ -122,9 +122,9 @@ const AnimatedIcon = ({
 
 export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-  const isNavigationMenuInEditMode = useRecoilValue(
-    isNavigationMenuInEditModeState,
+  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
+  const isNavigationMenuInEditMode = useRecoilValueV2(
+    isNavigationMenuInEditModeStateV2,
   );
 
   const isMobile = useIsMobile();
