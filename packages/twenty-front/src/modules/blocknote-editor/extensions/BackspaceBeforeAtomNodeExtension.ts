@@ -27,18 +27,10 @@ export const handleBackspaceBeforeAtomNode = (
     return false;
   }
 
-  const nodeBefore = $from.nodeBefore;
-
-  if (nodeBefore?.isAtom) {
-    return false;
-  }
-
   const from = $from.pos - 1;
   const to = $from.pos;
 
   view.dispatch(state.tr.delete(from, to));
-
-  return true;
 
   return true;
 };
