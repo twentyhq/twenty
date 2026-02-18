@@ -35,8 +35,8 @@ type PageDragDropProviderProps = {
 export const PageDragDropProvider = ({
   children,
 }: PageDragDropProviderProps) => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const [isDragging, setIsDragging] = useState(false);
   const [sourceDroppableId, setSourceDroppableId] = useState<string | null>(
@@ -136,7 +136,7 @@ export const PageDragDropProvider = ({
       return;
     }
 
-    if (isNavigationMenuItemEnabled) {
+    if (isNavigationMenuItemEditingEnabled) {
       const isWorkspaceDrop =
         isWorkspaceDroppableId(result.source?.droppableId) &&
         isWorkspaceDroppableId(result.destination?.droppableId);
