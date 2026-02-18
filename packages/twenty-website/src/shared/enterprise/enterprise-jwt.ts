@@ -32,6 +32,24 @@ const getValidityTokenDurationDays = (): number => {
   return parsed;
 };
 
+export type SignValidityTokenOptions = {
+  subscriptionCancelAt: number | null;
+};
+
+const computeValidityExp = (
+  nowSeconds: number,
+  durationDays: number,
+  subscriptionCancelAt: number | null,
+): number => {
+  const defaultExp = nowSeconds + durationDays * 24 * 60 * 60;
+
+  if (subscriptionCancelAt === null || subscriptionCancelAt <= 0) {
+    return defaultExp;
+  }
+
+  return Math.min(defaultExp, subscriptionCancelAt);
+};
+
 const getPrivateKey = (): string => {
   const key = process.env.ENTERPRISE_JWT_PRIVATE_KEY;
 
@@ -134,15 +152,20 @@ export const signEnterpriseKey = (
   return signJwt(payload, getPrivateKey());
 };
 
-export const signValidityToken = (subscriptionId: string): string => {
+export const signValidityToken = (
+  subscriptionId: string,
+  options?: SignValidityTokenOptions,
+): string => {
   const now = Math.floor(Date.now() / 1000);
   const durationDays = getValidityTokenDurationDays();
+  const subscriptionCancelAt = options?.subscriptionCancelAt ?? null;
+  const exp = computeValidityExp(now, durationDays, subscriptionCancelAt);
 
   const payload: EnterpriseValidityPayload = {
     sub: subscriptionId,
     status: 'valid',
     iat: now,
-    exp: now + durationDays * 24 * 60 * 60,
+    exp,
   };
 
   return signJwt(payload, getPrivateKey());
