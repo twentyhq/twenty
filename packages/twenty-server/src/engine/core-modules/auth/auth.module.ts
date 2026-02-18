@@ -35,6 +35,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
 import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -117,6 +118,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ApplicationModule,
     WorkspaceCacheModule,
     SecureHttpClientModule,
+    EnterpriseModule,
   ],
   controllers: [
     GoogleAuthController,

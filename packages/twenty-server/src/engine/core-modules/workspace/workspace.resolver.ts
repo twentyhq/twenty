@@ -35,6 +35,9 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
+import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -103,6 +106,7 @@ export class WorkspaceResolver {
     private readonly dnsManagerService: DnsManagerService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly applicationService: ApplicationService,
+    private readonly enterpriseKeyService: EnterpriseKeyService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -324,7 +328,7 @@ export class WorkspaceResolver {
 
   @ResolveField(() => Boolean)
   hasValidEnterpriseKey(): boolean {
-    return isDefined(this.twentyConfigService.get('ENTERPRISE_KEY'));
+    return this.enterpriseKeyService.isValid();
   }
 
   @ResolveField(() => WorkspaceUrlsDTO)
@@ -460,5 +464,64 @@ export class WorkspaceResolver {
       workspace,
       domainValidRecords,
     );
+  }
+
+  @Query(() => String, { nullable: true })
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+  )
+  async enterprisePortalSession(
+    @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
+    @AuthUser() user?: UserEntity,
+  ): Promise<string | null> {
+    return this.enterpriseKeyService.getPortalUrl(
+      returnUrlPath ?? undefined,
+      user?.email,
+    );
+  }
+
+  @Query(() => String, { nullable: true })
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+  )
+  async enterpriseCheckoutSession(): Promise<string | null> {
+    return this.enterpriseKeyService.getCheckoutUrl();
+  }
+
+  @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+  )
+  async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
+    return this.enterpriseKeyService.getSubscriptionStatus();
+  }
+
+  @Mutation(() => EnterpriseLicenseInfoDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+  )
+  async setEnterpriseKey(
+    @Args('enterpriseKey') enterpriseKey: string,
+  ): Promise<EnterpriseLicenseInfoDTO> {
+    try {
+      await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
+
+      await this.enterpriseKeyService.validate();
+
+      return this.enterpriseKeyService.getLicenseInfo();
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+
+      return {
+        isValid: false,
+        licensee: null,
+        expiresAt: null,
+        subscriptionId: null,
+      };
+    }
   }
 }

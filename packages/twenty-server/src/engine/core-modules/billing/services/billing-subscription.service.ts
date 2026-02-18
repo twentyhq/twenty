@@ -38,6 +38,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -61,6 +62,7 @@ export class BillingSubscriptionService {
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
     private readonly meteredCreditService: MeteredCreditService,
+    private readonly enterpriseKeyService: EnterpriseKeyService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -180,9 +182,7 @@ export class BillingSubscriptionService {
     workspaceId: string,
   ): Promise<BillingEntitlementDTO[]> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
-    const hasValidEnterpriseKey = isDefined(
-      this.twentyConfigService.get('ENTERPRISE_KEY'),
-    );
+    const hasValidEnterpriseKey = this.enterpriseKeyService.isValid();
 
     const entitlements = isBillingEnabled
       ? await this.billingEntitlementRepository.find({
