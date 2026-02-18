@@ -74,7 +74,7 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allPeople: 'blue',
   allTasks: 'turquoise',
   allNotes: 'turquoise',
-  allOpportunities: 'tomato',
+  allOpportunities: 'red',
   workflowsFolder: 'orange',
   allDashboards: 'gray',
   workflowsFolderAllWorkflows: 'gray',
