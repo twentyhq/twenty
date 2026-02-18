@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { IconHelp, IconX } from '@ui/display/icon/components/TablerIcons';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightButton, LightIconButton } from '@ui/input';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export type CalloutVariant =
@@ -120,6 +121,7 @@ export type CalloutProps = {
     label: string;
     onClick: () => void;
   };
+  isClosable?: boolean;
   onClose?: () => void;
 };
 
@@ -129,8 +131,24 @@ export const Callout = ({
   description,
   Icon = IconHelp,
   action,
+  isClosable = false,
   onClose,
 }: CalloutProps) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  const handleClose = () => {
+    if (!isClosable) {
+      return;
+    }
+
+    setIsVisible(false);
+    onClose?.();
+  };
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <StyledCalloutContainer variant={variant}>
       <StyledHeader>
@@ -138,12 +156,12 @@ export const Callout = ({
           <Icon size={16} />
         </StyledIconContainer>
         <StyledTitle>{title}</StyledTitle>
-        {isDefined(onClose) && (
+        {isClosable && (
           <LightIconButton
             Icon={IconX}
             size="small"
             aria-label="Close"
-            onClick={onClose}
+            onClick={handleClose}
           />
         )}
       </StyledHeader>

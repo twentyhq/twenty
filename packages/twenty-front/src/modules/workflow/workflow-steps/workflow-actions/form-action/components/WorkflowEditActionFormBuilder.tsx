@@ -241,6 +241,7 @@ export const WorkflowEditActionFormBuilder = ({
               Icon={IconAlertTriangle}
               title={t`This form will appear in workflow runs.`}
               description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
+              isClosable
               onClose={() => setIsCalloutVisible(false)}
               action={{
                 label: t`Learn more`,
@@ -258,6 +259,7 @@ export const WorkflowEditActionFormBuilder = ({
           <StyledNotClosableCalloutContainer>
             <Callout
               variant={'neutral'}
+              isClosable={false}
               title={t`Add inputs to your form`}
               description={t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
             />
