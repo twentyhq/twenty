@@ -89,7 +89,7 @@ export class LocalDriver implements StorageDriver {
         );
       }
     } catch (error) {
-      if (error instanceof FileStorageException) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw error;
       }
     }
