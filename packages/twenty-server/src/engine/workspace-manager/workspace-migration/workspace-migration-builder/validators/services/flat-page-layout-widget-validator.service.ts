@@ -16,7 +16,7 @@ import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-lay
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+import { type GridPosition } from 'twenty-shared/types';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';

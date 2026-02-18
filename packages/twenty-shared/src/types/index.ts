@@ -138,16 +138,12 @@ export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
 export type {
-  PageLayoutWidgetGridPosition,
-  PageLayoutWidgetVerticalListPosition,
-  PageLayoutWidgetCanvasPosition,
-  PageLayoutWidgetPosition,
-} from './page-layout/page-layout-widget-position.type';
-export type {
   ChartRecordFilter,
   ChartRecordFilterGroup,
   ChartFilter,
-  RatioAggregateConfig,
+} from './page-layout/chart-filter.type';
+export type { GridPosition } from './page-layout/grid-position.type';
+export type {
   AggregateChartConfiguration,
   GaugeChartConfiguration,
   PieChartConfiguration,
@@ -170,10 +166,17 @@ export type {
   WorkflowVersionConfiguration,
   WorkflowRunConfiguration,
   PageLayoutWidgetConfiguration,
-  PageLayoutWidgetUniversalConfiguration,
-} from './page-layout/page-layout-widget-universal-configuration.type';
+} from './page-layout/page-layout-widget-configuration.type';
+export type {
+  PageLayoutWidgetGridPosition,
+  PageLayoutWidgetVerticalListPosition,
+  PageLayoutWidgetCanvasPosition,
+  PageLayoutWidgetPosition,
+} from './page-layout/page-layout-widget-position.type';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
+export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';

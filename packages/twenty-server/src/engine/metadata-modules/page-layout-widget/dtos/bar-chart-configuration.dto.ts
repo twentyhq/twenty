@@ -20,6 +20,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   type BarChartConfiguration,
+  type ChartFilter,
   SerializedRelation,
 } from 'twenty-shared/types';
 
@@ -30,7 +31,6 @@ import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/e
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 
 @ObjectType('BarChartConfiguration')
 export class BarChartConfigurationDTO implements BarChartConfiguration {

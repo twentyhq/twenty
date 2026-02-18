@@ -20,13 +20,13 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   type AggregateChartConfiguration,
   AggregateOperations,
+  type ChartFilter,
   SerializedRelation,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RatioAggregateConfigDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/ratio-aggregate-config.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
 
 @ObjectType('AggregateChartConfiguration')
 export class AggregateChartConfigurationDTO
