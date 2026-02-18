@@ -4,8 +4,6 @@ FROM node:24-alpine AS twenty-website-build
 WORKDIR /app
 
 COPY ./package.json .
-COPY ./nx.json .
-COPY ./tsconfig.base.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
@@ -22,11 +20,8 @@ ENV KEYSTATIC_GITHUB_CLIENT_SECRET="<fake build value>"
 ENV KEYSTATIC_SECRET="<fake build value>"
 ENV NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG="<fake build value>"
 
-COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-website /app/packages/twenty-website
-RUN npx nx build twenty-shared
-RUN npx nx build twenty-ui
 RUN npx nx build twenty-website
 
 FROM node:24-alpine AS twenty-website
