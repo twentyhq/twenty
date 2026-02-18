@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from 'node:child_process';
+import * as fs from 'fs-extra';
 import path from 'node:path';
 
 import {
@@ -24,8 +25,13 @@ export class TscWatcher {
     this.onErrors = options.onErrors;
   }
 
-  start(): void {
+  async start(): Promise<void> {
     const tscPath = path.join(this.appPath, 'node_modules', '.bin', 'tsc');
+
+    if (!(await fs.pathExists(tscPath))) {
+      return;
+    }
+
     const tsconfigPath = path.join(this.appPath, 'tsconfig.json');
 
     this.process = spawn(
@@ -33,6 +39,10 @@ export class TscWatcher {
       ['--watch', '--noEmit', '--pretty', 'false', '-p', tsconfigPath],
       { cwd: this.appPath, stdio: ['ignore', 'pipe', 'pipe'] },
     );
+
+    this.process.on('error', () => {
+      this.process = null;
+    });
 
     this.process.stdout?.on('data', (chunk: Buffer) => {
       this.handleOutput(chunk.toString());

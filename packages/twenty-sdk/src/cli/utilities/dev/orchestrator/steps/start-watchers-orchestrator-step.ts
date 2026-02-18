@@ -151,9 +151,8 @@ export class StartWatchersOrchestratorStep {
     logicFunctions: string[],
     frontComponents: string[],
   ): Promise<void> {
-    this.startTscWatcher();
-
     await Promise.all([
+      this.startTscWatcher(),
       this.startLogicFunctionsWatcher(logicFunctions),
       this.startFrontComponentsWatcher(frontComponents),
       this.startAssetWatcher(),
@@ -209,13 +208,13 @@ export class StartWatchersOrchestratorStep {
     this.dependencyWatcher.start();
   }
 
-  private startTscWatcher(): void {
+  private async startTscWatcher(): Promise<void> {
     this.tscWatcher = new TscWatcher({
       appPath: this.state.appPath,
       onErrors: this.handleTypecheckErrors.bind(this),
     });
 
-    this.tscWatcher.start();
+    await this.tscWatcher.start();
   }
 
   private handleTypecheckErrors(errors: TypecheckError[]): void {
