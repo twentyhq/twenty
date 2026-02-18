@@ -25,7 +25,9 @@ import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuI
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   // TEMP_DISABLED_TEST: Commented out unused import
   // Avatar,
@@ -35,14 +37,24 @@ import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
+const DROPDOWN_ID = 'test-dropdown-id';
+
+const ResetDropdownStateDecorator: Decorator = (Story) => {
+  jotaiStore.set(
+    isDropdownOpenComponentState.atomFamily({ instanceId: DROPDOWN_ID }),
+    false,
+  );
+  return <Story />;
+};
+
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
   component: Dropdown,
-  decorators: [ComponentDecorator, (Story) => <Story />],
+  decorators: [ComponentDecorator, ResetDropdownStateDecorator],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
     dropdownOffset: { x: 0, y: 8 },
-    dropdownId: 'test-dropdown-id',
+    dropdownId: DROPDOWN_ID,
   },
   argTypes: {
     clickableComponent: { control: false },
