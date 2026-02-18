@@ -1,6 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
 
-import { type ApplicationManifestMetadataName } from 'src/engine/core-modules/application/constants/application-manifest-metadata-names.constant';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/utils/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/utils/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/utils/from-logic-function-manifest-to-universal-flat-logic-function.util';
@@ -13,33 +12,23 @@ import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/e
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/utils/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/utils/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/utils/from-view-manifest-to-universal-flat-view.util';
-import { getEmptyApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-empty-application-manifest-all-universal-flat-entity-maps.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
-import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
-
-export type ApplicationManifestAllUniversalFlatEntityMaps = Pick<
-  AllUniversalFlatEntityMaps,
-  MetadataToFlatEntityMapsKey<ApplicationManifestMetadataName>
->;
-
-export type ApplicationManifestAllFlatEntityMaps = Pick<
-  AllFlatEntityMaps,
-  MetadataToFlatEntityMapsKey<ApplicationManifestMetadataName>
->;
 
 export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
   manifest,
   applicationUniversalIdentifier,
   now,
+  dependencyAllFlatEntityMaps,
 }: {
   manifest: Manifest;
   applicationUniversalIdentifier: string;
   now: string;
-}): ApplicationManifestAllUniversalFlatEntityMaps => {
-  const allUniversalFlatEntityMaps =
-    getEmptyApplicationManifestAllUniversalFlatEntityMaps();
+  dependencyAllFlatEntityMaps: AllFlatEntityMaps;
+}): AllFlatEntityMaps => {
+  const allUniversalFlatEntityMaps = structuredClone(
+    dependencyAllFlatEntityMaps,
+  );
 
   for (const objectManifest of manifest.objects) {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
