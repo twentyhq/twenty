@@ -30,6 +30,19 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 describe('useOpenDropdown', () => {
+  beforeEach(() => {
+    jotaiStore.set(
+      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+      false,
+    );
+    jotaiStore.set(
+      isDropdownOpenComponentState.atomFamily({
+        instanceId: outsideDropdownId,
+      }),
+      false,
+    );
+  });
+
   it('should open dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {

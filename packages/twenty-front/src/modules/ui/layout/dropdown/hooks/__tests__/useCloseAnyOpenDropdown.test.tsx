@@ -27,6 +27,13 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 describe('useCloseAnyOpenDropdown', () => {
+  beforeEach(() => {
+    jotaiStore.set(
+      isDropdownOpenComponentState.atomFamily({ instanceId: dropdownId }),
+      false,
+    );
+  });
+
   it('should open dropdown and then close it with closeAnyOpenDropdown', async () => {
     const { result } = renderHook(
       () => {
