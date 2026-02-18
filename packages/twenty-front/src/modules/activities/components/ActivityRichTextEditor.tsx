@@ -29,6 +29,7 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
+import { handleBackspaceBeforeAtomNode } from '@/blocknote-editor/extensions/BackspaceBeforeAtomNodeExtension';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
@@ -226,6 +227,11 @@ export const ActivityRichTextEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
     placeholders: {
       default: t`Type '/' for commands, '@' for mentions`,
+    },
+    _tiptapOptions: {
+      editorProps: {
+        handleKeyDown: handleBackspaceBeforeAtomNode,
+      },
     },
   });
 
