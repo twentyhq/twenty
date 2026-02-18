@@ -138,12 +138,14 @@ export const Callout = ({
           <Icon size={16} />
         </StyledIconContainer>
         <StyledTitle>{title}</StyledTitle>
-        <LightIconButton
-          Icon={IconX}
-          size="small"
-          aria-label="Close"
-          onClick={onClose}
-        />
+        {isDefined(onClose) && (
+          <LightIconButton
+            Icon={IconX}
+            size="small"
+            aria-label="Close"
+            onClick={onClose}
+          />
+        )}
       </StyledHeader>
       <StyledDescriptionWrapper hasAction={isDefined(action)}>
         <StyledDescription>{description}</StyledDescription>

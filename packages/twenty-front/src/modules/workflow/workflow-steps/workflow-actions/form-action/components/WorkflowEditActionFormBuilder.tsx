@@ -51,7 +51,8 @@ type FormData = WorkflowFormActionField[];
 
 const StyledWorkflowStepBody = styled(WorkflowStepBody)`
   display: block;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledFormFieldContainer = styled.div`
@@ -98,7 +99,8 @@ const StyledFieldContainer = styled.div<{
   border: none;
   display: flex;
   font-family: inherit;
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -118,7 +120,8 @@ const StyledPlaceholder = styled(FormFieldPlaceholder)`
 `;
 
 const StyledAddFieldButtonContainer = styled.div`
-  padding-inline: ${({ theme }) => theme.spacing(7)};
+  padding-left: ${({ theme }) => theme.spacing(7)};
+  padding-right: ${({ theme }) => theme.spacing(7)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -133,17 +136,13 @@ const StyledAddFieldButtonContentContainer = styled.div`
 `;
 
 const StyledCalloutContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-inline: ${({ theme }) => theme.spacing(7)};
+  padding-left: ${({ theme }) => theme.spacing(7)};
+  padding-right: ${({ theme }) => theme.spacing(7)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledNotClosableCalloutContainer = styled(StyledCalloutContainer)`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
-
-  button[aria-label='Close'] {
-    display: none;
-  }
 `;
 
 export const WorkflowEditActionFormBuilder = ({
