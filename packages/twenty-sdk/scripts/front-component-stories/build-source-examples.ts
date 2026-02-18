@@ -54,9 +54,21 @@ const twentySharedAliases = Object.fromEntries(
   ]),
 );
 
+const svelteRoot = path.join(rootNodeModules, 'svelte');
+
 const storyAlias = {
   react: path.join(rootNodeModules, 'react'),
   'react-dom': path.join(rootNodeModules, 'react-dom'),
+  vue: path.join(rootNodeModules, 'vue'),
+  svelte: svelteRoot,
+  'svelte/internal': path.join(
+    svelteRoot,
+    'src/runtime/internal/index.js',
+  ),
+  'svelte/internal/disclose-version': path.join(
+    svelteRoot,
+    'src/runtime/internal/disclose-version/index.js',
+  ),
   '@/sdk': sdkIndividualIndex,
   'twenty-sdk/ui': twentyUiIndividualIndex,
   ...twentySharedAliases,
@@ -74,6 +86,8 @@ const STORY_COMPONENTS = [
   'mui-example.front-component',
   'twenty-ui-example.front-component',
   'sdk-context-example.front-component',
+  'vue-example.front-component',
+  'svelte-example.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {

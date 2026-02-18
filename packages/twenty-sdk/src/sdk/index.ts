@@ -25,6 +25,7 @@ export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
 export type {
   FrontComponentConfig,
+  FrontComponentRenderFunction,
   FrontComponentType,
 } from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';

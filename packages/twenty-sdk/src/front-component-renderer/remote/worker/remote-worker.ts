@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { installStyleBridge } from '@/front-component-renderer/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/front-component-renderer/remote/utils/installStylePropertyOnRemoteElements';
+import { patchDocumentCreateElementForRemoteDom } from '@/front-component-renderer/remote/utils/patchDocumentCreateElementForRemoteDom';
 import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
@@ -28,6 +29,7 @@ import { setWorkerEnv } from './utils/setWorkerEnv';
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementSetAttribute();
+patchDocumentCreateElementForRemoteDom();
 
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,

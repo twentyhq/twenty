@@ -203,6 +203,7 @@ export const buildManifest = async (
 
         const config: FrontComponentManifest = {
           ...rest,
+          framework: rest.framework ?? 'react',
           componentName: component.name,
           sourceComponentPath: relativeFilePath,
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),

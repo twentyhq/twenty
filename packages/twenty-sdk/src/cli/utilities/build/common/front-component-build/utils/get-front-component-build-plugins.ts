@@ -1,4 +1,5 @@
 import type * as esbuild from 'esbuild';
+import sveltePlugin from 'esbuild-svelte';
 
 import { createJsxRuntimeRemoteWrapperPlugin } from '../jsx-runtime-remote-wrapper-plugin';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../jsx-transform-to-remote-dom-worker-format-plugin';
@@ -12,6 +13,7 @@ type GetFrontComponentBuildPluginsOptions = {
 export const getFrontComponentBuildPlugins = (
   options?: GetFrontComponentBuildPluginsOptions,
 ): esbuild.Plugin[] => [
+  sveltePlugin(),
   createJsxRuntimeRemoteWrapperPlugin(
     options?.usePreact ? { usePreact: true } : undefined,
   ),
