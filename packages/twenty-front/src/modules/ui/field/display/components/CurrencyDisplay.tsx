@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 
@@ -26,6 +26,7 @@ export const CurrencyDisplay = ({
 }: CurrencyDisplayProps) => {
   const theme = useTheme();
   const instanceId = useId();
+  const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 
   const currencyCode = currencyValue?.currencyCode;
   const currencyMetadata = isDefined(currencyCode)
@@ -56,7 +57,11 @@ export const CurrencyDisplay = ({
       <EllipsisDisplay>
         {shouldShowCurrencyTooltip && (
           <>
-            <span id={tooltipAnchorId}>
+            <span
+              id={tooltipAnchorId}
+              onMouseEnter={() => setShouldRenderTooltip(true)}
+              onMouseLeave={() => setShouldRenderTooltip(false)}
+            >
               <CurrencyIcon
                 color={theme.font.color.primary}
                 size={theme.icon.size.md}
@@ -71,7 +76,7 @@ export const CurrencyDisplay = ({
             : formatNumber(amountToDisplay, { decimals: decimalsToUse })
           : null}
       </EllipsisDisplay>
-      {typeof document !== 'undefined' &&
+      {shouldRenderTooltip &&
         shouldShowCurrencyTooltip &&
         createPortal(
           <AppTooltip
