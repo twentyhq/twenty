@@ -27,7 +27,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
-    packageJsonChecksum: '42c3913415952d91ff1cf67ef6452872',
+    packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
   },
   frontComponents: [
     {

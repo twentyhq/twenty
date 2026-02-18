@@ -48,9 +48,6 @@ Buradan şunları yapabilirsiniz:
 # Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
-yarn twenty app:generate
-
 # Watch your application's function logs
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn twenty app:generate`, `generated/` klasörünü oluşturur (türlendirilmiş Twenty istemcisi + çalışma alanı türleri).
+* `yarn twenty app:dev`, `node_modules/twenty-sdk/generated` içinde tipli bir API istemcisini otomatik olarak oluşturur (tipli Twenty istemcisi + çalışma alanı türleri).
 * `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz veya rolleriniz için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
@@ -662,7 +659,7 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
 ### Oluşturulmuş türlendirilmiş istemci
 
-Çalışma alanı şemanıza göre `generated/` içinde yerel bir türlendirilmiş istemci oluşturmak için `yarn twenty app:generate` çalıştırın. Fonksiyonlarınızda kullanın:
+Tipli istemci, `yarn twenty app:dev` tarafından otomatik olarak oluşturulur ve çalışma alanı şemanıza göre `node_modules/twenty-sdk/generated` içine kaydedilir. Fonksiyonlarınızda kullanın:
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-İstemci `yarn twenty app:generate` tarafından yeniden oluşturulur. Nesnelerinizi değiştirdikten sonra veya yeni bir çalışma alanına katılırken yeniden çalıştırın.
+Nesneleriniz veya alanlarınız değiştiğinde, istemci `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
@@ -708,13 +705,13 @@ Ardından bir `twenty` betiği ekleyin:
 }
 ```
 
-Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` vb.
+Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty app:dev`, `yarn twenty help` vb.
 
 ## Sorun Giderme
 
 * Kimlik doğrulama hataları: `yarn twenty auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
 * Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
-* Türler veya istemci eksik/eski: `yarn twenty app:generate` çalıştırın.
+* Türler veya istemci eksik/eski: `yarn twenty app:dev` komutunu yeniden çalıştırın — tip tanımlı istemciyi otomatik olarak oluşturur.
 * Geliştirme modu eşitlenmiyor: `yarn twenty app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
 
 Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322
