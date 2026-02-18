@@ -74,17 +74,6 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
     };
 
-    if (
-      !buildOptions.isSystemBuild &&
-      existingFlatFieldMetadataToUpdate.isSystem
-    ) {
-      validationResult.errors.push({
-        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-        message: 'System fields cannot be updated',
-        userFriendlyMessage: msg`System fields cannot be updated`,
-      });
-    }
-
     const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
