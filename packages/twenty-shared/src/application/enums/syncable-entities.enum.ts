@@ -6,4 +6,5 @@ export enum SyncableEntity {
   Role = 'role',
   View = 'view',
   NavigationMenuItem = 'navigationMenuItem',
+  PageLayout = 'pageLayout',
 }

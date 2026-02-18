@@ -45,19 +45,22 @@ yarn twenty app:dev
 从这里您可以：
 
 ```bash filename="Terminal"
-# 向你的应用添加一个新实体（引导式）
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# 监听你的应用函数日志
+# Watch your application's function logs
 yarn twenty function:logs
 
-# 按名称执行一个函数
+# Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# 从当前工作区卸载该应用
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# 显示命令帮助
+# Display commands' help
 yarn twenty help
 ```
 
@@ -70,7 +73,7 @@ yarn twenty help
 * 将一个最小的基础应用复制到 `my-twenty-app/` 中
 * 添加本地 `twenty-sdk` 依赖和 Yarn 4 配置
 * 创建与 `twenty` CLI 关联的配置文件和脚本
-* 生成默认的应用配置和默认的函数角色
+* Generates a default application config, a default function role, and a post-install function
 
 一个新生成的脚手架应用如下所示：
 
@@ -86,15 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # 公共资源文件夹（图像、字体等）
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # 必需 - 主应用程序配置
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # 用于逻辑函数的默认角色
+  │   └── default-role.ts               # Default role for logic functions
   ├── logic-functions/
-  │   └── hello-world.ts                # 示例逻辑函数
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   └── front-components/
-      └── hello-world.tsx               # 示例前端组件
+      └── hello-world.tsx               # Example front component
 ```
 
 总体来说：
@@ -290,6 +294,7 @@ export default defineObject({
 * **应用的身份**：标识符、显示名称和描述。
 * **函数如何运行**：它们用于权限的角色。
 * **（可选）变量**：以环境变量形式提供给函数的键值对。
+* **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 使用 `defineApplication()` 定义你的应用配置：
 
@@ -297,6 +302,7 @@ export default defineObject({
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +318,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +327,7 @@ export default defineApplication({
 * `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
 * `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
 * `defaultRoleUniversalIdentifier` 必须与角色文件一致（见下文）。
+* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### 角色和权限
 
@@ -457,6 +465,55 @@ export default defineLogicFunction({
 
 * `triggers` 数组是可选的。 没有触发器的函数可作为实用函数，被其他函数调用。
 * 你可以在单个函数中混用多种触发器类型。
+
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+关键点：
+
+* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
 ### 路由触发器负载
 

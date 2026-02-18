@@ -4,6 +4,7 @@ import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-fu
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import chalk from 'chalk';
@@ -134,6 +135,15 @@ export class EntityAddCommand {
           name,
         });
 
+        return { name, file };
+      }
+
+      case SyncableEntity.PageLayout: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutBaseFile({
+          name,
+        });
         return { name, file };
       }
 
