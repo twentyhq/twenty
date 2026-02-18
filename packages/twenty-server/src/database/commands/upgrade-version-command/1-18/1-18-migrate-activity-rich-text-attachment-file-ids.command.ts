@@ -444,7 +444,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
 
       return fileId;
     } catch (error) {
-      this.logger.error(
+      this.logger.warn(
         `Failed to create attachment from URL ${url}: ${error.message}`,
       );
 
