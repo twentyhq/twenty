@@ -49,6 +49,14 @@ export { defineNavigationMenuItem } from './navigation-menu-items/define-navigat
 export { defineObject } from './objects/define-object';
 export { definePageLayout } from './page-layouts/define-page-layout';
 export type { PageLayoutConfig } from './page-layouts/page-layout-config';
+export {
+  AggregateOperations,
+  ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
+} from './page-layouts/page-layout-widget-enums';
+export type {
+  PageLayoutWidgetUniversalConfiguration,
+} from './page-layouts/page-layout-widget-types';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
