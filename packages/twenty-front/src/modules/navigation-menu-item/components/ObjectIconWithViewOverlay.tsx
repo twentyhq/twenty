@@ -32,21 +32,20 @@ const StyledObjectIconWrapper = styled.div<{
     $borderColor ? `border: 1px solid ${$borderColor};` : ''}
 `;
 
-const StyledViewOverlay = styled.div<{
-  $backgroundColor: string;
-  $borderColor: string;
-}>`
+const VIEW_OVERLAY_BOX_SIZE_PX = 14;
+const VIEW_OVERLAY_ICON_SIZE_PX = 10.5;
+
+const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
-  border: 1px solid ${({ $borderColor }) => $borderColor};
   border-radius: 4px;
   bottom: -7px;
   display: flex;
-  height: ${({ theme }) => theme.spacing(3.5)};
+  height: ${VIEW_OVERLAY_BOX_SIZE_PX}px;
   justify-content: center;
   position: absolute;
   right: -7px;
-  width: ${({ theme }) => theme.spacing(3.5)};
+  width: ${VIEW_OVERLAY_BOX_SIZE_PX}px;
 `;
 
 export type ObjectIconWithViewOverlayProps = {
@@ -65,10 +64,6 @@ export const ObjectIconWithViewOverlay = ({
     theme,
     objectColor,
   );
-  const viewOverlayStyle = getNavigationMenuItemIconStyleFromColor(
-    theme,
-    'gray',
-  );
 
   return (
     <StyledCompositeContainer>
@@ -82,14 +77,11 @@ export const ObjectIconWithViewOverlay = ({
           color={objectStyle.iconColor}
         />
       </StyledObjectIconWrapper>
-      <StyledViewOverlay
-        $backgroundColor={viewOverlayStyle.backgroundColor}
-        $borderColor={viewOverlayStyle.borderColor}
-      >
+      <StyledViewOverlay $backgroundColor={theme.grayScale.gray4}>
         <ViewIcon
-          size={theme.spacing(2)}
+          size={VIEW_OVERLAY_ICON_SIZE_PX}
           stroke={theme.icon.stroke.sm}
-          color={viewOverlayStyle.iconColor}
+          color={theme.grayScale.gray11}
         />
       </StyledViewOverlay>
     </StyledCompositeContainer>
