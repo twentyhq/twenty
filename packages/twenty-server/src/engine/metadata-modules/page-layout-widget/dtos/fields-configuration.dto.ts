@@ -1,9 +1,29 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsIn, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
+
+@ObjectType('NewFieldDefaultConfiguration')
+export class NewFieldDefaultConfigurationDTO {
+  @Field(() => Boolean)
+  @IsBoolean()
+  isVisible: boolean;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  viewFieldGroupId: string | null;
+}
 
 @ObjectType('FieldsConfiguration')
 export class FieldsConfigurationDTO
@@ -18,4 +38,10 @@ export class FieldsConfigurationDTO
   @IsOptional()
   @IsUUID()
   viewId: string | null;
+
+  @Field(() => NewFieldDefaultConfigurationDTO, { nullable: true })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => NewFieldDefaultConfigurationDTO)
+  newFieldDefaultConfiguration: NewFieldDefaultConfigurationDTO | null;
 }

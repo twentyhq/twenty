@@ -52,6 +52,7 @@ export class PageLayoutDuplicationService {
       flatPageLayoutWidgetMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatViewFieldGroupMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
     const originalFlatLayout = this.findOriginalLayoutOrThrow(
@@ -114,6 +115,7 @@ export class PageLayoutDuplicationService {
       flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatViewFieldGroupMaps,
     });
 
     const validateAndBuildResult =
@@ -181,6 +183,7 @@ export class PageLayoutDuplicationService {
           'flatPageLayoutWidgetMaps',
           'flatObjectMetadataMaps',
           'flatFieldMetadataMaps',
+          'flatViewFieldGroupMaps',
         ],
       },
     );
@@ -290,6 +293,7 @@ export class PageLayoutDuplicationService {
     flatPageLayoutTabMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatViewFieldGroupMaps,
   }: {
     originalTabsWithWidgets: {
       tab: FlatPageLayoutTab;
@@ -301,6 +305,7 @@ export class PageLayoutDuplicationService {
     flatPageLayoutTabMaps: AllFlatEntityMaps['flatPageLayoutTabMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatViewFieldGroupMaps: AllFlatEntityMaps['flatViewFieldGroupMaps'];
   }): FlatPageLayoutWidget[] {
     return originalTabsWithWidgets.flatMap(({ tab, widgets }) => {
       const newTabId = originalTabIdToNewTabIdMap.get(tab.id)!;
@@ -320,6 +325,7 @@ export class PageLayoutDuplicationService {
           flatPageLayoutTabMaps,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
+          flatViewFieldGroupMaps,
         }),
       );
     });

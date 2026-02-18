@@ -1,5 +1,6 @@
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -28,8 +29,6 @@ export const FrontComponentRenderer = ({
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
 
-  const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
-
   const handleError = useCallback(
     (error?: Error) => {
       if (!isDefined(error)) {
@@ -48,6 +47,15 @@ export const FrontComponentRenderer = ({
   const { data, loading } = useFindOneFrontComponentQuery({
     variables: { id: frontComponentId },
     onError: handleError,
+  });
+
+  useOnFrontComponentUpdated({
+    frontComponentId,
+  });
+
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data?.frontComponent?.builtComponentChecksum,
   });
 
   const [renewApplicationToken] = useRenewApplicationTokenMutation();
@@ -100,25 +108,25 @@ export const FrontComponentRenderer = ({
       [frontComponentHostCommunicationApi, requestAccessTokenRefresh],
     );
 
+  if (
+    loading ||
+    !isDefined(data?.frontComponent) ||
+    !isDefined(applicationTokenPair)
+  ) {
+    return null;
+  }
+
   return (
-    <>
-      {!loading &&
-        isDefined(data?.frontComponent) &&
-        isDefined(applicationTokenPair) && (
-          <SharedFrontComponentRenderer
-            theme={theme}
-            componentUrl={componentUrl}
-            applicationAccessToken={
-              applicationTokenPair.applicationAccessToken.token
-            }
-            apiUrl={REACT_APP_SERVER_BASE_URL}
-            executionContext={executionContext}
-            frontComponentHostCommunicationApi={
-              composedFrontComponentHostCommunicationApi
-            }
-            onError={handleError}
-          />
-        )}
-    </>
+    <SharedFrontComponentRenderer
+      theme={theme}
+      componentUrl={componentUrl}
+      applicationAccessToken={applicationTokenPair.applicationAccessToken.token}
+      apiUrl={REACT_APP_SERVER_BASE_URL}
+      executionContext={executionContext}
+      frontComponentHostCommunicationApi={
+        composedFrontComponentHostCommunicationApi
+      }
+      onError={handleError}
+    />
   );
 };

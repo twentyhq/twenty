@@ -1,6 +1,6 @@
-import { OBJECT_RECORD_OPERATION_BROWSER_EVENT_NAME } from '@/object-record/constants/ObjectRecordOperationBrowserEventName';
+import { OBJECT_RECORD_OPERATION_BROWSER_EVENT_NAME } from '@/browser-event/constants/ObjectRecordOperationBrowserEventName';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
-import { type ObjectRecordOperationBrowserEventDetail } from '@/object-record/types/ObjectRecordOperationBrowserEventDetail';
+import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useEffect } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 

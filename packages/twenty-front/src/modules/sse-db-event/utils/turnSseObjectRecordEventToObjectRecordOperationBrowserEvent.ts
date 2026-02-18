@@ -1,5 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ObjectRecordOperationBrowserEventDetail } from '@/object-record/types/ObjectRecordOperationBrowserEventDetail';
+import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { getObjectRecordOperationUpdateInputs } from '@/sse-db-event/utils/getObjectRecordOperationUpdateInputs';
 import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/groupObjectRecordSseEventsByEventType';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
