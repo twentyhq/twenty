@@ -1,9 +1,10 @@
-import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {
@@ -19,9 +20,13 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     removeRecordSort(recordSort.fieldMetadataId);
   };
 
-  const { fieldMetadataItem } = useFieldMetadataItemByIdOrThrow(
+  const { fieldMetadataItem } = useFieldMetadataItemById(
     recordSort.fieldMetadataId,
   );
+
+  if (!isDefined(fieldMetadataItem)) {
+    return null;
+  }
 
   const handleClick = () => {
     const newSort: RecordSort = {
