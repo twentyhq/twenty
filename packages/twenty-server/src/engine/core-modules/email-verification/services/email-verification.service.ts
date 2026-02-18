@@ -8,7 +8,7 @@ import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -138,7 +138,12 @@ export class EmailVerificationService {
       },
     });
 
-    assertIsDefinedOrThrow(user);
+    if (!isDefined(user)) {
+      throw new EmailVerificationException(
+        'User not found for the given email',
+        EmailVerificationExceptionCode.INVALID_EMAIL,
+      );
+    }
 
     if (user.isEmailVerified) {
       throw new EmailVerificationException(
