@@ -4,6 +4,8 @@ FROM node:24-alpine AS twenty-website-build
 WORKDIR /app
 
 COPY ./package.json .
+COPY ./nx.json .
+COPY ./tsconfig.base.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
