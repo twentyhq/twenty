@@ -6,6 +6,7 @@ import { CommandMenuObjectPickerSubView } from '@/command-menu/pages/navigation-
 import { CommandMenuSystemObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/pages/navigation-menu-item/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
@@ -67,6 +68,7 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId,
       addMenuItemInsertionContext?.targetIndex,
+      getStandardObjectIconColor(objectMetadataItem.nameSingular),
     );
     setAddMenuItemInsertionContext(null);
     closeCommandMenu();

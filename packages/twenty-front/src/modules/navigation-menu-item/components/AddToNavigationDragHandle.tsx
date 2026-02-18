@@ -74,10 +74,15 @@ export const AddToNavigationDragHandle = ({
   isHovered,
 }: AddToNavigationDragHandleProps) => {
   const theme = useTheme();
+  const iconColorFromPayload =
+    payload.type === 'object' ? payload.iconColor : undefined;
   const iconStyle =
     payload.type === NavigationMenuItemType.RECORD
       ? null
-      : getNavigationMenuItemIconStyleFromColor(theme, undefined);
+      : getNavigationMenuItemIconStyleFromColor(
+          theme,
+          iconColorFromPayload ?? undefined,
+        );
   const hasBackgroundColor = !!iconStyle && !isHovered;
   const showCustomContentWithoutWrapper = isDefined(customIconContent);
 
@@ -96,7 +101,7 @@ export const AddToNavigationDragHandle = ({
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
       ) : hasBackgroundColor && icon && !isDefined(customIconContent) ? (
-        <NavigationMenuItemStyleIcon Icon={icon} />
+        <NavigationMenuItemStyleIcon Icon={icon} color={iconColorFromPayload} />
       ) : hasBackgroundColor && iconStyle ? (
         <StyledNavigationMenuItemIconContainer
           $backgroundColor={iconStyle.backgroundColor}

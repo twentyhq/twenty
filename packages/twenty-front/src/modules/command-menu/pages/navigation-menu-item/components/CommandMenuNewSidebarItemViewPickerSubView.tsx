@@ -9,16 +9,17 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandMenuSubViewWithSearch';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
+import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 
@@ -80,6 +81,9 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId ?? null,
       addMenuItemInsertionContext?.targetIndex,
+      selectedObjectMetadataItem
+        ? getStandardObjectIconColor(selectedObjectMetadataItem.nameSingular)
+        : undefined,
     );
     setAddMenuItemInsertionContext(null);
     closeCommandMenu();
@@ -118,6 +122,9 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
                               selectedObjectMetadataItem.icon,
                             )}
                             ViewIcon={getIcon(view.icon)}
+                            objectColor={getStandardObjectIconColor(
+                              selectedObjectMetadataItem.nameSingular,
+                            )}
                           />
                         ) : undefined
                       }

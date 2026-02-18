@@ -11,7 +11,7 @@ const STANDARD_OBJECT_ICON_COLOR: Partial<
   [CoreObjectNameSingular.TaskTarget]: 'turquoise',
   [CoreObjectNameSingular.Note]: 'turquoise',
   [CoreObjectNameSingular.NoteTarget]: 'turquoise',
-  [CoreObjectNameSingular.Opportunity]: 'tomato',
+  [CoreObjectNameSingular.Opportunity]: 'red',
   [CoreObjectNameSingular.Dashboard]: 'gray',
   [CoreObjectNameSingular.Workflow]: 'gray',
   [CoreObjectNameSingular.WorkflowRun]: 'gray',

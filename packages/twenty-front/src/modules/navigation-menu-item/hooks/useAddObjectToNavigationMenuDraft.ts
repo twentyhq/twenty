@@ -17,6 +17,7 @@ export const useAddObjectToNavigationMenuDraft = () => {
     currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
+    color?: string | null,
   ): string => {
     const folderId = targetFolderId ?? null;
 
@@ -45,6 +46,7 @@ export const useAddObjectToNavigationMenuDraft = () => {
       folderId: folderId ?? undefined,
       name: undefined,
       applicationId: undefined,
+      color: color ?? undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

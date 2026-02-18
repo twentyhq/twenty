@@ -3,6 +3,7 @@ export type AddToNavigationDragPayloadObject = {
   objectMetadataId: string;
   defaultViewId: string;
   label: string;
+  iconColor?: string;
 };
 
 export type AddToNavigationDragPayloadView = {
