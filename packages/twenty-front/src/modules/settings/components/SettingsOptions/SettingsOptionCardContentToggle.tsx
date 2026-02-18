@@ -10,7 +10,10 @@ import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOpti
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId } from 'react';
-import { type IconComponent, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import {
+  type IconComponent,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`

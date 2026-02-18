@@ -7,7 +7,10 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
-import { type IconComponent, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import {
+  type IconComponent,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 
 type SettingsOptionCardContentButtonProps = {
   Icon?: IconComponent;
