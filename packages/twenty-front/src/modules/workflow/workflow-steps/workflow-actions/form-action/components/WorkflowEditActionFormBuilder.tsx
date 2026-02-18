@@ -11,7 +11,6 @@ import {
 } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { WorkflowMessage } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowMessage';
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
@@ -25,6 +24,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Callout,
+  IconAlertTriangle,
   IconChevronDown,
   IconGripVertical,
   IconPlus,
@@ -132,6 +132,20 @@ const StyledAddFieldButtonContentContainer = styled.div`
   width: 100%;
 `;
 
+const StyledCalloutContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-inline: ${({ theme }) => theme.spacing(7)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledNotClosableCalloutContainer = styled(StyledCalloutContainer)`
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
+
+  button[aria-label='Close'] {
+    display: none;
+  }
+`;
+
 export const WorkflowEditActionFormBuilder = ({
   triggerType,
   action,
@@ -221,27 +235,33 @@ export const WorkflowEditActionFormBuilder = ({
     <>
       <StyledWorkflowStepBody>
         {triggerType && triggerType !== 'MANUAL' && isCalloutVisible && (
-          <Callout
-            variant={'warning'}
-            title={t`This form will appear in workflow runs.`}
-            description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
-            onClose={() => setIsCalloutVisible(false)}
-            action={{
-              label: t`Learn more`,
-              onClick: () =>
-                window.open(
-                  'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
-                  '_blank',
-                  'noopener,noreferrer',
-                ),
-            }}
-          />
+          <StyledCalloutContainer>
+            <Callout
+              variant={'warning'}
+              Icon={IconAlertTriangle}
+              title={t`This form will appear in workflow runs.`}
+              description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
+              onClose={() => setIsCalloutVisible(false)}
+              action={{
+                label: t`Learn more`,
+                onClick: () =>
+                  window.open(
+                    'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
+                    '_blank',
+                    'noopener,noreferrer',
+                  ),
+              }}
+            />
+          </StyledCalloutContainer>
         )}
         {formData.length === 0 && (
-          <WorkflowMessage
-            title={t`Add inputs to your form`}
-            description={t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
-          />
+          <StyledNotClosableCalloutContainer>
+            <Callout
+              variant={'neutral'}
+              title={t`Add inputs to your form`}
+              description={t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
+            />
+          </StyledNotClosableCalloutContainer>
         )}
         <DraggableList
           onDragEnd={handleDragEnd}
