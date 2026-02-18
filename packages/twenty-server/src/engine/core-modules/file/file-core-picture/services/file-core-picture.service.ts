@@ -211,6 +211,39 @@ export class FileCorePictureService {
     });
   }
 
+  async uploadWorkspacePictureFromUrl({
+    imageUrl,
+    workspaceId,
+    applicationUniversalIdentifier,
+    queryRunner,
+  }: {
+    imageUrl: string;
+    workspaceId: string;
+    applicationUniversalIdentifier?: string;
+    queryRunner?: QueryRunner;
+  }): Promise<FileEntity | undefined> {
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
+      const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
+
+      const type = await FileType.fromBuffer(buffer);
+
+      if (!isDefined(type) || !type.mime.startsWith('image/')) {
+        return undefined;
+      }
+
+      return this.uploadCorePicture({
+        file: buffer,
+        filename: `logo.${type.ext}`,
+        workspaceId,
+        applicationUniversalIdentifier,
+        queryRunner,
+      });
+    } catch {
+      return undefined;
+    }
+  }
+
   async copyWorkspaceMemberProfilePicture({
     sourceWorkspaceId,
     sourceFileId,
