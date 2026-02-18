@@ -2,7 +2,7 @@ import { RECORD_AGNOSTIC_ACTIONS_CONFIG } from '@/action-menu/actions/record-agn
 import { RecordAgnosticActionsKeys } from '@/action-menu/actions/record-agnostic-actions/types/RecordAgnosticActionsKeys';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useRecordAgnosticActions = () => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);

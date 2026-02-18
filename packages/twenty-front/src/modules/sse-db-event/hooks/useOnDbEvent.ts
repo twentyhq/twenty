@@ -4,7 +4,7 @@ import { useContext, useEffect } from 'react';
 import {
   type Subscription,
   type SubscriptionOnDbEventArgs,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 type OnDbEventArgs = SubscriptionOnDbEventArgs & {
   skip?: boolean;

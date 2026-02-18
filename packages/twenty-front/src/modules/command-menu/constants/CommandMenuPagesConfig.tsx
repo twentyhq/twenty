@@ -4,6 +4,8 @@ import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/Com
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuFrontComponentPage } from '@/command-menu/pages/front-component/components/CommandMenuFrontComponentPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
+import { CommandMenuNavigationMenuItemEditPage } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage';
+import { CommandMenuNewSidebarItemPage } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemPage';
 import { CommandMenuPageLayoutChartSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutChartSettings';
 import { CommandMenuPageLayoutFieldsLayout } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout';
 import { CommandMenuPageLayoutFieldsSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings';
@@ -76,4 +78,9 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
     <CommandMenuPageLayoutFieldsLayout />,
   ],
   [CommandMenuPages.ViewFrontComponent, <CommandMenuFrontComponentPage />],
+  [
+    CommandMenuPages.NavigationMenuItemEdit,
+    <CommandMenuNavigationMenuItemEditPage />,
+  ],
+  [CommandMenuPages.NavigationMenuAddItem, <CommandMenuNewSidebarItemPage />],
 ]);

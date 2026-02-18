@@ -11,7 +11,7 @@ import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
@@ -52,7 +52,8 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 export const PageLayoutRendererContent = () => {
   const { currentPageLayout } = useCurrentPageLayout();
 
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInRightDrawer, layoutType, targetRecordIdentifier } =
+    useLayoutRenderingContext();
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
@@ -104,9 +105,11 @@ export const PageLayoutRendererContent = () => {
     isInRightDrawer,
   });
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(
-    currentPageLayout.id,
-  );
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId: currentPageLayout.id,
+    layoutType,
+    targetRecordIdentifier,
+  });
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
 
@@ -121,7 +124,8 @@ export const PageLayoutRendererContent = () => {
           tabs={sortedTabs}
           componentInstanceId={tabListInstanceId}
           defaultTabToFocusOnMobileAndSidePanelId={
-            currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId
+            currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId ??
+            undefined
           }
         />
         {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (

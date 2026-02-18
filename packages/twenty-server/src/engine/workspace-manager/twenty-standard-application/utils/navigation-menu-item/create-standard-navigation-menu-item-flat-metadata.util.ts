@@ -64,6 +64,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     folderId: null,
     folderUniversalIdentifier: null,
     name: null,
+    link: null,
+    icon: null,
     position,
     createdAt: now,
     updatedAt: now,

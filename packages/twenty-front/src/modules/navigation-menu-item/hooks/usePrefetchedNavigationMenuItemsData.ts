@@ -1,5 +1,9 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -17,14 +21,24 @@ export const usePrefetchedNavigationMenuItemsData =
     const prefetchNavigationMenuItems = useRecoilValue(
       prefetchNavigationMenuItemsState,
     );
+    const isNavigationMenuInEditMode = useRecoilValueV2(
+      isNavigationMenuInEditModeStateV2,
+    );
+    const navigationMenuItemsDraft = useRecoilValueV2(
+      navigationMenuItemsDraftStateV2,
+    );
 
     const navigationMenuItems = prefetchNavigationMenuItems.filter((item) =>
       isDefined(item.userWorkspaceId),
     );
 
-    const workspaceNavigationMenuItems = prefetchNavigationMenuItems.filter(
-      (item) => !isDefined(item.userWorkspaceId),
-    );
+    const workspaceNavigationMenuItemsFromPrefetch =
+      filterWorkspaceNavigationMenuItems(prefetchNavigationMenuItems);
+
+    const workspaceNavigationMenuItems =
+      isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
+        ? navigationMenuItemsDraft
+        : workspaceNavigationMenuItemsFromPrefetch;
 
     return {
       navigationMenuItems,

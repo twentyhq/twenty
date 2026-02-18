@@ -14,7 +14,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { t } from '@lingui/core/macro';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
-import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { type MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<

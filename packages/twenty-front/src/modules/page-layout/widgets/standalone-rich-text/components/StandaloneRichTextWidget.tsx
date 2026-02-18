@@ -18,7 +18,7 @@ import {
   FeatureFlagKey,
   PageLayoutType,
   type StandaloneRichTextConfiguration,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;
@@ -91,7 +91,6 @@ export const StandaloneRichTextWidget = ({
         <StandaloneRichTextEditorContent
           key={isEditable ? 'editing' : 'readonly'}
           widget={widget}
-          dashboardId={dashboardId}
           currentBody={currentBody}
           attachments={attachments}
           isEditable={isEditable}

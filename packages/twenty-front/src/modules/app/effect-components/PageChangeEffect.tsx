@@ -5,7 +5,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import {
   setSessionId,
@@ -17,6 +17,8 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -37,7 +39,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { AppBasePath, AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { AnalyticsType } from '~/generated/graphql';
+import { AnalyticsType } from '~/generated-metadata/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -97,6 +99,20 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
+  const closeCommandMenuUnlessOnEditPage = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const currentPage = snapshot
+          .getLoadable(commandMenuPageState)
+          .getValue();
+        if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+          return;
+        }
+        closeCommandMenu();
+      },
+    [closeCommandMenu],
+  );
+
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
@@ -104,8 +120,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenu();
-  }, [location.pathname, closeCommandMenu]);
+    closeCommandMenuUnlessOnEditPage();
+  }, [location.pathname, closeCommandMenuUnlessOnEditPage]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {

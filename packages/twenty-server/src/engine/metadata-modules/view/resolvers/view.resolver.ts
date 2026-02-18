@@ -6,12 +6,13 @@ import {
   Parent,
   Query,
   ResolveField,
-  Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewVisibility } from 'twenty-shared/types';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -22,8 +23,9 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
+import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
@@ -40,11 +42,10 @@ import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/cr
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
-@Resolver(() => ViewDTO)
+@MetadataResolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewResolver {
@@ -56,7 +57,7 @@ export class ViewResolver {
     private readonly viewGroupService: ViewGroupService,
     private readonly i18nService: I18nService,
 
-    private readonly viewFieldV2Service: ViewFieldV2Service,
+    private readonly viewFieldService: ViewFieldService,
   ) {}
 
   @ResolveField(() => String)
@@ -209,7 +210,7 @@ export class ViewResolver {
       return view.viewFields;
     }
 
-    return this.viewFieldV2Service.findByViewId(workspace.id, view.id);
+    return this.viewFieldService.findByViewId(workspace.id, view.id);
   }
 
   @ResolveField(() => [ViewFilterDTO])
@@ -258,5 +259,21 @@ export class ViewResolver {
     }
 
     return this.viewGroupService.findByViewId(workspace.id, view.id);
+  }
+
+  @ResolveField(() => [ViewFieldGroupDTO])
+  async viewFieldGroups(
+    @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    if (isArray(view.viewFieldGroups)) {
+      return view.viewFieldGroups;
+    }
+
+    return context.loaders.viewFieldGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
   }
 }

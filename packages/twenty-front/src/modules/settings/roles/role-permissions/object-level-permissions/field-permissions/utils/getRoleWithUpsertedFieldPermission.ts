@@ -1,7 +1,7 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
-import { type FieldPermission } from '~/generated/graphql';
+import { type FieldPermission } from '~/generated-metadata/graphql';
 
 export const getRoleWithUpsertedFieldPermission = (
   role: RoleWithPartialMembers,

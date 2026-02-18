@@ -31,6 +31,16 @@ export class CreateNavigationMenuItemInput {
   @Field(() => String, { nullable: true })
   name?: string | null;
 
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  link?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  icon?: string | null;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

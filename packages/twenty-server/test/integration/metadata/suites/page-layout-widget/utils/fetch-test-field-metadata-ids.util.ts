@@ -2,9 +2,11 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 export type TestFieldMetadataIds = {
+  objectMetadataId: string;
   fieldMetadataId1: string;
   fieldMetadataId2: string;
   fieldMetadataId3: string;
+  fieldMetadataId3SubFieldName: string;
 };
 
 // Uses well-known company fields that make semantic sense for chart configs:
@@ -50,8 +52,10 @@ export const fetchTestFieldMetadataIds =
     };
 
     return {
+      objectMetadataId: companyObject.id,
       fieldMetadataId1: findFieldByName('employees').id,
       fieldMetadataId2: findFieldByName('name').id,
       fieldMetadataId3: findFieldByName('domainName').id,
+      fieldMetadataId3SubFieldName: 'primaryLinkUrl',
     };
   };

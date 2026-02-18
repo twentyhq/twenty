@@ -3,6 +3,7 @@ import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingS
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
+import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
@@ -40,6 +41,7 @@ export const useTriggerEventStreamDestroy = () => {
           disposeFunctionForEventStream?.dispose();
 
           set(sseEventStreamIdState, null);
+          set(sseEventStreamReadyState, false);
           set(disposeFunctionForEventStreamState, null);
           set(shouldDestroyEventStreamState, false);
         }

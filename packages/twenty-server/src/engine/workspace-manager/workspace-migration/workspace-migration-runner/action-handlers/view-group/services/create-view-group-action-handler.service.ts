@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateViewGroupAction,
@@ -32,6 +32,11 @@ export class CreateViewGroupActionHandlerService extends WorkspaceMigrationRunne
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'viewGroup',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -40,6 +45,7 @@ export class CreateViewGroupActionHandlerService extends WorkspaceMigrationRunne
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -47,15 +53,12 @@ export class CreateViewGroupActionHandlerService extends WorkspaceMigrationRunne
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateViewGroupAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const viewGroupRepository =
-      queryRunner.manager.getRepository<ViewGroupEntity>(ViewGroupEntity);
-
-    await viewGroupRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

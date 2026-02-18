@@ -4,6 +4,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import {
+  type GenerateDescriptorOptions,
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -13,11 +14,15 @@ import {
   type StaticToolHandler,
   ToolExecutorService,
 } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
+import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -31,6 +36,7 @@ export class ActionToolProvider implements ToolProvider {
   constructor(
     private readonly httpTool: HttpTool,
     private readonly sendEmailTool: SendEmailTool,
+    private readonly draftEmailTool: DraftEmailTool,
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly permissionsService: PermissionsService,
@@ -39,6 +45,7 @@ export class ActionToolProvider implements ToolProvider {
     this.toolMap = new Map<string, Tool>([
       ['http_request', this.httpTool],
       ['send_email', this.sendEmailTool],
+      ['draft_email', this.draftEmailTool],
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
     ]);
@@ -65,8 +72,10 @@ export class ActionToolProvider implements ToolProvider {
 
   async generateDescriptors(
     context: ToolProviderContext,
-  ): Promise<ToolDescriptor[]> {
-    const descriptors: ToolDescriptor[] = [];
+    options?: GenerateDescriptorOptions,
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
+    const includeSchemas = options?.includeSchemas ?? true;
+    const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     const hasHttpPermission = await this.permissionsService.hasToolPermission(
       context.rolePermissionConfig,
@@ -75,7 +84,9 @@ export class ActionToolProvider implements ToolProvider {
     );
 
     if (hasHttpPermission) {
-      descriptors.push(this.buildDescriptor('http_request', this.httpTool));
+      descriptors.push(
+        this.buildDescriptor('http_request', this.httpTool, includeSchemas),
+      );
     }
 
     const hasEmailPermission = await this.permissionsService.hasToolPermission(
@@ -85,11 +96,24 @@ export class ActionToolProvider implements ToolProvider {
     );
 
     if (hasEmailPermission) {
-      descriptors.push(this.buildDescriptor('send_email', this.sendEmailTool));
+      descriptors.push(
+        this.buildDescriptor('send_email', this.sendEmailTool, includeSchemas),
+      );
+      descriptors.push(
+        this.buildDescriptor(
+          'draft_email',
+          this.draftEmailTool,
+          includeSchemas,
+        ),
+      );
     }
 
     descriptors.push(
-      this.buildDescriptor('search_help_center', this.searchHelpCenterTool),
+      this.buildDescriptor(
+        'search_help_center',
+        this.searchHelpCenterTool,
+        includeSchemas,
+      ),
     );
 
     const hasCodeInterpreterPermission =
@@ -101,19 +125,29 @@ export class ActionToolProvider implements ToolProvider {
 
     if (hasCodeInterpreterPermission) {
       descriptors.push(
-        this.buildDescriptor('code_interpreter', this.codeInterpreterTool),
+        this.buildDescriptor(
+          'code_interpreter',
+          this.codeInterpreterTool,
+          includeSchemas,
+        ),
       );
     }
 
     return descriptors;
   }
 
-  private buildDescriptor(toolId: string, tool: Tool): ToolDescriptor {
+  private buildDescriptor(
+    toolId: string,
+    tool: Tool,
+    includeSchemas: boolean,
+  ): ToolIndexEntry | ToolDescriptor {
     return {
       name: toolId,
       description: tool.description,
       category: ToolCategory.ACTION,
-      inputSchema: z.toJSONSchema(tool.inputSchema as z.ZodType),
+      ...(includeSchemas && {
+        inputSchema: z.toJSONSchema(tool.inputSchema as z.ZodType),
+      }),
       executionRef: { kind: 'static', toolId },
     };
   }

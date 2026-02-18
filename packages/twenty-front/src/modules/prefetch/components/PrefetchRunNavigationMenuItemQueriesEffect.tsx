@@ -11,15 +11,15 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
+  FeatureFlagKey,
   useFindManyNavigationMenuItemsQuery,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
   const showAuthModal = useShowAuthModal();
@@ -37,7 +37,7 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
       showAuthModal ||
       isSettingsPage ||
       !isWorkspaceActive ||
-      !isNavigationMenuItemEnabled,
+      !isNavigationMenuItemEditingEnabled,
     fetchPolicy: 'cache-and-network',
   });
 

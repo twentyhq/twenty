@@ -7,7 +7,7 @@ import {
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 describe('convertPageLayoutToTabLayouts', () => {
   it('should convert page layout to tab layouts', () => {
@@ -19,6 +19,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       tabs: [
         {
           id: 'tab-1',
+          applicationId: '',
           title: 'Tab 1',
           position: 0,
           pageLayoutId: 'page-layout-1',
@@ -97,6 +98,7 @@ describe('convertPageLayoutToTabLayouts', () => {
       tabs: [
         {
           id: 'tab-1',
+          applicationId: '',
           title: 'Tab 1',
           position: 0,
           pageLayoutId: 'page-layout-1',

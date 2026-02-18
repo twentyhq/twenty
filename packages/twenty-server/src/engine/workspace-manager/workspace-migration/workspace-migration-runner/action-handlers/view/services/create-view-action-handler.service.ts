@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateViewAction,
@@ -41,6 +41,11 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'view',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -53,9 +58,11 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         applicationId: flatApplication.id,
         workspaceId,
         viewFieldIds: [],
+        viewFieldGroupIds: [],
         viewGroupIds: [],
         viewFilterIds: [],
         viewFilterGroupIds: [],
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -63,15 +70,12 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateViewAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const viewRepository =
-      queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
-
-    await viewRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

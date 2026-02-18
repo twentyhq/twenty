@@ -12,7 +12,7 @@ import {
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext');
 jest.mock(
@@ -32,6 +32,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
     tabs: [
       {
         __typename: 'PageLayoutTab',
+        applicationId: '',
         id: 'tab-1',
         title: 'Fields',
         icon: 'IconList',

@@ -1,8 +1,12 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-duration';
+import { isValidDate } from 'src/utils/date/isValidDate';
 
 export const isThrottled = (
   syncStageStartedAt: string | null,
   throttleFailureCount: number,
+  throttleRetryAfter?: string | null,
 ): boolean => {
   if (!syncStageStartedAt) {
     return false;
@@ -12,10 +16,25 @@ export const isThrottled = (
     return false;
   }
 
-  return (
-    computeThrottlePauseUntil(syncStageStartedAt, throttleFailureCount) >
-    new Date()
+  const now = new Date();
+
+  const exponentialBackoffUntil = computeThrottlePauseUntil(
+    syncStageStartedAt,
+    throttleFailureCount,
   );
+  const retryAfterCandidate = isDefined(throttleRetryAfter)
+    ? new Date(throttleRetryAfter)
+    : null;
+  const retryAfterDate = isValidDate(retryAfterCandidate)
+    ? retryAfterCandidate
+    : null;
+
+  const effectiveUntil =
+    isDefined(retryAfterDate) && retryAfterDate > exponentialBackoffUntil
+      ? retryAfterDate
+      : exponentialBackoffUntil;
+
+  return effectiveUntil > now;
 };
 
 const computeThrottlePauseUntil = (

@@ -9,7 +9,7 @@ import { type ViewField } from '@/views/types/ViewField';
 import {
   type CreateViewFieldInput,
   type UpdateCoreViewFieldMutationVariables,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

@@ -30,7 +30,7 @@ describe('granularObjectRecordsPermissions', () => {
       };
 
       const rolesResponse = await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(getRolesQuery);
 
@@ -54,7 +54,7 @@ describe('granularObjectRecordsPermissions', () => {
       };
 
       await client
-        .post('/graphql')
+        .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send(restoreMemberRoleQuery);
     });

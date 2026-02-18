@@ -5,7 +5,7 @@ import { within } from 'storybook/test';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { AppPath } from 'twenty-shared/types';
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import {
   PageDecorator,

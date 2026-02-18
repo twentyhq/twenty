@@ -20,8 +20,7 @@ import {
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
-import { iconsState } from 'twenty-ui/display';
-import { SupportDriver } from '~/generated/graphql';
+import { SupportDriver } from '~/generated-metadata/graphql';
 
 const redirectSpy = jest.fn();
 
@@ -159,7 +158,6 @@ describe('useAuth', () => {
     const { result } = renderHook(
       () => {
         const client = useApolloClient();
-        const icons = useRecoilValue(iconsState);
         const workspaceAuthProviders = useRecoilValue(
           workspaceAuthProvidersState,
         );
@@ -175,7 +173,6 @@ describe('useAuth', () => {
           ...useAuth(),
           client,
           state: {
-            icons,
             workspaceAuthProviders,
             billing,
             isDeveloperDefaultSignInPrefilled,
@@ -200,7 +197,6 @@ describe('useAuth', () => {
 
     const { state } = result.current;
 
-    expect(state.icons).toEqual({});
     expect(state.workspaceAuthProviders).toEqual(null);
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);

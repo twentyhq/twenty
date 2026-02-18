@@ -15,7 +15,7 @@ import {
   type TestHttpRequestInput,
   type TestHttpRequestMutation,
   type TestHttpRequestMutationVariables,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;

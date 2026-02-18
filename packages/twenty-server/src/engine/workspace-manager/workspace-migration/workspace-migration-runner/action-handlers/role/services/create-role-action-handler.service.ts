@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { FlatCreateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
+import {
+  FlatCreateRoleAction,
+  UniversalCreateRoleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -18,24 +23,43 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
     super();
   }
 
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateRoleAction>,
-  ): Promise<FlatCreateRoleAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRoleAction>): Promise<FlatCreateRoleAction> {
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'role',
+      });
+
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+        roleTargetIds: [],
+        rowLevelPermissionPredicateIds: [],
+        rowLevelPermissionPredicateGroupIds: [],
+        objectPermissionIds: [],
+        permissionFlagIds: [],
+        fieldPermissionIds: [],
+        ...emptyUniversalForeignKeyAggregators,
+      },
+    };
   }
 
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateRoleAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
-    const { flatEntity: role } = flatAction;
+    const { flatAction, queryRunner } = context;
+    const { flatEntity } = flatAction;
 
-    const roleRepository =
-      queryRunner.manager.getRepository<RoleEntity>(RoleEntity);
-
-    await roleRepository.insert({
-      ...role,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

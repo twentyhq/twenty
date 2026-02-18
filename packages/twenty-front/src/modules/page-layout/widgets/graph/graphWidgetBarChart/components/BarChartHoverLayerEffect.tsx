@@ -4,7 +4,7 @@ import { renderSliceHighlight } from '@/page-layout/widgets/graph/graphWidgetBar
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState, type RefObject } from 'react';
-import { BarChartLayout } from '~/generated/graphql';
+import { BarChartLayout } from '~/generated-metadata/graphql';
 
 type BarChartHoverLayerEffectProps = {
   hoveredSlice: BarChartSlice | null;

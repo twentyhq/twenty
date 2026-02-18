@@ -15,12 +15,13 @@ import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modul
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
+import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -149,10 +150,15 @@ export class WorkspaceMigrationRunnerService {
   }
 
   run = async ({
-    actions,
-    applicationUniversalIdentifier,
+    workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-  }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
+  }: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<{
+    allFlatEntityMaps: AllFlatEntityMaps;
+    metadataEvents: MetadataEvent[];
+  }> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
@@ -207,8 +213,10 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
+      const allMetadataEvents: MetadataEvent[] = [];
+
       for (const action of actions) {
-        const result =
+        const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -224,8 +232,10 @@ export class WorkspaceMigrationRunnerService {
 
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
-          ...result,
+          ...partialOptimisticCache,
         } as typeof allFlatEntityMaps;
+
+        allMetadataEvents.push(...metadataEvents);
       }
 
       await queryRunner.commitTransaction();
@@ -239,7 +249,7 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Total execution');
 
-      return allFlatEntityMaps;
+      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction().catch((error) =>

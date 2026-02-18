@@ -18,6 +18,10 @@
     "src/**/*.ts",
     "scripts/**/*.ts",
     "**/__mocks__/**/*",
-    "jest.config.mjs"
+    "jest.config.mjs",
+    "vite.config.*.ts"
+  ],
+  "exclude": [
+    "src/individual-entry.ts"
   ]
 }

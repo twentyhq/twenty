@@ -20,7 +20,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
@@ -29,8 +29,8 @@ export const useShouldActionBeRegisteredParams = ({
 }): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
@@ -47,7 +47,7 @@ export const useShouldActionBeRegisteredParams = ({
       return false;
     }
 
-    if (isNavigationMenuItemEnabled && isDefined(objectMetadataItem)) {
+    if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
       const foundNavigationMenuItem = navigationMenuItems?.find(
         (item) =>
           item.targetRecordId === recordId &&
@@ -62,7 +62,7 @@ export const useShouldActionBeRegisteredParams = ({
     return !!foundFavorite;
   }, [
     recordId,
-    isNavigationMenuItemEnabled,
+    isNavigationMenuItemEditingEnabled,
     objectMetadataItem,
     navigationMenuItems,
     favorites,

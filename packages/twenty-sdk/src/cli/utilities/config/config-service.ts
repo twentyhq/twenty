@@ -1,10 +1,13 @@
 import * as fs from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
+
+import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 
 export type TwentyConfig = {
   apiUrl: string;
   apiKey?: string;
+  applicationAccessToken?: string;
+  applicationRefreshToken?: string;
 };
 
 type PersistedConfig = TwentyConfig & {
@@ -19,7 +22,7 @@ export class ConfigService {
   private static activeWorkspace = DEFAULT_WORKSPACE_NAME;
 
   constructor() {
-    this.configPath = path.join(os.homedir(), '.twenty', 'config.json');
+    this.configPath = getConfigPath();
   }
 
   static setActiveWorkspace(name?: string) {
@@ -58,10 +61,14 @@ export class ConfigService {
       // Fallback to legacy top-level values if profile value is missing
       const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;
       const apiKey = profileConfig?.apiKey;
+      const applicationAccessToken = profileConfig?.applicationAccessToken;
+      const applicationRefreshToken = profileConfig?.applicationRefreshToken;
 
       return {
         apiUrl,
         apiKey,
+        applicationAccessToken,
+        applicationRefreshToken,
       };
     } catch {
       return defaultConfig;

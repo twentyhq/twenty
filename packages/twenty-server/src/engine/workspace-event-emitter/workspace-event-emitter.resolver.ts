@@ -1,8 +1,9 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Subscription } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -17,10 +18,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import { AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
-import {
-  EventSubscriptionDTO,
-  EventWithQueryIdsDTO,
-} from 'src/engine/subscriptions/dtos/event-subscription.dto';
+import { EventSubscriptionDTO } from 'src/engine/subscriptions/dtos/event-subscription.dto';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 import { RemoveQueryFromEventStreamInput } from 'src/engine/subscriptions/dtos/remove-query-subscription.input';
@@ -31,12 +29,13 @@ import {
 } from 'src/engine/subscriptions/event-stream.exception';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/workspace-event-emitter/utils/wrap-async-iterator-with-lifecycle';
 import { WorkspaceEventEmitterExceptionFilter } from 'src/engine/workspace-event-emitter/workspace-event-emitter-exception.filter';
 
 import { eventStreamIdToChannelId } from './utils/get-channel-id-from-event-stream-id';
 
-@Resolver()
+@MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -85,12 +84,13 @@ export class WorkspaceEventEmitterResolver {
   @Subscription(() => EventSubscriptionDTO, {
     nullable: true,
     resolve: (
-      payload: EventWithQueryIdsDTO[],
+      payload: EventStreamPayload,
       variables: { eventStreamId: string },
     ) => {
       return {
         eventStreamId: variables.eventStreamId,
-        eventWithQueryIdsList: payload,
+        objectRecordEventsWithQueryIds: payload.objectRecordEventsWithQueryIds,
+        metadataEventsWithQueryIds: payload.metadataEventsWithQueryIds,
       };
     },
   })
@@ -125,7 +125,7 @@ export class WorkspaceEventEmitterResolver {
       },
     });
 
-    let iterator: AsyncIterableIterator<EventWithQueryIdsDTO[]>;
+    let iterator: AsyncIterableIterator<EventStreamPayload>;
 
     try {
       iterator = await this.subscriptionService.subscribeToEventStream({
@@ -141,6 +141,10 @@ export class WorkspaceEventEmitterResolver {
     }
 
     return wrapAsyncIteratorWithLifecycle(iterator, {
+      initialValue: {
+        objectRecordEventsWithQueryIds: [],
+        metadataEventsWithQueryIds: [],
+      },
       onHeartbeat: () =>
         this.eventStreamService.refreshEventStreamTTL({
           workspaceId: workspace.id,

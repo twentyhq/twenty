@@ -30,7 +30,7 @@ export class GmailMessageListFetchErrorHandler {
     }
 
     throw new MessageImportDriverException(
-      'Unknown error',
+      `Gmail message list fetch error: ${error instanceof Error ? error.message : String(error)}`,
       MessageImportDriverExceptionCode.UNKNOWN,
     );
   }

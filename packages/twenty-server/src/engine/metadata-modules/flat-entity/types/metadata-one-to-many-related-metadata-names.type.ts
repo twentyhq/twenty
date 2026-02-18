@@ -1,6 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
+import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 
 type ExtractMetadataNames<T> = {
   [K in keyof T]: T[K] extends { metadataName: infer M } ? M : never;
@@ -8,6 +8,6 @@ type ExtractMetadataNames<T> = {
 
 export type MetadataOneToManyRelatedMetadataNames<T extends AllMetadataName> =
   Extract<
-    ExtractMetadataNames<(typeof ALL_METADATA_RELATIONS)[T]['oneToMany']>,
+    ExtractMetadataNames<(typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[T]>,
     AllMetadataName
   >;

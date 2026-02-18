@@ -1,5 +1,5 @@
-import { AIChatTab } from '@/ai/components/AIChatTab';
 import styled from '@emotion/styled';
+import { AIChatTab } from '@/ai/components/AIChatTab';
 
 const StyledContainer = styled.div`
   height: 100%;

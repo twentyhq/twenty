@@ -1,13 +1,14 @@
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
+import { useCallback } from 'react';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
-
-import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -17,28 +18,44 @@ export const FrontComponentRenderer = ({
   frontComponentId,
 }: FrontComponentRendererProps) => {
   const theme = useTheme();
-  const [hasError, setHasError] = useState(false);
-
   const { enqueueErrorSnackBar } = useSnackBar();
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
 
-  const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
-  const authToken = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token;
+  const handleError = useCallback(
+    (error?: Error) => {
+      if (!isDefined(error)) {
+        return;
+      }
 
-  const handleError = (error?: Error) => {
-    if (isDefined(error)) {
       const errorMessage = error.message;
 
       enqueueErrorSnackBar({
         message: t`Failed to load front component: ${errorMessage}`,
       });
-    }
-    setHasError(true);
-  };
+    },
+    [enqueueErrorSnackBar],
+  );
 
-  if (hasError || !isDefined(authToken)) {
-    // TODO: Add an error display component here
+  const { data, loading } = useFindOneFrontComponentQuery({
+    variables: { id: frontComponentId },
+    onError: handleError,
+  });
+
+  useOnFrontComponentUpdated({
+    frontComponentId,
+  });
+
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data?.frontComponent?.builtComponentChecksum,
+  });
+
+  if (
+    loading ||
+    !isDefined(data?.frontComponent) ||
+    !isDefined(data.frontComponent.applicationTokenPair)
+  ) {
     return null;
   }
 
@@ -46,7 +63,10 @@ export const FrontComponentRenderer = ({
     <SharedFrontComponentRenderer
       theme={theme}
       componentUrl={componentUrl}
-      authToken={authToken}
+      applicationAccessToken={
+        data.frontComponent.applicationTokenPair.applicationAccessToken.token
+      }
+      apiUrl={REACT_APP_SERVER_BASE_URL}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
       onError={handleError}

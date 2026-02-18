@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
-import { validateArrayFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util';
+import { validateEmailsAdditionalEmailsSubfieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-additional-emails-subfield-or-throw.util';
+import { validateEmailsPrimaryEmailSubfieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
-import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -23,10 +23,16 @@ export const validateEmailsFieldOrThrow = (
   for (const [subField, subFieldValue] of Object.entries(preValidatedValue)) {
     switch (subField) {
       case 'primaryEmail':
-        validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        validateEmailsPrimaryEmailSubfieldOrThrow(
+          subFieldValue,
+          `${fieldName}.${subField}`,
+        );
         break;
       case 'additionalEmails':
-        validateArrayFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        validateEmailsAdditionalEmailsSubfieldOrThrow(
+          subFieldValue,
+          `${fieldName}.${subField}`,
+        );
         break;
       default:
         throw new CommonQueryRunnerException(

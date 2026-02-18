@@ -1,4 +1,4 @@
-import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
+import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import { type EditorProps, type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
@@ -39,6 +39,7 @@ export const SettingsLogicFunctionCodeEditor = ({
     if (files.length > 1) {
       files.forEach((file) => {
         const model = monaco.editor.getModel(monaco.Uri.file(file.path));
+
         if (!isDefined(model)) {
           monaco.editor.createModel(
             file.content,

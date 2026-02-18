@@ -37,15 +37,16 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { GraphOrderBy, WidgetType } from '~/generated-metadata/graphql';
 import {
+  GraphOrderBy,
+  WidgetType,
   AggregateOperations,
   AxisNameDisplay,
   BarChartLayout,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -144,6 +145,7 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
       position: 0,
@@ -1698,6 +1700,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             ? [
                 {
                   __typename: 'PageLayoutTab',
+                  applicationId: '',
                   id: 'pinned-tab',
                   title: 'Pinned Tab',
                   position: 0,
@@ -1709,6 +1712,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
                 },
                 {
                   __typename: 'PageLayoutTab',
+                  applicationId: '',
                   id: 'other-tab',
                   title: 'Other Tab',
                   position: 1,
@@ -1722,6 +1726,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             : [
                 {
                   __typename: 'PageLayoutTab',
+                  applicationId: '',
                   id: TAB_ID_OVERVIEW,
                   title: 'Overview',
                   position: 0,

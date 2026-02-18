@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { IconFolder } from 'twenty-ui/display';
 
 import { CurrentWorkspaceMemberNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems';
 import { useCreateNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItemFolder';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
-import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingState';
+import { isNavigationMenuItemFolderCreatingStateV2 } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 
@@ -18,14 +18,14 @@ export const NavigationMenuItemFolders = ({
 }: NavigationMenuItemFoldersProps) => {
   const [newFolderName, setNewFolderName] = useState('');
 
-  const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
+  const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const { createNewNavigationMenuItemFolder } =
     useCreateNavigationMenuItemFolder();
 
   const [
     isNavigationMenuItemFolderCreating,
     setIsNavigationMenuItemFolderCreating,
-  ] = useRecoilState(isNavigationMenuItemFolderCreatingState);
+  ] = useRecoilStateV2(isNavigationMenuItemFolderCreatingStateV2);
 
   const handleNavigationMenuItemFolderNameChange = (value: string) => {
     setNewFolderName(value);
@@ -79,11 +79,11 @@ export const NavigationMenuItemFolders = ({
           />
         </NavigationDrawerAnimatedCollapseWrapper>
       )}
-      {navigationMenuItemsByFolder.map((folder) => (
+      {userNavigationMenuItemsByFolder.map((folder) => (
         <CurrentWorkspaceMemberNavigationMenuItems
-          key={folder.folderId}
+          key={folder.id}
           folder={folder}
-          isGroup={navigationMenuItemsByFolder.length > 1}
+          isGroup={userNavigationMenuItemsByFolder.length > 1}
         />
       ))}
     </>

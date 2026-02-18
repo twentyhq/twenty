@@ -7,11 +7,12 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  FieldMetadataType,
+  ViewType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 const VIEW_WITH_KANBAN_FIELDS = `
   id

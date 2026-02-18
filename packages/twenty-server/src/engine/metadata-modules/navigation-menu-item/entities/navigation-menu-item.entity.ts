@@ -81,6 +81,12 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'text' })
   name: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  link: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  icon: string | null;
+
   @ManyToOne(() => NavigationMenuItemEntity, {
     onDelete: 'CASCADE',
     nullable: true,

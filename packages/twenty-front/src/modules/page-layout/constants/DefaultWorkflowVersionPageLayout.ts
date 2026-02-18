@@ -4,7 +4,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 /**
  * Default WorkflowVersion PageLayout.
@@ -24,6 +24,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
     // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'workflow-version-tab-fields',
       title: 'Home',
       icon: 'IconHome',
@@ -62,6 +63,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
     // Flow tab (position 200)
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: 'workflow-version-tab-flow',
       title: 'Flow',
       icon: 'IconSettings',

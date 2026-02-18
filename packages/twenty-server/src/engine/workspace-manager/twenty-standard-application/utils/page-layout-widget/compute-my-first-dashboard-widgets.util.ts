@@ -1,9 +1,11 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -21,7 +23,7 @@ type DashboardWidgetBuilderArgs = Omit<
   'context'
 >;
 
-const createFilterConfig = (
+const createFilterConfigs = (
   filters: Array<{
     type: string;
     label: string;
@@ -29,27 +31,44 @@ const createFilterConfig = (
     displayValue: string;
     operand: string;
     fieldMetadataId: string;
+    fieldMetadataUniversalIdentifier: string;
   }>,
 ) => {
   const groupId = v4();
 
+  const recordFilterGroups = [
+    {
+      id: groupId,
+      logicalOperator: 'AND',
+    },
+  ];
+
   return {
-    recordFilters: filters.map((filter) => ({
-      id: v4(),
-      type: filter.type,
-      label: filter.label,
-      value: filter.value,
-      displayValue: filter.displayValue,
-      operand: filter.operand,
-      fieldMetadataId: filter.fieldMetadataId,
-      recordFilterGroupId: groupId,
-    })),
-    recordFilterGroups: [
-      {
-        id: groupId,
-        logicalOperator: 'AND',
-      },
-    ],
+    configuration: {
+      recordFilters: filters.map((filter) => ({
+        type: filter.type,
+        label: filter.label,
+        value: filter.value,
+        displayValue: filter.displayValue,
+        operand: filter.operand,
+        fieldMetadataId: filter.fieldMetadataId,
+        recordFilterGroupId: groupId,
+      })),
+      recordFilterGroups,
+    },
+    universal: {
+      recordFilters: filters.map((filter) => ({
+        type: filter.type,
+        label: filter.label,
+        value: filter.value,
+        displayValue: filter.displayValue,
+        operand: filter.operand,
+        fieldMetadataUniversalIdentifier:
+          filter.fieldMetadataUniversalIdentifier,
+        recordFilterGroupId: groupId,
+      })),
+      recordFilterGroups,
+    },
   };
 };
 
@@ -560,7 +579,7 @@ const createDealsCreatedThisMonth = ({
   const opportunityObjectId =
     args.standardObjectMetadataRelatedEntityIds.opportunity.id;
 
-  const filterConfig = createFilterConfig([
+  const filterConfigs = createFilterConfigs([
     {
       type: 'DATE_TIME',
       label: 'Creation date',
@@ -568,6 +587,8 @@ const createDealsCreatedThisMonth = ({
       displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
       operand: 'IS_RELATIVE',
       fieldMetadataId: opportunityFields.createdAt.id,
+      fieldMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.opportunity.fields.createdAt.universalIdentifier,
     },
   ]);
 
@@ -594,7 +615,7 @@ const createDealsCreatedThisMonth = ({
         aggregateFieldMetadataId: opportunityFields.id.id,
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: false,
-        filter: filterConfig,
+        filter: filterConfigs.configuration,
         prefix: '',
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
@@ -605,7 +626,7 @@ const createDealsCreatedThisMonth = ({
           STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: false,
-        filter: filterConfig,
+        filter: filterConfigs.universal,
         prefix: '',
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
@@ -626,7 +647,7 @@ const createDealValueCreatedThisMonth = ({
   const opportunityObjectId =
     args.standardObjectMetadataRelatedEntityIds.opportunity.id;
 
-  const filterConfig = createFilterConfig([
+  const filterConfigs = createFilterConfigs([
     {
       type: 'DATE_TIME',
       label: 'Creation date',
@@ -634,6 +655,8 @@ const createDealValueCreatedThisMonth = ({
       displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
       operand: 'IS_RELATIVE',
       fieldMetadataId: opportunityFields.createdAt.id,
+      fieldMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.opportunity.fields.createdAt.universalIdentifier,
     },
   ]);
 
@@ -660,7 +683,7 @@ const createDealValueCreatedThisMonth = ({
         aggregateFieldMetadataId: opportunityFields.amount.id,
         aggregateOperation: AggregateOperations.SUM,
         displayDataLabel: false,
-        filter: filterConfig,
+        filter: filterConfigs.configuration,
         prefix: '$',
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
@@ -671,7 +694,7 @@ const createDealValueCreatedThisMonth = ({
           STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
         aggregateOperation: AggregateOperations.SUM,
         displayDataLabel: false,
-        filter: filterConfig,
+        filter: filterConfigs.universal,
         prefix: '$',
         timezone: 'UTC',
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,

@@ -4,9 +4,8 @@ import crypto from 'crypto';
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
 
-import { isObject } from '@sniptt/guards';
 import { build } from 'esbuild';
-import { FileFolder, Sources } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 
@@ -15,63 +14,55 @@ import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/i
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import {
-  getLogicFunctionBaseFolderPath,
-  getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-handler-path.util';
-import {
   getLogicFunctionSeedProjectFiles,
   LogicFunctionSeedProjectFile,
 } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-seed-project-files.util';
-import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  DEFAULT_SOURCE_HANDLER_PATH,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-type SeedSourceFilesParams = {
+type Identifier = {
   workspaceId: string;
   applicationUniversalIdentifier: string;
-  sourceSubfolder: string;
+};
+
+type SeedSourceFilesParams = Identifier & {
+  sourceHandlerPath: string;
+  builtHandlerPath: string;
 };
 
 type SeedSourceFilesResult = {
-  sourceHandlerPath: string;
-  builtHandlerPath: string;
   handlerName: string;
   checksum: string;
 };
 
-type UpdateSourceFilesParams = {
-  sourceHandlerPath: string;
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
-  code: Sources;
+type UpdateSourceFilesParams = Omit<
+  SeedSourceFilesParams,
+  'builtHandlerPath'
+> & {
+  sourceHandlerCode: string;
 };
 
-type BuildFromSourceParams = {
+type BuildFromSourceParams = Identifier & {
   sourceHandlerPath: string;
   builtHandlerPath: string;
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
 };
 
-type GetSourceCodeParams = {
+type GetSourceCodeParams = Identifier & {
   sourceHandlerPath: string;
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
 };
 
-type CopySourceParams = {
+type GetBuiltCodeParams = Identifier & {
+  builtHandlerPath: string;
+};
+
+type CopySourceParams = Identifier & {
   fromSourceHandlerPath: string;
-  fromBuiltHandlerPath: string;
   toSourceHandlerPath: string;
+  fromBuiltHandlerPath: string;
   toBuiltHandlerPath: string;
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
 };
 
 @Injectable()
@@ -81,11 +72,9 @@ export class LogicFunctionResourceService {
   async seedSourceFiles({
     workspaceId,
     applicationUniversalIdentifier,
-    sourceSubfolder,
+    sourceHandlerPath,
+    builtHandlerPath,
   }: SeedSourceFilesParams): Promise<SeedSourceFilesResult> {
-    const sourceHandlerPath = `${sourceSubfolder}/${DEFAULT_SOURCE_HANDLER_PATH}`;
-    const builtHandlerPath = `${sourceSubfolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
-
     const seedProjectFiles = await getLogicFunctionSeedProjectFiles();
 
     const sourceFiles = seedProjectFiles.filter(
@@ -138,40 +127,28 @@ export class LogicFunctionResourceService {
 
     return {
       handlerName: 'main',
-      sourceHandlerPath,
-      builtHandlerPath,
       checksum,
     };
   }
 
-  async updateSourceFiles({
+  async uploadSourceFile({
     sourceHandlerPath,
     workspaceId,
     applicationUniversalIdentifier,
-    code,
+    sourceHandlerCode,
   }: UpdateSourceFilesParams): Promise<void> {
-    const temporaryDirManager = new TemporaryDirManager();
-
-    try {
-      const { sourceTemporaryDir } = await temporaryDirManager.init();
-
-      await this.writeSourcesToLocalFolder(code, sourceTemporaryDir);
-
-      const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
-
-      await this.fileStorageService.uploadFolder({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
-      });
-    } finally {
-      await temporaryDirManager.clean();
-    }
+    await this.fileStorageService.writeFile({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceHandlerPath,
+      sourceFile: sourceHandlerCode,
+      settings: { isTemporaryFile: false, toDelete: false },
+      mimeType: 'application/typescript',
+    });
   }
 
-  async buildFromSource({
+  async buildFromSourceFile({
     sourceHandlerPath,
     builtHandlerPath,
     workspaceId,
@@ -182,29 +159,18 @@ export class LogicFunctionResourceService {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
-
-      await this.fileStorageService.downloadFolder({
+      await this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
+        resourcePath: sourceHandlerPath,
+        localPath: join(sourceTemporaryDir, sourceHandlerPath),
       });
-
-      const relativeSourcePath = getRelativePathFromBase(
-        sourceHandlerPath,
-        baseFolderPath,
-      );
-      const relativeBuiltPath = getRelativePathFromBase(
-        builtHandlerPath,
-        baseFolderPath,
-      );
 
       const builtBundleFilePath = await this.buildInMemory({
         sourceTemporaryDir,
-        sourceHandlerPath: relativeSourcePath,
-        builtHandlerPath: relativeBuiltPath,
+        sourceHandlerPath,
+        builtHandlerPath,
       });
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
@@ -230,20 +196,22 @@ export class LogicFunctionResourceService {
     }
   }
 
-  async getSourceCode({
+  async getSourceFile({
     sourceHandlerPath,
     workspaceId,
     applicationUniversalIdentifier,
-  }: GetSourceCodeParams): Promise<Sources | null> {
-    const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
-
+  }: GetSourceCodeParams): Promise<string | null> {
     try {
-      return await this.fileStorageService.readFolder({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-      });
+      return (
+        await streamToBuffer(
+          await this.fileStorageService.readFile({
+            workspaceId,
+            applicationUniversalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: sourceHandlerPath,
+          }),
+        )
+      ).toString('utf-8');
     } catch (error) {
       if (
         isDefined(error) &&
@@ -259,34 +227,24 @@ export class LogicFunctionResourceService {
 
   async copyResources({
     fromSourceHandlerPath,
-    fromBuiltHandlerPath,
     toSourceHandlerPath,
+    fromBuiltHandlerPath,
     toBuiltHandlerPath,
     workspaceId,
     applicationUniversalIdentifier,
   }: CopySourceParams): Promise<void> {
-    const fromSourceBaseFolderPath = getLogicFunctionBaseFolderPath(
-      fromSourceHandlerPath,
-    );
-    const toSourceBaseFolderPath =
-      getLogicFunctionBaseFolderPath(toSourceHandlerPath);
-    const fromBuiltBaseFolderPath =
-      getLogicFunctionBaseFolderPath(fromBuiltHandlerPath);
-    const toBuiltBaseFolderPath =
-      getLogicFunctionBaseFolderPath(toBuiltHandlerPath);
-
     await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: fromSourceBaseFolderPath,
+        resourcePath: fromSourceHandlerPath,
       },
       to: {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: toSourceBaseFolderPath,
+        resourcePath: toSourceHandlerPath,
       },
     });
 
@@ -295,13 +253,13 @@ export class LogicFunctionResourceService {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: fromBuiltBaseFolderPath,
+        resourcePath: fromBuiltHandlerPath,
       },
       to: {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: toBuiltBaseFolderPath,
+        resourcePath: toBuiltHandlerPath,
       },
     });
   }
@@ -337,11 +295,7 @@ export class LogicFunctionResourceService {
     builtHandlerPath,
     workspaceId,
     applicationUniversalIdentifier,
-  }: {
-    builtHandlerPath: string;
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<string> {
+  }: GetBuiltCodeParams): Promise<string> {
     return (
       await streamToBuffer(
         await this.fileStorageService.readFile({
@@ -359,36 +313,20 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
     inMemoryDestinationPath,
-  }: {
-    builtHandlerPath: string;
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
+  }: GetBuiltCodeParams & {
     inMemoryDestinationPath: string;
-  }): Promise<void> {
+  }): Promise<string> {
+    const localPath = join(inMemoryDestinationPath, builtHandlerPath);
+
     await this.fileStorageService.downloadFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: builtHandlerPath,
-      localPath: inMemoryDestinationPath,
+      localPath,
     });
-  }
 
-  async writeSourcesToLocalFolder(
-    sources: Sources,
-    localPath: string,
-  ): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      const filePath = join(localPath, key);
-      const value = sources[key];
-
-      if (isObject(value)) {
-        await this.writeSourcesToLocalFolder(value as Sources, filePath);
-        continue;
-      }
-      await fs.mkdir(dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, value);
-    }
+    return localPath;
   }
 
   private async buildInMemory({

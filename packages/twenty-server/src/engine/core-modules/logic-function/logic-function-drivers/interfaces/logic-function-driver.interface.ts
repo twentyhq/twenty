@@ -26,6 +26,7 @@ export type LogicFunctionExecuteParams = {
   applicationUniversalIdentifier: string;
   payload: object;
   env?: Record<string, string>;
+  timeoutMs?: number;
 };
 
 export interface LogicFunctionDriver {

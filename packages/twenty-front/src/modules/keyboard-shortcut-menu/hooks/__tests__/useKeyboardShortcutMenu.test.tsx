@@ -1,8 +1,11 @@
 import { renderHook } from '@testing-library/react';
-import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode, act } from 'react';
+import { RecoilRoot } from 'recoil';
 
-import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
+import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 
@@ -24,11 +27,17 @@ jest.mock(
   }),
 );
 
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>{children}</RecoilRoot>
+  </JotaiProvider>
+);
+
 const renderHookConfig = () => {
   const { result } = renderHook(
     () => {
-      const isKeyboardShortcutMenuOpened = useRecoilValue(
-        isKeyboardShortcutMenuOpenedState,
+      const isKeyboardShortcutMenuOpened = useRecoilValueV2(
+        isKeyboardShortcutMenuOpenedStateV2,
       );
       return {
         ...useKeyboardShortcutMenu(),
@@ -36,7 +45,7 @@ const renderHookConfig = () => {
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Wrapper,
     },
   );
   return { result };

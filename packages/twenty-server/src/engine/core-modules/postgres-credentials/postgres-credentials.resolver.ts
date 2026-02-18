@@ -1,8 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
 import { PostgresCredentialsService } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -14,7 +15,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
-@Resolver(() => PostgresCredentialsDTO)
+@MetadataResolver(() => PostgresCredentialsDTO)
 export class PostgresCredentialsResolver {
   constructor(
     private readonly postgresCredentialsService: PostgresCredentialsService,

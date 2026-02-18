@@ -1,4 +1,4 @@
-import { PermissionFlagType, type Role } from '~/generated/graphql';
+import { PermissionFlagType, type Role } from '~/generated-metadata/graphql';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 const rolesMock: Role[] = [

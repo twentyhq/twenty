@@ -7,8 +7,8 @@ import {
   type CodeExecutionFile,
   type CodeExecutionState,
 } from 'twenty-shared/ai';
-import { v4 } from 'uuid';
 import { FileFolder } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import {
   type InputFile,
@@ -23,7 +23,7 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
 import { type CodeInterpreterInput } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
@@ -226,7 +226,9 @@ export class CodeInterpreterTool implements Tool {
 
       const executionTimeMs = Date.now() - startTime;
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error
+          ? error.message
+          : `Unexpected error: ${String(error)}`;
 
       onCodeExecutionUpdate?.(
         this.buildExecutionState(

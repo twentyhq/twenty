@@ -1,4 +1,4 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type UpdateOneObjectFactoryInput,
   updateOneObjectMetadataQueryFactory,
@@ -22,7 +22,7 @@ export const updateOneObjectMetadata = async ({
     gqlFields,
   });
 
-  const response = await makeGraphqlAPIRequest(graphqlOperation);
+  const response = await makeMetadataAPIRequest(graphqlOperation);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

@@ -22,6 +22,8 @@ import {
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
+import type { InputJsonSchema } from 'twenty-shared/logic-function';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('LogicFunction')
@@ -64,16 +66,12 @@ export class LogicFunctionDTO {
 
   @IsString()
   @Field()
-  builtHandlerPath: string;
-
-  @IsString()
-  @Field()
   handlerName: string;
 
   @IsObject()
   @IsOptional()
   @Field(() => graphqlTypeJson, { nullable: true })
-  toolInputSchema?: object;
+  toolInputSchema?: InputJsonSchema;
 
   @IsBoolean()
   @Field()

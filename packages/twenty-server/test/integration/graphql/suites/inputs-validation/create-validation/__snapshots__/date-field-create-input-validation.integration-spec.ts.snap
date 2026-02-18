@@ -1,21 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":"malformed-date"} 1`] = `"Invalid value 'malformed-date' for date or date-time field "dateField""`;
+exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":"malformed-date"} 1`] = `"Invalid value 'malformed-date' for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
 
-exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":[]} 1`] = `"Invalid value [] for date or date-time field "dateField""`;
-
-exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":{}} 1`] = `"Invalid value {} for date or date-time field "dateField""`;
-
-exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":1} 1`] = `"Data validation error."`;
-
-exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":true} 1`] = `"Invalid value true for date or date-time field "dateField""`;
-
-exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":"malformed-date"} 1`] = `"["Invalid value 'malformed-date' for date or date-time field \\"dateField\\""]"`;
-
-exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":[]} 1`] = `"["Invalid value [] for date or date-time field \\"dateField\\""]"`;
-
-exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":{}} 1`] = `"["Invalid value {} for date or date-time field \\"dateField\\""]"`;
-
-exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":1} 1`] = `"["Data validation error."]"`;
-
-exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":true} 1`] = `"["Invalid value true for date or date-time field \\"dateField\\""]"`;
+exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":"malformed-date"} 1`] = `"["Invalid value 'malformed-date' for date field \\"dateField\\". Expected format: 'YYYY-MM-DD'"]"`;

@@ -10,6 +10,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-entity-to-flat-view-field.util';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -28,13 +29,15 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvide
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(ViewFieldGroupEntity)
+    private readonly viewFieldGroupRepository: Repository<ViewFieldGroupEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<FlatViewFieldMaps> {
-    const [viewFields, applications, fieldMetadatas, views] = await Promise.all(
-      [
+    const [viewFields, applications, fieldMetadatas, views, viewFieldGroups] =
+      await Promise.all([
         this.viewFieldRepository.find({
           where: { workspaceId },
           withDeleted: true,
@@ -54,8 +57,12 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvide
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
-      ],
-    );
+        this.viewFieldGroupRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+      ]);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
@@ -63,6 +70,8 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvide
       createIdToUniversalIdentifierMap(fieldMetadatas);
     const viewIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(views);
+    const viewFieldGroupIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(viewFieldGroups);
 
     const flatViewFieldMaps = createEmptyFlatEntityMaps();
 
@@ -72,6 +81,7 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceCacheProvide
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
         viewIdToUniversalIdentifierMap,
+        viewFieldGroupIdToUniversalIdentifierMap,
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

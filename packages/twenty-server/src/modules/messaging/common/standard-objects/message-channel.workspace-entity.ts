@@ -98,6 +98,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt: string | null;
   throttleFailureCount: number;
+  throttleRetryAfter: string | null;
   connectedAccount: EntityRelation<ConnectedAccountWorkspaceEntity>;
   connectedAccountId: string;
   messageChannelMessageAssociations: EntityRelation<

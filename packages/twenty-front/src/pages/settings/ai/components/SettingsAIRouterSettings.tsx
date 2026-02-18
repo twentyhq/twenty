@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
@@ -22,6 +22,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconBolt, IconBrain } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledSelectContainer = styled.div`
   justify-content: flex-end;
@@ -42,7 +43,7 @@ export const SettingsAIRouterSettings = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
   const activeModelOptions = useAiModelOptions();
   const fastModelLabel = useAiModelLabel(currentWorkspace?.fastModel);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel);

@@ -3,13 +3,17 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import {
+  type GenerateDescriptorOptions,
   type ToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
-import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import {
+  type ToolDescriptor,
+  type ToolIndexEntry,
+} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
@@ -65,8 +69,12 @@ export class ViewToolProvider implements ToolProvider, OnModuleInit {
 
   async generateDescriptors(
     context: ToolProviderContext,
-  ): Promise<ToolDescriptor[]> {
+    options?: GenerateDescriptorOptions,
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const workspaceMemberId = context.actorContext?.workspaceMemberId;
+    const schemaOptions = {
+      includeSchemas: options?.includeSchemas ?? true,
+    };
 
     const readTools = this.viewToolsFactory.generateReadTools(
       context.workspaceId,
@@ -90,9 +98,10 @@ export class ViewToolProvider implements ToolProvider, OnModuleInit {
       return toolSetToDescriptors(
         { ...readTools, ...writeTools },
         ToolCategory.VIEW,
+        schemaOptions,
       );
     }
 
-    return toolSetToDescriptors(readTools, ToolCategory.VIEW);
+    return toolSetToDescriptors(readTools, ToolCategory.VIEW, schemaOptions);
   }
 }

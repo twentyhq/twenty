@@ -16,7 +16,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   DatabaseEventAction,
   type ObjectRecordEvent,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
   const apolloCoreClient = useApolloCoreClient();

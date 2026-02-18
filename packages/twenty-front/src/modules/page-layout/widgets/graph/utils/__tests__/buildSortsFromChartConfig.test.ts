@@ -5,7 +5,7 @@ import {
   type BarChartConfiguration,
   type PieChartConfiguration,
   GraphOrderBy,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 describe('buildSortsFromChartConfig', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {

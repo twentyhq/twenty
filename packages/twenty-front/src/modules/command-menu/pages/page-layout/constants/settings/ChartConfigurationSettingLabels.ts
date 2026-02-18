@@ -28,4 +28,6 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   PREFIX: msg`Prefix`,
   SUFFIX: msg`Suffix`,
   CUMULATIVE: msg`Cumulative`,
+  SPLIT_MULTI_VALUE_FIELDS_X: msg`Split multiple values`,
+  SPLIT_MULTI_VALUE_FIELDS_Y: msg`Split multiple values`,
 };

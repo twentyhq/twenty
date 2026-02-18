@@ -1,14 +1,14 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useRecoilValue } from 'recoil';
 import { type SelectOption } from 'twenty-ui/input';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useAiModelOptions = (
   includeDeprecated = false,
 ): SelectOption<string>[] => {
-  const aiModels = useRecoilValue(aiModelsState);
+  const aiModels = useRecoilValueV2(aiModelsState);
 
   return aiModels
     .filter((model) => includeDeprecated || !model.deprecated)
@@ -23,8 +23,11 @@ export const useAiModelOptions = (
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-export const useAiModelLabel = (modelId: string | undefined): string => {
-  const aiModels = useRecoilValue(aiModelsState);
+export const useAiModelLabel = (
+  modelId: string | undefined,
+  includeProvider = true,
+): string => {
+  const aiModels = useRecoilValueV2(aiModelsState);
 
   if (!modelId) {
     return '';
@@ -38,7 +41,8 @@ export const useAiModelLabel = (modelId: string | undefined): string => {
 
   if (
     model.modelId === DEFAULT_FAST_MODEL ||
-    model.modelId === DEFAULT_SMART_MODEL
+    model.modelId === DEFAULT_SMART_MODEL ||
+    !includeProvider
   ) {
     return model.label;
   }

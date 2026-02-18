@@ -1,18 +1,18 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberOrphanFavorites } from '@/favorites/components/CurrentWorkspaceMemberOrphanFavorites';
-import { FavoritesDragProvider } from '@/favorites/components/FavoritesDragProvider';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
-import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -23,7 +23,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { favoritesByFolder } = useFavoritesByFolder();
 
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
-    useRecoilState(isFavoriteFolderCreatingState);
+    useRecoilStateV2(isFavoriteFolderCreatingStateV2);
 
   const loading = useIsPrefetchLoading();
 
@@ -69,10 +69,10 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (
-        <FavoritesDragProvider>
+        <>
           <FavoriteFolders isNavigationSectionOpen={isNavigationSectionOpen} />
           <CurrentWorkspaceMemberOrphanFavorites />
-        </FavoritesDragProvider>
+        </>
       )}
     </NavigationDrawerSection>
   );
