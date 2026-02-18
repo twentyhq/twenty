@@ -11,10 +11,9 @@ import {
 import { createTestViewWithRestApi } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
-import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('View REST API', () => {
   let testObjectMetadataId: string;

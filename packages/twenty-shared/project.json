@@ -28,6 +28,8 @@
         "{projectRoot}/constants/dist",
         "{projectRoot}/database-events/package.json",
         "{projectRoot}/database-events/dist",
+        "{projectRoot}/logic-function/package.json",
+        "{projectRoot}/logic-function/dist",
         "{projectRoot}/metadata/package.json",
         "{projectRoot}/metadata/dist",
         "{projectRoot}/testing/package.json",
@@ -50,6 +52,24 @@
           "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
         ],
         "parallel": false
+      }
+    },
+    "build:individual": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/individual"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vite build -c vite.config.individual.ts"
       }
     },
     "generateBarrels": {

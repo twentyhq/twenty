@@ -1,15 +1,15 @@
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 import { normalizeUrl } from '@/navigation-menu-item/utils/normalizeUrl';
 
 export const useAddLinkToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilState(
-    navigationMenuItemsDraftState,
+  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+    navigationMenuItemsDraftStateV2,
   );
 
   const addLinkToDraft = (

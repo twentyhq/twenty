@@ -48,9 +48,6 @@ De aici puteți:
 # Adaugă o entitate nouă în aplicația ta (ghidat)
 yarn twenty entity:add
 
-# Generează un client Twenty tipizat și tipurile de entități ale spațiului de lucru
-yarn twenty app:generate
-
 # Urmărește jurnalele funcțiilor aplicației tale
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn twenty app:generate` va crea un folder `generated/` (client Twenty tipizat + tipuri pentru spațiul de lucru).
+* `yarn twenty app:dev` va genera automat un client API tipizat în `node_modules/twenty-sdk/generated` (client Twenty tipizat + tipuri ale spațiului de lucru).
 * `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end sau rolurile personalizate.
 
 ## Autentificare
@@ -279,7 +276,11 @@ Puncte cheie:
 * Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
-  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard precum `name`, `createdAt`, `updatedAt`, `createdBy`, `position` și `deletedAt`. Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
+  precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`.
+  Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+  Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
+  dar acest lucru nu este recomandat.
 </Note>
 
 ### Configurația aplicației (application-config.ts)
@@ -554,6 +555,71 @@ Puteți crea funcții noi în două moduri:
 * **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o funcție logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
 * **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
 
+### Marcarea unei funcții logice drept instrument
+
+Funcțiile logice pot fi expuse ca **instrumente** pentru agenți de IA și fluxuri de lucru. Când o funcție este marcată ca instrument, poate fi descoperită de funcționalitățile de IA ale Twenty și poate fi selectată ca pas în automatizări ale fluxurilor de lucru.
+
+Pentru a marca o funcție logică drept instrument, setați `isTool: true` și furnizați un `toolInputSchema` care descrie parametrii de intrare așteptați folosind [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Puncte cheie:
+
+* **`isTool`** (`boolean`, implicit: `false`): Când este setat la `true`, funcția este înregistrată ca instrument și devine disponibilă pentru agenții AI și automatizările de fluxuri de lucru.
+* **`toolInputSchema`** (`object`, opțional): Un obiect JSON Schema care descrie parametrii pe care îi acceptă funcția dvs. Agenții AI folosesc această schemă pentru a înțelege ce intrări așteaptă instrumentul și pentru a valida apelurile. Dacă este omisă, schema are implicit valoarea `{ type: 'object', properties: {} }` (fără parametri).
+* Funcțiile cu `isTool: false` (sau nedefinit) **nu** sunt expuse ca instrumente. Pot totuși fi executate direct sau apelate de alte funcții, dar nu vor apărea în descoperirea instrumentelor.
+* **Denumierea instrumentelor**: Când este expusă ca instrument, denumirea funcției este normalizată automat la `logic_function_<name>` (convertită la litere mici, iar caracterele non-alfanumerice sunt înlocuite cu caractere de subliniere). De exemplu, `enrich-company` devine `logic_function_enrich_company`.
+* Puteți combina `isTool` cu declanșatoare — o funcție poate fi atât un instrument (apelabilă de agenții AI), cât și declanșată de evenimente (cron, evenimente de bază de date, rute) în același timp.
+
+<Note>
+  **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+</Note>
+
 ### Componente Front
 
 Componentele Front vă permit să construiți componente React personalizate care sunt randate în interfața Twenty. Utilizați `defineFrontComponent()` pentru a defini componente cu validare încorporată:
@@ -593,7 +659,7 @@ Puteți crea componente Front noi în două moduri:
 
 ### Client tipizat generat
 
-Rulați `yarn twenty app:generate` pentru a crea un client tipizat local în `generated/`, pe baza schemei spațiului de lucru. Folosiți-l în funcțiile dvs.:
+Clientul tipizat este generat automat de `yarn twenty app:dev` și stocat în `node_modules/twenty-sdk/generated`, pe baza schemei spațiului tău de lucru. Folosiți-l în funcțiile dvs.:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Clientul este regenerat de `yarn twenty app:generate`. Rulați din nou după ce vă modificați obiectele sau când vă integrați într-un spațiu de lucru nou.
+Clientul este regenerat automat de `yarn twenty app:dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
 
 #### Acreditări la runtime în funcțiile de logică
 
@@ -639,13 +705,13 @@ Apoi adăugați un script `twenty`:
 }
 ```
 
-Acum puteți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
+Acum poți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty help`, etc.
 
 ## Depanare
 
 * Erori de autentificare: rulați `yarn twenty auth:login` și asigurați-vă că cheia API are permisiunile necesare.
 * Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Tipuri sau client lipsă/învechite: rulați `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Modul dev nu sincronizează: asigurați-vă că `yarn twenty app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
 
 Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

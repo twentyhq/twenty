@@ -1,5 +1,6 @@
 import { FieldType } from '@/sdk';
 import type { Manifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   application: {
@@ -8,7 +9,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     description: 'An app with all entities at root level',
     icon: 'IconFolder',
     defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
-    packageJsonChecksum: '351460efb13a6c1bee63e27cf87f6ece',
+    packageJsonChecksum: '93ae1e2eb3db18351d06f43550700dcc',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
   },
   publicAssets: [],
@@ -22,12 +23,90 @@ export const EXPECTED_MANIFEST: Manifest = {
       labelPlural: 'My notes',
       description: 'A simple root-level object',
       icon: 'IconNote',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        'e1e2e3e4-e5e6-4000-8000-000000000031',
       fields: [
         {
           universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000031',
           type: FieldType.TEXT,
           label: 'Title',
           name: 'title',
+        },
+        {
+          defaultValue: 'uuid',
+          description: 'Id',
+          icon: 'Icon123',
+          isNullable: false,
+          label: 'Id',
+          name: 'id',
+          type: FieldMetadataType.UUID,
+          universalIdentifier: '5bdb4f57-a349-56d0-b421-845fd55b3026',
+        },
+        {
+          defaultValue: null,
+          description: 'Name',
+          icon: 'IconAbc',
+          isNullable: true,
+          label: 'Name',
+          name: 'name',
+          type: FieldMetadataType.TEXT,
+          universalIdentifier: '86cc7b06-26de-5b7b-bf4a-31fa246dfd90',
+        },
+        {
+          defaultValue: 'now',
+          description: 'Creation date',
+          icon: 'IconCalendar',
+          isNullable: false,
+          label: 'Creation date',
+          name: 'createdAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: 'abe3bc69-1a51-5814-a722-74f5a025e92a',
+        },
+        {
+          defaultValue: 'now',
+          description: 'Last time the record was changed',
+          icon: 'IconCalendarClock',
+          isNullable: false,
+          label: 'Last update',
+          name: 'updatedAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: 'c296d408-9720-5a86-8586-3490fbf04b86',
+        },
+        {
+          defaultValue: null,
+          description: 'Deletion date',
+          icon: 'IconCalendarClock',
+          isNullable: true,
+          label: 'Deleted at',
+          name: 'deletedAt',
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: '488333a2-f4ff-5790-88ef-21f07f8f1985',
+        },
+        {
+          defaultValue: {
+            name: "''",
+            source: "'MANUAL'",
+          },
+          description: 'The creator of the record',
+          icon: 'IconCreativeCommonsSa',
+          isNullable: false,
+          label: 'Created by',
+          name: 'createdBy',
+          type: FieldMetadataType.ACTOR,
+          universalIdentifier: 'fba6e01b-6579-554e-ad64-a676003c8e68',
+        },
+        {
+          defaultValue: {
+            name: "''",
+            source: "'MANUAL'",
+          },
+          description: 'The workspace member who last updated the record',
+          icon: 'IconUserCircle',
+          isNullable: false,
+          label: 'Updated by',
+          name: 'updatedBy',
+          type: FieldMetadataType.ACTOR,
+          universalIdentifier: 'fa60f87d-15c8-5ff7-9da0-191fa14a922f',
         },
       ],
     },
@@ -46,6 +125,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'my.function.ts',
       builtHandlerPath: 'my.function.mjs',
       builtHandlerChecksum: '[checksum]',
+      toolInputSchema: { type: 'object', properties: {} },
     },
   ],
   frontComponents: [
@@ -59,6 +139,8 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtComponentChecksum: '[checksum]',
     },
   ],
+  views: [],
+  navigationMenuItems: [],
   roles: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',

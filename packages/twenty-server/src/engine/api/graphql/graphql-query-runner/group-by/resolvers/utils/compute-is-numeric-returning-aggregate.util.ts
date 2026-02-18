@@ -1,6 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 
 export const computeIsNumericReturningAggregate = (
   operation: AggregateOperations,

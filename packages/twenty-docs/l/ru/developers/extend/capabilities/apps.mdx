@@ -48,9 +48,6 @@ yarn twenty app:dev
 # Добавить новую сущность в ваше приложение (с мастером)
 yarn twenty entity:add
 
-# Сгенерировать типизированный клиент Twenty и типы сущностей рабочего пространства
-yarn twenty app:generate
-
 # Просматривать логи функций вашего приложения
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn twenty app:generate` создаст папку `generated/` (типизированный клиент Twenty + типы рабочего пространства).
+* `yarn twenty app:dev` автоматически сгенерирует типизированный клиент API в `node_modules/twenty-sdk/generated` (типизированный клиент Twenty + типы рабочего пространства).
 * `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов или ролей.
 
 ## Аутентификация
@@ -279,7 +276,11 @@ export default defineObject({
 * Вы можете сгенерировать новые объекты с помощью `yarn twenty entity:add`, который проведёт вас через настройку имени, полей и связей.
 
 <Note>
-  **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля, такие как `name`, `createdAt`, `updatedAt`, `createdBy`, `position` и `deletedAt`. Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
+  **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля,
+  такие как `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` и `deletedAt`.
+  Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
+  Вы можете переопределить поля по умолчанию, определив поле с тем же именем в массиве `fields`,
+  но это не рекомендуется.
 </Note>
 
 ### Конфигурация приложения (application-config.ts)
@@ -554,6 +555,71 @@ const handler = async (event: RoutePayload) => {
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления новой функции логики. Это создаёт стартовый файл с обработчиком и конфигурацией.
 * **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
 
+### Пометка логической функции как инструмента
+
+Логические функции можно предоставлять как **инструменты** для ИИ-агентов и рабочих процессов. Когда функция помечена как инструмент, она становится доступной для ИИ Twenty и может быть выбрана в качестве шага в автоматизациях рабочих процессов.
+
+Чтобы пометить логическую функцию как инструмент, установите `isTool: true` и укажите `toolInputSchema` для описания ожидаемых входных параметров с помощью [схемы JSON](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Основные моменты:
+
+* **`isTool`** (`boolean`, по умолчанию: `false`): Если значение равно `true`, функция регистрируется как инструмент и становится доступной агентам ИИ и автоматизациям рабочих процессов.
+* **`toolInputSchema`** (`object`, необязательно): Объект JSON Schema, который описывает параметры, которые принимает ваша функция. Агенты ИИ используют эту схему, чтобы понять, какие входные данные ожидает инструмент, и проверять корректность вызовов. Если опущено, по умолчанию используется схема `{ type: 'object', properties: {} }` (без параметров).
+* Функции с `isTool: false` (или без указания) **не** выставляются как инструменты. Их по-прежнему можно выполнять напрямую или вызывать из других функций, но они не будут отображаться при обнаружении инструментов.
+* **Именование инструмента**: При публикации как инструмента имя функции автоматически нормализуется до `logic_function_<name>` (в нижнем регистре, небуквенно-цифровые символы заменяются на подчёркивания). Например, `enrich-company` становится `logic_function_enrich_company`.
+* Вы можете комбинировать `isTool` с триггерами — функция может одновременно быть инструментом (вызываемым агентами ИИ) и запускаться событиями (cron, события базы данных, маршруты).
+
+<Note>
+  **Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.
+</Note>
+
 ### Фронт-компоненты
 
 Фронт-компоненты позволяют создавать пользовательские компоненты React, которые рендерятся внутри интерфейса Twenty. Используйте `defineFrontComponent()` для определения компонентов со встроенной валидацией:
@@ -593,7 +659,7 @@ export default defineFrontComponent({
 
 ### Сгенерированный типизированный клиент
 
-Запустите `yarn twenty app:generate`, чтобы создать локальный типизированный клиент в `generated/` на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
+Типизированный клиент автоматически генерируется с помощью `yarn twenty app:dev` и сохраняется в `node_modules/twenty-sdk/generated` на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Клиент повторно генерируется командой `yarn twenty app:generate`. Запускайте повторно после изменения ваших объектов или при подключении к новому рабочему пространству.
+Клиент автоматически перегенерируется с помощью `yarn twenty app:dev` при изменении ваших объектов или полей.
 
 #### Учётные данные времени выполнения в логических функциях
 
@@ -639,13 +705,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-Теперь вы можете запускать все команды через `yarn twenty <command>`, например, `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help` и т. д.
+Теперь вы можете запускать все команды через `yarn twenty <command>`, например, `yarn twenty app:dev`, `yarn twenty help` и т. д.
 
 ## Устранение неполадок
 
 * Ошибки аутентификации: выполните `yarn twenty auth:login` и убедитесь, что у вашего ключа API есть необходимые права.
 * Не удаётся подключиться к серверу: проверьте URL API и доступность сервера Twenty.
-* Типы или клиент отсутствуют/устарели: выполните `yarn twenty app:generate`.
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * Режим разработки не синхронизируется: убедитесь, что запущен `yarn twenty app:dev`, и что ваша среда не игнорирует изменения.
 
 Канал помощи в Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

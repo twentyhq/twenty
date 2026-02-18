@@ -28,6 +28,10 @@ const config: StorybookConfig = {
       from: '../src/front-component-renderer/__stories__/example-sources-built',
       to: '/built',
     },
+    {
+      from: '../src/front-component-renderer/__stories__/example-sources-built-preact',
+      to: '/built-preact',
+    },
   ],
 
   viteFinal: async (viteConfig) => {

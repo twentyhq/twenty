@@ -27,13 +27,13 @@ export type {
 } from './fieldManifestType';
 export type { FrontComponentManifest } from './frontComponentManifestType';
 export type {
-  InputJsonSchema,
   LogicFunctionManifest,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
+export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
@@ -42,3 +42,12 @@ export type {
   RoleManifest,
 } from './roleManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export type {
+  ViewManifestFilterValue,
+  ViewFieldManifest,
+  ViewFilterManifest,
+  ViewFilterGroupManifest,
+  ViewGroupManifest,
+  ViewFieldGroupManifest,
+  ViewManifest,
+} from './viewManifestType';

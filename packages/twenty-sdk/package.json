@@ -9,6 +9,7 @@
   },
   "files": [
     "dist",
+    "generated",
     "README.md",
     "package.json"
   ],
@@ -38,6 +39,11 @@
       "types": "./dist/front-component-renderer/index.d.ts",
       "import": "./dist/front-component-renderer/index.mjs",
       "require": "./dist/front-component-renderer/index.cjs"
+    },
+    "./generated": {
+      "types": "./generated/index.ts",
+      "import": "./generated/index.ts",
+      "require": "./generated/index.ts"
     }
   },
   "license": "AGPL-3.0",
@@ -45,6 +51,7 @@
     "@chakra-ui/react": "^3.33.0",
     "@emotion/react": "^11.14.0",
     "@genql/cli": "^3.0.3",
+    "@genql/runtime": "^2.10.0",
     "@quilted/threads": "^4.0.1",
     "@remote-dom/core": "^1.10.1",
     "@remote-dom/react": "^1.2.2",
@@ -64,6 +71,7 @@
     "inquirer": "^10.0.0",
     "jsonc-parser": "^3.2.0",
     "lodash.camelcase": "^4.3.0",
+    "preact": "^10.28.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.9.2",
@@ -105,6 +113,9 @@
       ],
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
+      ],
+      "generated": [
+        "generated/index.ts"
       ]
     }
   }

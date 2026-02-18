@@ -27,6 +27,7 @@ import {
   FromToAllUniversalFlatEntityMaps,
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
+  WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { computeUniversalFlatEntityMapsFromTo } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to.util';
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/infer-deletion-from-missing-entities.type';
@@ -217,7 +218,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     args: WorkspaceMigrationOrchestratorBuildArgs & {
       idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
     },
-  ) {
+  ): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | WorkspaceMigrationOrchestratorSuccessfulResult
+  > {
     const { idByUniversalIdentifierByMetadataName, ...buildArgs } = args;
 
     const validateAndBuildResult =
@@ -239,10 +243,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
-    if (validateAndBuildResult.workspaceMigration.actions.length === 0) {
-      return undefined;
-    }
-
     const workspaceMigration = isDefined(idByUniversalIdentifierByMetadataName)
       ? enrichCreateWorkspaceMigrationActionsWithIds({
           idByUniversalIdentifierByMetadataName,
@@ -250,13 +250,24 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         })
       : validateAndBuildResult.workspaceMigration;
 
-    const { metadataEvents } =
-      await this.workspaceMigrationRunnerService.run(workspaceMigration);
+    if (workspaceMigration.actions.length > 0) {
+      const { metadataEvents } = await this.workspaceMigrationRunnerService.run(
+        {
+          workspaceId: args.workspaceId,
+          workspaceMigration,
+        },
+      );
 
-    this.metadataEventEmitter.emitMetadataEvents({
-      metadataEvents,
-      workspaceId: args.workspaceId,
-    });
+      this.metadataEventEmitter.emitMetadataEvents({
+        metadataEvents,
+        workspaceId: args.workspaceId,
+      });
+    }
+
+    return {
+      status: 'success',
+      workspaceMigration,
+    };
   }
 
   public async validateBuildAndRunWorkspaceMigration({
@@ -265,7 +276,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
-    WorkspaceMigrationOrchestratorFailedResult | undefined
+    | WorkspaceMigrationOrchestratorFailedResult
+    | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
     const {
       fromToAllFlatEntityMaps,

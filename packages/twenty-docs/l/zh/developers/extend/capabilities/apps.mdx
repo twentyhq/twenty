@@ -48,9 +48,6 @@ yarn twenty app:dev
 # 向你的应用添加一个新实体（引导式）
 yarn twenty entity:add
 
-# 生成类型化的 Twenty 客户端和工作区实体类型
-yarn twenty app:generate
-
 # 监听你的应用函数日志
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
+* `yarn twenty app:dev` 将在 `node_modules/twenty-sdk/generated` 中自动生成一个类型化的 API 客户端（类型化的 Twenty 客户端 + 工作区类型）。
 * `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
 
 ## 身份验证
@@ -279,7 +276,11 @@ export default defineObject({
 * 你可以使用 `yarn twenty entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
 
 <Note>
-  **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+  **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加标准字段
+  例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。
+  你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+  你可以通过在你的 `fields` 数组中定义一个同名字段来覆盖默认字段，
+  但不建议这样做。
 </Note>
 
 ### 应用配置（application-config.ts）
@@ -554,6 +555,71 @@ const handler = async (event: RoutePayload) => {
 * **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
 * **手动**：创建一个新的 `*.logic-function.ts` 文件，并使用 `defineLogicFunction()`，遵循相同的模式。
 
+### 将逻辑函数标记为工具
+
+逻辑函数可以作为供 AI 智能体和工作流使用的**工具**对外提供。 当函数被标记为工具时，Twenty 的 AI 功能即可发现它，并可在工作流自动化中将其选作一个步骤。
+
+要将逻辑函数标记为工具，请设置 `isTool: true`，并提供 `toolInputSchema`，使用 [JSON Schema](https://json-schema.org/) 描述预期的输入参数:
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+关键点：
+
+* **`isTool`** (`boolean`, 默认: `false`): 当设置为 `true` 时，该函数会被注册为工具，并可供 AI 代理和工作流自动化使用。
+* **`toolInputSchema`** (`object`, 可选): 描述函数可接受参数的 JSON Schema 对象。 AI 代理使用此架构来理解该工具期望的输入并验证调用。 如果省略，架构将默认为 `{ type: 'object', properties: {} }`（无参数）。
+* 设置为 `isTool: false`（或未设置）的函数**不会**被暴露为工具。 它们仍可直接执行或被其他函数调用，但不会出现在工具发现中。
+* **工具命名**: 当作为工具对外暴露时，函数名会被自动规范化为 `logic_function_<name>`（转换为小写，非字母数字字符替换为下划线）。 例如，`enrich-company` 将变为 `logic_function_enrich_company`。
+* 你可以将 `isTool` 与触发器结合使用——一个函数既可以作为工具（由 AI 代理调用），也可以同时由事件（cron、数据库事件、路由）触发。
+
+<Note>
+  **写一个好的 `description`。** AI 代理会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
+</Note>
+
 ### 前端组件
 
 前端组件使你可以构建在 Twenty 的 UI 中渲染的自定义 React 组件。 使用 `defineFrontComponent()` 以内置校验定义组件：
@@ -593,7 +659,7 @@ export default defineFrontComponent({
 
 ### 生成的类型化客户端
 
-运行 `yarn twenty app:generate`，根据你的工作空间模式在 `generated/` 中创建本地类型化客户端。 在你的函数中使用它：
+类型化客户端由 `yarn twenty app:dev` 自动生成，并基于你的工作区架构存放在 `node_modules/twenty-sdk/generated`。 在你的函数中使用它：
 
 ```typescript
 import Twenty from '~/generated';
@@ -602,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-客户端会通过 `yarn twenty app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
+每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成该客户端。
 
 #### 逻辑函数中的运行时凭据
 
@@ -639,13 +705,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty app:generate`、`yarn twenty help` 等。
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty help` 等。
 
 ## 故障排除
 
 * 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：运行 `yarn twenty app:generate`。
+* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 * 开发模式未同步：确保 `yarn twenty app:dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

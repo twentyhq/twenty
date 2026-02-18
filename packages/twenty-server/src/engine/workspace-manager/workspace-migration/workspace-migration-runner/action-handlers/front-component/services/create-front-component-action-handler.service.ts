@@ -11,6 +11,7 @@ import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateFrontComponentAction,
   UniversalCreateFrontComponentAction,
@@ -34,6 +35,11 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateFrontComponentAction>): Promise<FlatCreateFrontComponentAction> {
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'frontComponent',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -41,6 +47,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

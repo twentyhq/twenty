@@ -47,9 +47,6 @@ From here you can:
 # Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Generate a typed Twenty client and workspace entity types
-yarn twenty app:generate
-
 # Watch your application's function logs
 yarn twenty function:logs
 
@@ -140,7 +137,7 @@ export default defineObject({
 
 Later commands will add more files and folders:
 
-- `yarn twenty app:generate` will create a `generated/` folder (typed Twenty client + workspace types).
+- `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
 - `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## Authentication
@@ -277,7 +274,11 @@ Key points:
 - You can scaffold new objects using `yarn twenty entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
-**Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields such as `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, and `deletedAt`. You don't need to define these in your `fields` array — only add your custom fields.
+**Base fields are created automatically.** When you define a custom object, Twenty automatically adds standard fields
+  such as `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` and `deletedAt`.
+  You don't need to define these in your `fields` array — only add your custom fields.
+  You can override default fields by defining a field with the same name in your `fields` array,
+  but this is not recommended.
 </Note>
 
 
@@ -544,6 +545,71 @@ You can create new functions in two ways:
 - **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new logic function. This generates a starter file with a handler and config.
 - **Manual**: Create a new `*.logic-function.ts` file and use `defineLogicFunction()`, following the same pattern.
 
+### Marking a logic function as a tool
+
+Logic functions can be exposed as **tools** for AI agents and workflows. When a function is marked as a tool, it becomes discoverable by Twenty's AI features and can be selected as a step in workflow automations.
+
+To mark a logic function as a tool, set `isTool: true` and provide a `toolInputSchema` describing the expected input parameters using [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from '~/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new Twenty();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Key points:
+
+- **`isTool`** (`boolean`, default: `false`): When set to `true`, the function is registered as a tool and becomes available to AI agents and workflow automations.
+- **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
+- Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
+- **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
+- You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+
+<Note>
+**Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+</Note>
+
 ### Front components
 
 Front components let you build custom React components that render within Twenty's UI. Use `defineFrontComponent()` to define components with built-in validation:
@@ -582,7 +648,7 @@ You can create new front components in two ways:
 
 ### Generated typed client
 
-Run `yarn twenty app:generate` to create a local typed client in `generated/` based on your workspace schema. Use it in your functions:
+The typed client is auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema. Use it in your functions:
 
 ```typescript
 import Twenty from '~/generated';
@@ -591,7 +657,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated by `yarn twenty app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
+The client is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
 
 #### Runtime credentials in logic functions
 
@@ -628,13 +694,13 @@ Then add a `twenty` script:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty app:generate`, `yarn twenty help`, etc.
+Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
 
 ## Troubleshooting
 
 - Authentication errors: run `yarn twenty auth:login` and ensure your API key has the required permissions.
 - Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-- Types or client missing/outdated: run `yarn twenty app:generate`.
+- Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
 - Dev mode not syncing: ensure `yarn twenty app:dev` is running and that changes are not ignored by your environment.
 
 Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322

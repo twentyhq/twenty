@@ -57,7 +57,7 @@ const deleteFile = async (fileId: string): Promise<void> => {
   });
 };
 
-describe('files-field.controller - GET /files-field/:id', () => {
+describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
   let createdObjectMetadataId = '';
   let createdFieldMetadataId = '';
   let uploadedFiles: UploadedFile[] = [];
@@ -296,7 +296,7 @@ describe('files-field.controller - GET /files-field/:id', () => {
     const fileId = createdRecord.filesField[0].fileId;
 
     const downloadResponse = await request(global.app.getHttpServer()).get(
-      `/files-field/${fileId}`,
+      `/file/files-field/${fileId}`,
     );
 
     expect(downloadResponse.status).toBe(403);
@@ -341,7 +341,7 @@ describe('files-field.controller - GET /files-field/:id', () => {
     const fileId = createdRecord.filesField[0].fileId;
 
     const downloadResponse = await request(global.app.getHttpServer())
-      .get(`/files-field/${fileId}`)
+      .get(`/file/files-field/${fileId}`)
       .query({ token: 'invalid-token-12345' });
 
     expect(downloadResponse.status).toBe(403);

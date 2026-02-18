@@ -2,12 +2,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type ExtractUniversalForeignKeyAggregatorForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-flat-entity-foreign-key-aggregator-properties.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 export type FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs = {
-  universalFlatObjectMetadata: UniversalFlatObjectMetadata;
+  universalFlatObjectMetadata: Omit<
+    UniversalFlatObjectMetadata,
+    ExtractUniversalForeignKeyAggregatorForMetadataName<'objectMetadata'>
+  >;
   generatedId: string;
   allFlatEntityMaps: AllFlatEntityMaps;
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
@@ -60,9 +65,6 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     applicationUniversalIdentifier,
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
-    viewUniversalIdentifiers: _viewUniversalIdentifiers,
-    indexMetadataUniversalIdentifiers: _indexMetadataUniversalIdentifiers,
-    fieldUniversalIdentifiers: _fieldUniversalIdentifiers,
     ...restProperties
   } = universalFlatObjectMetadata;
 
@@ -98,6 +100,11 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     }
   }
 
+  const emptyUniversalForeignKeyAggregators =
+    getUniversalFlatEntityEmptyForeignKeyAggregators({
+      metadataName: 'objectMetadata',
+    });
+
   return {
     ...restProperties,
     dataSourceId,
@@ -115,8 +122,6 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     fieldIds: [],
     viewIds: [],
     indexMetadataIds: [],
-    fieldUniversalIdentifiers: [],
-    viewUniversalIdentifiers: [],
-    indexMetadataUniversalIdentifiers: [],
+    ...emptyUniversalForeignKeyAggregators,
   };
 };

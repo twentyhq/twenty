@@ -28,12 +28,14 @@
     "vite.config.ts",
     "vite.config.node.ts",
     "vite.config.browser.ts",
+    "vite.config.sdk.ts",
     "jest.config.mjs"
   ],
   "exclude": [
     "src/front-component-renderer/remote/mock/**/*",
     "src/front-component-renderer/host/generated/host-component-registry.ts",
     "src/front-component-renderer/remote/generated/remote-components.ts",
-    "src/front-component-renderer/remote/generated/remote-elements.ts"
+    "src/front-component-renderer/remote/generated/remote-elements.ts",
+    "src/front-component-renderer/__stories__/**/*"
   ]
 }

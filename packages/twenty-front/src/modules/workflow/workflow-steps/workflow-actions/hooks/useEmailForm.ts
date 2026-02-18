@@ -1,6 +1,6 @@
-import { type EmailFormData } from '@/workflow/workflow-steps/workflow-actions/email-action/types/EmailFormData';
-import { type WorkflowEmailAction } from '@/workflow/workflow-steps/workflow-actions/email-action/types/WorkflowEmailAction';
 import { useState } from 'react';
+import { type EmailFormData } from '@/workflow/types/EmailFormData';
+import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 

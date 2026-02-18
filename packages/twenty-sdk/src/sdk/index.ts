@@ -1,9 +1,9 @@
 export type { ApplicationConfig } from './application/application-config';
 export { defineApplication } from './application/define-application';
 export type {
-  ValidationResult,
   DefinableEntity,
   DefineEntity,
+  ValidationResult,
 } from './common/types/define-entity.type';
 export type { SyncableEntityOptions } from './common/types/syncable-entity-options.type';
 export { createValidationResult } from './common/utils/create-validation-result';
@@ -24,42 +24,53 @@ export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
 export type {
-  FrontComponentType,
   FrontComponentConfig,
+  FrontComponentType,
 } from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
 export type {
-  LogicFunctionHandler,
   LogicFunctionConfig,
+  LogicFunctionHandler,
 } from './logic-functions/logic-function-config';
 export type { CronPayload } from './logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,
+  ObjectRecordBaseEvent,
   ObjectRecordCreateEvent,
-  ObjectRecordUpdateEvent,
-  ObjectRecordEvent,
   ObjectRecordDeleteEvent,
   ObjectRecordDestroyEvent,
-  ObjectRecordBaseEvent,
+  ObjectRecordEvent,
   ObjectRecordRestoreEvent,
+  ObjectRecordUpdateEvent,
   ObjectRecordUpsertEvent,
 } from './logic-functions/triggers/database-event-payload-type';
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
+export { defineNavigationMenuItem } from './navigation-menu-items/define-navigation-menu-item';
 export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
+export { defineView } from './views/define-view';
+export type { ViewConfig } from './views/view-config';
 
 // Front Component API exports
-export { useFrontComponentExecutionContext } from './front-component-api';
-export { navigate } from './front-component-api';
-export { useUserId } from './front-component-api';
+export {
+  navigate,
+  useFrontComponentExecutionContext,
+  useUserId,
+} from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
 
 // Front Component Common exports
+export {
+  ALLOWED_HTML_ELEMENTS,
+  COMMON_HTML_EVENTS,
+  EVENT_TO_REACT,
+  HTML_COMMON_PROPERTIES,
+  HTML_TAG_TO_REMOTE_COMPONENT,
+} from './front-component-api';
 export type { AllowedHtmlElement } from './front-component-api';
-export { ALLOWED_HTML_ELEMENTS } from './front-component-api';
-export { COMMON_HTML_EVENTS } from './front-component-api';
-export { EVENT_TO_REACT } from './front-component-api';
-export { HTML_COMMON_PROPERTIES } from './front-component-api';
-export { HTML_TAG_TO_REMOTE_COMPONENT } from './front-component-api';
+
+// Style bridge utilities for CSS-in-JS libraries in remote components
+export { installStyleBridge } from '../front-component-renderer/polyfills/installStyleBridge';
+export { exposeGlobals } from '../front-component-renderer/remote/utils/exposeGlobals';

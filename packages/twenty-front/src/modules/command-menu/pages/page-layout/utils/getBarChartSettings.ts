@@ -16,6 +16,8 @@ import { RANGE_MAX_SETTING } from '@/command-menu/pages/page-layout/constants/se
 import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMinSetting';
 import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
+import { SPLIT_MULTI_VALUE_FIELDS_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SplitMultiValueFieldsXSetting';
+import { SPLIT_MULTI_VALUE_FIELDS_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SplitMultiValueFieldsYSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
@@ -34,6 +36,7 @@ export const getBarChartSettings = (
     DATE_GRANULARITY_X_SETTING,
     PRIMARY_SORT_BY_SETTING,
     OMIT_NULL_VALUES_SETTING,
+    SPLIT_MULTI_VALUE_FIELDS_X_SETTING,
   ];
 
   const secondaryAxisItems = [
@@ -44,6 +47,7 @@ export const getBarChartSettings = (
     CUMULATIVE_SETTING,
     RANGE_MIN_SETTING,
     RANGE_MAX_SETTING,
+    SPLIT_MULTI_VALUE_FIELDS_Y_SETTING,
   ];
 
   const xAxisItems = isHorizontal ? secondaryAxisItems : primaryAxisItems;

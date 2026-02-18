@@ -1,6 +1,6 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
+import { userLookupResultStateV2 } from '@/settings/admin-panel/states/userLookupResultStateV2';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -8,8 +8,9 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated-metadata/graphql';
 
@@ -45,8 +46,8 @@ export const SettingsAdminGeneral = () => {
     activeTabIdComponentState,
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
-  const [userLookupResult, setUserLookupResult] = useRecoilState(
-    userLookupResultState,
+  const [userLookupResult, setUserLookupResult] = useRecoilStateV2(
+    userLookupResultStateV2,
   );
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 

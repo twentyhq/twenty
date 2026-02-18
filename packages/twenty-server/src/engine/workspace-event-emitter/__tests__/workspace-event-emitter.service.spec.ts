@@ -5,7 +5,10 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
+import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { COMPANY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/company-flat-fields.mock';
@@ -16,6 +19,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
@@ -79,6 +83,19 @@ describe('WorkspaceEventEmitterService', () => {
   let mockWorkspaceCacheService: {
     getOrRecompute: jest.Mock;
   };
+  let mockProcessNestedRelationsHelper: jest.Mocked<
+    Pick<ProcessNestedRelationsHelper, 'processNestedRelations'>
+  >;
+  let mockWorkspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<
+    Pick<
+      WorkspaceManyOrAllFlatEntityMapsCacheService,
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >
+  >;
+
+  let mockGlobalWorkspaceOrmManager: jest.Mocked<
+    Pick<GlobalWorkspaceOrmManager, 'getGlobalWorkspaceDataSourceReplica'>
+  >;
 
   const workspaceId = COMPANY_FLAT_OBJECT_MOCK.workspaceId;
   const streamChannelId = 'test-stream-channel-id';
@@ -225,6 +242,29 @@ describe('WorkspaceEventEmitterService', () => {
       getOrRecompute: jest.fn().mockImplementation(createCacheMock()),
     };
 
+    mockProcessNestedRelationsHelper = {
+      processNestedRelations: jest.fn(),
+    };
+
+    mockWorkspaceManyOrAllFlatEntityMapsCacheService = {
+      getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+        flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
+        flatObjectMetadataMaps: {
+          byId: {
+            [companyObjectMetadata.id]: companyObjectMetadata,
+          },
+          idByUniversalIdentifier: {},
+          universalIdentifiersByApplicationId: {},
+        },
+      } as never),
+    };
+
+    mockGlobalWorkspaceOrmManager = {
+      getGlobalWorkspaceDataSourceReplica: jest.fn().mockResolvedValue({
+        getRepository: jest.fn(),
+      }),
+    };
+
     (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({});
     (
       isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
@@ -244,6 +284,22 @@ describe('WorkspaceEventEmitterService', () => {
         {
           provide: WorkspaceCacheService,
           useValue: mockWorkspaceCacheService,
+        },
+        {
+          provide: ProcessNestedRelationsHelper,
+          useValue: mockProcessNestedRelationsHelper,
+        },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: mockWorkspaceManyOrAllFlatEntityMapsCacheService,
+        },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: mockGlobalWorkspaceOrmManager,
+        },
+        {
+          provide: CommonSelectFieldsHelper,
+          useValue: new CommonSelectFieldsHelper(),
         },
       ],
     }).compile();
@@ -1150,6 +1206,263 @@ describe('WorkspaceEventEmitterService', () => {
               workspaceMemberId,
               workspaceMember: undefined,
             }),
+          }),
+        );
+      });
+    });
+
+    describe('nested relations enrichment', () => {
+      it('should enrich events with nested relations when publishing', async () => {
+        const recordAfter = { id: 'record-1', name: 'Test Company' };
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [
+            createMockEvent({
+              properties: {
+                after: recordAfter,
+              },
+            }),
+          ],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(
+          mockWorkspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+        ).toHaveBeenCalledWith({
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        });
+
+        expect(
+          mockGlobalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica,
+        ).toHaveBeenCalled();
+
+        expect(
+          mockProcessNestedRelationsHelper.processNestedRelations,
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            parentObjectMetadataItem: companyObjectMetadata,
+            parentObjectRecords: expect.arrayContaining([recordAfter]),
+            authContext: expect.objectContaining({
+              userWorkspaceId,
+              userId: 'test-user-id',
+            }),
+            workspaceDataSource: expect.objectContaining({
+              getRepository: expect.any(Function),
+            }),
+            rolePermissionConfig: expect.objectContaining({
+              intersectionOf: [roleId],
+            }),
+          }),
+        );
+      });
+
+      it('should include both before and after records when enriching update events', async () => {
+        const recordBefore = { id: 'record-1', name: 'Old Name' };
+        const recordAfter = { id: 'record-1', name: 'New Name' };
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.updated',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [
+            createMockEvent({
+              properties: {
+                before: recordBefore,
+                after: recordAfter,
+                updatedFields: ['name'],
+                diff: { name: { before: 'Old Name', after: 'New Name' } },
+              },
+            }),
+          ],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(
+          mockProcessNestedRelationsHelper.processNestedRelations,
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            parentObjectRecords: expect.arrayContaining([
+              recordBefore,
+              recordAfter,
+            ]),
+          }),
+        );
+      });
+
+      it('should include only before records when enriching delete events', async () => {
+        const recordBefore = { id: 'record-1', name: 'Deleted Company' };
+
+        const streamDataWithFilter: EventStreamData = {
+          ...mockStreamData,
+          queries: {
+            'query-1': {
+              objectNameSingular: 'company',
+              variables: {},
+            },
+          },
+        };
+
+        mockEventStreamService.getStreamsData.mockResolvedValue(
+          new Map([[streamChannelId, streamDataWithFilter]]) as Map<
+            string,
+            EventStreamData | undefined
+          >,
+        );
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.deleted',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [
+            createMockEvent({
+              properties: {
+                before: recordBefore,
+              },
+            }),
+          ],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(
+          mockProcessNestedRelationsHelper.processNestedRelations,
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            parentObjectRecords: expect.arrayContaining([recordBefore]),
+          }),
+        );
+      });
+
+      it('should enrich multiple records from batch events', async () => {
+        const record1 = { id: 'record-1', name: 'Company 1' };
+        const record2 = { id: 'record-2', name: 'Company 2' };
+        const record3 = { id: 'record-3', name: 'Company 3' };
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [
+            createMockEvent({
+              recordId: 'record-1',
+              properties: { after: record1 },
+            }),
+            createMockEvent({
+              recordId: 'record-2',
+              properties: { after: record2 },
+            }),
+            createMockEvent({
+              recordId: 'record-3',
+              properties: { after: record3 },
+            }),
+          ],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(
+          mockProcessNestedRelationsHelper.processNestedRelations,
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            parentObjectRecords: expect.arrayContaining([
+              record1,
+              record2,
+              record3,
+            ]),
+          }),
+        );
+      });
+
+      it('should not call processNestedRelations when no events match', async () => {
+        const permissionsWithoutRead: ObjectsPermissionsByRoleId = {
+          [roleId]: {
+            [companyObjectMetadata.id]: {
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+              canDestroyObjectRecords: true,
+              restrictedFields: {},
+              rowLevelPermissionPredicates: [],
+              rowLevelPermissionPredicateGroups: [],
+            },
+          },
+        };
+
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({ rolesPermissions: permissionsWithoutRead }),
+        );
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [createMockEvent()],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(
+          mockProcessNestedRelationsHelper.processNestedRelations,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should pass correct role permission config when enriching events', async () => {
+        const customRoleId = 'custom-role-id';
+        const customUserWorkspaceRoleMap = {
+          [userWorkspaceId]: customRoleId,
+        };
+
+        const customRolesPermissions: ObjectsPermissionsByRoleId = {
+          [customRoleId]: {
+            [companyObjectMetadata.id]: {
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+              canDestroyObjectRecords: true,
+              restrictedFields: {},
+              rowLevelPermissionPredicates: [],
+              rowLevelPermissionPredicateGroups: [],
+            },
+          },
+        };
+
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({
+            userWorkspaceRoleMap: customUserWorkspaceRoleMap,
+            rolesPermissions: customRolesPermissions,
+          }),
+        );
+
+        const recordAfter = { id: 'record-1', name: 'Test Company' };
+
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [
+            createMockEvent({
+              properties: {
+                after: recordAfter,
+              },
+            }),
+          ],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+        expect(
+          mockProcessNestedRelationsHelper.processNestedRelations,
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            rolePermissionConfig: {
+              intersectionOf: [customRoleId],
+            },
           }),
         );
       });

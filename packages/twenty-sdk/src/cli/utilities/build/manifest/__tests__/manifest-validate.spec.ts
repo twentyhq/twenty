@@ -32,6 +32,8 @@ const validManifest: Manifest = {
   logicFunctions: [],
   roles: [],
   publicAssets: [],
+  views: [],
+  navigationMenuItems: [],
 };
 
 describe('manifestValidate', () => {
@@ -157,6 +159,7 @@ describe('manifestValidate', () => {
             namePlural: 'myObjects',
             labelSingular: 'My Object',
             labelPlural: 'My Objects',
+            labelIdentifierFieldMetadataUniversalIdentifier: sharedId,
             fields: [
               {
                 universalIdentifier: sharedId,

@@ -18,6 +18,7 @@ import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custo
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
@@ -108,6 +109,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly customDomainManagerService: CustomDomainManagerService,
+    private readonly fileCorePictureService: FileCorePictureService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectDataSource()
@@ -214,8 +216,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
     }
 
+    let updatedWorkspace: WorkspaceEntity;
+
     try {
-      return await this.workspaceRepository.save({
+      updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
       });
@@ -230,6 +234,15 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       }
       throw error;
     }
+
+    if (payload.logo === null && isDefined(workspace.logoFileId)) {
+      await this.fileCorePictureService.deleteCorePicture({
+        fileId: workspace.logoFileId,
+        workspaceId: workspace.id,
+      });
+    }
+
+    return updatedWorkspace;
   }
 
   async activateWorkspace(
