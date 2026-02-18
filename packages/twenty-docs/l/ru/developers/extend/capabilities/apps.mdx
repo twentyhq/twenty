@@ -45,19 +45,22 @@ yarn twenty app:dev
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Добавить новую сущность в ваше приложение (с мастером)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Просматривать логи функций вашего приложения
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Выполнить функцию по имени
-yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Удалить приложение из текущего рабочего пространства
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Показать справку по командам
+# Display commands' help
 yarn twenty help
 ```
 
@@ -70,7 +73,7 @@ yarn twenty help
 * Копирует минимальное базовое приложение в `my-twenty-app/`
 * Добавляет локальную зависимость `twenty-sdk` и конфигурацию Yarn 4
 * Создаёт файлы конфигурации и скрипты, подключённые к CLI `twenty`
-* Генерирует конфигурацию приложения по умолчанию и роль функции по умолчанию
+* Generates a default application config, a default function role, and a post-install function
 
 Свежесгенерированное приложение выглядит так:
 
@@ -86,15 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Папка общедоступных ресурсов (изображения, шрифты и т. п.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Обязательный — основная конфигурация приложения
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Роль по умолчанию для логических функций
+  │   └── default-role.ts               # Default role for logic functions
   ├── logic-functions/
-  │   └── hello-world.ts                # Пример логической функции
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   └── front-components/
-      └── hello-world.tsx               # Пример фронтенд-компонента
+      └── hello-world.tsx               # Example front component
 ```
 
 В общих чертах:
@@ -290,6 +294,7 @@ export default defineObject({
 * **Что это за приложение**: идентификаторы, отображаемое имя и описание.
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
+* **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Используйте `defineApplication()` для определения конфигурации вашего приложения:
 
@@ -297,6 +302,7 @@ export default defineObject({
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +318,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +327,7 @@ export default defineApplication({
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
+* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### Роли и разрешения
 
@@ -457,6 +465,55 @@ export default defineLogicFunction({
 
 * Массив `triggers` необязателен. Функции без триггеров можно использовать как вспомогательные, вызываемые другими функциями.
 * Вы можете сочетать несколько типов триггеров в одной функции.
+
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Основные моменты:
+
+* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
 ### Полезная нагрузка триггера маршрута
 

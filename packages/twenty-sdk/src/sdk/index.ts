@@ -47,6 +47,8 @@ export type {
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
 export { defineNavigationMenuItem } from './navigation-menu-items/define-navigation-menu-item';
 export { defineObject } from './objects/define-object';
+export { definePageLayout } from './page-layouts/define-page-layout';
+export type { PageLayoutConfig } from './page-layouts/page-layout-config';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';

@@ -497,45 +497,53 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           continue;
         }
 
-        const {
-          applicationId,
-          applicationUniversalIdentifier,
-          universalIdentifier,
-        } = this.getApplicationIdAndUniversalIdentifierForViewFavorite({
-          viewId: favorite.viewId,
-          flatViewMaps,
-          twentyStandardApplicationId,
-          twentyStandardApplicationUniversalIdentifier,
-          workspaceCustomApplicationId,
-          workspaceCustomApplicationUniversalIdentifier,
-        });
+        try {
+          const {
+            applicationId,
+            applicationUniversalIdentifier,
+            universalIdentifier,
+          } = this.getApplicationIdAndUniversalIdentifierForViewFavorite({
+            viewId: favorite.viewId,
+            flatViewMaps,
+            twentyStandardApplicationId,
+            twentyStandardApplicationUniversalIdentifier,
+            workspaceCustomApplicationId,
+            workspaceCustomApplicationUniversalIdentifier,
+          });
 
-        const now = new Date().toISOString();
+          const now = new Date().toISOString();
 
-        flatNavigationMenuItemsToCreate.push({
-          id: favorite.id,
-          universalIdentifier,
-          userWorkspaceId,
-          targetRecordId: null,
-          targetObjectMetadataId: null,
-          targetObjectMetadataUniversalIdentifier: null,
-          viewId: favorite.viewId,
-          viewUniversalIdentifier:
-            flatViewMaps.universalIdentifierById[favorite.viewId] ?? null,
-          folderId,
-          folderUniversalIdentifier: folderId,
-          name: null,
-          link: null,
-          icon: null,
-          position: favorite.position,
-          workspaceId,
-          applicationId,
-          applicationUniversalIdentifier,
-          createdAt: now,
-          updatedAt: now,
-        });
+          flatNavigationMenuItemsToCreate.push({
+            id: favorite.id,
+            universalIdentifier,
+            userWorkspaceId,
+            targetRecordId: null,
+            targetObjectMetadataId: null,
+            targetObjectMetadataUniversalIdentifier: null,
+            viewId: favorite.viewId,
+            viewUniversalIdentifier:
+              flatViewMaps.universalIdentifierById[favorite.viewId] ?? null,
+            folderId,
+            folderUniversalIdentifier: folderId,
+            name: null,
+            link: null,
+            icon: null,
+            position: favorite.position,
+            workspaceId,
+            applicationId,
+            applicationUniversalIdentifier,
+            createdAt: now,
+            updatedAt: now,
+          });
 
-        migratedFavoriteIds.push(favorite.id);
+          migratedFavoriteIds.push(favorite.id);
+        } catch (error) {
+          this.logger.error(
+            `Failed to migrate favorite ${favorite.id} with view ${favorite.viewId} - ${error}`,
+          );
+
+          continue;
+        }
 
         continue;
       }

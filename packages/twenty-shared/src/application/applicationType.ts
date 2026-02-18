@@ -14,6 +14,7 @@ export type ApplicationMarketplaceData = {
 
 export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
+  postInstallLogicFunctionUniversalIdentifier?: string;
   displayName: string;
   description: string;
   icon?: string;

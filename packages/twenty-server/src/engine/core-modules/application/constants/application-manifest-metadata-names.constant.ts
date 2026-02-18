@@ -13,6 +13,9 @@ export const APPLICATION_MANIFEST_METADATA_NAMES = [
   'viewFilterGroup',
   'viewGroup',
   'navigationMenuItem',
+  'pageLayout',
+  'pageLayoutTab',
+  'pageLayoutWidget',
 ] as const satisfies AllMetadataName[];
 
 export type ApplicationManifestMetadataName =

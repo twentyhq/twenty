@@ -412,6 +412,7 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
   views: [],
   navigationMenuItems: [],
+  pageLayouts: [],
   logicFunctions: [
     {
       builtHandlerChecksum: '[checksum]',
