@@ -9,7 +9,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -46,8 +46,8 @@ export class RowLevelPermissionPredicateService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingService: BillingService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly applicationService: ApplicationService,
+    private readonly enterpriseKeyService: EnterpriseKeyService,
   ) {}
 
   async findByWorkspaceId(
@@ -555,9 +555,7 @@ export class RowLevelPermissionPredicateService {
   private async hasRowLevelPermissionFeature(
     workspaceId: string,
   ): Promise<boolean> {
-    const hasValidEnterpriseKey = isDefined(
-      this.twentyConfigService.get('ENTERPRISE_KEY'),
-    );
+    const hasValidEnterpriseKey = this.enterpriseKeyService.isValid();
 
     const isRowLevelPermissionEnabled =
       await this.billingService.hasEntitlement(

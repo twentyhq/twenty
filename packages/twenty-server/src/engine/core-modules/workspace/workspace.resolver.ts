@@ -16,9 +16,10 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -27,6 +28,9 @@ import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/dom
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
+import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -35,9 +39,6 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
-import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
-import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -65,6 +66,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { SelfHostGuard } from 'src/engine/guards/self-host.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -74,7 +76,6 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 const OriginHeader = createParamDecorator(
@@ -217,7 +218,7 @@ export class WorkspaceResolver {
   async billingSubscriptions(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingSubscriptionEntity[] | undefined> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+    if (this.twentyConfigService.isSelfHost()) {
       return [];
     }
 
@@ -287,7 +288,7 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingSubscriptionEntity | undefined> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+    if (this.twentyConfigService.isSelfHost()) {
       return;
     }
 
@@ -469,6 +470,7 @@ export class WorkspaceResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
+    SelfHostGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async enterprisePortalSession(
@@ -484,6 +486,7 @@ export class WorkspaceResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
+    SelfHostGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async enterpriseCheckoutSession(): Promise<string | null> {
@@ -493,6 +496,7 @@ export class WorkspaceResolver {
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
+    SelfHostGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
@@ -502,6 +506,7 @@ export class WorkspaceResolver {
   @Mutation(() => EnterpriseLicenseInfoDTO)
   @UseGuards(
     WorkspaceAuthGuard,
+    SelfHostGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async setEnterpriseKey(
@@ -510,7 +515,7 @@ export class WorkspaceResolver {
     try {
       await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
 
-      await this.enterpriseKeyService.validate();
+      await this.enterpriseKeyService.validateAndRefresh();
 
       return this.enterpriseKeyService.getLicenseInfo();
     } catch (error) {

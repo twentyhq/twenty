@@ -63,9 +63,6 @@ export class CronRegisterAllCommand extends CommandRunner {
   async run(): Promise<void> {
     this.logger.log('Registering all background sync cron jobs...');
 
-    const isBillingEnabled =
-      this.twentyConfigService.get('IS_BILLING_ENABLED') === true;
-
     const commands: Array<{ name: string; command: { run(): Promise<void> } }> =
       [
         {
@@ -146,7 +143,7 @@ export class CronRegisterAllCommand extends CommandRunner {
         },
       ];
 
-    if (!isBillingEnabled) {
+    if (this.twentyConfigService.isSelfHost()) {
       commands.push({
         name: 'EnterpriseKeyValidation',
         command: this.enterpriseKeyValidationCronCommand,

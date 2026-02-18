@@ -10,21 +10,21 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EnterpriseFeaturesEnabledGuard implements CanActivate {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly enterpriseKeyService: EnterpriseKeyService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
     try {
-      if (!this.twentyConfigService.get('ENTERPRISE_KEY')) {
+      if (!this.enterpriseKeyService.isValid()) {
         throw new AuthException(
-          'Enterprise key missing',
+          'Enterprise license is not active',
           AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE,
         );
       }

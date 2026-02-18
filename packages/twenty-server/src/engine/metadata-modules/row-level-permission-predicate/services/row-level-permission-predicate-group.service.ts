@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -25,6 +26,7 @@ export class RowLevelPermissionPredicateGroupService {
     @InjectRepository(RowLevelPermissionPredicateGroupEntity)
     private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly enterpriseKeyService: EnterpriseKeyService,
   ) {}
 
   async findByWorkspaceId(
@@ -136,9 +138,7 @@ export class RowLevelPermissionPredicateGroupService {
   private async hasRowLevelPermissionFeature(
     workspaceId: string,
   ): Promise<boolean> {
-    const hasValidEnterpriseKey = isDefined(
-      this.twentyConfigService.get('ENTERPRISE_KEY'),
-    );
+    const hasValidEnterpriseKey = this.enterpriseKeyService.isValid();
 
     const isRowLevelPermissionEnabled =
       await this.billingService.hasEntitlement(

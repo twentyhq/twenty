@@ -71,7 +71,7 @@ export class EnterpriseKeyService implements OnModuleInit {
 
   isValid(): boolean {
     // On cloud, enterprise features are managed by the billing system
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return true;
     }
 
@@ -111,7 +111,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   getLicenseInfo(): EnterpriseLicenseInfo {
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return {
         isValid: true,
         licensee: null,
@@ -149,7 +149,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   async validateAndRefresh(): Promise<boolean> {
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return true;
     }
 
@@ -211,7 +211,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   async reportSeats(seatCount: number): Promise<boolean> {
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return false;
     }
 
@@ -264,7 +264,7 @@ export class EnterpriseKeyService implements OnModuleInit {
     currentPeriodEnd: Date | null;
     isCancellationScheduled: boolean;
   } | null> {
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return null;
     }
 
@@ -320,7 +320,7 @@ export class EnterpriseKeyService implements OnModuleInit {
     returnUrl?: string,
     userEmail?: string,
   ): Promise<string | null> {
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return null;
     }
 
@@ -417,7 +417,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   async getCheckoutUrl(): Promise<string | null> {
-    if (this.isBillingEnabled()) {
+    if (!this.twentyConfigService.isSelfHost()) {
       return null;
     }
 
@@ -459,10 +459,6 @@ export class EnterpriseKeyService implements OnModuleInit {
 
       return null;
     }
-  }
-
-  private isBillingEnabled(): boolean {
-    return this.twentyConfigService.get('IS_BILLING_ENABLED') === true;
   }
 
   private verifyJwt<T extends Record<string, unknown>>(
