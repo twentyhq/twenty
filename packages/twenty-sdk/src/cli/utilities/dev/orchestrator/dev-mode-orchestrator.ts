@@ -6,11 +6,12 @@ import { BuildManifestOrchestratorStep } from '@/cli/utilities/dev/orchestrator/
 import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
 import { EnsureValidTokensOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/ensure-valid-tokens-orchestrator-step';
 import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
+import { type ApiClientGeneratedFile } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
 import { ResolveApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/resolve-application-orchestrator-step';
 import { StartWatchersOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
+import { type FileBuiltEvent } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
-import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
@@ -62,7 +63,7 @@ export class DevModeOrchestrator {
       ...stepDeps,
       clientService,
       configService,
-      uploadFilesStep: this.uploadFilesStep,
+      onApiClientGenerated: this.handleApiClientGenerated.bind(this),
     });
     this.syncApplicationStep = new SyncApplicationOrchestratorStep({
       ...stepDeps,
@@ -71,7 +72,7 @@ export class DevModeOrchestrator {
     this.startWatchersStep = new StartWatchersOrchestratorStep({
       ...stepDeps,
       scheduleSync: this.scheduleSync.bind(this),
-      uploadFilesStep: this.uploadFilesStep,
+      onFileBuilt: this.handleFileBuilt.bind(this),
     });
   }
 
@@ -90,6 +91,22 @@ export class DevModeOrchestrator {
 
   getState(): OrchestratorState {
     return this.state;
+  }
+
+  private handleFileBuilt(event: FileBuiltEvent): void {
+    if (this.state.steps.uploadFiles.output.fileUploader) {
+      this.uploadFilesStep.uploadFile(
+        event.builtPath,
+        event.sourcePath,
+        event.fileFolder,
+      );
+    }
+  }
+
+  private handleApiClientGenerated(files: ApiClientGeneratedFile[]): void {
+    for (const file of files) {
+      this.handleFileBuilt(file);
+    }
   }
 
   private scheduleSync(): void {
@@ -167,18 +184,6 @@ export class DevModeOrchestrator {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
       });
-
-      const typecheckErrors = await runTypecheck(this.state.appPath);
-
-      if (typecheckErrors.length > 0) {
-        this.state.applyStepEvents(
-          typecheckErrors.map((error) => ({
-            message: `Type error in ${error.file}(${error.line},${error.column}): ${error.text}`,
-            status: 'error' as const,
-          })),
-        );
-        this.state.notify();
-      }
     }
   }
 

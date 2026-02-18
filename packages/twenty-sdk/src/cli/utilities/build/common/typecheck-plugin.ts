@@ -9,25 +9,34 @@ export type TypecheckError = {
   column: number;
 };
 
+const TSC_ERROR_REGEX = /^(.+)\((\d+),(\d+)\): error TS\d+: (.+)$/;
+
+export const parseTscOutputLine = (line: string): TypecheckError | null => {
+  const match = line.match(TSC_ERROR_REGEX);
+
+  if (!match) {
+    return null;
+  }
+
+  const [, filePath, lineStr, columnStr, text] = match;
+
+  return {
+    text,
+    file: filePath,
+    line: Number(lineStr),
+    column: Number(columnStr) - 1,
+  };
+};
+
 const parseTscOutput = (output: string): TypecheckError[] => {
-  const lines = output.split('\n');
   const errors: TypecheckError[] = [];
 
-  for (const line of lines) {
-    const match = line.match(/^(.+)\((\d+),(\d+)\): error TS\d+: (.+)$/);
+  for (const line of output.split('\n')) {
+    const error = parseTscOutputLine(line);
 
-    if (!match) {
-      continue;
+    if (error) {
+      errors.push(error);
     }
-
-    const [, filePath, lineStr, columnStr, text] = match;
-
-    errors.push({
-      text,
-      file: filePath,
-      line: Number(lineStr),
-      column: Number(columnStr) - 1,
-    });
   }
 
   return errors;

@@ -1,12 +1,18 @@
 import { type ClientService } from '@/cli/utilities/client/client-service';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-import { type UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import crypto from 'crypto';
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+
+export type ApiClientGeneratedFile = {
+  fileFolder: FileFolder;
+  builtPath: string;
+  sourcePath: string;
+  checksum: string;
+};
 
 const API_CLIENT_FILES = ['types.ts', 'schema.ts'];
 
@@ -15,26 +21,26 @@ export class GenerateApiClientOrchestratorStep {
   private configService: ConfigService;
   private state: OrchestratorState;
   private notify: () => void;
-  private uploadFilesStep: UploadFilesOrchestratorStep;
+  private onApiClientGenerated: (files: ApiClientGeneratedFile[]) => void;
 
   constructor({
     clientService,
     configService,
     state,
     notify,
-    uploadFilesStep,
+    onApiClientGenerated,
   }: {
     clientService: ClientService;
     configService: ConfigService;
     state: OrchestratorState;
     notify: () => void;
-    uploadFilesStep: UploadFilesOrchestratorStep;
+    onApiClientGenerated: (files: ApiClientGeneratedFile[]) => void;
   }) {
     this.clientService = clientService;
     this.configService = configService;
     this.state = state;
     this.notify = notify;
-    this.uploadFilesStep = uploadFilesStep;
+    this.onApiClientGenerated = onApiClientGenerated;
   }
 
   async execute(input: { appPath: string }): Promise<void> {
@@ -51,7 +57,10 @@ export class GenerateApiClientOrchestratorStep {
         authToken: config.applicationAccessToken,
       });
 
-      await this.copyAndUploadApiClientFiles(input.appPath);
+      const files = await this.copyApiClientFiles(input.appPath);
+
+      this.registerBuiltFiles(files);
+      this.onApiClientGenerated(files);
 
       step.status = 'done';
     } catch (error) {
@@ -67,9 +76,20 @@ export class GenerateApiClientOrchestratorStep {
     this.notify();
   }
 
-  private async copyAndUploadApiClientFiles(
+  private registerBuiltFiles(files: ApiClientGeneratedFile[]): void {
+    for (const file of files) {
+      this.state.steps.uploadFiles.output.builtFileInfos.set(file.builtPath, {
+        checksum: file.checksum,
+        builtPath: file.builtPath,
+        sourcePath: file.sourcePath,
+        fileFolder: file.fileFolder,
+      });
+    }
+  }
+
+  private async copyApiClientFiles(
     appPath: string,
-  ): Promise<void> {
+  ): Promise<ApiClientGeneratedFile[]> {
     const generatedDir = join(
       appPath,
       'node_modules',
@@ -80,37 +100,31 @@ export class GenerateApiClientOrchestratorStep {
 
     await fs.ensureDir(outputDir);
 
-    for (const fileName of API_CLIENT_FILES) {
-      const sourcePath = join(generatedDir, fileName);
+    const files: ApiClientGeneratedFile[] = [];
 
-      if (!(await fs.pathExists(sourcePath))) {
+    for (const fileName of API_CLIENT_FILES) {
+      const absoluteSourcePath = join(generatedDir, fileName);
+
+      if (!(await fs.pathExists(absoluteSourcePath))) {
         continue;
       }
 
-      const destPath = join(outputDir, fileName);
+      await fs.copy(absoluteSourcePath, join(outputDir, fileName));
 
-      await fs.copy(sourcePath, destPath);
-
-      const content = await fs.readFile(destPath);
+      const content = await fs.readFile(absoluteSourcePath);
       const checksum = crypto
         .createHash('md5')
         .update(content)
         .digest('hex');
 
-      const builtPath = join(OUTPUT_DIR, 'api-client', fileName);
-
-      this.state.steps.uploadFiles.output.builtFileInfos.set(builtPath, {
-        checksum,
-        builtPath,
-        sourcePath: join('api-client', fileName),
+      files.push({
         fileFolder: FileFolder.Dependencies,
+        builtPath: join(OUTPUT_DIR, 'api-client', fileName),
+        sourcePath: join('api-client', fileName),
+        checksum,
       });
-
-      this.uploadFilesStep.uploadFile(
-        builtPath,
-        join('api-client', fileName),
-        FileFolder.Dependencies,
-      );
     }
+
+    return files;
   }
 }

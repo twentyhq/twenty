@@ -22,6 +22,7 @@ export class ClientService {
     authToken?: string;
   }): Promise<void> {
     const outputPath = this.resolveGeneratedPath(appPath);
+    const tempPath = `${outputPath}.tmp`;
 
     const getSchemaResponse = await this.apiService.getSchema({ authToken });
 
@@ -33,12 +34,12 @@ export class ClientService {
 
     const { data: schema } = getSchemaResponse;
 
-    await fs.ensureDir(outputPath);
-    await fs.emptyDir(outputPath);
+    await fs.ensureDir(tempPath);
+    await fs.emptyDir(tempPath);
 
     await generate({
       schema,
-      output: outputPath,
+      output: tempPath,
       scalarTypes: {
         DateTime: 'string',
         JSON: 'Record<string, unknown>',
@@ -46,7 +47,10 @@ export class ClientService {
       },
     });
 
-    await this.injectTwentyClient(outputPath);
+    await this.injectTwentyClient(tempPath);
+
+    await fs.remove(outputPath);
+    await fs.move(tempPath, outputPath);
   }
 
   private resolveGeneratedPath(appPath: string): string {
