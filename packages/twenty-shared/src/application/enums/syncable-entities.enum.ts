@@ -4,4 +4,5 @@ export enum SyncableEntity {
   LogicFunction = 'logicFunction',
   FrontComponent = 'frontComponent',
   Role = 'role',
+  PageLayout = 'pageLayout',
 }

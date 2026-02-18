@@ -45,19 +45,22 @@ yarn twenty app:dev
 A partir daqui você pode:
 
 ```bash filename="Terminal"
-# Adicionar uma nova entidade à sua aplicação (assistido)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Acompanhar os logs das funções da sua aplicação
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Executar uma função pelo nome
+# Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Desinstalar a aplicação do espaço de trabalho atual
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Exibir a ajuda dos comandos
+# Display commands' help
 yarn twenty help
 ```
 
@@ -70,7 +73,7 @@ Ao executar `npx create-twenty-app@latest my-twenty-app`, o gerador:
 * Copia um aplicativo base mínimo para `my-twenty-app/`
 * Adiciona uma dependência local `twenty-sdk` e a configuração do Yarn 4
 * Cria arquivos de configuração e scripts conectados à CLI `twenty`
-* Gera uma configuração de aplicativo padrão e um papel padrão para as funções
+* Generates a default application config, a default function role, and a post-install function
 
 Um aplicativo recém-criado pelo scaffold fica assim:
 
@@ -86,15 +89,16 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Pasta de recursos públicos (imagens, fontes, etc.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Obrigatório - configuração principal da aplicação
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Papel padrão para funções de lógica
+  │   └── default-role.ts               # Default role for logic functions
   ├── logic-functions/
-  │   └── hello-world.ts                # Exemplo de função de lógica
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   └── front-components/
-      └── hello-world.tsx               # Exemplo de componente de front-end
+      └── hello-world.tsx               # Example front component
 ```
 
 Em alto nível:
@@ -290,6 +294,7 @@ Todo aplicativo tem um único arquivo `application-config.ts` que descreve:
 * **O que é o aplicativo**: identificadores, nome de exibição e descrição.
 * **Como suas funções são executadas**: qual papel usam para permissões.
 * **Variáveis (opcional)**: pares chave–valor expostos às suas funções como variáveis de ambiente.
+* **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -297,6 +302,7 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +318,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +327,7 @@ Notas:
 * `universalIdentifier` são IDs determinísticos que você controla; gere-os uma vez e mantenha-os estáveis entre sincronizações.
 * `applicationVariables` tornam-se variáveis de ambiente para suas funções (por exemplo, `DEFAULT_RECIPIENT_NAME` fica disponível como `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corresponder ao arquivo do papel (veja abaixo).
+* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### Papéis e permissões
 
@@ -457,6 +465,55 @@ Notas:
 
 * O array `triggers` é opcional. Funções sem gatilhos podem ser usadas como funções utilitárias chamadas por outras funções.
 * Você pode misturar vários tipos de gatilho em uma única função.
+
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Pontos-chave:
+
+* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
 ### Payload de gatilho de rota
 

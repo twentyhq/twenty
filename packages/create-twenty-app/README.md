@@ -54,6 +54,9 @@ yarn twenty function:logs
 # Execute a function with a JSON payload
 yarn twenty function:execute -n my-function -p '{"key": "value"}'
 
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
 # Uninstall the application from the current workspace
 yarn twenty app:uninstall
 ```
@@ -63,6 +66,7 @@ yarn twenty app:uninstall
   - `application-config.ts` - Application metadata configuration
   - `roles/default-role.ts` - Default role for logic functions
   - `logic-functions/hello-world.ts` - Example logic function with HTTP trigger
+  - `logic-functions/post-install.ts` - Post-install logic function (runs after app installation)
   - `front-components/hello-world.tsx` - Example front component
 - TypeScript configuration
 - A prewired `twenty` script that delegates to the `twenty` CLI from twenty-sdk
