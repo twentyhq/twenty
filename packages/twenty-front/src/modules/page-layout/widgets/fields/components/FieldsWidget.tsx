@@ -12,7 +12,7 @@ import { recordFieldListHoverPositionComponentState } from '@/object-record/reco
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { isJunctionFieldForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionFieldForbidden';
+import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
@@ -184,7 +184,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                                 fieldName: fieldMetadataItem.name,
                                 prefix: instanceId,
                               })}`,
-                              isForbidden: isJunctionFieldForbidden({
+                              isForbidden: isJunctionRelationForbidden({
                                 fieldMetadataItem,
                                 sourceObjectMetadataId: objectMetadataItem.id,
                                 objectMetadataItems,

@@ -16,7 +16,7 @@ import { RecordFieldListComponentInstanceContext } from '@/object-record/record-
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { isJunctionFieldForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionFieldForbidden';
+import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -70,18 +70,6 @@ export const RecordFieldList = ({
     recordFieldListHoverPositionComponentState,
     instanceId,
   );
-
-  const isFieldForbidden = (
-    fieldMetadataItem: Parameters<
-      typeof isJunctionFieldForbidden
-    >[0]['fieldMetadataItem'],
-  ) =>
-    isJunctionFieldForbidden({
-      fieldMetadataItem,
-      sourceObjectMetadataId: objectMetadataItem.id,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-    });
 
   const handleMouseEnter = (index: number) => {
     setRecordFieldListHoverPosition(index);
@@ -202,7 +190,12 @@ export const RecordFieldList = ({
                     fieldName: fieldMetadataItem.name,
                     prefix: instanceId,
                   })}`,
-                  isForbidden: isFieldForbidden(fieldMetadataItem),
+                  isForbidden: isJunctionRelationForbidden({
+                    fieldMetadataItem,
+                    sourceObjectMetadataId: objectMetadataItem.id,
+                    objectMetadataItems,
+                    objectPermissionsByObjectMetadataId,
+                  }),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

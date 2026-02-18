@@ -12,7 +12,7 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { isJunctionFieldForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionFieldForbidden';
+import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCellAnchoredPortalContext } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortalContext';
 import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -65,8 +65,8 @@ export const RecordInlineCellAnchoredPortal = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const isForbidden = isJunctionFieldForbidden({
-    fieldMetadataItem: fieldMetadataItem,
+  const isForbidden = isJunctionRelationForbidden({
+    fieldMetadataItem,
     sourceObjectMetadataId: objectMetadataItem.id,
     objectMetadataItems,
     objectPermissionsByObjectMetadataId,
