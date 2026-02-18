@@ -3,7 +3,7 @@ import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-exec
 import chalk from 'chalk';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
+import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 
 export class LogicFunctionExecuteCommand {
   private apiService = new ApiService();
@@ -32,7 +32,7 @@ export class LogicFunctionExecuteCommand {
         process.exit(1);
       }
 
-      const { manifest } = await buildManifest(appPath);
+      const manifest = await readManifestFromFile(appPath);
 
       if (!manifest) {
         console.error(chalk.red('Failed to build manifest.'));
