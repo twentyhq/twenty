@@ -151,9 +151,11 @@ export class SearchService {
     );
   }
 
-  // Runs a fast tsvector query first (uses GIN index). If not enough results,
-  // falls back to an ILIKE query on the searchVector text representation to
-  // catch cases where tsvector tokenization fails (e.g. continuous CJK text).
+  // Runs a fast tsvector query first (uses GIN index). On the first page only,
+  // if not enough results, falls back to an ILIKE query on the searchVector
+  // text representation to catch cases where tsvector tokenization fails
+  // (e.g. continuous CJK text). Skipped on subsequent pages since any ILIKE-only
+  // matches would already have appeared on page 1 with rank 0.
   async buildSearchQueryAndGetRecordsWithFallback<
     Entity extends ObjectLiteral,
   >({
@@ -190,7 +192,8 @@ export class SearchService {
 
     if (
       tsvectorResults.length >= limit ||
-      !isNonEmptyString(searchInput.trim())
+      !isNonEmptyString(searchInput.trim()) ||
+      isDefined(after)
     ) {
       return tsvectorResults;
     }
