@@ -11,6 +11,7 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
+import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
@@ -62,6 +63,7 @@ export const ObjectFilterDropdownActorSelect = ({
       selectedIds: selectedRecordIds,
       objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       limit: 10,
+      allowRequestsToTwentyIcons: false,
     });
 
   const currentWorkspaceMemberSelectableItem: SelectableItem = {
@@ -132,9 +134,11 @@ export const ObjectFilterDropdownActorSelect = ({
       ...selectedRecordNames,
     ];
 
+    const numberOfSelectedItems = selectedItemNames.length;
+
     const filterDisplayValue =
-      selectedItemNames.length > MAX_WORKSPACE_MEMBERS_TO_DISPLAY
-        ? `${selectedItemNames.length} workspace members`
+      numberOfSelectedItems > MAX_WORKSPACE_MEMBERS_TO_DISPLAY
+        ? t`${numberOfSelectedItems} workspace members`
         : selectedItemNames.join(', ');
 
     if (isDefined(selectedOperandInDropdown)) {

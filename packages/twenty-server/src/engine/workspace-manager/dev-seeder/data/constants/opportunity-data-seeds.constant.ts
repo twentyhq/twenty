@@ -1,7 +1,8 @@
-import { isDefined } from 'class-validator';
+
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS, WORKSPACE_MEMBER_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { isDefined } from 'twenty-shared/utils';
 
 type OpportunityDataSeed = {
   id: string;
