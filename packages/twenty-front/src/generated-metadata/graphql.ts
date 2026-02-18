@@ -10490,6 +10490,43 @@ export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHoo
 export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
+export const UploadWorkflowFileDocument = gql`
+    mutation UploadWorkflowFile($file: Upload!) {
+  uploadWorkflowFile(file: $file) {
+    id
+    path
+    size
+    createdAt
+    url
+  }
+}
+    `;
+export type UploadWorkflowFileMutationFn = Apollo.MutationFunction<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>;
+
+/**
+ * __useUploadWorkflowFileMutation__
+ *
+ * To run a mutation, you first call `useUploadWorkflowFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadWorkflowFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadWorkflowFileMutation, { data, loading, error }] = useUploadWorkflowFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadWorkflowFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>(UploadWorkflowFileDocument, options);
+      }
+export type UploadWorkflowFileMutationHookResult = ReturnType<typeof useUploadWorkflowFileMutation>;
+export type UploadWorkflowFileMutationResult = Apollo.MutationResult<UploadWorkflowFileMutation>;
+export type UploadWorkflowFileMutationOptions = Apollo.BaseMutationOptions<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>;
 export const RenewApplicationTokenDocument = gql`
     mutation RenewApplicationToken($applicationRefreshToken: String!) {
   renewApplicationToken(applicationRefreshToken: $applicationRefreshToken) {
@@ -10530,43 +10567,6 @@ export function useRenewApplicationTokenMutation(baseOptions?: Apollo.MutationHo
 export type RenewApplicationTokenMutationHookResult = ReturnType<typeof useRenewApplicationTokenMutation>;
 export type RenewApplicationTokenMutationResult = Apollo.MutationResult<RenewApplicationTokenMutation>;
 export type RenewApplicationTokenMutationOptions = Apollo.BaseMutationOptions<RenewApplicationTokenMutation, RenewApplicationTokenMutationVariables>;
-export const UploadWorkflowFileDocument = gql`
-    mutation UploadWorkflowFile($file: Upload!) {
-  uploadWorkflowFile(file: $file) {
-    id
-    path
-    size
-    createdAt
-    url
-  }
-}
-    `;
-export type UploadWorkflowFileMutationFn = Apollo.MutationFunction<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>;
-
-/**
- * __useUploadWorkflowFileMutation__
- *
- * To run a mutation, you first call `useUploadWorkflowFileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadWorkflowFileMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadWorkflowFileMutation, { data, loading, error }] = useUploadWorkflowFileMutation({
- *   variables: {
- *      file: // value for 'file'
- *   },
- * });
- */
-export function useUploadWorkflowFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>(UploadWorkflowFileDocument, options);
-      }
-export type UploadWorkflowFileMutationHookResult = ReturnType<typeof useUploadWorkflowFileMutation>;
-export type UploadWorkflowFileMutationResult = Apollo.MutationResult<UploadWorkflowFileMutation>;
-export type UploadWorkflowFileMutationOptions = Apollo.BaseMutationOptions<UploadWorkflowFileMutation, UploadWorkflowFileMutationVariables>;
 export const FindManyFrontComponentsDocument = gql`
     query FindManyFrontComponents {
   frontComponents {
