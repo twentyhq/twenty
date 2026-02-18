@@ -10,7 +10,6 @@ export default definePageLayout({
     {
       universalIdentifier: '${uuidv4()}',
       title: 'Overview',
-      position: 0,
       widgets: [],
     },
   ],

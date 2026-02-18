@@ -1,3 +1,7 @@
+import {
+  type ChartFilter,
+  type UniversalChartFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -38,6 +42,31 @@ const resolveFieldMetadataIdOrThrow = ({
   return flatFieldMetadata.id;
 };
 
+const convertUniversalFilterToChartFilter = ({
+  filter,
+  flatFieldMetadataMaps,
+}: {
+  filter: UniversalChartFilter | undefined;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): ChartFilter | undefined => {
+  if (!isDefined(filter)) {
+    return undefined;
+  }
+
+  return {
+    ...filter,
+    recordFilters: filter.recordFilters?.map(
+      ({ fieldMetadataUniversalIdentifier, ...rest }) => ({
+        ...rest,
+        fieldMetadataId: resolveFieldMetadataIdOrThrow({
+          fieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+      }),
+    ),
+  };
+};
+
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,
   flatFieldMetadataMaps,
@@ -54,6 +83,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const {
         aggregateFieldMetadataUniversalIdentifier,
         ratioAggregateConfig: universalRatioAggregateConfig,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -78,11 +108,15 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         ...rest,
         aggregateFieldMetadataId,
         ratioAggregateConfig,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
     case WidgetConfigurationType.GAUGE_CHART: {
-      const { aggregateFieldMetadataUniversalIdentifier, ...rest } =
+      const { aggregateFieldMetadataUniversalIdentifier, filter, ...rest } =
         universalConfiguration;
 
       const aggregateFieldMetadataId = resolveFieldMetadataIdOrThrow({
@@ -94,6 +128,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return {
         ...rest,
         aggregateFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -101,6 +139,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const {
         aggregateFieldMetadataUniversalIdentifier,
         groupByFieldMetadataUniversalIdentifier,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -120,6 +159,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         ...rest,
         aggregateFieldMetadataId,
         groupByFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -128,6 +171,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -158,6 +202,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataId,
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
@@ -166,6 +214,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
+        filter,
         ...rest
       } = universalConfiguration;
 
@@ -196,6 +245,10 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataId,
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
+        filter: convertUniversalFilterToChartFilter({
+          filter,
+          flatFieldMetadataMaps,
+        }),
       };
     }
 
