@@ -1,15 +1,16 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { usePerformViewFieldGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFieldGroupAPIPersist';
+import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    type FieldsConfiguration,
-    WidgetConfigurationType,
+  type FieldsConfiguration,
+  WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 
 type UseSaveFieldsWidgetGroupsParams = {
@@ -126,8 +127,8 @@ export const useSaveFieldsWidgetGroups = ({
     pageLayoutId,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
-    pageLayoutDraftComponentState,
+  const pageLayoutPersistedState = useRecoilComponentCallbackState(
+    pageLayoutPersistedComponentState,
     pageLayoutId,
   );
 
@@ -139,14 +140,20 @@ export const useSaveFieldsWidgetGroups = ({
 
   const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
 
+  const { refreshAllCoreViews } = useRefreshAllCoreViews();
+
   const getViewIdForWidget = useRecoilCallback(
     ({ snapshot }) =>
       (widgetId: string): string | null => {
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
+        const pageLayoutPersisted = snapshot
+          .getLoadable(pageLayoutPersistedState)
           .getValue();
 
-        for (const tab of pageLayoutDraft.tabs) {
+        if (!isDefined(pageLayoutPersisted)) {
+          return null;
+        }
+
+        for (const tab of pageLayoutPersisted.tabs) {
           for (const widget of tab.widgets) {
             if (
               widget.id === widgetId &&
@@ -163,7 +170,7 @@ export const useSaveFieldsWidgetGroups = ({
 
         return null;
       },
-    [pageLayoutDraftState],
+    [pageLayoutPersistedState],
   );
 
   const saveFieldsWidgetGroups = useRecoilCallback(
@@ -257,6 +264,8 @@ export const useSaveFieldsWidgetGroups = ({
         // After successful save, update persisted state to match draft
         set(fieldsWidgetGroupsPersistedState, allDraftGroups);
 
+        await refreshAllCoreViews();
+
         return { status: 'successful' as const };
       },
     [
@@ -267,6 +276,7 @@ export const useSaveFieldsWidgetGroups = ({
       performViewFieldGroupAPIDelete,
       performViewFieldGroupAPIUpdate,
       performViewFieldAPIUpdate,
+      refreshAllCoreViews,
     ],
   );
 
