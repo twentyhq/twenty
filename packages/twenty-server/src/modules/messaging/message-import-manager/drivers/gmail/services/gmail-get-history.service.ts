@@ -108,8 +108,8 @@ export class GmailGetHistoryService {
     );
 
     return {
-      messagesAdded: uniqueMessagesAdded,
-      messagesDeleted: uniqueMessagesDeleted,
+      messagesAdded: [...new Set(uniqueMessagesAdded)],
+      messagesDeleted: [...new Set(uniqueMessagesDeleted)],
     };
   }
 }
