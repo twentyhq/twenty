@@ -1,5 +1,5 @@
-import { type ColumnType } from 'typeorm';
 import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
+import { type ColumnType } from 'typeorm';
 
 import {
   FieldMetadataException,
@@ -12,6 +12,11 @@ import {
   escapeLiteral,
   removeSqlDDLInjection,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+
+// Default values arrive pre-quoted with single quotes (e.g. "'OPTION_1'").
+// Strip them so escapeLiteral can re-quote properly.
+const stripSurroundingQuotes = (value: string): string =>
+  value.startsWith("'") && value.endsWith("'") ? value.slice(1, -1) : value;
 
 type SerializeDefaultValueArgs = {
   defaultValue?: FieldMetadataDefaultValueForAnyType;
@@ -65,10 +70,7 @@ export const serializeDefaultValue = ({
         );
       }
 
-      // Strip the surrounding single quotes then properly escape the inner value
-      const innerValue = defaultValue.slice(1, -1);
-
-      return escapeAndCast(innerValue);
+      return escapeAndCast(stripSurroundingQuotes(defaultValue));
     }
     case 'boolean':
     case 'number': {
@@ -81,7 +83,7 @@ export const serializeDefaultValue = ({
 
       if (Array.isArray(defaultValue)) {
         const arrayValues = defaultValue
-          .map((val) => escapeLiteral(String(val)))
+          .map((val) => escapeLiteral(stripSurroundingQuotes(String(val))))
           .join(',');
 
         return `ARRAY[${arrayValues}]${castSuffix}[]`;
