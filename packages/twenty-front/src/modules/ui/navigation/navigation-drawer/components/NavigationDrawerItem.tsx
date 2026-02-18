@@ -12,6 +12,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -60,7 +61,6 @@ export type NavigationDrawerItemProps = {
   mouseUpNavigation?: boolean;
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
-  usePlainIcon?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -309,7 +309,6 @@ export const NavigationDrawerItem = ({
   mouseUpNavigation = false,
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
-  usePlainIcon = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -389,7 +388,8 @@ export const NavigationDrawerItem = ({
           )}
 
           {Icon &&
-            (isNavigationMenuItemEditingEnabled && !usePlainIcon ? (
+            (isNavigationMenuItemEditingEnabled &&
+            isNonEmptyString(iconColor) ? (
               <StyledIcon>
                 <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
               </StyledIcon>

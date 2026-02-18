@@ -25,6 +25,7 @@ import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDel
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItemFolder';
 import { useRenameNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useRenameNavigationMenuItemFolder';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
@@ -297,6 +298,9 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
                         }
                         isDragging={isDragging}
                         triggerEvent="CLICK"
+                        iconColor={getEffectiveNavigationMenuItemColor(
+                          navigationMenuItem,
+                        )}
                       />
                     }
                   />

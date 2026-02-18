@@ -81,10 +81,13 @@ export const NavigationMenuItemIcon = ({
       : navigationMenuItem.itemType === NavigationMenuItemType.LINK
         ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK
         : undefined;
-  const iconStyle =
-    isNavigationMenuItemEditingEnabled && !isRecord
-      ? getNavigationMenuItemIconStyleFromColor(theme, effectiveColor)
-      : null;
+  const useStyledIcon =
+    isNavigationMenuItemEditingEnabled &&
+    !isRecord &&
+    isNonEmptyString(effectiveColor);
+  const iconStyle = useStyledIcon
+    ? getNavigationMenuItemIconStyleFromColor(theme, effectiveColor)
+    : null;
   const iconBackgroundColor = iconStyle?.backgroundColor;
   const iconColorToUse = iconStyle
     ? iconStyle.iconColor

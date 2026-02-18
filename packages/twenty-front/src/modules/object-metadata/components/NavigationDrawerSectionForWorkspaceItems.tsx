@@ -333,7 +333,6 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                     label={t`Add menu item`}
                     onClick={onAddMenuItem}
                     triggerEvent="CLICK"
-                    usePlainIcon
                   />
                 )}
               </NavigationItemDropTarget>
