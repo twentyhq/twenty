@@ -2,8 +2,8 @@ import { joinColumnNameForManyToOneMorphRelationField1 } from 'test/integration/
 import {
   type FieldMetadataDefaultOption,
   type FieldMetadataOptions,
+  type FieldMetadataSettings,
   FieldMetadataType,
-  type RelationFieldMetadataSettings,
   RelationType,
 } from 'twenty-shared/types';
 
@@ -12,7 +12,7 @@ export type FieldMetadataConfig = {
   type: FieldMetadataType;
   isNullable: boolean;
   options?: FieldMetadataOptions;
-  settings?: RelationFieldMetadataSettings;
+  settings?: FieldMetadataSettings;
   defaultValue?: unknown;
 };
 
@@ -153,7 +153,7 @@ export const fieldMetadataConfigByFieldName: Record<
     name: 'filesField',
     type: FieldMetadataType.FILES,
     isNullable: true,
-    settings: {} as RelationFieldMetadataSettings,
+    settings: {} as FieldMetadataSettings,
   },
   actorField: {
     name: 'actorField',
