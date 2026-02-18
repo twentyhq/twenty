@@ -2,9 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
 
-import { getSecureAxiosAdapter } from 'src/engine/core-modules/secure-http-client/utils/get-secure-axios-adapter.util';
-import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
+import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { type OutboundRequestContext } from './outbound-request-context.type';
