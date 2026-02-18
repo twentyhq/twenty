@@ -42,8 +42,6 @@ export const StyledSettingsCardDescription = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
   overflow: hidden;
   line-height: 1.5;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 
   a {
     position: relative;

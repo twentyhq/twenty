@@ -12,7 +12,7 @@ import { type IconComponent, OverflowingTextWithTooltip } from 'twenty-ui/displa
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: string | React.ReactNode;
+  description?: string;
   disabled?: boolean;
   children?: React.ReactNode;
 };
@@ -42,11 +42,7 @@ export const SettingsOptionCardContentSelect = ({
         <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
         {description && (
           <StyledSettingsCardDescription>
-            {typeof description === 'string' ? (
-              <OverflowingTextWithTooltip text={description} />
-            ) : (
-              description
-            )}
+            <OverflowingTextWithTooltip text={description} />
           </StyledSettingsCardDescription>
         )}
       </StyledSettingsCardTextContainer>
