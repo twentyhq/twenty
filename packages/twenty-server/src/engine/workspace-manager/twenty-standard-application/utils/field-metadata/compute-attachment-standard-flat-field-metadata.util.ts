@@ -259,6 +259,41 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  position: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'position',
+      type: FieldMetadataType.POSITION,
+      label: 'Position',
+      description: 'Attachment record position',
+      icon: 'IconHierarchy2',
+      isSystem: true,
+      isNullable: false,
+      defaultValue: 0,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  searchVector: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+      label: 'Search vector',
+      description: 'Field used for full-text search',
+      icon: 'IconUser',
+      isSystem: true,
+      isNullable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 
   // Relation fields
   targetTask: createStandardRelationFieldFlatMetadata({
