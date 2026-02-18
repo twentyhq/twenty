@@ -235,7 +235,7 @@ const createDefaultPostInstallFunction = async ({
 
 export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
 
-const handler = async (): void => {
+const handler = async (): Promise<void> => {
   console.log('Post install logic function executed successfully!');
 };
 
