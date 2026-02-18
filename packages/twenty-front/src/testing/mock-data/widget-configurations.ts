@@ -32,6 +32,7 @@ export const TEST_BAR_CHART_CONFIGURATION: TypedBarChartConfiguration = {
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
   axisNameDisplay: AxisNameDisplay.NONE,
+  splitMultiValueFields: false,
 };
 
 export const TEST_BAR_CHART_CONFIGURATION_HORIZONTAL: TypedBarChartConfiguration =
