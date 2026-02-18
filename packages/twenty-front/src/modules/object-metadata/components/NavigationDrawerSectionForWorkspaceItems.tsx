@@ -206,6 +206,9 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
                             folderId={item.id}
                             folderName={item.name ?? 'Folder'}
                             folderIconKey={item.Icon}
+                            folderColor={
+                              'color' in item ? item.color : undefined
+                            }
                             navigationMenuItems={
                               folderChildrenById.get(item.id) ?? []
                             }

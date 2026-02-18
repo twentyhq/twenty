@@ -65,6 +65,7 @@ type WorkspaceNavigationMenuItemsFolderProps = {
   folderId: string;
   folderName: string;
   folderIconKey?: string | null;
+  folderColor?: string | null;
   navigationMenuItems: ProcessedNavigationMenuItem[];
   isGroup: boolean;
   isEditMode?: boolean;
@@ -79,6 +80,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   folderId,
   folderName,
   folderIconKey,
+  folderColor,
   navigationMenuItems,
   isGroup,
   isEditMode = false,
@@ -156,6 +158,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           <NavigationDrawerItem
             label={folderName}
             Icon={FolderIcon}
+            iconColor={folderColor}
             onClick={handleClick}
             className="navigation-drawer-item"
             triggerEvent="CLICK"
