@@ -62,9 +62,7 @@ describe('escapeLiteral', () => {
   });
 
   it('should handle both single quotes and backslashes', () => {
-    expect(escapeLiteral("it's a \\path")).toBe(
-      "E'it''s a \\\\path'",
-    );
+    expect(escapeLiteral("it's a \\path")).toBe("E'it''s a \\\\path'");
   });
 
   it('should not add E prefix when no backslashes present', () => {
