@@ -83,7 +83,7 @@ export const CommandMenuNewSidebarItemViewObjectPickerSubView = ({
           {showSystemObjectsOption && (
             <SelectableListItem itemId="system" onEnter={onOpenSystemPicker}>
               <CommandMenuItem
-                Icon={IconSettings}
+                Icon={() => <NavigationMenuItemStyleIcon Icon={IconSettings} />}
                 label={t`System objects`}
                 id="system"
                 hasSubMenu={true}

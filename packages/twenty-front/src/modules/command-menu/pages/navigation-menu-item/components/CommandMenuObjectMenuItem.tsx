@@ -34,6 +34,7 @@ export const CommandMenuObjectMenuItem = ({
     }),
   );
   const Icon = getIcon(objectMetadataItem.icon);
+  const iconColor = getStandardObjectIconColor(objectMetadataItem.nameSingular);
   const isDisabled = !isDefined(defaultViewId);
 
   const handleClick = () => {
@@ -43,11 +44,15 @@ export const CommandMenuObjectMenuItem = ({
     onSelect(objectMetadataItem, defaultViewId);
   };
 
+  const styledIcon = () => (
+    <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
+  );
+
   return (
     <SelectableListItem itemId={objectMetadataItem.id} onEnter={handleClick}>
       {variant === 'add' && !isDisabled ? (
         <CommandMenuItemWithAddToNavigationDrag
-          icon={Icon}
+          icon={styledIcon}
           label={objectMetadataItem.labelPlural}
           id={objectMetadataItem.id}
           onClick={handleClick}
@@ -57,21 +62,12 @@ export const CommandMenuObjectMenuItem = ({
             objectMetadataId: objectMetadataItem.id,
             defaultViewId: defaultViewId ?? '',
             label: objectMetadataItem.labelPlural,
-            iconColor: getStandardObjectIconColor(
-              objectMetadataItem.nameSingular,
-            ),
+            iconColor,
           }}
         />
       ) : (
         <CommandMenuItem
-          Icon={() => (
-            <NavigationMenuItemStyleIcon
-              Icon={Icon}
-              color={getStandardObjectIconColor(
-                objectMetadataItem.nameSingular,
-              )}
-            />
-          )}
+          Icon={styledIcon}
           label={objectMetadataItem.labelPlural}
           id={objectMetadataItem.id}
           onClick={handleClick}
