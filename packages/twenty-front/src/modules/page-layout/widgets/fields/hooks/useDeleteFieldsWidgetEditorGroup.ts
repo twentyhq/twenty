@@ -1,15 +1,38 @@
-import { usePerformViewFieldGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFieldGroupAPIPersist';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useCallback } from 'react';
+import { useRecoilCallback } from 'recoil';
 
-export const useDeleteFieldsWidgetEditorGroup = () => {
-  const { performViewFieldGroupAPIDelete } =
-    usePerformViewFieldGroupAPIPersist();
+type UseDeleteFieldsWidgetEditorGroupParams = {
+  pageLayoutId: string;
+  widgetId: string;
+};
+
+export const useDeleteFieldsWidgetEditorGroup = ({
+  pageLayoutId,
+  widgetId,
+}: UseDeleteFieldsWidgetEditorGroupParams) => {
+  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetGroupsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const deleteGroupRecoilCallback = useRecoilCallback(
+    ({ set }) =>
+      (groupId: string) => {
+        set(fieldsWidgetGroupsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: (prev[widgetId] ?? []).filter(
+            (group) => group.id !== groupId,
+          ),
+        }));
+      },
+    [fieldsWidgetGroupsDraftState, widgetId],
+  );
 
   const deleteGroup = useCallback(
-    async (groupId: string) => {
-      await performViewFieldGroupAPIDelete([{ input: { id: groupId } }]);
-    },
-    [performViewFieldGroupAPIDelete],
+    (groupId: string) => deleteGroupRecoilCallback(groupId),
+    [deleteGroupRecoilCallback],
   );
 
   return { deleteGroup };

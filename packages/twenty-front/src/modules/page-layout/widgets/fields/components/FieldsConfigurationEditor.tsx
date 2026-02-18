@@ -10,7 +10,11 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
 import { useFieldsWidgetEditorGroupsData } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData';
+import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
+import { useInitializeFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useInitializeFieldsWidgetGroupsDraft';
+import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
+import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
 import { useLingui } from '@lingui/react/macro';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
@@ -22,26 +26,53 @@ const StyledGroupsDroppable = styled.div`
 
 type FieldsConfigurationEditorProps = {
   configuration: FieldsConfiguration;
-  onChange: (configuration: FieldsConfiguration) => void;
+  pageLayoutId: string;
+  widgetId: string;
 };
 
 export const FieldsConfigurationEditor = ({
   configuration,
+  pageLayoutId,
+  widgetId,
 }: FieldsConfigurationEditorProps) => {
   const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { groups } = useFieldsWidgetEditorGroupsData({
+  const { groups: serverGroups } = useFieldsWidgetEditorGroupsData({
     viewId: configuration.viewId ?? null,
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { createGroup } = useCreateFieldsWidgetEditorGroup({
-    viewId: configuration.viewId ?? null,
-    groups,
+  useInitializeFieldsWidgetGroupsDraft({
+    pageLayoutId,
+    widgetId,
+    serverGroups,
   });
 
-  const { reorderGroups } = useReorderFieldsWidgetEditorGroups();
+  const { draftGroups } = useFieldsWidgetGroupsDraft({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { createGroup } = useCreateFieldsWidgetEditorGroup({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { reorderGroups } = useReorderFieldsWidgetEditorGroups({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { moveField } = useMoveFieldInDraft({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { toggleFieldVisibility } = useToggleFieldVisibilityInDraft({
+    pageLayoutId,
+    widgetId,
+  });
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, type } = result;
@@ -73,7 +104,9 @@ export const FieldsConfigurationEditor = ({
     sourceIndex: number,
     destinationIndex: number,
   ) => {
-    const sortedGroups = [...groups].sort((a, b) => a.position - b.position);
+    const sortedGroups = [...draftGroups].sort(
+      (a, b) => a.position - b.position,
+    );
 
     const reorderedGroupIds = sortedGroups.map((g) => g.id);
     const [movedGroupId] = reorderedGroupIds.splice(sourceIndex, 1);
@@ -85,18 +118,27 @@ export const FieldsConfigurationEditor = ({
   const handleFieldMove = (
     sourceGroupId: string,
     destinationGroupId: string,
-    _sourceIndex: number,
-    _destinationIndex: number,
+    sourceIndex: number,
+    destinationIndex: number,
   ) => {
-    // TODO: Implement field move via ViewField mutations
+    // droppableIds are prefixed with "group-"
+    const cleanSourceGroupId = sourceGroupId.replace('group-', '');
+    const cleanDestinationGroupId = destinationGroupId.replace('group-', '');
+
+    moveField(
+      cleanSourceGroupId,
+      cleanDestinationGroupId,
+      sourceIndex,
+      destinationIndex,
+    );
   };
 
-  const handleAddGroup = async () => {
+  const handleAddGroup = () => {
     const newGroupName = t`New Group`;
-    await createGroup(newGroupName);
+    createGroup(newGroupName);
   };
 
-  const sortedGroups = [...groups].sort((a, b) => a.position - b.position);
+  const sortedGroups = [...draftGroups].sort((a, b) => a.position - b.position);
 
   if (sortedGroups.length === 0) {
     return null;
@@ -125,6 +167,9 @@ export const FieldsConfigurationEditor = ({
                     draggableProvided={draggableProvided}
                     isDragging={snapshot.isDragging}
                     onAddGroup={handleAddGroup}
+                    onToggleFieldVisibility={(fieldMetadataId) =>
+                      toggleFieldVisibility(group.id, fieldMetadataId)
+                    }
                   />
                 )}
               </Draggable>

@@ -34,14 +34,15 @@ type FieldsConfigurationGroupEditorProps = {
   draggableProvided: DraggableProvided;
   isDragging: boolean;
   onAddGroup?: () => void;
+  onToggleFieldVisibility: (fieldMetadataId: string) => void;
 };
 
 export const FieldsConfigurationGroupEditor = ({
   group,
-  objectMetadataItem,
   draggableProvided,
   isDragging,
   onAddGroup,
+  onToggleFieldVisibility,
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
@@ -98,7 +99,7 @@ export const FieldsConfigurationGroupEditor = ({
                       }}
                       fieldMetadata={field.fieldMetadataItem}
                       onToggleVisibility={() => {
-                        // TODO: Implement toggle visibility via ViewField mutation
+                        onToggleFieldVisibility(field.fieldMetadataItem.id);
                       }}
                     />
                   }

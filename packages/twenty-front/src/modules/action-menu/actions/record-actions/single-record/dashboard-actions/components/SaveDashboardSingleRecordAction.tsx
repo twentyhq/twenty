@@ -2,6 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useRecoilValue } from 'recoil';
@@ -14,6 +15,9 @@ export const SaveDashboardSingleRecordAction = () => {
   const pageLayoutId = selectedRecord?.pageLayoutId;
 
   const { savePageLayout } = useSavePageLayout(pageLayoutId);
+  const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups({
+    pageLayoutId,
+  });
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -24,6 +28,8 @@ export const SaveDashboardSingleRecordAction = () => {
     const result = await savePageLayout();
 
     if (result.status === 'successful') {
+      await saveFieldsWidgetGroups();
+
       closeCommandMenu();
       setIsPageLayoutInEditMode(false);
     }

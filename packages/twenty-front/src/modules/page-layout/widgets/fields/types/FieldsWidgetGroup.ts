@@ -5,6 +5,7 @@ export type FieldsWidgetGroupField = {
   position: number;
   isVisible: boolean;
   globalIndex: number;
+  viewFieldId?: string;
 };
 
 export type FieldsWidgetGroup = {

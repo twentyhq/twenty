@@ -1,4 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -41,6 +43,16 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     tabListComponentInstanceId,
   );
 
+  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetGroupsDraftComponentState,
+    componentInstanceId,
+  );
+
+  const fieldsWidgetGroupsPersistedState = useRecoilComponentCallbackState(
+    fieldsWidgetGroupsPersistedComponentState,
+    componentInstanceId,
+  );
+
   const resetDraftPageLayoutToPersistedPageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -74,6 +86,12 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
 
           const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
           set(pageLayoutCurrentLayoutsState, tabLayouts);
+
+          // Reset field groups draft to persisted state
+          const fieldsWidgetGroupsPersisted = snapshot
+            .getLoadable(fieldsWidgetGroupsPersistedState)
+            .getValue();
+          set(fieldsWidgetGroupsDraftState, fieldsWidgetGroupsPersisted);
         }
       },
     [
@@ -81,6 +99,8 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       pageLayoutPersistedState,
       pageLayoutCurrentLayoutsState,
       activeTabIdState,
+      fieldsWidgetGroupsDraftState,
+      fieldsWidgetGroupsPersistedState,
     ],
   );
 

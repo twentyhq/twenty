@@ -2,32 +2,24 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 
-type UpdateGroupParams = {
-  groupId: string;
-  name?: string;
-  position?: number;
-  isVisible?: boolean;
-};
-
-type UseUpdateFieldsWidgetEditorGroupParams = {
+type UseToggleFieldVisibilityInDraftParams = {
   pageLayoutId: string;
   widgetId: string;
 };
 
-export const useUpdateFieldsWidgetEditorGroup = ({
+export const useToggleFieldVisibilityInDraft = ({
   pageLayoutId,
   widgetId,
-}: UseUpdateFieldsWidgetEditorGroupParams) => {
+}: UseToggleFieldVisibilityInDraftParams) => {
   const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const updateGroupRecoilCallback = useRecoilCallback(
+  const toggleFieldVisibilityRecoilCallback = useRecoilCallback(
     ({ set }) =>
-      ({ groupId, name, position, isVisible }: UpdateGroupParams) => {
+      (groupId: string, fieldMetadataId: string) => {
         set(fieldsWidgetGroupsDraftState, (prev) => {
           const currentGroups = prev[widgetId] ?? [];
 
@@ -37,9 +29,11 @@ export const useUpdateFieldsWidgetEditorGroup = ({
               group.id === groupId
                 ? {
                     ...group,
-                    ...(isDefined(name) ? { name } : {}),
-                    ...(isDefined(position) ? { position } : {}),
-                    ...(isDefined(isVisible) ? { isVisible } : {}),
+                    fields: group.fields.map((field) =>
+                      field.fieldMetadataItem.id === fieldMetadataId
+                        ? { ...field, isVisible: !field.isVisible }
+                        : field,
+                    ),
                   }
                 : group,
             ),
@@ -49,10 +43,11 @@ export const useUpdateFieldsWidgetEditorGroup = ({
     [fieldsWidgetGroupsDraftState, widgetId],
   );
 
-  const updateGroup = useCallback(
-    (params: UpdateGroupParams) => updateGroupRecoilCallback(params),
-    [updateGroupRecoilCallback],
+  const toggleFieldVisibility = useCallback(
+    (groupId: string, fieldMetadataId: string) =>
+      toggleFieldVisibilityRecoilCallback(groupId, fieldMetadataId),
+    [toggleFieldVisibilityRecoilCallback],
   );
 
-  return { updateGroup };
+  return { toggleFieldVisibility };
 };

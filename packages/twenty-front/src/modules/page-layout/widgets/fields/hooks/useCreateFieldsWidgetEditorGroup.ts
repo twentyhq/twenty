@@ -1,46 +1,60 @@
-import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { usePerformViewFieldGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFieldGroupAPIPersist';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 type UseCreateFieldsWidgetEditorGroupParams = {
-  viewId: string | null;
-  groups: FieldsWidgetGroup[];
+  pageLayoutId: string;
+  widgetId: string;
 };
 
 export const useCreateFieldsWidgetEditorGroup = ({
-  viewId,
-  groups,
+  pageLayoutId,
+  widgetId,
 }: UseCreateFieldsWidgetEditorGroupParams) => {
-  const { performViewFieldGroupAPICreate } =
-    usePerformViewFieldGroupAPIPersist();
-
-  const createGroup = useCallback(
-    async (name: string) => {
-      if (!isDefined(viewId)) {
-        return;
-      }
-
-      const maxPosition = Math.max(...groups.map((g) => g.position), -1);
-      const newId = v4();
-
-      await performViewFieldGroupAPICreate({
-        inputs: [
-          {
-            id: newId,
-            name,
-            position: maxPosition + 1,
-            isVisible: true,
-            viewId,
-          },
-        ],
-      });
-
-      return newId;
-    },
-    [viewId, groups, performViewFieldGroupAPICreate],
+  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetGroupsDraftComponentState,
+    pageLayoutId,
   );
 
-  return { createGroup };
+  const createGroup = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (name: string) => {
+        const allDraftGroups = snapshot
+          .getLoadable(fieldsWidgetGroupsDraftState)
+          .getValue();
+
+        const currentGroups = allDraftGroups[widgetId] ?? [];
+        const maxPosition = Math.max(
+          ...currentGroups.map((g) => g.position),
+          -1,
+        );
+        const newId = v4();
+
+        set(fieldsWidgetGroupsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: [
+            ...(prev[widgetId] ?? []),
+            {
+              id: newId,
+              name,
+              position: maxPosition + 1,
+              isVisible: true,
+              fields: [],
+            },
+          ],
+        }));
+
+        return newId;
+      },
+    [fieldsWidgetGroupsDraftState, widgetId],
+  );
+
+  const createGroupCallback = useCallback(
+    (name: string) => createGroup(name),
+    [createGroup],
+  );
+
+  return { createGroup: createGroupCallback };
 };

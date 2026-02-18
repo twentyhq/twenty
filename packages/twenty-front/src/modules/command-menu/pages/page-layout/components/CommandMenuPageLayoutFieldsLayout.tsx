@@ -3,7 +3,6 @@ import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/co
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
-import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -35,7 +34,6 @@ export const CommandMenuPageLayoutFieldsLayout = () => {
     usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
   const temporaryFieldsConfiguration = useTemporaryFieldsConfiguration();
 
   if (!isDefined(widgetInEditMode)) {
@@ -50,14 +48,6 @@ export const CommandMenuPageLayoutFieldsLayout = () => {
       ? (widgetConfiguration as FieldsConfiguration)
       : temporaryFieldsConfiguration;
 
-  const handleConfigurationChange = (
-    updatedConfiguration: FieldsConfiguration,
-  ) => {
-    updatePageLayoutWidget(widgetInEditMode.id, {
-      configuration: updatedConfiguration,
-    });
-  };
-
   return (
     <StyledOuterContainer>
       <SidePanelSubPageNavigationHeader
@@ -67,7 +57,8 @@ export const CommandMenuPageLayoutFieldsLayout = () => {
       <StyledContainer>
         <FieldsConfigurationEditor
           configuration={fieldsConfiguration}
-          onChange={handleConfigurationChange}
+          pageLayoutId={pageLayoutId}
+          widgetId={widgetInEditMode.id}
         />
       </StyledContainer>
     </StyledOuterContainer>
