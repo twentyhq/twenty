@@ -3801,6 +3801,11 @@ msgstr "Die Rolle, die Sie suchen, konnte nicht gefunden werden. Möglicherweise
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "Die Rolle, die Sie ändern möchten, konnte nicht gefunden werden. Möglicherweise wurde sie gelöscht oder Sie haben keinen Zugriff darauf."
 
+#. js-lingui-id: vD3FVp
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "The server address you entered is not allowed. Please use a public server address."
+msgstr ""
+
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"

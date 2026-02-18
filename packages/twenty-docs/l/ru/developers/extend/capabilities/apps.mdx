@@ -27,40 +27,53 @@ description: Создавайте и управляйте настройками
 Создайте новое приложение с помощью официального генератора, затем выполните аутентификацию и начните разработку:
 
 ```bash filename="Terminal"
-# Создать каркас нового приложения
+# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# Если вы не используете yarn@4
+# If you don't use yarn@4
 corepack enable
 yarn install
 
-# Аутентифицироваться с помощью вашего API-ключа (вам будет предложено)
+# Authenticate using your API key (you'll be prompted)
 yarn twenty auth:login
 
-# Запустить режим разработки: автоматически синхронизирует локальные изменения с вашим рабочим пространством
+# Start dev mode: automatically syncs local changes to your workspace
 yarn twenty app:dev
+```
+
+The scaffolder supports three modes for controlling which example files are included:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interactive: select which examples to include
+npx create-twenty-app@latest my-app --interactive
 ```
 
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Добавить новую сущность в ваше приложение (с мастером)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Просматривать логи функций вашего приложения
 yarn twenty function:logs
 
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
+# Выполнить функцию по имени
+yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
 
-# Execute the post-install function
+# Выполнить послеустановочную функцию
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Удалить приложение из текущего рабочего пространства
 yarn twenty app:uninstall
 
-# Display commands' help
+# Показать справку по командам
 yarn twenty help
 ```
 
@@ -73,9 +86,9 @@ yarn twenty help
 * Копирует минимальное базовое приложение в `my-twenty-app/`
 * Добавляет локальную зависимость `twenty-sdk` и конфигурацию Yarn 4
 * Создаёт файлы конфигурации и скрипты, подключённые к CLI `twenty`
-* Generates a default application config, a default function role, and a post-install function
+* Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
 
-Свежесгенерированное приложение выглядит так:
+A freshly scaffolded app with the default `--exhaustive` mode looks like this:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -94,12 +107,22 @@ my-twenty-app/
   ├── application-config.ts           # Required - main application configuration
   ├── roles/
   │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
   │   ├── hello-world.ts                # Example logic function
   │   └── post-install.ts               # Post-install logic function
-  └── front-components/
-      └── hello-world.tsx               # Example front component
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Example sidebar navigation link
 ```
+
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
 
 В общих чертах:
 
@@ -116,13 +139,15 @@ my-twenty-app/
 
 SDK обнаруживает сущности, разбирая ваши файлы TypeScript в поисках вызовов **`export default define<Entity>({...})`**. Для каждого типа сущности существует соответствующая вспомогательная функция, экспортируемая из `twenty-sdk`:
 
-| Вспомогательная функция  | Тип сущности                               |
-| ------------------------ | ------------------------------------------ |
-| `defineObject()`         | Определения пользовательских объектов      |
-| `defineLogicFunction()`  | Определения логических функций             |
-| `defineFrontComponent()` | Определения компонентов фронтенда          |
-| `defineRole()`           | Определения ролей                          |
-| `defineField()`          | Расширения полей для существующих объектов |
+| Вспомогательная функция      | Тип сущности                               |
+| ---------------------------- | ------------------------------------------ |
+| `defineObject()`             | Определения пользовательских объектов      |
+| `defineLogicFunction()`      | Определения логических функций             |
+| `defineFrontComponent()`     | Определения компонентов фронтенда          |
+| `defineRole()`               | Определения ролей                          |
+| `defineField()`              | Расширения полей для существующих объектов |
+| `defineView()`               | Saved view definitions                     |
+| `defineNavigationMenuItem()` | Navigation menu item definitions           |
 
 <Note>
   **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
@@ -187,14 +212,16 @@ yarn twenty auth:status
 
 SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
 
-| Функция                  | Назначение                                                             |
-| ------------------------ | ---------------------------------------------------------------------- |
-| `defineApplication()`    | Настройка метаданных приложения (обязательно, по одному на приложение) |
-| `defineObject()`         | Определяет пользовательские объекты с полями                           |
-| `defineLogicFunction()`  | Определение логических функций с обработчиками                         |
-| `defineFrontComponent()` | Определение фронт-компонентов для настраиваемого интерфейса            |
-| `defineRole()`           | Настраивает права роли и доступ к объектам                             |
-| `defineField()`          | Расширение существующих объектов дополнительными полями                |
+| Функция                      | Назначение                                                             |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| `defineApplication()`        | Настройка метаданных приложения (обязательно, по одному на приложение) |
+| `defineObject()`             | Определяет пользовательские объекты с полями                           |
+| `defineLogicFunction()`      | Определение логических функций с обработчиками                         |
+| `defineFrontComponent()`     | Определение фронт-компонентов для настраиваемого интерфейса            |
+| `defineRole()`               | Настраивает права роли и доступ к объектам                             |
+| `defineField()`              | Расширение существующих объектов дополнительными полями                |
+| `defineView()`               | Define saved views for objects                                         |
+| `defineNavigationMenuItem()` | Define sidebar navigation links                                        |
 
 Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
@@ -294,7 +321,7 @@ export default defineObject({
 * **Что это за приложение**: идентификаторы, отображаемое имя и описание.
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
-* **(Optional) post-install function**: a logic function that runs after the app is installed.
+* **(Необязательно) послеустановочная функция**: функция логики, которая запускается после установки приложения.
 
 Используйте `defineApplication()` для определения конфигурации вашего приложения:
 
@@ -327,7 +354,7 @@ export default defineApplication({
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
-* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
+* `postInstallLogicFunctionUniversalIdentifier` (необязательно) указывает на логическую функцию, которая автоматически выполняется после установки приложения. См. [Послеустановочные функции](#post-install-functions).
 
 #### Роли и разрешения
 
@@ -466,9 +493,9 @@ export default defineLogicFunction({
 * Массив `triggers` необязателен. Функции без триггеров можно использовать как вспомогательные, вызываемые другими функциями.
 * Вы можете сочетать несколько типов триггеров в одной функции.
 
-### Post-install functions
+### Послеустановочные функции
 
-A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+Послеустановочная функция — это функция логики, которая автоматически выполняется после установки вашего приложения в рабочем пространстве. Это полезно для одноразовых задач настройки, таких как инициализация данных по умолчанию, создание начальных записей или настройка параметров рабочего пространства.
 
 When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
 
