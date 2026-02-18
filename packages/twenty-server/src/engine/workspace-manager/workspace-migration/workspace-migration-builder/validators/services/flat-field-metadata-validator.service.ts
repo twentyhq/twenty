@@ -14,7 +14,6 @@ import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modu
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -250,19 +249,27 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToDelete.objectMetadataUniversalIdentifier,
     };
 
-    if (!buildOptions.isSystemBuild && flatFieldMetadataToDelete.isSystem) {
+    const relatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        flatFieldMetadataToDelete.objectMetadataUniversalIdentifier,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    const parentObjectMetadataHasBeenDeleted = !isDefined(
+      relatedFlatObjectMetadata,
+    );
+
+    if (
+      !buildOptions.isSystemBuild &&
+      flatFieldMetadataToDelete.isSystem &&
+      !parentObjectMetadataHasBeenDeleted
+    ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: 'System fields cannot be deleted',
         userFriendlyMessage: msg`System fields cannot be deleted`,
       });
     }
-
-    const relatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        flatFieldMetadataToDelete.objectMetadataUniversalIdentifier,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
 
     if (
       isDefined(relatedFlatObjectMetadata) &&
@@ -274,35 +281,6 @@ export class FlatFieldMetadataValidatorService {
         message:
           'Cannot delete, please update the label identifier field first',
         userFriendlyMessage: msg`Cannot delete, please update the label identifier field first`,
-      });
-    }
-
-    const relationTargetObjectMetadataHasBeenDeleted =
-      isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadataToDelete) &&
-      !isDefined(
-        findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatFieldMetadataToDelete.relationTargetObjectMetadataUniversalIdentifier,
-          flatEntityMaps: flatObjectMetadataMaps,
-        }),
-      );
-    const parentObjectMetadataHasBeenDeleted = !isDefined(
-      findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatFieldMetadataToDelete.objectMetadataUniversalIdentifier,
-        flatEntityMaps: flatObjectMetadataMaps,
-      }),
-    );
-
-    if (
-      belongsToTwentyStandardApp(flatFieldMetadataToDelete) &&
-      !relationTargetObjectMetadataHasBeenDeleted &&
-      !parentObjectMetadataHasBeenDeleted
-    ) {
-      validationResult.errors.push({
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: "Standard Fields can't be deleted",
-        userFriendlyMessage: msg`Standard fields cannot be deleted`,
       });
     }
 
