@@ -165,6 +165,7 @@ export const buildFavoriteFolderStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
+      defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -197,6 +197,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'IconSettingsAutomation',
       isNullable: false,
       isUIReadOnly: true,
+      defaultValue: "'DATABASE_EVENT'",
       options: [
         {
           value: 'DATABASE_EVENT',
