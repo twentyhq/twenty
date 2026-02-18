@@ -35,6 +35,7 @@ const validManifest: Manifest = {
   publicAssets: [],
   views: [],
   navigationMenuItems: [],
+  pageLayouts: [],
 };
 
 describe('manifestValidate', () => {

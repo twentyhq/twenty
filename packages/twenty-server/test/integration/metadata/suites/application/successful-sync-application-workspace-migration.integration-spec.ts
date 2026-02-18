@@ -108,6 +108,7 @@ describe('syncApplication', () => {
       publicAssets: [],
       views: [],
       navigationMenuItems: [],
+      pageLayouts: [],
     };
 
     const { data: firstSyncData } = await syncApplication({

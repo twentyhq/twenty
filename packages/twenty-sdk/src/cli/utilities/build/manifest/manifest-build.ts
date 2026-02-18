@@ -11,6 +11,7 @@ import {
   type LogicFunctionConfig,
 } from '@/sdk';
 import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
 import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
@@ -25,6 +26,7 @@ import {
   type Manifest,
   type NavigationMenuItemManifest,
   type ObjectManifest,
+  type PageLayoutManifest,
   type RoleManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
@@ -67,6 +69,7 @@ export const buildManifest = async (
   const publicAssets: AssetManifest[] = [];
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
+  const pageLayouts: PageLayoutManifest[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -77,6 +80,7 @@ export const buildManifest = async (
   const publicAssetsFilePaths: string[] = [];
   const viewsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
+  const pageLayoutsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -240,6 +244,21 @@ export const buildManifest = async (
         navigationMenuItemsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayouts: {
+        const extract = await extractManifestFromFile<PageLayoutConfig>({
+          appPath,
+          filePath,
+        });
+
+        const pageLayoutManifest: PageLayoutManifest = {
+          ...extract.config,
+        };
+
+        pageLayouts.push(pageLayoutManifest);
+        errors.push(...extract.errors);
+        pageLayoutsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -280,6 +299,7 @@ export const buildManifest = async (
         publicAssets,
         views,
         navigationMenuItems,
+        pageLayouts,
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -292,6 +312,7 @@ export const buildManifest = async (
     publicAssets: publicAssetsFilePaths,
     views: viewsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
+    pageLayouts: pageLayoutsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };
