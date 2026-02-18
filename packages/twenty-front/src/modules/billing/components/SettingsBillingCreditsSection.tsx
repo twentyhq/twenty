@@ -9,19 +9,12 @@ import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflow
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { formatToShortNumber } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, HorizontalSeparator } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
-
-const StyledLineSeparator = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({ theme }) => theme.background.tertiary};
-`;
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
@@ -91,7 +84,7 @@ export const SettingsBillingCreditsSection = ({
 
           {!isTrialing && (
             <>
-              <StyledLineSeparator />
+              <HorizontalSeparator noMargin color={theme.background.tertiary} />
               <SettingsBillingLabelValueItem
                 label={t`Base Credits`}
                 value={formatNumber(grantedCredits, {
@@ -117,7 +110,7 @@ export const SettingsBillingCreditsSection = ({
                   })}
                 />
               )}
-              <StyledLineSeparator />
+              <HorizontalSeparator noMargin color={theme.background.tertiary} />
               <SettingsBillingLabelValueItem
                 label={t`Extra Credits Used`}
                 value={`${formatToShortNumber(extraCreditsUsed)}`}

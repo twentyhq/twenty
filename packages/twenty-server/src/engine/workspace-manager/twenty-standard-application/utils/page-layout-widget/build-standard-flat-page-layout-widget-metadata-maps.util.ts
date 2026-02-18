@@ -69,6 +69,8 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   opportunity: 'opportunityRecordPageFields',
   task: 'taskRecordPageFields',
   note: 'noteRecordPageFields',
+  workflowRun: 'workflowRunRecordPageFields',
+  workflowVersion: 'workflowVersionRecordPageFields',
 };
 
 const buildRecordPageWidgetConfigurations = ({
@@ -126,34 +128,71 @@ const buildFieldsWidgetConfiguration = ({
       configuration: {
         configurationType: WidgetConfigurationType.FIELDS,
         viewId: null,
+        newFieldDefaultConfiguration: {
+          isVisible: true,
+          viewFieldGroupId: null,
+        },
       },
       universalConfiguration: {
         configurationType: WidgetConfigurationType.FIELDS,
         viewId: null,
+        newFieldDefaultConfiguration: {
+          isVisible: true,
+          viewFieldGroupId: null,
+        },
       },
     };
   }
 
   const views = standardObjectMetadataRelatedEntityIds[objectName]
-    .views as Record<string, { id: string }>;
+    .views as Record<
+    string,
+    {
+      id: string;
+      viewFieldGroups?: Record<string, { id: string }>;
+    }
+  >;
 
   const viewId = views[recordPageFieldsViewName]?.id ?? null;
 
   // @ts-expect-error ignore
   const viewDefinition = STANDARD_OBJECTS[objectName].views?.[
     recordPageFieldsViewName
-  ] as { universalIdentifier: string } | undefined;
+  ] as
+    | {
+        universalIdentifier: string;
+        viewFieldGroups?: Record<string, { universalIdentifier: string }>;
+      }
+    | undefined;
 
   const viewUniversalIdentifier = viewDefinition?.universalIdentifier ?? null;
+
+  const otherViewFieldGroupId =
+    views[recordPageFieldsViewName]?.viewFieldGroups?.other?.id ?? null;
+
+  const otherViewFieldGroupUniversalIdentifier =
+    viewDefinition?.viewFieldGroups?.other?.universalIdentifier ?? null;
+
+  const newFieldDefaultConfiguration = {
+    isVisible: true,
+    viewFieldGroupId: otherViewFieldGroupId,
+  };
+
+  const universalNewFieldDefaultConfiguration = {
+    isVisible: true,
+    viewFieldGroupId: otherViewFieldGroupUniversalIdentifier,
+  };
 
   return {
     configuration: {
       configurationType: WidgetConfigurationType.FIELDS,
       viewId,
+      newFieldDefaultConfiguration,
     },
     universalConfiguration: {
       configurationType: WidgetConfigurationType.FIELDS,
       viewId: viewUniversalIdentifier,
+      newFieldDefaultConfiguration: universalNewFieldDefaultConfiguration,
     },
   };
 };

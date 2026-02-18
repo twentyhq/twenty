@@ -17,9 +17,13 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { SerializedRelation } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  type BarChartConfiguration,
+  type ChartFilter,
+  SerializedRelation,
+} from 'twenty-shared/types';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -27,13 +31,9 @@ import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/e
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { ChartFilter } from 'src/engine/metadata-modules/page-layout-widget/types/chart-filter.type';
-import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('BarChartConfiguration')
-export class BarChartConfigurationDTO
-  implements PageLayoutWidgetConfigurationBase
-{
+export class BarChartConfigurationDTO implements BarChartConfiguration {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.BAR_CHART])
   @IsNotEmpty()
@@ -111,6 +111,11 @@ export class BarChartConfigurationDTO
   @IsBoolean()
   @IsOptional()
   omitNullValues?: boolean;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  splitMultiValueFields?: boolean;
 
   @Field(() => AxisNameDisplay, {
     nullable: true,

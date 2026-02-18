@@ -40,7 +40,7 @@ describe('getCronTriggerDefaultSettings', () => {
 
   it('throws an error for an invalid interval', () => {
     // @ts-expect-error Testing invalid input
-    expect(() => getCronTriggerDefaultSettings('INVALID')).toThrowError(
+    expect(() => getCronTriggerDefaultSettings('INVALID')).toThrow(
       'Invalid cron trigger interval',
     );
   });

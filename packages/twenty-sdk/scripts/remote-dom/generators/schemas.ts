@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const PropertySchemaZ = z.object({
-  type: z.enum(['string', 'number', 'boolean', 'array', 'object', 'function']),
+  type: z.enum(['string', 'number', 'boolean']),
   optional: z.boolean(),
 });
 
@@ -17,17 +17,12 @@ export const HtmlElementConfigArrayZ = z.array(HtmlElementConfigZ);
 
 export const ComponentSchemaZ = z.object({
   name: z.string().min(1),
-  tagName: z.string().min(1),
   customElementName: z.string().min(1),
   properties: z.record(z.string(), PropertySchemaZ),
-  slots: z.array(z.string()).optional(),
   events: z.array(z.string()).readonly(),
-  isHtmlElement: z.boolean(),
   htmlTag: z.string().optional(),
-  componentImport: z.string().optional(),
-  componentPath: z.string().optional(),
-  propsTypeName: z.string().optional(),
-  supportsRefForwarding: z.boolean().optional(),
+  customHostRenderer: z.string().optional(),
+  customHostRendererPath: z.string().optional(),
 });
 
 export type PropertySchema = z.infer<typeof PropertySchemaZ>;

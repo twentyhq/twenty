@@ -21,7 +21,7 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFeatureFlagsStateV2';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
@@ -77,8 +77,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     canManageFeatureFlagsState,
   );
 
-  const setLabPublicFeatureFlags = useSetRecoilState(
-    labPublicFeatureFlagsState,
+  const setLabPublicFeatureFlags = useSetRecoilStateV2(
+    labPublicFeatureFlagsStateV2,
   );
 
   const setMicrosoftMessagingEnabled = useSetRecoilState(

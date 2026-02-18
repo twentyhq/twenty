@@ -3,8 +3,8 @@ import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useListenToObjectRecordOperationBrowserEvent } from '@/object-record/hooks/useListenToObjectRecordOperationBrowserEvent';
-import { useListenToObjectRecordEventsForQuery } from '@/sse-db-event/hooks/useListenToObjectRecordEventsForQuery';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 
 export const WorkflowSSESubscribeEffect = ({
@@ -23,7 +23,7 @@ export const WorkflowSSESubscribeEffect = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  useListenToObjectRecordEventsForQuery({
+  useListenToEventsForQuery({
     queryId,
     operationSignature: {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,

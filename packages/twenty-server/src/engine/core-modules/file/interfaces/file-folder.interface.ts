@@ -24,6 +24,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.PersonPicture]: {
     ignoreExpirationToken: false,
   },
+  [FileFolder.CorePicture]: {
+    ignoreExpirationToken: true,
+  },
   [FileFolder.File]: {
     ignoreExpirationToken: false,
   },
@@ -46,6 +49,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
   [FileFolder.Dependencies]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.Workflow]: {
     ignoreExpirationToken: false,
   },
 };

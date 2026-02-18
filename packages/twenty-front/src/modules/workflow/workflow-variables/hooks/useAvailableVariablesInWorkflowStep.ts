@@ -1,14 +1,16 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import {
+  type InputSchemaPropertyType,
+  TRIGGER_STEP_ID,
+} from 'twenty-shared/workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordFields,

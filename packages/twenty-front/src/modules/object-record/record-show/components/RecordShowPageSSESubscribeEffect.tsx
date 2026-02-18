@@ -1,4 +1,4 @@
-import { useListenToObjectRecordEventsForQuery } from '@/sse-db-event/hooks/useListenToObjectRecordEventsForQuery';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 
 type RecordShowPageSSESubscribeEffectProps = {
   objectNameSingular: string;
@@ -11,7 +11,7 @@ export const RecordShowPageSSESubscribeEffect = ({
 }: RecordShowPageSSESubscribeEffectProps) => {
   const queryId = `record-show-${objectNameSingular}-${recordId}`;
 
-  useListenToObjectRecordEventsForQuery({
+  useListenToEventsForQuery({
     queryId,
     operationSignature: {
       objectNameSingular,

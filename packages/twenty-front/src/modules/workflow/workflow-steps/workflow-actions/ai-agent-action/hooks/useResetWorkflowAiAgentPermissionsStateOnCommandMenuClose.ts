@@ -1,22 +1,22 @@
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
-import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
-import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
-import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
+import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
+import { workflowAiAgentPermissionsSelectedObjectIdStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdStateV2';
 
 export const useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose = () => {
-  const resetSelectedObjectId = useResetRecoilState(
-    workflowAiAgentPermissionsSelectedObjectIdState,
+  const setSelectedObjectId = useSetRecoilStateV2(
+    workflowAiAgentPermissionsSelectedObjectIdStateV2,
   );
-  const setIsAddingPermission = useSetRecoilState(
-    workflowAiAgentPermissionsIsAddingPermissionState,
+  const setIsAddingPermission = useSetRecoilStateV2(
+    workflowAiAgentPermissionsIsAddingPermissionStateV2,
   );
-  const resetAgentState = useResetRecoilState(workflowAiAgentActionAgentState);
+  const setAgentState = useSetRecoilStateV2(workflowAiAgentActionAgentStateV2);
 
   const resetPermissionState = () => {
-    resetSelectedObjectId();
+    setSelectedObjectId(undefined);
     setIsAddingPermission(false);
-    resetAgentState();
+    setAgentState(undefined);
   };
 
   useListenToSidePanelClosing(resetPermissionState);

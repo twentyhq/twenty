@@ -16,7 +16,6 @@
     "auth:list": "twenty auth:list",
     "app:dev": "twenty app:dev",
     "entity:add": "twenty entity:add",
-    "app:generate": "twenty app:generate",
     "function:logs": "twenty function:logs",
     "function:execute": "twenty function:execute",
     "app:uninstall": "twenty app:uninstall",

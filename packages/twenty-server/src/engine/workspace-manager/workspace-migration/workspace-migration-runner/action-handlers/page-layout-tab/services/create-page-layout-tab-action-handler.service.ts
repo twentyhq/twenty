@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreatePageLayoutTabAction,
@@ -35,6 +36,11 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'pageLayoutTab',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -44,6 +50,7 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
         id: action.id ?? v4(),
         workspaceId,
         widgetIds: [],
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

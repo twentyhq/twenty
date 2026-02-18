@@ -1,4 +1,4 @@
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const getStepItemIcon = ({

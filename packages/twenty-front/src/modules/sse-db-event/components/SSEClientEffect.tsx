@@ -39,7 +39,7 @@ export const SSEClientEffect = () => {
       const token = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
       const newSseClient = createClient({
-        url: `${REACT_APP_SERVER_BASE_URL}/graphql`,
+        url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         headers: {
           Authorization: token ? `Bearer ${token}` : '',
         },

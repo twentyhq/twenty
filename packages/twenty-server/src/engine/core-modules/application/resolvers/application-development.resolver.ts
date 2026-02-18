@@ -23,9 +23,10 @@ import { ApplicationInput } from 'src/engine/core-modules/application/dtos/appli
 import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/dtos/uploadApplicationFileInput';
+import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/dtos/workspace-migration.dto';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -57,30 +58,35 @@ export class ApplicationDevelopmentResolver {
     private readonly fileStorageService: FileStorageService,
   ) {}
 
-  @Mutation(() => AuthToken)
+  @Mutation(() => ApplicationTokenPairDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async generateApplicationToken(
     @Args() { applicationId }: GenerateApplicationTokenInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AuthToken> {
-    return this.applicationTokenService.generateApplicationAccessToken({
+  ): Promise<ApplicationTokenPairDTO> {
+    return this.applicationTokenService.generateApplicationTokenPair({
       workspaceId,
       applicationId,
     });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => WorkspaceMigrationDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async syncApplication(
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    await this.applicationSyncService.synchronizeFromManifest({
-      workspaceId,
-      manifest,
-    });
+  ): Promise<WorkspaceMigrationDTO> {
+    const workspaceMigration =
+      await this.applicationSyncService.synchronizeFromManifest({
+        workspaceId,
+        manifest,
+      });
 
-    return true;
+    return {
+      applicationUniversalIdentifier:
+        workspaceMigration.applicationUniversalIdentifier,
+      actions: workspaceMigration.actions,
+    };
   }
 
   @Mutation(() => ApplicationDTO)

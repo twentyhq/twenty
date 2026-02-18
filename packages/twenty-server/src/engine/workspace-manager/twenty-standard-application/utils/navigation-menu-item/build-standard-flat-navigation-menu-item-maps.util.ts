@@ -77,6 +77,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
   const workflowsFolder = createStandardNavigationMenuItemFolderFlatMetadata({
     universalIdentifier: workflowsFolderDefinition.universalIdentifier,
     name: workflowsFolderDefinition.name,
+    icon: workflowsFolderDefinition.icon,
     position: workflowsFolderDefinition.position,
     navigationMenuItemId: workflowsFolderId,
     workspaceId,

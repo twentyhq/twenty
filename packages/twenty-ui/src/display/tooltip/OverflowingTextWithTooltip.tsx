@@ -59,10 +59,11 @@ const StyledPre = styled.pre`
   white-space: pre-wrap;
 `;
 
-export type OverflowingTextWithTooltipProps = {
+type OverflowingTextWithTooltipProps = {
   size?: 'large' | 'small';
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
+  tooltipDelay?: TooltipDelay;
 } & (
   | {
       text: string | null | undefined;
@@ -80,6 +81,7 @@ export const OverflowingTextWithTooltip = ({
   isTooltipMultiline,
   displayedMaxRows,
   tooltipContent,
+  tooltipDelay = TooltipDelay.mediumDelay,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -154,7 +156,7 @@ export const OverflowingTextWithTooltip = ({
               noArrow
               place="bottom"
               positionStrategy="absolute"
-              delay={TooltipDelay.mediumDelay}
+              delay={tooltipDelay}
               isOpen={true}
             >
               {isTooltipMultiline ? (

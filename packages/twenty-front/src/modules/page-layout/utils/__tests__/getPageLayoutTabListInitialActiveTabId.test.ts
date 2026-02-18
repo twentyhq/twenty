@@ -4,6 +4,7 @@ import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getP
 describe('getPageLayoutTabListInitialActiveTabId', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
     id,
+    applicationId: '',
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,
     position: 0,

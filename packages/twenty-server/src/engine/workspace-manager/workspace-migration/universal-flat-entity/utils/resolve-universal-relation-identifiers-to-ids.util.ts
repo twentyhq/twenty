@@ -2,44 +2,38 @@ import { t } from '@lingui/core/macro';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MetadataManyToOneRelationConfiguration } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
+import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
-import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import {
-  ALL_UNIVERSAL_METADATA_RELATIONS,
-  type ToUniversalMetadataManyToOneRelationConfiguration,
-} from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant';
 
-type UniversalManyToOneConfig<T extends AllMetadataName> =
-  (typeof ALL_UNIVERSAL_METADATA_RELATIONS)[T]['manyToOne'];
+type ManyToOneRelationsConfig<T extends AllMetadataName> =
+  (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[T];
 
 type ExtractUniversalForeignKeys<T> = {
   [K in keyof T]: T[K] extends { universalForeignKey: infer UFK } ? UFK : never;
 }[keyof T];
 
 type MetadataUniversalManyToOneJoinColumn<T extends AllMetadataName> =
-  ExtractUniversalForeignKeys<UniversalManyToOneConfig<T>>;
+  ExtractUniversalForeignKeys<ManyToOneRelationsConfig<T>>;
 
 type TargetMetadataNamesForUniversalForeignKeys<
   T extends AllMetadataName,
   TProvidedKeys extends string,
 > = {
-  [K in keyof UniversalManyToOneConfig<T>]: UniversalManyToOneConfig<T>[K] extends {
+  [K in keyof ManyToOneRelationsConfig<T>]: ManyToOneRelationsConfig<T>[K] extends {
     universalForeignKey: infer _UFK extends TProvidedKeys;
     metadataName: infer MN extends AllMetadataName;
   }
     ? MN
     : never;
-}[keyof UniversalManyToOneConfig<T>];
+}[keyof ManyToOneRelationsConfig<T>];
 
 type RequiredFlatEntityMapsForUniversalForeignKeys<
   T extends AllMetadataName,
@@ -58,14 +52,14 @@ type ResolvedForeignKeyIds<
     string
   >,
 > = {
-  [K in keyof UniversalManyToOneConfig<T> as UniversalManyToOneConfig<T>[K] extends {
+  [K in keyof ManyToOneRelationsConfig<T> as ManyToOneRelationsConfig<T>[K] extends {
     universalForeignKey: infer UFK extends string;
     foreignKey: infer FK extends string;
   }
     ? UFK extends TProvidedKeys
       ? FK
       : never
-    : never]: UniversalManyToOneConfig<T>[K] extends { isNullable: true }
+    : never]: ManyToOneRelationsConfig<T>[K] extends { isNullable: true }
     ? string | null
     : string;
 };
@@ -88,18 +82,20 @@ export const resolveUniversalRelationIdentifiersToIds = <
     TProvidedKeys
   >;
 }): ResolvedForeignKeyIds<T, TProvidedKeys> => {
-  const relations = ALL_UNIVERSAL_METADATA_RELATIONS[metadataName].manyToOne;
+  const relationEntries = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
   const result: Record<string, string | null> = {};
 
-  for (const relation of Object.values(
-    relations,
-  ) as ToUniversalMetadataManyToOneRelationConfiguration<
-    MetadataManyToOneRelationConfiguration<
-      T,
-      ExtractEntityManyToOneEntityRelationProperties<MetadataEntity<T>>
-    >
-  >[]) {
-    if (!isDefined(relation)) {
+  for (const relationPropertyName of Object.keys(relationEntries)) {
+    const relationEntry = relationEntries[
+      relationPropertyName as keyof typeof relationEntries
+    ] as {
+      foreignKey: string;
+      metadataName: AllMetadataName;
+      isNullable: boolean;
+      universalForeignKey: string;
+    } | null;
+
+    if (!isDefined(relationEntry)) {
       continue;
     }
 
@@ -108,7 +104,7 @@ export const resolveUniversalRelationIdentifiersToIds = <
       universalForeignKey,
       metadataName: targetMetadataName,
       isNullable,
-    } = relation;
+    } = relationEntry;
 
     if (
       !Object.prototype.hasOwnProperty.call(

@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconGmailRaw from '@assets/icons/gmail.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export type IconGmailProps = Pick<IconComponentProps, 'size'>;
+type IconGmailProps = Pick<IconComponentProps, 'size'>;
 
 export const IconGmail = (props: IconGmailProps) => {
   const theme = useTheme();

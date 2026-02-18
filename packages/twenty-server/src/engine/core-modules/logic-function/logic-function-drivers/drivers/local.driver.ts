@@ -215,6 +215,12 @@ export class LocalDriver implements LogicFunctionDriver {
     builtFileAbsPath: string;
     handlerName: string;
   }) {
+    if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(handlerName)) {
+      throw new Error(
+        `Invalid handlerName "${handlerName}": must be a valid JavaScript identifier`,
+      );
+    }
+
     const runnerPath = join(dir, '__runner.cjs');
     const code = `
       // Auto-generated. Do not edit.

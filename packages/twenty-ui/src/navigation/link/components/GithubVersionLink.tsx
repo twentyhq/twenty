@@ -3,7 +3,7 @@ import { IconBrandGithub } from '@ui/display';
 import { ClickToActionLink } from '@ui/navigation/link/components/ClickToActionLink';
 import { GITHUB_LINK } from '../constants/GithubLink';
 
-export interface GithubVersionLinkProps {
+interface GithubVersionLinkProps {
   version: string;
 }
 

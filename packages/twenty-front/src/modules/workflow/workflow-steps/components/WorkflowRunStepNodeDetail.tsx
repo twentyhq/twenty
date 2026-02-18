@@ -9,7 +9,7 @@ import { WorkflowActionCode } from '@/workflow/workflow-steps/workflow-actions/c
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
-import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
+import { WorkflowEditActionEmailBase } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
 import { WorkflowEditActionUpsertRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord';
 import { WorkflowEditActionDelay } from '@/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay';
@@ -127,9 +127,10 @@ export const WorkflowRunStepNodeDetail = ({
             />
           );
         }
-        case 'SEND_EMAIL': {
+        case 'SEND_EMAIL':
+        case 'DRAFT_EMAIL': {
           return (
-            <WorkflowEditActionSendEmail
+            <WorkflowEditActionEmailBase
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

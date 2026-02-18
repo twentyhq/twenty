@@ -1,4 +1,4 @@
-import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/send-email-tool/utils/parse-comma-separated-emails.util';
+import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 
 describe('SendEmailTool - parseCommaSeparatedEmails', () => {
   it('should parse comma-separated emails into array', () => {

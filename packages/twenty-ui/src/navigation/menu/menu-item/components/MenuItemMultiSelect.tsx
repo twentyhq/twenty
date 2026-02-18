@@ -16,7 +16,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   overflow: hidden;
 `;
 
-export type MenuItemMultiSelectProps = {
+type MenuItemMultiSelectProps = {
   color?: ThemeColor;
   LeftIcon?: IconComponent;
   selected: boolean;

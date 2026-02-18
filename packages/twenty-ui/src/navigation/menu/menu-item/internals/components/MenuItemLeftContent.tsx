@@ -32,7 +32,7 @@ const StyledMenuItemLabelRight = styled(StyledMenuItemLabel)`
   margin-left: auto;
 `;
 
-export type MenuItemLeftContentProps = {
+type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;

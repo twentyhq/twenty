@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
 import {
   type GenerateDescriptorOptions,
@@ -68,10 +69,9 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
       if (includeSchemas) {
         // Logic functions already store JSON Schema -- use it directly
-        const inputSchema = (logicFunction.toolInputSchema as object) ?? {
-          type: 'object',
-          properties: {},
-        };
+        const inputSchema =
+          (logicFunction.toolInputSchema as object) ??
+          DEFAULT_TOOL_INPUT_SCHEMA;
 
         descriptors.push({ ...base, inputSchema });
       } else {

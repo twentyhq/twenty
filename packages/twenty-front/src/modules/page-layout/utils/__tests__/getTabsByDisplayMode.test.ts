@@ -9,6 +9,7 @@ import {
 describe('getTabsByDisplayMode', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
     id,
+    applicationId: '',
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,
     position: 0,
