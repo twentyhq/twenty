@@ -1,3 +1,4 @@
+import { isObject } from '@sniptt/guards';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setupFetchInterceptor } from '../setupFetchInterceptor';
 
@@ -6,10 +7,7 @@ describe('setupFetchInterceptor', () => {
   const originalProcess = (globalThis as Record<string, unknown>)['process'];
 
   beforeEach(() => {
-    const processPrototype =
-      typeof originalProcess === 'object' && originalProcess !== null
-        ? originalProcess
-        : {};
+    const processPrototype = isObject(originalProcess) ? originalProcess : {};
     const processObjectWithPrototype = Object.create(
       processPrototype,
     ) as Record<string, unknown>;
@@ -62,26 +60,71 @@ describe('setupFetchInterceptor', () => {
     expect(processEnvironment['TWENTY_APP_ACCESS_TOKEN']).toBe('new-token');
   });
 
-  it('should refresh and retry once for trusted GraphQL UNAUTHENTICATED responses', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
-          }),
-          {
+  it.each([
+    {
+      name: 'UNAUTHENTICATED code',
+      payload: { errors: [{ extensions: { code: 'UNAUTHENTICATED' } }] },
+    },
+    {
+      name: 'Unauthorized message',
+      payload: { errors: [{ message: 'Unauthorized' }] },
+    },
+  ])(
+    'should refresh and retry once for trusted GraphQL %s responses',
+    async ({ payload }) => {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(
+          new Response(JSON.stringify(payload), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
-          },
-        ),
-      )
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ data: { ok: true } }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        }),
+          }),
+        )
+        .mockResolvedValueOnce(
+          new Response(JSON.stringify({ data: { ok: true } }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
+      const requestRefresh = vi.fn().mockResolvedValue('new-token');
+
+      globalThis.fetch = fetchMock as typeof fetch;
+
+      setupFetchInterceptor({
+        requestRefresh,
+        trustedBaseUrl: 'https://api.example.com',
+      });
+
+      const response = await globalThis.fetch(
+        'https://api.example.com/graphql',
       );
+
+      expect(response.status).toBe(200);
+      expect(requestRefresh).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+
+      const retryHeaders = new Headers(fetchMock.mock.calls[1][1]?.headers);
+
+      expect(retryHeaders.get('Authorization')).toBe('Bearer new-token');
+    },
+  );
+
+  it.each([
+    {
+      name: 'subCode without UNAUTHENTICATED code',
+      payload: { errors: [{ extensions: { subCode: 'UNAUTHENTICATED' } }] },
+    },
+    {
+      name: 'non-auth error code',
+      payload: { errors: [{ extensions: { code: 'BAD_USER_INPUT' } }] },
+    },
+  ])('should not refresh for GraphQL %s', async ({ payload }) => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      new Response(JSON.stringify(payload), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
     const requestRefresh = vi.fn().mockResolvedValue('new-token');
 
     globalThis.fetch = fetchMock as typeof fetch;
@@ -94,12 +137,8 @@ describe('setupFetchInterceptor', () => {
     const response = await globalThis.fetch('https://api.example.com/graphql');
 
     expect(response.status).toBe(200);
-    expect(requestRefresh).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-
-    const retryHeaders = new Headers(fetchMock.mock.calls[1][1]?.headers);
-
-    expect(retryHeaders.get('Authorization')).toBe('Bearer new-token');
+    expect(requestRefresh).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('should ignore 401 responses for external URLs', async () => {

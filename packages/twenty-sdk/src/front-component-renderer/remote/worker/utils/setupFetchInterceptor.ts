@@ -1,34 +1,32 @@
+import { isArray, isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { setWorkerEnv } from './setWorkerEnv';
 
-type GraphqlErrorExtension = {
-  code?: string;
-  subCode?: string;
-};
+const isAuthenticationError = (response: Response) => response.status === 401;
 
-type GraphqlErrorLike = {
-  extensions?: GraphqlErrorExtension;
-};
-
-const hasUnauthenticatedGraphqlError = (payload: unknown) => {
+const hasGraphqlAuthenticationError = (payload: unknown) => {
   if (
-    typeof payload !== 'object' ||
-    payload === null ||
+    !isDefined(payload) ||
+    !isObject(payload) ||
     !('errors' in payload) ||
-    !Array.isArray(payload.errors)
+    !isArray(payload.errors)
   ) {
     return false;
   }
 
   return payload.errors.some((error) => {
-    const maybeGraphqlError = error as GraphqlErrorLike;
-    const code = maybeGraphqlError.extensions?.code;
-    const subCode = maybeGraphqlError.extensions?.subCode;
+    const graphqlError = error as {
+      message?: string;
+      extensions?: { code?: string };
+    };
+    const message = graphqlError.message;
+    const code = graphqlError.extensions?.code;
 
-    return code === 'UNAUTHENTICATED' || subCode === 'UNAUTHENTICATED';
+    return message === 'Unauthorized' || code === 'UNAUTHENTICATED';
   });
 };
 
-const isGraphqlUnauthenticatedResponse = async (response: Response) => {
+const isGraphqlAuthenticationErrorResponse = async (response: Response) => {
   const contentType = response.headers.get('content-type') ?? '';
 
   if (!contentType.includes('application/json')) {
@@ -38,7 +36,7 @@ const isGraphqlUnauthenticatedResponse = async (response: Response) => {
   try {
     const payload = await response.clone().json();
 
-    return hasUnauthenticatedGraphqlError(payload);
+    return hasGraphqlAuthenticationError(payload);
   } catch {
     return false;
   }
@@ -105,14 +103,15 @@ export const setupFetchInterceptor = ({
       requestUrl: url,
       trustedUrl,
     });
-    const shouldRefreshBecause401 = response.status === 401;
-    const shouldRefreshBecauseGraphqlUnauthenticated =
+    const shouldRefreshBecause401 = isAuthenticationError(response);
+    const shouldRefreshBecauseGraphqlAuthenticationError =
       !shouldRefreshBecause401 &&
-      (await isGraphqlUnauthenticatedResponse(response));
+      (await isGraphqlAuthenticationErrorResponse(response));
 
     if (
       !isTrustedRequest ||
-      (!shouldRefreshBecause401 && !shouldRefreshBecauseGraphqlUnauthenticated)
+      (!shouldRefreshBecause401 &&
+        !shouldRefreshBecauseGraphqlAuthenticationError)
     ) {
       return response;
     }
