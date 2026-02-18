@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
 import type { ObjectConfig } from '@/sdk/objects/object-config';
 import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
@@ -14,10 +14,10 @@ const baseObjectConfig: ObjectConfig = {
   fields: [],
 };
 
-describe('injectDefaultFieldsInObjectFields', () => {
+describe('getDefaultFieldsInObjectFields', () => {
   it('should return all default fields when objectConfig has no fields', () => {
     const { objectFields, fields } =
-      injectDefaultFieldsInObjectFields(baseObjectConfig);
+      getDefaultFieldsInObjectFields(baseObjectConfig);
     const defaultFields = getDefaultObjectFields(baseObjectConfig);
     const {
       objectFields: defaultRelationObjectFields,
@@ -44,7 +44,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: [customField],
     };
 
-    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
     const { objectFields: defaultRelationObjectFields } =
       getDefaultRelationObjectFields(objectConfig);
@@ -68,7 +68,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: [customIdField],
     };
 
-    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
 
     const idFields = objectFields.filter((f) => f.name === 'id');
 
@@ -103,7 +103,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: customFields,
     };
 
-    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
     const defaultFields = getDefaultObjectFields(objectConfig);
     const { objectFields: defaultRelationObjectFields } =
       getDefaultRelationObjectFields(objectConfig);
@@ -136,7 +136,7 @@ describe('injectDefaultFieldsInObjectFields', () => {
       fields: [customField],
     };
 
-    const { objectFields } = injectDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
 
     expect(objectFields[0]).toEqual(customField);
   });
@@ -156,13 +156,13 @@ describe('injectDefaultFieldsInObjectFields', () => {
 
     const originalLength = objectConfig.fields.length;
 
-    injectDefaultFieldsInObjectFields(objectConfig);
+    getDefaultFieldsInObjectFields(objectConfig);
 
     expect(objectConfig.fields).toHaveLength(originalLength);
   });
 
   it('should return reverse relation fields for each default relation', () => {
-    const { fields } = injectDefaultFieldsInObjectFields(baseObjectConfig);
+    const { fields } = getDefaultFieldsInObjectFields(baseObjectConfig);
 
     expect(fields).toHaveLength(5);
 

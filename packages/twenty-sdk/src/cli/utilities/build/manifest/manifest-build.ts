@@ -30,7 +30,7 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -115,7 +115,7 @@ export const buildManifest = async (
         const {
           objectFields: objectFieldsWithDefaults,
           fields: reverseRelationFields,
-        } = injectDefaultFieldsInObjectFields(extract.config);
+        } = getDefaultFieldsInObjectFields(extract.config);
 
         const labelIdentifierFieldMetadataUniversalIdentifier =
           extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??

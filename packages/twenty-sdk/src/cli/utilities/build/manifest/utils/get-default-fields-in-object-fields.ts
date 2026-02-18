@@ -6,7 +6,7 @@ import {
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
 
-export const injectDefaultFieldsInObjectFields = (
+export const getDefaultFieldsInObjectFields = (
   objectConfig: ObjectConfig,
 ): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
   const defaultObjectFields = getDefaultObjectFields(objectConfig);
