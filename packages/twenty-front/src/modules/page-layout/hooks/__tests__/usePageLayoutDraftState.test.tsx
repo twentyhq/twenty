@@ -1,12 +1,12 @@
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { act, renderHook } from '@testing-library/react';
 import {
-  GraphOrderBy,
-  WidgetType,
   AggregateOperations,
   BarChartLayout,
+  GraphOrderBy,
   PageLayoutType,
   WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -88,6 +88,7 @@ describe('usePageLayoutDraftState', () => {
         tabs: [
           {
             id: 'tab-1',
+            applicationId: '',
             title: 'Tab 1',
             position: 0,
             pageLayoutId: '',

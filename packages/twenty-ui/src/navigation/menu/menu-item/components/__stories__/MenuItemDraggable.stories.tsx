@@ -114,7 +114,20 @@ export const Catalog: Story = {
 };
 
 export const Grip: Story = {
-  args: { ...Default.args, showGrip: true, isDragDisabled: false },
+  args: { ...Default.args, gripMode: 'always', isDragDisabled: false },
+};
+
+export const GripOnHover: Story = {
+  args: { ...Default.args, gripMode: 'onHover', isDragDisabled: false },
+};
+
+export const GripOnHoverWithIconContainer: Story = {
+  args: {
+    ...Default.args,
+    gripMode: 'onHover',
+    withIconContainer: true,
+    isDragDisabled: false,
+  },
 };
 
 export const HoverDisabled: Story = {

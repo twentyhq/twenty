@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
+{
+  "agent": [],
+  "commandMenuItem": [],
+  "fieldMetadata": [
+    "viewFieldUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
+    "kanbanAggregateOperationViewUniversalIdentifiers",
+    "calendarViewUniversalIdentifiers",
+    "mainGroupByFieldMetadataViewUniversalIdentifiers",
+  ],
+  "frontComponent": [],
+  "index": [],
+  "logicFunction": [],
+  "navigationMenuItem": [],
+  "objectMetadata": [
+    "fieldUniversalIdentifiers",
+    "indexMetadataUniversalIdentifiers",
+    "viewUniversalIdentifiers",
+  ],
+  "pageLayout": [
+    "tabUniversalIdentifiers",
+  ],
+  "pageLayoutTab": [
+    "widgetUniversalIdentifiers",
+  ],
+  "pageLayoutWidget": [],
+  "role": [
+    "roleTargetUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
+    "rowLevelPermissionPredicateGroupUniversalIdentifiers",
+  ],
+  "roleTarget": [],
+  "rowLevelPermissionPredicate": [],
+  "rowLevelPermissionPredicateGroup": [
+    "childRowLevelPermissionPredicateGroupUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
+  ],
+  "skill": [],
+  "view": [
+    "viewFieldUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
+    "viewFilterGroupUniversalIdentifiers",
+    "viewGroupUniversalIdentifiers",
+    "viewFieldGroupUniversalIdentifiers",
+  ],
+  "viewField": [],
+  "viewFieldGroup": [
+    "viewFieldUniversalIdentifiers",
+  ],
+  "viewFilter": [],
+  "viewFilterGroup": [
+    "childViewFilterGroupUniversalIdentifiers",
+    "viewFilterUniversalIdentifiers",
+  ],
+  "viewGroup": [],
+  "webhook": [],
+}
+`;

@@ -1,4 +1,5 @@
 import { ON_EVENT_SUBSCRIPTION } from '@/sse-db-event/graphql/subscriptions/OnEventSubscription';
+import { useDispatchMetadataEventsFromSseToBrowserEvents } from '@/sse-db-event/hooks/useDispatchMetadataEventsFromSseToBrowserEvents';
 import { useDispatchObjectRecordEventsFromSseToBrowserEvents } from '@/sse-db-event/hooks/useDispatchObjectRecordEventsFromSseToBrowserEvents';
 import { useTriggerOptimisticEffectFromSseEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseEvents';
 import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/disposeFunctionByEventStreamMapState';
@@ -22,6 +23,9 @@ export const useTriggerEventStreamCreation = () => {
   const setIsCreatingSseEventStream = useSetRecoilState(
     isCreatingSseEventStreamState,
   );
+
+  const { dispatchMetadataEventsFromSseToBrowserEvents } =
+    useDispatchMetadataEventsFromSseToBrowserEvents();
 
   const { dispatchObjectRecordEventsFromSseToBrowserEvents } =
     useDispatchObjectRecordEventsFromSseToBrowserEvents();
@@ -78,18 +82,32 @@ export const useTriggerEventStreamCreation = () => {
                 onEventSubscription: EventSubscription;
               }>,
             ) => {
+              if (isDefined(value?.errors)) {
+                captureException(
+                  new Error(
+                    `SSE subscription error: ${value.errors[0]?.message}`,
+                  ),
+                );
+                set(shouldDestroyEventStreamState, true);
+
+                return;
+              }
+
               if (!hasReceivedFirstEvent) {
                 hasReceivedFirstEvent = true;
                 set(sseEventStreamReadyState, true);
               }
 
+              const eventSubscription = value?.data?.onEventSubscription;
+
               const objectRecordEventsWithQueryIds =
-                value?.data?.onEventSubscription?.eventWithQueryIdsList ?? [];
+                eventSubscription?.objectRecordEventsWithQueryIds ?? [];
+
+              const metadataEventsWithQueryIds =
+                eventSubscription?.metadataEventsWithQueryIds ?? [];
 
               const objectRecordEvents = objectRecordEventsWithQueryIds.map(
-                (eventWithQueryIds) => {
-                  return eventWithQueryIds.event;
-                },
+                (item) => item.objectRecordEvent,
               );
 
               triggerOptimisticEffectFromSseEvents({
@@ -99,6 +117,10 @@ export const useTriggerEventStreamCreation = () => {
               dispatchObjectRecordEventsFromSseToBrowserEvents(
                 objectRecordEventsWithQueryIds,
               );
+
+              dispatchMetadataEventsFromSseToBrowserEvents(
+                metadataEventsWithQueryIds,
+              );
             },
             error: (error) => {
               captureException(error);
@@ -107,17 +129,61 @@ export const useTriggerEventStreamCreation = () => {
           },
           {
             message: ({ data, event }) => {
-              if (event === 'next') {
-                if (isDefined(data?.errors)) {
-                  const subCode = data.errors[0]?.extensions?.subCode;
+              const result = data as ExecutionResult<{
+                onEventSubscription: EventSubscription;
+              }>;
 
-                  switch (subCode) {
-                    case 'EVENT_STREAM_ALREADY_EXISTS': {
-                      set(shouldDestroyEventStreamState, true);
-                      break;
+              try {
+                if (event === 'next') {
+                  if (isDefined(result?.errors)) {
+                    const subCode = result.errors[0]?.extensions?.subCode;
+
+                    switch (subCode) {
+                      case 'EVENT_STREAM_ALREADY_EXISTS': {
+                        set(shouldDestroyEventStreamState, true);
+                        break;
+                      }
+                      default: {
+                        for (const error of result.errors) {
+                          captureException(error);
+                        }
+                      }
                     }
+
+                    set(shouldDestroyEventStreamState, true);
+                  } else {
+                    if (!hasReceivedFirstEvent) {
+                      hasReceivedFirstEvent = true;
+                      set(sseEventStreamReadyState, true);
+                    }
+
+                    const objectRecordEventsWithQueryIds =
+                      result?.data?.onEventSubscription
+                        ?.objectRecordEventsWithQueryIds ?? [];
+
+                    const objectRecordEvents =
+                      objectRecordEventsWithQueryIds.map(
+                        (objectRecordEventWithQueryIds) => {
+                          return objectRecordEventWithQueryIds.objectRecordEvent;
+                        },
+                      );
+
+                    triggerOptimisticEffectFromSseEvents({
+                      objectRecordEvents,
+                    });
+
+                    dispatchObjectRecordEventsFromSseToBrowserEvents(
+                      objectRecordEventsWithQueryIds,
+                    );
                   }
                 }
+              } catch (error) {
+                const errorProcessingSSEMessage = new Error(
+                  'Error while processing SSE message',
+                  { cause: error instanceof Error ? error : undefined },
+                );
+
+                captureException(errorProcessingSSEMessage);
               }
             },
           },
@@ -128,9 +194,9 @@ export const useTriggerEventStreamCreation = () => {
         setIsCreatingSseEventStream(false);
       },
     [
+      dispatchMetadataEventsFromSseToBrowserEvents,
       dispatchObjectRecordEventsFromSseToBrowserEvents,
       setIsCreatingSseEventStream,
-
       triggerOptimisticEffectFromSseEvents,
     ],
   );

@@ -13,8 +13,8 @@ import { createPortal } from 'react-dom';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { DashboardBlockColorPicker } from '@/page-layout/widgets/standalone-rich-text/components/DashboardBlockColorPicker';
+import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { DRAG_HANDLE_MENU_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/DragHandleMenuFloatingConfig';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,7 +23,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isDefined } from 'twenty-shared/utils';
 
 type DashboardBlockDragHandleMenuProps = {
-  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
+  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   block: Block;
   anchorElement: HTMLElement | null;
   boundaryElement?: HTMLElement | null;

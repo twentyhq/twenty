@@ -1,7 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 type BuildAggregateFieldKeyParams = {

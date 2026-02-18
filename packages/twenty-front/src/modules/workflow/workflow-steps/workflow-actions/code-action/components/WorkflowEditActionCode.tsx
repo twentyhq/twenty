@@ -1,8 +1,5 @@
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
-} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { useLogicFunctionEditor } from '@/logic-functions/hooks/useLogicFunctionEditor';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -13,8 +10,7 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { getFunctionInputFromSourceCode } from '@/logic-functions/utils/getFunctionInputFromSourceCode';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -36,22 +32,24 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
+import {
+  getOutputSchemaFromValue,
+  type InputJsonSchema,
+} from 'twenty-shared/logic-function';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
+import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -103,7 +101,6 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateLogicFunction } = usePersistLogicFunction();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -111,6 +108,24 @@ export const WorkflowEditActionCode = ({
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+
+  const updateOutputSchemaFromTestResult = async (testResult: object) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+    const newOutputSchema = getOutputSchemaFromValue(testResult);
+    updateAction({
+      ...action,
+      settings: { ...action.settings, outputSchema: newOutputSchema },
+    });
+  };
+
+  const { formValues, loading, executeLogicFunction, onChange, isExecuting } =
+    useLogicFunctionEditor({
+      logicFunctionId,
+      executeCallback: updateOutputSchemaFromTestResult,
+    });
+
   const { availablePackages } = useGetAvailablePackages({
     id: logicFunctionId,
   });
@@ -125,52 +140,8 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput,
     );
 
-  const { formValues, setFormValues, loading } =
-    useLogicFunctionUpdateFormState({ logicFunctionId });
-
-  const updateOutputSchemaFromTestResult = async (testResult: object) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-    const newOutputSchema = buildOutputSchemaFromValue(testResult);
-    updateAction({
-      ...action,
-      settings: { ...action.settings, outputSchema: newOutputSchema },
-    });
-  };
-
-  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
-    logicFunctionId,
-    callback: updateOutputSchemaFromTestResult,
-  });
-
-  const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunction({
-      input: {
-        id: logicFunctionId,
-        update: {
-          sourceHandlerCode: formValues.code,
-        },
-      },
-    });
-  }, 500);
-
-  const onCodeChange = async (newCode: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-    setFormValues((prevState: LogicFunctionFormValues) => {
-      return {
-        ...prevState,
-        code: newCode,
-      };
-    });
-    await handleSave();
-    await handleUpdateFunctionInputSchema(newCode);
-  };
-
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string) => {
+    async (sourceCode: string, toolInputSchema: InputJsonSchema) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -179,7 +150,12 @@ export const WorkflowEditActionCode = ({
         return;
       }
 
-      const newFunctionInput = await getFunctionInputFromSourceCode(sourceCode);
+      const schemaArray = Array.isArray(toolInputSchema)
+        ? toolInputSchema
+        : [toolInputSchema];
+
+      const newFunctionInput = getFunctionInputFromInputSchema(schemaArray)[0];
+
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
         oldInput: action.settings.input.logicFunctionInput,
@@ -190,6 +166,7 @@ export const WorkflowEditActionCode = ({
       });
 
       setFunctionInput(newMergedInput);
+
       setLogicFunctionTestData((prev) => ({
         ...prev,
         input: newMergedTestInput,
@@ -251,14 +228,12 @@ export const WorkflowEditActionCode = ({
     }));
   };
 
-  const handleRunFunction = async () => {
+  const handleTestFunction = async () => {
     if (actionOptions.readonly === true) {
       return;
     }
 
-    if (!isExecuting) {
-      await executeLogicFunction();
-    }
+    await executeLogicFunction();
   };
 
   const handleEditorDidMount = async (
@@ -288,12 +263,18 @@ export const WorkflowEditActionCode = ({
     500,
   );
 
-  const handleCodeChange = async (value: string) => {
+  const handleCodeChange = async (newCode: string) => {
     if (actionOptions.readonly === true || !isDefined(workflow)) {
       return;
     }
+
+    const toolInputSchema = await onChange('sourceHandlerCode')(newCode);
+
     await getUpdatableWorkflowVersion();
-    await onCodeChange(value);
+
+    if (isDefined(toolInputSchema)) {
+      await handleUpdateFunctionInputSchema(newCode, toolInputSchema);
+    }
   };
 
   const tabs = [
@@ -308,10 +289,6 @@ export const WorkflowEditActionCode = ({
       Icon: IconPlayerPlay,
     },
   ];
-
-  useEffect(() => {
-    setFunctionInput(action.settings.input.logicFunctionInput);
-  }, [action]);
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
@@ -382,7 +359,7 @@ export const WorkflowEditActionCode = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={formValues.code}
+          value={formValues.sourceHandlerCode}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -417,7 +394,7 @@ export const WorkflowEditActionCode = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowCodeEditor
-                value={formValues.code}
+                value={formValues.sourceHandlerCode}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{
@@ -469,7 +446,7 @@ export const WorkflowEditActionCode = ({
                 ? [
                     <CmdEnterActionButton
                       title={t`Test`}
-                      onClick={handleRunFunction}
+                      onClick={handleTestFunction}
                       disabled={isExecuting}
                     />,
                   ]

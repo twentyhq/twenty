@@ -1,21 +1,20 @@
 {
   "name": "twenty-sdk",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/sdk/index.d.ts",
   "bin": {
     "twenty": "dist/cli.cjs"
   },
   "files": [
     "dist",
+    "generated",
     "README.md",
     "package.json"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build",
-    "prepublishOnly": "tsx ../twenty-utils/pack-scripts/pre-publish-only.ts",
-    "postpublish": "tsx ../twenty-utils/pack-scripts/post-publish.ts"
+    "build": "npx rimraf dist && npx vite build"
   },
   "keywords": [
     "twenty",
@@ -27,7 +26,7 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/sdk/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
@@ -36,15 +35,23 @@
       "import": "./dist/ui/index.mjs",
       "require": "./dist/ui/index.cjs"
     },
-    "./front-component": {
-      "types": "./dist/front-component/index.d.ts",
-      "import": "./dist/front-component/index.mjs",
-      "require": "./dist/front-component/index.cjs"
+    "./front-component-renderer": {
+      "types": "./dist/front-component-renderer/index.d.ts",
+      "import": "./dist/front-component-renderer/index.mjs",
+      "require": "./dist/front-component-renderer/index.cjs"
+    },
+    "./generated": {
+      "types": "./generated/index.ts",
+      "import": "./generated/index.ts",
+      "require": "./generated/index.ts"
     }
   },
   "license": "AGPL-3.0",
   "dependencies": {
+    "@chakra-ui/react": "^3.33.0",
+    "@emotion/react": "^11.14.0",
     "@genql/cli": "^3.0.3",
+    "@genql/runtime": "^2.10.0",
     "@quilted/threads": "^4.0.1",
     "@remote-dom/core": "^1.10.1",
     "@remote-dom/react": "^1.2.2",
@@ -64,10 +71,9 @@
     "inquirer": "^10.0.0",
     "jsonc-parser": "^3.2.0",
     "lodash.camelcase": "^4.3.0",
+    "preact": "^10.28.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
@@ -75,6 +81,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@mui/material": "^7.3.8",
     "@prettier/sync": "^0.5.2",
     "@storybook/addon-vitest": "^10.1.11",
     "@storybook/react-vite": "^10.1.11",
@@ -90,6 +97,8 @@
     "storybook": "^10.1.11",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "wait-on": "^7.2.0"
   },
@@ -102,8 +111,11 @@
       "ui": [
         "dist/ui/index.d.ts"
       ],
-      "front-component": [
-        "dist/front-component/index.d.ts"
+      "front-component-renderer": [
+        "dist/front-component-renderer/index.d.ts"
+      ],
+      "generated": [
+        "generated/index.ts"
       ]
     }
   }

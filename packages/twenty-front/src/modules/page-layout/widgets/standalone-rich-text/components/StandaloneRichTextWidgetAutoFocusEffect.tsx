@@ -1,9 +1,9 @@
-import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { useEffect } from 'react';
 
 type StandaloneRichTextWidgetAutoFocusEffectProps = {
   shouldFocus: boolean;
-  editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
+  editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   containerElement?: HTMLElement | null;
 };
 

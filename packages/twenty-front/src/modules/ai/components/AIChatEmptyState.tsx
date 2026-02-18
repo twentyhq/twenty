@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { type Editor } from '@tiptap/react';
 
 import { AIChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AIChatSuggestedPrompts';
 
@@ -10,10 +11,14 @@ const StyledEmptyState = styled.div`
   height: 100%;
 `;
 
-export const AIChatEmptyState = () => {
+type AIChatEmptyStateProps = {
+  editor: Editor | null;
+};
+
+export const AIChatEmptyState = ({ editor }: AIChatEmptyStateProps) => {
   return (
     <StyledEmptyState>
-      <AIChatSuggestedPrompts />
+      <AIChatSuggestedPrompts editor={editor} />
     </StyledEmptyState>
   );
 };

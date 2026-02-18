@@ -1,33 +1,58 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  Nullable,
+  ObjectRecord,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
+  type RecordGqlOperationSignature,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { combineFilters, isDefined } from 'twenty-shared/utils';
+import {
+  combineFilters,
+  isDefined,
+  isMetadataGqlOperationSignature,
+  isNonEmptyArray,
+  isRecordGqlOperationSignature,
+} from 'twenty-shared/utils';
+import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
+import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
+import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import {
+  type EventStreamData,
+  type RecordOrMetadataGqlOperationSignature,
+} from 'src/engine/subscriptions/types/event-stream-data.type';
+import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { isMetadataRecordMatchingFilter } from 'src/engine/workspace-event-emitter/utils/is-metadata-record-matching-filter.util';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
 export class WorkspaceEventEmitterService {
@@ -35,16 +60,36 @@ export class WorkspaceEventEmitterService {
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
   ) {}
 
   async publish(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
   ): Promise<void> {
-    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
+    if (!this.isMetadataEventBatch(eventBatch)) {
+      await this.publishToLegacyChannel(eventBatch);
+    }
 
-    for (const eventData of workspaceEventBatch.events) {
+    await this.publishToEventStreams(eventBatch);
+  }
+
+  private isMetadataEventBatch(
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
+  ): eventBatch is MetadataEventBatch {
+    return 'metadataName' in eventBatch;
+  }
+
+  private async publishToLegacyChannel(
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+  ): Promise<void> {
+    const [nameSingular, operation] = eventBatch.name.split('.');
+
+    for (const eventData of eventBatch.events) {
       const { record, updatedFields } = transformEventToWebhookEvent({
-        eventName: workspaceEventBatch.name,
+        eventName: eventBatch.name,
         event: eventData,
       });
 
@@ -56,21 +101,19 @@ export class WorkspaceEventEmitterService {
         ...(updatedFields && { updatedFields }),
       };
 
-      // Publish individual events to legacy channel (onDbEvent)
       await this.subscriptionService.publish({
         channel: SubscriptionChannel.DATABASE_EVENT_CHANNEL,
-        workspaceId: workspaceEventBatch.workspaceId,
+        workspaceId: eventBatch.workspaceId,
         payload: { onDbEvent: event },
       });
     }
-
-    await this.publishToEventStreams(workspaceEventBatch);
   }
 
   private async publishToEventStreams(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
   ): Promise<void> {
-    const workspaceId = workspaceEventBatch.workspaceId;
+    const workspaceId = eventBatch.workspaceId;
+    const isMetadata = this.isMetadataEventBatch(eventBatch);
 
     const activeStreamIds =
       await this.eventStreamService.getActiveStreamIds(workspaceId);
@@ -84,14 +127,11 @@ export class WorkspaceEventEmitterService {
       activeStreamIds,
     );
 
-    const permissionsContext = await this.fetchPermissionsContext(workspaceId);
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
     const streamIdsToRemove: string[] = [];
+
+    const objectRecordStreamContext = !isMetadata
+      ? await this.fetchObjectRecordStreamContext(workspaceId)
+      : undefined;
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -103,13 +143,25 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      await this.processStreamEvents(
-        streamChannelId,
-        streamData,
-        workspaceEventBatch,
-        permissionsContext,
-        flatWorkspaceMemberMaps,
-      );
+      if (isMetadata) {
+        await this.processMetadataStreamEvents(
+          streamChannelId,
+          streamData,
+          eventBatch as MetadataEventBatch,
+        );
+      } else {
+        if (!isDefined(objectRecordStreamContext)) {
+          continue;
+        }
+
+        await this.processObjectRecordStreamEvents(
+          streamChannelId,
+          streamData,
+          eventBatch as WorkspaceEventBatch<ObjectRecordEvent>,
+          objectRecordStreamContext.permissionsContext,
+          objectRecordStreamContext.flatWorkspaceMemberMaps,
+        );
+      }
     }
 
     await this.eventStreamService.removeFromActiveStreams(
@@ -118,7 +170,102 @@ export class WorkspaceEventEmitterService {
     );
   }
 
-  private async processStreamEvents(
+  private async fetchObjectRecordStreamContext(workspaceId: string) {
+    const permissionsContext = await this.fetchPermissionsContext(workspaceId);
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return { permissionsContext, flatWorkspaceMemberMaps };
+  }
+
+  private async processMetadataStreamEvents(
+    streamChannelId: string,
+    streamData: EventStreamData,
+    metadataEventBatch: MetadataEventBatch,
+  ): Promise<void> {
+    const metadataEventsWithQueryIds: {
+      queryIds: string[];
+      metadataEvent: MetadataEvent;
+    }[] = [];
+
+    for (const metadataEvent of metadataEventBatch.events) {
+      const matchedQueryIds = this.getMatchingMetadataQueryIds(
+        streamData.queries,
+        metadataEvent,
+      );
+
+      if (!isNonEmptyArray(matchedQueryIds)) {
+        continue;
+      }
+
+      metadataEventsWithQueryIds.push({
+        queryIds: matchedQueryIds,
+        metadataEvent,
+      });
+    }
+
+    if (!isNonEmptyArray(metadataEventsWithQueryIds)) {
+      return;
+    }
+
+    const payload: EventStreamPayload = {
+      objectRecordEventsWithQueryIds: [],
+      metadataEventsWithQueryIds,
+    };
+
+    await this.subscriptionService.publishToEventStream({
+      workspaceId: metadataEventBatch.workspaceId,
+      eventStreamChannelId: streamChannelId,
+      payload,
+    });
+  }
+
+  private getMatchingMetadataQueryIds(
+    queries: Record<string, RecordOrMetadataGqlOperationSignature>,
+    metadataEvent: MetadataEvent,
+  ): string[] {
+    const properties = metadataEvent.properties as {
+      after?: Record<string, unknown>;
+      before?: Record<string, unknown>;
+    };
+
+    const record = properties?.after ?? properties?.before;
+
+    return Object.entries(queries)
+      .filter(([, operationSignature]) => {
+        if (!isMetadataGqlOperationSignature(operationSignature)) {
+          return false;
+        }
+
+        if (operationSignature.metadataName !== metadataEvent.metadataName) {
+          return false;
+        }
+
+        const queryFilter = (
+          operationSignature.variables as {
+            filter?: Record<string, unknown>;
+          }
+        )?.filter;
+
+        if (!isDefined(queryFilter) || Object.keys(queryFilter).length === 0) {
+          return true;
+        }
+
+        if (!isDefined(record)) {
+          return false;
+        }
+
+        return isMetadataRecordMatchingFilter({
+          record,
+          filter: queryFilter,
+        });
+      })
+      .map(([queryId]) => queryId);
+  }
+
+  private async processObjectRecordStreamEvents(
     streamChannelId: string,
     streamData: EventStreamData,
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
@@ -154,7 +301,7 @@ export class WorkspaceEventEmitterService {
 
     const matchedEvents: {
       queryIds: string[];
-      event: ObjectRecordEvent & { objectNameSingular: string };
+      objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
 
     const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
@@ -195,7 +342,7 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      const matchedQueryIds = this.getMatchingQueryIds(
+      const matchedQueryIds = this.getMatchingObjectRecordQueryIds(
         streamData.queries,
         filteredEvent,
         subscriberRLSFilter,
@@ -209,17 +356,123 @@ export class WorkspaceEventEmitterService {
 
       matchedEvents.push({
         queryIds: matchedQueryIds,
-        event: filteredEvent,
+        objectRecordEvent: filteredEvent,
       });
     }
 
     if (matchedEvents.length > 0) {
+      await this.enrichEventBatchWithNestedRelations({
+        objectMetadata: workspaceEventBatch.objectMetadata,
+        events: matchedEvents.map((e) => e.objectRecordEvent),
+        streamData,
+        permissionsContext,
+        workspaceId: workspaceEventBatch.workspaceId,
+        roleId,
+      });
+
+      const payload: EventStreamPayload = {
+        objectRecordEventsWithQueryIds: matchedEvents,
+        metadataEventsWithQueryIds: [],
+      };
+
       await this.subscriptionService.publishToEventStream({
         workspaceId: workspaceEventBatch.workspaceId,
         eventStreamChannelId: streamChannelId,
-        payload: matchedEvents,
+        payload,
       });
     }
+  }
+
+  private async enrichEventBatchWithNestedRelations({
+    streamData,
+    objectMetadata,
+    events,
+    workspaceId,
+    permissionsContext,
+    roleId,
+  }: {
+    streamData: EventStreamData;
+    objectMetadata: FlatObjectMetadata;
+    events: ObjectRecordEvent[];
+    workspaceId: string;
+    roleId: string;
+    permissionsContext: {
+      flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
+      flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+      flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+      userWorkspaceRoleMap: UserWorkspaceRoleMap;
+      rolesPermissions: ObjectsPermissionsByRoleId;
+    };
+  }) {
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    const allRecords: ObjectRecord[] = [];
+
+    for (const event of events) {
+      if ('before' in event.properties) {
+        const recordBefore = event.properties.before as Nullable<ObjectRecord>;
+
+        if (isDefined(recordBefore)) {
+          allRecords.push(recordBefore);
+        }
+      }
+
+      if ('after' in event.properties) {
+        const recordAfter = event.properties.after as Nullable<ObjectRecord>;
+
+        if (isDefined(recordAfter)) {
+          allRecords.push(recordAfter);
+        }
+      }
+    }
+
+    const rolePermissionConfig: RolePermissionConfig = {
+      intersectionOf: [roleId],
+    };
+
+    const globalWorkspaceDataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica();
+
+    const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
+      depth: 1,
+      flatObjectMetadata: objectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectsPermissions: permissionsContext.rolesPermissions[roleId],
+      onlyUseLabelIdentifierFieldsInRelations: true,
+      recurseIntoJunctionTableRelations: true,
+    });
+
+    const commonQueryParser = new GraphqlQueryParser(
+      objectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    const selectedFieldsResult =
+      commonQueryParser.parseSelectedFields(selectedFields);
+
+    await this.processNestedRelationsHelper.processNestedRelations({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem: objectMetadata,
+      parentObjectRecords: allRecords,
+      authContext: streamData.authContext,
+      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      rolePermissionConfig,
+      workspaceDataSource: globalWorkspaceDataSource,
+      relations: selectedFieldsResult.relations as Record<
+        string,
+        FindOptionsRelations<ObjectLiteral>
+      >,
+      selectedFields: selectedFieldsResult.select,
+    });
   }
 
   private buildSubscriberRLSFilter(
@@ -319,14 +572,8 @@ export class WorkspaceEventEmitterService {
     } as ObjectRecordSubscriptionEvent;
   }
 
-  private getMatchingQueryIds(
-    queries: Record<
-      string,
-      {
-        objectNameSingular: string;
-        variables?: { filter?: RecordGqlOperationFilter };
-      }
-    >,
+  private getMatchingObjectRecordQueryIds(
+    queries: Record<string, RecordOrMetadataGqlOperationSignature>,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
@@ -335,8 +582,12 @@ export class WorkspaceEventEmitterService {
     const matchedQueryIds: string[] = [];
 
     for (const [queryId, operationSignature] of Object.entries(queries)) {
+      if (!isRecordGqlOperationSignature(operationSignature)) {
+        continue;
+      }
+
       if (
-        this.isQueryMatchingEvent(
+        this.isQueryMatchingObjectRecordEvent(
           operationSignature,
           event,
           subscriberRLSFilter,
@@ -351,11 +602,8 @@ export class WorkspaceEventEmitterService {
     return matchedQueryIds;
   }
 
-  private isQueryMatchingEvent(
-    operationSignature: {
-      objectNameSingular: string;
-      variables?: { filter?: RecordGqlOperationFilter };
-    },
+  private isQueryMatchingObjectRecordEvent(
+    operationSignature: RecordGqlOperationSignature,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
@@ -369,6 +617,7 @@ export class WorkspaceEventEmitterService {
       after?: object;
       before?: object;
     };
+
     const record = properties?.after ?? properties?.before;
 
     if (!isDefined(record)) {

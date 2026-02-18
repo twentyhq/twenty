@@ -1,18 +1,18 @@
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowAttachmentChip } from '@/advanced-text-editor/components/WorkflowAttachmentChip';
 import { useUploadWorkflowFile } from '@/advanced-text-editor/hooks/useUploadWorkflowFile';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 
-import { type WorkflowAttachmentType } from '@/workflow/workflow-steps/workflow-actions/email-action/types/WorkflowAttachmentType';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/display';
-import { useTheme } from '@emotion/react';
 
 type WorkflowSendEmailAttachmentsProps = {
-  files: WorkflowAttachmentType[];
-  onChange: (files: WorkflowAttachmentType[]) => void;
+  files: WorkflowAttachment[];
+  onChange: (files: WorkflowAttachment[]) => void;
   label?: string;
 };
 
@@ -92,9 +92,7 @@ export const WorkflowSendEmailAttachments = ({
       filesToUpload.map((file) => uploadWorkflowFile(file)),
     );
 
-    const successfulUploads = uploadedFiles.filter(
-      (file): file is WorkflowAttachmentType => file !== null,
-    );
+    const successfulUploads = uploadedFiles.filter(isDefined);
 
     if (successfulUploads.length > 0) {
       onChange([...files, ...successfulUploads]);
@@ -132,7 +130,7 @@ export const WorkflowSendEmailAttachments = ({
       >
         {files.length > 0 ? (
           <StyledChipsContainer>
-            {files.map((file: WorkflowAttachmentType) => (
+            {files.map((file: WorkflowAttachment) => (
               <WorkflowAttachmentChip
                 key={file.id}
                 file={file}

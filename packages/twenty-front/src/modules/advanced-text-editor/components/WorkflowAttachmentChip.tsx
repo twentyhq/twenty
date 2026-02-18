@@ -1,14 +1,14 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
-import { type WorkflowAttachmentType } from '@/workflow/workflow-steps/workflow-actions/email-action/types/WorkflowAttachmentType';
+import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { AvatarChip } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/display';
 
 type WorkflowAttachmentChipProps = {
-  file: WorkflowAttachmentType;
+  file: WorkflowAttachment;
   onRemove: () => void;
   readonly?: boolean;
 };

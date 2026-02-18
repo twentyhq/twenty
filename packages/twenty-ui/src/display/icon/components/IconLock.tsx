@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import IconLockRaw from '@assets/icons/lock.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-export type IconLockCustomProps = Pick<IconComponentProps, 'size'>;
+type IconLockCustomProps = Pick<IconComponentProps, 'size'>;
 
 export const IconLockCustom = (props: IconLockCustomProps) => {
   const theme = useTheme();

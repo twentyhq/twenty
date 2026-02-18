@@ -114,7 +114,7 @@ export class FrontComponentService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating front component',
@@ -129,10 +129,14 @@ export class FrontComponentService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatFrontComponentToCreate.id,
-      flatEntityMaps: recomputedFlatFrontComponentMaps,
-    });
+    const createdFlatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: flatFrontComponentToCreate.id,
+        flatEntityMaps: recomputedFlatFrontComponentMaps,
+      },
+    );
+
+    return createdFlatFrontComponent;
   }
 
   async updateOne({
@@ -185,7 +189,7 @@ export class FrontComponentService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating front component',
@@ -200,10 +204,14 @@ export class FrontComponentService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: id,
-      flatEntityMaps: recomputedFlatFrontComponentMaps,
-    });
+    const updatedFlatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: id,
+        flatEntityMaps: recomputedFlatFrontComponentMaps,
+      },
+    );
+
+    return updatedFlatFrontComponent;
   }
 
   async destroyOne({
@@ -262,7 +270,7 @@ export class FrontComponentService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying front component',

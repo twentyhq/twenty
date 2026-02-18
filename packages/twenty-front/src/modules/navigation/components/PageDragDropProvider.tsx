@@ -12,18 +12,21 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { useHandleFavoriteDragAndDrop } from '@/favorites/hooks/useHandleFavoriteDragAndDrop';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/hooks/useHandleAddToNavigationDrop';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
+import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
 import { getDropTargetIdFromDestination } from '@/navigation-menu-item/utils/getDropTargetIdFromDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-shared/utils';
 
 type PageDragDropProviderProps = {
   children: ReactNode;
@@ -45,7 +48,12 @@ export const PageDragDropProvider = ({
   const [forbiddenDropTargetId, setForbiddenDropTargetId] = useState<
     string | null
   >(null);
+  const [
+    addToNavigationFallbackDestination,
+    setAddToNavigationFallbackDestination,
+  ] = useState<{ droppableId: string; index: number } | null>(null);
 
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
   const { handleNavigationMenuItemDragAndDrop } =
     useHandleNavigationMenuItemDragAndDrop();
@@ -53,48 +61,78 @@ export const PageDragDropProvider = ({
     useHandleWorkspaceNavigationMenuItemDragAndDrop();
   const { handleFavoriteDragAndDrop } = useHandleFavoriteDragAndDrop();
 
+  const orphanItemCount = workspaceNavigationMenuItems.filter(
+    (item) => !isDefined(item.folderId),
+  ).length;
+
   const handleDragStart = (dragStart: DragStart) => {
     setIsDragging(true);
     setSourceDroppableId(dragStart.source.droppableId);
+    if (dragStart.source.droppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+      const defaultDestination = {
+        droppableId:
+          NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS,
+        index: orphanItemCount,
+      };
+      setAddToNavigationFallbackDestination(defaultDestination);
+      setActiveDropTargetId(getDropTargetIdFromDestination(defaultDestination));
+    }
   };
 
   const handleDragUpdate = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ((update: Parameters<OnDragUpdateResponder>[0]) => {
         const { source, destination } = update;
         if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
           return;
         }
-        if (!destination || !isWorkspaceDroppableId(destination.droppableId)) {
-          setActiveDropTargetId(null);
-          setForbiddenDropTargetId(null);
-          return;
-        }
-        const dropTargetId = getDropTargetIdFromDestination(destination);
-        setActiveDropTargetId(dropTargetId);
+        if (
+          destination !== null &&
+          isWorkspaceDroppableId(destination.droppableId)
+        ) {
+          setAddToNavigationFallbackDestination(destination);
+          const dropTargetId = getDropTargetIdFromDestination(destination);
+          setActiveDropTargetId(dropTargetId);
 
-        const payload =
-          getSnapshotValue(snapshot, addToNavPayloadRegistryState).get(
-            update.draggableId,
-          ) ?? null;
-        const folderId = validateAndExtractWorkspaceFolderId(
-          destination.droppableId,
-        );
-        const isFolderOverFolder =
-          payload?.type === 'folder' && folderId !== null;
-        setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
+          const payload =
+            jotaiStore
+              .get(addToNavPayloadRegistryStateV2.atom)
+              .get(update.draggableId) ?? null;
+          const folderId = validateAndExtractWorkspaceFolderId(
+            destination.droppableId,
+          );
+          const isFolderOverFolder =
+            payload?.type === 'folder' && folderId !== null;
+          setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
+        } else {
+          setForbiddenDropTargetId(null);
+          const fallback = addToNavigationFallbackDestination;
+          setActiveDropTargetId(
+            fallback ? getDropTargetIdFromDestination(fallback) : null,
+          );
+        }
       }) as OnDragUpdateResponder,
-    [],
+    [addToNavigationFallbackDestination],
   );
 
   const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    const isAddToNavigationSource =
+      result.source.droppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
+    const effectiveResult: DropResult =
+      isAddToNavigationSource &&
+      !result.destination &&
+      addToNavigationFallbackDestination
+        ? { ...result, destination: addToNavigationFallbackDestination }
+        : result;
+
     setIsDragging(false);
     setSourceDroppableId(null);
     setActiveDropTargetId(null);
     setForbiddenDropTargetId(null);
+    setAddToNavigationFallbackDestination(null);
 
-    if (result.source.droppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
-      handleAddToNavigationDrop(result, provided);
+    if (isAddToNavigationSource) {
+      handleAddToNavigationDrop(effectiveResult, provided);
       return;
     }
 
@@ -122,6 +160,7 @@ export const PageDragDropProvider = ({
               setActiveDropTargetId,
               forbiddenDropTargetId,
               setForbiddenDropTargetId,
+              addToNavigationFallbackDestination,
             }}
           >
             <DragDropContext

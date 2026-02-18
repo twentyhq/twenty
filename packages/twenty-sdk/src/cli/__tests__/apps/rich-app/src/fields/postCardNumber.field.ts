@@ -1,5 +1,5 @@
 import { defineField, FieldType } from '@/sdk';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/post-card.object';
 
 export default defineField({
   objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
