@@ -7,7 +7,11 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import {
+  escapeIdentifier,
+  escapeLiteral,
+  removeSqlDDLInjection,
+} from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type SerializeDefaultValueArgs = {
   defaultValue?: FieldMetadataDefaultValueForAnyType;
@@ -23,15 +27,10 @@ export const serializeDefaultValue = ({
   tableName,
   columnName,
 }: SerializeDefaultValueArgs) => {
-  const safeSchemaName = removeSqlDDLInjection(schemaName);
-  const safeTableName = removeSqlDDLInjection(tableName);
-  const safeColumnName = removeSqlDDLInjection(columnName);
-
   if (defaultValue === undefined || defaultValue === null) {
     return 'NULL';
   }
 
-  // Function default values
   if (isFunctionDefaultValue(defaultValue)) {
     const serializedTypeDefaultValue =
       serializeFunctionDefaultValue(defaultValue);
@@ -46,13 +45,16 @@ export const serializeDefaultValue = ({
     return serializedTypeDefaultValue;
   }
 
+  // Enum types need a schema-qualified cast; others use the column type directly.
+  // Enum name is built from sanitized table+column (removeSqlDDLInjection strips
+  // to [a-zA-Z0-9_]) to match computePostgresEnumName.
   const castSuffix =
     columnType === 'enum'
-      ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
+      ? `::${escapeIdentifier(schemaName)}.${escapeIdentifier(`${removeSqlDDLInjection(tableName)}_${removeSqlDDLInjection(columnName)}_enum`)}`
       : `::${columnType}`;
 
-  const sanitizeAndAddCastPrefix = (defaultValue: string) =>
-    `'${removeSqlDDLInjection(defaultValue)}'` + castSuffix;
+  const escapeAndCast = (rawValue: string) =>
+    escapeLiteral(rawValue) + castSuffix;
 
   switch (typeof defaultValue) {
     case 'string': {
@@ -63,27 +65,29 @@ export const serializeDefaultValue = ({
         );
       }
 
-      return sanitizeAndAddCastPrefix(defaultValue);
+      // Strip the surrounding single quotes then properly escape the inner value
+      const innerValue = defaultValue.slice(1, -1);
+
+      return escapeAndCast(innerValue);
     }
     case 'boolean':
     case 'number': {
-      return sanitizeAndAddCastPrefix(`${defaultValue}`);
+      return escapeAndCast(`${defaultValue}`);
     }
     case 'object': {
       if (defaultValue instanceof Date) {
-        return sanitizeAndAddCastPrefix(`'${defaultValue.toISOString()}'`);
+        return escapeAndCast(defaultValue.toISOString());
       }
 
       if (Array.isArray(defaultValue)) {
         const arrayValues = defaultValue
-          .map((val) => `'${removeSqlDDLInjection(val)}'`)
+          .map((val) => escapeLiteral(String(val)))
           .join(',');
 
         return `ARRAY[${arrayValues}]${castSuffix}[]`;
       }
 
-      // Default value for objects won't work with sanitization here
-      return sanitizeAndAddCastPrefix(`'${JSON.stringify(defaultValue)}'`);
+      return escapeAndCast(JSON.stringify(defaultValue));
     }
     default: {
       throw new FieldMetadataException(
