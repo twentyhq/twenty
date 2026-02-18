@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { IsInt, IsNotEmpty, Min } from 'class-validator';
-
 import { type GridPosition } from 'twenty-shared/types';
 
 @InputType('GridPositionInput')

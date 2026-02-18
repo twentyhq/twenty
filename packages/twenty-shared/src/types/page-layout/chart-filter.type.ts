@@ -1,4 +1,5 @@
-import { SerializedRelation } from "@/types/SerializedRelation.type";
+import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSerializedRelationProperties.type';
+import { type SerializedRelation } from '../SerializedRelation.type';
 
 export type ChartRecordFilter = {
   id: string;
@@ -20,3 +21,6 @@ export type ChartFilter = {
   recordFilters?: ChartRecordFilter[];
   recordFilterGroups?: ChartRecordFilterGroup[];
 };
+
+export type UniversalChartFilter =
+  FormatRecordSerializedRelationProperties<ChartFilter>;

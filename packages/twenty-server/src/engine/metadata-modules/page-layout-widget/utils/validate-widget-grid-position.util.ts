@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-
 import { type GridPosition } from 'twenty-shared/types';
 
 import { WIDGET_GRID_MAX_COLUMNS } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-grid-max-columns.constant';
