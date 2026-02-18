@@ -1,5 +1,15 @@
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
 export { navigate, setNavigate } from './functions/navigate';
+export {
+  openConfirmationModal,
+  setOpenConfirmationModal,
+} from './functions/openConfirmationModal';
+export type { OpenConfirmationModalParams } from './functions/openConfirmationModal';
+export {
+  openSidePanelPage,
+  setOpenSidePanelPage,
+} from './functions/openSidePanelPage';
+export type { OpenSidePanelPageParams } from './functions/openSidePanelPage';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';

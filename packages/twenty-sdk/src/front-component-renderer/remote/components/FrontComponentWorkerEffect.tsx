@@ -42,8 +42,7 @@ export const FrontComponentWorkerEffect = ({
 
     worker.onerror = (event: ErrorEvent) => {
       const workerError =
-        event.error ??
-        new Error(event.message || 'Unknown worker error');
+        event.error ?? new Error(event.message || 'Unknown worker error');
 
       console.error('[FrontComponentRenderer] Worker error:', workerError);
       setError(workerError);
@@ -53,6 +52,14 @@ export const FrontComponentWorkerEffect = ({
       {
         navigate: (...args) =>
           frontComponentHostCommunicationApiRef.current.navigate(...args),
+        openConfirmationModal: (...args) =>
+          frontComponentHostCommunicationApiRef.current.openConfirmationModal(
+            ...args,
+          ),
+        openSidePanelPage: (...args) =>
+          frontComponentHostCommunicationApiRef.current.openSidePanelPage(
+            ...args,
+          ),
       };
 
     const thread = new ThreadWebWorker<

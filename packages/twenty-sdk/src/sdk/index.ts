@@ -53,13 +53,27 @@ export { PermissionFlag } from './roles/permission-flag-type';
 export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
 
+// Action components for front components
+export { Action } from './action';
+export type { ActionProps } from './action';
+export { ActionLink } from './action';
+export type { ActionLinkProps } from './action';
+export { ActionModal } from './action';
+export type { ActionModalProps } from './action';
+export { ActionOpenSidePanelPage } from './action';
+export type { ActionOpenSidePanelPageProps } from './action';
+
 // Front Component API exports
 export {
   navigate,
+  openConfirmationModal,
+  openSidePanelPage,
   useFrontComponentExecutionContext,
   useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
+export type { OpenConfirmationModalParams } from './front-component-api';
+export type { OpenSidePanelPageParams } from './front-component-api';
 
 // Front Component Common exports
 export {

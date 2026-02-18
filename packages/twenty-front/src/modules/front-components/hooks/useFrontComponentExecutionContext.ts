@@ -29,6 +29,21 @@ export const useFrontComponentExecutionContext = (): {
     );
   };
 
+  // TODO: replace with Twenty's ConfirmationModal once wired to the modal system
+  const openConfirmationModal: FrontComponentHostCommunicationApi['openConfirmationModal'] =
+    async (params) => {
+      return window.confirm(`${params.title}\n\n${params.subtitle}`);
+    };
+
+  // TODO: wire to navigateCommandMenu once page/icon types are resolved
+  const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
+    async (params) => {
+      console.warn(
+        '[FrontComponent] openSidePanelPage not yet fully implemented',
+        params,
+      );
+    };
+
   const executionContext: FrontComponentExecutionContext = {
     userId: currentUser?.id ?? null,
   };
@@ -36,6 +51,8 @@ export const useFrontComponentExecutionContext = (): {
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
+      openConfirmationModal,
+      openSidePanelPage,
     };
 
   return {
