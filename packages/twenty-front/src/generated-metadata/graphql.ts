@@ -1387,6 +1387,24 @@ export type EmailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type EnterpriseLicenseInfoDto = {
+  __typename?: 'EnterpriseLicenseInfoDTO';
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  isValid: Scalars['Boolean'];
+  licensee?: Maybe<Scalars['String']>;
+  subscriptionId?: Maybe<Scalars['String']>;
+};
+
+export type EnterpriseSubscriptionStatusDto = {
+  __typename?: 'EnterpriseSubscriptionStatusDTO';
+  cancelAt?: Maybe<Scalars['DateTime']>;
+  currentPeriodEnd?: Maybe<Scalars['DateTime']>;
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  isCancellationScheduled: Scalars['Boolean'];
+  licensee?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
+};
+
 export type EventLogDateRangeInput = {
   end?: InputMaybe<Scalars['DateTime']>;
   start?: InputMaybe<Scalars['DateTime']>;
@@ -2166,6 +2184,7 @@ export type Mutation = {
   runEvaluationInput: AgentTurn;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
+  setEnterpriseKey: EnterpriseLicenseInfoDto;
   setMeteredSubscriptionPrice: BillingUpdateOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -2778,6 +2797,11 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
 
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
+};
+
+
+export type MutationSetEnterpriseKeyArgs = {
+  enterpriseKey: Scalars['String'];
 };
 
 
@@ -3531,6 +3555,9 @@ export type Query = {
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
   currentWorkspace: Workspace;
+  enterpriseCheckoutSession?: Maybe<Scalars['String']>;
+  enterprisePortalSession?: Maybe<Scalars['String']>;
+  enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
@@ -3653,6 +3680,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 export type QueryCommandMenuItemArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryEnterprisePortalSessionArgs = {
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -6072,6 +6104,30 @@ export type GetEmailingDomainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetEmailingDomainsQuery = { __typename?: 'Query', getEmailingDomains: Array<{ __typename?: 'EmailingDomain', id: string, domain: string, driver: EmailingDomainDriver, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null }> };
+
+export type SetEnterpriseKeyMutationVariables = Exact<{
+  enterpriseKey: Scalars['String'];
+}>;
+
+
+export type SetEnterpriseKeyMutation = { __typename?: 'Mutation', setEnterpriseKey: { __typename?: 'EnterpriseLicenseInfoDTO', isValid: boolean, licensee?: string | null, expiresAt?: string | null, subscriptionId?: string | null } };
+
+export type EnterpriseCheckoutSessionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EnterpriseCheckoutSessionQuery = { __typename?: 'Query', enterpriseCheckoutSession?: string | null };
+
+export type EnterprisePortalSessionQueryVariables = Exact<{
+  returnUrlPath?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EnterprisePortalSessionQuery = { __typename?: 'Query', enterprisePortalSession?: string | null };
+
+export type EnterpriseSubscriptionStatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EnterpriseSubscriptionStatusQuery = { __typename?: 'Query', enterpriseSubscriptionStatus?: { __typename?: 'EnterpriseSubscriptionStatusDTO', status: string, licensee?: string | null, expiresAt?: string | null, cancelAt?: string | null, currentPeriodEnd?: string | null, isCancellationScheduled: boolean } | null };
 
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
@@ -12735,6 +12791,146 @@ export function useGetEmailingDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetEmailingDomainsQueryHookResult = ReturnType<typeof useGetEmailingDomainsQuery>;
 export type GetEmailingDomainsLazyQueryHookResult = ReturnType<typeof useGetEmailingDomainsLazyQuery>;
 export type GetEmailingDomainsQueryResult = Apollo.QueryResult<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
+export const SetEnterpriseKeyDocument = gql`
+    mutation SetEnterpriseKey($enterpriseKey: String!) {
+  setEnterpriseKey(enterpriseKey: $enterpriseKey) {
+    isValid
+    licensee
+    expiresAt
+    subscriptionId
+  }
+}
+    `;
+export type SetEnterpriseKeyMutationFn = Apollo.MutationFunction<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>;
+
+/**
+ * __useSetEnterpriseKeyMutation__
+ *
+ * To run a mutation, you first call `useSetEnterpriseKeyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetEnterpriseKeyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setEnterpriseKeyMutation, { data, loading, error }] = useSetEnterpriseKeyMutation({
+ *   variables: {
+ *      enterpriseKey: // value for 'enterpriseKey'
+ *   },
+ * });
+ */
+export function useSetEnterpriseKeyMutation(baseOptions?: Apollo.MutationHookOptions<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>(SetEnterpriseKeyDocument, options);
+      }
+export type SetEnterpriseKeyMutationHookResult = ReturnType<typeof useSetEnterpriseKeyMutation>;
+export type SetEnterpriseKeyMutationResult = Apollo.MutationResult<SetEnterpriseKeyMutation>;
+export type SetEnterpriseKeyMutationOptions = Apollo.BaseMutationOptions<SetEnterpriseKeyMutation, SetEnterpriseKeyMutationVariables>;
+export const EnterpriseCheckoutSessionDocument = gql`
+    query EnterpriseCheckoutSession {
+  enterpriseCheckoutSession
+}
+    `;
+
+/**
+ * __useEnterpriseCheckoutSessionQuery__
+ *
+ * To run a query within a React component, call `useEnterpriseCheckoutSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterpriseCheckoutSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterpriseCheckoutSessionQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEnterpriseCheckoutSessionQuery(baseOptions?: Apollo.QueryHookOptions<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>(EnterpriseCheckoutSessionDocument, options);
+      }
+export function useEnterpriseCheckoutSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>(EnterpriseCheckoutSessionDocument, options);
+        }
+export type EnterpriseCheckoutSessionQueryHookResult = ReturnType<typeof useEnterpriseCheckoutSessionQuery>;
+export type EnterpriseCheckoutSessionLazyQueryHookResult = ReturnType<typeof useEnterpriseCheckoutSessionLazyQuery>;
+export type EnterpriseCheckoutSessionQueryResult = Apollo.QueryResult<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>;
+export const EnterprisePortalSessionDocument = gql`
+    query EnterprisePortalSession($returnUrlPath: String) {
+  enterprisePortalSession(returnUrlPath: $returnUrlPath)
+}
+    `;
+
+/**
+ * __useEnterprisePortalSessionQuery__
+ *
+ * To run a query within a React component, call `useEnterprisePortalSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterprisePortalSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterprisePortalSessionQuery({
+ *   variables: {
+ *      returnUrlPath: // value for 'returnUrlPath'
+ *   },
+ * });
+ */
+export function useEnterprisePortalSessionQuery(baseOptions?: Apollo.QueryHookOptions<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>(EnterprisePortalSessionDocument, options);
+      }
+export function useEnterprisePortalSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>(EnterprisePortalSessionDocument, options);
+        }
+export type EnterprisePortalSessionQueryHookResult = ReturnType<typeof useEnterprisePortalSessionQuery>;
+export type EnterprisePortalSessionLazyQueryHookResult = ReturnType<typeof useEnterprisePortalSessionLazyQuery>;
+export type EnterprisePortalSessionQueryResult = Apollo.QueryResult<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>;
+export const EnterpriseSubscriptionStatusDocument = gql`
+    query EnterpriseSubscriptionStatus {
+  enterpriseSubscriptionStatus {
+    status
+    licensee
+    expiresAt
+    cancelAt
+    currentPeriodEnd
+    isCancellationScheduled
+  }
+}
+    `;
+
+/**
+ * __useEnterpriseSubscriptionStatusQuery__
+ *
+ * To run a query within a React component, call `useEnterpriseSubscriptionStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEnterpriseSubscriptionStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEnterpriseSubscriptionStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEnterpriseSubscriptionStatusQuery(baseOptions?: Apollo.QueryHookOptions<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>(EnterpriseSubscriptionStatusDocument, options);
+      }
+export function useEnterpriseSubscriptionStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>(EnterpriseSubscriptionStatusDocument, options);
+        }
+export type EnterpriseSubscriptionStatusQueryHookResult = ReturnType<typeof useEnterpriseSubscriptionStatusQuery>;
+export type EnterpriseSubscriptionStatusLazyQueryHookResult = ReturnType<typeof useEnterpriseSubscriptionStatusLazyQuery>;
+export type EnterpriseSubscriptionStatusQueryResult = Apollo.QueryResult<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>;
 export const UpdateLabPublicFeatureFlagDocument = gql`
     mutation UpdateLabPublicFeatureFlag($input: UpdateLabPublicFeatureFlagInput!) {
   updateLabPublicFeatureFlag(input: $input) {

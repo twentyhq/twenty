@@ -157,6 +157,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
+          label: t`Enterprise`,
+          path: SettingsPath.Enterprise,
+          Icon: IconKey,
+          isHidden:
+            isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
           label: t`APIs & Webhooks`,
           path: SettingsPath.ApiWebhooks,
           Icon: IconApi,
