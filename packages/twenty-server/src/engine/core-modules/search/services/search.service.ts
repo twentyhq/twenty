@@ -236,9 +236,9 @@ export class SearchService {
           );
 
           // Fallback: LIKE search on label columns
-          labelColumns.forEach((column, _) => {
+          labelColumns.forEach((column) => {
             qb.orWhere(`"${column}" ILIKE :likeSearchInput`, {
-              likeSearchInput: `%${searchInput.replace(/[%_\\]/g, '\\$&')}%`,
+              likeSearchInput: `%${searchInput}%`,
             });
           });
         }),
