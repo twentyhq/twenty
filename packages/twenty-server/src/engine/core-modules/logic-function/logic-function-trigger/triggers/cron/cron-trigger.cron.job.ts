@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -41,41 +41,47 @@ export class CronTriggerCronJob {
       select: ['id'],
     });
 
+    const activeWorkspaceIds = activeWorkspaces.map(
+      (workspace) => workspace.id,
+    );
+
+    if (activeWorkspaceIds.length === 0) {
+      return;
+    }
+
+    const logicFunctionsWithCronTrigger =
+      await this.logicFunctionRepository.find({
+        where: {
+          workspaceId: In(activeWorkspaceIds),
+          cronTriggerSettings: Not(IsNull()),
+        },
+        select: ['id', 'cronTriggerSettings', 'workspaceId'],
+      });
+
     const now = new Date();
 
-    for (const activeWorkspace of activeWorkspaces) {
-      const logicFunctionsWithCronTrigger =
-        await this.logicFunctionRepository.find({
-          where: {
-            workspaceId: activeWorkspace.id,
-            cronTriggerSettings: Not(IsNull()),
-          },
-          select: ['id', 'cronTriggerSettings', 'workspaceId'],
-        });
+    for (const logicFunction of logicFunctionsWithCronTrigger) {
+      const cronSettings = logicFunction.cronTriggerSettings;
 
-      for (const logicFunction of logicFunctionsWithCronTrigger) {
-        const cronSettings = logicFunction.cronTriggerSettings;
-
-        if (!isDefined(cronSettings?.pattern)) {
-          continue;
-        }
-
-        if (!shouldRunNow(cronSettings.pattern, now)) {
-          continue;
-        }
-
-        await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-          LogicFunctionTriggerJob.name,
-          [
-            {
-              logicFunctionId: logicFunction.id,
-              workspaceId: logicFunction.workspaceId,
-              payload: {},
-            },
-          ],
-          { retryLimit: 3 },
-        );
+      if (!isDefined(cronSettings?.pattern)) {
+        continue;
       }
+
+      if (!shouldRunNow(cronSettings.pattern, now)) {
+        continue;
+      }
+
+      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+        LogicFunctionTriggerJob.name,
+        [
+          {
+            logicFunctionId: logicFunction.id,
+            workspaceId: logicFunction.workspaceId,
+            payload: {},
+          },
+        ],
+        { retryLimit: 3 },
+      );
     }
   }
 }
