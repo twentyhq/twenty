@@ -7,6 +7,7 @@ import {
   ObjectRecord,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
+  type RecordGqlOperationSignature,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
@@ -125,10 +126,6 @@ export class WorkspaceEventEmitterService {
       activeStreamIds,
     );
 
-    const objectRecordContext = isMetadata
-      ? undefined
-      : await this.fetchObjectRecordStreamContext(workspaceId);
-
     const streamIdsToRemove: string[] = [];
 
     for (const [streamChannelId, streamData] of streamsData) {
@@ -147,13 +144,12 @@ export class WorkspaceEventEmitterService {
           streamData,
           eventBatch as MetadataEventBatch,
         );
-      } else if (isDefined(objectRecordContext)) {
+      } else {
         await this.processObjectRecordStreamEvents(
           streamChannelId,
           streamData,
           eventBatch as WorkspaceEventBatch<ObjectRecordEvent>,
-          objectRecordContext.permissionsContext,
-          objectRecordContext.flatWorkspaceMemberMaps,
+          workspaceId,
         );
       }
     }
@@ -263,15 +259,11 @@ export class WorkspaceEventEmitterService {
     streamChannelId: string,
     streamData: EventStreamData,
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
-    permissionsContext: {
-      flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
-      flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
-      flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-      userWorkspaceRoleMap: Record<string, string>;
-      rolesPermissions: ObjectsPermissionsByRoleId;
-    },
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
+    workspaceId: string,
   ): Promise<void> {
+    const { permissionsContext, flatWorkspaceMemberMaps } =
+      await this.fetchObjectRecordStreamContext(workspaceId);
+
     const { userWorkspaceId } = streamData.authContext;
 
     if (!isDefined(userWorkspaceId)) {
@@ -336,7 +328,7 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      const matchedQueryIds = this.getMatchingQueryIds(
+      const matchedQueryIds = this.getMatchingObjectRecordQueryIds(
         streamData.queries,
         filteredEvent,
         subscriberRLSFilter,
@@ -566,7 +558,7 @@ export class WorkspaceEventEmitterService {
     } as ObjectRecordSubscriptionEvent;
   }
 
-  private getMatchingQueryIds(
+  private getMatchingObjectRecordQueryIds(
     queries: Record<string, RecordOrMetadataGqlOperationSignature>,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
@@ -576,8 +568,12 @@ export class WorkspaceEventEmitterService {
     const matchedQueryIds: string[] = [];
 
     for (const [queryId, operationSignature] of Object.entries(queries)) {
+      if (!isRecordGqlOperationSignature(operationSignature)) {
+        continue;
+      }
+
       if (
-        this.isQueryMatchingEvent(
+        this.isQueryMatchingObjectRecordEvent(
           operationSignature,
           event,
           subscriberRLSFilter,
@@ -592,17 +588,13 @@ export class WorkspaceEventEmitterService {
     return matchedQueryIds;
   }
 
-  private isQueryMatchingEvent(
-    operationSignature: RecordOrMetadataGqlOperationSignature,
+  private isQueryMatchingObjectRecordEvent(
+    operationSignature: RecordGqlOperationSignature,
     event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): boolean {
-    if (!isRecordGqlOperationSignature(operationSignature)) {
-      return false;
-    }
-
     if (operationSignature.objectNameSingular !== event.objectNameSingular) {
       return false;
     }
