@@ -1,7 +1,9 @@
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -15,6 +17,7 @@ import { RecordFieldListComponentInstanceContext } from '@/object-record/record-
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -67,6 +70,26 @@ export const RecordFieldList = ({
     recordFieldListHoverPositionComponentState,
     instanceId,
   );
+
+  const isJunctionFieldForbidden = (fieldMetadataItem: FieldMetadataItem) => {
+    if (!isJunctionRelationField(fieldMetadataItem)) {
+      return false;
+    }
+
+    const relationObjectMetadataId =
+      fieldMetadataItem.relation?.targetObjectMetadata.id;
+
+    if (!relationObjectMetadataId) {
+      return false;
+    }
+
+    const relationObjectPermissions = getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      relationObjectMetadataId,
+    );
+
+    return !relationObjectPermissions.canReadObjectRecords;
+  };
 
   const handleMouseEnter = (index: number) => {
     setRecordFieldListHoverPosition(index);
@@ -187,6 +210,7 @@ export const RecordFieldList = ({
                     fieldName: fieldMetadataItem.name,
                     prefix: instanceId,
                   })}`,
+                  isForbidden: isJunctionFieldForbidden(fieldMetadataItem),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
