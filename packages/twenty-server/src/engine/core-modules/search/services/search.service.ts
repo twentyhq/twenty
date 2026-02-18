@@ -26,15 +26,15 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -104,6 +104,7 @@ export class SearchService {
                   flatFieldMetadataMaps,
                   searchTerms: formatSearchTerms(searchInput, 'and'),
                   searchTermsOr: formatSearchTerms(searchInput, 'or'),
+                  searchInput,
                   limit: limit as number,
                   filter: filter ?? ({} as ObjectRecordFilter),
                   after,
@@ -155,6 +156,7 @@ export class SearchService {
     flatFieldMetadataMaps,
     searchTerms,
     searchTermsOr,
+    searchInput,
     limit,
     filter,
     after,
@@ -164,6 +166,7 @@ export class SearchService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchTerms: string;
     searchTermsOr: string;
+    searchInput: string;
     limit: number;
     filter: ObjectRecordFilterInput;
     after?: string;
@@ -217,8 +220,14 @@ export class SearchService {
       .addSelect(tsRankExpr, 'tsRank');
 
     if (isNonEmptyString(searchTerms)) {
+      const labelColumns = this.getLabelIdentifierColumns(
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      );
+
       queryBuilder.andWhere(
         new Brackets((qb) => {
+          // Full-text search on search vector
           qb.where(
             `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', public.unaccent_immutable(:searchTerms))`,
             { searchTerms },
@@ -226,6 +235,13 @@ export class SearchService {
             `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', public.unaccent_immutable(:searchTermsOr))`,
             { searchTermsOr },
           );
+
+          // Fallback: LIKE search on label columns
+          labelColumns.forEach((column, _) => {
+            qb.orWhere(`"${column}" ILIKE :likeSearchInput`, {
+              likeSearchInput: `%${searchInput}%`,
+            });
+          });
         }),
       );
     } else {
