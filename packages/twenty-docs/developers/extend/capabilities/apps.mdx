@@ -26,7 +26,7 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 Create a new app using the official scaffolder, then authenticate and start developing:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -39,6 +39,19 @@ yarn twenty auth:login
 
 # Start dev mode: automatically syncs local changes to your workspace
 yarn twenty app:dev
+```
+
+The scaffolder supports three modes for controlling which example files are included:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interactive: select which examples to include
+npx create-twenty-app@latest my-app --interactive
 ```
 
 From here you can:
@@ -72,9 +85,9 @@ When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
 - Copies a minimal base application into `my-twenty-app/`
 - Adds a local `twenty-sdk` dependency and Yarn 4 configuration
 - Creates config files and scripts wired to the `twenty` CLI
-- Generates a default application config, a default function role, and a post-install function
+- Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
 
-A freshly scaffolded app looks like this:
+A freshly scaffolded app with the default `--exhaustive` mode looks like this:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -93,12 +106,18 @@ my-twenty-app/
   ├── application-config.ts           # Required - main application configuration
   ├── roles/
   │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
   │   ├── hello-world.ts                # Example logic function
   │   └── post-install.ts               # Post-install logic function
   └── front-components/
       └── hello-world.tsx               # Example front component
 ```
+
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
 
 At a high level:
 

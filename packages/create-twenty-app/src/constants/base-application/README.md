@@ -30,7 +30,7 @@ yarn twenty auth:list      # List all configured workspaces
 
 # Application
 yarn twenty app:dev        # Start dev mode (watch, build, sync, and auto-generate typed client)
-yarn twenty entity:add     # Add a new entity (function, front-component, object, role)
+yarn twenty entity:add     # Add a new entity (function, front-component, object, field, role)
 yarn twenty function:logs  # Stream function logs
 yarn twenty function:execute  # Execute a function with JSON payload
 yarn twenty app:uninstall  # Uninstall app from workspace
