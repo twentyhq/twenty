@@ -1,14 +1,15 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import type { ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
 
-import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorLink';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 
 const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
   align-items: center;
@@ -74,23 +75,23 @@ export const AddToNavigationDragHandle = ({
   isHovered,
 }: AddToNavigationDragHandleProps) => {
   const theme = useTheme();
-  const iconColorFromPayload =
-    payload.type === 'object' ? payload.iconColor : undefined;
-  const iconStyle =
-    payload.type === NavigationMenuItemType.RECORD
-      ? null
-      : getNavigationMenuItemIconStyleFromColor(
-          theme,
-          iconColorFromPayload ?? undefined,
-        );
-  const hasBackgroundColor = !!iconStyle && !isHovered;
+  const effectiveColor =
+    payload.type === 'object' && isNonEmptyString(payload.iconColor)
+      ? payload.iconColor
+      : payload.type === 'folder'
+        ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
+        : payload.type === 'link'
+          ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK
+          : undefined;
+  const hasBackgroundColor =
+    payload.type !== NavigationMenuItemType.RECORD &&
+    isDefined(effectiveColor) &&
+    !isHovered;
   const showCustomContentWithoutWrapper = isDefined(customIconContent);
 
   return (
     <StyledIconSlot
-      $hasFixedSize={
-        !!iconStyle?.backgroundColor || showCustomContentWithoutWrapper
-      }
+      $hasFixedSize={hasBackgroundColor || showCustomContentWithoutWrapper}
     >
       {isHovered ? (
         <IconGripVertical
@@ -100,19 +101,8 @@ export const AddToNavigationDragHandle = ({
         />
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
-      ) : hasBackgroundColor && icon && !isDefined(customIconContent) ? (
-        <NavigationMenuItemStyleIcon Icon={icon} color={iconColorFromPayload} />
-      ) : hasBackgroundColor && iconStyle ? (
-        <StyledNavigationMenuItemIconContainer
-          $backgroundColor={iconStyle.backgroundColor}
-          $borderColor={iconStyle.borderColor}
-        >
-          <AddToNavigationDragHandleIcon
-            icon={icon}
-            customIconContent={customIconContent}
-            iconColor={iconStyle.iconColor}
-          />
-        </StyledNavigationMenuItemIconContainer>
+      ) : hasBackgroundColor && icon ? (
+        <NavigationMenuItemStyleIcon Icon={icon} color={effectiveColor} />
       ) : (
         <AddToNavigationDragHandleIcon
           icon={icon}

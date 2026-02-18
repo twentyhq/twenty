@@ -23,6 +23,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationMenuItemDroppable } from '@/navigation-menu-item/components/NavigationMenuItemDroppable';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { WorkspaceNavigationMenuItemFolderDragClone } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderDragClone';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
@@ -190,7 +191,11 @@ export const WorkspaceNavigationMenuItemsFolder = ({
           <NavigationDrawerItem
             label={folderName}
             Icon={FolderIcon}
-            iconColor={folderColor}
+            iconColor={
+              isNonEmptyString(folderColor)
+                ? folderColor
+                : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
+            }
             onClick={handleClick}
             className="navigation-drawer-item"
             triggerEvent="CLICK"
