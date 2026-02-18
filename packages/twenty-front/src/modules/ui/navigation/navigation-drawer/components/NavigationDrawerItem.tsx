@@ -60,6 +60,7 @@ export type NavigationDrawerItemProps = {
   mouseUpNavigation?: boolean;
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
+  usePlainIcon?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -308,6 +309,7 @@ export const NavigationDrawerItem = ({
   mouseUpNavigation = false,
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
+  usePlainIcon = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -387,7 +389,7 @@ export const NavigationDrawerItem = ({
           )}
 
           {Icon &&
-            (isNavigationMenuItemEditingEnabled ? (
+            (isNavigationMenuItemEditingEnabled && !usePlainIcon ? (
               <StyledIcon>
                 <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
               </StyledIcon>
