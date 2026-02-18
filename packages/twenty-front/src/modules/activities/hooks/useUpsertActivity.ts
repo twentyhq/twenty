@@ -1,16 +1,17 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectIdState';
+import { objectShowPageTargetableObjectStateV2 } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectStateV2';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useUpsertActivity = ({
   activityObjectNameSingular,
@@ -33,8 +34,8 @@ export const useUpsertActivity = ({
     isUpsertingActivityInDBState,
   );
 
-  const objectShowPageTargetableObject = useRecoilValue(
-    objectShowPageTargetableObjectState,
+  const objectShowPageTargetableObject = useRecoilValueV2(
+    objectShowPageTargetableObjectStateV2,
   );
 
   const { refreshShowPageFindManyActivitiesQueries } =

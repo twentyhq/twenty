@@ -1,11 +1,12 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
+import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import {
   matchesWorkspaceFolderId,
   validateAndExtractWorkspaceFolderId,
@@ -17,17 +18,17 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
   const { workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuInEditMode = useRecoilValue(
-    isNavigationMenuInEditModeState,
+  const isNavigationMenuInEditMode = useRecoilValueV2(
+    isNavigationMenuInEditModeStateV2,
   );
-  const navigationMenuItemsDraft = useRecoilValue(
-    navigationMenuItemsDraftState,
+  const navigationMenuItemsDraft = useRecoilValueV2(
+    navigationMenuItemsDraftStateV2,
   );
-  const setNavigationMenuItemsDraft = useSetRecoilState(
-    navigationMenuItemsDraftState,
+  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+    navigationMenuItemsDraftStateV2,
   );
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilState(
-    openNavigationMenuItemFolderIdsState,
+  const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
+    openNavigationMenuItemFolderIdsStateV2,
   );
 
   const openDestinationFolder = (folderId: string | null) => {

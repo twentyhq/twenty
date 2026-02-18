@@ -2,20 +2,4 @@
 
 exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"Invalid UUID"`;
 
-exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":[]} 1`] = `"UUID must be a string"`;
-
-exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":{}} 1`] = `"UUID must be a string"`;
-
-exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":1} 1`] = `"UUID must be a string"`;
-
-exports[`Create input validation - UUID Gql create input - failure UUID - should fail with : {"uuidField":true} 1`] = `"UUID must be a string"`;
-
 exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":"non-uuid"} 1`] = `"["Invalid UUID value 'non-uuid' for field \\"uuidField\\""]"`;
-
-exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":[]} 1`] = `"["Invalid UUID value [] for field \\"uuidField\\""]"`;
-
-exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":{}} 1`] = `"["Invalid UUID value {} for field \\"uuidField\\""]"`;
-
-exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":1} 1`] = `"["Invalid UUID value 1 for field \\"uuidField\\""]"`;
-
-exports[`Create input validation - UUID Rest create input - failure UUID - should fail with : {"uuidField":true} 1`] = `"["Invalid UUID value true for field \\"uuidField\\""]"`;

@@ -48,9 +48,6 @@ yarn twenty app:dev
 # أضف كيانًا جديدًا إلى تطبيقك (موجّه)
 yarn twenty entity:add
 
-# ولِّد عميل Twenty مضبوط الأنواع وأنواع كيانات مساحة العمل
-yarn twenty app:generate
-
 # راقب سجلات وظائف تطبيقك
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* `yarn twenty app:generate` سيُنشئ مجلدًا `generated/` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
+* `yarn twenty app:dev` سيولّد تلقائيًا عميل API مضبوط الأنواع في `node_modules/twenty-sdk/generated` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات تحت `src/` لكائناتك المخصصة أو الوظائف أو المكونات الواجهية أو الأدوار.
 
 ## المصادقة
@@ -662,7 +659,7 @@ export default defineFrontComponent({
 
 ### عميل مُولَّد مضبوط الأنواع
 
-شغّل `yarn twenty app:generate` لإنشاء عميل محلي مضبوط الأنواع في `generated/` استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
+يُولَّد العميل مضبوط الأنواع تلقائيًا بواسطة `yarn twenty app:dev` ويُخزَّن في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-يُعاد توليد العميل بواسطة `yarn twenty app:generate`. أعِد التشغيل بعد تغيير كائناتك أو عند الانضمام إلى مساحة عمل جديدة.
+يُعاد توليد العميل تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -708,13 +705,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty app:dev`، `yarn twenty app:generate`، `yarn twenty help`، إلخ.
+الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty app:dev`، `yarn twenty help`، إلخ.
 
 ## استكشاف الأخطاء وإصلاحها
 
 * أخطاء المصادقة: شغّل `yarn twenty auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
 * يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة البرمجة وأن خادم Twenty قابل للوصول.
-* الأنواع أو العميل مفقود/قديم: شغّل `yarn twenty app:generate`.
+* الأنواع أو العميل مفقود/قديم: أعد تشغيل `yarn twenty app:dev` — فهو ينشئ العميل مضبوط الأنواع بشكل تلقائي.
 * وضع التطوير لا يزامن: تأكد من أن `yarn twenty app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
 
 قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

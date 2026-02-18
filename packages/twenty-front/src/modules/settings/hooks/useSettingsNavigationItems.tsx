@@ -99,17 +99,20 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: IconAt,
+          isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
           subItems: [
             {
               label: t`Emails`,
               path: SettingsPath.AccountsEmails,
               Icon: IconMail,
+              isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
               indentationLevel: 2,
             },
             {
               label: t`Calendars`,
               path: SettingsPath.AccountsCalendars,
               Icon: IconCalendarEvent,
+              isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
               indentationLevel: 2,
             },
           ],

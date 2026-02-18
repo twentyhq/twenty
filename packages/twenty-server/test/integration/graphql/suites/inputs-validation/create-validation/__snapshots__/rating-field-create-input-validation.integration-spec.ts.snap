@@ -2,20 +2,4 @@
 
 exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"Value "not-a-rating" does not exist in "ApiInputValidationTestObjectRatingFieldEnum" enum."`;
 
-exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":[]} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: []."`;
-
-exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":{}} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: {}."`;
-
-exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":1} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: 1."`;
-
-exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":true} 1`] = `"Enum "ApiInputValidationTestObjectRatingFieldEnum" cannot represent non-string value: true."`;
-
 exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"["Invalid value 'not-a-rating' for field \\"ratingField\\""]"`;
-
-exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":[]} 1`] = `"["Invalid string value [] for text field \\"ratingField\\""]"`;
-
-exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":{}} 1`] = `"["Invalid string value {} for text field \\"ratingField\\""]"`;
-
-exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":1} 1`] = `"["Invalid string value 1 for text field \\"ratingField\\""]"`;
-
-exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":true} 1`] = `"["Invalid string value true for text field \\"ratingField\\""]"`;

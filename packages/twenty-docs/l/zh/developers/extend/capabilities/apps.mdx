@@ -48,9 +48,6 @@ yarn twenty app:dev
 # 向你的应用添加一个新实体（引导式）
 yarn twenty entity:add
 
-# 生成类型化的 Twenty 客户端和工作区实体类型
-yarn twenty app:generate
-
 # 监听你的应用函数日志
 yarn twenty function:logs
 
@@ -142,7 +139,7 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
+* `yarn twenty app:dev` 将在 `node_modules/twenty-sdk/generated` 中自动生成一个类型化的 API 客户端（类型化的 Twenty 客户端 + 工作区类型）。
 * `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
 
 ## 身份验证
@@ -662,7 +659,7 @@ export default defineFrontComponent({
 
 ### 生成的类型化客户端
 
-运行 `yarn twenty app:generate`，根据你的工作空间模式在 `generated/` 中创建本地类型化客户端。 在你的函数中使用它：
+类型化客户端由 `yarn twenty app:dev` 自动生成，并基于你的工作区架构存放在 `node_modules/twenty-sdk/generated`。 在你的函数中使用它：
 
 ```typescript
 import Twenty from '~/generated';
@@ -671,7 +668,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-客户端会通过 `yarn twenty app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
+每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成该客户端。
 
 #### 逻辑函数中的运行时凭据
 
@@ -708,13 +705,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty app:generate`、`yarn twenty help` 等。
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty help` 等。
 
 ## 故障排除
 
 * 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：运行 `yarn twenty app:generate`。
+* 类型或客户端缺失/过期：重启 `yarn twenty app:dev` — 它会自动生成类型化客户端。
 * 开发模式未同步：确保 `yarn twenty app:dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

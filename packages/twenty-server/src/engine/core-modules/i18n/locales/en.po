@@ -2091,10 +2091,15 @@ msgstr "Invalid value for address."
 msgid "Invalid value for currency."
 msgstr "Invalid value for currency."
 
-#. js-lingui-id: AUbno1
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
-msgid "Invalid value for date: \"{inspectedValue}\""
-msgstr "Invalid value for date: \"{inspectedValue}\""
+#. js-lingui-id: MnHbVB
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
+msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
+msgstr "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
+
+#. js-lingui-id: U4Wdjc
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
+msgstr "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
 
 #. js-lingui-id: mANTdg
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts

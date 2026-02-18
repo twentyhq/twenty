@@ -1,11 +1,14 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
-import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
+import { settingsRoleIdsStateV2 } from '@/settings/roles/states/settingsRoleIdsStateV2';
+import { settingsRolesIsLoadingStateV2 } from '@/settings/roles/states/settingsRolesIsLoadingStateV2';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect } from 'react';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -15,8 +18,8 @@ export const SettingsRolesQueryEffect = () => {
     fetchPolicy: 'network-only',
   });
 
-  const setSettingsRolesIsLoading = useSetRecoilState(
-    settingsRolesIsLoadingState,
+  const setSettingsRolesIsLoading = useSetRecoilStateV2(
+    settingsRolesIsLoadingStateV2,
   );
 
   const populateRoles = useRecoilCallback(
@@ -24,6 +27,7 @@ export const SettingsRolesQueryEffect = () => {
       (roles: RoleWithPartialMembers[]) => {
         const roleIds = roles.map((role) => role.id);
         set(settingsRoleIdsState, roleIds);
+        jotaiStore.set(settingsRoleIdsStateV2.atom, roleIds);
         roles.forEach((role) => {
           const persistedRole = getSnapshotValue(
             snapshot,

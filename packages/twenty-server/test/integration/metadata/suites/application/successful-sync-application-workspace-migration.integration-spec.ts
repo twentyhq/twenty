@@ -57,6 +57,7 @@ describe('syncApplication', () => {
         applicationVariables: {},
         packageJsonChecksum: null,
         yarnLockChecksum: null,
+        apiClientChecksum: null,
       },
       roles: [
         {
