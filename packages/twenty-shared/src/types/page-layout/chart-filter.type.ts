@@ -1,6 +1,8 @@
+import { SerializedRelation } from "@/types/SerializedRelation.type";
+
 export type ChartRecordFilter = {
   id: string;
-  fieldMetadataId: string;
+  fieldMetadataId: SerializedRelation;
   operand: string;
   value?: string | null;
   type?: string;
