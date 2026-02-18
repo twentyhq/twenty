@@ -72,8 +72,8 @@ export const convertChartFilterToGqlOperationFilter = ({
     })
     .filter(isDefined);
 
-  const convertedRecordFilters: Omit<RecordFilter, 'id'>[] =
-    recordFilters.map((recordFilter) => {
+  const convertedRecordFilters: Omit<RecordFilter, 'id'>[] = recordFilters.map(
+    (recordFilter) => {
       const field = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: recordFilter.fieldMetadataId,
         flatEntityMaps: flatFieldMetadataMaps,
@@ -91,7 +91,8 @@ export const convertChartFilterToGqlOperationFilter = ({
           | CompositeFieldSubFieldName
           | undefined,
       };
-    });
+    },
+  );
 
   const convertedRecordFilterGroups: RecordFilterGroup[] =
     recordFilterGroups.map((recordFilterGroup) => ({
