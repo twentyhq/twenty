@@ -5,6 +5,7 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 import {
   type ApplicationConfig,
   type FrontComponentConfig,
@@ -20,6 +21,7 @@ import {
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
+  type CommandMenuItemManifest,
   type FieldManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
@@ -32,7 +34,6 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -70,6 +71,7 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
+  const commandMenuItems: CommandMenuItemManifest[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -202,7 +204,7 @@ export const buildManifest = async (
 
         errors.push(...extract.errors);
 
-        const { component, ...rest } = extract.config;
+        const { component, command, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -216,6 +218,14 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
+        if (command) {
+          commandMenuItems.push({
+            ...command,
+            frontComponentUniversalIdentifier: rest.universalIdentifier,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.Views: {
@@ -300,6 +310,7 @@ export const buildManifest = async (
         views,
         navigationMenuItems,
         pageLayouts,
+        commandMenuItems,
       };
 
   const entityFilePaths: EntityFilePaths = {

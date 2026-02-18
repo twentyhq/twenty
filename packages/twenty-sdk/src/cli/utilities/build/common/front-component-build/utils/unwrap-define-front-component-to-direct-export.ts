@@ -1,31 +1,103 @@
 const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
-  /import\s*\{\s*defineFrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
+  /import\s*\{[^}]*\bdefineFrontComponent\b[^}]*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
-const DEFINE_FRONT_COMPONENT_EXPORT_PATTERN =
-  /export\s+default\s+defineFrontComponent\s*\(\s*\{[^}]*component\s*:\s*(\w+)[^}]*\}\s*\)\s*;?/s;
+const removeDefineFrontComponentFromImport = (
+  importStatement: string,
+): string => {
+  const withoutDefineFrontComponent = importStatement.replace(
+    /,?\s*\bdefineFrontComponent\b\s*,?/,
+    (match) => {
+      if (match.startsWith(',') && match.endsWith(',')) {
+        return ',';
+      }
+
+      return '';
+    },
+  );
+
+  const remainingImportsMatch = withoutDefineFrontComponent.match(
+    /import\s*\{([^}]*)\}\s*from/,
+  );
+
+  if (!remainingImportsMatch || remainingImportsMatch[1].trim().length === 0) {
+    return '';
+  }
+
+  return withoutDefineFrontComponent;
+};
+
+const extractComponentNameFromExport = (
+  sourceCode: string,
+): { fullMatch: string; componentName: string } | null => {
+  const exportStart = sourceCode.indexOf('export default defineFrontComponent');
+
+  if (exportStart === -1) {
+    return null;
+  }
+
+  const parenStart = sourceCode.indexOf('(', exportStart);
+
+  if (parenStart === -1) {
+    return null;
+  }
+
+  let depth = 0;
+  let parenEnd = -1;
+
+  for (let i = parenStart; i < sourceCode.length; i++) {
+    if (sourceCode[i] === '(') {
+      depth++;
+    } else if (sourceCode[i] === ')') {
+      depth--;
+
+      if (depth === 0) {
+        parenEnd = i;
+        break;
+      }
+    }
+  }
+
+  if (parenEnd === -1) {
+    return null;
+  }
+
+  let endIndex = parenEnd + 1;
+
+  if (sourceCode[endIndex] === ';') {
+    endIndex++;
+  }
+
+  const fullMatch = sourceCode.slice(exportStart, endIndex);
+  const configContent = sourceCode.slice(parenStart + 1, parenEnd);
+  const componentMatch = configContent.match(/\bcomponent\s*:\s*(\w+)/);
+
+  if (!componentMatch) {
+    return null;
+  }
+
+  return { fullMatch, componentName: componentMatch[1] };
+};
 
 export const unwrapDefineFrontComponentToDirectExport = (
   sourceCode: string,
 ): string => {
   let transformedSource = sourceCode.replace(
     DEFINE_FRONT_COMPONENT_IMPORT_PATTERN,
-    '',
+    (match) => removeDefineFrontComponentFromImport(match),
   );
 
-  const defineFrontComponentMatch = transformedSource.match(
-    DEFINE_FRONT_COMPONENT_EXPORT_PATTERN,
-  );
+  const extracted = extractComponentNameFromExport(transformedSource);
 
-  if (defineFrontComponentMatch) {
-    const wrappedComponentName = defineFrontComponentMatch[1];
+  if (extracted) {
+    const { fullMatch, componentName } = extracted;
 
     const exportedComponentDeclarationPattern = new RegExp(
-      `export\\s+(const|function)\\s+${wrappedComponentName}\\b`,
+      `export\\s+(const|function)\\s+${componentName}\\b`,
     );
 
     transformedSource = transformedSource.replace(
       exportedComponentDeclarationPattern,
-      `$1 ${wrappedComponentName}`,
+      `$1 ${componentName}`,
     );
 
     transformedSource =
@@ -34,8 +106,8 @@ export const unwrapDefineFrontComponentToDirectExport = (
       transformedSource;
 
     transformedSource = transformedSource.replace(
-      DEFINE_FRONT_COMPONENT_EXPORT_PATTERN,
-      `export default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(${wrappedComponentName}, {})); }`,
+      fullMatch,
+      `export default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(${componentName}, {})); }`,
     );
   }
 

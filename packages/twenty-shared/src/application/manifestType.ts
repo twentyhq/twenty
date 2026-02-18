@@ -1,5 +1,6 @@
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
+import { type CommandMenuItemManifest } from './commandMenuItemManifestType';
 import { type FieldManifest } from './fieldManifestType';
 import { type FrontComponentManifest } from './frontComponentManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
@@ -20,4 +21,5 @@ export type Manifest = {
   views: ViewManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];
   pageLayouts: PageLayoutManifest[];
+  commandMenuItems: CommandMenuItemManifest[];
 };
