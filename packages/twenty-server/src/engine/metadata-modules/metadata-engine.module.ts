@@ -21,6 +21,7 @@ import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     PermissionsModule,
     RouteTriggerModule,
     WebhookModule,
+    WorkspaceEventEmitterModule,
   ],
   providers: [
     {
