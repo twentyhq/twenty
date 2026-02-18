@@ -14,6 +14,7 @@ import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modu
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
+import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -74,10 +75,10 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
     };
 
-    const SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES: string[] = [
-      'settings',
+    const SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES = [
+      'universalSettings',
       'isActive',
-    ];
+    ] as const satisfies (keyof UniversalFlatFieldMetadata)[];
 
     if (
       !buildOptions.isSystemBuild &&
@@ -85,7 +86,9 @@ export class FlatFieldMetadataValidatorService {
     ) {
       const disallowedProperties = Object.keys(flatEntityUpdate).filter(
         (property) =>
-          !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(property),
+          !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(
+            property as (typeof SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES)[number],
+          ),
       );
 
       if (disallowedProperties.length > 0) {
