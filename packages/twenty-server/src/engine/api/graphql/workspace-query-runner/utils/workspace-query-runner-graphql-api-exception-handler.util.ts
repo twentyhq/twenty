@@ -1,4 +1,5 @@
 import { type QueryFailedError } from 'typeorm';
+import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
 
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
@@ -10,6 +11,7 @@ import { ApiKeyException } from 'src/engine/core-modules/api-key/exceptions/api-
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { authGraphqlApiExceptionHandler } from 'src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RecordTransformerException } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { recordTransformerGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-transformer/utils/record-transformer-graphql-api-exception-handler.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -45,6 +47,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return apiKeyGraphqlApiExceptionHandler(error);
     case error instanceof ThrottlerException:
       return throttlerToGraphqlApiExceptionHandler(error);
+    case error instanceof EntityMetadataNotFoundError:
+      throw new NotFoundError(error.message);
     default:
       throw error;
   }
