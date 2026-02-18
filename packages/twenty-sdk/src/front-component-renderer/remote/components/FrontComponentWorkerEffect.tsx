@@ -1,7 +1,6 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
@@ -30,8 +29,7 @@ export const FrontComponentWorkerEffect = ({
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const applicationAccessTokenRef = useRef(applicationAccessToken);
-  applicationAccessTokenRef.current = applicationAccessToken;
+  const initialApplicationAccessTokenRef = useRef(applicationAccessToken);
 
   const frontComponentHostCommunicationApiRef = useRef(
     frontComponentHostCommunicationApi,
@@ -48,7 +46,6 @@ export const FrontComponentWorkerEffect = ({
       const workerError =
         event.error ?? new Error(event.message || 'Unknown worker error');
 
-      console.error('[FrontComponentRenderer] Worker error:', workerError);
       setError(workerError);
     };
 
@@ -74,14 +71,9 @@ export const FrontComponentWorkerEffect = ({
       try {
         await thread.imports.initializeHostCommunicationApi();
 
-        const currentApplicationAccessToken = applicationAccessTokenRef.current;
-
-        if (isDefined(currentApplicationAccessToken)) {
-          await thread.imports.updateAccessToken(currentApplicationAccessToken);
-        }
-
         await thread.imports.render(newReceiver.connection, {
           componentUrl,
+          applicationAccessToken: initialApplicationAccessTokenRef.current,
           apiUrl,
         });
       } catch (error) {

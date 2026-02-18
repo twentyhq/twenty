@@ -60,15 +60,15 @@ const render: WorkerExports['render'] = async (
     });
   }
 
-  const processObject = (globalThis as Record<string, unknown>)['process'] as {
-    env?: Record<string, string | undefined>;
-  };
-  const applicationAccessToken =
-    processObject?.env?.['TWENTY_APP_ACCESS_TOKEN'];
+  if (isDefined(renderContext.applicationAccessToken)) {
+    setWorkerEnv({
+      TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
+    });
+  }
 
   const response = await fetch(renderContext.componentUrl, {
-    headers: isDefined(applicationAccessToken)
-      ? { Authorization: `Bearer ${applicationAccessToken}` }
+    headers: isDefined(renderContext.applicationAccessToken)
+      ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
       : undefined,
   });
 
@@ -101,12 +101,6 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
     setNavigate(frontComponentWorkerThread.imports.navigate);
   };
 
-const updateAccessToken: WorkerExports['updateAccessToken'] = async (
-  accessToken: string,
-) => {
-  setWorkerEnv({ TWENTY_APP_ACCESS_TOKEN: accessToken });
-};
-
 const updateContext: WorkerExports['updateContext'] = async (
   context: FrontComponentExecutionContext,
 ) => {
@@ -120,7 +114,6 @@ const frontComponentWorkerThread = ThreadWebWorker.self<
   exports: {
     render,
     initializeHostCommunicationApi,
-    updateAccessToken,
     updateContext,
   },
 });

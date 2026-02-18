@@ -8,6 +8,5 @@ export type WorkerExports = {
     context: HostToWorkerRenderContext,
   ) => Promise<void>;
   initializeHostCommunicationApi: () => Promise<void>;
-  updateAccessToken: (accessToken: string) => Promise<void>;
   updateContext: (context: FrontComponentExecutionContext) => Promise<void>;
 };

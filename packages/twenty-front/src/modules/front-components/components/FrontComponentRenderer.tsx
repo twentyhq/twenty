@@ -4,7 +4,7 @@ import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import {
   type FrontComponentHostCommunicationApi,
   FrontComponentRenderer as SharedFrontComponentRenderer,
@@ -12,7 +12,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  type ApplicationTokenPair,
   useFindOneFrontComponentQuery,
   useRenewApplicationTokenMutation,
 } from '~/generated-metadata/graphql';
@@ -60,24 +59,8 @@ export const FrontComponentRenderer = ({
 
   const [renewApplicationToken] = useRenewApplicationTokenMutation();
 
-  const [refreshedTokenOverride, setRefreshedTokenOverride] = useState<{
-    frontComponentId: string;
-    applicationTokenPair: ApplicationTokenPair;
-  } | null>(null);
-
-  const queriedApplicationTokenPair =
-    data?.frontComponent?.applicationTokenPair;
-
-  const shouldUseRefreshedTokenOverride =
-    isDefined(refreshedTokenOverride) &&
-    refreshedTokenOverride.frontComponentId === frontComponentId &&
-    (!isDefined(queriedApplicationTokenPair) ||
-      refreshedTokenOverride.applicationTokenPair.applicationRefreshToken
-        .token === queriedApplicationTokenPair.applicationRefreshToken.token);
-
-  const applicationTokenPair = shouldUseRefreshedTokenOverride
-    ? refreshedTokenOverride.applicationTokenPair
-    : (queriedApplicationTokenPair ?? null);
+  const applicationTokenPair =
+    data?.frontComponent?.applicationTokenPair ?? null;
 
   const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
     if (!isDefined(applicationTokenPair)) {
@@ -105,22 +88,14 @@ export const FrontComponentRenderer = ({
       throw new Error('Failed to renew application token');
     }
 
-    setRefreshedTokenOverride({
-      frontComponentId,
-      applicationTokenPair: renewedApplicationTokenPair,
-    });
-
     return renewedApplicationTokenPair.applicationAccessToken.token;
-  }, [applicationTokenPair, frontComponentId, renewApplicationToken]);
+  }, [applicationTokenPair, renewApplicationToken]);
 
   const composedFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
-    useMemo(
-      () => ({
-        ...frontComponentHostCommunicationApi,
-        requestAccessTokenRefresh,
-      }),
-      [frontComponentHostCommunicationApi, requestAccessTokenRefresh],
-    );
+    {
+      navigate: frontComponentHostCommunicationApi.navigate,
+      requestAccessTokenRefresh,
+    };
 
   if (
     loading ||

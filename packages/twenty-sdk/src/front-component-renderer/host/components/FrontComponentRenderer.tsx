@@ -1,5 +1,4 @@
 import { FrontComponentErrorEffect } from '@/front-component-renderer/remote/components/FrontComponentErrorEffect';
-import { FrontComponentUpdateAccessTokenEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateAccessTokenEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateContextEffect';
 import { type FrontComponentExecutionContext } from '@/front-component-renderer/types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
@@ -80,12 +79,6 @@ export const FrontComponentRenderer = ({
 
       {isDefined(thread) && (
         <>
-          {isDefined(applicationAccessToken) && (
-            <FrontComponentUpdateAccessTokenEffect
-              thread={thread}
-              applicationAccessToken={applicationAccessToken}
-            />
-          )}
           <FrontComponentUpdateContextEffect
             thread={thread}
             executionContext={executionContext}
