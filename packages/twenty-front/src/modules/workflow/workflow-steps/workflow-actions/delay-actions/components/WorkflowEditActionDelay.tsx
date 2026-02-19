@@ -14,6 +14,7 @@ import {
   IconHourglassHigh,
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
+
 type WorkflowEditActionDelayProps = {
   action: WorkflowDelayAction;
   actionOptions:
@@ -197,9 +198,7 @@ export const WorkflowEditActionDelay = ({
             <FormNumberFieldInput
               label={t`Days`}
               defaultValue={localDuration.days}
-              onChange={(value) =>
-                handleDurationDraftChange('days', value)
-              }
+              onChange={(value) => handleDurationDraftChange('days', value)}
               onBlur={handleDurationCommit}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -208,9 +207,7 @@ export const WorkflowEditActionDelay = ({
             <FormNumberFieldInput
               label={t`Hours`}
               defaultValue={localDuration.hours}
-              onChange={(value) =>
-                handleDurationDraftChange('hours', value)
-              }
+              onChange={(value) => handleDurationDraftChange('hours', value)}
               onBlur={handleDurationCommit}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -219,9 +216,7 @@ export const WorkflowEditActionDelay = ({
             <FormNumberFieldInput
               label={t`Minutes`}
               defaultValue={localDuration.minutes}
-              onChange={(value) =>
-                handleDurationDraftChange('minutes', value)
-              }
+              onChange={(value) => handleDurationDraftChange('minutes', value)}
               onBlur={handleDurationCommit}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -230,9 +225,7 @@ export const WorkflowEditActionDelay = ({
             <FormNumberFieldInput
               label={t`Seconds`}
               defaultValue={localDuration.seconds}
-              onChange={(value) =>
-                handleDurationDraftChange('seconds', value)
-              }
+              onChange={(value) => handleDurationDraftChange('seconds', value)}
               onBlur={handleDurationCommit}
               readonly={actionOptions.readonly}
               VariablePicker={WorkflowVariablePicker}
