@@ -5,8 +5,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-    FlatEntityMapsException,
-    FlatEntityMapsExceptionCode,
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';

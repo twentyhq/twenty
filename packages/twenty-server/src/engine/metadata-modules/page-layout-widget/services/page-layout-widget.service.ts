@@ -12,8 +12,8 @@ import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layo
 import { fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-create-page-layout-widget-input-to-flat-page-layout-widget-to-create.util';
 import { fromDestroyPageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-destroy-page-layout-widget-input-to-flat-page-layout-widget-or-throw.util';
 import {
-    fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow,
-    type UpdatePageLayoutWidgetInputWithId,
+  fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow,
+  type UpdatePageLayoutWidgetInputWithId,
 } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
@@ -21,10 +21,10 @@ import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layou
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
-    PageLayoutWidgetException,
-    PageLayoutWidgetExceptionCode,
-    PageLayoutWidgetExceptionMessageKey,
-    generatePageLayoutWidgetExceptionMessage,
+  PageLayoutWidgetException,
+  PageLayoutWidgetExceptionCode,
+  PageLayoutWidgetExceptionMessageKey,
+  generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
