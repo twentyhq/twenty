@@ -27,12 +27,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     BackfillSystemFieldsIsSystemCommand,
     AddMissingSystemFieldsToStandardObjectsCommand,
-    BackfillMessageChannelMessageAssociationMessageFolderCommand
+    BackfillMessageChannelMessageAssociationMessageFolderCommand,
   ],
   exports: [
     BackfillSystemFieldsIsSystemCommand,
     AddMissingSystemFieldsToStandardObjectsCommand,
-    BackfillMessageChannelMessageAssociationMessageFolderCommand
+    BackfillMessageChannelMessageAssociationMessageFolderCommand,
   ],
 })
 export class V1_19_UpgradeVersionCommandModule {}
