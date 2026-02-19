@@ -28,51 +28,45 @@ export const NavigationMenuItemIcon = ({
   );
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
-    navigationMenuItem.objectNameSingular || '',
+    navigationMenuItem.objectNameSingular ?? '',
   );
 
   const isRecord =
     navigationMenuItem.itemType === NavigationMenuItemType.RECORD;
-  const isObjectIndexView =
-    navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
-    navigationMenuItem.viewKey === ViewKey.Index;
   const isViewWithOverlay =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
-    !isObjectIndexView;
+    navigationMenuItem.viewKey !== ViewKey.Index;
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === navigationMenuItem.objectNameSingular,
   );
-  const ObjectIconForView =
+  const objectIconForView =
     objectMetadataItem?.icon != null
       ? getIcon(objectMetadataItem.icon)
       : StandardIcon;
 
-  if (
+  const canShowViewOverlay =
     isViewWithOverlay &&
-    isDefined(ObjectIconForView) &&
-    isDefined(navigationMenuItem.Icon)
-  ) {
-    const ViewIcon = getIcon(navigationMenuItem.Icon);
+    isDefined(objectIconForView) &&
+    isDefined(navigationMenuItem.Icon);
+
+  if (canShowViewOverlay) {
     return (
       <ObjectIconWithViewOverlay
-        ObjectIcon={ObjectIconForView}
-        ViewIcon={ViewIcon}
+        ObjectIcon={objectIconForView}
+        ViewIcon={getIcon(navigationMenuItem.Icon!)}
         objectColor={
           isNavigationMenuItemEditingEnabled
-            ? navigationMenuItem.color
+            ? (navigationMenuItem.color ?? undefined)
             : undefined
         }
       />
     );
   }
 
-  const IconToUse =
-    StandardIcon ||
+  const iconToUse =
+    StandardIcon ??
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
-
-  const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
-
   const effectiveColor =
     getEffectiveNavigationMenuItemColor(navigationMenuItem);
   const useStyledIcon =
@@ -82,34 +76,33 @@ export const NavigationMenuItemIcon = ({
   const iconStyle = useStyledIcon
     ? getNavigationMenuItemIconStyleFromColor(theme, effectiveColor)
     : null;
-  const iconBackgroundColor = iconStyle?.backgroundColor;
+
   const iconColorToUse = iconStyle
     ? iconStyle.iconColor
     : StandardIcon
       ? IconColor
       : theme.font.color.secondary;
-  const iconBorderColor = iconStyle?.borderColor;
 
   const avatar = (
     <Avatar
-      size={iconBackgroundColor ? 'sm' : 'md'}
+      size={iconStyle ? 'sm' : 'md'}
       type={navigationMenuItem.avatarType}
-      Icon={IconToUse}
+      Icon={iconToUse}
       iconColor={iconColorToUse}
       avatarUrl={navigationMenuItem.avatarUrl}
       placeholder={navigationMenuItem.labelIdentifier}
-      placeholderColorSeed={placeholderColorSeed}
+      placeholderColorSeed={navigationMenuItem.targetRecordId ?? undefined}
     />
   );
 
-  if (!iconBackgroundColor) {
+  if (!iconStyle) {
     return avatar;
   }
 
   return (
     <StyledNavigationMenuItemIconContainer
-      $backgroundColor={iconBackgroundColor}
-      $borderColor={iconBorderColor}
+      $backgroundColor={iconStyle.backgroundColor}
+      $borderColor={iconStyle.borderColor}
     >
       {avatar}
     </StyledNavigationMenuItemIconContainer>
