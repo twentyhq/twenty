@@ -89,9 +89,9 @@ export const useSaveNavigationMenuItemsDraft = () => {
           };
 
           if (isNavigationMenuItemFolder(draftItem)) {
-            input.name = draftItem.name ?? undefined;
-            input.icon = draftItem.icon ?? null;
-            input.color = draftItem.color ?? null;
+            input.name = draftItem.name;
+            input.icon = draftItem.icon;
+            input.color = draftItem.color;
           } else if (isNavigationMenuItemLink(draftItem)) {
             input.name = draftItem.name ?? 'Link';
             const linkUrl = (draftItem.link ?? '').trim();
@@ -105,16 +105,15 @@ export const useSaveNavigationMenuItemsDraft = () => {
             input.viewId = draftItem.viewId;
           } else if (isDefined(draftItem.targetRecordId)) {
             input.targetRecordId = draftItem.targetRecordId;
-            input.targetObjectMetadataId =
-              draftItem.targetObjectMetadataId ?? undefined;
+            input.targetObjectMetadataId = draftItem.targetObjectMetadataId;
           }
 
           if (isDefined(draftItem.folderId)) {
             input.folderId = draftItem.folderId;
           }
 
-          if (draftItem.color !== undefined) {
-            input.color = draftItem.color ?? null;
+          if (isDefined(draftItem.color)) {
+            input.color = draftItem.color;
           }
 
           await createNavigationMenuItemMutation({
@@ -130,20 +129,18 @@ export const useSaveNavigationMenuItemsDraft = () => {
           if (!original) continue;
 
           const positionChanged = original.position !== draftItem.position;
-          const folderIdChanged =
-            (original.folderId ?? null) !== (draftItem.folderId ?? null);
+          const folderIdChanged = original.folderId !== draftItem.folderId;
           const nameChanged =
-            (isNavigationMenuItemFolder(draftItem) ||
-              isNavigationMenuItemLink(draftItem)) &&
-            (original.name ?? null) !== (draftItem.name ?? null);
+            isNavigationMenuItemFolder(draftItem) ||
+            (isNavigationMenuItemLink(draftItem) &&
+              original.name !== draftItem.name);
           const linkChanged =
             isNavigationMenuItemLink(draftItem) &&
-            (original.link ?? null) !== (draftItem.link ?? null);
+            original.link !== draftItem.link;
           const iconChanged =
             isNavigationMenuItemFolder(draftItem) &&
-            (original.icon ?? null) !== (draftItem.icon ?? null);
-          const colorChanged =
-            (original.color ?? null) !== (draftItem.color ?? null);
+            original.icon !== draftItem.icon;
+          const colorChanged = original.color !== draftItem.color;
 
           if (
             positionChanged ||
@@ -170,7 +167,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
               );
             }
             if (folderIdChanged) {
-              updateInput.folderId = draftItem.folderId ?? null;
+              updateInput.folderId = draftItem.folderId;
             }
             if (nameChanged && isNavigationMenuItemFolder(draftItem)) {
               updateInput.name = draftItem.name ?? undefined;
@@ -188,10 +185,10 @@ export const useSaveNavigationMenuItemsDraft = () => {
                 : null;
             }
             if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
-              updateInput.icon = draftItem.icon ?? null;
+              updateInput.icon = draftItem.icon;
             }
             if (colorChanged) {
-              updateInput.color = draftItem.color ?? null;
+              updateInput.color = draftItem.color;
             }
 
             await updateNavigationMenuItem(updateInput);
