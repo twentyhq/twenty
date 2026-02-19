@@ -24,6 +24,7 @@ import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/crea
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -40,7 +41,18 @@ export class RoleService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly applicationService: ApplicationService,
+    private readonly roleValidationService: RoleValidationService,
   ) {}
+
+  async validateRoleAssignableToUsersOrThrow(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    return this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+      roleId,
+      workspaceId,
+    );
+  }
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
     return this.roleRepository.find({

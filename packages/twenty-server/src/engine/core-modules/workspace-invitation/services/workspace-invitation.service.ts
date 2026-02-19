@@ -35,6 +35,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -45,6 +46,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly roleValidationService: RoleValidationService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -263,6 +265,13 @@ export class WorkspaceInvitationService {
         errors: ['Workspace invite hash not found'],
         result: [],
       };
+    }
+
+    if (isDefined(roleId)) {
+      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+        roleId,
+        workspace.id,
+      );
     }
 
     await this.throttleInvitationSending(workspace.id, emails);

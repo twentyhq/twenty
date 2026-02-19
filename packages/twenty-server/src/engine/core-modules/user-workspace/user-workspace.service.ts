@@ -35,7 +35,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -52,8 +52,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    private readonly roleValidationService: RoleValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -198,26 +197,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     workspace: WorkspaceEntity,
   ): Promise<string> {
     if (isDefined(roleId)) {
-      const role = await this.roleRepository.findOne({
-        where: {
-          id: roleId,
-          workspaceId: workspace.id,
-        },
-      });
-
-      if (!role) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.ROLE_NOT_FOUND,
-          PermissionsExceptionCode.ROLE_NOT_FOUND,
-        );
-      }
-
-      if (!role.canBeAssignedToUsers) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-          PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-        );
-      }
+      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+        roleId,
+        workspace.id,
+      );
 
       return roleId;
     }
