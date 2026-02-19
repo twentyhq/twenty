@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
@@ -17,7 +16,6 @@ export const RecordIndexPageHeaderIcon = ({
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }) => {
-  const theme = useTheme();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
