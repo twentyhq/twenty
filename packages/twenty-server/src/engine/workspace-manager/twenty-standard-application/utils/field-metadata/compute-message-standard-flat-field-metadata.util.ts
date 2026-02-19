@@ -221,8 +221,20 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: "'INCOMING'",
       options: [
-        { value: 'INCOMING', label: 'Incoming', position: 0, color: 'green' },
-        { value: 'OUTGOING', label: 'Outgoing', position: 1, color: 'blue' },
+        {
+          id: '20202020-7b52-47d2-abd8-e96a4295f9a6',
+          value: 'INCOMING',
+          label: 'Incoming',
+          position: 0,
+          color: 'green',
+        },
+        {
+          id: '20202020-11cb-42be-8df7-709ad53f90f9',
+          value: 'OUTGOING',
+          label: 'Outgoing',
+          position: 1,
+          color: 'blue',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

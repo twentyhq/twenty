@@ -218,6 +218,7 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
         break;
       }
       case ManifestEntityKey.Views: {
