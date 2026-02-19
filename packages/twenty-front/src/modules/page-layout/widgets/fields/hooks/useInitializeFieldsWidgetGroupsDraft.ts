@@ -1,8 +1,9 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
+import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 type UseInitializeFieldsWidgetGroupsDraftParams = {
@@ -26,11 +27,23 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
     pageLayoutId,
   );
 
-  const hasInitializedRef = useRef(false);
+  const hasInitializedFieldsWidgetGroupsDraftState =
+    useRecoilComponentCallbackState(
+      hasInitializedFieldsWidgetGroupsDraftComponentState,
+      pageLayoutId,
+    );
 
   const initializeDraft = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
+        const hasInitialized = snapshot
+          .getLoadable(hasInitializedFieldsWidgetGroupsDraftState)
+          .getValue();
+
+        if (hasInitialized[widgetId]) {
+          return;
+        }
+
         const currentDraft = snapshot
           .getLoadable(fieldsWidgetGroupsDraftState)
           .getValue();
@@ -48,8 +61,14 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
             [widgetId]: serverGroups,
           }));
         }
+
+        set(hasInitializedFieldsWidgetGroupsDraftState, (prev) => ({
+          ...prev,
+          [widgetId]: true,
+        }));
       },
     [
+      hasInitializedFieldsWidgetGroupsDraftState,
       fieldsWidgetGroupsDraftState,
       fieldsWidgetGroupsPersistedState,
       widgetId,
@@ -58,8 +77,7 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
   );
 
   useEffect(() => {
-    if (serverGroups.length > 0 && !hasInitializedRef.current) {
-      hasInitializedRef.current = true;
+    if (serverGroups.length > 0) {
       initializeDraft();
     }
   }, [serverGroups, initializeDraft]);
