@@ -69,7 +69,7 @@ const StyledPlaceholder = styled(FormFieldPlaceholder)`
   width: 100%;
 `;
 
-export const safeParsedValue = (value: string) => {
+const safeParsedValue = (value: string) => {
   try {
     return JSON.parse(value);
   } catch {
