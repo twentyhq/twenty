@@ -18,11 +18,11 @@ const StyledIconSlot = styled.div<{ $hasFixedSize: boolean }>`
   flex-shrink: 0;
   justify-content: center;
 
-  ${({ $hasFixedSize }) =>
+  ${({ theme, $hasFixedSize }) =>
     $hasFixedSize &&
     css`
-      height: 16px;
-      width: 16px;
+      height: ${theme.spacing(4)};
+      width: ${theme.spacing(4)};
     `}
 
   &:active {
