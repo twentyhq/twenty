@@ -21,7 +21,7 @@ import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -65,7 +65,7 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
+    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly agentService: AgentService,
     @InjectRepository(RoleTargetEntity)
@@ -87,7 +87,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.logicFunctionMetadataService.destroyOne({
+        await this.logicFunctionFromSourceService.deleteOneWithSource({
           id: step.settings.input.logicFunctionId,
           workspaceId,
         });

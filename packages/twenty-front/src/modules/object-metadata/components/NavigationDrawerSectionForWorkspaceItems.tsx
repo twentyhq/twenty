@@ -66,9 +66,8 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
   const { t } = useLingui();
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
-  const { toggleNavigationSection, isNavigationSectionOpenState } =
+  const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
-  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
   const coreViews = useRecoilValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
 

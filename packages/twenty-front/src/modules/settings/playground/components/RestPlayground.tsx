@@ -27,6 +27,12 @@ const StyledContainer = styled.div`
     --scalar-color-2: ${({ theme }) => theme.font.color.secondary};
     --scalar-color-3: ${({ theme }) => theme.font.color.tertiary};
   }
+
+  .scalar-app .text-pretty {
+    overflow-wrap: break-word;
+    word-break: normal;
+    white-space: normal;
+  }
 `;
 
 const ApiReferenceReact = lazy(() =>

@@ -1,6 +1,8 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
 
-export const iconPickerVisibleCountState = createFamilyState<number, string>({
+export const ICON_PICKER_DEFAULT_VISIBLE_COUNT = 25;
+
+export const iconPickerVisibleCountState = createFamilyStateV2<number, string>({
   key: 'iconPickerVisibleCountState',
-  defaultValue: 25,
+  defaultValue: ICON_PICKER_DEFAULT_VISIBLE_COUNT,
 });

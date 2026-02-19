@@ -15,11 +15,12 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IconArchive,
@@ -90,7 +91,7 @@ export const SettingsObjectFieldTable = ({
   const [showInactive, setShowInactive] = useState(true);
   const [showSystemFields, setShowSystemFields] = useState(false);
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_FIELD_TABLE_METADATA;
 

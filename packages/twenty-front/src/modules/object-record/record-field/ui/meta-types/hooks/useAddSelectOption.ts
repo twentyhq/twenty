@@ -1,19 +1,19 @@
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useAddSelectOption = (fieldName: string) => {
   const { objectNamePlural } = useParams();
   const navigateSettings = useNavigateSettings();
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetRecoilStateV2(
     navigationMemorizedUrlState,
   );
 
-  const setShouldNavigateBackToMemorizedUrlOnSave = useSetRecoilState(
+  const setShouldNavigateBackToMemorizedUrlOnSave = useSetRecoilStateV2(
     shouldNavigateBackToMemorizedUrlOnSaveState,
   );
 

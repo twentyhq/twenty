@@ -148,9 +148,22 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       options: [
-        { value: 'DRAFT', label: 'Draft', position: 0, color: 'yellow' },
-        { value: 'ACTIVE', label: 'Active', position: 1, color: 'green' },
         {
+          id: '20202020-e9d8-41df-8262-31bb04948366',
+          value: 'DRAFT',
+          label: 'Draft',
+          position: 0,
+          color: 'yellow',
+        },
+        {
+          id: '20202020-e47e-4d57-913a-7b29e1f140ef',
+          value: 'ACTIVE',
+          label: 'Active',
+          position: 1,
+          color: 'green',
+        },
+        {
+          id: '20202020-bdfa-4d35-bf5c-e410cccfc765',
           value: 'DEACTIVATED',
           label: 'Deactivated',
           position: 2,

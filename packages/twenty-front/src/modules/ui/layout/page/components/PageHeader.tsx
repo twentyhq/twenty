@@ -1,13 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
 import {
@@ -96,7 +96,7 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
-  const isNavigationDrawerExpanded = useRecoilValue(
+  const isNavigationDrawerExpanded = useRecoilValueV2(
     isNavigationDrawerExpandedState,
   );
 

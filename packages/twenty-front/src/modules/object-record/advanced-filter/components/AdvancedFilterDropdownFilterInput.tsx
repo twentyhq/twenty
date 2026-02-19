@@ -1,3 +1,4 @@
+import { ObjectFilterDropdownActorSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect';
 import { ObjectFilterDropdownOptionSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect';
 import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
@@ -14,6 +15,7 @@ import { ObjectFilterDropdownDateTimeInput } from '@/object-record/object-filter
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
+import { isFilterOnActorWorkspaceMemberSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorWorkspaceMemberSubField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -40,6 +42,9 @@ export const AdvancedFilterDropdownFilterInput = ({
     subFieldNameUsedInDropdown,
   );
 
+  const isActorWorkspaceMemberCompositeFilter =
+    isFilterOnActorWorkspaceMemberSubField(subFieldNameUsedInDropdown);
+
   return (
     <>
       {filterType === 'ADDRESS' &&
@@ -64,6 +69,14 @@ export const AdvancedFilterDropdownFilterInput = ({
       {filterType === 'ACTOR' &&
         (isActorSourceCompositeFilter ? (
           <ObjectFilterDropdownSourceSelect dropdownId={filterDropdownId} />
+        ) : isActorWorkspaceMemberCompositeFilter ? (
+          <DropdownContent
+            widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+          >
+            <ObjectFilterDropdownSearchInput />
+            <DropdownMenuSeparator />
+            <ObjectFilterDropdownActorSelect dropdownId={filterDropdownId} />
+          </DropdownContent>
         ) : (
           <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
         ))}

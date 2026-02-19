@@ -4,7 +4,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 
@@ -17,14 +17,10 @@ export const GotoHotkeysEffectsProvider = () => {
   useGoToHotkeys({
     key: 's',
     location: getSettingsPath(SettingsPath.ProfilePage),
-    preNavigateFunction: useRecoilCallback(
-      ({ set }) =>
-        () => {
-          set(isNavigationDrawerExpandedState, true);
-          store.set(navigationDrawerExpandedMemorizedStateV2.atom, true);
-        },
-      [store],
-    ),
+    preNavigateFunction: useCallback(() => {
+      store.set(isNavigationDrawerExpandedState.atom, true);
+      store.set(navigationDrawerExpandedMemorizedStateV2.atom, true);
+    }, [store]),
   });
 
   return activeNonSystemObjectMetadataItems.map((objectMetadataItem) => {

@@ -1,13 +1,12 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
-  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -20,10 +19,9 @@ export class UpdateNavigationMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   folderId?: string | null;
 
-  @IsInt()
-  @Min(0)
+  @IsNumber()
   @IsOptional()
-  @Field(() => Int, { nullable: true })
+  @Field({ nullable: true })
   position?: number;
 
   @IsOptional()
