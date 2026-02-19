@@ -1,20 +1,17 @@
+import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
+import { RelationType } from '@/sdk';
 import type { ObjectConfig } from '@/sdk/objects/object-config';
 import {
   type FieldManifest,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
-import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { RelationType } from '@/sdk';
 
 type DefaultRelationConfig = {
   fieldName: string;
   label: string;
-  targetFieldType:
-    | FieldMetadataType.RELATION
-    | FieldMetadataType.MORPH_RELATION;
   targetFieldName: (objectConfig: ObjectConfig) => string;
   targetLabel: (objectConfig: ObjectConfig) => string;
   icon: string;
@@ -33,7 +30,7 @@ const DEFAULT_DEFAULT_RELATION = {
   icon: 'IconBuildingSkyscraper',
 };
 
-const DEFAULT_RELATION_CONFIGS: DefaultRelationConfig[] = [
+const DEFAULT_RELATION_CONFIGS = [
   {
     ...DEFAULT_DEFAULT_RELATION,
     fieldName: 'timelineActivities',
@@ -82,7 +79,53 @@ const DEFAULT_RELATION_CONFIGS: DefaultRelationConfig[] = [
     standardObjectKey: 'taskTarget',
     morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
   },
-];
+] as const satisfies DefaultRelationConfig[];
+
+const buildReverseField = ({
+  config,
+  forwardFieldUniversalIdentifier,
+  objectConfig,
+  universalIdentifier,
+}: {
+  config: DefaultRelationConfig;
+  objectConfig: ObjectConfig;
+  universalIdentifier: string;
+  forwardFieldUniversalIdentifier: string;
+}): FieldManifest<typeof config.targetFieldType> => {
+  const standardObject = STANDARD_OBJECTS[config.standardObjectKey];
+
+  const commonFields = {
+    name: config.targetFieldName(objectConfig),
+    label: config.targetLabel(objectConfig),
+    description: `${config.targetLabel(objectConfig)} ${objectConfig.labelSingular}`,
+    icon: config.targetIcon,
+    isNullable: true,
+    universalSettings: {
+      relationType: RelationType.MANY_TO_ONE,
+      onDelete: RelationOnDeleteAction.SET_NULL,
+      joinColumnName: `target${capitalize(objectConfig.nameSingular)}Id`,
+    },
+    universalIdentifier,
+    objectUniversalIdentifier: standardObject.universalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      forwardFieldUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier:
+      objectConfig.universalIdentifier,
+  };
+
+  if (config.targetFieldType === FieldMetadataType.MORPH_RELATION) {
+    return {
+      ...commonFields,
+      type: config.targetFieldType,
+      morphId: config.morphId,
+    };
+  }
+
+  return {
+    ...commonFields,
+    type: config.targetFieldType,
+  };
+};
 
 export const getDefaultRelationObjectFields = (
   objectConfig: ObjectConfig,
@@ -105,7 +148,6 @@ export const getDefaultRelationObjectFields = (
         fieldName: `${config.fieldName}Inverse`,
       });
 
-    // Forward field: lives on the custom object, points to the standard object
     const forwardField: ObjectFieldManifest = {
       name: config.fieldName,
       label: config.label,
@@ -121,28 +163,12 @@ export const getDefaultRelationObjectFields = (
         standardObject.universalIdentifier,
     };
 
-    const reverseField: FieldManifest = {
-      name: config.targetFieldName(objectConfig),
-      label: config.targetLabel(objectConfig),
-      description: `${config.targetLabel(objectConfig)} ${objectConfig.labelSingular}`,
-      icon: config.targetIcon,
-      isNullable: true,
-      type: config.targetFieldType,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: `target${capitalize(objectConfig.nameSingular)}Id`,
-      },
+    const reverseField = buildReverseField({
+      config,
+      objectConfig,
       universalIdentifier: reverseFieldUniversalIdentifier,
-      objectUniversalIdentifier: standardObject.universalIdentifier,
-      relationTargetFieldMetadataUniversalIdentifier:
-        forwardFieldUniversalIdentifier,
-      relationTargetObjectMetadataUniversalIdentifier:
-        objectConfig.universalIdentifier,
-      ...(config.targetFieldType === FieldMetadataType.MORPH_RELATION
-        ? { morphId: config.morphId }
-        : {}),
-    };
+      forwardFieldUniversalIdentifier,
+    });
 
     objectFields.push(forwardField);
     fields.push(reverseField);

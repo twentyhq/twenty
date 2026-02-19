@@ -1,10 +1,10 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
-import type {
+import {
   FieldMetadataDefaultValue,
   FieldMetadataOptions,
   FieldMetadataType,
   FieldMetadataUniversalSettings,
-  RelationAndMorphRelationFieldMetadataType,
+  RelationAndMorphRelationFieldMetadataType
 } from '@/types';
 
 export type RegularFieldManifest<
@@ -28,12 +28,18 @@ export type RegularFieldManifest<
 export type RelationFieldManifest<
   T extends
     RelationAndMorphRelationFieldMetadataType = RelationAndMorphRelationFieldMetadataType,
-> = Omit<RegularFieldManifest<T>, 'universalSettings'> & {
+> = Omit<RegularFieldManifest<T>, 'universalSettings' | 'type'> & {
+  type: T;
   relationTargetFieldMetadataUniversalIdentifier: string;
   relationTargetObjectMetadataUniversalIdentifier: string;
   universalSettings: FieldMetadataUniversalSettings<T>;
-  morphId?: string;
-};
+} & ([T] extends [FieldMetadataType.MORPH_RELATION]
+    ? {
+        morphId: string;
+      }
+    : {
+        morphId?: undefined;
+      });
 
 export type FieldManifest<T extends FieldMetadataType = FieldMetadataType> =
   T extends RelationAndMorphRelationFieldMetadataType
