@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -13,6 +12,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -42,7 +42,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   );
 
   const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetRecoilStateV2(
     navigationMemorizedUrlState,
   );
 

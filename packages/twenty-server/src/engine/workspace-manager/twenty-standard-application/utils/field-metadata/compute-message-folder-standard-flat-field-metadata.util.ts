@@ -309,12 +309,19 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
       defaultValue: "'NONE'",
       options: [
         {
+          id: '20202020-dc59-4dd3-92fe-f41c6491a588',
           value: 'FOLDER_DELETION',
           label: 'Folder deletion',
           position: 0,
           color: 'red',
         },
-        { value: 'NONE', label: 'None', position: 1, color: 'blue' },
+        {
+          id: '20202020-aa29-41d3-872b-142174fe6595',
+          value: 'NONE',
+          label: 'None',
+          position: 1,
+          color: 'blue',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

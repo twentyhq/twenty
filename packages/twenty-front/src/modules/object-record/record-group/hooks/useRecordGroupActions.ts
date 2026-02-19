@@ -11,12 +11,12 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -56,7 +56,7 @@ export const useRecordGroupActions = ({
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility();
 
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetRecoilStateV2(
     navigationMemorizedUrlState,
   );
 
