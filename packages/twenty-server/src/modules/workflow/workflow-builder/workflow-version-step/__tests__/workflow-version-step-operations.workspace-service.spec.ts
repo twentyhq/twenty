@@ -162,12 +162,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
-          useValue: (flatEntityMapsCacheService = {
+          useValue: {
             flushFlatEntityMaps: jest.fn(),
             getOrRecomputeManyOrAllFlatEntityMaps: jest
               .fn()
               .mockResolvedValue(createEmptyAllFlatEntityMaps()),
-          } as unknown as jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>),
+          },
         },
       ],
     }).compile();
