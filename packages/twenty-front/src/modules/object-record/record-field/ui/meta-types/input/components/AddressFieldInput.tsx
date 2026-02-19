@@ -18,6 +18,12 @@ export const AddressFieldInput = () => {
   const convertToAddress = (
     newAddress: FieldAddressDraftValue | undefined,
   ): FieldAddressDraftValue => {
+    const parseCoordinate = (value: number | string | null | undefined): number | null => {
+      if (value == null) return null;
+      const num = Number(value);
+      return Number.isFinite(num) ? num : null;
+    };
+
     return {
       addressStreet1: newAddress?.addressStreet1 ?? '',
       addressStreet2: newAddress?.addressStreet2 ?? null,
@@ -25,8 +31,8 @@ export const AddressFieldInput = () => {
       addressState: newAddress?.addressState ?? null,
       addressCountry: newAddress?.addressCountry ?? null,
       addressPostcode: newAddress?.addressPostcode ?? null,
-      addressLat: newAddress?.addressLat ?? null,
-      addressLng: newAddress?.addressLng ?? null,
+      addressLat: parseCoordinate(newAddress?.addressLat),
+      addressLng: parseCoordinate(newAddress?.addressLng),
     };
   };
   const settings = fieldDefinition.metadata.settings;
