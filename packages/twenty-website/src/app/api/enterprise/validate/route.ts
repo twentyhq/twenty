@@ -43,7 +43,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const validityToken = signValidityToken(payload.sub);
+    const rawCancelAt = subscription.cancel_at;
+    const rawCancelAtPeriodEnd = subscription.cancel_at_period_end;
+    const rawCurrentPeriodEnd = (subscription as { current_period_end?: number })
+      .current_period_end;
+    const effectiveCancelAt =
+      rawCancelAt ??
+      (rawCancelAtPeriodEnd && rawCurrentPeriodEnd ? rawCurrentPeriodEnd : null);
+
+    const validityToken = signValidityToken(payload.sub, {
+      subscriptionCancelAt: effectiveCancelAt,
+    });
 
     return Response.json({
       validityToken,

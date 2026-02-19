@@ -14,7 +14,7 @@ export type EnterpriseValidityPayload = {
 };
 
 const ALGORITHM = 'RS256';
-const DEFAULT_VALIDITY_TOKEN_DURATION_DAYS = 30;
+const DEFAULT_VALIDITY_TOKEN_DURATION_DAYS= 30;
 
 const getValidityTokenDurationDays = (): number => {
   const value = process.env.ENTERPRISE_VALIDITY_TOKEN_DURATION_DAYS;

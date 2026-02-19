@@ -116,7 +116,7 @@ export const SettingsEnterprise = () => {
         setEnterpriseKey('');
       } else {
         enqueueErrorSnackBar({
-          message: t`Failed to activate enterprise license. Please check your key.`,
+          message: t`Failed to activate enterprise license. Please check your key or contact support.`,
         });
       }
     } catch {
@@ -134,12 +134,12 @@ export const SettingsEnterprise = () => {
     t,
   ]);
 
+  const returnUrlPath = getSettingsPath(SettingsPath.Enterprise);
+
   const openBillingPortal = useCallback(async () => {
     try {
       const { data } = await fetchPortalSession({
-        variables: {
-          returnUrlPath: getSettingsPath(SettingsPath.Enterprise),
-        },
+        variables: { returnUrlPath },
       });
 
       const portalUrl = data?.enterprisePortalSession;
@@ -156,27 +156,44 @@ export const SettingsEnterprise = () => {
         message: t`Error opening billing portal`,
       });
     }
-  }, [fetchPortalSession, enqueueErrorSnackBar, t]);
+  }, [fetchPortalSession, enqueueErrorSnackBar, t, returnUrlPath]);
 
-  const openCheckout = useCallback(async () => {
+  // Portal first (reactivate or manage), then checkout (new subscription)
+  const openPortalOrCheckout = useCallback(async () => {
     try {
-      const { data } = await fetchCheckoutSession();
+      const { data: portalData } = await fetchPortalSession({
+        variables: { returnUrlPath },
+      });
 
-      const checkoutUrl = data?.enterpriseCheckoutSession;
+      const portalUrl = portalData?.enterprisePortalSession;
+
+      if (portalUrl !== null && portalUrl !== undefined) {
+        window.open(portalUrl, '_blank', 'noopener');
+        return;
+      }
+
+      const { data: checkoutData } = await fetchCheckoutSession();
+      const checkoutUrl = checkoutData?.enterpriseCheckoutSession;
 
       if (checkoutUrl !== null && checkoutUrl !== undefined) {
         window.open(checkoutUrl, '_blank', 'noopener');
       } else {
         enqueueErrorSnackBar({
-          message: t`Could not open checkout. Please try again.`,
+          message: t`Could not open Stripe. Please try again.`,
         });
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Error opening checkout`,
+        message: t`Error opening Stripe`,
       });
     }
-  }, [fetchCheckoutSession, enqueueErrorSnackBar, t]);
+  }, [
+    fetchPortalSession,
+    fetchCheckoutSession,
+    enqueueErrorSnackBar,
+    t,
+    returnUrlPath,
+  ]);
 
   return (
     <SubMenuTopBarContainer
@@ -270,19 +287,19 @@ export const SettingsEnterprise = () => {
             <Section>
               <H2Title
                 title={t`Get Enterprise`}
-                description={t`Unlock enterprise features like SSO, row-level security, and audit logs`}
+                description={t`Unlock enterprise features like SSO, row-level security, and audit logs. If your subscription expired, you will be redirected to Stripe to reactivate it.`}
               />
               <Button
                 Icon={IconKey}
                 title={t`Get Enterprise Key`}
                 variant="secondary"
-                onClick={openCheckout}
+                onClick={openPortalOrCheckout}
               />
             </Section>
             <Section>
               <H2Title
                 title={t`Activate Enterprise Key`}
-                description={t`Already have an enterprise key? Paste it below to activate`}
+                description={t`Paste your enterprise key below to activate`}
               />
               <StyledInputContainer>
                 <StyledInputWrapper>

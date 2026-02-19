@@ -1,7 +1,12 @@
 import { verifyEnterpriseKey } from '@/shared/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/shared/enterprise/stripe-client';
+import {
+  getEnterprisePriceId,
+  getStripeClient,
+} from '@/shared/enterprise/stripe-client';
 
 export const dynamic = 'force-dynamic';
+
+const ACTIVE_SUBSCRIPTION_STATUSES = ['active', 'trialing'];
 
 export async function POST(request: Request) {
   try {
@@ -33,14 +38,32 @@ export async function POST(request: Request) {
         : subscription.customer.id;
 
     const frontendUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
-    const fullReturnUrl = returnUrl ? `${frontendUrl}${returnUrl}` : frontendUrl;
+    const fullReturnUrl = returnUrl
+      ? `${frontendUrl}${returnUrl}`
+      : frontendUrl;
 
-    const session = await stripe.billingPortal.sessions.create({
+    if (ACTIVE_SUBSCRIPTION_STATUSES.includes(subscription.status)) {
+      const session = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: fullReturnUrl,
+      });
+
+      return Response.json({ url: session.url });
+    }
+
+    const priceId = getEnterprisePriceId();
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: 'subscription',
       customer: customerId,
-      return_url: fullReturnUrl,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${frontendUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: fullReturnUrl,
+      subscription_data: {
+        metadata: { source: 'enterprise-self-hosted-resubscribe' },
+      },
     });
 
-    return Response.json({ url: session.url });
+    return Response.json({ url: checkoutSession.url });
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : 'Unknown error';

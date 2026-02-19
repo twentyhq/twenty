@@ -61,18 +61,22 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           <SettingsOptionCardContentButton
             Icon={IconLock}
             title={t`Upgrade to access`}
-            description={t`This feature is part of the Organization Plan`}
+            description={t`This feature is part of the Enterprise Plan`}
             Button={
-              isBillingEnabled && (
-                <Button
-                  title={t`Upgrade`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconArrowUp}
-                  onClick={() => navigateSettings(SettingsPath.Billing)}
-                />
-              )
+              <Button
+                title={t`Upgrade`}
+                variant="primary"
+                accent="blue"
+                size="small"
+                Icon={IconArrowUp}
+                onClick={() =>
+                  navigateSettings(
+                    isBillingEnabled
+                      ? SettingsPath.Billing
+                      : SettingsPath.Enterprise,
+                  )
+                }
+              />
             }
           />
         </StyledCard>
