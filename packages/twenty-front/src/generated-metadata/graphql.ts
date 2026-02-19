@@ -1045,7 +1045,7 @@ export type CreateNavigationMenuItemInput = {
   icon?: InputMaybe<Scalars['String']>;
   link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  position?: InputMaybe<Scalars['Int']>;
+  position?: InputMaybe<Scalars['Float']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   targetRecordId?: InputMaybe<Scalars['UUID']>;
   userWorkspaceId?: InputMaybe<Scalars['UUID']>;
@@ -4571,13 +4571,11 @@ export type UpdateLogicFunctionFromSourceInput = {
 };
 
 export type UpdateLogicFunctionFromSourceInputUpdates = {
-  checksum?: InputMaybe<Scalars['String']>;
   cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
   databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
   httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
-  isBuildUpToDate?: InputMaybe<Scalars['Boolean']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   sourceHandlerCode?: InputMaybe<Scalars['String']>;
@@ -4591,7 +4589,7 @@ export type UpdateNavigationMenuItemInput = {
   icon?: InputMaybe<Scalars['String']>;
   link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  position?: InputMaybe<Scalars['Int']>;
+  position?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateObjectPayload = {

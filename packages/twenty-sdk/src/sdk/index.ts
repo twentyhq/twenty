@@ -24,6 +24,7 @@ export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
 export type {
+  FrontComponentCommandConfig,
   FrontComponentConfig,
   FrontComponentType,
 } from './front-component-config';

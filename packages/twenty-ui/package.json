@@ -12,7 +12,7 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@prettier/sync": "^0.5.2",
-    "@swc/plugin-emotion": "10.0.4",
+    "@swc/plugin-emotion": "14.6.0",
     "@types/babel__preset-env": "^7",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.15",
