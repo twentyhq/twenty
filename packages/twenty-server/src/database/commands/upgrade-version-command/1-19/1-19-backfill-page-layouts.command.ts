@@ -14,12 +14,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Command({
-  name: 'upgrade:1-20:backfill-page-layouts',
+  name: 'upgrade:1-19:backfill-page-layouts',
   description:
     'Backfill RECORD_PAGE page layouts for legacy workspaces and enable the IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED feature flag',
 })
@@ -30,7 +29,6 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly featureFlagService: FeatureFlagService,
   ) {
