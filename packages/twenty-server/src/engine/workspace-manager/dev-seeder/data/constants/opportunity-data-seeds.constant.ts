@@ -1,8 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
 
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
-import { WORKSPACE_MEMBER_DATA_SEED_IDS, WORKSPACE_MEMBER_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  WORKSPACE_MEMBER_DATA_SEED_IDS,
+  WORKSPACE_MEMBER_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type OpportunityDataSeed = {
   id: string;
@@ -179,9 +182,15 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
 
     CLOSE_DATE.setDate(CLOSE_DATE.getDate() + DAYS_AHEAD);
 
-    const workspaceMemberId =  Object.values(WORKSPACE_MEMBER_DATA_SEED_IDS)[INDEX % 4]
-    const workspaceMember = WORKSPACE_MEMBER_DATA_SEEDS.find((workspaceMember) => workspaceMember.id === workspaceMemberId);
-    const workspaceMemberName = isDefined(workspaceMember) ? `${workspaceMember?.nameFirstName} ${workspaceMember?.nameLastName}` : "Unkonwn"
+    const workspaceMemberId = Object.values(WORKSPACE_MEMBER_DATA_SEED_IDS)[
+      INDEX % 4
+    ];
+    const workspaceMember = WORKSPACE_MEMBER_DATA_SEEDS.find(
+      (workspaceMember) => workspaceMember.id === workspaceMemberId,
+    );
+    const workspaceMemberName = isDefined(workspaceMember)
+      ? `${workspaceMember?.nameFirstName} ${workspaceMember?.nameLastName}`
+      : 'Unkonwn';
 
     const rawSeed: OpportunityDataSeed = {
       id: OPPORTUNITY_DATA_SEED_IDS[`ID_${INDEX}`],
@@ -206,11 +215,15 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
       createdByName: workspaceMemberName,
       updatedByWorkspaceMemberId: workspaceMemberId,
       updatedByName: workspaceMemberName,
-    }
+    };
 
-    const opportunityDataSeedWithSQLColumnOrder: OpportunityDataSeed = Object.fromEntries(
-      OPPORTUNITY_DATA_SEED_COLUMNS.map((column) => [column, rawSeed[column as keyof OpportunityDataSeed]]),
-    ) as OpportunityDataSeed
+    const opportunityDataSeedWithSQLColumnOrder: OpportunityDataSeed =
+      Object.fromEntries(
+        OPPORTUNITY_DATA_SEED_COLUMNS.map((column) => [
+          column,
+          rawSeed[column as keyof OpportunityDataSeed],
+        ]),
+      ) as OpportunityDataSeed;
 
     OPPORTUNITY_SEEDS.push(opportunityDataSeedWithSQLColumnOrder);
   }
