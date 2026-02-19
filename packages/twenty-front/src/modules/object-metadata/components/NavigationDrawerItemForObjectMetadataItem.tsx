@@ -14,7 +14,6 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -146,7 +145,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const iconThemeColor =
     isNavigationMenuItemEditingEnabled && !isRecord
-      ? isNonEmptyString(navigationMenuItem?.color)
+      ? isDefined(navigationMenuItem?.color)
         ? navigationMenuItem.color
         : (getStandardObjectIconColor(objectMetadataItem.nameSingular) ??
           'gray')
