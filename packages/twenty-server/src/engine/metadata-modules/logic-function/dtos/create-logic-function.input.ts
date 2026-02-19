@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
   Min,
 } from 'class-validator';
@@ -17,6 +18,8 @@ import {
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
+
+import type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -52,7 +55,7 @@ export class CreateLogicFunction {
 
   @Field(() => graphqlTypeJson, { nullable: false })
   @IsObject()
-  toolInputSchema: object;
+  toolInputSchema: InputJsonSchema;
 
   @IsBoolean()
   @Field({ nullable: true })
@@ -69,6 +72,9 @@ export class CreateLogicFunction {
   checksum?: string;
 
   @IsString()
+  @Matches(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
+    message: 'handlerName must be a valid JavaScript identifier',
+  })
   @Field({ nullable: false })
   handlerName: string;
 

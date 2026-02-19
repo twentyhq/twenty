@@ -1,12 +1,16 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
+import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
+import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
+import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
 
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -20,20 +24,26 @@ import { cookieStorage } from '~/utils/cookie-storage';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetRecoilState(tokenPairState);
-  const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
+  const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
 
   const { getBrowsingContext } = useGetBrowsingContext();
-
-  const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
-
-  const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
-
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
-    agentChatUploadedFilesState,
+  const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
+    currentAIChatThreadTitleStateV2,
   );
 
-  const [agentChatInput, setAgentChatInput] =
-    useRecoilState(agentChatInputState);
+  const agentChatSelectedFiles = useRecoilValueV2(
+    agentChatSelectedFilesStateV2,
+  );
+
+  const currentAIChatThread = useRecoilValueV2(currentAIChatThreadStateV2);
+
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilStateV2(
+    agentChatUploadedFilesStateV2,
+  );
+
+  const [agentChatInput, setAgentChatInput] = useRecoilStateV2(
+    agentChatInputStateV2,
+  );
 
   const retryFetchWithRenewedToken = async (
     input: RequestInfo | URL,
@@ -149,6 +159,14 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
           inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
           outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));
+      }
+
+      const titlePart = message.parts.find(
+        (part) => part.type === 'data-thread-title',
+      );
+
+      if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
+        setCurrentAIChatThreadTitle(titlePart.data.title);
       }
     },
   });

@@ -9,6 +9,7 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreatePageLayoutAction,
@@ -70,6 +71,11 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
       }
     }
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'pageLayout',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -80,6 +86,7 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
         id: action.id ?? v4(),
         workspaceId,
         tabIds: [],
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

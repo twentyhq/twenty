@@ -13,6 +13,7 @@ import {
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
+import { type InputJsonSchema } from 'twenty-shared/logic-function';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -59,7 +60,7 @@ export class LogicFunctionEntity
   checksum: string | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  toolInputSchema: JsonbProperty<object> | null;
+  toolInputSchema: JsonbProperty<InputJsonSchema> | null;
 
   @Column({ nullable: false, default: false })
   isTool: boolean;

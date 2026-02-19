@@ -23,7 +23,10 @@ export const useAiModelOptions = (
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-export const useAiModelLabel = (modelId: string | undefined): string => {
+export const useAiModelLabel = (
+  modelId: string | undefined,
+  includeProvider = true,
+): string => {
   const aiModels = useRecoilValueV2(aiModelsState);
 
   if (!modelId) {
@@ -38,7 +41,8 @@ export const useAiModelLabel = (modelId: string | undefined): string => {
 
   if (
     model.modelId === DEFAULT_FAST_MODEL ||
-    model.modelId === DEFAULT_SMART_MODEL
+    model.modelId === DEFAULT_SMART_MODEL ||
+    !includeProvider
   ) {
     return model.label;
   }

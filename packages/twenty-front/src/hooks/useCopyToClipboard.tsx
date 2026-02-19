@@ -9,6 +9,18 @@ export const useCopyToClipboard = () => {
   const { t } = useLingui();
 
   const copyToClipboard = async (valueAsString: string, message?: string) => {
+    if (!window.isSecureContext) {
+      enqueueErrorSnackBar({
+        message: t`Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying.`,
+        options: {
+          icon: <IconExclamationCircle size={16} color="red" />,
+          duration: 6000,
+        },
+      });
+
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(valueAsString);
 

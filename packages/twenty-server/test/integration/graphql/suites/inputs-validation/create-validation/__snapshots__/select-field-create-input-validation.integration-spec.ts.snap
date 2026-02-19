@@ -2,20 +2,8 @@
 
 exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"Value "not-a-select-option" does not exist in "ApiInputValidationTestObjectSelectFieldEnum" enum."`;
 
-exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":[]} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: []."`;
-
-exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":{}} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: {}."`;
-
 exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":1} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: 1."`;
-
-exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":true} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: true."`;
 
 exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"["Invalid value 'not-a-select-option' for field \\"selectField\\""]"`;
 
-exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":[]} 1`] = `"["Invalid string value [] for text field \\"selectField\\""]"`;
-
-exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":{}} 1`] = `"["Invalid string value {} for text field \\"selectField\\""]"`;
-
 exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":1} 1`] = `"["Invalid string value 1 for text field \\"selectField\\""]"`;
-
-exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":true} 1`] = `"["Invalid string value true for text field \\"selectField\\""]"`;

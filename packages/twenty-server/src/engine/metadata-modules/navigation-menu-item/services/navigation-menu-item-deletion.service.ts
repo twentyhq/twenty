@@ -68,13 +68,13 @@ export class NavigationMenuItemDeletionService {
             },
           },
           workspaceId,
-          isSystemBuild: true,
+          isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting navigation menu items for deleted records',

@@ -4,6 +4,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -69,7 +70,7 @@ export const useLoadRecordIndexStates = () => {
     ({ set, snapshot }) =>
       (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
         const activeFieldMetadataItems = objectMetadataItem.fields.filter(
-          ({ isActive, isSystem }) => isActive && !isSystem,
+          (field) => field.isActive && !isHiddenSystemField(field),
         );
 
         const filterableFieldMetadataItems = snapshot

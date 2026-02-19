@@ -4,8 +4,8 @@ import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/typ
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
-import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
+import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/to-universal-foreign-key.type';
 
 type HasObjectInUnion<T> = T extends unknown
   ? T extends object
@@ -1019,6 +1019,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     link: { toCompare: true, toStringify: false, universalProperty: undefined },
+    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
     createdAt: {
       toCompare: false,
       toStringify: false,

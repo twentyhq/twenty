@@ -24,7 +24,7 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts",
+          "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts && npx vite build -c vite.config.sdk.ts",
           "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
         ],
         "parallel": false
@@ -37,7 +37,7 @@
       ],
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist && npx vite build -c vite.config.node.ts --watch & npx vite build -c vite.config.browser.ts --watch"
+        "command": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts && npx vite build -c vite.config.sdk.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist && npx vite build -c vite.config.node.ts --watch & npx vite build -c vite.config.browser.ts --watch & npx vite build -c vite.config.sdk.ts --watch"
       }
     },
     "start": {
@@ -116,6 +116,23 @@
         }
       ]
     },
+    "build:sdk": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "{projectRoot}/src/sdk/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/sdk"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx vite build -c vite.config.sdk.ts"
+      }
+    },
     "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -146,7 +163,16 @@
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": [
-        "generate-remote-dom-elements"
+        "generate-remote-dom-elements",
+        "build:sdk",
+        {
+          "target": "build:individual",
+          "projects": "twenty-ui"
+        },
+        {
+          "target": "build:individual",
+          "projects": "twenty-shared"
+        }
       ],
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",

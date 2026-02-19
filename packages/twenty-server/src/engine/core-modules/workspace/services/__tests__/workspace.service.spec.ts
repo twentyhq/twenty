@@ -13,6 +13,7 @@ import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomai
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -115,6 +116,7 @@ describe('WorkspaceService', () => {
           FeatureFlagService,
           ExceptionHandlerService,
           PermissionsService,
+          FileCorePictureService,
         ].map((service) => ({
           provide: service,
           useValue: {},

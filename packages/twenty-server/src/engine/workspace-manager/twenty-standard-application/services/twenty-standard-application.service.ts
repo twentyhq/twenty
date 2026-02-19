@@ -113,19 +113,19 @@ export class TwentyStandardApplicationService {
           buildOptions: {
             isSystemBuild: true,
             inferDeletionFromMissingEntities: true,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
           idByUniversalIdentifierByMetadataName,
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while synchronizing twenty-standard application',

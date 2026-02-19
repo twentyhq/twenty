@@ -11,7 +11,7 @@ import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -617,6 +617,18 @@ export class AuthService {
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
+
+    // Invalidate all existing refresh tokens for this user across all workspaces
+    await this.appTokenRepository.update(
+      {
+        userId,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      },
+      {
+        revokedAt: new Date(),
+      },
+    );
 
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,

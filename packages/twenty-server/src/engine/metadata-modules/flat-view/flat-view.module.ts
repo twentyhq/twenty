@@ -5,6 +5,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -20,6 +21,7 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
       ObjectMetadataEntity,
       ViewEntity,
       ViewFieldEntity,
+      ViewFieldGroupEntity,
       ViewFilterEntity,
       ViewGroupEntity,
       ViewSortEntity,

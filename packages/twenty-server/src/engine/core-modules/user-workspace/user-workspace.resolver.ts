@@ -21,7 +21,7 @@ export class UserWorkspaceResolver {
 
   @Mutation(() => SignedFileDTO)
   @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
-  async uploadWorkspaceMemberProfilePicture(
+  async uploadWorkspaceMemberProfilePictureLegacy(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,

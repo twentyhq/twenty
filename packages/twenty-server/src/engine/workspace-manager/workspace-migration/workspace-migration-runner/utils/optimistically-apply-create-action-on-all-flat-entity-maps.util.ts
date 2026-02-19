@@ -1,4 +1,4 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
@@ -15,7 +15,12 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
 }: OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs): AllFlatEntityMaps => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata': {
-      flatAction.flatFieldMetadatas.forEach((flatEntity) =>
+      const flatFieldMetadatas = [
+        flatAction.flatEntity,
+        flatAction.relatedFlatFieldMetadata,
+      ].filter(isDefined);
+
+      flatFieldMetadatas.forEach((flatEntity) =>
         addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
           flatEntity,
           flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

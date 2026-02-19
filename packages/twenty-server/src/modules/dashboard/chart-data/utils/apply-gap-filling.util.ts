@@ -1,5 +1,6 @@
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import {
+  isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
   isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
@@ -23,6 +24,7 @@ type ApplyGapFillingParams = {
   omitNullValues: boolean;
   isDescOrder: boolean;
   isTwoDimensional: boolean;
+  splitMultiValueFields?: boolean;
 };
 
 type ApplyGapFillingResult = {
@@ -37,6 +39,7 @@ export const applyGapFilling = ({
   omitNullValues,
   isDescOrder,
   isTwoDimensional,
+  splitMultiValueFields,
 }: ApplyGapFillingParams): ApplyGapFillingResult => {
   if (omitNullValues) {
     return { data, wasTruncated: false };
@@ -64,11 +67,15 @@ export const applyGapFilling = ({
     wasTruncated = dateResult.wasTruncated;
   }
 
+  const isArrayFieldWithoutSplit =
+    isFieldMetadataArrayKind(primaryAxisGroupByField.type) &&
+    !(splitMultiValueFields ?? true);
+
   const isPrimaryFieldSelect = isFieldMetadataSelectKind(
     primaryAxisGroupByField.type,
   );
 
-  if (isPrimaryFieldSelect) {
+  if (isPrimaryFieldSelect && !isArrayFieldWithoutSplit) {
     const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
     const fillSelectGapsFn = isTwoDimensional

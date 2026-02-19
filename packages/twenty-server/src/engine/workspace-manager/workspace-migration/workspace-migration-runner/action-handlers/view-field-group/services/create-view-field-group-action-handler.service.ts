@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateViewFieldGroupAction,
@@ -32,16 +33,21 @@ export class CreateViewFieldGroupActionHandlerService extends WorkspaceMigration
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'viewFieldGroup',
+      });
+
     return {
       ...action,
       flatEntity: {
         ...action.flatEntity,
         viewId,
-        viewFieldIds: [],
-        viewFieldUniversalIdentifiers: [],
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
+        viewFieldIds: [],
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }

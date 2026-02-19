@@ -6,6 +6,8 @@ import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 export type TwentyConfig = {
   apiUrl: string;
   apiKey?: string;
+  applicationAccessToken?: string;
+  applicationRefreshToken?: string;
 };
 
 type PersistedConfig = TwentyConfig & {
@@ -59,10 +61,14 @@ export class ConfigService {
       // Fallback to legacy top-level values if profile value is missing
       const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;
       const apiKey = profileConfig?.apiKey;
+      const applicationAccessToken = profileConfig?.applicationAccessToken;
+      const applicationRefreshToken = profileConfig?.applicationRefreshToken;
 
       return {
         apiUrl,
         apiKey,
+        applicationAccessToken,
+        applicationRefreshToken,
       };
     } catch {
       return defaultConfig;

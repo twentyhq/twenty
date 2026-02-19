@@ -8,8 +8,14 @@ export const generateApplicationTokenQueryFactory = ({
   query: gql`
     mutation GenerateApplicationToken($applicationId: UUID!) {
       generateApplicationToken(applicationId: $applicationId) {
-        token
-        expiresAt
+        applicationAccessToken {
+          token
+          expiresAt
+        }
+        applicationRefreshToken {
+          token
+          expiresAt
+        }
       }
     }
   `,

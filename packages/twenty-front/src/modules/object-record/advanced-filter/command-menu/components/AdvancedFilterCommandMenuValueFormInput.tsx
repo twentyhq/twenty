@@ -19,6 +19,7 @@ import {
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { isObject, isString } from '@sniptt/guards';
@@ -61,6 +62,10 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
+
+  const featureFlags = useFeatureFlagsMap();
+  const isWholeDayFilterEnabled =
+    featureFlags.IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED ?? false;
 
   const handleChange = (newValue: JsonValue) => {
     if (isString(newValue)) {
@@ -178,7 +183,12 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
   }
 
   const field = {
-    type: recordFilter.type as FieldMetadataType,
+    type:
+      isWholeDayFilterEnabled === true &&
+      recordFilter.type === FieldMetadataType.DATE_TIME &&
+      recordFilter.operand === RecordFilterOperand.IS
+        ? FieldMetadataType.DATE
+        : (recordFilter.type as FieldMetadataType),
     label: '',
     metadata: fieldDefinition?.metadata as FieldMetadata,
   };

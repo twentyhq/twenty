@@ -14,8 +14,9 @@ import {
 } from 'twenty-shared/testing';
 import {
   FieldMetadataType,
-  ViewFilterOperand,
   type EnumFieldMetadataType,
+  ViewFilterOperand,
+  ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,7 +25,6 @@ import {
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 

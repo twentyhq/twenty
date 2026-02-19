@@ -30,7 +30,7 @@ export class GmailFoldersErrorHandlerService {
     }
 
     throw new MessageImportDriverException(
-      'Unknown error',
+      `Gmail folders fetch error: ${error instanceof Error ? error.message : String(error)}`,
       MessageImportDriverExceptionCode.UNKNOWN,
     );
   }
