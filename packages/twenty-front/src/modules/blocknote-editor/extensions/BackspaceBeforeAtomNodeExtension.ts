@@ -1,10 +1,37 @@
 import { Plugin, PluginKey } from 'prosemirror-state';
 
+// Fixes a bug where pressing Backspace/Delete adjacent to an atom inline node
+// (e.g. a mention chip) fails to delete the neighboring text character.
+//
+// Root cause: the browser's contenteditable engine doesn't correctly handle
+// removal of text next to atom inline nodes, and ProseMirror's DOM observation
+// can't recover from the resulting DOM state.
+//
+// This plugin intercepts Backspace/Delete only when:
+//   - The cursor is collapsed (no selection range)
+//   - The adjacent node in the deletion direction is an atom inline node
+//   - The content on the opposite side (what will be deleted) is text
+//
+// The nodeBefore/nodeAfter guards are critical: for Backspace we check that
+// nodeBefore is a text node (not another atom), which distinguishes
+// "text|atom" (broken case we fix) from "atom|atom" (two adjacent mentions,
+// ProseMirror handles correctly). Without this guard, tr.delete(pos-1, pos)
+// would slice into the preceding atom node and corrupt the document.
+//
+// See:
+// - https://github.com/ProseMirror/prosemirror/issues/1263
+// - https://discuss.prosemirror.net/t/cursor-and-backspace-problems-with-inline-nodes/3469
+
 const PLUGIN_KEY = new PluginKey('backspaceBeforeAtomNode');
 
+// Atom nodes are represented as spaces in textBetween calls so that
+// word boundary detection naturally stops at atom nodes, preventing
+// Ctrl/Alt+Backspace/Delete from deleting mention chips.
 const ATOM_NODE_REPLACEMENT = ' ';
 
-const findWordBoundaryBefore = (text: string): number => {
+// Find the start position of the previous word boundary.
+// Scans backwards: skips trailing whitespace, then skips non-whitespace.
+export const findWordBoundaryBefore = (text: string): number => {
   let index = text.length;
 
   while (index > 0 && /\s/.test(text[index - 1])) {
@@ -18,7 +45,9 @@ const findWordBoundaryBefore = (text: string): number => {
   return index;
 };
 
-const findWordBoundaryAfter = (text: string): number => {
+// Find the end position of the next word boundary.
+// Scans forward: skips leading whitespace, then skips non-whitespace.
+export const findWordBoundaryAfter = (text: string): number => {
   let index = 0;
 
   while (index < text.length && /\s/.test(text[index])) {
@@ -64,11 +93,23 @@ export const backspaceBeforeAtomNodePlugin = new Plugin({
 
         const nodeAfter = $from.nodeAfter;
 
-        if (!nodeAfter?.isAtom || !nodeAfter?.isInline) {
+        // Only intervene when nodeAfter is a non-text atom inline node.
+        // Text nodes also have isAtom=true in ProseMirror (they are leaves),
+        // so we must exclude them explicitly.
+        if (
+          !nodeAfter?.isAtom ||
+          !nodeAfter?.isInline ||
+          nodeAfter?.isText
+        ) {
           return false;
         }
 
-        if ($from.textOffset === 0) {
+        // Verify the content before the cursor is text (not another atom node).
+        // When two adjacent mentions exist (atom|atom), nodeBefore is an atom
+        // and ProseMirror handles Backspace correctly — we must not intervene.
+        const nodeBefore = $from.nodeBefore;
+
+        if (!nodeBefore?.isText) {
           return false;
         }
 
@@ -96,7 +137,12 @@ export const backspaceBeforeAtomNodePlugin = new Plugin({
       if (isDelete) {
         const nodeBefore = $from.nodeBefore;
 
-        if (!nodeBefore?.isAtom || !nodeBefore?.isInline) {
+        // Only intervene when nodeBefore is a non-text atom inline node.
+        if (
+          !nodeBefore?.isAtom ||
+          !nodeBefore?.isInline ||
+          nodeBefore?.isText
+        ) {
           return false;
         }
 
