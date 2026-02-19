@@ -10,6 +10,7 @@ import {
 
 export const EXPECTED_MANIFEST: Manifest = {
   pageLayouts: [],
+  agents: [],
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',

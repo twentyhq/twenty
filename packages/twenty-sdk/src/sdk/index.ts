@@ -1,3 +1,5 @@
+export type { AgentConfig } from './agents/agent-config';
+export { defineAgent } from './agents/define-agent';
 export type { ApplicationConfig } from './application/application-config';
 export { defineApplication } from './application/define-application';
 export type {

@@ -1,10 +1,10 @@
 import {
   type OrchestratorState,
+  type OrchestratorStateEntityInfo,
   type OrchestratorStateEvent,
   type OrchestratorStateFileStatus,
   type OrchestratorStateStepStatus,
   type OrchestratorStateSyncStatus,
-  type OrchestratorStateEntityInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { SyncableEntity } from 'twenty-shared/application';
 
@@ -98,6 +98,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.FrontComponent]: 'Front components',
   [SyncableEntity.Role]: 'Roles',
   [SyncableEntity.Skill]: 'Skills',
+  [SyncableEntity.Agent]: 'Agents',
   [SyncableEntity.View]: 'Views',
   [SyncableEntity.NavigationMenuItem]: 'Navigation menu items',
   [SyncableEntity.PageLayout]: 'Page layouts',

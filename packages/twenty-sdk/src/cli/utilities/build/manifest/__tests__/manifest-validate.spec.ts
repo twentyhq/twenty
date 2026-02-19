@@ -1,10 +1,10 @@
+import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 import {
   type ApplicationManifest,
-  type Manifest,
   type FieldManifest,
+  type Manifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
 const validApplication: ApplicationManifest = {
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -33,6 +33,7 @@ const validManifest: Manifest = {
   logicFunctions: [],
   roles: [],
   skills: [],
+  agents: [],
   publicAssets: [],
   views: [],
   navigationMenuItems: [],

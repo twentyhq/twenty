@@ -1,4 +1,5 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
@@ -153,6 +154,15 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getPageLayoutBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
+      case SyncableEntity.Agent: {
+        const name = await this.getEntityName(entity);
+
+        const file = getAgentBaseFile({
           name,
         });
         return { name, file };

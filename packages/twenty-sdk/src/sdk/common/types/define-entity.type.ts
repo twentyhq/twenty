@@ -1,3 +1,4 @@
+import { type AgentConfig } from '@/sdk/agents/agent-config';
 import { type ApplicationConfig } from '@/sdk/application/application-config';
 import { type FrontComponentConfig } from '@/sdk/front-component-config';
 import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
@@ -25,6 +26,7 @@ export type DefinableEntity =
   | LogicFunctionConfig
   | RoleManifest
   | SkillManifest
+  | AgentConfig
   | ViewConfig
   | NavigationMenuItemManifest
   | PageLayoutConfig;

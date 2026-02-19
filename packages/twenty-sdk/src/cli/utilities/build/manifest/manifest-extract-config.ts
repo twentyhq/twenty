@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
 
 export enum TargetFunction {
+  DefineAgent = 'defineAgent',
   DefineApplication = 'defineApplication',
   DefineField = 'defineField',
   DefineLogicFunction = 'defineLogicFunction',
@@ -20,6 +21,7 @@ export enum ManifestEntityKey {
   Objects = 'objects',
   Roles = 'roles',
   Skills = 'skills',
+  Agents = 'agents',
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
   Views = 'views',
@@ -33,6 +35,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   TargetFunction,
   ManifestEntityKey
 > = {
+  [TargetFunction.DefineAgent]: ManifestEntityKey.Agents,
   [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
   [TargetFunction.DefineField]: ManifestEntityKey.Fields,
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,

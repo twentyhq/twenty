@@ -5,11 +5,13 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import {
   type ApplicationConfig,
   type FrontComponentConfig,
   type LogicFunctionConfig,
 } from '@/sdk';
+import { type AgentConfig } from '@/sdk/agents/agent-config';
 import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
@@ -17,6 +19,7 @@ import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
 import { basename, extname, relative } from 'path';
 import {
+  type AgentManifest,
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
@@ -33,7 +36,6 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -66,6 +68,7 @@ export const buildManifest = async (
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
+  const agents: AgentManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -78,6 +81,7 @@ export const buildManifest = async (
   const fieldsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
+  const agentsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -178,6 +182,16 @@ export const buildManifest = async (
         skills.push(extract.config);
         errors.push(...extract.errors);
         skillsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.Agents: {
+        const extract = await extractManifestFromFile<AgentConfig>({
+          appPath,
+          filePath,
+        });
+        agents.push(extract.config);
+        errors.push(...extract.errors);
+        agentsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.LogicFunctions: {
@@ -311,6 +325,7 @@ export const buildManifest = async (
         fields,
         roles,
         skills,
+        agents,
         logicFunctions,
         frontComponents,
         publicAssets,
@@ -325,6 +340,7 @@ export const buildManifest = async (
     fields: fieldsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
+    agents: agentsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,
