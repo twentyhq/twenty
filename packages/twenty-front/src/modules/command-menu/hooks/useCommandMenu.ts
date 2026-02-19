@@ -8,6 +8,8 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
+import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { useStore } from 'jotai';
@@ -15,6 +17,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -49,13 +52,26 @@ export const useCommandMenu = () => {
   const openCommandMenu = useCallback(() => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
-    navigateCommandMenu({
-      page: CommandMenuPages.Root,
-      pageTitle: t`Command Menu`,
-      pageIcon: IconDotsVertical,
-      resetNavigationStack: true,
-    });
-  }, [closeAnyOpenDropdown, navigateCommandMenu]);
+    const isEditMode = store.get(isNavigationMenuInEditModeStateV2.atom);
+    const selectedNavItemId = store.get(
+      selectedNavigationMenuItemInEditModeStateV2.atom,
+    );
+    if (isEditMode && isDefined(selectedNavItemId)) {
+      navigateCommandMenu({
+        page: CommandMenuPages.NavigationMenuItemEdit,
+        pageTitle: t`Edit`,
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: true,
+      });
+    } else {
+      navigateCommandMenu({
+        page: CommandMenuPages.Root,
+        pageTitle: t`Command Menu`,
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: true,
+      });
+    }
+  }, [closeAnyOpenDropdown, navigateCommandMenu, store]);
 
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
