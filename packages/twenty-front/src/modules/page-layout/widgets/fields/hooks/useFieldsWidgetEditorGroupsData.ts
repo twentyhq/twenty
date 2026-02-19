@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useGetViewById } from '@/views/hooks/useGetViewById';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +14,7 @@ export const useFieldsWidgetEditorGroupsData = ({
   viewId,
   objectNameSingular,
 }: UseFieldsWidgetEditorGroupsDataParams) => {
+  const { t } = useLingui();
   const { view } = useGetViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -67,11 +69,50 @@ export const useFieldsWidgetEditorGroupsData = ({
       });
     }
 
+    if (isDefined(view) && view.viewFields.length > 0) {
+      let globalIndex = 0;
+
+      const fields = [...view.viewFields]
+        .sort((a, b) => a.position - b.position)
+        .map((viewField) => {
+          const fieldMetadataItem = objectMetadataItem.fields.find(
+            (f) => f.id === viewField.fieldMetadataId,
+          );
+
+          if (!isDefined(fieldMetadataItem)) {
+            return null;
+          }
+
+          return {
+            fieldMetadataItem,
+            position: viewField.position,
+            isVisible: viewField.isVisible,
+            globalIndex: globalIndex++,
+            viewFieldId: viewField.id,
+          };
+        })
+        .filter(isDefined);
+
+      if (fields.length > 0) {
+        return [
+          {
+            id: `${view.id}-group-general`,
+            name: t`General`,
+            position: 0,
+            isVisible: true,
+            fields,
+          },
+        ];
+      }
+    }
+
     return [];
-  }, [objectMetadataItem, view]);
+  }, [objectMetadataItem, t, view]);
 
   return {
     groups,
-    isFromView: isDefined(view) && isDefined(view.viewFieldGroups),
+    isFromView:
+      isDefined(view) &&
+      (isDefined(view.viewFieldGroups) || view.viewFields.length > 0),
   };
 };

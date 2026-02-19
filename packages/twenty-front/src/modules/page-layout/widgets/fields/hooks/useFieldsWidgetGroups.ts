@@ -81,6 +81,43 @@ export const useFieldsWidgetGroups = ({
         .filter((group) => group.fields.length > 0);
     }
 
+    if (isDefined(view) && view.viewFields.length > 0) {
+      let globalIndex = 0;
+
+      const fields: FieldsWidgetGroupField[] = [...view.viewFields]
+        .sort((a, b) => a.position - b.position)
+        .filter((viewField) => viewField.isVisible)
+        .map((viewField) => {
+          const fieldMetadataItem = objectMetadataItem.fields.find(
+            (f) => f.id === viewField.fieldMetadataId,
+          );
+
+          if (!isDefined(fieldMetadataItem)) {
+            return null;
+          }
+
+          return {
+            fieldMetadataItem,
+            position: viewField.position,
+            isVisible: viewField.isVisible,
+            globalIndex: globalIndex++,
+          };
+        })
+        .filter(isDefined);
+
+      if (fields.length > 0) {
+        return [
+          {
+            id: `${view.id}-group-general`,
+            name: t`General`,
+            position: 0,
+            isVisible: true,
+            fields,
+          },
+        ];
+      }
+    }
+
     const fieldsToDisplay = inlineFieldMetadataItems;
 
     if (fieldsToDisplay.length === 0) {
@@ -157,6 +194,8 @@ export const useFieldsWidgetGroups = ({
 
   return {
     groups,
-    isFromView: isDefined(view) && isDefined(view.viewFieldGroups),
+    isFromView:
+      isDefined(view) &&
+      (isDefined(view.viewFieldGroups) || view.viewFields.length > 0),
   };
 };
