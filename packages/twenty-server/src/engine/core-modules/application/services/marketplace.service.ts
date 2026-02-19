@@ -98,13 +98,13 @@ export class MarketplaceService {
           }
         } catch (error) {
           this.logger.warn(
-            `Failed to load manifest from ${appDir}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            `Failed to load manifest from ${appDir}: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       }
     } catch (error) {
       this.logger.error(
-        `Failed to fetch marketplace apps from GitHub: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to fetch marketplace apps from GitHub: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 

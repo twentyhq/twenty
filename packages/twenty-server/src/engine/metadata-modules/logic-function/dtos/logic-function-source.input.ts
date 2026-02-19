@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsObject, IsString } from 'class-validator';
+import { IsObject, IsString, Matches } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
 @InputType()
@@ -14,6 +14,9 @@ export class LogicFunctionSourceInput {
   toolInputSchema: object;
 
   @IsString()
+  @Matches(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
+    message: 'handlerName must be a valid JavaScript identifier',
+  })
   @Field({ nullable: false })
   handlerName: string;
 }

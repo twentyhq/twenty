@@ -9,9 +9,9 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { type FieldsConfiguration } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('NewFieldDefaultConfiguration')
 export class NewFieldDefaultConfigurationDTO {
@@ -26,9 +26,7 @@ export class NewFieldDefaultConfigurationDTO {
 }
 
 @ObjectType('FieldsConfiguration')
-export class FieldsConfigurationDTO
-  implements PageLayoutWidgetConfigurationBase
-{
+export class FieldsConfigurationDTO implements FieldsConfiguration {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.FIELDS])
   @IsNotEmpty()

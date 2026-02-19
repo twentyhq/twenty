@@ -37,6 +37,11 @@ export type { NavigationMenuItemManifest } from './navigationMenuItemManifestTyp
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
+  PageLayoutWidgetManifest,
+  PageLayoutTabManifest,
+  PageLayoutManifest,
+} from './pageLayoutManifestType';
+export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
   RoleManifest,

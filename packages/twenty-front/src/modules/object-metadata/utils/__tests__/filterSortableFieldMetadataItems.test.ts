@@ -7,6 +7,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.TEXT,
       isSystem: false,
       isActive: true,
+      name: 'text',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(true);
@@ -17,6 +18,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.NUMBER,
       isSystem: false,
       isActive: true,
+      name: 'number',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(true);
@@ -27,6 +29,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.DATE_TIME,
       isSystem: false,
       isActive: true,
+      name: 'dateTime',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(true);
@@ -37,6 +40,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.RELATION,
       isSystem: false,
       isActive: true,
+      name: 'relation',
       relation: {
         type: RelationType.MANY_TO_ONE,
       },
@@ -50,6 +54,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.RELATION,
       isSystem: false,
       isActive: true,
+      name: 'relation',
       relation: {
         type: RelationType.ONE_TO_MANY,
       },
@@ -63,6 +68,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.RELATION,
       isSystem: false,
       isActive: true,
+      name: 'relation',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(false);
@@ -73,6 +79,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.TEXT,
       isSystem: true,
       isActive: true,
+      name: 'id',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(false);
@@ -83,6 +90,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.TEXT,
       isSystem: false,
       isActive: false,
+      name: 'text',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(false);
@@ -93,6 +101,7 @@ describe('filterSortableFieldMetadataItems', () => {
       type: FieldMetadataType.RICH_TEXT,
       isSystem: false,
       isActive: true,
+      name: 'richText',
     };
 
     expect(filterSortableFieldMetadataItems(field)).toBe(false);

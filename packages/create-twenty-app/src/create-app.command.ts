@@ -8,13 +8,23 @@ import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
 import * as path from 'path';
 
+import {
+  type ExampleOptions,
+  type ScaffoldingMode,
+} from '@/types/scaffolding-options';
+
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
 export class CreateAppCommand {
-  async execute(directory?: string): Promise<void> {
+  async execute(
+    directory?: string,
+    mode: ScaffoldingMode = 'exhaustive',
+  ): Promise<void> {
     try {
       const { appName, appDisplayName, appDirectory, appDescription } =
         await this.getAppInfos(directory);
+
+      const exampleOptions = await this.resolveExampleOptions(mode);
 
       await this.validateDirectory(appDirectory);
 
@@ -27,6 +37,7 @@ export class CreateAppCommand {
         appDisplayName,
         appDescription,
         appDirectory,
+        exampleOptions,
       });
 
       await install(appDirectory);
@@ -90,6 +101,95 @@ export class CreateAppCommand {
       : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };
+  }
+
+  private async resolveExampleOptions(
+    mode: ScaffoldingMode,
+  ): Promise<ExampleOptions> {
+    if (mode === 'minimal') {
+      return {
+        includeExampleObject: false,
+        includeExampleField: false,
+        includeExampleLogicFunction: false,
+        includeExampleFrontComponent: false,
+        includeExampleView: false,
+        includeExampleNavigationMenuItem: false,
+      };
+    }
+
+    if (mode === 'exhaustive') {
+      return {
+        includeExampleObject: true,
+        includeExampleField: true,
+        includeExampleLogicFunction: true,
+        includeExampleFrontComponent: true,
+        includeExampleView: true,
+        includeExampleNavigationMenuItem: true,
+      };
+    }
+
+    const { selectedExamples } = await inquirer.prompt([
+      {
+        type: 'checkbox',
+        name: 'selectedExamples',
+        message: 'Select which example files to include:',
+        choices: [
+          {
+            name: 'Example object (custom object definition)',
+            value: 'object',
+            checked: true,
+          },
+          {
+            name: 'Example field (custom field on the example object)',
+            value: 'field',
+            checked: true,
+          },
+          {
+            name: 'Example logic function (server-side handler)',
+            value: 'logicFunction',
+            checked: true,
+          },
+          {
+            name: 'Example front component (React UI component)',
+            value: 'frontComponent',
+            checked: true,
+          },
+          {
+            name: 'Example view (saved view for the example object)',
+            value: 'view',
+            checked: true,
+          },
+          {
+            name: 'Example navigation menu item (sidebar link)',
+            value: 'navigationMenuItem',
+            checked: true,
+          },
+        ],
+      },
+    ]);
+
+    const includeField = selectedExamples.includes('field');
+    const includeView = selectedExamples.includes('view');
+    const includeObject =
+      selectedExamples.includes('object') || includeField || includeView;
+
+    if ((includeField || includeView) && !selectedExamples.includes('object')) {
+      console.log(
+        chalk.yellow(
+          'Note: Example object auto-included because example field/view depends on it.',
+        ),
+      );
+    }
+
+    return {
+      includeExampleObject: includeObject,
+      includeExampleField: includeField,
+      includeExampleLogicFunction: selectedExamples.includes('logicFunction'),
+      includeExampleFrontComponent: selectedExamples.includes('frontComponent'),
+      includeExampleView: includeView,
+      includeExampleNavigationMenuItem:
+        selectedExamples.includes('navigationMenuItem'),
+    };
   }
 
   private async validateDirectory(appDirectory: string): Promise<void> {

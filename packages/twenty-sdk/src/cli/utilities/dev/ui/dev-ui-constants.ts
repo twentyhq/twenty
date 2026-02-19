@@ -97,6 +97,9 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.LogicFunction]: 'Logic functions',
   [SyncableEntity.FrontComponent]: 'Front components',
   [SyncableEntity.Role]: 'Roles',
+  [SyncableEntity.View]: 'Views',
+  [SyncableEntity.NavigationMenuItem]: 'Navigation menu items',
+  [SyncableEntity.PageLayout]: 'Page layouts',
 };
 
 export const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];

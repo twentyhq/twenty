@@ -32,6 +32,11 @@ export const StyledSettingsCardTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
+export const StyledSettingsCardTextContainer = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 export const StyledSettingsCardDescription = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};

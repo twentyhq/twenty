@@ -1,3 +1,7 @@
+import {
+  type ChartFilter,
+  type UniversalChartFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -39,6 +43,33 @@ const getFieldMetadataUniversalIdentifier = ({
   return universalIdentifier;
 };
 
+const convertChartFilterToUniversalFilter = ({
+  filter,
+  fieldMetadataUniversalIdentifierById,
+}: {
+  filter: ChartFilter | undefined;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier: boolean;
+}): UniversalChartFilter | undefined => {
+  if (!isDefined(filter)) {
+    return undefined;
+  }
+
+  return {
+    ...filter,
+    recordFilters: filter.recordFilters?.map(
+      ({ fieldMetadataId, ...rest }) => ({
+        ...rest,
+        fieldMetadataUniversalIdentifier: getFieldMetadataUniversalIdentifier({
+          fieldMetadataId,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier: false,
+        }),
+      }),
+    ),
+  };
+};
+
 export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
@@ -54,8 +85,12 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
 }): UniversalPageLayoutWidgetConfiguration => {
   switch (configuration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART: {
-      const { aggregateFieldMetadataId, ratioAggregateConfig, ...rest } =
-        configuration;
+      const {
+        aggregateFieldMetadataId,
+        ratioAggregateConfig,
+        filter,
+        ...rest
+      } = configuration;
 
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
@@ -80,11 +115,16 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         ...rest,
         aggregateFieldMetadataUniversalIdentifier,
         ratioAggregateConfig: universalRatioAggregateConfig,
+        filter: convertChartFilterToUniversalFilter({
+          filter,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        }),
       };
     }
 
     case WidgetConfigurationType.GAUGE_CHART: {
-      const { aggregateFieldMetadataId, ...rest } = configuration;
+      const { aggregateFieldMetadataId, filter, ...rest } = configuration;
 
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
@@ -96,12 +136,21 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         ...rest,
         aggregateFieldMetadataUniversalIdentifier,
+        filter: convertChartFilterToUniversalFilter({
+          filter,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        }),
       };
     }
 
     case WidgetConfigurationType.PIE_CHART: {
-      const { aggregateFieldMetadataId, groupByFieldMetadataId, ...rest } =
-        configuration;
+      const {
+        aggregateFieldMetadataId,
+        groupByFieldMetadataId,
+        filter,
+        ...rest
+      } = configuration;
 
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
@@ -121,6 +170,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         ...rest,
         aggregateFieldMetadataUniversalIdentifier,
         groupByFieldMetadataUniversalIdentifier,
+        filter: convertChartFilterToUniversalFilter({
+          filter,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        }),
       };
     }
 
@@ -129,6 +183,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         aggregateFieldMetadataId,
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
+        filter,
         ...rest
       } = configuration;
 
@@ -161,6 +216,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
+        filter: convertChartFilterToUniversalFilter({
+          filter,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        }),
       };
     }
 
@@ -169,6 +229,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         aggregateFieldMetadataId,
         primaryAxisGroupByFieldMetadataId,
         secondaryAxisGroupByFieldMetadataId,
+        filter,
         ...rest
       } = configuration;
 
@@ -201,6 +262,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
+        filter: convertChartFilterToUniversalFilter({
+          filter,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        }),
       };
     }
 
