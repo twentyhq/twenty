@@ -17,10 +17,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const OBJECT_UNIVERSAL_IDENTIFIER =
+const OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA =
   STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
     .universalIdentifier;
-const FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
+const FIELD_UNIVERSAL_IDENTIFIERS_TO_CREATE = Object.values(
   STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder.fields,
 ).map((el) => el.universalIdentifier);
 
@@ -52,16 +52,14 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
       `${isDryRun ? '[DRY RUN] ' : ''}Starting backfill of messageChannelMessageAssociationMessageFolder for workspace ${workspaceId}`,
     );
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, featureFlagsMap } =
+    const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'featureFlagsMap',
       ]);
 
     const existingObject = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA,
     });
 
     if (existingObject) {
@@ -95,13 +93,13 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
     const flatObjectMetadataToCreate =
       findFlatEntityByUniversalIdentifierOrThrow({
         flatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
-        universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA,
       });
 
     const flatFieldMetadataToCreate =
       findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
         flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
-        universalIdentifiers: FIELD_UNIVERSAL_IDENTIFIERS,
+        universalIdentifiers: FIELD_UNIVERSAL_IDENTIFIERS_TO_CREATE,
       });
 
     const validateAndBuildResult =
