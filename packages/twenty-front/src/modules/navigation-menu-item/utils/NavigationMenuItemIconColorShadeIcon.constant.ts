@@ -1,1 +1,1 @@
-export const COLOR_SHADE_ICON = 10;
+export const COLOR_SHADE_ICON = 11;
