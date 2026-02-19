@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import type { IconComponent } from 'twenty-ui/display';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
 export type NavigationMenuItemStyleIconProps = {
   Icon: IconComponent;
