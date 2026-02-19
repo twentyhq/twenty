@@ -22,6 +22,7 @@ import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-mod
 import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
+import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -221,8 +222,14 @@ export class LogicFunctionFromSourceService {
       });
     }
 
-    await this.helperService.updateOneFromSourceInput({
-      updateLogicFunctionFromSourceInput,
+    const flatLogicFunctionToUpdate =
+      fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate({
+        updateLogicFunctionFromSourceInput,
+        existingFlatLogicFunction: flatLogicFunction,
+      });
+
+    await this.helperService.updateOneFromMetadata({
+      flatLogicFunctionToUpdate,
       workspaceId,
       applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
@@ -302,8 +309,12 @@ export class LogicFunctionFromSourceService {
       });
 
     await this.helperService.updateOneFromMetadata({
-      id,
-      update: { checksum, isBuildUpToDate: true },
+      flatLogicFunctionToUpdate: {
+        ...flatLogicFunction,
+        checksum,
+        isBuildUpToDate: true,
+        updatedAt: new Date().toISOString(),
+      },
       workspaceId,
       applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
