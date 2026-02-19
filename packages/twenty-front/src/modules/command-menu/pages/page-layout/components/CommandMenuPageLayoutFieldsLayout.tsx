@@ -4,6 +4,7 @@ import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
+import { FieldsWidgetGroupsDraftInitializationEffect } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupsDraftInitializationEffect';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -55,8 +56,12 @@ export const CommandMenuPageLayoutFieldsLayout = () => {
         onBackClick={goBackFromCommandMenu}
       />
       <StyledContainer>
+        <FieldsWidgetGroupsDraftInitializationEffect
+          viewId={fieldsConfiguration.viewId ?? null}
+          pageLayoutId={pageLayoutId}
+          widgetId={widgetInEditMode.id}
+        />
         <FieldsConfigurationEditor
-          configuration={fieldsConfiguration}
           pageLayoutId={pageLayoutId}
           widgetId={widgetInEditMode.id}
         />

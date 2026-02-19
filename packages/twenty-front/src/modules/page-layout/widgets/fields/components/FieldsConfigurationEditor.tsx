@@ -9,14 +9,11 @@ import {
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
-import { useFieldsWidgetEditorGroupsData } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData';
 import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
-import { useInitializeFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useInitializeFieldsWidgetGroupsDraft';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
 import { useLingui } from '@lingui/react/macro';
-import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;
@@ -25,29 +22,16 @@ const StyledGroupsDroppable = styled.div`
 `;
 
 type FieldsConfigurationEditorProps = {
-  configuration: FieldsConfiguration;
   pageLayoutId: string;
   widgetId: string;
 };
 
 export const FieldsConfigurationEditor = ({
-  configuration,
   pageLayoutId,
   widgetId,
 }: FieldsConfigurationEditorProps) => {
   const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-
-  const { groups: serverGroups } = useFieldsWidgetEditorGroupsData({
-    viewId: configuration.viewId ?? null,
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
-  useInitializeFieldsWidgetGroupsDraft({
-    pageLayoutId,
-    widgetId,
-    serverGroups,
-  });
 
   const { draftGroups } = useFieldsWidgetGroupsDraft({
     pageLayoutId,
