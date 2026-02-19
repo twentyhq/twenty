@@ -7,9 +7,8 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorLink';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
@@ -74,13 +73,8 @@ export const NavigationMenuItemIcon = ({
 
   const placeholderColorSeed = navigationMenuItem.targetRecordId ?? undefined;
 
-  const effectiveColor = isNonEmptyString(navigationMenuItem.color)
-    ? navigationMenuItem.color
-    : navigationMenuItem.itemType === NavigationMenuItemType.FOLDER
-      ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
-      : navigationMenuItem.itemType === NavigationMenuItemType.LINK
-        ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK
-        : undefined;
+  const effectiveColor =
+    getEffectiveNavigationMenuItemColor(navigationMenuItem);
   const useStyledIcon =
     isNavigationMenuItemEditingEnabled &&
     !isRecord &&
