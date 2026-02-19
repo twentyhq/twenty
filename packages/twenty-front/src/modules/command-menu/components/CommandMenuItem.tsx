@@ -67,7 +67,7 @@ export const CommandMenuItem = ({
               })
           : undefined
       }
-      focused={isSelectedItemId}
+      focused={!disabled && isSelectedItemId}
       RightComponent={RightComponent}
       hasSubMenu={hasSubMenu}
       isSubMenuOpened={isSubMenuOpened}
