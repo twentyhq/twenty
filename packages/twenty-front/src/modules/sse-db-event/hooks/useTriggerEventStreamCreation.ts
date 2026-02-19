@@ -83,11 +83,16 @@ export const useTriggerEventStreamCreation = () => {
               }>,
             ) => {
               if (isDefined(value?.errors)) {
-                captureException(
-                  new Error(
-                    `SSE subscription error: ${value.errors[0]?.message}`,
-                  ),
-                );
+                const subCode = value.errors[0]?.extensions?.subCode;
+
+                if (subCode !== 'EVENT_STREAM_ALREADY_EXISTS') {
+                  captureException(
+                    new Error(
+                      `SSE subscription error: ${value.errors[0]?.message}`,
+                    ),
+                  );
+                }
+
                 set(shouldDestroyEventStreamState, true);
 
                 return;
