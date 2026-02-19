@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest, type RoleManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ApplicationException,
@@ -85,7 +85,7 @@ export class ApplicationManifestMigrationService {
       });
 
     const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps,
+      fromAllFlatEntityMaps: dependencyAllFlatEntityMaps,
       toAllUniversalFlatEntityMaps,
     });
 
