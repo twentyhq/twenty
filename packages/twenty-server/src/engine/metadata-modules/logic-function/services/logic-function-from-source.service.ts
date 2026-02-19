@@ -218,8 +218,7 @@ export class LogicFunctionFromSourceService {
       fromBuiltHandlerPath: builtHandlerPath,
       toBuiltHandlerPath,
       workspaceId,
-      applicationUniversalIdentifier:
-        ownerFlatApplication.universalIdentifier,
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
 
     const created = await this.createOneFromParams({
@@ -232,15 +231,13 @@ export class LogicFunctionFromSourceService {
         toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
         isTool: existingLogicFunction.isTool,
         isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
-        checksum:
-          existingLogicFunction.checksum ?? '[default-checksum]',
+        checksum: existingLogicFunction.checksum ?? '[default-checksum]',
         handlerName: existingLogicFunction.handlerName,
         sourceHandlerPath: toSourceHandlerPath,
         builtHandlerPath: toBuiltHandlerPath,
-        cronTriggerSettings:
-          existingLogicFunction.cronTriggerSettings as
-            | JsonbProperty<CronTriggerSettings>
-            | undefined,
+        cronTriggerSettings: existingLogicFunction.cronTriggerSettings as
+          | JsonbProperty<CronTriggerSettings>
+          | undefined,
         databaseEventTriggerSettings:
           existingLogicFunction.databaseEventTriggerSettings as
             | JsonbProperty<DatabaseEventTriggerSettings>

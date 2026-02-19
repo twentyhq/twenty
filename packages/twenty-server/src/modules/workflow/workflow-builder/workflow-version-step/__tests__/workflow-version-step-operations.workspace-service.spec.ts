@@ -298,31 +298,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
   describe('runStepCreationSideEffectsAndBuildStep', () => {
     it('should create code step with logic function', async () => {
-      const mockFlatLogicFunction: FlatLogicFunction = {
-        id: 'new-function-id',
-        name: 'Test Function',
-        description: 'Test Description',
-        workspaceId: mockWorkspaceId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        runtime: LogicFunctionRuntime.NODE22,
-        timeoutSeconds: 30,
-        sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
-        handlerName: 'main',
-        checksum: null,
-        toolInputSchema: null,
-        isTool: false,
-        isBuildUpToDate: true,
-        universalIdentifier: 'universal-id',
-        applicationId: 'application-id',
-        applicationUniversalIdentifier: 'application-universal-id',
-        cronTriggerSettings: null,
-        databaseEventTriggerSettings: null,
-        httpRouteTriggerSettings: null,
-      };
-
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
         workspaceId: mockWorkspaceId,
@@ -386,31 +361,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         isTool: false,
         isBuildUpToDate: true,
         universalIdentifier: 'existing-universal-id',
-        applicationId: 'application-id',
-        applicationUniversalIdentifier: 'application-universal-id',
-        cronTriggerSettings: null,
-        databaseEventTriggerSettings: null,
-        httpRouteTriggerSettings: null,
-      };
-
-      const mockNewFlatLogicFunction: FlatLogicFunction = {
-        id: 'new-function-id',
-        name: 'Test Function',
-        description: 'Test Description',
-        workspaceId: mockWorkspaceId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        runtime: LogicFunctionRuntime.NODE22,
-        timeoutSeconds: 30,
-        sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
-        handlerName: 'main',
-        checksum: null,
-        toolInputSchema: null,
-        isTool: false,
-        isBuildUpToDate: true,
-        universalIdentifier: 'universal-id',
         applicationId: 'application-id',
         applicationUniversalIdentifier: 'application-universal-id',
         cronTriggerSettings: null,
