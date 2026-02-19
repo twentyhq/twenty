@@ -6,6 +6,7 @@ import { Readable } from 'stream';
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 
 import { FileController } from './file.controller';
 
@@ -13,6 +14,7 @@ describe('FileController', () => {
   let controller: FileController;
   let fileService: FileService;
   const mock_FilePathGuard: CanActivate = { canActivate: jest.fn(() => true) };
+  const mock_FileByIdGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,6 +30,8 @@ describe('FileController', () => {
     })
       .overrideGuard(FilePathGuard)
       .useValue(mock_FilePathGuard)
+      .overrideGuard(FileByIdGuard)
+      .useValue(mock_FileByIdGuard)
       .overrideFilter(FileApiExceptionFilter)
       .useValue({})
       .compile();
