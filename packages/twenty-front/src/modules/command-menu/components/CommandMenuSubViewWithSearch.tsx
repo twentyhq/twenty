@@ -25,8 +25,7 @@ const StyledSearchInput = styled.input`
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
+
   padding: 0;
   width: 100%;
   outline: none;
