@@ -1,6 +1,7 @@
 import { type Manifest } from 'twenty-shared/application';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/utils/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/utils/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/utils/from-front-component-manifest-to-universal-flat-front-component.util';
@@ -20,6 +21,7 @@ import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-m
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/utils/from-view-manifest-to-universal-flat-view.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
 export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
@@ -135,6 +137,20 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         metadataName: 'skill',
         universalFlatEntity: fromSkillManifestToUniversalFlatSkill({
           skillManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
+      },
+    );
+  }
+
+  for (const agentManifest of manifest.agents ?? []) {
+    addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+      {
+        metadataName: 'agent',
+        universalFlatEntity: fromAgentManifestToUniversalFlatAgent({
+          agentManifest,
           applicationUniversalIdentifier,
           now,
         }),
