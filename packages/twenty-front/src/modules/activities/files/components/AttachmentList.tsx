@@ -17,12 +17,12 @@ import { ActivityList } from '@/activities/components/ActivityList';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
-  PermissionFlagType,
   FeatureFlagKey,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
 
@@ -212,15 +212,20 @@ export const AttachmentList = ({
               />
             ) : (
               <ActivityList>
-                {attachments.map((attachment) => (
-                  <AttachmentRow
-                    key={attachment.id}
-                    attachment={attachment}
-                    onPreview={
-                      isAttachmentPreviewEnabled ? handlePreview : undefined
-                    }
-                  />
-                ))}
+                {attachments
+                  .filter(
+                    (attachment) =>
+                      !isFilesFieldMigrated || isDefined(attachment.file?.[0]),
+                  )
+                  .map((attachment) => (
+                    <AttachmentRow
+                      key={attachment.id}
+                      attachment={attachment}
+                      onPreview={
+                        isAttachmentPreviewEnabled ? handlePreview : undefined
+                      }
+                    />
+                  ))}
               </ActivityList>
             )}
           </StyledDropZoneContainer>
