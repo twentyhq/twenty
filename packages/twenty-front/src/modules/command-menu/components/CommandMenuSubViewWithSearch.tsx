@@ -12,9 +12,12 @@ const StyledSubViewContainer = styled.div`
 `;
 
 const StyledSearchContainer = styled.div`
+  align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(10)};
   min-width: 0;
-  padding: ${({ theme }) => theme.spacing(2, 3)};
+  padding-inline: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledSearchInput = styled.input`
