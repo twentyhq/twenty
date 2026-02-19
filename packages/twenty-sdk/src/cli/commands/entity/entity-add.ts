@@ -1,12 +1,18 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
-import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
+import {
+  getNavigationMenuItemBaseFile,
+  getNavigationMenuItemForViewBaseFile,
+} from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
-import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
+import {
+  getViewBaseFile,
+  getViewForObjectBaseFile,
+} from '@/cli/utilities/entity/entity-view-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
@@ -18,6 +24,13 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
 
 const APP_FOLDER = 'src';
+
+type ObjectMetadata = {
+  constantName: string;
+  labelPlural: string;
+  namePlural: string;
+  nameSingular: string;
+};
 
 export class EntityAddCommand {
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
@@ -32,7 +45,8 @@ export class EntityAddCommand {
 
       await fs.ensureDir(appPath);
 
-      const { name, file } = await this.getEntityData(entity);
+      const { name, file, objectMetadata } =
+        await this.getEntityData(entity);
 
       const filePath = join(appPath, this.getFileName(name, entity));
 
@@ -49,6 +63,13 @@ export class EntityAddCommand {
         chalk.green(`✓ Created ${entityName}:`),
         chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
       );
+
+      if (entity === SyncableEntity.Object && objectMetadata) {
+        await this.promptAndCreateViewAndNavItem({
+          objectMetadata,
+          objectFileName: kebabcase(objectMetadata.nameSingular),
+        });
+      }
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
@@ -58,19 +79,111 @@ export class EntityAddCommand {
     }
   }
 
-  private async getEntityData(entity: SyncableEntity) {
+  private async promptAndCreateViewAndNavItem({
+    objectMetadata,
+    objectFileName,
+  }: {
+    objectMetadata: ObjectMetadata;
+    objectFileName: string;
+  }): Promise<void> {
+    const { createViewAndNav } = await inquirer.prompt<{
+      createViewAndNav: boolean;
+    }>([
+      {
+        type: 'confirm',
+        name: 'createViewAndNav',
+        message:
+          'Create a view and navigation menu item for this object? (recommended)',
+        default: true,
+      },
+    ]);
+
+    if (!createViewAndNav) {
+      return;
+    }
+
+    const objectImportPath = `src/objects/${objectFileName}`;
+    const viewName = `all-${kebabcase(objectMetadata.namePlural)}`;
+
+    const { file: viewFile, constantName: viewConstantName } =
+      getViewForObjectBaseFile({
+        objectConstantName: objectMetadata.constantName,
+        objectImportPath,
+        labelPlural: objectMetadata.labelPlural,
+      });
+
+    const viewsFolderPath = join(
+      CURRENT_EXECUTION_DIRECTORY,
+      APP_FOLDER,
+      'views',
+    );
+
+    await fs.ensureDir(viewsFolderPath);
+
+    const viewFilePath = join(viewsFolderPath, `${viewName}.ts`);
+
+    await fs.writeFile(viewFilePath, viewFile);
+
+    console.log(
+      chalk.green('✓ Created views:'),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, viewFilePath)),
+    );
+
+    const viewImportPath = `src/views/${viewName}`;
+    const navItemName = kebabcase(objectMetadata.namePlural);
+
+    const navItemFile = getNavigationMenuItemForViewBaseFile({
+      viewConstantName,
+      viewImportPath,
+    });
+
+    const navItemsFolderPath = join(
+      CURRENT_EXECUTION_DIRECTORY,
+      APP_FOLDER,
+      'navigation-menu-items',
+    );
+
+    await fs.ensureDir(navItemsFolderPath);
+
+    const navItemFilePath = join(
+      navItemsFolderPath,
+      `${navItemName}.ts`,
+    );
+
+    await fs.writeFile(navItemFilePath, navItemFile);
+
+    console.log(
+      chalk.green('✓ Created navigation-menu-items:'),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, navItemFilePath)),
+    );
+  }
+
+  private async getEntityData(entity: SyncableEntity): Promise<{
+    name: string;
+    file: string;
+    objectMetadata?: ObjectMetadata;
+  }> {
     switch (entity) {
       case SyncableEntity.Object: {
         const entityData = await this.getObjectData();
 
         const name = entityData.nameSingular;
 
-        const file = getObjectBaseFile({
+        const { file, constantName } = getObjectBaseFile({
           data: entityData,
           name,
         });
 
-        return { name, file };
+        return {
+          name,
+          file,
+          objectMetadata: {
+            constantName,
+            labelPlural: entityData.labelPlural,
+            namePlural: entityData.namePlural,
+            nameSingular: entityData.nameSingular,
+          },
+        };
       }
 
       case SyncableEntity.Field: {

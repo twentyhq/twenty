@@ -26,3 +26,23 @@ export default defineNavigationMenuItem({
 });
 `;
 };
+
+export const getNavigationMenuItemForViewBaseFile = ({
+  viewConstantName,
+  viewImportPath,
+}: {
+  viewConstantName: string;
+  viewImportPath: string;
+}) => {
+  const universalIdentifier = v4();
+
+  return `import { defineNavigationMenuItem } from 'twenty-sdk';
+import { ${viewConstantName} } from '${viewImportPath}';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '${universalIdentifier}',
+  position: 0,
+  viewUniversalIdentifier: ${viewConstantName},
+});
+`;
+};

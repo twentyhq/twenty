@@ -1,4 +1,8 @@
+import kebabCase from 'lodash.kebabcase';
 import { v4 } from 'uuid';
+
+const toScreamingSnakeCase = (value: string) =>
+  kebabCase(value).replace(/-/g, '_').toUpperCase();
 
 export const getObjectBaseFile = ({
   data,
@@ -12,11 +16,15 @@ export const getObjectBaseFile = ({
   name: string;
 }) => {
   const universalIdentifier = v4();
+  const constantName = `${toScreamingSnakeCase(data.nameSingular)}_UNIVERSAL_IDENTIFIER`;
 
-  return `import { defineObject } from 'twenty-sdk';
+  const file = `import { defineObject } from 'twenty-sdk';
+
+export const ${constantName} =
+  '${universalIdentifier}';
 
 export default defineObject({
-  universalIdentifier: '${universalIdentifier}',
+  universalIdentifier: ${constantName},
   nameSingular: '${data.nameSingular}',
   namePlural: '${data.namePlural}',
   labelSingular: '${data.labelSingular}',
@@ -34,4 +42,6 @@ export default defineObject({
   ],
 });
 `;
+
+  return { file, universalIdentifier, constantName };
 };

@@ -1,6 +1,9 @@
 import kebabCase from 'lodash.kebabcase';
 import { v4 } from 'uuid';
 
+const toScreamingSnakeCase = (value: string) =>
+  kebabCase(value).replace(/-/g, '_').toUpperCase();
+
 export const getViewBaseFile = ({
   name,
   universalIdentifier = v4(),
@@ -36,4 +39,34 @@ export default defineView({
   // ],
 });
 `;
+};
+
+export const getViewForObjectBaseFile = ({
+  objectConstantName,
+  objectImportPath,
+  labelPlural,
+}: {
+  objectConstantName: string;
+  objectImportPath: string;
+  labelPlural: string;
+}) => {
+  const universalIdentifier = v4();
+  const constantName = `ALL_${toScreamingSnakeCase(labelPlural)}_VIEW_UNIVERSAL_IDENTIFIER`;
+
+  const file = `import { defineView } from 'twenty-sdk';
+import { ${objectConstantName} } from '${objectImportPath}';
+
+export const ${constantName} =
+  '${universalIdentifier}';
+
+export default defineView({
+  universalIdentifier: ${constantName},
+  name: 'All ${labelPlural}',
+  objectUniversalIdentifier: ${objectConstantName},
+  icon: 'IconList',
+  position: 0,
+});
+`;
+
+  return { file, universalIdentifier, constantName };
 };
