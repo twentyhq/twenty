@@ -112,13 +112,32 @@ export class MessageChannelSyncStatusService {
           'messageFolder',
         );
 
-      await messageChannelRepository.update(messageChannelIds, {
-        syncCursor: '',
-        syncStageStartedAt: null,
-        throttleFailureCount: 0,
-        throttleRetryAfter: null,
-        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
-      });
+      try {
+        await messageChannelRepository.update(messageChannelIds, {
+          syncCursor: '',
+          syncStageStartedAt: null,
+          throttleFailureCount: 0,
+          throttleRetryAfter: null,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+        });
+      } catch (updateError) {
+        if (
+          updateError instanceof Error &&
+          updateError.message.includes(
+            'Field metadata for field "throttleRetryAfter" is missing',
+          )
+        ) {
+          await messageChannelRepository.update(messageChannelIds, {
+            syncCursor: '',
+            syncStageStartedAt: null,
+            throttleFailureCount: 0,
+            pendingGroupEmailsAction:
+              MessageChannelPendingGroupEmailsAction.NONE,
+          });
+        } else {
+          throw updateError;
+        }
+      }
 
       await messageFolderRepository.update(
         { messageChannelId: In(messageChannelIds) },
@@ -222,14 +241,33 @@ export class MessageChannelSyncStatusService {
           'messageChannel',
         );
 
-      await messageChannelRepository.update(messageChannelIds, {
-        syncStatus: MessageChannelSyncStatus.ACTIVE,
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-        throttleFailureCount: 0,
-        throttleRetryAfter: null,
-        syncStageStartedAt: null,
-        syncedAt: new Date().toISOString(),
-      });
+      try {
+        await messageChannelRepository.update(messageChannelIds, {
+          syncStatus: MessageChannelSyncStatus.ACTIVE,
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          throttleFailureCount: 0,
+          throttleRetryAfter: null,
+          syncStageStartedAt: null,
+          syncedAt: new Date().toISOString(),
+        });
+      } catch (updateError) {
+        if (
+          updateError instanceof Error &&
+          updateError.message.includes(
+            'Field metadata for field "throttleRetryAfter" is missing',
+          )
+        ) {
+          await messageChannelRepository.update(messageChannelIds, {
+            syncStatus: MessageChannelSyncStatus.ACTIVE,
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            throttleFailureCount: 0,
+            syncStageStartedAt: null,
+            syncedAt: new Date().toISOString(),
+          });
+        } else {
+          throw updateError;
+        }
+      }
     }, authContext);
 
     await this.metricsService.batchIncrementCounter({
@@ -306,11 +344,27 @@ export class MessageChannelSyncStatusService {
           'messageChannel',
         );
 
-      await messageChannelRepository.update(messageChannelIds, {
-        syncStage: MessageChannelSyncStage.FAILED,
-        syncStatus: syncStatus,
-        throttleRetryAfter: null,
-      });
+      try {
+        await messageChannelRepository.update(messageChannelIds, {
+          syncStage: MessageChannelSyncStage.FAILED,
+          syncStatus: syncStatus,
+          throttleRetryAfter: null,
+        });
+      } catch (updateError) {
+        if (
+          updateError instanceof Error &&
+          updateError.message.includes(
+            'Field metadata for field "throttleRetryAfter" is missing',
+          )
+        ) {
+          await messageChannelRepository.update(messageChannelIds, {
+            syncStage: MessageChannelSyncStage.FAILED,
+            syncStatus: syncStatus,
+          });
+        } else {
+          throw updateError;
+        }
+      }
 
       const metricsKey =
         syncStatus === MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS

@@ -32,21 +32,47 @@ export class MessagingCursorService {
         );
 
       if (!folderId) {
-        await messageChannelRepository.update(
-          {
-            id: messageChannel.id,
-          },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-            syncCursor:
-              !messageChannel.syncCursor ||
-              nextSyncCursor > messageChannel.syncCursor
-                ? nextSyncCursor
-                : messageChannel.syncCursor,
-          },
-        );
+        try {
+          await messageChannelRepository.update(
+            {
+              id: messageChannel.id,
+            },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+              syncCursor:
+                !messageChannel.syncCursor ||
+                nextSyncCursor > messageChannel.syncCursor
+                  ? nextSyncCursor
+                  : messageChannel.syncCursor,
+            },
+          );
+        } catch (updateError) {
+          if (
+            updateError instanceof Error &&
+            updateError.message.includes(
+              'Field metadata for field "throttleRetryAfter" is missing',
+            )
+          ) {
+            await messageChannelRepository.update(
+              {
+                id: messageChannel.id,
+              },
+              {
+                throttleFailureCount: 0,
+                syncStageStartedAt: null,
+                syncCursor:
+                  !messageChannel.syncCursor ||
+                  nextSyncCursor > messageChannel.syncCursor
+                    ? nextSyncCursor
+                    : messageChannel.syncCursor,
+              },
+            );
+          } else {
+            throw updateError;
+          }
+        }
       } else {
         await folderRepository.update(
           {
@@ -56,16 +82,37 @@ export class MessagingCursorService {
             syncCursor: nextSyncCursor,
           },
         );
-        await messageChannelRepository.update(
-          {
-            id: messageChannel.id,
-          },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-          },
-        );
+        try {
+          await messageChannelRepository.update(
+            {
+              id: messageChannel.id,
+            },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+            },
+          );
+        } catch (updateError) {
+          if (
+            updateError instanceof Error &&
+            updateError.message.includes(
+              'Field metadata for field "throttleRetryAfter" is missing',
+            )
+          ) {
+            await messageChannelRepository.update(
+              {
+                id: messageChannel.id,
+              },
+              {
+                throttleFailureCount: 0,
+                syncStageStartedAt: null,
+              },
+            );
+          } else {
+            throw updateError;
+          }
+        }
       }
     }, authContext);
   }
