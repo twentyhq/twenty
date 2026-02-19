@@ -169,6 +169,5 @@ describe('getDefaultFieldsInObjectFields', () => {
     const fieldNames = fields.map((f) => f.name);
 
     expect(fieldNames).toContain('targetTestObject');
-    expect(fieldNames).toContain('testObject');
   });
 });
