@@ -12,6 +12,7 @@ const TEST_ROLE_ID = uuidv4();
 const TEST_SECOND_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
 const TEST_SKILL_ID = uuidv4();
+const TEST_AGENT_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
   nameSingular: 'ticket',
