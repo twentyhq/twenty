@@ -29,11 +29,6 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const basePageLayout = useBasePageLayout(pageLayoutId);
 
-  console.log('in PageLayoutInitializationQueryEffect', {
-    pageLayoutId,
-    basePageLayout,
-  });
-
   const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
 
   const pageLayoutPersistedComponentCallbackState =
