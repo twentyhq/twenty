@@ -45,7 +45,6 @@ export const useMoveFieldInDraft = ({
           }
 
           if (sourceGroupId === destinationGroupId) {
-            // Moving within the same group
             sortedSourceFields.splice(destinationIndex, 0, movedField);
 
             const updatedFields = sortedSourceFields.map((field, index) => ({
@@ -63,7 +62,6 @@ export const useMoveFieldInDraft = ({
             };
           }
 
-          // Moving between groups
           const destinationGroup = currentGroups.find(
             (g) => g.id === destinationGroupId,
           );

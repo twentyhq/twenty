@@ -1,7 +1,5 @@
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 
-// Filters draft groups to only include visible groups/fields,
-// matching the filtering logic in useFieldsWidgetGroups for View data.
 export const filterDraftGroupsForDisplay = (
   draftGroups: FieldsWidgetGroup[],
 ): FieldsWidgetGroup[] => {

@@ -105,7 +105,6 @@ export const FieldsConfigurationEditor = ({
     sourceIndex: number,
     destinationIndex: number,
   ) => {
-    // droppableIds are prefixed with "group-"
     const cleanSourceGroupId = sourceGroupId.replace('group-', '');
     const cleanDestinationGroupId = destinationGroupId.replace('group-', '');
 

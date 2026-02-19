@@ -33,11 +33,9 @@ export const useFieldsWidgetGroups = ({
       return [];
     }
 
-    // If we have a view with viewFieldGroups, use them
+    // Views are seeded for object
     if (isDefined(view) && isDefined(view.viewFieldGroups)) {
-      const viewFieldGroups = view.viewFieldGroups;
-
-      const sortedGroups = [...viewFieldGroups].sort(
+      const sortedGroups = view.viewFieldGroups.toSorted(
         (a, b) => a.position - b.position,
       );
 
@@ -46,7 +44,6 @@ export const useFieldsWidgetGroups = ({
       return sortedGroups
         .filter((group) => group.isVisible)
         .map((group) => {
-          // Get fields belonging to this group (nested in the group)
           const groupFields = [...(group.viewFields ?? [])].sort(
             (a, b) => a.position - b.position,
           );
@@ -84,7 +81,6 @@ export const useFieldsWidgetGroups = ({
         .filter((group) => group.fields.length > 0);
     }
 
-    // Fallback: generate temporary groups from object metadata
     const fieldsToDisplay = inlineFieldMetadataItems;
 
     if (fieldsToDisplay.length === 0) {

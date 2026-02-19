@@ -23,7 +23,6 @@ export const useFieldsWidgetEditorGroupsData = ({
       return [];
     }
 
-    // If we have a view with viewFieldGroups, use them
     if (isDefined(view) && isDefined(view.viewFieldGroups)) {
       const viewFieldGroups = view.viewFieldGroups;
 
@@ -34,7 +33,6 @@ export const useFieldsWidgetEditorGroupsData = ({
       let globalIndex = 0;
 
       return sortedGroups.map((group) => {
-        // Get fields belonging to this group (nested in the group)
         const groupFields = [...(group.viewFields ?? [])].sort(
           (a, b) => a.position - b.position,
         );
@@ -69,7 +67,6 @@ export const useFieldsWidgetEditorGroupsData = ({
       });
     }
 
-    // Fallback: generate empty groups (no view configured)
     return [];
   }, [objectMetadataItem, view]);
 
