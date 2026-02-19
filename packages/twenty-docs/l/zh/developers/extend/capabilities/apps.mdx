@@ -497,7 +497,7 @@ export default defineLogicFunction({
 
 安装后函数是在你的应用安装到工作区后自动运行的逻辑函数。 这对于一次性设置任务很有用，例如填充默认数据、创建初始记录或配置工作区设置。
 
-When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+当你使用 `create-twenty-app` 脚手架创建一个新应用时，会在 `src/logic-functions/post-install.ts` 为你生成一个安装后函数：
 
 ```typescript
 // src/logic-functions/post-install.ts
@@ -518,7 +518,7 @@ export default defineLogicFunction({
 });
 ```
 
-The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+通过在 `application-config.ts` 中引用其通用标识符，可将该函数接入你的应用：
 
 ```typescript
 import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
