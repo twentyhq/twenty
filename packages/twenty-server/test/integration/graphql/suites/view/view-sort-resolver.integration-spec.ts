@@ -236,7 +236,7 @@ describe('View Sort Resolver', () => {
       const response = await makeMetadataAPIRequest(deleteOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.deleteCoreViewSort).toBe(true);
+      expect(response.body.data.deleteCoreViewSort.id).toBe(viewSort.id);
     });
 
     it('should throw an error when deleting non-existent view sort', async () => {
