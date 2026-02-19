@@ -13,7 +13,6 @@ export type {
 } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
-export type { CommandMenuItemManifest } from './commandMenuItemManifestType';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
@@ -27,6 +26,7 @@ export type {
   FieldManifest,
 } from './fieldManifestType';
 export type {
+  CommandMenuItemManifest,
   FrontComponentCommandManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
