@@ -12,7 +12,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 type FolderOption = {
   id: string;
   name: string;
-  folderId?: string;
+  folderId?: string | null;
 };
 
 const getDescendantFolderIds = (
