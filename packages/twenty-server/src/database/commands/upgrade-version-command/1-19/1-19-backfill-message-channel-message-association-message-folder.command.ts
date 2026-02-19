@@ -135,7 +135,6 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
               flatEntityToUpdate: [],
             },
           },
-          isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
