@@ -32,13 +32,11 @@ export const useSortedArray = <T>(
 
     return [...arrayToSort].sort((a: T, b: T) => {
       if (sortFieldType === 'string') {
+        const aValue = String(a[sortFieldName] ?? '');
+        const bValue = String(b[sortFieldName] ?? '');
         return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
-          ? (a[sortFieldName] as string)?.localeCompare(
-              b[sortFieldName] as string,
-            )
-          : (b[sortFieldName] as string)?.localeCompare(
-              a[sortFieldName] as string,
-            );
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
       } else if (sortFieldType === 'number') {
         return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
           ? (a[sortFieldName] as number) - (b[sortFieldName] as number)
