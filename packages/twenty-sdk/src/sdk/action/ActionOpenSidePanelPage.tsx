@@ -21,8 +21,11 @@ export const ActionOpenSidePanelPage = ({
     if (hasExecutedRef.current) {
       return;
     }
+
     hasExecutedRef.current = true;
+
     execute?.();
+
     openSidePanelPage({ page, pageTitle, pageIcon });
   }, [page, pageTitle, pageIcon, execute]);
 

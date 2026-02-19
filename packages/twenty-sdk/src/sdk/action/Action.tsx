@@ -11,7 +11,9 @@ export const Action = ({ execute }: ActionProps) => {
     if (hasExecutedRef.current) {
       return;
     }
+
     hasExecutedRef.current = true;
+
     execute();
   }, [execute]);
 

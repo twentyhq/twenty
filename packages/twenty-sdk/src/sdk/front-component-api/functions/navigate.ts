@@ -1,10 +1,10 @@
 import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type getAppPath, isDefined } from 'twenty-shared/utils';
 
-type NavigateFunction = (
-  to: AppPath,
-  params?: Record<string, string | null>,
-  queryParams?: Record<string, unknown>,
+type NavigateFunction = <T extends AppPath>(
+  to: T,
+  params?: Parameters<typeof getAppPath<T>>[1],
+  queryParams?: Record<string, any>,
   options?: NavigateOptions,
 ) => Promise<void>;
 
@@ -16,10 +16,10 @@ export const setNavigate = (fn: NavigateFunction): void => {
   (globalThis as Record<string, unknown>)[NAVIGATE_KEY] = fn;
 };
 
-export const navigate: NavigateFunction = (
-  to: AppPath,
-  params?: Record<string, string | null>,
-  queryParams?: Record<string, unknown>,
+export const navigate: NavigateFunction = <T extends AppPath>(
+  to: T,
+  params?: Parameters<typeof getAppPath<T>>[1],
+  queryParams?: Record<string, any>,
   options?: NavigateOptions,
 ): Promise<void> => {
   const navigateFunction = (globalThis as Record<string, unknown>)[
