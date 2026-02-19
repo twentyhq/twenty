@@ -201,13 +201,13 @@ export class LogicFunctionResolver {
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async updateOneLogicFunction(
-    @Args('input') { id, update }: UpdateLogicFunctionFromSourceInput,
+    @Args('input')
+    updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     try {
-      await this.logicFunctionFromSourceService.updateOne({
-        id,
-        update,
+      await this.logicFunctionFromSourceService.updateOneFromSource({
+        updateLogicFunctionFromSourceInput,
         workspaceId,
       });
 

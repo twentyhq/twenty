@@ -18,9 +18,9 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
-import { type UpdateLogicFunctionFromSourceParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-from-source-params.type';
-import { type UpdateLogicFunctionMetadataParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-metadata-params.type';
+import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
+import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -63,23 +63,19 @@ export class LogicFunctionFromSourceService {
       });
 
       const universalFlatLogicFunctionToCreate =
-        buildUniversalFlatLogicFunctionToCreate({
-          id: logicFunctionId,
-          name: input.name,
-          description: input.description,
-          timeoutSeconds: input.timeoutSeconds,
-          isTool: input.isTool,
-          handlerName: input.source.handlerName,
-          toolInputSchema: input.source.toolInputSchema,
-          sourceHandlerPath,
-          builtHandlerPath,
-          isBuildUpToDate: false,
-          cronTriggerSettings: input.cronTriggerSettings,
-          databaseEventTriggerSettings: input.databaseEventTriggerSettings,
-          httpRouteTriggerSettings: input.httpRouteTriggerSettings,
-          applicationUniversalIdentifier:
-            ownerFlatApplication.universalIdentifier,
-        });
+        fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate(
+          {
+            createLogicFunctionFromSourceInput: { ...input, id: logicFunctionId },
+            sourceHandlerPath,
+            builtHandlerPath,
+            handlerName: input.source.handlerName,
+            checksum: null,
+            toolInputSchema: input.source.toolInputSchema,
+            isBuildUpToDate: false,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
+          },
+        );
 
       await this.helperService.createOneFromMetadata({
         universalFlatLogicFunctionToCreate,
@@ -102,24 +98,19 @@ export class LogicFunctionFromSourceService {
       });
 
     const universalFlatLogicFunctionToCreate =
-      buildUniversalFlatLogicFunctionToCreate({
-        id: logicFunctionId,
-        name: input.name,
-        description: input.description,
-        timeoutSeconds: input.timeoutSeconds,
-        isTool: input.isTool,
-        handlerName,
-        checksum,
-        toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
-        sourceHandlerPath,
-        builtHandlerPath,
-        isBuildUpToDate: true,
-        cronTriggerSettings: input.cronTriggerSettings,
-        databaseEventTriggerSettings: input.databaseEventTriggerSettings,
-        httpRouteTriggerSettings: input.httpRouteTriggerSettings,
-        applicationUniversalIdentifier:
-          ownerFlatApplication.universalIdentifier,
-      });
+      fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate(
+        {
+          createLogicFunctionFromSourceInput: { ...input, id: logicFunctionId },
+          sourceHandlerPath,
+          builtHandlerPath,
+          handlerName,
+          checksum,
+          toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
+          isBuildUpToDate: true,
+          applicationUniversalIdentifier:
+            ownerFlatApplication.universalIdentifier,
+        },
+      );
 
     await this.helperService.createOneFromMetadata({
       universalFlatLogicFunctionToCreate,
@@ -204,26 +195,21 @@ export class LogicFunctionFromSourceService {
     return { id: created.id };
   }
 
-  async updateOne({
-    id,
-    update,
+  async updateOneFromSource({
+    updateLogicFunctionFromSourceInput,
     workspaceId,
   }: {
-    id: string;
-    update: UpdateLogicFunctionFromSourceParams;
+    updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<void> {
     const { flatLogicFunction, ownerFlatApplication } =
       await this.helperService.findLogicFunctionAndApplicationOrThrow({
-        id,
+        id: updateLogicFunctionFromSourceInput.id,
         workspaceId,
       });
 
-    const { sourceHandlerCode, ...metadataFields } = update;
-
-    let metadataUpdate: UpdateLogicFunctionMetadataParams = {
-      ...metadataFields,
-    };
+    const sourceHandlerCode =
+      updateLogicFunctionFromSourceInput.update.sourceHandlerCode;
 
     if (sourceHandlerCode) {
       await this.logicFunctionResourceService.uploadSourceFile({
@@ -233,16 +219,10 @@ export class LogicFunctionFromSourceService {
           ownerFlatApplication.universalIdentifier,
         workspaceId,
       });
-
-      metadataUpdate = {
-        ...metadataUpdate,
-        isBuildUpToDate: false,
-      };
     }
 
-    await this.helperService.updateOneFromMetadata({
-      id,
-      update: metadataUpdate,
+    await this.helperService.updateOneFromSourceInput({
+      updateLogicFunctionFromSourceInput,
       workspaceId,
       applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
