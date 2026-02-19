@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-    Draggable,
-    type DraggableProvided,
-    type DraggableRubric,
-    type DraggableStateSnapshot,
-    Droppable,
+  Draggable,
+  type DraggableProvided,
+  type DraggableRubric,
+  type DraggableStateSnapshot,
+  Droppable,
 } from '@hello-pangea/dnd';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';

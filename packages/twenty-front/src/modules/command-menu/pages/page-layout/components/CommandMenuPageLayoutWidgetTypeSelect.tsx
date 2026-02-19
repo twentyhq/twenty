@@ -24,15 +24,15 @@ import { t } from '@lingui/core/macro';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    IconAlignBoxLeftTop,
-    IconApps,
-    IconChartPie,
-    IconFrame,
+  IconAlignBoxLeftTop,
+  IconApps,
+  IconChartPie,
+  IconFrame,
 } from 'twenty-ui/display';
 import {
-    FeatureFlagKey,
-    type FrontComponent,
-    WidgetType,
+  FeatureFlagKey,
+  type FrontComponent,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {

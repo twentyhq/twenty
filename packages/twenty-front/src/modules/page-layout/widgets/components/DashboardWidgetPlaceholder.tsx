@@ -10,12 +10,12 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { CommandMenuPages } from 'twenty-shared/types';
 import {
-    AnimatedPlaceholder,
-    AnimatedPlaceholderEmptyContainer,
-    AnimatedPlaceholderEmptySubTitle,
-    AnimatedPlaceholderEmptyTextContainer,
-    AnimatedPlaceholderEmptyTitle,
-    EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 
 export const DashboardWidgetPlaceholder = () => {

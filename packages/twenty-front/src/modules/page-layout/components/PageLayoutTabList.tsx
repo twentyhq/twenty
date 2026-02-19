@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import {
-    DragDropContext,
-    type DropResult,
-    type OnDragEndResponder,
-    type OnDragStartResponder,
-    type OnDragUpdateResponder,
-    type ResponderProvided,
+  DragDropContext,
+  type DropResult,
+  type OnDragEndResponder,
+  type OnDragStartResponder,
+  type OnDragUpdateResponder,
+  type ResponderProvided,
 } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';

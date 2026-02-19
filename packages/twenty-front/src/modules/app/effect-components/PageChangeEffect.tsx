@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import {
-    matchPath,
-    useLocation,
-    useNavigate,
-    useParams,
+  matchPath,
+  useLocation,
+  useNavigate,
+  useParams,
 } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import {
-    setSessionId,
-    useEventTracker,
+  setSessionId,
+  useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';

@@ -2,12 +2,12 @@ import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout
 import { CommandMenuPages } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import {
-    IconAppWindow,
-    IconChartPie,
-    IconFilter,
-    IconFrame,
-    IconLayoutSidebarRight,
-    IconList,
+  IconAppWindow,
+  IconChartPie,
+  IconFilter,
+  IconFrame,
+  IconLayoutSidebarRight,
+  IconList,
 } from 'twenty-ui/display';
 
 export const getPageLayoutIcon = (page: PageLayoutCommandMenuPage) => {

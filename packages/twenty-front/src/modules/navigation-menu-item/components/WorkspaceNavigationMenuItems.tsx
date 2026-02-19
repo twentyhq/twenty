@@ -11,8 +11,8 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIcon
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
 import {
-    type NavigationMenuItemClickParams,
-    useWorkspaceSectionItems,
+  type NavigationMenuItemClickParams,
+  useWorkspaceSectionItems,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';

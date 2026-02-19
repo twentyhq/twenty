@@ -1,7 +1,7 @@
 import {
-    type Decorator,
-    type Meta,
-    type StoryObj,
+  type Decorator,
+  type Meta,
+  type StoryObj,
 } from '@storybook/react-vite';
 import { useSetRecoilState } from 'recoil';
 import { expect, userEvent, within } from 'storybook/test';
@@ -13,10 +13,10 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-    mockCurrentWorkspace,
-    mockedLimitedPermissionsUserData,
-    mockedUserData,
-    mockedWorkspaceMemberData,
+  mockCurrentWorkspace,
+  mockedLimitedPermissionsUserData,
+  mockedUserData,
+  mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 

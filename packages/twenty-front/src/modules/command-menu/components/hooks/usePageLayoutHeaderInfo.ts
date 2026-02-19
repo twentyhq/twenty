@@ -8,11 +8,11 @@ import { t } from '@lingui/core/macro';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    IconAppWindow,
-    IconFrame,
-    IconList,
-    IconPlus,
-    type IconComponent,
+  IconAppWindow,
+  IconFrame,
+  IconList,
+  IconPlus,
+  type IconComponent,
 } from 'twenty-ui/display';
 
 type PageLayoutHeaderInfo = {

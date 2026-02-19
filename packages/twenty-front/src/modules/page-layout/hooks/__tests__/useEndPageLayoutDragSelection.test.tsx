@@ -9,8 +9,8 @@ import { type ReactNode } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    PAGE_LAYOUT_TEST_INSTANCE_ID,
-    PageLayoutTestWrapper,
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
 jest.mock(
