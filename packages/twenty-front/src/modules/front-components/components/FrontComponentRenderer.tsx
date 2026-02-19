@@ -1,5 +1,6 @@
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
@@ -11,10 +12,7 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  useFindOneFrontComponentQuery,
-  useRenewApplicationTokenMutation,
-} from '~/generated-metadata/graphql';
+import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -57,39 +55,12 @@ export const FrontComponentRenderer = ({
     checksum: data?.frontComponent?.builtComponentChecksum,
   });
 
-  const [renewApplicationToken] = useRenewApplicationTokenMutation();
-
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
-  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
-    if (!isDefined(applicationTokenPair)) {
-      throw new Error('No refresh token available');
-    }
-
-    const result = await renewApplicationToken({
-      variables: {
-        applicationRefreshToken:
-          applicationTokenPair.applicationRefreshToken.token,
-      },
-    });
-
-    if (isDefined(result.errors) && result.errors.length > 0) {
-      const errorMessage = result.errors
-        .map((error) => error.message)
-        .join(', ');
-
-      throw new Error(`Token renewal failed: ${errorMessage}`);
-    }
-
-    const renewedApplicationTokenPair = result.data?.renewApplicationToken;
-
-    if (!isDefined(renewedApplicationTokenPair)) {
-      throw new Error('Failed to renew application token');
-    }
-
-    return renewedApplicationTokenPair.applicationAccessToken.token;
-  }, [applicationTokenPair, renewApplicationToken]);
+  const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
+    frontComponentId,
+  });
 
   const composedFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
