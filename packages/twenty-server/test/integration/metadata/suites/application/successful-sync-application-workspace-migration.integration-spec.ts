@@ -83,6 +83,7 @@ describe('syncApplication', () => {
       logicFunctions: [],
       frontComponents: [],
       publicAssets: [],
+      agents: [],
       views: [],
       navigationMenuItems: [],
       pageLayouts: [],

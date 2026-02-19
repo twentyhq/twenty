@@ -45,6 +45,7 @@ const buildBaseManifest = (
   logicFunctions: [],
   frontComponents: [],
   publicAssets: [],
+  agents: [],
   views: [],
   navigationMenuItems: [],
   pageLayouts: [],
