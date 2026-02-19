@@ -13,7 +13,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { computeApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/compute-application-manifest-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-application-sub-all-flat-entity-maps.util';
-import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -66,27 +65,26 @@ export class ApplicationManifestMigrationService {
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
-    const dependencyAllFlatEntityMaps =
-      ownerFlatApplication.universalIdentifier ===
-      TWENTY_STANDARD_APPLICATION.universalIdentifier
-        ? createEmptyAllFlatEntityMaps()
-        : getApplicationSubAllFlatEntityMaps({
-            applicationIds: [twentyStandardFlatApplication.id],
-            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
-          });
-
     const toAllUniversalFlatEntityMaps =
       computeApplicationManifestAllUniversalFlatEntityMaps({
         manifest,
         ownerFlatApplication,
         now,
-        dependencyAllFlatEntityMaps,
       });
 
-    const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-      toAllUniversalFlatEntityMaps,
+    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds: [ownerFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
+
+    const dependencyAllFlatEntityMaps =
+      ownerFlatApplication.universalIdentifier ===
+      TWENTY_STANDARD_APPLICATION.universalIdentifier
+        ? undefined
+        : getApplicationSubAllFlatEntityMaps({
+            applicationIds: [twentyStandardFlatApplication.id],
+            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+          });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
@@ -97,7 +95,10 @@ export class ApplicationManifestMigrationService {
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
           },
-          fromToAllFlatEntityMaps,
+          fromToAllFlatEntityMaps: buildFromToAllUniversalFlatEntityMaps({
+            fromAllFlatEntityMaps,
+            toAllUniversalFlatEntityMaps,
+          }),
           workspaceId,
           dependencyAllFlatEntityMaps,
           additionalCacheDataMaps: { featureFlagsMap },
