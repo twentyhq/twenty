@@ -104,7 +104,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
         withDeleted: true,
       }),
       this.viewSortRepository.find({
-          where: { workspaceId },
+        where: { workspaceId },
         select: ['id', 'universalIdentifier', 'viewId'],
         withDeleted: true,
       }),
@@ -145,7 +145,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
           foreignKey: 'viewId',
         },
         {
-         entities: viewFieldGroups,
+          entities: viewFieldGroups,
           foreignKey: 'viewId',
         },
       ] as const

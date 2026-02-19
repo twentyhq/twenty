@@ -9,10 +9,10 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { v4 } from 'uuid';
+import { ViewType } from 'twenty-shared/types';
 
 import { type CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { ViewType } from 'twenty-shared/types';
 
 type TestSetup = {
   createdViewId: string;
