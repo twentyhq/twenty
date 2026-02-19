@@ -1,4 +1,5 @@
-import { useApolloClient } from '@apollo/client';
+import { ApolloError, useApolloClient } from '@apollo/client';
+import { type GraphQLFormattedError } from 'graphql';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -9,23 +10,13 @@ import {
 } from '~/generated-metadata/graphql';
 
 const hasUnauthenticatedGraphqlError = (
-  errors:
-    | ReadonlyArray<{
-        message?: string;
-        extensions?: { code?: string };
-      }>
-    | undefined,
-): boolean => {
-  if (!isDefined(errors)) {
-    return false;
-  }
-
-  return errors.some(
+  errors: ReadonlyArray<GraphQLFormattedError>,
+): boolean =>
+  errors.some(
     (error) =>
       error.extensions?.code === 'UNAUTHENTICATED' ||
       error.message === 'Unauthorized',
   );
-};
 
 type UseRequestApplicationTokenRefreshArgs = {
   frontComponentId: string;
@@ -120,16 +111,10 @@ export const useRequestApplicationTokenRefresh = ({
 
       return renewedTokenPair.applicationAccessToken.token;
     } catch (error) {
-      const graphQLErrors = (
-        error as {
-          graphQLErrors?: ReadonlyArray<{
-            message?: string;
-            extensions?: { code?: string };
-          }>;
-        }
-      ).graphQLErrors;
-
-      if (hasUnauthenticatedGraphqlError(graphQLErrors)) {
+      if (
+        error instanceof ApolloError &&
+        hasUnauthenticatedGraphqlError(error.graphQLErrors)
+      ) {
         return await refetchApplicationAccessToken();
       }
 
