@@ -64,15 +64,15 @@ export class ApplicationManifestMigrationService {
       ],
     );
 
-    const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
+    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
-    const dependencyAllFlatEntityMaps =
+    const fromAllFlatEntityMaps =
       ownerFlatApplication.universalIdentifier ===
       TWENTY_STANDARD_APPLICATION.universalIdentifier
         ? createEmptyAllFlatEntityMaps()
         : getApplicationSubAllFlatEntityMaps({
             applicationIds: [twentyStandardFlatApplication.id],
-            fromAllFlatEntityMaps,
+            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
           });
 
     const toAllUniversalFlatEntityMaps =
@@ -81,11 +81,11 @@ export class ApplicationManifestMigrationService {
         applicationUniversalIdentifier:
           ownerFlatApplication.universalIdentifier,
         now,
-        dependencyAllFlatEntityMaps,
+        dependencyAllFlatEntityMaps: fromAllFlatEntityMaps,
       });
 
     const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps: dependencyAllFlatEntityMaps,
+      fromAllFlatEntityMaps: fromAllFlatEntityMaps,
       toAllUniversalFlatEntityMaps,
     });
 
