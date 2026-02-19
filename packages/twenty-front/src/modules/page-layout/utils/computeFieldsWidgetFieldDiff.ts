@@ -12,7 +12,6 @@ export const computeFieldsWidgetFieldDiff = (
     viewFieldGroupId?: string;
   }> = [];
 
-  // Build a map of persisted fields by their viewFieldId for quick lookup
   const persistedFieldMap = new Map<
     string,
     {
@@ -34,7 +33,6 @@ export const computeFieldsWidgetFieldDiff = (
     }
   }
 
-  // Compare each field in the draft against its persisted state
   for (const draftGroup of draftGroups) {
     for (const draftField of draftGroup.fields) {
       if (!isDefined(draftField.viewFieldId)) {

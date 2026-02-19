@@ -106,11 +106,9 @@ export const useSaveFieldsWidgetGroups = ({
             continue;
           }
 
-          // Compute group-level diffs
           const { createdGroups, deletedGroups, updatedGroups } =
             computeFieldsWidgetGroupDiff(persistedGroups, draftGroups);
 
-          // Create new groups
           if (createdGroups.length > 0) {
             await performViewFieldGroupAPICreate({
               inputs: createdGroups.map((group) => ({
@@ -123,7 +121,6 @@ export const useSaveFieldsWidgetGroups = ({
             });
           }
 
-          // Delete removed groups
           if (deletedGroups.length > 0) {
             for (const group of deletedGroups) {
               await performViewFieldGroupAPIDelete([
@@ -132,7 +129,6 @@ export const useSaveFieldsWidgetGroups = ({
             }
           }
 
-          // Update modified groups
           if (updatedGroups.length > 0) {
             const updates = updatedGroups.map((group) => ({
               input: {
@@ -148,7 +144,6 @@ export const useSaveFieldsWidgetGroups = ({
             await performViewFieldGroupAPIUpdate(updates);
           }
 
-          // Compute and apply field-level diffs
           const fieldUpdates = computeFieldsWidgetFieldDiff(
             persistedGroups,
             draftGroups,
@@ -168,7 +163,6 @@ export const useSaveFieldsWidgetGroups = ({
           }
         }
 
-        // After successful save, update persisted state to match draft
         set(fieldsWidgetGroupsPersistedState, allDraftGroups);
 
         await refreshAllCoreViews();

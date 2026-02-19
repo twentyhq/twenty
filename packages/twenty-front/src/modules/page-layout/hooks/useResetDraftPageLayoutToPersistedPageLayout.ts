@@ -86,7 +86,6 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
           const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
           set(pageLayoutCurrentLayoutsState, tabLayouts);
 
-          // Reset field groups draft to persisted state
           const fieldsWidgetGroupsPersisted = snapshot
             .getLoadable(fieldsWidgetGroupsPersistedState)
             .getValue();
