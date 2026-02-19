@@ -19,8 +19,8 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
-import { CreateLogicFunction } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
-import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { type CreateLogicFunctionParams } from 'src/engine/metadata-modules/logic-function/types/create-logic-function-params.type';
+import { type UpdateLogicFunctionMetadataParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-metadata-params.type';
 
 @Injectable()
 export class LogicFunctionMetadataService {
@@ -82,7 +82,7 @@ export class LogicFunctionMetadataService {
     workspaceId,
     ownerFlatApplication,
   }: {
-    input: CreateLogicFunction;
+    input: CreateLogicFunctionParams;
     ownerFlatApplication: FlatApplication;
     workspaceId: string;
   }) {
@@ -135,7 +135,7 @@ export class LogicFunctionMetadataService {
     ownerFlatApplication,
   }: {
     id: string;
-    update: Omit<UpdateLogicFunctionFromSourceInput['update'], 'source'>;
+    update: UpdateLogicFunctionMetadataParams;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
   }) {

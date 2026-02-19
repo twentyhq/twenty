@@ -3,10 +3,10 @@ import { v4 } from 'uuid';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type CreateLogicFunction } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
+import { type CreateLogicFunctionParams } from 'src/engine/metadata-modules/logic-function/types/create-logic-function-params.type';
 
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
-  createLogicFunctionInput: CreateLogicFunction;
+  createLogicFunctionInput: CreateLogicFunctionParams;
   workspaceId: string;
   ownerFlatApplication: FlatApplication;
 };

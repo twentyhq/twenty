@@ -15,7 +15,8 @@ import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
-import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { type UpdateLogicFunctionFromSourceParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-from-source-params.type';
+import { type UpdateLogicFunctionMetadataParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-metadata-params.type';
 import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
@@ -143,33 +144,35 @@ export class LogicFunctionFromSourceService {
     workspaceId,
   }: {
     id: string;
-    update: UpdateLogicFunctionFromSourceInput['update'];
+    update: UpdateLogicFunctionFromSourceParams;
     workspaceId: string;
   }): Promise<void> {
     const { applicationUniversalIdentifier, flatLogicFunction } =
       await this.getLogicFunctionContext({ id, workspaceId });
 
-    let formattedUpdate: UpdateLogicFunctionFromSourceInput['update'] = {
-      ...update,
+    const { sourceHandlerCode, ...metadataFields } = update;
+
+    let metadataUpdate: UpdateLogicFunctionMetadataParams = {
+      ...metadataFields,
     };
 
-    if (update.sourceHandlerCode) {
+    if (sourceHandlerCode) {
       await this.logicFunctionResourceService.uploadSourceFile({
         sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-        sourceHandlerCode: update.sourceHandlerCode,
+        sourceHandlerCode,
         applicationUniversalIdentifier,
         workspaceId,
       });
 
-      formattedUpdate = {
-        ...formattedUpdate,
+      metadataUpdate = {
+        ...metadataUpdate,
         isBuildUpToDate: false,
       };
     }
 
     await this.logicFunctionMetadataService.updateOne({
       id,
-      update: formattedUpdate,
+      update: metadataUpdate,
       workspaceId,
     });
   }
