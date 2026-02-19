@@ -1,7 +1,7 @@
 import { FormCountryMultiSelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountryMultiSelectInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { FormWorkspaceMemberMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberMultiSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
@@ -90,11 +90,10 @@ export const WorkflowStepFilterValueCompositeInput = ({
             VariablePicker={WorkflowVariablePicker}
           />
         ) : subFieldName === 'workspaceMemberId' ? (
-          <FormSingleRecordPicker
-            objectNameSingulars={['workspaceMember']}
+          <FormWorkspaceMemberMultiSelectFieldInput
             defaultValue={stepFilter.value}
             onChange={onChange}
-            disabled={readonly}
+            readonly={readonly}
             VariablePicker={WorkflowVariablePicker}
           />
         ) : (
