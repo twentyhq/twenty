@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -52,5 +53,7 @@ export const isFieldCellSupported = (
     }
   }
 
-  return !fieldMetadataItem.isSystem && !!fieldMetadataItem.isActive;
+  return (
+    !isHiddenSystemField(fieldMetadataItem) && !!fieldMetadataItem.isActive
+  );
 };

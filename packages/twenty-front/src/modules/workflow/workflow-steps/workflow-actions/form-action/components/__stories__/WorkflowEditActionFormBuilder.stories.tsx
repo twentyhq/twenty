@@ -179,9 +179,7 @@ export const EmptyForm: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const messageContainer = await canvas.findByTestId(
-      'workflow-message-title',
-    );
+    const messageContainer = await canvas.findByText('Add inputs to your form');
 
     expect(messageContainer).toBeVisible();
 

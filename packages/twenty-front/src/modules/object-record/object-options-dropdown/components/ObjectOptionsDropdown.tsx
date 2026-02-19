@@ -10,7 +10,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { type ViewType } from '@/views/types/ViewType';
 import { Trans } from '@lingui/react/macro';
 
@@ -28,7 +28,7 @@ export const ObjectOptionsDropdown = ({
   const { currentContentId, handleContentChange, handleResetContent } =
     useDropdownContextCurrentContentId<ObjectOptionsContentId>();
 
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

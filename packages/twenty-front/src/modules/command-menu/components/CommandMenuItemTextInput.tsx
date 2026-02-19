@@ -4,10 +4,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { type IconComponent } from 'twenty-ui/display';
 
 type CommandMenuItemTextInputProps = {
@@ -37,7 +37,7 @@ export const CommandMenuItemTextInput = ({
   const focusId = `${id}-input`;
   const [draftValue, setDraftValue] = useState(value);
 
-  const currentFocusId = useRecoilValue(currentFocusIdSelector);
+  const currentFocusId = useRecoilValueV2(currentFocusIdSelector);
   const isTextInputCurrentlyFocused = currentFocusId === focusId;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();

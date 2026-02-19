@@ -27,7 +27,7 @@ Le app ti consentono di creare e gestire le personalizzazioni di Twenty **come c
 Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e inizia a sviluppare:
 
 ```bash filename="Terminal"
-# Crea lo scaffold di una nuova app
+# Crea lo scaffold di una nuova app (include tutti gli esempi per impostazione predefinita)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -42,22 +42,38 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+Lo strumento di scaffolding supporta tre modalità per controllare quali file di esempio vengono inclusi:
+
+```bash filename="Terminal"
+# Predefinita (esaustiva): tutti gli esempi (oggetto, campo, funzione logica, componente front-end, vista, voce del menu di navigazione)
+npx create-twenty-app@latest my-app
+
+# Minimale: solo i file principali (application-config.ts e default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interattiva: seleziona quali esempi includere
+npx create-twenty-app@latest my-app --interactive
+```
+
 Da qui puoi:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Aggiungi una nuova entità alla tua applicazione (guidata)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Monitora i log delle funzioni della tua applicazione
 yarn twenty function:logs
 
-# Execute a function by name
+# Esegui una funzione per nome
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Esegui la funzione post-installazione
+yarn twenty function:execute --postInstall
+
+# Disinstalla l'applicazione dallo spazio di lavoro corrente
 yarn twenty app:uninstall
 
-# Display commands' help
+# Mostra l'aiuto dei comandi
 yarn twenty help
 ```
 
@@ -70,9 +86,9 @@ Quando esegui `npx create-twenty-app@latest my-twenty-app`, lo scaffolder:
 * Copia un'applicazione base minimale in `my-twenty-app/`
 * Aggiunge una dipendenza locale `twenty-sdk` e la configurazione di Yarn 4
 * Crea file di configurazione e script collegati alla CLI `twenty`
-* Genera una configurazione applicativa predefinita e un ruolo funzione predefinito
+* Genera i file principali (configurazione dell'applicazione, ruolo predefinito per le funzioni logiche, funzione di post-installazione) più i file di esempio in base alla modalità di scaffolding
 
-Un'app appena generata dallo scaffolder si presenta così:
+Un'app appena creata con la modalità predefinita `--exhaustive` si presenta così:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -91,11 +107,22 @@ my-twenty-app/
   ├── application-config.ts           # Obbligatorio - configurazione principale dell'applicazione
   ├── roles/
   │   └── default-role.ts               # Ruolo predefinito per le funzioni logiche
+  ├── objects/
+  │   └── example-object.ts             # Definizione di oggetto personalizzato di esempio
+  ├── fields/
+  │   └── example-field.ts              # Definizione di campo autonomo di esempio
   ├── logic-functions/
-  │   └── hello-world.ts                # Funzione logica di esempio
-  └── front-components/
-      └── hello-world.tsx               # Componente front-end di esempio
+  │   ├── hello-world.ts                # Funzione logica di esempio
+  │   └── post-install.ts               # Funzione logica post-installazione
+  ├── front-components/
+  │   └── hello-world.tsx               # Componente front-end di esempio
+  ├── views/
+  │   └── example-view.ts                # Definizione di vista salvata di esempio
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Link di navigazione della barra laterale di esempio
 ```
+
+Con `--minimal`, vengono creati solo i file principali (`application-config.ts`, `roles/default-role.ts` e `logic-functions/post-install.ts`). Con `--interactive`, scegli quali file di esempio includere.
 
 A livello generale:
 
@@ -112,13 +139,15 @@ A livello generale:
 
 L'SDK rileva le entità analizzando i tuoi file TypeScript alla ricerca di chiamate **`export default define<Entity>({...})`**. Ogni tipo di entità ha una corrispondente funzione helper esportata da `twenty-sdk`:
 
-| Funzione helper          | Tipo di entità                            |
-| ------------------------ | ----------------------------------------- |
-| `defineObject()`         | Definizioni di oggetti personalizzati     |
-| `defineLogicFunction()`  | Definizioni di funzioni logiche           |
-| `defineFrontComponent()` | Definizioni dei componenti front-end      |
-| `defineRole()`           | Definizioni di ruoli                      |
-| `defineField()`          | Estensioni di campo per oggetti esistenti |
+| Funzione helper              | Tipo di entità                                 |
+| ---------------------------- | ---------------------------------------------- |
+| `defineObject()`             | Definizioni di oggetti personalizzati          |
+| `defineLogicFunction()`      | Definizioni di funzioni logiche                |
+| `defineFrontComponent()`     | Definizioni dei componenti front-end           |
+| `defineRole()`               | Definizioni di ruoli                           |
+| `defineField()`              | Estensioni di campo per oggetti esistenti      |
+| `defineView()`               | Definizioni di viste salvate                   |
+| `defineNavigationMenuItem()` | Definizioni delle voci del menu di navigazione |
 
 <Note>
   **La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
@@ -139,7 +168,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
+* `yarn twenty app:dev` genererà automaticamente un client API tipizzato in `node_modules/twenty-sdk/generated` (client Twenty tipizzato + tipi dell'area di lavoro).
 * `yarn twenty entity:add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti, funzioni, componenti front-end o ruoli personalizzati.
 
 ## Autenticazione
@@ -183,14 +212,16 @@ Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare ne
 
 L'SDK fornisce funzioni helper per definire le entità della tua app. Come descritto in [Rilevamento delle entità](#entity-detection), devi usare `export default define<Entity>({...})` affinché le tue entità vengano rilevate:
 
-| Funzione                 | Scopo                                                                   |
-| ------------------------ | ----------------------------------------------------------------------- |
-| `defineApplication()`    | Configura i metadati dell'applicazione (obbligatorio, uno per app)      |
-| `defineObject()`         | Definisci oggetti personalizzati con campi                              |
-| `defineLogicFunction()`  | Definisci funzioni logiche con handler                                  |
-| `defineFrontComponent()` | Definisci componenti front-end per un'interfaccia utente personalizzata |
-| `defineRole()`           | Configura i permessi dei ruoli e l'accesso agli oggetti                 |
-| `defineField()`          | Estendi gli oggetti esistenti con campi aggiuntivi                      |
+| Funzione                     | Scopo                                                                   |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `defineApplication()`        | Configura i metadati dell'applicazione (obbligatorio, uno per app)      |
+| `defineObject()`             | Definisci oggetti personalizzati con campi                              |
+| `defineLogicFunction()`      | Definisci funzioni logiche con handler                                  |
+| `defineFrontComponent()`     | Definisci componenti front-end per un'interfaccia utente personalizzata |
+| `defineRole()`               | Configura i permessi dei ruoli e l'accesso agli oggetti                 |
+| `defineField()`              | Estendi gli oggetti esistenti con campi aggiuntivi                      |
+| `defineView()`               | Definisce viste salvate per gli oggetti                                 |
+| `defineNavigationMenuItem()` | Definisce i link di navigazione della barra laterale                    |
 
 Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
 
@@ -290,6 +321,7 @@ Ogni app ha un singolo file `application-config.ts` che descrive:
 * **Identità dell'app**: identificatori, nome visualizzato e descrizione.
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
+* **(Opzionale) funzione post-installazione**: una funzione logica che viene eseguita dopo l'installazione dell'app.
 
 Usa `defineApplication()` per definire la configurazione della tua applicazione:
 
@@ -297,6 +329,7 @@ Usa `defineApplication()` per definire la configurazione della tua applicazione:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +345,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +354,7 @@ Note:
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
+* `postInstallLogicFunctionUniversalIdentifier` (opzionale) fa riferimento a una funzione logica che viene eseguita automaticamente dopo l'installazione dell'app. Vedi [Funzioni post-installazione](#post-install-functions).
 
 #### Ruoli e permessi
 
@@ -457,6 +492,55 @@ Note:
 
 * L'array `triggers` è facoltativo. Le funzioni senza trigger possono essere utilizzate come funzioni di utilità richiamate da altre funzioni.
 * Puoi combinare più tipi di trigger in un'unica funzione.
+
+### Funzioni post-installazione
+
+Una funzione post-installazione è una funzione logica che viene eseguita automaticamente dopo che la tua app è stata installata in uno spazio di lavoro. Questo è utile per attività di configurazione una tantum come il popolamento di dati predefiniti, la creazione di record iniziali o la configurazione delle impostazioni dello spazio di lavoro.
+
+Quando esegui lo scaffolding di una nuova app con `create-twenty-app`, viene generata automaticamente una funzione di post-installazione in `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+La funzione viene collegata alla tua app facendo riferimento al suo identificatore universale in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Puoi anche eseguire manualmente la funzione di post-installazione in qualsiasi momento utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Punti chiave:
+
+* Le funzioni di post-installazione sono funzioni logiche standard — usano `defineLogicFunction()` come qualsiasi altra funzione.
+* Il campo `postInstallLogicFunctionUniversalIdentifier` in `defineApplication()` è facoltativo. Se omesso, nessuna funzione viene eseguita dopo l'installazione.
+* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
+* Le funzioni di post-installazione non necessitano di trigger — vengono invocate dalla piattaforma durante l'installazione o manualmente tramite `function:execute --postInstall`.
 
 ### Payload del trigger di route
 
@@ -659,7 +743,7 @@ Puoi creare nuovi componenti front-end in due modi:
 
 ### Client tipizzato generato
 
-The typed client is auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema. Usalo nelle tue funzioni:
+Il client tipizzato è generato automaticamente da `yarn twenty app:dev` e salvato in `node_modules/twenty-sdk/generated` in base allo schema della tua area di lavoro. Usalo nelle tue funzioni:
 
 ```typescript
 import Twenty from '~/generated';
@@ -668,7 +752,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Il client viene rigenerato automaticamente da `yarn twenty app:dev` ogni volta che i tuoi oggetti o campi cambiano.
 
 #### Credenziali di runtime nelle funzioni logiche
 
@@ -705,7 +789,7 @@ Quindi aggiungi uno script `twenty`:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty help`, ecc.
 
 ## Risoluzione dei problemi
 

@@ -27,7 +27,7 @@ description: Создавайте и управляйте настройками
 Создайте новое приложение с помощью официального генератора, затем выполните аутентификацию и начните разработку:
 
 ```bash filename="Terminal"
-# Создать каркас нового приложения
+# Создать каркас нового приложения (по умолчанию включает все примеры)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -42,22 +42,38 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+Генератор каркаса поддерживает три режима для управления тем, какие примерные файлы включаются:
+
+```bash filename="Terminal"
+# По умолчанию (полный набор): все примеры (объект, поле, логическая функция, фронтенд-компонент, представление, пункт меню навигации)
+npx create-twenty-app@latest my-app
+
+# Минимальный: только основные файлы (application-config.ts и default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Интерактивный: выбрать, какие примеры включить
+npx create-twenty-app@latest my-app --interactive
+```
+
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Добавить новую сущность в ваше приложение (с мастером)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Просматривать логи функций вашего приложения
 yarn twenty function:logs
 
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
+# Выполнить функцию по имени
+yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
 
-# Uninstall the application from the current workspace
+# Выполнить послеустановочную функцию
+yarn twenty function:execute --postInstall
+
+# Удалить приложение из текущего рабочего пространства
 yarn twenty app:uninstall
 
-# Display commands' help
+# Показать справку по командам
 yarn twenty help
 ```
 
@@ -70,9 +86,9 @@ yarn twenty help
 * Копирует минимальное базовое приложение в `my-twenty-app/`
 * Добавляет локальную зависимость `twenty-sdk` и конфигурацию Yarn 4
 * Создаёт файлы конфигурации и скрипты, подключённые к CLI `twenty`
-* Генерирует конфигурацию приложения по умолчанию и роль функции по умолчанию
+* Генерирует основные файлы (конфигурацию приложения, роль функций по умолчанию, постустановочную функцию), а также примерные файлы в зависимости от выбранного режима создания каркаса
 
-Свежесгенерированное приложение выглядит так:
+Сгенерированное с помощью каркаса приложение с режимом по умолчанию `--exhaustive` выглядит так:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -86,16 +102,27 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Папка общедоступных ресурсов (изображения, шрифты и т. п.)
+  public/                           # Папка публичных ресурсов (изображения, шрифты и т. д.)
   src/
   ├── application-config.ts           # Обязательный — основная конфигурация приложения
   ├── roles/
   │   └── default-role.ts               # Роль по умолчанию для логических функций
+  ├── objects/
+  │   └── example-object.ts             # Пример определения пользовательского объекта
+  ├── fields/
+  │   └── example-field.ts              # Пример определения отдельного поля
   ├── logic-functions/
-  │   └── hello-world.ts                # Пример логической функции
-  └── front-components/
-      └── hello-world.tsx               # Пример фронтенд-компонента
+  │   ├── hello-world.ts                # Пример логической функции
+  │   └── post-install.ts               # Постустановочная логическая функция
+  ├── front-components/
+  │   └── hello-world.tsx               # Пример фронтенд-компонента
+  ├── views/
+  │   └── example-view.ts                # Пример определения сохранённого представления
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Пример ссылки боковой панели навигации
 ```
+
+С `--minimal` создаются только основные файлы (`application-config.ts`, `roles/default-role.ts` и `logic-functions/post-install.ts`). С `--interactive` вы выбираете, какие примерные файлы включить.
 
 В общих чертах:
 
@@ -112,13 +139,15 @@ my-twenty-app/
 
 SDK обнаруживает сущности, разбирая ваши файлы TypeScript в поисках вызовов **`export default define<Entity>({...})`**. Для каждого типа сущности существует соответствующая вспомогательная функция, экспортируемая из `twenty-sdk`:
 
-| Вспомогательная функция  | Тип сущности                               |
-| ------------------------ | ------------------------------------------ |
-| `defineObject()`         | Определения пользовательских объектов      |
-| `defineLogicFunction()`  | Определения логических функций             |
-| `defineFrontComponent()` | Определения компонентов фронтенда          |
-| `defineRole()`           | Определения ролей                          |
-| `defineField()`          | Расширения полей для существующих объектов |
+| Вспомогательная функция      | Тип сущности                               |
+| ---------------------------- | ------------------------------------------ |
+| `defineObject()`             | Определения пользовательских объектов      |
+| `defineLogicFunction()`      | Определения логических функций             |
+| `defineFrontComponent()`     | Определения компонентов фронтенда          |
+| `defineRole()`               | Определения ролей                          |
+| `defineField()`              | Расширения полей для существующих объектов |
+| `defineView()`               | Определения сохранённых представлений      |
+| `defineNavigationMenuItem()` | Определения пунктов меню навигации         |
 
 <Note>
   **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
@@ -139,7 +168,7 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
+* `yarn twenty app:dev` автоматически сгенерирует типизированный клиент API в `node_modules/twenty-sdk/generated` (типизированный клиент Twenty + типы рабочего пространства).
 * `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов или ролей.
 
 ## Аутентификация
@@ -183,14 +212,16 @@ yarn twenty auth:status
 
 SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
 
-| Функция                  | Назначение                                                             |
-| ------------------------ | ---------------------------------------------------------------------- |
-| `defineApplication()`    | Настройка метаданных приложения (обязательно, по одному на приложение) |
-| `defineObject()`         | Определяет пользовательские объекты с полями                           |
-| `defineLogicFunction()`  | Определение логических функций с обработчиками                         |
-| `defineFrontComponent()` | Определение фронт-компонентов для настраиваемого интерфейса            |
-| `defineRole()`           | Настраивает права роли и доступ к объектам                             |
-| `defineField()`          | Расширение существующих объектов дополнительными полями                |
+| Функция                      | Назначение                                                             |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| `defineApplication()`        | Настройка метаданных приложения (обязательно, по одному на приложение) |
+| `defineObject()`             | Определяет пользовательские объекты с полями                           |
+| `defineLogicFunction()`      | Определение логических функций с обработчиками                         |
+| `defineFrontComponent()`     | Определение фронт-компонентов для настраиваемого интерфейса            |
+| `defineRole()`               | Настраивает права роли и доступ к объектам                             |
+| `defineField()`              | Расширение существующих объектов дополнительными полями                |
+| `defineView()`               | Определяйте сохранённые представления для объектов                     |
+| `defineNavigationMenuItem()` | Определяйте ссылки боковой панели навигации                            |
 
 Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
@@ -290,6 +321,7 @@ export default defineObject({
 * **Что это за приложение**: идентификаторы, отображаемое имя и описание.
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
+* **(Необязательно) послеустановочная функция**: функция логики, которая запускается после установки приложения.
 
 Используйте `defineApplication()` для определения конфигурации вашего приложения:
 
@@ -297,6 +329,7 @@ export default defineObject({
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +345,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +354,7 @@ export default defineApplication({
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
+* `postInstallLogicFunctionUniversalIdentifier` (необязательно) указывает на логическую функцию, которая автоматически выполняется после установки приложения. См. [Послеустановочные функции](#post-install-functions).
 
 #### Роли и разрешения
 
@@ -457,6 +492,55 @@ export default defineLogicFunction({
 
 * Массив `triggers` необязателен. Функции без триггеров можно использовать как вспомогательные, вызываемые другими функциями.
 * Вы можете сочетать несколько типов триггеров в одной функции.
+
+### Послеустановочные функции
+
+Послеустановочная функция — это функция логики, которая автоматически выполняется после установки вашего приложения в рабочем пространстве. Это полезно для одноразовых задач настройки, таких как инициализация данных по умолчанию, создание начальных записей или настройка параметров рабочего пространства.
+
+Когда вы создаёте каркас нового приложения с помощью `create-twenty-app`, для вас генерируется постустановочная функция по пути `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Функция подключается к вашему приложению посредством ссылки на её универсальный идентификатор в `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Вы также можете вручную выполнить постустановочную функцию в любое время с помощью CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Основные моменты:
+
+* Постустановочные функции — это стандартные логические функции: они используют `defineLogicFunction()` как и любые другие функции.
+* Поле `postInstallLogicFunctionUniversalIdentifier` в `defineApplication()` является необязательным. Если его опустить, после установки никакая функция выполняться не будет.
+* Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
+* Постустановочным функциям не нужны триггеры — платформа вызывает их во время установки или вручную через `function:execute --postInstall`.
 
 ### Полезная нагрузка триггера маршрута
 
@@ -659,7 +743,7 @@ export default defineFrontComponent({
 
 ### Сгенерированный типизированный клиент
 
-The typed client is auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema. Используйте его в своих функциях:
+Типизированный клиент автоматически генерируется с помощью `yarn twenty app:dev` и сохраняется в `node_modules/twenty-sdk/generated` на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
 
 ```typescript
 import Twenty from '~/generated';
@@ -668,7 +752,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Клиент автоматически перегенерируется с помощью `yarn twenty app:dev` при изменении ваших объектов или полей.
 
 #### Учётные данные времени выполнения в логических функциях
 
@@ -705,7 +789,7 @@ yarn add -D twenty-sdk
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Теперь вы можете запускать все команды через `yarn twenty <command>`, например, `yarn twenty app:dev`, `yarn twenty help` и т. д.
 
 ## Устранение неполадок
 

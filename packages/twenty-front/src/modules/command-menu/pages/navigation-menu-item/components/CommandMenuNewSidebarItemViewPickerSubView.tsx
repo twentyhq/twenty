@@ -10,6 +10,7 @@ import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandM
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
+import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
@@ -110,7 +111,21 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
                     onEnter={() => handleSelectView(view)}
                   >
                     <CommandMenuItemWithAddToNavigationDrag
-                      icon={getIcon(view.icon)}
+                      customIconContent={
+                        selectedObjectMetadataItem ? (
+                          <ObjectIconWithViewOverlay
+                            ObjectIcon={getIcon(
+                              selectedObjectMetadataItem.icon,
+                            )}
+                            ViewIcon={getIcon(view.icon)}
+                          />
+                        ) : undefined
+                      }
+                      icon={
+                        selectedObjectMetadataItem
+                          ? undefined
+                          : getIcon(view.icon)
+                      }
                       label={view.name}
                       id={view.id}
                       onClick={() => handleSelectView(view)}

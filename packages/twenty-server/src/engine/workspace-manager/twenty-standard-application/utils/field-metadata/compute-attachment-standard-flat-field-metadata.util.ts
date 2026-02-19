@@ -13,6 +13,8 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_ATTACHMENT } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 export const buildAttachmentStandardFlatFieldMetadatas = ({
   now,
@@ -54,6 +56,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Creation date',
       description: 'Creation date',
       icon: 'IconCalendar',
+      isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
@@ -75,6 +78,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Last update',
       description: 'Last time the record was changed',
       icon: 'IconCalendarClock',
+      isSystem: true,
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
@@ -96,6 +100,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Deleted at',
       description: 'Date when the record was deleted',
       icon: 'IconCalendarMinus',
+      isSystem: true,
       isNullable: true,
       isUIReadOnly: true,
       settings: {
@@ -219,6 +224,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Created by',
       description: 'The creator of the record',
       icon: 'IconCreativeCommonsSa',
+      isSystem: true,
       isUIReadOnly: true,
       isNullable: false,
       defaultValue: {
@@ -241,12 +247,54 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       label: 'Updated by',
       description: 'The workspace member who last updated the record',
       icon: 'IconUserCircle',
+      isSystem: true,
       isUIReadOnly: true,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
         name: "'System'",
         workspaceMemberId: null,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  position: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'position',
+      type: FieldMetadataType.POSITION,
+      label: 'Position',
+      description: 'Attachment record position',
+      icon: 'IconHierarchy2',
+      isSystem: true,
+      isNullable: false,
+      defaultValue: 0,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  searchVector: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+      label: 'Search vector',
+      description: 'Field used for full-text search',
+      icon: 'IconUser',
+      isSystem: true,
+      isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_ATTACHMENT,
+        ),
       },
     },
     standardObjectMetadataRelatedEntityIds,

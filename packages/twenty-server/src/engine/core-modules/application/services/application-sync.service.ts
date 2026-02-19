@@ -182,11 +182,11 @@ export class ApplicationSyncService {
           buildOptions: {
             isSystemBuild: true,
             inferDeletionFromMissingEntities: true,
+            applicationUniversalIdentifier,
           },
           fromToAllFlatEntityMaps,
           workspaceId,
           additionalCacheDataMaps: { featureFlagsMap },
-          applicationUniversalIdentifier,
         },
       );
 

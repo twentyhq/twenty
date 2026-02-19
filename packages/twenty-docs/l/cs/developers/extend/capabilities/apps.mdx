@@ -27,7 +27,7 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
 
 ```bash filename="Terminal"
-# Vygenerujte kostru nové aplikace
+# Vygenerujte kostru nové aplikace (ve výchozím nastavení zahrnuje všechny příklady)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -42,22 +42,38 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+Nástroj pro generování kostry podporuje tři režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
+
+```bash filename="Terminal"
+# Výchozí (úplný): všechny příklady (objekt, pole, logická funkce, front-endová komponenta, zobrazení, položka navigační nabídky)
+npx create-twenty-app@latest my-app
+
+# Minimální: pouze základní soubory (application-config.ts a default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interaktivní: vyberte, které příklady zahrnout
+npx create-twenty-app@latest my-app --interactive
+```
+
 Odtud můžete:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Přidejte do vaší aplikace novou entitu (s průvodcem)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Sledujte logy funkcí vaší aplikace
 yarn twenty function:logs
 
-# Execute a function by name
+# Spusťte funkci podle názvu
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Spusťte postinstalační funkci
+yarn twenty function:execute --postInstall
+
+# Odinstalujte aplikaci z aktuálního pracovního prostoru
 yarn twenty app:uninstall
 
-# Display commands' help
+# Zobrazte nápovědu k příkazům
 yarn twenty help
 ```
 
@@ -70,9 +86,9 @@ Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
 * Zkopíruje minimální základní aplikaci do `my-twenty-app/`
 * Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
 * Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
-* Vygeneruje výchozí konfiguraci aplikace a výchozí roli funkcí
+* Vygeneruje základní soubory (konfigurace aplikace, výchozí role funkcí, postinstalační funkce) a k nim ukázkové soubory podle zvoleného režimu generování kostry
 
-Čerstvě vytvořená aplikace vypadá takto:
+Čerstvě vygenerovaná aplikace s výchozím režimem `--exhaustive` vypadá takto:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -91,11 +107,22 @@ my-twenty-app/
   ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
   ├── roles/
   │   └── default-role.ts               # Výchozí role pro logické funkce
+  ├── objects/
+  │   └── example-object.ts             # Ukázková definice vlastního objektu
+  ├── fields/
+  │   └── example-field.ts              # Ukázková samostatná definice pole
   ├── logic-functions/
-  │   └── hello-world.ts                # Ukázková logická funkce
-  └── front-components/
-      └── hello-world.tsx               # Ukázková front-endová komponenta
+  │   ├── hello-world.ts                # Ukázková logická funkce
+  │   └── post-install.ts               # Postinstalační logická funkce
+  ├── front-components/
+  │   └── hello-world.tsx               # Ukázková front-endová komponenta
+  ├── views/
+  │   └── example-view.ts                # Ukázková definice uloženého zobrazení
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Ukázkový odkaz postranní navigace
 ```
+
+S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
 
 V kostce:
 
@@ -112,13 +139,15 @@ V kostce:
 
 SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`export default define<Entity>({...})`**. Každý typ entity má odpovídající pomocnou funkci exportovanou z `twenty-sdk`:
 
-| Pomocná funkce           | Typ entity                            |
-| ------------------------ | ------------------------------------- |
-| `defineObject()`         | Definice vlastních objektů            |
-| `defineLogicFunction()`  | Definice logických funkcí             |
-| `defineFrontComponent()` | Definice frontendových komponent      |
-| `defineRole()`           | Definice rolí                         |
-| `defineField()`          | Rozšíření polí u existujících objektů |
+| Pomocná funkce               | Typ entity                            |
+| ---------------------------- | ------------------------------------- |
+| `defineObject()`             | Definice vlastních objektů            |
+| `defineLogicFunction()`      | Definice logických funkcí             |
+| `defineFrontComponent()`     | Definice frontendových komponent      |
+| `defineRole()`               | Definice rolí                         |
+| `defineField()`              | Rozšíření polí u existujících objektů |
+| `defineView()`               | Definice uložených zobrazení          |
+| `defineNavigationMenuItem()` | Definice položek navigační nabídky    |
 
 <Note>
   **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
@@ -139,7 +168,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
+* `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
 
 ## Ověření
@@ -183,14 +212,16 @@ twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které použí
 
 SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je popsáno v [Detekce entit](#entity-detection), musíte použít `export default define<Entity>({...})`, aby byly vaše entity detekovány:
 
-| Funkce                   | Účel                                                              |
-| ------------------------ | ----------------------------------------------------------------- |
-| `defineApplication()`    | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
-| `defineObject()`         | Definice vlastních objektů s poli                                 |
-| `defineLogicFunction()`  | Definice logických funkcí s obslužnými funkcemi                   |
-| `defineFrontComponent()` | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
-| `defineRole()`           | Konfigurace oprávnění rolí a přístupu k objektům                  |
-| `defineField()`          | Rozšiřte existující objekty o další pole                          |
+| Funkce                       | Účel                                                              |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `defineApplication()`        | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
+| `defineObject()`             | Definice vlastních objektů s poli                                 |
+| `defineLogicFunction()`      | Definice logických funkcí s obslužnými funkcemi                   |
+| `defineFrontComponent()`     | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
+| `defineRole()`               | Konfigurace oprávnění rolí a přístupu k objektům                  |
+| `defineField()`              | Rozšiřte existující objekty o další pole                          |
+| `defineView()`               | Definujte uložená zobrazení pro objekty                           |
+| `defineNavigationMenuItem()` | Definujte odkazy postranní navigace                               |
 
 Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
@@ -290,6 +321,7 @@ Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
 * **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
+* **(Volitelná) postinstalační funkce**: logická funkce, která se spouští po instalaci aplikace.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -297,6 +329,7 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +345,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +354,7 @@ Poznámky:
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
+* `postInstallLogicFunctionUniversalIdentifier` (volitelné) odkazuje na logickou funkci, která se automaticky spustí po instalaci aplikace. Viz [Postinstalační funkce](#post-install-functions).
 
 #### Role a oprávnění
 
@@ -457,6 +492,55 @@ Poznámky:
 
 * Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
 * V jedné funkci můžete kombinovat více typů spouštěčů.
+
+### Postinstalační funkce
+
+Postinstalační funkce je logická funkce, která se automaticky spouští po instalaci vaší aplikace do pracovního prostoru. To je užitečné pro jednorázové úlohy nastavení, jako je naplnění výchozími daty, vytvoření počátečních záznamů nebo konfigurace nastavení pracovního prostoru.
+
+Když vygenerujete kostru nové aplikace pomocí `create-twenty-app`, vytvoří se pro vás postinstalační funkce v `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Funkce je připojena do vaší aplikace odkazem na její univerzální identifikátor v `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Postinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Hlavní body:
+
+* Postinstalační funkce jsou standardní logické funkce — používají `defineLogicFunction()` stejně jako jakákoli jiná funkce.
+* Pole `postInstallLogicFunctionUniversalIdentifier` v `defineApplication()` je volitelné. Pokud je vynecháno, po instalaci se nespustí žádná funkce.
+* Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší úlohy nastavení, jako je naplnění daty.
+* Postinstalační funkce nepotřebují spouštěče — jsou spouštěny platformou během instalace nebo ručně pomocí `function:execute --postInstall`.
 
 ### Payload spouštěče trasy
 
@@ -659,7 +743,7 @@ Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 ### Generovaný typovaný klient
 
-The typed client is auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema. Použijte jej ve svých funkcích:
+Typovaný klient je automaticky generován pomocí `yarn twenty app:dev` a ukládá se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
 
 ```typescript
 import Twenty from '~/generated';
@@ -668,7 +752,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Klient se automaticky znovu generuje pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -705,7 +789,7 @@ Poté přidejte skript `twenty`:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty app:dev`, `yarn twenty help` atd.
 
 ## Řešení potíží
 

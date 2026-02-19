@@ -1,6 +1,6 @@
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
@@ -26,7 +26,7 @@ export const NavigationDrawerCollapseButton = ({
   className,
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
-  const setIsNavigationDrawerExpanded = useSetRecoilState(
+  const setIsNavigationDrawerExpanded = useSetRecoilStateV2(
     isNavigationDrawerExpandedState,
   );
 

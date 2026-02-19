@@ -1,24 +1,24 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
+import { useStore } from 'jotai';
 
 export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
-  const setActiveDropdownFocusIdAndMemorizePrevious = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (dropdownId: string | null) => {
-        const activeDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
+  const store = useStore();
 
-        if (activeDropdownFocusId === dropdownId) {
-          return;
-        }
+  const setActiveDropdownFocusIdAndMemorizePrevious = useCallback(
+    (dropdownId: string | null) => {
+      const activeDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
-        set(previousDropdownFocusIdState, activeDropdownFocusId);
-        set(activeDropdownFocusIdState, dropdownId);
-      },
-    [],
+      if (activeDropdownFocusId === dropdownId) {
+        return;
+      }
+
+      store.set(previousDropdownFocusIdState.atom, activeDropdownFocusId);
+      store.set(activeDropdownFocusIdState.atom, dropdownId);
+    },
+    [store],
   );
 
   return {

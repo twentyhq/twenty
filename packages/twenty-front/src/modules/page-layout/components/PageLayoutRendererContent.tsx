@@ -21,6 +21,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -59,7 +60,7 @@ export const PageLayoutRendererContent = () => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
   const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');

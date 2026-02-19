@@ -4,6 +4,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type PieChartConvertibleFields = {
+  aggregateFieldMetadataId?: string;
   groupByFieldMetadataId?: string;
   groupBySubFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;

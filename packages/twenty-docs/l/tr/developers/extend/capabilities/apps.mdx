@@ -27,7 +27,7 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 Resmi scaffolder aracını kullanarak yeni bir uygulama oluşturun, ardından kimlik doğrulaması yapıp geliştirmeye başlayın:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -42,6 +42,19 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için üç modu destekler:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interactive: select which examples to include
+npx create-twenty-app@latest my-app --interactive
+```
+
 Buradan şunları yapabilirsiniz:
 
 ```bash filename="Terminal"
@@ -53,6 +66,9 @@ yarn twenty function:logs
 
 # Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute the post-install function
+yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
 yarn twenty app:uninstall
@@ -70,9 +86,9 @@ Ayrıca bkz.: [create-twenty-app](https://www.npmjs.com/package/create-twenty-ap
 * Minimal bir temel uygulamayı `my-twenty-app/` içine kopyalar
 * Yerel bir `twenty-sdk` bağımlılığı ve Yarn 4 yapılandırması ekler
 * `twenty` CLI ile bağlantılı yapılandırma dosyaları ve betikler oluşturur
-* Varsayılan bir uygulama yapılandırması ve varsayılan bir fonksiyon rolü üretir
+* İskelet oluşturma moduna bağlı olarak çekirdek dosyaları (uygulama yapılandırması, varsayılan işlev rolü, kurulum sonrası işlev) ile örnek dosyaları üretir
 
-Yeni şablondan oluşturulan bir uygulama şöyle görünür:
+Varsayılan `--exhaustive` moduyla yeni oluşturulmuş bir uygulama şu şekilde görünür:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -86,16 +102,27 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Gerekli - ana uygulama yapılandırması
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Mantık işlevleri için varsayılan rol
+  │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   └── hello-world.ts                # Örnek mantık işlevi
-  └── front-components/
-      └── hello-world.tsx               # Örnek ön uç bileşeni
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Example sidebar navigation link
 ```
+
+`--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts` ve `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
 
 Genel hatlarıyla:
 
@@ -112,13 +139,15 @@ Genel hatlarıyla:
 
 SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** çağrılarını arayarak ayrıştırıp varlıkları algılar. Her varlık türünün, `twenty-sdk` tarafından dışa aktarılan karşılık gelen bir yardımcı fonksiyonu vardır:
 
-| Yardımcı fonksiyon       | Varlık türü                              |
-| ------------------------ | ---------------------------------------- |
-| `defineObject()`         | Özel nesne tanımları                     |
-| `defineLogicFunction()`  | Mantık fonksiyon tanımları               |
-| `defineFrontComponent()` | Front component definitions              |
-| `defineRole()`           | Rol tanımları                            |
-| `defineField()`          | Mevcut nesneler için alan genişletmeleri |
+| Yardımcı fonksiyon           | Varlık türü                              |
+| ---------------------------- | ---------------------------------------- |
+| `defineObject()`             | Özel nesne tanımları                     |
+| `defineLogicFunction()`      | Mantık fonksiyon tanımları               |
+| `defineFrontComponent()`     | Front component definitions              |
+| `defineRole()`               | Rol tanımları                            |
+| `defineField()`              | Mevcut nesneler için alan genişletmeleri |
+| `defineView()`               | Kaydedilmiş görünüm tanımları            |
+| `defineNavigationMenuItem()` | Gezinme menüsü öğesi tanımları           |
 
 <Note>
   **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
@@ -139,7 +168,7 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
+* `yarn twenty app:dev`, `node_modules/twenty-sdk/generated` içinde tipli bir API istemcisini otomatik olarak oluşturur (tipli Twenty istemcisi + çalışma alanı türleri).
 * `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz veya rolleriniz için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
@@ -183,14 +212,16 @@ twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşla
 
 SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağlar. [Varlık algılama](#entity-detection) bölümünde açıklandığı gibi, varlıklarınızın algılanması için `export default define<Entity>({...})` kullanmalısınız:
 
-| Fonksiyon                | Amaç                                                                      |
-| ------------------------ | ------------------------------------------------------------------------- |
-| `defineApplication()`    | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet) |
-| `defineObject()`         | Alanlara sahip özel nesneler tanımlayın                                   |
-| `defineLogicFunction()`  | İşleyicilerle mantık fonksiyonları tanımlayın                             |
-| `defineFrontComponent()` | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                |
-| `defineRole()`           | Rol izinlerini ve nesne erişimini yapılandırın                            |
-| `defineField()`          | Mevcut nesneleri ek alanlarla genişletin                                  |
+| Fonksiyon                    | Amaç                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| `defineApplication()`        | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet) |
+| `defineObject()`             | Alanlara sahip özel nesneler tanımlayın                                   |
+| `defineLogicFunction()`      | İşleyicilerle mantık fonksiyonları tanımlayın                             |
+| `defineFrontComponent()`     | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                |
+| `defineRole()`               | Rol izinlerini ve nesne erişimini yapılandırın                            |
+| `defineField()`              | Mevcut nesneleri ek alanlarla genişletin                                  |
+| `defineView()`               | Nesneler için kaydedilmiş görünümler tanımlayın                           |
+| `defineNavigationMenuItem()` | Kenar çubuğu gezinme bağlantılarını tanımlayın                            |
 
 Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
@@ -290,6 +321,7 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application-config.ts` do
 * **Uygulamanın kim olduğu**: tanımlayıcılar, görünen ad ve açıklama.
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
 * **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
+* **(İsteğe bağlı) kurulum sonrası işlev**: uygulama yüklendikten sonra çalışan bir mantık işlevi.
 
 Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 
@@ -297,6 +329,7 @@ Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +345,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +354,7 @@ Notlar:
 * `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
 * `defaultRoleUniversalIdentifier`, rol dosyasıyla eşleşmelidir (aşağıya bakın).
+* `postInstallLogicFunctionUniversalIdentifier` (isteğe bağlı), uygulama yüklendikten sonra otomatik olarak çalışan bir mantık işlevine işaret eder. Bkz. [Kurulum sonrası işlevler](#post-install-functions).
 
 #### Roller ve izinler
 
@@ -457,6 +492,55 @@ Notlar:
 
 * `triggers` dizisi isteğe bağlıdır. Tetikleyicisi olmayan fonksiyonlar, diğer fonksiyonlar tarafından çağrılan yardımcı fonksiyonlar olarak kullanılabilir.
 * Tek bir fonksiyonda birden çok tetikleyici türünü birleştirebilirsiniz.
+
+### Kurulum sonrası işlevler
+
+Kurulum sonrası işlev, uygulamanız bir çalışma alanına yüklendikten sonra otomatik olarak çalışan bir mantık işlevidir. Bu, varsayılan verileri tohumlama, ilk kayıtları oluşturma veya çalışma alanı ayarlarını yapılandırma gibi tek seferlik kurulum görevleri için yararlıdır.
+
+`create-twenty-app` ile yeni bir uygulama iskeleti oluşturduğunuzda, `src/logic-functions/post-install.ts` konumunda sizin için bir kurulum sonrası işlevi oluşturulur:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+İşlev, `application-config.ts` içinde evrensel tanımlayıcısına başvurularak uygulamanıza bağlanır:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Ayrıca kurulum sonrası işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Önemli noktalar:
+
+* Kurulum sonrası işlevleri standart mantık işlevleridir — diğer herhangi bir işlev gibi `defineLogicFunction()` kullanırlar.
+* `defineApplication()` içindeki `postInstallLogicFunctionUniversalIdentifier` alanı isteğe bağlıdır. Atlanırsa, kurulumdan sonra hiçbir işlev çalıştırılmaz.
+* Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* Kurulum sonrası işlevlerin tetikleyicilere ihtiyacı yoktur — kurulum sırasında platform tarafından veya `function:execute --postInstall` aracılığıyla manuel olarak çağrılırlar.
 
 ### Rota tetikleyicisi yükü
 
@@ -659,7 +743,7 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
 ### Oluşturulmuş türlendirilmiş istemci
 
-The typed client is auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema. Fonksiyonlarınızda kullanın:
+Tipli istemci, `yarn twenty app:dev` tarafından otomatik olarak oluşturulur ve çalışma alanı şemanıza göre `node_modules/twenty-sdk/generated` içine kaydedilir. Fonksiyonlarınızda kullanın:
 
 ```typescript
 import Twenty from '~/generated';
@@ -668,7 +752,7 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-The client is re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Nesneleriniz veya alanlarınız değiştiğinde, istemci `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
@@ -705,13 +789,13 @@ Ardından bir `twenty` betiği ekleyin:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty app:dev`, `yarn twenty help` vb.
 
 ## Sorun Giderme
 
 * Kimlik doğrulama hataları: `yarn twenty auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
 * Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
-* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
+* Türler veya istemci eksik/eski: `yarn twenty app:dev` komutunu yeniden çalıştırın — tip tanımlı istemciyi otomatik olarak oluşturur.
 * Geliştirme modu eşitlenmiyor: `yarn twenty app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
 
 Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322

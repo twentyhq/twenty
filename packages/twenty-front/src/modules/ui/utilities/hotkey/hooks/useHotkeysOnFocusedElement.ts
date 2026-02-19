@@ -1,12 +1,12 @@
 import { useHotkeysOnFocusedElementCallback } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElementCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
   type HotkeyCallback,
   type Keys,
   type Options,
 } from 'react-hotkeys-hook/dist/types';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
@@ -24,7 +24,8 @@ export const useHotkeysOnFocusedElement = ({
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
-  const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
+  const [pendingHotkey, setPendingHotkey] =
+    useRecoilStateV2(pendingHotkeyState);
 
   const callScopedHotkeyCallback =
     useHotkeysOnFocusedElementCallback(dependencies);

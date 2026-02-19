@@ -2,7 +2,7 @@ import { PermissionFlag, defineRole } from '@/sdk';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
-} from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
+} from '@/cli/__tests__/apps/rich-app/src/objects/post-card.object';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';

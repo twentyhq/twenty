@@ -7,7 +7,7 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect } from 'react';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
@@ -22,12 +22,14 @@ export const SettingsRolesQueryEffect = () => {
     settingsRolesIsLoadingStateV2,
   );
 
+  const store = useStore();
+
   const populateRoles = useRecoilCallback(
     ({ set, snapshot }) =>
       (roles: RoleWithPartialMembers[]) => {
         const roleIds = roles.map((role) => role.id);
         set(settingsRoleIdsState, roleIds);
-        jotaiStore.set(settingsRoleIdsStateV2.atom, roleIds);
+        store.set(settingsRoleIdsStateV2.atom, roleIds);
         roles.forEach((role) => {
           const persistedRole = getSnapshotValue(
             snapshot,
@@ -50,7 +52,7 @@ export const SettingsRolesQueryEffect = () => {
           }
         });
       },
-    [],
+    [store],
   );
 
   useEffect(() => {

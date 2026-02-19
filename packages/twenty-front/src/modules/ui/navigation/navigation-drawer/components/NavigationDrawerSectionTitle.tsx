@@ -4,6 +4,7 @@ import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
@@ -60,7 +61,7 @@ export const NavigationDrawerSectionTitle = ({
   alwaysShowRightIcon = false,
 }: NavigationDrawerSectionTitleProps) => {
   const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useRecoilValue(
+  const isNavigationDrawerExpanded = useRecoilValueV2(
     isNavigationDrawerExpandedState,
   );
   const isSettingsPage = useIsSettingsPage();

@@ -1,7 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
+import {
+  type CreateNavigationMenuItemInput,
+  useCreateNavigationMenuItemMutation,
+} from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
@@ -9,7 +12,7 @@ import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/n
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 
 export const useSaveNavigationMenuItemsDraft = () => {
@@ -20,10 +23,12 @@ export const useSaveNavigationMenuItemsDraft = () => {
       refetchQueries: ['FindManyNavigationMenuItems'],
     });
 
+  const store = useStore();
+
   const saveDraft = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const draft = jotaiStore.get(navigationMenuItemsDraftStateV2.atom);
+        const draft = store.get(navigationMenuItemsDraftStateV2.atom);
         const prefetch = snapshot
           .getLoadable(prefetchNavigationMenuItemsState)
           .getValue();
@@ -81,20 +86,13 @@ export const useSaveNavigationMenuItemsDraft = () => {
         ];
 
         for (const draftItem of idsToCreateIncludingRecreated) {
-          const input: {
-            position: number;
-            folderId?: string | null;
-            name?: string;
-            link?: string;
-            viewId?: string;
-            targetObjectMetadataId?: string;
-            targetRecordId?: string;
-          } = {
+          const input: CreateNavigationMenuItemInput = {
             position: Math.max(0, Math.round(draftItem.position)),
           };
 
           if (isNavigationMenuItemFolder(draftItem)) {
             input.name = draftItem.name ?? undefined;
+            input.icon = draftItem.icon ?? null;
           } else if (isNavigationMenuItemLink(draftItem)) {
             input.name = draftItem.name ?? 'Link';
             const linkUrl = (draftItem.link ?? '').trim();
@@ -138,12 +136,16 @@ export const useSaveNavigationMenuItemsDraft = () => {
           const linkChanged =
             isNavigationMenuItemLink(draftItem) &&
             (original.link ?? null) !== (draftItem.link ?? null);
+          const iconChanged =
+            isNavigationMenuItemFolder(draftItem) &&
+            (original.icon ?? null) !== (draftItem.icon ?? null);
 
           if (
             positionChanged ||
             folderIdChanged ||
             nameChanged ||
-            linkChanged
+            linkChanged ||
+            iconChanged
           ) {
             const updateInput: {
               id: string;
@@ -151,6 +153,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
               folderId?: string | null;
               name?: string;
               link?: string | null;
+              icon?: string | null;
             } = { id: draftItem.id };
 
             if (positionChanged) {
@@ -177,6 +180,9 @@ export const useSaveNavigationMenuItemsDraft = () => {
                   : `https://${linkUrl}`
                 : null;
             }
+            if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
+              updateInput.icon = draftItem.icon ?? null;
+            }
 
             await updateNavigationMenuItem(updateInput);
           }
@@ -186,6 +192,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
       updateNavigationMenuItem,
       deleteNavigationMenuItem,
       createNavigationMenuItemMutation,
+      store,
     ],
   );
 

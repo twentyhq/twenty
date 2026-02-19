@@ -202,14 +202,6 @@ jobs:
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
-      - name: Check for coverage threshold failure
-        if: always() && steps.run-task.outcome == 'failure' && matrix.task == 'test'
-        shell: bash
-        run: |
-          echo "::error::The test task failed. If no individual test is failing, this is likely a coverage threshold not being met."
-          echo ""
-          echo "To debug locally, run: npx nx run twenty-front:test:ci"
-          exit 1
       - name: Save ${{ matrix.task }} cache
         uses: ./.github/actions/save-cache
         with:

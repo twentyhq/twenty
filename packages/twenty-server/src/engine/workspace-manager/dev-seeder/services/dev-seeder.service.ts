@@ -95,6 +95,7 @@ export class DevSeederService {
     await this.devSeederPermissionsService.initPermissions({
       workspaceId,
       twentyStandardFlatApplication,
+      workspaceCustomFlatApplication,
     });
 
     await seedPageLayouts(

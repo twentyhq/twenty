@@ -28,11 +28,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconDotsVertical,
@@ -166,7 +166,7 @@ export const SettingsDataModelFieldSelectForm = ({
   );
   const isNullable = fieldMetadataItem?.isNullable;
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
 
   const [searchParams] = useSearchParams();
 

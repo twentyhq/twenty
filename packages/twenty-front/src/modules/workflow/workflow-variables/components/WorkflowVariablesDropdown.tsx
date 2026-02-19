@@ -2,7 +2,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
@@ -53,7 +53,7 @@ export const WorkflowVariablesDropdown = ({
   const theme = useTheme();
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     dropdownId,
   );

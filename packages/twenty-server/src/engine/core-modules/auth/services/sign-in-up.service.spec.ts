@@ -98,6 +98,9 @@ const createSignInUpServiceForTests = () => {
       createWorkspaceCustomApplication: jest.fn(),
     } as any,
     {
+      uploadWorkspaceLogoFromUrl: jest.fn(),
+    } as any,
+    {
       createQueryRunner: jest.fn(() => queryRunnerMock),
     } as any,
   );

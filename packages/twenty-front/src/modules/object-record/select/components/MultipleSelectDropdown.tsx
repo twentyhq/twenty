@@ -9,7 +9,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
@@ -39,7 +39,7 @@ export const MultipleSelectDropdown = ({
 
   const { resetSelectedItem } = useSelectableList(selectableListId);
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
     selectableListId,
   );
