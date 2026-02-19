@@ -34,6 +34,21 @@ describe('isFieldAddressValue', () => {
     ).toBe(true);
   });
 
+  it('should return true for address with string lat/lng from numeric db column', () => {
+    expect(
+      isFieldAddressValue({
+        addressStreet1: 'England',
+        addressStreet2: '',
+        addressCity: '',
+        addressState: 'England',
+        addressPostcode: '',
+        addressCountry: 'United Kingdom',
+        addressLat: '52.83816401015793',
+        addressLng: '-2.327480843616569',
+      }),
+    ).toBe(true);
+  });
+
   it('should return false for incomplete address', () => {
     expect(isFieldAddressValue({ addressStreet1: '123 Main St' })).toBe(false);
   });
