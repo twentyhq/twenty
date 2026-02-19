@@ -30,6 +30,7 @@ import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-v
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
+import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -75,6 +76,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
+
+    // 1.20 Commands
+    protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
   ) {
     super(
       workspaceRepository,
@@ -117,11 +121,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
     ];
 
+    const commands_1200: VersionCommands = [this.backfillPageLayoutsCommand];
+
     this.allCommands = {
       '1.16.0': commands_1160,
       '1.17.0': commands_1170,
       '1.18.0': commands_1180,
       '1.19.0': commands_1190,
+      '1.20.0': commands_1200,
     };
   }
 
