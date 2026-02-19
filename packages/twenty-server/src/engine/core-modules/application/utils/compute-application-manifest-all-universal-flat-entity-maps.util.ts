@@ -1,6 +1,7 @@
 import { type Manifest } from 'twenty-shared/application';
 
 import { type ApplicationManifestMetadataName } from 'src/engine/core-modules/application/constants/application-manifest-metadata-names.constant';
+import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/utils/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/utils/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/utils/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/utils/from-logic-function-manifest-to-universal-flat-logic-function.util';
@@ -117,6 +118,25 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
       },
     );
+
+    if (frontComponentManifest.command) {
+      addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+        {
+          metadataName: 'commandMenuItem',
+          universalFlatEntity:
+            fromCommandMenuItemManifestToUniversalFlatCommandMenuItem({
+              commandMenuItemManifest: {
+                ...frontComponentManifest.command,
+                frontComponentUniversalIdentifier:
+                  frontComponentManifest.universalIdentifier,
+              },
+              applicationUniversalIdentifier,
+              now,
+            }),
+          universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
+        },
+      );
+    }
   }
 
   for (const roleManifest of manifest.roles) {

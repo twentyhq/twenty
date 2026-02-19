@@ -200,12 +200,19 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       defaultValue: "'DATABASE_EVENT'",
       options: [
         {
+          id: '20202020-ccd5-4f45-9292-f6b2fe81b22c',
           value: 'DATABASE_EVENT',
           label: 'Database Event',
           position: 0,
           color: 'green',
         },
-        { value: 'CRON', label: 'Cron', position: 1, color: 'blue' },
+        {
+          id: '20202020-07b8-4e8f-b218-997ac813c209',
+          value: 'CRON',
+          label: 'Cron',
+          position: 1,
+          color: 'blue',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

@@ -71,16 +71,6 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @IsOptional()
   isTool?: boolean;
 
-  @IsBoolean()
-  @Field({ nullable: true })
-  @IsOptional()
-  isBuildUpToDate?: boolean;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  checksum?: string;
-
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()

@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",
-    "@lingui/swc-plugin": "^5.6.0",
+    "@lingui/swc-plugin": "^5.11.0",
     "@lingui/vite-plugin": "^5.1.2",
     "@react-email/preview-server": "5.1.0",
     "@tiptap/core": "^3.4.2",
