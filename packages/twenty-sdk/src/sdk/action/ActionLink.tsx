@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 import { type NavigateOptions } from 'react-router-dom';
 import { type AppPath } from 'twenty-shared/types';
@@ -18,14 +18,14 @@ export const ActionLink = <T extends AppPath>({
   queryParams,
   options,
 }: ActionLinkProps<T>) => {
-  const hasExecutedRef = useRef(false);
+  const [hasExecuted, setHasExecuted] = useState(false);
 
   useEffect(() => {
-    if (hasExecutedRef.current) {
+    if (hasExecuted) {
       return;
     }
 
-    hasExecutedRef.current = true;
+    setHasExecuted(true);
 
     const run = async () => {
       try {
@@ -36,7 +36,7 @@ export const ActionLink = <T extends AppPath>({
     };
 
     run();
-  }, [to, params, queryParams, options]);
+  }, [to, params, queryParams, options, hasExecuted]);
 
   return null;
 };

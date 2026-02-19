@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 import { unmountFrontComponent } from '../front-component-api';
 
@@ -7,14 +7,14 @@ export type ActionProps = {
 };
 
 export const Action = ({ execute }: ActionProps) => {
-  const hasExecutedRef = useRef(false);
+  const [hasExecuted, setHasExecuted] = useState(false);
 
   useEffect(() => {
-    if (hasExecutedRef.current) {
+    if (hasExecuted) {
       return;
     }
 
-    hasExecutedRef.current = true;
+    setHasExecuted(true);
 
     const run = async () => {
       try {
@@ -25,7 +25,7 @@ export const Action = ({ execute }: ActionProps) => {
     };
 
     run();
-  }, [execute]);
+  }, [execute, hasExecuted]);
 
   return null;
 };
