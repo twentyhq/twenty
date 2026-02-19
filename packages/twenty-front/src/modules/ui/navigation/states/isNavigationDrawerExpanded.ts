@@ -1,11 +1,10 @@
-import { atom } from 'recoil';
+import { createStateWithLocalStorageV2 } from '@/ui/utilities/state/jotai/utils/createStateWithLocalStorageV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
 
 const isMobile = window.innerWidth <= MOBILE_VIEWPORT;
 
-export const isNavigationDrawerExpandedState = atom({
-  key: 'isNavigationDrawerExpanded',
-  default: !isMobile,
-  effects: [localStorageEffect()],
-});
+export const isNavigationDrawerExpandedState =
+  createStateWithLocalStorageV2<boolean>({
+    key: 'isNavigationDrawerExpanded',
+    defaultValue: !isMobile,
+  });
