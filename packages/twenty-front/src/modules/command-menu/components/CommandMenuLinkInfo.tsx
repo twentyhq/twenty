@@ -81,7 +81,7 @@ export const CommandMenuLinkInfo = () => {
           onFocus={() => setShouldFocusTitleInput(false)}
         />
       }
-      label={t`link`}
+      label={t`Link`}
     />
   );
 };

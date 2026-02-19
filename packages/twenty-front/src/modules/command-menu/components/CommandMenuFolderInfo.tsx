@@ -103,6 +103,7 @@ export const CommandMenuFolderInfo = () => {
           onFocus={() => setShouldFocusTitleInput(false)}
         />
       }
+      label={t`Folder`}
     />
   );
 };
