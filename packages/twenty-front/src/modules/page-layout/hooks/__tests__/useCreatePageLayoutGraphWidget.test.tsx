@@ -6,7 +6,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutType,
@@ -30,7 +30,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
   it('should create widget in the correct tab with isolated layouts', () => {
     const { result } = renderHook(
       () => {
-        const setActiveTabId = useSetRecoilState(
+        const setActiveTabId = useSetAtom(
           activeTabIdComponentState.atomFamily({
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
@@ -113,7 +113,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const setActiveTabId = useSetRecoilState(
+        const setActiveTabId = useSetAtom(
           activeTabIdComponentState.atomFamily({
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),

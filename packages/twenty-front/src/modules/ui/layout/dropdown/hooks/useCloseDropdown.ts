@@ -6,7 +6,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseDropdown = () => {
@@ -15,6 +15,8 @@ export const useCloseDropdown = () => {
 
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+
+  const store = useStore();
 
   const dropdownComponentInstanceIdFromContext =
     useAvailableComponentInstanceId(DropdownComponentInstanceContext);
@@ -29,7 +31,7 @@ export const useCloseDropdown = () => {
         throw new Error('Dropdown component instance ID is not defined');
       }
 
-      const isDropdownOpen = jotaiStore.get(
+      const isDropdownOpen = store.get(
         isDropdownOpenComponentState.atomFamily({
           instanceId: dropdownComponentInstanceId,
         }),
@@ -42,7 +44,7 @@ export const useCloseDropdown = () => {
 
         goBackToPreviousDropdownFocusId();
 
-        jotaiStore.set(
+        store.set(
           isDropdownOpenComponentState.atomFamily({
             instanceId: dropdownComponentInstanceId,
           }),
@@ -54,6 +56,7 @@ export const useCloseDropdown = () => {
       removeFocusItemFromFocusStackById,
       goBackToPreviousDropdownFocusId,
       dropdownComponentInstanceIdFromContext,
+      store,
     ],
   );
 

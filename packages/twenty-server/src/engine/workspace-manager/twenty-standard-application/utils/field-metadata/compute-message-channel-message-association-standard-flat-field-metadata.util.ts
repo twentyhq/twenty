@@ -247,12 +247,14 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         defaultValue: `'${MessageDirection.INCOMING}'`,
         options: [
           {
+            id: '20202020-3075-4e35-b6a1-27db444a4668',
             value: MessageDirection.INCOMING,
             label: 'Incoming',
             position: 0,
             color: 'green',
           },
           {
+            id: '20202020-a15f-4512-9202-391a3c0bbed3',
             value: MessageDirection.OUTGOING,
             label: 'Outgoing',
             position: 1,

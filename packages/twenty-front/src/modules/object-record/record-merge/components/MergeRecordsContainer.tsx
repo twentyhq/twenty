@@ -5,7 +5,7 @@ import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDraw
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
@@ -52,7 +52,7 @@ export const MergeRecordsContainer = ({
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     CommandMenuPageComponentInstanceContext,
   );
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
     instanceId,
   );

@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink } from 'twenty-ui/display';
@@ -11,6 +10,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { Select } from '@/ui/input/components/Select';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
@@ -25,7 +25,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const { watch, setValue } =
     useFormContext<SettingsDataModelFieldEditFormValues>();
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
 
   const { objectMetadataItem: sourceObjectMetadataItem } =
     useObjectMetadataItem({ objectNameSingular });

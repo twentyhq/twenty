@@ -3170,12 +3170,12 @@ msgstr "인증하려면 SSO를 사용해 주세요."
 msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
 msgstr ""
 
-#. js-lingui-id: KTTUV3
+#. js-lingui-id: rFj1tD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Position must be a non-negative integer"
+msgid "Position must be a finite number"
 msgstr ""
 
 #. js-lingui-id: +DJKfQ
