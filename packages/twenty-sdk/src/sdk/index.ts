@@ -73,9 +73,8 @@ export {
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
 export type { OpenConfirmationModalParams } from './front-component-api';
-export type { OpenSidePanelPageParams } from './front-component-api';
 
-export { AppPath } from 'twenty-shared/types';
+export { AppPath, CommandMenuPages } from 'twenty-shared/types';
 
 // Front Component Common exports
 export {

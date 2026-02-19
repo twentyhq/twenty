@@ -1,7 +1,7 @@
 import {
-  type Decorator,
-  type Meta,
-  type StoryObj,
+    type Decorator,
+    type Meta,
+    type StoryObj,
 } from '@storybook/react-vite';
 import { useSetRecoilState } from 'recoil';
 import { expect, userEvent, within } from 'storybook/test';
@@ -13,10 +13,10 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  mockCurrentWorkspace,
-  mockedLimitedPermissionsUserData,
-  mockedUserData,
-  mockedWorkspaceMemberData,
+    mockCurrentWorkspace,
+    mockedLimitedPermissionsUserData,
+    mockedUserData,
+    mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
@@ -28,12 +28,12 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 

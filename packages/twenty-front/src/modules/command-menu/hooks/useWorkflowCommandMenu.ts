@@ -3,17 +3,17 @@ import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workfl
 import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconBolt,
-  type IconComponent,
-  IconSettingsAutomation,
+    IconBolt,
+    type IconComponent,
+    IconSettingsAutomation,
 } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 

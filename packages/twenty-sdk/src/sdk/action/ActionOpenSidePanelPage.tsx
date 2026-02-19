@@ -1,19 +1,22 @@
+import { openSidePanelPage } from '@/sdk/front-component-api';
 import { useEffect, useRef } from 'react';
 
-import { openSidePanelPage } from '../front-component-api';
+import { type CommandMenuPages } from 'twenty-shared/types';
 
 export type ActionOpenSidePanelPageProps = {
-  page: string;
+  page: CommandMenuPages;
   pageTitle: string;
-  pageIcon?: string;
-  execute?: () => void | Promise<void>;
+  pageIcon: string;
+  onClick?: () => void;
+  shouldResetSearchState?: boolean;
 };
 
 export const ActionOpenSidePanelPage = ({
   page,
   pageTitle,
   pageIcon,
-  execute,
+  onClick,
+  shouldResetSearchState = false,
 }: ActionOpenSidePanelPageProps) => {
   const hasExecutedRef = useRef(false);
 
@@ -24,10 +27,15 @@ export const ActionOpenSidePanelPage = ({
 
     hasExecutedRef.current = true;
 
-    execute?.();
+    onClick?.();
 
-    openSidePanelPage({ page, pageTitle, pageIcon });
-  }, [page, pageTitle, pageIcon, execute]);
+    openSidePanelPage({
+      page,
+      pageTitle,
+      pageIcon,
+      shouldResetSearchState,
+    });
+  }, [page, pageTitle, pageIcon, shouldResetSearchState, onClick]);
 
   return null;
 };

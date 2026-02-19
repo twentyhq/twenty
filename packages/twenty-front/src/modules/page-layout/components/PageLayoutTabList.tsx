@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import {
-  DragDropContext,
-  type DropResult,
-  type OnDragEndResponder,
-  type OnDragStartResponder,
-  type OnDragUpdateResponder,
-  type ResponderProvided,
+    DragDropContext,
+    type DropResult,
+    type OnDragEndResponder,
+    type OnDragStartResponder,
+    type OnDragUpdateResponder,
+    type ResponderProvided,
 } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
@@ -28,7 +28,6 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
@@ -45,6 +44,7 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/Ta
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 

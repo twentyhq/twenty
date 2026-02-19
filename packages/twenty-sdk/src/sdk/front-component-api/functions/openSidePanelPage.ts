@@ -1,9 +1,11 @@
+import { type CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export type OpenSidePanelPageParams = {
-  page: string;
+  page: CommandMenuPages;
   pageTitle: string;
   pageIcon?: string;
+  shouldResetSearchState?: boolean;
 };
 
 type OpenSidePanelPageFunction = (

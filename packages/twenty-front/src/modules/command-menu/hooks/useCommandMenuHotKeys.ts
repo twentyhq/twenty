@@ -7,7 +7,6 @@ import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useO
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
@@ -17,6 +16,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {

@@ -1,10 +1,10 @@
 import { useCommandMenuUpdateNavigationMorphItemsByPage } from '@/command-menu/hooks/useCommandMenuUpdateNavigationMorphItemsByPage';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';

@@ -5,11 +5,11 @@ import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/component
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLayoutSidebarRight } from 'twenty-ui/display';
 

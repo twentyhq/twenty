@@ -1,9 +1,9 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRichTextComponentStateV2 } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentStateV2';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
 export const useRichTextCommandMenu = () => {

@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
@@ -6,6 +6,9 @@ import {
 import { type AppPath } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = (): {
@@ -14,6 +17,9 @@ export const useFrontComponentExecutionContext = (): {
 } => {
   const currentUser = useRecoilValue(currentUserState);
   const navigateApp = useNavigateApp();
+  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
+  const { getIcon } = useIcons();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -35,13 +41,17 @@ export const useFrontComponentExecutionContext = (): {
       return window.confirm(`${params.title}\n\n${params.subtitle}`);
     };
 
-  // TODO: wire to navigateCommandMenu once page/icon types are resolved
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
-    async (params) => {
-      console.warn(
-        '[FrontComponent] openSidePanelPage not yet fully implemented',
-        params,
-      );
+    async ({ page, pageTitle, pageIcon, shouldResetSearchState }) => {
+      navigateCommandMenu({
+        page,
+        pageTitle,
+        pageIcon: getIcon(pageIcon),
+      });
+
+      if (shouldResetSearchState === true) {
+        setCommandMenuSearchState('');
+      }
     };
 
   const executionContext: FrontComponentExecutionContext = {
