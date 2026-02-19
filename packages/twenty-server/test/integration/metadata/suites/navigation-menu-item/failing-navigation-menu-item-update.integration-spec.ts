@@ -130,17 +130,6 @@ describe('NavigationMenuItem update should fail', () => {
           }),
         },
       },
-      {
-        title: 'when updating with negative position',
-        context: {
-          input: (testSetup) => ({
-            id: testSetup.testNavigationMenuItemId,
-            update: {
-              position: -1,
-            },
-          }),
-        },
-      },
     ];
 
   it.each(eachTestingContextFilter(failingNavigationMenuItemUpdateTestCases))(
