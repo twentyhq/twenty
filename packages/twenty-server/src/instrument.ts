@@ -41,6 +41,16 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       }),
       nodeProfilingIntegration(),
     ],
+    beforeBreadcrumb(breadcrumb) {
+      if (
+        breadcrumb.category === 'console' &&
+        breadcrumb.message?.includes('DeprecationWarning')
+      ) {
+        return null;
+      }
+
+      return breadcrumb;
+    },
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
     sendDefaultPii: true,
