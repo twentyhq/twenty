@@ -12,10 +12,12 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { isDefined } from 'twenty-shared/utils';
 
 const OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA =
   STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
@@ -96,11 +98,24 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
         universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA,
       });
 
-    const flatFieldMetadataToCreate =
+    const flatFieldMetadataToCreateOnObject =
       findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
         flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
         universalIdentifiers: FIELD_UNIVERSAL_IDENTIFIERS_TO_CREATE,
       });
+    const relatedFlatFieldMetadataToCreate = flatFieldMetadataToCreateOnObject
+      .map((flatFieldMetadata) => {
+        if (!isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadata)) {
+          return undefined;
+        }
+
+        return findFlatEntityByUniversalIdentifierOrThrow({
+          flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
+          universalIdentifier:
+            flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+        });
+      })
+      .filter(isDefined);
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -112,7 +127,10 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
               flatEntityToUpdate: [],
             },
             fieldMetadata: {
-              flatEntityToCreate: flatFieldMetadataToCreate,
+              flatEntityToCreate: [
+                ...flatFieldMetadataToCreateOnObject,
+                ...relatedFlatFieldMetadataToCreate,
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
