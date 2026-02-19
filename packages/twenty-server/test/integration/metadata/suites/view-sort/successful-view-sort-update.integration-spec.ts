@@ -8,10 +8,9 @@ import { updateOneCoreViewSort } from 'test/integration/metadata/suites/view-sor
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
 describe('View Sort update should succeed', () => {
   let testObjectMetadataId: string;
