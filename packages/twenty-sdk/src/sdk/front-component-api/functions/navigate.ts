@@ -8,8 +8,6 @@ type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-// State is stored on globalThis so the worker's SDK instance and each
-// front component's bundled SDK copy share the same backing store.
 const NAVIGATE_KEY = '__twentySdkNavigateFunction__';
 
 export const setNavigate = (fn: NavigateFunction): void => {
