@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -13,7 +15,6 @@ import {
   AppNavigationDrawer,
   type AppNavigationDrawerProps,
 } from '@/navigation/components/AppNavigationDrawer';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { AppPath } from 'twenty-shared/types';
 
 const MobileNavigationDrawerStateSetterEffect = ({
@@ -22,7 +23,7 @@ const MobileNavigationDrawerStateSetterEffect = ({
   mobileNavigationDrawer?: 'main' | 'settings';
 }) => {
   const isMobile = useIsMobile();
-  const setIsNavigationDrawerExpanded = useSetRecoilState(
+  const setIsNavigationDrawerExpanded = useSetRecoilStateV2(
     isNavigationDrawerExpandedState,
   );
   const setCurrentMobileNavigationDrawer = useSetRecoilState(

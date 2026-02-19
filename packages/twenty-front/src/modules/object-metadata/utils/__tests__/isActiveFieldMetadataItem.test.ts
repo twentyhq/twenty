@@ -17,12 +17,20 @@ describe('isActiveFieldMetadataItem', () => {
     expect(res).toBe(true);
   });
 
-  it('should return false for system fields', () => {
+  it('should return false for hidden system fields', () => {
+    const res = isActiveFieldMetadataItem({
+      fieldMetadata: { isActive: true, isSystem: true, name: 'position' },
+      objectNameSingular: 'objectNameSingular',
+    });
+    expect(res).toBe(false);
+  });
+
+  it('should return false for non hidden system fields', () => {
     const res = isActiveFieldMetadataItem({
       fieldMetadata: { isActive: true, isSystem: true, name: 'fieldName' },
       objectNameSingular: 'objectNameSingular',
     });
-    expect(res).toBe(false);
+    expect(res).toBe(true);
   });
 
   it('should return true for note targets', () => {

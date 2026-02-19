@@ -1,7 +1,7 @@
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -21,7 +21,7 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
   objectFieldNamesAndJoinColumnNames: ObjectFieldNamesAndJoinColumnNames;
 } => {
   const objectUniversalFlatFieldMetadatas =
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
+    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
       flatEntityMaps: universalFlatFieldMetadataMaps,
       universalIdentifiers:
         universalFlatObjectMetadata.fieldUniversalIdentifiers,

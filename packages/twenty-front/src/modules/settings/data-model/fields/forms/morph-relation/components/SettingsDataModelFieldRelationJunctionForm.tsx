@@ -1,19 +1,16 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
-import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink } from 'twenty-ui/display';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Select } from '@/ui/input/components/Select';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
@@ -28,13 +25,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const { watch, setValue } =
     useFormContext<SettingsDataModelFieldEditFormValues>();
 
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const documentationUrl = getDocumentationUrl({
-    locale: currentWorkspaceMember?.locale,
-    path: DOCUMENTATION_PATHS.USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_MANY_TO_MANY_RELATIONS,
-  });
+  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
 
   const { objectMetadataItem: sourceObjectMetadataItem } =
     useObjectMetadataItem({ objectNameSingular });
@@ -163,19 +154,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
       <SettingsOptionCardContentToggle
         Icon={IconLink}
         title={t`This is a relation to a Junction Object`}
-        description={
-          <Trans>
-            Build many-to-many relations.{' '}
-            <a
-              href={documentationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: 'underline', color: 'inherit' }}
-            >
-              Learn more
-            </a>
-          </Trans>
-        }
+        description={t`Build many-to-many relations`}
         checked={isJunctionConfigEnabled}
         onChange={handleJunctionToggle}
         divider={isJunctionConfigEnabled}

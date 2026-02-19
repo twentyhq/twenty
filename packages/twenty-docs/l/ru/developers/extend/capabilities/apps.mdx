@@ -27,31 +27,31 @@ description: Создавайте и управляйте настройками
 Создайте новое приложение с помощью официального генератора, затем выполните аутентификацию и начните разработку:
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
+# Создать каркас нового приложения (по умолчанию включает все примеры)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# Если вы не используете yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# Аутентифицироваться с помощью вашего API-ключа (вам будет предложено)
 yarn twenty auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# Запустить режим разработки: автоматически синхронизирует локальные изменения с вашим рабочим пространством
 yarn twenty app:dev
 ```
 
-The scaffolder supports three modes for controlling which example files are included:
+Генератор каркаса поддерживает три режима для управления тем, какие примерные файлы включаются:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+# По умолчанию (полный набор): все примеры (объект, поле, логическая функция, фронтенд-компонент, представление, пункт меню навигации)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Минимальный: только основные файлы (application-config.ts и default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# Интерактивный: выбрать, какие примеры включить
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -86,9 +86,9 @@ yarn twenty help
 * Копирует минимальное базовое приложение в `my-twenty-app/`
 * Добавляет локальную зависимость `twenty-sdk` и конфигурацию Yarn 4
 * Создаёт файлы конфигурации и скрипты, подключённые к CLI `twenty`
-* Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
+* Генерирует основные файлы (конфигурацию приложения, роль функций по умолчанию, постустановочную функцию), а также примерные файлы в зависимости от выбранного режима создания каркаса
 
-A freshly scaffolded app with the default `--exhaustive` mode looks like this:
+Сгенерированное с помощью каркаса приложение с режимом по умолчанию `--exhaustive` выглядит так:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -102,27 +102,27 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Папка публичных ресурсов (изображения, шрифты и т. д.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Обязательный — основная конфигурация приложения
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Роль по умолчанию для логических функций
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Пример определения пользовательского объекта
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Пример определения отдельного поля
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Пример логической функции
+  │   └── post-install.ts               # Постустановочная логическая функция
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Пример фронтенд-компонента
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Пример определения сохранённого представления
   └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Example sidebar navigation link
+      └── example-navigation-menu-item.ts # Пример ссылки боковой панели навигации
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
+С `--minimal` создаются только основные файлы (`application-config.ts`, `roles/default-role.ts` и `logic-functions/post-install.ts`). С `--interactive` вы выбираете, какие примерные файлы включить.
 
 В общих чертах:
 
@@ -146,8 +146,8 @@ SDK обнаруживает сущности, разбирая ваши фай�
 | `defineFrontComponent()`     | Определения компонентов фронтенда          |
 | `defineRole()`               | Определения ролей                          |
 | `defineField()`              | Расширения полей для существующих объектов |
-| `defineView()`               | Saved view definitions                     |
-| `defineNavigationMenuItem()` | Navigation menu item definitions           |
+| `defineView()`               | Определения сохранённых представлений      |
+| `defineNavigationMenuItem()` | Определения пунктов меню навигации         |
 
 <Note>
   **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
@@ -220,8 +220,8 @@ SDK предоставляет вспомогательные функции д�
 | `defineFrontComponent()`     | Определение фронт-компонентов для настраиваемого интерфейса            |
 | `defineRole()`               | Настраивает права роли и доступ к объектам                             |
 | `defineField()`              | Расширение существующих объектов дополнительными полями                |
-| `defineView()`               | Define saved views for objects                                         |
-| `defineNavigationMenuItem()` | Define sidebar navigation links                                        |
+| `defineView()`               | Определяйте сохранённые представления для объектов                     |
+| `defineNavigationMenuItem()` | Определяйте ссылки боковой панели навигации                            |
 
 Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
@@ -497,7 +497,7 @@ export default defineLogicFunction({
 
 Послеустановочная функция — это функция логики, которая автоматически выполняется после установки вашего приложения в рабочем пространстве. Это полезно для одноразовых задач настройки, таких как инициализация данных по умолчанию, создание начальных записей или настройка параметров рабочего пространства.
 
-When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+Когда вы создаёте каркас нового приложения с помощью `create-twenty-app`, для вас генерируется постустановочная функция по пути `src/logic-functions/post-install.ts`:
 
 ```typescript
 // src/logic-functions/post-install.ts
@@ -518,7 +518,7 @@ export default defineLogicFunction({
 });
 ```
 
-The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+Функция подключается к вашему приложению посредством ссылки на её универсальный идентификатор в `application-config.ts`:
 
 ```typescript
 import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
@@ -529,7 +529,7 @@ export default defineApplication({
 });
 ```
 
-You can also manually execute the post-install function at any time using the CLI:
+Вы также можете вручную выполнить постустановочную функцию в любое время с помощью CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --postInstall
@@ -537,10 +537,10 @@ yarn twenty function:execute --postInstall
 
 Основные моменты:
 
-* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
-* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
+* Постустановочные функции — это стандартные логические функции: они используют `defineLogicFunction()` как и любые другие функции.
+* Поле `postInstallLogicFunctionUniversalIdentifier` в `defineApplication()` является необязательным. Если его опустить, после установки никакая функция выполняться не будет.
+* Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
+* Постустановочным функциям не нужны триггеры — платформа вызывает их во время установки или вручную через `function:execute --postInstall`.
 
 ### Полезная нагрузка триггера маршрута
 

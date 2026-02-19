@@ -3378,6 +3378,12 @@ export type ObjectPermissionInput = {
   objectMetadataId: Scalars['UUID'];
 };
 
+export type ObjectRecordCount = {
+  __typename?: 'ObjectRecordCount';
+  objectNamePlural: Scalars['String'];
+  totalCount: Scalars['Int'];
+};
+
 export type ObjectRecordEvent = {
   __typename?: 'ObjectRecordEvent';
   action: DatabaseEventAction;
@@ -3751,6 +3757,7 @@ export type Query = {
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
+  objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
   skill?: Maybe<Skill>;
@@ -5955,6 +5962,11 @@ export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>
 
 
 export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+
+export type ObjectRecordCountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ObjectRecordCountsQuery = { __typename?: 'Query', objectRecordCounts: Array<{ __typename?: 'ObjectRecordCount', objectNamePlural: string, totalCount: number }> };
 
 export type SkipBookOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -11442,6 +11454,41 @@ export function useObjectMetadataItemsLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ObjectMetadataItemsQueryHookResult = ReturnType<typeof useObjectMetadataItemsQuery>;
 export type ObjectMetadataItemsLazyQueryHookResult = ReturnType<typeof useObjectMetadataItemsLazyQuery>;
 export type ObjectMetadataItemsQueryResult = Apollo.QueryResult<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>;
+export const ObjectRecordCountsDocument = gql`
+    query ObjectRecordCounts {
+  objectRecordCounts {
+    objectNamePlural
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useObjectRecordCountsQuery__
+ *
+ * To run a query within a React component, call `useObjectRecordCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useObjectRecordCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useObjectRecordCountsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useObjectRecordCountsQuery(baseOptions?: Apollo.QueryHookOptions<ObjectRecordCountsQuery, ObjectRecordCountsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ObjectRecordCountsQuery, ObjectRecordCountsQueryVariables>(ObjectRecordCountsDocument, options);
+      }
+export function useObjectRecordCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ObjectRecordCountsQuery, ObjectRecordCountsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ObjectRecordCountsQuery, ObjectRecordCountsQueryVariables>(ObjectRecordCountsDocument, options);
+        }
+export type ObjectRecordCountsQueryHookResult = ReturnType<typeof useObjectRecordCountsQuery>;
+export type ObjectRecordCountsLazyQueryHookResult = ReturnType<typeof useObjectRecordCountsLazyQuery>;
+export type ObjectRecordCountsQueryResult = Apollo.QueryResult<ObjectRecordCountsQuery, ObjectRecordCountsQueryVariables>;
 export const SkipBookOnboardingStepDocument = gql`
     mutation SkipBookOnboardingStep {
   skipBookOnboardingStep {

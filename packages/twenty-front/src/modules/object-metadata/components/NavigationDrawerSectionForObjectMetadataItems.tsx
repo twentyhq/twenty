@@ -7,7 +7,8 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useRecoilValue } from 'recoil';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
@@ -45,9 +46,12 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   onObjectMetadataItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForObjectMetadataItemsProps) => {
-  const { toggleNavigationSection, isNavigationSectionOpenState } =
-    useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
-  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const navigationSectionId = 'Objects' + (isRemote ? 'Remote' : 'Workspace');
+  const { toggleNavigationSection } = useNavigationSection(navigationSectionId);
+  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+    isNavigationSectionOpenFamilyState,
+    navigationSectionId,
+  );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

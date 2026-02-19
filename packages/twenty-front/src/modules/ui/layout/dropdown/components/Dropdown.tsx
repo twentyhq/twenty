@@ -13,8 +13,8 @@ import { dropdownYPositionComponentState } from '@/ui/layout/dropdown/states/int
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   type Placement,
@@ -24,10 +24,9 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { type MouseEvent, type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode, useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';
-import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -89,7 +88,7 @@ export const Dropdown = ({
   disableClickForClickableComponent = false,
   middlewareBoundaryPadding = {},
 }: DropdownProps) => {
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -108,17 +107,17 @@ export const Dropdown = ({
       ]
     : [];
 
-  const setDropdownMaxHeight = useSetRecoilComponentState(
+  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const setDropdownMaxWidth = useSetRecoilComponentState(
+  const setDropdownMaxWidth = useSetRecoilComponentStateV2(
     dropdownMaxWidthComponentState,
     dropdownId,
   );
 
-  const setDropdownYPosition = useSetRecoilComponentState(
+  const setDropdownYPosition = useSetRecoilComponentStateV2(
     dropdownYPositionComponentState,
     dropdownId,
   );
@@ -173,8 +172,8 @@ export const Dropdown = ({
     strategy: dropdownStrategy,
   });
 
-  const handleClickableComponentClick = useRecoilCallback(
-    () => async (event: MouseEvent) => {
+  const handleClickableComponentClick = useCallback(
+    async (event: MouseEvent) => {
       if (disableClickForClickableComponent) return;
       event.stopPropagation();
       event.preventDefault();

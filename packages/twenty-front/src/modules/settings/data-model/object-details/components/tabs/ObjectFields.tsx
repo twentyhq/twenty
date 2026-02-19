@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsObjectRelationsTable } from '@/settings/data-model/object-details/components/SettingsObjectRelationsTable';
 import styled from '@emotion/styled';
@@ -31,7 +32,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
 
   const hasRelations = objectMetadataItem.fields.some(
     (field) =>
-      !field.isSystem &&
+      !isHiddenSystemField(field) &&
       (field.type === FieldMetadataType.RELATION ||
         field.type === FieldMetadataType.MORPH_RELATION),
   );
