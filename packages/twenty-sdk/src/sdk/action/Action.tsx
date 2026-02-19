@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import { unmountFrontComponent } from '../front-component-api';
+
 export type ActionProps = {
   execute: () => void | Promise<void>;
 };
@@ -14,7 +16,12 @@ export const Action = ({ execute }: ActionProps) => {
 
     hasExecutedRef.current = true;
 
-    execute();
+    const run = async () => {
+      await execute();
+      await unmountFrontComponent();
+    };
+
+    run();
   }, [execute]);
 
   return null;

@@ -1,4 +1,7 @@
-import { openSidePanelPage } from '@/sdk/front-component-api';
+import {
+  openSidePanelPage,
+  unmountFrontComponent,
+} from '@/sdk/front-component-api';
 import { useEffect, useRef } from 'react';
 
 import { type CommandMenuPages } from 'twenty-shared/types';
@@ -27,14 +30,20 @@ export const ActionOpenSidePanelPage = ({
 
     hasExecutedRef.current = true;
 
-    onClick?.();
+    const run = async () => {
+      onClick?.();
 
-    openSidePanelPage({
-      page,
-      pageTitle,
-      pageIcon,
-      shouldResetSearchState,
-    });
+      await openSidePanelPage({
+        page,
+        pageTitle,
+        pageIcon,
+        shouldResetSearchState,
+      });
+
+      await unmountFrontComponent();
+    };
+
+    run();
   }, [page, pageTitle, pageIcon, shouldResetSearchState, onClick]);
 
   return null;

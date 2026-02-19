@@ -20,6 +20,7 @@ import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/con
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
 import { setOpenConfirmationModal } from '@/sdk/front-component-api/functions/openConfirmationModal';
 import { setOpenSidePanelPage } from '@/sdk/front-component-api/functions/openSidePanelPage';
+import { setUnmountFrontComponent } from '@/sdk/front-component-api/functions/unmountFrontComponent';
 
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
@@ -94,6 +95,7 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
     setNavigate(hostApi.navigate);
     setOpenConfirmationModal(hostApi.openConfirmationModal);
     setOpenSidePanelPage(hostApi.openSidePanelPage);
+    setUnmountFrontComponent(hostApi.unmountFrontComponent);
   };
 
 const updateContext: WorkerExports['updateContext'] = async (

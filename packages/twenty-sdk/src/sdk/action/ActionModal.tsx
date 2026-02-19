@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-import { openConfirmationModal } from '../front-component-api';
+import {
+  openConfirmationModal,
+  unmountFrontComponent,
+} from '../front-component-api';
 
 export type ActionModalProps = {
   title: string;
@@ -25,16 +28,22 @@ export const ActionModal = ({
     }
     hasExecutedRef.current = true;
 
-    openConfirmationModal({
-      title,
-      subtitle,
-      confirmButtonText,
-      confirmButtonAccent,
-    }).then((confirmed) => {
+    const run = async () => {
+      const confirmed = await openConfirmationModal({
+        title,
+        subtitle,
+        confirmButtonText,
+        confirmButtonAccent,
+      });
+
       if (confirmed) {
-        onConfirmClick();
+        await onConfirmClick();
       }
-    });
+
+      await unmountFrontComponent();
+    };
+
+    run();
   }, [title, subtitle, onConfirmClick, confirmButtonText, confirmButtonAccent]);
 
   return null;

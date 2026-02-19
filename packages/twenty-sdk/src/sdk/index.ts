@@ -68,6 +68,7 @@ export {
   navigate,
   openConfirmationModal,
   openSidePanelPage,
+  unmountFrontComponent,
   useFrontComponentExecutionContext,
   useUserId,
 } from './front-component-api';

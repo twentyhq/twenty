@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { type NavigateOptions } from 'react-router-dom';
 import { type AppPath } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
-import { navigate } from '../front-component-api';
+import { navigate, unmountFrontComponent } from '../front-component-api';
 
 export type ActionLinkProps<T extends AppPath> = {
   to: T;
@@ -27,7 +27,12 @@ export const ActionLink = <T extends AppPath>({
 
     hasExecutedRef.current = true;
 
-    navigate(to, params, queryParams, options);
+    const run = async () => {
+      await navigate(to, params, queryParams, options);
+      await unmountFrontComponent();
+    };
+
+    run();
   }, [to, params, queryParams, options]);
 
   return null;

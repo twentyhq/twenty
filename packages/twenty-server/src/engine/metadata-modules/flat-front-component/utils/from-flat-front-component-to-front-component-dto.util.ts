@@ -20,6 +20,7 @@ export const fromFlatFrontComponentToFrontComponentDto = (
     : undefined,
   workspaceId: flatFrontComponent.workspaceId,
   applicationId: flatFrontComponent.applicationId,
+  isHeadless: flatFrontComponent.isHeadless,
   createdAt: new Date(flatFrontComponent.createdAt),
   updatedAt: new Date(flatFrontComponent.updatedAt),
 });

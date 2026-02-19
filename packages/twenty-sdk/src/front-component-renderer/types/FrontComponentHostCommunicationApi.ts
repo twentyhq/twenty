@@ -14,4 +14,5 @@ export type FrontComponentHostCommunicationApi = {
     params: OpenConfirmationModalParams,
   ) => Promise<boolean>;
   openSidePanelPage: (params: OpenSidePanelPageParams) => Promise<void>;
+  unmountFrontComponent: () => Promise<void>;
 };

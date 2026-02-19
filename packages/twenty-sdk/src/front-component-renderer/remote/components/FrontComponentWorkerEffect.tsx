@@ -60,6 +60,8 @@ export const FrontComponentWorkerEffect = ({
           frontComponentHostCommunicationApiRef.current.openSidePanelPage(
             ...args,
           ),
+        unmountFrontComponent: () =>
+          frontComponentHostCommunicationApiRef.current.unmountFrontComponent(),
       };
 
     const thread = new ThreadWebWorker<
