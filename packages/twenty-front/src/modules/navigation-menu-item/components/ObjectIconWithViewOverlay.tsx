@@ -32,20 +32,17 @@ const StyledObjectIconWrapper = styled.div<{
     $borderColor ? `border: 1px solid ${$borderColor};` : ''}
 `;
 
-const VIEW_OVERLAY_BOX_SIZE_PX = 14;
-const VIEW_OVERLAY_ICON_SIZE_PX = 10.5;
-
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border-radius: 4px;
   bottom: -7px;
   display: flex;
-  height: ${VIEW_OVERLAY_BOX_SIZE_PX}px;
+  height: ${({ theme }) => theme.spacing(3.5)};
   justify-content: center;
   position: absolute;
   right: -7px;
-  width: ${VIEW_OVERLAY_BOX_SIZE_PX}px;
+  width: ${({ theme }) => theme.spacing(3.5)};
 `;
 
 export type ObjectIconWithViewOverlayProps = {
@@ -79,7 +76,7 @@ export const ObjectIconWithViewOverlay = ({
       </StyledObjectIconWrapper>
       <StyledViewOverlay $backgroundColor={theme.grayScale.gray4}>
         <ViewIcon
-          size={VIEW_OVERLAY_ICON_SIZE_PX}
+          size={theme.spacing(2.5)}
           stroke={theme.icon.stroke.sm}
           color={theme.grayScale.gray11}
         />
