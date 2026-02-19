@@ -28,9 +28,8 @@ import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavi
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -112,10 +111,6 @@ export const WorkspaceNavigationMenuItems = () => {
         pageTitle: objectMetadataItem.labelPlural,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
-
-      if (isNonEmptyString(item.link)) {
-        navigate(item.link);
-      }
     }
   };
 
