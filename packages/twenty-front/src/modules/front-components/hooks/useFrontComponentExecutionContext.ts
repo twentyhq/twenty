@@ -41,12 +41,6 @@ export const useFrontComponentExecutionContext = ({
     );
   };
 
-  // TODO: replace with Twenty's ConfirmationModal once wired to the modal system
-  const openConfirmationModal: FrontComponentHostCommunicationApi['openConfirmationModal'] =
-    async (params) => {
-      return window.confirm(`${params.title}\n\n${params.subtitle}`);
-    };
-
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async ({ page, pageTitle, pageIcon, shouldResetSearchState }) => {
       navigateCommandMenu({
@@ -72,7 +66,6 @@ export const useFrontComponentExecutionContext = ({
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
-      openConfirmationModal,
       openSidePanelPage,
       unmountFrontComponent,
     };

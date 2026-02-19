@@ -58,8 +58,6 @@ export { Action } from './action';
 export type { ActionProps } from './action';
 export { ActionLink } from './action';
 export type { ActionLinkProps } from './action';
-export { ActionModal } from './action';
-export type { ActionModalProps } from './action';
 export { ActionOpenSidePanelPage } from './action';
 export type { ActionOpenSidePanelPageProps } from './action';
 
