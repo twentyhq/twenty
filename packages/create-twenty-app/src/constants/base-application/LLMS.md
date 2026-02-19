@@ -5,5 +5,5 @@
 
 ## Common Pitfalls
 
-- Creating an object without an index view associated. Unless this is a technical object, user will need to vizualise it.
+- Creating an object without an index view associated. Unless this is a technical object, user will need to visualize it.
 - Creating a view without a navigationMenuItem associated. Will make the view available on the left side bar.
