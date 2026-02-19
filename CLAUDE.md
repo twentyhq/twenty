@@ -28,6 +28,8 @@ npx jest path/to/test.test.ts --config=packages/PROJECT/jest.config.mjs
 npx nx test twenty-front      # Frontend unit tests
 npx nx test twenty-server     # Backend unit tests
 npx nx run twenty-server:test:integration:with-db-reset  # Integration tests with DB reset
+# To run an indivual test or a pattern of tests, use the following command:
+cd packages/{workspace} && npx jest "pattern or filename"
 
 # Storybook
 npx nx storybook:build twenty-front

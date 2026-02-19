@@ -2,12 +2,13 @@ import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAI
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
+import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings, IconSparkles } from 'twenty-ui/display';
@@ -17,14 +18,14 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const MainNavigationDrawerFixedItems = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetRecoilStateV2(
     navigationMemorizedUrlState,
   );
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilState(isNavigationDrawerExpandedState);
-  const setNavigationDrawerExpandedMemorized = useSetRecoilState(
-    navigationDrawerExpandedMemorizedState,
+    useRecoilStateV2(isNavigationDrawerExpandedState);
+  const setNavigationDrawerExpandedMemorized = useSetRecoilStateV2(
+    navigationDrawerExpandedMemorizedStateV2,
   );
 
   const navigate = useNavigate();

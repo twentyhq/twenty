@@ -1,10 +1,12 @@
+import { useCallback } from 'react';
+
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseDropdown = () => {
@@ -14,47 +16,47 @@ export const useCloseDropdown = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const store = useStore();
+
   const dropdownComponentInstanceIdFromContext =
     useAvailableComponentInstanceId(DropdownComponentInstanceContext);
 
-  const closeDropdown = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (dropdownComponentInstanceIdFromProps?: string) => {
-        const dropdownComponentInstanceId =
-          dropdownComponentInstanceIdFromProps ??
-          dropdownComponentInstanceIdFromContext;
+  const closeDropdown = useCallback(
+    (dropdownComponentInstanceIdFromProps?: string) => {
+      const dropdownComponentInstanceId =
+        dropdownComponentInstanceIdFromProps ??
+        dropdownComponentInstanceIdFromContext;
 
-        if (!isDefined(dropdownComponentInstanceId)) {
-          throw new Error('Dropdown component instance ID is not defined');
-        }
+      if (!isDefined(dropdownComponentInstanceId)) {
+        throw new Error('Dropdown component instance ID is not defined');
+      }
 
-        const isDropdownOpen = snapshot
-          .getLoadable(
-            isDropdownOpenComponentState.atomFamily({
-              instanceId: dropdownComponentInstanceId,
-            }),
-          )
-          .getValue();
+      const isDropdownOpen = store.get(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: dropdownComponentInstanceId,
+        }),
+      );
 
-        if (isDropdownOpen) {
-          removeFocusItemFromFocusStackById({
-            focusId: dropdownComponentInstanceId,
-          });
+      if (isDropdownOpen) {
+        removeFocusItemFromFocusStackById({
+          focusId: dropdownComponentInstanceId,
+        });
 
-          goBackToPreviousDropdownFocusId();
+        goBackToPreviousDropdownFocusId();
 
-          set(
-            isDropdownOpenComponentState.atomFamily({
-              instanceId: dropdownComponentInstanceId,
-            }),
-            false,
-          );
-        }
-      },
+        store.set(
+          isDropdownOpenComponentState.atomFamily({
+            instanceId: dropdownComponentInstanceId,
+          }),
+          false,
+        );
+      }
+    },
     [
       removeFocusItemFromFocusStackById,
       goBackToPreviousDropdownFocusId,
       dropdownComponentInstanceIdFromContext,
+      store,
     ],
   );
 

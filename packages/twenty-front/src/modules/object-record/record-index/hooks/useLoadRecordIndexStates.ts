@@ -4,6 +4,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -14,7 +15,6 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -26,11 +26,14 @@ import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { useStore } from 'jotai';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
+  const store = useStore();
+
   const setContextStoreTargetedRecordsRuleComponentState =
     useSetRecoilComponentState(contextStoreTargetedRecordsRuleComponentState);
 
@@ -69,7 +72,7 @@ export const useLoadRecordIndexStates = () => {
     ({ set, snapshot }) =>
       (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
         const activeFieldMetadataItems = objectMetadataItem.fields.filter(
-          ({ isActive, isSystem }) => isActive && !isSystem,
+          (field) => field.isActive && !isHiddenSystemField(field),
         );
 
         const filterableFieldMetadataItems = snapshot
@@ -202,7 +205,7 @@ export const useLoadRecordIndexStates = () => {
 
         setRecordIndexViewType(view.type);
         setRecordIndexOpenRecordIn(view.openRecordIn);
-        jotaiStore.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
+        store.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
 
         setRecordIndexCalendarFieldMetadataIdState(
           view.calendarFieldMetadataId ?? null,
@@ -258,6 +261,7 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexGroupAggregateOperation,
       getFieldMetadataItemByIdOrThrow,
       setRecordIndexGroupFieldMetadataItem,
+      store,
     ],
   );
 

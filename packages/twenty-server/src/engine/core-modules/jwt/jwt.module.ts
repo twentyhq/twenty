@@ -10,7 +10,11 @@ const InternalJwtModule = NestJwtModule.registerAsync({
     return {
       secret: twentyConfigService.get('APP_SECRET'),
       signOptions: {
+        algorithm: 'HS256',
         expiresIn: twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN'),
+      },
+      verifyOptions: {
+        algorithms: ['HS256'],
       },
     };
   },

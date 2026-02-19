@@ -11,6 +11,7 @@ import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,10 +29,8 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
     pageLayoutIdFromProps,
   );
 
-  const activeTabIdState = useRecoilComponentCallbackState(
-    activeTabIdComponentState,
-    getTabListInstanceIdFromPageLayoutId(pageLayoutId),
-  );
+  const store = useStore();
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
     pageLayoutCurrentLayoutsComponentState,
@@ -51,7 +50,11 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
   const createPageLayoutStandaloneRichTextWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (body: RichTextV2Body): PageLayoutWidget => {
-        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+        const activeTabId = store.get(
+          activeTabIdComponentState.atomFamily({
+            instanceId: tabListInstanceId,
+          }),
+        );
 
         if (!isDefined(activeTabId)) {
           throw new Error(
@@ -118,10 +121,11 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
         return newWidget;
       },
     [
-      activeTabIdState,
+      tabListInstanceId,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
+      store,
     ],
   );
 

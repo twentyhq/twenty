@@ -5,10 +5,12 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
+import { useStore } from 'jotai';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -21,6 +23,8 @@ export const useCommandMenu = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const store = useStore();
+
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -29,8 +33,9 @@ export const useCommandMenu = () => {
           .getValue();
 
         if (isCommandMenuOpened) {
-          set(addToNavPayloadRegistryState, new Map());
+          store.set(addToNavPayloadRegistryStateV2.atom, new Map());
           set(isCommandMenuOpenedState, false);
+          store.set(isCommandMenuOpenedStateV2.atom, false);
           set(isCommandMenuClosingState, true);
           closeAnyOpenDropdown();
           removeFocusItemFromFocusStackById({
@@ -38,7 +43,7 @@ export const useCommandMenu = () => {
           });
         }
       },
-    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById],
+    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store],
   );
 
   const openCommandMenu = useCallback(() => {

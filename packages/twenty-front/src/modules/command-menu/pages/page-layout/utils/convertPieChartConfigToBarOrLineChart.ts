@@ -10,6 +10,7 @@ export const convertPieChartConfigToBarOrLineChart = (
   }
 
   return {
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
     primaryAxisGroupByFieldMetadataId: configuration.groupByFieldMetadataId,
     primaryAxisGroupBySubFieldName: configuration.groupBySubFieldName,
     primaryAxisDateGranularity: configuration.dateGranularity,

@@ -1,24 +1,23 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useCallback } from 'react';
 
-import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
+import { isDragSelectionStartEnabledStateV2 } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useStore } from 'jotai';
 
 export const useDragSelect = () => {
-  const setIsDragSelectionStartEnabled = useSetRecoilState(
-    isDragSelectionStartEnabledState,
+  const store = useStore();
+
+  const setIsDragSelectionStartEnabled = useSetRecoilStateV2(
+    isDragSelectionStartEnabledStateV2,
   );
 
   const setDragSelectionStartEnabled = (isEnabled: boolean) => {
     setIsDragSelectionStartEnabled(isEnabled);
   };
 
-  const isDragSelectionStartEnabled = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        return snapshot
-          .getLoadable(isDragSelectionStartEnabledState)
-          .getValue();
-      },
-    [],
+  const isDragSelectionStartEnabled = useCallback(
+    () => store.get(isDragSelectionStartEnabledStateV2.atom),
+    [store],
   );
 
   return {

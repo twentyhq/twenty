@@ -4,14 +4,17 @@ import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
-import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -22,18 +25,18 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { favoritesByFolder } = useFavoritesByFolder();
 
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
-    useRecoilState(isFavoriteFolderCreatingState);
+    useRecoilStateV2(isFavoriteFolderCreatingStateV2);
 
   const loading = useIsPrefetchLoading();
 
   const { t } = useLingui();
 
-  const {
-    toggleNavigationSection,
-    isNavigationSectionOpenState,
-    openNavigationSection,
-  } = useNavigationSection('Favorites');
-  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const { toggleNavigationSection, openNavigationSection } =
+    useNavigationSection('Favorites');
+  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+    isNavigationSectionOpenFamilyState,
+    'Favorites',
+  );
 
   const toggleNewFolder = () => {
     openNavigationSection();

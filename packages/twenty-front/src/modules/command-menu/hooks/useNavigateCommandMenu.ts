@@ -10,10 +10,12 @@ import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/s
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { type CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
@@ -33,6 +35,8 @@ export const useNavigateCommandMenu = () => {
     useCommandMenuCloseAnimationCompleteCleanup();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const store = useStore();
 
   const openCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -70,12 +74,14 @@ export const useNavigateCommandMenu = () => {
         });
 
         set(isCommandMenuOpenedState, true);
+        store.set(isCommandMenuOpenedStateV2.atom, true);
         set(hasUserSelectedCommandState, false);
       },
     [
       copyContextStoreStates,
       commandMenuCloseAnimationCompleteCleanup,
       pushFocusItemToFocusStack,
+      store,
     ],
   );
 

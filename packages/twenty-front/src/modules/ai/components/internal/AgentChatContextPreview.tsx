@@ -1,7 +1,7 @@
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
+import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
 
 const StyledContainer = styled.div`
@@ -19,11 +19,11 @@ const StyledPreviewsContainer = styled.div`
 `;
 
 export const AgentChatContextPreview = () => {
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilState(
-    agentChatSelectedFilesState,
+  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilStateV2(
+    agentChatSelectedFilesStateV2,
   );
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
-    agentChatUploadedFilesState,
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilStateV2(
+    agentChatUploadedFilesStateV2,
   );
 
   const handleRemoveUploadedFile = (fileIndex: number) => {

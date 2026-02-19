@@ -27,7 +27,8 @@ import { validateAddressFieldOrThrow } from 'src/engine/api/common/common-args-p
 import { validateArrayFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util';
 import { validateBooleanFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util';
 import { validateCurrencyFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util';
-import { validateDateAndDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util';
+import { validateDateFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util';
+import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util';
 import { validateEmailsFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util';
 import { validateFilesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { validateFullNameFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util';
@@ -184,8 +185,9 @@ export class DataArgProcessor {
         return transformTextField(validatedValue);
       }
       case FieldMetadataType.DATE_TIME:
+        return validateDateTimeFieldOrThrow(value, key);
       case FieldMetadataType.DATE:
-        return validateDateAndDateTimeFieldOrThrow(value, key);
+        return validateDateFieldOrThrow(value, key);
       case FieldMetadataType.BOOLEAN:
         return validateBooleanFieldOrThrow(value, key);
       case FieldMetadataType.RATING:

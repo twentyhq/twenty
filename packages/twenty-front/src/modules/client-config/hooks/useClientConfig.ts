@@ -21,12 +21,12 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFeatureFlagsStateV2';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
@@ -77,8 +77,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     canManageFeatureFlagsState,
   );
 
-  const setLabPublicFeatureFlags = useSetRecoilState(
-    labPublicFeatureFlagsState,
+  const setLabPublicFeatureFlags = useSetRecoilStateV2(
+    labPublicFeatureFlagsStateV2,
   );
 
   const setMicrosoftMessagingEnabled = useSetRecoilState(
@@ -129,6 +129,8 @@ export const useClientConfig = (): UseClientConfigResult => {
   );
 
   const setAppVersion = useSetRecoilStateV2(appVersionState);
+
+  const store = useStore();
 
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({
@@ -191,7 +193,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
       setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
-      jotaiStore.set(
+      store.set(
         isAttachmentPreviewEnabledStateV2.atom,
         clientConfig?.isAttachmentPreviewEnabled,
       );
@@ -252,6 +254,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setSentryConfig,
     setSupportChat,
     setAllowRequestsToTwentyIcons,
+    store,
   ]);
 
   return {

@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
 
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
@@ -31,110 +31,109 @@ export const useSelectableListHotKeys = (
     }
   };
 
-  const handleSelect = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (direction: Direction) => {
-        const selectedItemId = getSnapshotValue(
-          snapshot,
-          selectedItemIdComponentState.atomFamily({
-            instanceId: instanceId,
-          }),
-        );
-        const selectableItemIds = getSnapshotValue(
-          snapshot,
-          selectableItemIdsComponentState.atomFamily({
-            instanceId: instanceId,
-          }),
-        );
+  const store = useStore();
 
-        const currentPosition = findPosition(selectableItemIds, selectedItemId);
+  const handleSelect = useCallback(
+    (direction: Direction) => {
+      const selectedItemId = store.get(
+        selectedItemIdComponentState.atomFamily({
+          instanceId: instanceId,
+        }),
+      );
+      const selectableItemIds = store.get(
+        selectableItemIdsComponentState.atomFamily({
+          instanceId: instanceId,
+        }),
+      );
 
-        const computeNextId = (direction: Direction) => {
-          if (
-            selectableItemIds.length === 0 ||
-            selectableItemIds[0]?.length === 0
-          ) {
-            return;
-          }
+      const currentPosition = findPosition(selectableItemIds, selectedItemId);
 
-          if (!selectedItemId || !currentPosition) {
-            return selectableItemIds[0][0];
-          }
-
-          const { row: currentRow, col: currentCol } = currentPosition;
-
-          const isSingleRow = selectableItemIds.length === 1;
-
-          let nextRow: number;
-          let nextCol: number;
-
-          switch (direction) {
-            case 'up':
-              nextRow = isSingleRow ? currentRow : Math.max(0, currentRow - 1);
-              nextCol = isSingleRow ? Math.max(0, currentCol - 1) : currentCol;
-              break;
-            case 'down':
-              nextRow = isSingleRow
-                ? currentRow
-                : Math.min(selectableItemIds.length - 1, currentRow + 1);
-              nextCol = isSingleRow
-                ? Math.min(
-                    selectableItemIds[currentRow].length - 1,
-                    currentCol + 1,
-                  )
-                : currentCol;
-              break;
-            case 'left':
-              nextRow = currentRow;
-              nextCol = Math.max(0, currentCol - 1);
-              break;
-            case 'right':
-              nextRow = currentRow;
-              nextCol = Math.min(
-                selectableItemIds[currentRow].length - 1,
-                currentCol + 1,
-              );
-              break;
-            default:
-              nextRow = currentRow;
-              nextCol = currentCol;
-          }
-
-          return selectableItemIds[nextRow][nextCol];
-        };
-
-        const nextId = computeNextId(direction);
-
-        if (selectedItemId !== nextId) {
-          if (isNonEmptyString(nextId)) {
-            set(
-              isSelectedItemIdComponentFamilySelector.selectorFamily({
-                instanceId: instanceId,
-                familyKey: nextId,
-              }),
-              true,
-            );
-            set(
-              selectedItemIdComponentState.atomFamily({
-                instanceId: instanceId,
-              }),
-              nextId,
-            );
-            onSelect?.(nextId);
-          }
-
-          if (isNonEmptyString(selectedItemId)) {
-            set(
-              isSelectedItemIdComponentFamilySelector.selectorFamily({
-                instanceId: instanceId,
-                familyKey: selectedItemId,
-              }),
-              false,
-            );
-          }
+      const computeNextId = (direction: Direction) => {
+        if (
+          selectableItemIds.length === 0 ||
+          selectableItemIds[0]?.length === 0
+        ) {
+          return;
         }
-      },
-    [instanceId, onSelect],
+
+        if (!selectedItemId || !currentPosition) {
+          return selectableItemIds[0][0];
+        }
+
+        const { row: currentRow, col: currentCol } = currentPosition;
+
+        const isSingleRow = selectableItemIds.length === 1;
+
+        let nextRow: number;
+        let nextCol: number;
+
+        switch (direction) {
+          case 'up':
+            nextRow = isSingleRow ? currentRow : Math.max(0, currentRow - 1);
+            nextCol = isSingleRow ? Math.max(0, currentCol - 1) : currentCol;
+            break;
+          case 'down':
+            nextRow = isSingleRow
+              ? currentRow
+              : Math.min(selectableItemIds.length - 1, currentRow + 1);
+            nextCol = isSingleRow
+              ? Math.min(
+                  selectableItemIds[currentRow].length - 1,
+                  currentCol + 1,
+                )
+              : currentCol;
+            break;
+          case 'left':
+            nextRow = currentRow;
+            nextCol = Math.max(0, currentCol - 1);
+            break;
+          case 'right':
+            nextRow = currentRow;
+            nextCol = Math.min(
+              selectableItemIds[currentRow].length - 1,
+              currentCol + 1,
+            );
+            break;
+          default:
+            nextRow = currentRow;
+            nextCol = currentCol;
+        }
+
+        return selectableItemIds[nextRow][nextCol];
+      };
+
+      const nextId = computeNextId(direction);
+
+      if (selectedItemId !== nextId) {
+        if (isNonEmptyString(nextId)) {
+          store.set(
+            isSelectedItemIdComponentFamilyState.atomFamily({
+              instanceId: instanceId,
+              familyKey: nextId,
+            }),
+            true,
+          );
+          store.set(
+            selectedItemIdComponentState.atomFamily({
+              instanceId: instanceId,
+            }),
+            nextId,
+          );
+          onSelect?.(nextId);
+        }
+
+        if (isNonEmptyString(selectedItemId)) {
+          store.set(
+            isSelectedItemIdComponentFamilyState.atomFamily({
+              instanceId: instanceId,
+              familyKey: selectedItemId,
+            }),
+            false,
+          );
+        }
+      }
+    },
+    [store, instanceId, onSelect],
   );
 
   useHotkeysOnFocusedElement({

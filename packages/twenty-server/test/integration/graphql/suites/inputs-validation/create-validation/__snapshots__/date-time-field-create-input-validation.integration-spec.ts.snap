@@ -1,21 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"Invalid value 'malformed-date' for date or date-time field "dateTimeField""`;
+exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date-time"} 1`] = `"Invalid value 'malformed-date-time' for date-time field "dateTimeField". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"`;
 
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"Invalid value [] for date or date-time field "dateTimeField""`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"Invalid value {} for date or date-time field "dateTimeField""`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"Invalid DATE_TIME field "dateTimeField", value: "1", it should be a string, Date instance or plain object, (current type : number)."`;
-
-exports[`Create input validation - DATE_TIME Gql create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"Invalid value true for date or date-time field "dateTimeField""`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date"} 1`] = `"["Invalid value 'malformed-date' for date or date-time field \\"dateTimeField\\""]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":[]} 1`] = `"["Invalid value [] for date or date-time field \\"dateTimeField\\""]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":{}} 1`] = `"["Invalid value {} for date or date-time field \\"dateTimeField\\""]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":1} 1`] = `"["Invalid DATE_TIME field \\"dateTimeField\\", value: \\"1\\", it should be a string, Date instance or plain object, (current type : number)."]"`;
-
-exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":true} 1`] = `"["Invalid value true for date or date-time field \\"dateTimeField\\""]"`;
+exports[`Create input validation - DATE_TIME Rest create input - failure DATE_TIME - should fail with : {"dateTimeField":"malformed-date-time"} 1`] = `"["Invalid value 'malformed-date-time' for date-time field \\"dateTimeField\\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"]"`;

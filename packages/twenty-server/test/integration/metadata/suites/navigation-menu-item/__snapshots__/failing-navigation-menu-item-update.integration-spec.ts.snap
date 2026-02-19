@@ -71,38 +71,3 @@ exports[`NavigationMenuItem update should fail when updating with missing id 1`]
   "name": "ValidationError",
 }
 `;
-
-exports[`NavigationMenuItem update should fail when updating with negative position 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "navigationMenuItem": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "Position must be a non-negative integer",
-              "userFriendlyMessage": "Position must be a non-negative integer",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "navigationMenuItem",
-          "status": "fail",
-          "type": "update",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 navigationMenuItem",
-    "summary": {
-      "navigationMenuItem": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
-  },
-  "message": "Multiple validation errors occurred while updating navigation menu item",
-  "name": "GraphQLError",
-}
-`;

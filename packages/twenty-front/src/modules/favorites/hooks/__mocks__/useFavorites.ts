@@ -5,6 +5,7 @@ import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generat
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { AvatarType } from 'twenty-ui/display';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -105,7 +106,8 @@ export const sortedFavorites = [
   },
 ];
 
-const favoriteObjectMetadataItem = getMockObjectMetadataItemOrThrow('favorite')
+const favoriteObjectMetadataItem = getMockObjectMetadataItemOrThrow('favorite');
+const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
 const UPDATE_ONE_FAVORITE_MUTATION = generateUpdateOneRecordMutation(
   {
@@ -236,6 +238,41 @@ export const mocks = [
           id: favoriteId,
           position: 1,
           favoriteFolderId: null,
+        },
+      },
+    })),
+  },
+
+  {
+    request: {
+      query: CreateNavigationMenuItemDocument,
+      variables: {
+        input: {
+          targetRecordId: favoriteTargetObjectId,
+          targetObjectMetadataId: personObjectMetadataItem.id,
+          userWorkspaceId: '1',
+          folderId: undefined,
+          position: 1,
+        },
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        createNavigationMenuItem: {
+          __typename: 'NavigationMenuItem',
+          id: mockId,
+          userWorkspaceId: '1',
+          targetRecordId: favoriteTargetObjectId,
+          targetObjectMetadataId: personObjectMetadataItem.id,
+          viewId: null,
+          folderId: null,
+          name: null,
+          link: null,
+          icon: null,
+          position: 1,
+          applicationId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
       },
     })),
