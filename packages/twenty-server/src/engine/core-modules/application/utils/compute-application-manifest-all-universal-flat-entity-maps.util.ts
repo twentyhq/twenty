@@ -1,5 +1,6 @@
 import { type Manifest } from 'twenty-shared/application';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/utils/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/utils/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/utils/from-logic-function-manifest-to-universal-flat-logic-function.util';
@@ -15,23 +16,27 @@ import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/e
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/utils/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/utils/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/utils/from-view-manifest-to-universal-flat-view.util';
+import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-application-sub-all-flat-entity-maps.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 
 export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
   manifest,
-  applicationUniversalIdentifier,
+  ownerFlatApplication,
   now,
   dependencyAllFlatEntityMaps,
 }: {
   manifest: Manifest;
-  applicationUniversalIdentifier: string;
+  ownerFlatApplication: FlatApplication;
   now: string;
   dependencyAllFlatEntityMaps: AllFlatEntityMaps;
 }): AllFlatEntityMaps => {
   const allUniversalFlatEntityMaps = structuredClone(
     dependencyAllFlatEntityMaps,
   );
+
+  const { universalIdentifier: applicationUniversalIdentifier } =
+    ownerFlatApplication;
 
   for (const objectManifest of manifest.objects) {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
@@ -278,5 +283,8 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     }
   }
 
-  return allUniversalFlatEntityMaps;
+  return getApplicationSubAllFlatEntityMaps({
+    applicationIds: [ownerFlatApplication.id],
+    fromAllFlatEntityMaps: allUniversalFlatEntityMaps,
+  });
 };

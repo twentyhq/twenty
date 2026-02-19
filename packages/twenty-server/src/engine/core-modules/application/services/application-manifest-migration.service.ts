@@ -66,7 +66,7 @@ export class ApplicationManifestMigrationService {
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
-    const fromAllFlatEntityMaps =
+    const dependencyAllFlatEntityMaps =
       ownerFlatApplication.universalIdentifier ===
       TWENTY_STANDARD_APPLICATION.universalIdentifier
         ? createEmptyAllFlatEntityMaps()
@@ -78,14 +78,13 @@ export class ApplicationManifestMigrationService {
     const toAllUniversalFlatEntityMaps =
       computeApplicationManifestAllUniversalFlatEntityMaps({
         manifest,
-        applicationUniversalIdentifier:
-          ownerFlatApplication.universalIdentifier,
+        ownerFlatApplication,
         now,
-        dependencyAllFlatEntityMaps: fromAllFlatEntityMaps,
+        dependencyAllFlatEntityMaps,
       });
 
     const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps: fromAllFlatEntityMaps,
+      fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       toAllUniversalFlatEntityMaps,
     });
 
@@ -100,6 +99,7 @@ export class ApplicationManifestMigrationService {
           },
           fromToAllFlatEntityMaps,
           workspaceId,
+          dependencyAllFlatEntityMaps,
           additionalCacheDataMaps: { featureFlagsMap },
         },
       );
