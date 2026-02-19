@@ -2,21 +2,20 @@ import { useCallback } from 'react';
 
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 // TODO: this won't work for more than 1 nested dropdown
 export const useGoBackToPreviousDropdownFocusId = () => {
+  const store = useStore();
+
   const goBackToPreviousDropdownFocusId = useCallback(() => {
-    const previouslyFocusedDropdownId = jotaiStore.get(
+    const previouslyFocusedDropdownId = store.get(
       previousDropdownFocusIdState.atom,
     );
 
-    jotaiStore.set(
-      activeDropdownFocusIdState.atom,
-      previouslyFocusedDropdownId,
-    );
-    jotaiStore.set(previousDropdownFocusIdState.atom, null);
-  }, []);
+    store.set(activeDropdownFocusIdState.atom, previouslyFocusedDropdownId);
+    store.set(previousDropdownFocusIdState.atom, null);
+  }, [store]);
 
   return {
     goBackToPreviousDropdownFocusId,

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -10,16 +10,20 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
-import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
+import {
+  ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+  iconPickerVisibleCountState,
+} from '@/ui/input/states/iconPickerVisibleCountState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { useStore } from 'jotai';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/display';
 import {
   IconButton,
@@ -99,7 +103,7 @@ const IconPickerIcon = ({
   Icon,
   focusedIconKey,
 }: IconPickerIconProps) => {
-  const isSelectedItemId = useRecoilComponentValue(
+  const isSelectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
     iconKey,
   );
@@ -156,12 +160,18 @@ export const IconPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const iconPickerVisibleCount =
-    useRecoilValue(iconPickerVisibleCountState(dropdownId)) ?? maxIconsVisible;
+  const store = useStore();
 
-  const resetIconPickerVisibleCount = useResetRecoilState(
-    iconPickerVisibleCountState(dropdownId),
-  );
+  const iconPickerVisibleCount =
+    useFamilyRecoilValueV2(iconPickerVisibleCountState, dropdownId) ??
+    maxIconsVisible;
+
+  const resetIconPickerVisibleCount = useCallback(() => {
+    store.set(
+      iconPickerVisibleCountState.atomFamily(dropdownId),
+      ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+    );
+  }, [store, dropdownId]);
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
@@ -242,7 +252,7 @@ export const IconPicker = ({
   const selectableListInstanceId = 'icon-list';
 
   const focusedIconKey =
-    useRecoilComponentValue(
+    useRecoilComponentValueV2(
       selectedItemIdComponentState,
       selectableListInstanceId,
     ) ?? undefined;

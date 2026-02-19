@@ -5,7 +5,7 @@ import {
 import { SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/logic-functions/constants/SettingsLogicFunctionTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
@@ -27,7 +27,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   onChange: (value: string) => void;
   isTesting?: boolean;
 }) => {
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
     SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );

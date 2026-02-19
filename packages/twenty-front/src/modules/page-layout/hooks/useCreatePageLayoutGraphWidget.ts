@@ -16,6 +16,7 @@ import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,14 +34,10 @@ export const useCreatePageLayoutGraphWidget = (
     pageLayoutIdFromProps,
   );
 
+  const store = useStore();
   const { timeZone, calendarStartDay } = useDateTimeFormat();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-
-  const activeTabIdState = useRecoilComponentCallbackState(
-    activeTabIdComponentState,
-    tabListInstanceId,
-  );
 
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
@@ -64,7 +61,11 @@ export const useCreatePageLayoutGraphWidget = (
       }: {
         fieldSelection?: GraphWidgetFieldSelection;
       }): PageLayoutWidget => {
-        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+        const activeTabId = store.get(
+          activeTabIdComponentState.atomFamily({
+            instanceId: tabListInstanceId,
+          }),
+        );
 
         if (!isDefined(activeTabId)) {
           throw new Error(
@@ -166,12 +167,13 @@ export const useCreatePageLayoutGraphWidget = (
         return newWidget;
       },
     [
-      activeTabIdState,
+      tabListInstanceId,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       timeZone,
       calendarStartDay,
+      store,
     ],
   );
 

@@ -2,7 +2,7 @@ import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/Setti
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -22,7 +22,7 @@ export const SettingsRoleCreateEffect = ({
     settingsPersistedRoleFamilyState(roleId),
   );
 
-  const setActiveTabId = useSetRecoilComponentState(
+  const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
