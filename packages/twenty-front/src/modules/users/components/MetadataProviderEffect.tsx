@@ -15,7 +15,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
@@ -67,6 +67,8 @@ export const MetadataProviderEffect = () => {
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
 
+  const store = useStore();
+
   const updateLocaleCatalog = useRecoilCallback(
     ({ snapshot, set }) =>
       async (newLocale: keyof typeof APP_LOCALES) => {
@@ -78,11 +80,11 @@ export const MetadataProviderEffect = () => {
               localeCatalog: localeCatalog || enUS,
             };
             set(dateLocaleState, newValue);
-            jotaiStore.set(dateLocaleStateV2.atom, newValue);
+            store.set(dateLocaleStateV2.atom, newValue);
           });
         }
       },
-    [],
+    [store],
   );
 
   const setIndexCoreViews = useRecoilCallback(

@@ -5,7 +5,7 @@ import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-ind
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 type RecordIndexTableContainerProps = {
   recordTableId: string;
@@ -17,7 +17,7 @@ export const RecordIndexTableContainer = ({
   const { objectNameSingular, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
 
-  const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValue(
+  const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValueV2(
     isModalOpenedComponentState,
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );

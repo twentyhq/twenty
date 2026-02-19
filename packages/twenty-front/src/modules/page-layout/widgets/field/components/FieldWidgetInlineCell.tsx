@@ -24,7 +24,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { FieldWidgetInlineCellContainer } from '@/page-layout/widgets/field/components/FieldWidgetInlineCellContainer';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 type FieldWidgetInlineCellProps = {
   loading?: boolean;
@@ -36,6 +36,7 @@ export const FieldWidgetInlineCell = ({
   instanceIdPrefix,
 }: FieldWidgetInlineCellProps) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+  const store = useStore();
   const {
     fieldDefinition,
     recordId,
@@ -138,9 +139,7 @@ export const FieldWidgetInlineCell = ({
       newValue,
       skipPersist,
     }: Parameters<FieldInputClickOutsideEvent>[0]) => {
-      const currentDropdownFocusId = jotaiStore.get(
-        activeDropdownFocusIdState.atom,
-      );
+      const currentDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
       const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
         recordId,
@@ -168,6 +167,7 @@ export const FieldWidgetInlineCell = ({
       fieldDefinition.fieldMetadataId,
       persistFieldFromFieldInputContext,
       scopeInstanceId,
+      store,
     ],
   );
 

@@ -8,7 +8,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 type OpenDropdownArgs = {
@@ -21,6 +21,8 @@ export const useOpenDropdown = () => {
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
+  const store = useStore();
+
   const dropdownComponentInstanceIdFromContext =
     useAvailableComponentInstanceId(DropdownComponentInstanceContext);
 
@@ -34,7 +36,7 @@ export const useOpenDropdown = () => {
         throw new Error('Dropdown component instance ID is not defined');
       }
 
-      jotaiStore.set(
+      store.set(
         isDropdownOpenComponentState.atomFamily({
           instanceId: dropdownComponentInstanceId,
         }),
@@ -63,6 +65,7 @@ export const useOpenDropdown = () => {
       pushFocusItemToFocusStack,
       setActiveDropdownFocusIdAndMemorizePrevious,
       dropdownComponentInstanceIdFromContext,
+      store,
     ],
   );
 

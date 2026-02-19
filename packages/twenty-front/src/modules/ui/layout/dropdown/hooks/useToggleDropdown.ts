@@ -6,7 +6,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 type ToggleDropdownArgs = {
@@ -21,6 +21,8 @@ export const useToggleDropdown = () => {
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
+  const store = useStore();
+
   const toggleDropdown = useCallback(
     (args?: ToggleDropdownArgs | null | undefined) => {
       const dropdownComponentInstanceId =
@@ -31,7 +33,7 @@ export const useToggleDropdown = () => {
         throw new Error('Dropdown component instance ID is not defined');
       }
 
-      const isDropdownOpen = jotaiStore.get(
+      const isDropdownOpen = store.get(
         isDropdownOpenComponentState.atomFamily({
           instanceId: dropdownComponentInstanceId,
         }),
@@ -46,7 +48,12 @@ export const useToggleDropdown = () => {
         });
       }
     },
-    [closeDropdown, openDropdown, dropdownComponentInstanceIdFromContext],
+    [
+      closeDropdown,
+      openDropdown,
+      dropdownComponentInstanceIdFromContext,
+      store,
+    ],
   );
 
   return {
