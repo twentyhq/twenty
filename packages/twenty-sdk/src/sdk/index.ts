@@ -73,14 +73,12 @@ export type { ActionOpenSidePanelPageProps } from './action';
 // Front Component API exports
 export {
   navigate,
-  openConfirmationModal,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
   useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
-export type { OpenConfirmationModalParams } from './front-component-api';
 
 export { AppPath, CommandMenuPages } from 'twenty-shared/types';
 

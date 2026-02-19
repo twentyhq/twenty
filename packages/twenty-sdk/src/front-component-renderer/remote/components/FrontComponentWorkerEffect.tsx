@@ -52,10 +52,6 @@ export const FrontComponentWorkerEffect = ({
       {
         navigate: (...args) =>
           frontComponentHostCommunicationApiRef.current.navigate(...args),
-        openConfirmationModal: (...args) =>
-          frontComponentHostCommunicationApiRef.current.openConfirmationModal(
-            ...args,
-          ),
         openSidePanelPage: (...args) =>
           frontComponentHostCommunicationApiRef.current.openSidePanelPage(
             ...args,

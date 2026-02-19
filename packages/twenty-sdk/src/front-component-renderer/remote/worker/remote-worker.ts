@@ -18,7 +18,6 @@ import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remot
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
-import { setOpenConfirmationModal } from '@/sdk/front-component-api/functions/openConfirmationModal';
 import { setOpenSidePanelPage } from '@/sdk/front-component-api/functions/openSidePanelPage';
 import { setUnmountFrontComponent } from '@/sdk/front-component-api/functions/unmountFrontComponent';
 
@@ -93,7 +92,6 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
     const hostApi =
       ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
     setNavigate(hostApi.navigate);
-    setOpenConfirmationModal(hostApi.openConfirmationModal);
     setOpenSidePanelPage(hostApi.openSidePanelPage);
     setUnmountFrontComponent(hostApi.unmountFrontComponent);
   };

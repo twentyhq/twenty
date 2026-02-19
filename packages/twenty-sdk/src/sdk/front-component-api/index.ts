@@ -1,11 +1,6 @@
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
 export { navigate, setNavigate } from './functions/navigate';
 export {
-  openConfirmationModal,
-  setOpenConfirmationModal,
-} from './functions/openConfirmationModal';
-export type { OpenConfirmationModalParams } from './functions/openConfirmationModal';
-export {
   openSidePanelPage,
   setOpenSidePanelPage,
 } from './functions/openSidePanelPage';
