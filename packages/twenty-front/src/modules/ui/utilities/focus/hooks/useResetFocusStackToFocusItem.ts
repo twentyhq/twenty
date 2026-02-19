@@ -1,21 +1,22 @@
+import { useCallback } from 'react';
+
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { logDebug } from '~/utils/logDebug';
 
 export const useResetFocusStackToFocusItem = () => {
-  const resetFocusStackToFocusItem = useRecoilCallback(
-    ({ set }) =>
-      ({ focusStackItem }: { focusStackItem: FocusStackItem }) => {
-        set(focusStackState, [focusStackItem]);
+  const resetFocusStackToFocusItem = useCallback(
+    ({ focusStackItem }: { focusStackItem: FocusStackItem }) => {
+      jotaiStore.set(focusStackState.atom, [focusStackItem]);
 
-        if (DEBUG_FOCUS_STACK) {
-          logDebug(`DEBUG: reset focus stack to focus item`, {
-            focusStackItem,
-          });
-        }
-      },
+      if (DEBUG_FOCUS_STACK) {
+        logDebug(`DEBUG: reset focus stack to focus item`, {
+          focusStackItem,
+        });
+      }
+    },
     [],
   );
 

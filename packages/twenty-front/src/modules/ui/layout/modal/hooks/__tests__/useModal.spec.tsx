@@ -1,11 +1,20 @@
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { type ReactNode } from 'react';
+import { RecoilRoot } from 'recoil';
+import { Provider } from 'jotai';
+import { useAtomValue } from 'jotai';
 
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { act } from 'react';
 
 const modalId = 'test-modal-id';
+
+const TestWrapper = ({ children }: { children: ReactNode }) => (
+  <RecoilRoot>
+    <Provider>{children}</Provider>
+  </RecoilRoot>
+);
 
 describe('useModal', () => {
   beforeEach(() => {
@@ -16,13 +25,13 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilValue(
+        const isModalOpened = useAtomValue(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
         );
         return { modal, isModalOpened };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: TestWrapper,
       },
     );
 
@@ -37,13 +46,13 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilValue(
+        const isModalOpened = useAtomValue(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
         );
         return { modal, isModalOpened };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: TestWrapper,
       },
     );
 
@@ -63,13 +72,13 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilValue(
+        const isModalOpened = useAtomValue(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
         );
         return { modal, isModalOpened };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: TestWrapper,
       },
     );
 
@@ -86,13 +95,13 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilValue(
+        const isModalOpened = useAtomValue(
           isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
         );
         return { modal, isModalOpened };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: TestWrapper,
       },
     );
 

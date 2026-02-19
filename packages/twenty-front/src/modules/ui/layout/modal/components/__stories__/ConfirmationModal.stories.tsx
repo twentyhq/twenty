@@ -5,40 +5,49 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type SetRecoilState } from 'recoil';
+import { useMemo } from 'react';
+import { createStore, Provider } from 'jotai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
 
-const initializeState = ({ set }: { set: SetRecoilState }) => {
-  set(
-    isModalOpenedComponentState.atomFamily({
-      instanceId: 'confirmation-modal',
-    }),
-    true,
-  );
+const JotaiInitDecorator = (Story: React.ComponentType) => {
+  const store = useMemo(() => {
+    const jotaiStore = createStore();
+    jotaiStore.set(
+      isModalOpenedComponentState.atomFamily({
+        instanceId: 'confirmation-modal',
+      }),
+      true,
+    );
+    jotaiStore.set(focusStackState.atom, [
+      {
+        focusId: 'confirmation-modal',
+        componentInstance: {
+          componentType: FocusComponentType.MODAL,
+          componentInstanceId: 'confirmation-modal',
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysWithModifiers: true,
+          enableGlobalHotkeysConflictingWithKeyboard: true,
+        },
+      },
+    ]);
+    return jotaiStore;
+  }, []);
 
-  set(focusStackState, [
-    {
-      focusId: 'confirmation-modal',
-      componentInstance: {
-        componentType: FocusComponentType.MODAL,
-        componentInstanceId: 'confirmation-modal',
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysWithModifiers: true,
-        enableGlobalHotkeysConflictingWithKeyboard: true,
-      },
-    },
-  ]);
+  return (
+    <Provider store={store}>
+      <Story />
+    </Provider>
+  );
 };
 
 const meta: Meta<typeof ConfirmationModal> = {
   title: 'UI/Layout/Modal/ConfirmationModal',
   component: ConfirmationModal,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [JotaiInitDecorator, RootDecorator, ComponentDecorator],
   parameters: {
-    initializeState,
     disableHotkeyInitialization: true,
   },
 };
