@@ -4570,13 +4570,11 @@ export type UpdateLogicFunctionFromSourceInput = {
 };
 
 export type UpdateLogicFunctionFromSourceInputUpdates = {
-  checksum?: InputMaybe<Scalars['String']>;
   cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
   databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
   httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
-  isBuildUpToDate?: InputMaybe<Scalars['Boolean']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   sourceHandlerCode?: InputMaybe<Scalars['String']>;
