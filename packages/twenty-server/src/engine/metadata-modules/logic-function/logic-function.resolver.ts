@@ -140,7 +140,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      return await this.logicFunctionFromSourceService.deleteOne({
+      return await this.logicFunctionFromSourceService.deleteOneWithSource({
         id,
         workspaceId,
       });
@@ -172,7 +172,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionExecutionResultDTO> {
     try {
-      return await this.logicFunctionFromSourceService.executeOne({
+      return await this.logicFunctionFromSourceService.executeOneFromSource({
         id,
         payload,
         workspaceId,

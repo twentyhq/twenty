@@ -1,0 +1,189 @@
+import { Injectable } from '@nestjs/common';
+
+import { join } from 'path';
+
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  DEFAULT_BUILT_HANDLER_PATH,
+  DEFAULT_SOURCE_HANDLER_PATH,
+} from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
+import { type CreateLogicFunctionParams } from 'src/engine/metadata-modules/logic-function/types/create-logic-function-params.type';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type UpdateLogicFunctionMetadataParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-metadata-params.type';
+import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
+import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-flat-logic-function.util';
+import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
+import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+@Injectable()
+export class LogicFunctionFromSourceHelperService {
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+  ) {}
+
+  async findLogicFunctionAndApplicationOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }) {
+    const [{ flatLogicFunctionMaps }, { workspaceCustomFlatApplication }] =
+      await Promise.all([
+        this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        }),
+        this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        ),
+      ]);
+
+    const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      id,
+      flatLogicFunctionMaps,
+    });
+
+    return {
+      flatLogicFunction,
+      ownerFlatApplication: workspaceCustomFlatApplication,
+    };
+  }
+
+  buildHandlerPaths(logicFunctionId: string) {
+    const logicFunctionSubfolder =
+      getLogicFunctionSubfolderForFromSource(logicFunctionId);
+
+    return {
+      sourceHandlerPath: join(
+        logicFunctionSubfolder,
+        DEFAULT_SOURCE_HANDLER_PATH,
+      ),
+      builtHandlerPath: join(
+        logicFunctionSubfolder,
+        DEFAULT_BUILT_HANDLER_PATH,
+      ),
+    };
+  }
+
+  async createOneFromMetadata({
+    input,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    input: CreateLogicFunctionParams;
+    ownerFlatApplication: FlatApplication;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    const flatLogicFunctionToCreate =
+      fromCreateLogicFunctionInputToFlatLogicFunction({
+        createLogicFunctionInput: input,
+        workspaceId,
+        ownerFlatApplication,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            logicFunction: {
+              flatEntityToCreate: [flatLogicFunctionToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            ownerFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating logic function',
+      );
+    }
+
+    return flatLogicFunctionToCreate;
+  }
+
+  async updateOneFromMetadata({
+    id,
+    update,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    id: string;
+    update: UpdateLogicFunctionMetadataParams;
+    workspaceId: string;
+    ownerFlatApplication?: FlatApplication;
+  }) {
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
+
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const optimisticallyUpdatedFlatLogicFunction =
+      fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow({
+        flatLogicFunctionMaps,
+        updateLogicFunctionInput: { id, update },
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            logicFunction: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatLogicFunction],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating logic function',
+      );
+    }
+
+    const { flatLogicFunctionMaps: recomputedFlatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: optimisticallyUpdatedFlatLogicFunction.id,
+      flatEntityMaps: recomputedFlatLogicFunctionMaps,
+    });
+  }
+}

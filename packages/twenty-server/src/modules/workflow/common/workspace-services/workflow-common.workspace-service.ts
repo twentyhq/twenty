@@ -322,7 +322,7 @@ export class WorkflowCommonWorkspaceService {
     for (const workflowVersion of workflowVersions) {
       for (const step of workflowVersion.steps ?? []) {
         if (step.type === WorkflowActionType.CODE) {
-          await this.logicFunctionFromSourceService.deleteOne({
+          await this.logicFunctionFromSourceService.deleteOneWithSource({
             id: step.settings.input.logicFunctionId,
             workspaceId,
           });

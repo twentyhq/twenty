@@ -92,7 +92,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
     logicFunctionFromSourceService = {
-      deleteOne: jest.fn(),
+      deleteOneWithSource: jest.fn(),
     } as unknown as jest.Mocked<LogicFunctionFromSourceService>;
 
     agentRepository = {
@@ -212,7 +212,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionFromSourceService.deleteOne).toHaveBeenCalledWith({
+      expect(logicFunctionFromSourceService.deleteOneWithSource).toHaveBeenCalledWith({
         id: 'function-id',
         workspaceId: mockWorkspaceId,
       });
