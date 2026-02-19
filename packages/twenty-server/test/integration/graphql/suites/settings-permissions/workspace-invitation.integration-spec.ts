@@ -10,10 +10,7 @@ describe('workspace invitation permissions', () => {
     const queryData = {
       query: `
         mutation sendWorkspaceInvitation {
-          sendInvitations(
-            emails: ["test@example.com"],
-            roleId: "00000000-0000-0000-0000-000000000000"
-          ) {
+          sendInvitations(emails: ["test@example.com"]) {
             success
           }
         }

@@ -108,6 +108,13 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsOutput> {
+    if (sendInviteLinkInput.roleId === null) {
+      throw new PermissionsException(
+        'roleId cannot be null',
+        PermissionsExceptionCode.INVALID_ARG,
+      );
+    }
+
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =

@@ -278,7 +278,7 @@ describe('Granular settings permissions', () => {
           mutation SendWorkspaceInvitation {
             sendInvitations(
               emails: ["test@example.com"],
-              roleId: "00000000-0000-0000-0000-000000000000"
+              roleId: "${originalMemberRoleId}"
             ) {
               success
             }
