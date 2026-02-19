@@ -7,6 +7,7 @@ import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStan
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -16,6 +17,7 @@ export const RecordIndexPageHeaderIcon = ({
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }) => {
+  const theme = useTheme();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
@@ -34,7 +36,7 @@ export const RecordIndexPageHeaderIcon = ({
   }
 
   if (!isNavigationMenuItemEditingEnabled) {
-    return <ObjectIcon />;
+    return <ObjectIcon size={theme.icon.size.md} />;
   }
 
   const navItem = isDefined(coreIndexViewId)
