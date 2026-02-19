@@ -297,10 +297,7 @@ export class ViewSortService {
       );
     }
 
-    return fromFlatViewSortToViewSortDto({
-      ...existingFlatViewSort,
-      deletedAt: new Date().toISOString(),
-    });
+    return fromFlatViewSortToViewSortDto(existingFlatViewSort);
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
