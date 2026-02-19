@@ -1,7 +1,7 @@
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import {
-    PageLayoutTabLayoutMode,
-    PageLayoutType,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
 } from '~/generated-metadata/graphql';
 
 describe('getWidgetCardVariant', () => {

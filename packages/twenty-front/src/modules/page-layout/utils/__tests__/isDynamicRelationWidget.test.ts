@@ -1,7 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
-    DYNAMIC_RELATION_WIDGET_ID_PREFIX,
-    isDynamicRelationWidget,
+  DYNAMIC_RELATION_WIDGET_ID_PREFIX,
+  isDynamicRelationWidget,
 } from '@/page-layout/utils/isDynamicRelationWidget';
 
 const makeWidget = (id: string): PageLayoutWidget =>

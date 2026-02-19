@@ -1,8 +1,8 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import {
-    WidgetConfigurationType,
-    WidgetType,
+  WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 
 describe('isFieldWidget', () => {

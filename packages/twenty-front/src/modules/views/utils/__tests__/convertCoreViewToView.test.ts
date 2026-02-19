@@ -1,7 +1,7 @@
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import {
-    ViewType as CoreViewType,
-    ViewVisibility,
+  ViewType as CoreViewType,
+  ViewVisibility,
 } from '~/generated-metadata/graphql';
 
 const makeCoreView = (overrides = {}) => ({
