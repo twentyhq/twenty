@@ -1,8 +1,9 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -22,6 +23,8 @@ export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
+  private readonly logger = new Logger(CronTriggerCronJob.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -41,29 +44,37 @@ export class CronTriggerCronJob {
       select: ['id'],
     });
 
+    if (activeWorkspaces.length === 0) {
+      return;
+    }
+
+    const activeWorkspaceIds = activeWorkspaces.map(
+      (workspace) => workspace.id,
+    );
+
     const now = new Date();
 
-    for (const activeWorkspace of activeWorkspaces) {
-      const logicFunctionsWithCronTrigger =
-        await this.logicFunctionRepository.find({
-          where: {
-            workspaceId: activeWorkspace.id,
-            cronTriggerSettings: Not(IsNull()),
-          },
-          select: ['id', 'cronTriggerSettings', 'workspaceId'],
-        });
+    const logicFunctionsWithCronTrigger =
+      await this.logicFunctionRepository.find({
+        where: {
+          workspaceId: In(activeWorkspaceIds),
+          cronTriggerSettings: Not(IsNull()),
+        },
+        select: ['id', 'cronTriggerSettings', 'workspaceId'],
+      });
 
-      for (const logicFunction of logicFunctionsWithCronTrigger) {
-        const cronSettings = logicFunction.cronTriggerSettings;
+    for (const logicFunction of logicFunctionsWithCronTrigger) {
+      const cronSettings = logicFunction.cronTriggerSettings;
 
-        if (!isDefined(cronSettings?.pattern)) {
-          continue;
-        }
+      if (!isDefined(cronSettings?.pattern)) {
+        continue;
+      }
 
-        if (!shouldRunNow(cronSettings.pattern, now)) {
-          continue;
-        }
+      if (!shouldRunNow(cronSettings.pattern, now)) {
+        continue;
+      }
 
+      try {
         await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
           LogicFunctionTriggerJob.name,
           [
@@ -74,6 +85,11 @@ export class CronTriggerCronJob {
             },
           ],
           { retryLimit: 3 },
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to enqueue cron trigger for logic function ${logicFunction.id} in workspace ${logicFunction.workspaceId}`,
+          error instanceof Error ? error.stack : error,
         );
       }
     }
