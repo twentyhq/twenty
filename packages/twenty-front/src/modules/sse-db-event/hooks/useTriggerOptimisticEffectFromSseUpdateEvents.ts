@@ -47,79 +47,91 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
 
         upsertRecordsInStore({ partialRecords: [updatedRecord] });
 
-        const computedOptimisticRecord = {
-          ...computeOptimisticRecordFromInput({
+        try {
+          const computedOptimisticRecord = {
+            ...computeOptimisticRecordFromInput({
+              cache: apolloCoreClient.cache,
+              objectMetadataItem,
+              objectMetadataItems,
+              recordInput: updatedRecord,
+              objectPermissionsByObjectMetadataId,
+              currentWorkspaceMember: null,
+            }),
+            id: updatedRecord.id,
+            __typename: getObjectTypename(objectMetadataItem.nameSingular),
+          };
+
+          const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
+            objectMetadataItem,
+            objectMetadataItems,
+            record: computedOptimisticRecord,
+            depth: 0,
+          });
+
+          const cachedRecord = getRecordFromCache({
             cache: apolloCoreClient.cache,
             objectMetadataItem,
             objectMetadataItems,
-            recordInput: updatedRecord,
+            recordId: updatedRecord.id,
+            recordGqlFields,
             objectPermissionsByObjectMetadataId,
-            currentWorkspaceMember: null,
-          }),
-          id: updatedRecord.id,
-          __typename: getObjectTypename(objectMetadataItem.nameSingular),
-        };
+          });
 
-        const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
-          objectMetadataItem,
-          objectMetadataItems,
-          record: computedOptimisticRecord,
-          depth: 0,
-        });
+          const cachedRecordWithConnection = getRecordNodeFromRecord({
+            record: cachedRecord,
+            objectMetadataItem,
+            objectMetadataItems,
+            recordGqlFields,
+            computeReferences: false,
+          });
 
-        const cachedRecord = getRecordFromCache({
-          cache: apolloCoreClient.cache,
-          objectMetadataItem,
-          objectMetadataItems,
-          recordId: updatedRecord.id,
-          recordGqlFields,
-          objectPermissionsByObjectMetadataId,
-        });
+          if (
+            !isDefined(cachedRecord) ||
+            !isDefined(cachedRecordWithConnection)
+          ) {
+            continue;
+          }
 
-        const cachedRecordWithConnection = getRecordNodeFromRecord({
-          record: cachedRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          recordGqlFields,
-          computeReferences: false,
-        });
+          updateRecordFromCache({
+            objectMetadataItems,
+            objectMetadataItem,
+            cache: apolloCoreClient.cache,
+            record: computedOptimisticRecord,
+            recordGqlFields,
+            objectPermissionsByObjectMetadataId,
+          });
 
-        if (
-          !isDefined(cachedRecord) ||
-          !isDefined(cachedRecordWithConnection)
-        ) {
-          continue;
+          const computedOptimisticRecordWithConnection =
+            getRecordNodeFromRecord({
+              record: computedOptimisticRecord,
+              objectMetadataItem,
+              objectMetadataItems,
+              recordGqlFields,
+            });
+
+          if (!isDefined(computedOptimisticRecordWithConnection)) {
+            continue;
+          }
+
+          triggerUpdateRecordOptimisticEffect({
+            cache: apolloCoreClient.cache,
+            objectMetadataItem,
+            currentRecord: cachedRecordWithConnection,
+            updatedRecord: computedOptimisticRecordWithConnection,
+            objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
+          });
+        } catch (error) {
+          // SSE events from the server may contain fields not yet known
+          // to the frontend metadata (e.g. after a schema migration).
+          // Log a warning and continue processing remaining events.
+          console.warn(
+            'Failed to process SSE update event for record',
+            updatedRecord.id,
+            error,
+          );
         }
-
-        updateRecordFromCache({
-          objectMetadataItems,
-          objectMetadataItem,
-          cache: apolloCoreClient.cache,
-          record: computedOptimisticRecord,
-          recordGqlFields,
-          objectPermissionsByObjectMetadataId,
-        });
-
-        const computedOptimisticRecordWithConnection = getRecordNodeFromRecord({
-          record: computedOptimisticRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          recordGqlFields,
-        });
-
-        if (!isDefined(computedOptimisticRecordWithConnection)) {
-          continue;
-        }
-
-        triggerUpdateRecordOptimisticEffect({
-          cache: apolloCoreClient.cache,
-          objectMetadataItem,
-          currentRecord: cachedRecordWithConnection,
-          updatedRecord: computedOptimisticRecordWithConnection,
-          objectMetadataItems,
-          objectPermissionsByObjectMetadataId,
-          upsertRecordsInStore,
-        });
       }
 
       if (isNonEmptyArray(updateEvents)) {
