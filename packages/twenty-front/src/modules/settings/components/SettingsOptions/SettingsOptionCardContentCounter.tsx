@@ -3,10 +3,14 @@ import {
   StyledSettingsCardContent,
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { type IconComponent } from 'twenty-ui/display';
+import {
+  type IconComponent,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 
 type SettingsOptionCardContentCounterProps = {
   Icon?: IconComponent;
@@ -38,14 +42,14 @@ export const SettingsOptionCardContentCounter = ({
           <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsCardIcon>
       )}
-      <div>
+      <StyledSettingsCardTextContainer>
         <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
         {description && (
           <StyledSettingsCardDescription>
-            {description}
+            <OverflowingTextWithTooltip text={description} />
           </StyledSettingsCardDescription>
         )}
-      </div>
+      </StyledSettingsCardTextContainer>
       <SettingsCounter
         value={value}
         onChange={onChange}
