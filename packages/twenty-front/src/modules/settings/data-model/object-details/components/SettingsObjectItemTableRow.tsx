@@ -4,6 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import {
   StyledActionTableCell,
@@ -84,7 +85,11 @@ export const SettingsObjectMetadataItemTableRow = ({
         <SettingsItemTypeTag item={objectMetadataItem} />
       </TableCell>
       <TableCell align="right">
-        {objectMetadataItem.fields.filter((field) => !field.isSystem).length}
+        {
+          objectMetadataItem.fields.filter(
+            (field) => !isHiddenSystemField(field),
+          ).length
+        }
       </TableCell>
       <TableCell align="right">{totalObjectCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>

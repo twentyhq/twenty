@@ -15,6 +15,8 @@ export enum ObjectMetadataExceptionCode {
   INVALID_ORM_OUTPUT = 'INVALID_ORM_OUTPUT',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   NAME_CONFLICT = 'NAME_CONFLICT',
+  MISSING_SYSTEM_FIELD = 'MISSING_SYSTEM_FIELD',
+  INVALID_SYSTEM_FIELD = 'INVALID_SYSTEM_FIELD',
 }
 
 const getObjectMetadataExceptionUserFriendlyMessage = (
@@ -39,6 +41,10 @@ const getObjectMetadataExceptionUserFriendlyMessage = (
       return STANDARD_ERROR_MESSAGE;
     case ObjectMetadataExceptionCode.NAME_CONFLICT:
       return msg`A name conflict occurred.`;
+    case ObjectMetadataExceptionCode.MISSING_SYSTEM_FIELD:
+      return msg`A system field is missing.`;
+    case ObjectMetadataExceptionCode.INVALID_SYSTEM_FIELD:
+      return msg`A system field has invalid properties.`;
     default:
       assertUnreachable(code);
   }

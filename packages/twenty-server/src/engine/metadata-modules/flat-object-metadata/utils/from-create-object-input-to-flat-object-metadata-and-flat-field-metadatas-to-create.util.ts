@@ -64,7 +64,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField;
     const labelIdentifierFieldMetadataUniversalIdentifier =
       nameField?.universalIdentifier ??
-      defaultFlatFieldForCustomObjectMaps.fields.idField.universalIdentifier;
+      defaultFlatFieldForCustomObjectMaps.fields.id.universalIdentifier;
 
     const universalFlatObjectMetadataToCreate: UniversalFlatObjectMetadata & {
       id: string;

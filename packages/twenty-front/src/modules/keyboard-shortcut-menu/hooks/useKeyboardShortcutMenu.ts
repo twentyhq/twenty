@@ -4,7 +4,7 @@ import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/st
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 export const KEYBOARD_SHORTCUT_MENU_INSTANCE_ID = 'keyboard-shortcut-menu';
 
@@ -13,8 +13,10 @@ export const useKeyboardShortcutMenu = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const store = useStore();
+
   const openKeyboardShortcutMenu = useCallback(() => {
-    jotaiStore.set(isKeyboardShortcutMenuOpenedStateV2.atom, true);
+    store.set(isKeyboardShortcutMenuOpenedStateV2.atom, true);
     pushFocusItemToFocusStack({
       focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
       component: {
@@ -26,23 +28,23 @@ export const useKeyboardShortcutMenu = () => {
         enableGlobalHotkeysWithModifiers: false,
       },
     });
-  }, [pushFocusItemToFocusStack]);
+  }, [pushFocusItemToFocusStack, store]);
 
   const closeKeyboardShortcutMenu = useCallback(() => {
-    const isKeyboardShortcutMenuOpened = jotaiStore.get(
+    const isKeyboardShortcutMenuOpened = store.get(
       isKeyboardShortcutMenuOpenedStateV2.atom,
     );
 
     if (isKeyboardShortcutMenuOpened) {
-      jotaiStore.set(isKeyboardShortcutMenuOpenedStateV2.atom, false);
+      store.set(isKeyboardShortcutMenuOpenedStateV2.atom, false);
       removeFocusItemFromFocusStackById({
         focusId: KEYBOARD_SHORTCUT_MENU_INSTANCE_ID,
       });
     }
-  }, [removeFocusItemFromFocusStackById]);
+  }, [removeFocusItemFromFocusStackById, store]);
 
   const toggleKeyboardShortcutMenu = useCallback(() => {
-    const isKeyboardShortcutMenuOpened = jotaiStore.get(
+    const isKeyboardShortcutMenuOpened = store.get(
       isKeyboardShortcutMenuOpenedStateV2.atom,
     );
 
@@ -51,7 +53,7 @@ export const useKeyboardShortcutMenu = () => {
     } else {
       closeKeyboardShortcutMenu();
     }
-  }, [closeKeyboardShortcutMenu, openKeyboardShortcutMenu]);
+  }, [store, closeKeyboardShortcutMenu, openKeyboardShortcutMenu]);
 
   return {
     toggleKeyboardShortcutMenu,

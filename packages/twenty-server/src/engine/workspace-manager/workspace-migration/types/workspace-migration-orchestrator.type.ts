@@ -23,7 +23,6 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
   fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
   dependencyAllFlatEntityMaps?: Partial<AllUniversalFlatEntityMaps>;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
-  applicationUniversalIdentifier: string;
 };
 
 export type OrchestratorFailureReport = {

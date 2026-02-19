@@ -177,13 +177,12 @@ export class FlatNavigationMenuItemValidatorService {
 
     if (
       isDefined(flatNavigationMenuItem.position) &&
-      (!Number.isInteger(flatNavigationMenuItem.position) ||
-        flatNavigationMenuItem.position < 0)
+      !Number.isFinite(flatNavigationMenuItem.position)
     ) {
       validationResult.errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`Position must be a non-negative integer`,
-        userFriendlyMessage: msg`Position must be a non-negative integer`,
+        message: t`Position must be a finite number`,
+        userFriendlyMessage: msg`Position must be a finite number`,
       });
     }
 
@@ -307,14 +306,11 @@ export class FlatNavigationMenuItemValidatorService {
 
     const positionUpdate = flatEntityUpdate.position;
 
-    if (
-      isDefined(positionUpdate) &&
-      (!Number.isInteger(positionUpdate) || positionUpdate < 0)
-    ) {
+    if (isDefined(positionUpdate) && !Number.isFinite(positionUpdate)) {
       validationResult.errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`Position must be a non-negative integer`,
-        userFriendlyMessage: msg`Position must be a non-negative integer`,
+        message: t`Position must be a finite number`,
+        userFriendlyMessage: msg`Position must be a finite number`,
       });
     }
 

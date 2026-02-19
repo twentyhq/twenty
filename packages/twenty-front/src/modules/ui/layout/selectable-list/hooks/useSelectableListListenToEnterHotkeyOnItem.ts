@@ -2,9 +2,9 @@ import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-l
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
 
 export const useSelectableListListenToEnterHotkeyOnItem = ({
@@ -20,24 +20,23 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
     SelectableListComponentInstanceContext,
   );
 
+  const store = useStore();
+
+  const handleEnterKey = useCallback(() => {
+    const selectedItemId = store.get(
+      selectedItemIdComponentState.atomFamily({
+        instanceId,
+      }),
+    );
+
+    if (isNonEmptyString(selectedItemId) && selectedItemId === itemId) {
+      onEnter?.();
+    }
+  }, [store, instanceId, itemId, onEnter]);
+
   useHotkeysOnFocusedElement({
     keys: Key.Enter,
-    callback: useRecoilCallback(
-      ({ snapshot }) =>
-        () => {
-          const selectedItemId = getSnapshotValue(
-            snapshot,
-            selectedItemIdComponentState.atomFamily({
-              instanceId,
-            }),
-          );
-
-          if (isNonEmptyString(selectedItemId) && selectedItemId === itemId) {
-            onEnter?.();
-          }
-        },
-      [instanceId, itemId, onEnter],
-    ),
+    callback: handleEnterKey,
     focusId,
     dependencies: [itemId, onEnter],
   });

@@ -3,17 +3,26 @@ import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useRes
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+);
 
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
       const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
-      const focusStack = useRecoilValue(focusStackState);
-      const currentFocusId = useRecoilValue(currentFocusIdSelector);
+      const focusStack = useRecoilValueV2(focusStackState);
+      const currentFocusId = useRecoilValueV2(currentFocusIdSelector);
 
       return {
         pushFocusItemToFocusStack,
@@ -23,7 +32,7 @@ const renderHooks = () => {
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Wrapper,
     },
   );
 
@@ -31,6 +40,10 @@ const renderHooks = () => {
 };
 
 describe('useResetFocusStackToFocusItem', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+  });
+
   it('should reset the focus stack to a specific focus item', async () => {
     const { result } = renderHooks();
 

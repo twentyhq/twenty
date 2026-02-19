@@ -3,6 +3,7 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useStore } from 'jotai';
 import { type Layout, type Layouts } from 'react-grid-layout';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,12 +19,8 @@ export const usePageLayoutHandleLayoutChange = (
     pageLayoutIdFromProps,
   );
 
+  const store = useStore();
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-
-  const activeTabIdState = useRecoilComponentCallbackState(
-    activeTabIdComponentState,
-    tabListInstanceId,
-  );
 
   const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
     pageLayoutCurrentLayoutsComponentState,
@@ -38,7 +35,11 @@ export const usePageLayoutHandleLayoutChange = (
   const handleLayoutChange = useRecoilCallback(
     ({ snapshot, set }) =>
       (_: Layout[], allLayouts: Layouts) => {
-        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+        const activeTabId = store.get(
+          activeTabIdComponentState.atomFamily({
+            instanceId: tabListInstanceId,
+          }),
+        );
 
         if (!isDefined(activeTabId)) return;
 
@@ -84,7 +85,12 @@ export const usePageLayoutHandleLayoutChange = (
           }));
         }
       },
-    [activeTabIdState, pageLayoutCurrentLayoutsState, pageLayoutDraftState],
+    [
+      tabListInstanceId,
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      store,
+    ],
   );
 
   return { handleLayoutChange };

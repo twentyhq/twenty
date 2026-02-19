@@ -1,24 +1,27 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type SetRecoilState } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
 
-const initializeState = ({ set }: { set: SetRecoilState }) => {
-  set(
+const JotaiInitDecorator: Decorator = (Story) => {
+  jotaiStore.set(
     isModalOpenedComponentState.atomFamily({
       instanceId: 'modal-id',
     }),
     true,
   );
-
-  set(focusStackState, [
+  jotaiStore.set(focusStackState.atom, [
     {
       focusId: 'modal-id',
       componentInstance: {
@@ -31,14 +34,14 @@ const initializeState = ({ set }: { set: SetRecoilState }) => {
       },
     },
   ]);
+  return <Story />;
 };
 
 const meta: Meta<typeof Modal> = {
   title: 'UI/Layout/Modal/Modal',
   component: Modal,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [JotaiInitDecorator, RootDecorator, ComponentDecorator],
   parameters: {
-    initializeState,
     disableHotkeyInitialization: true,
   },
 };

@@ -19,7 +19,7 @@ import { usePersistFieldFromFieldInputContext } from '@/object-record/record-fie
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -46,6 +46,7 @@ export const RecordInlineCell = ({
     isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+  const store = useStore();
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
@@ -139,9 +140,7 @@ export const RecordInlineCell = ({
       newValue,
       skipPersist,
     }: Parameters<FieldInputClickOutsideEvent>[0]) => {
-      const currentDropdownFocusId = jotaiStore.get(
-        activeDropdownFocusIdState.atom,
-      );
+      const currentDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
       const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
         recordId,
@@ -169,6 +168,7 @@ export const RecordInlineCell = ({
       scopeInstanceId,
       closeInlineCell,
       persistFieldFromFieldInputContext,
+      store,
     ],
   );
 
