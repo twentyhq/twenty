@@ -273,7 +273,7 @@ describe('View Sort Resolver', () => {
       const response = await makeMetadataAPIRequest(destroyOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.destroyCoreViewSort).toBe(true);
+      expect(response.body.data.destroyCoreViewSort.id).toBe(viewSort.id);
     });
 
     it('should throw an error when destroying non-existent view sort', async () => {

@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewSortMutationVariables,
   type DeleteCoreViewSortMutationVariables,
+  type DestroyCoreViewSortMutationVariables,
   type UpdateCoreViewSortMutationVariables,
   useCreateCoreViewSortMutation,
   useDeleteCoreViewSortMutation,
@@ -216,7 +217,7 @@ export const usePerformViewSortAPIPersist = () => {
 
   const performViewSortAPIDestroy = useCallback(
     async (
-      destroyCoreViewSortInputs: DeleteCoreViewSortMutationVariables[],
+      destroyCoreViewSortInputs: DestroyCoreViewSortMutationVariables[],
     ): Promise<
       MetadataRequestResult<
         Awaited<ReturnType<typeof destroyCoreViewSortMutation>>[]
