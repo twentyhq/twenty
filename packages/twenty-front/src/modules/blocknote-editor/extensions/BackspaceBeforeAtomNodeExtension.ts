@@ -96,11 +96,7 @@ export const backspaceBeforeAtomNodePlugin = new Plugin({
         // Only intervene when nodeAfter is a non-text atom inline node.
         // Text nodes also have isAtom=true in ProseMirror (they are leaves),
         // so we must exclude them explicitly.
-        if (
-          !nodeAfter?.isAtom ||
-          !nodeAfter?.isInline ||
-          nodeAfter?.isText
-        ) {
+        if (!nodeAfter?.isAtom || !nodeAfter?.isInline || nodeAfter?.isText) {
           return false;
         }
 

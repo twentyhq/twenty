@@ -1,4 +1,4 @@
-import { Fragment, Node, Schema } from 'prosemirror-model';
+import { Fragment, type Node, Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
 import {
@@ -21,9 +21,11 @@ const testSchema = new Schema({
       inline: true,
       atom: true,
       attrs: { label: { default: '' } },
-      toDOM(node: Node) {
-        return ['span', { class: 'mention' }, `@${node.attrs.label}`];
-      },
+      toDOM: (node: Node) => [
+        'span',
+        { class: 'mention' },
+        `@${node.attrs.label}`,
+      ],
       parseDOM: [{ tag: 'span.mention' }],
     },
   },
@@ -55,7 +57,7 @@ const setupTest = (docNode: Node) => {
     get state() {
       return currentState;
     },
-    dispatch(tr: ReturnType<typeof currentState.tr.delete>) {
+    dispatch: (tr: ReturnType<typeof currentState.tr.delete>) => {
       dispatched.push({
         from: (tr as any).steps[0]?.from ?? -1,
         to: (tr as any).steps[0]?.to ?? -1,
@@ -66,9 +68,7 @@ const setupTest = (docNode: Node) => {
 
   const setCursor = (pos: number) => {
     currentState = currentState.apply(
-      currentState.tr.setSelection(
-        TextSelection.create(currentState.doc, pos),
-      ),
+      currentState.tr.setSelection(TextSelection.create(currentState.doc, pos)),
     );
   };
 
