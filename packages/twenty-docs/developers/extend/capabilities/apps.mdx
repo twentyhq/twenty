@@ -14,6 +14,7 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 **What you can do today:**
 - Define custom objects and fields as code (managed data model)
 - Build logic functions with custom triggers
+- Define skills for AI agents
 - Deploy the same app across multiple workspaces
 
 ## Prerequisites
@@ -44,7 +45,7 @@ yarn twenty app:dev
 The scaffolder supports three modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -117,8 +118,10 @@ my-twenty-app/
   │   └── hello-world.tsx               # Example front component
   ├── views/
   │   └── example-view.ts                # Example saved view definition
-  └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Example sidebar navigation link
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
@@ -147,6 +150,7 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 | `defineField()` | Field extensions for existing objects |
 | `defineView()` | Saved view definitions |
 | `defineNavigationMenuItem()` | Navigation menu item definitions |
+| `defineSkill()` | AI agent skill definitions |
 
 <Note>
 **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
@@ -167,7 +171,7 @@ export default defineObject({
 Later commands will add more files and folders:
 
 - `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
-- `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+- `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Authentication
 
@@ -220,6 +224,7 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineField()` | Extend existing objects with additional fields |
 | `defineView()` | Define saved views for objects |
 | `defineNavigationMenuItem()` | Define sidebar navigation links |
+| `defineSkill()` | Define AI agent skills |
 
 These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
@@ -728,6 +733,40 @@ You can create new front components in two ways:
 
 - **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
 - **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
+
+### Skills
+
+Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Key points:
+- `name` is a unique identifier string for the skill (kebab-case recommended).
+- `label` is the human-readable display name shown in the UI.
+- `content` contains the skill instructions — this is the text the AI agent uses.
+- `icon` (optional) sets the icon displayed in the UI.
+- `description` (optional) provides additional context about the skill's purpose.
+
+You can create new skills in two ways:
+
+- **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
+- **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
 ### Generated typed client
 
