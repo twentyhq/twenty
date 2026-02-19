@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
@@ -14,6 +15,11 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 const NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID = 'navigation-menu-item-color';
+
+const StyledMenuStyleText = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: 13px;
+`;
 
 const COLOR_LABELS: ColorLabels = {
   gray: 'Gray',
@@ -85,7 +91,7 @@ export const CommandMenuEditColorOption = ({
       Icon={IconColorSwatch}
       dropdownId={NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID}
       dropdownPlacement="bottom-start"
-      RightComponent={colorLabel}
+      RightComponent={<StyledMenuStyleText>{colorLabel}</StyledMenuStyleText>}
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuSearchInput
