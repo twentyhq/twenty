@@ -13,6 +13,22 @@ export const extractParticipantSummary = (
   const activeMessageParticipants =
     filterActiveParticipants(messageParticipants);
 
+  if (activeMessageParticipants.length === 0) {
+    return {
+      firstParticipant: {
+        personId: null,
+        workspaceMemberId: null,
+        firstName: '',
+        lastName: '',
+        displayName: '',
+        avatarUrl: '',
+        handle: '',
+      },
+      lastTwoParticipants: [],
+      participantCount: 0,
+    };
+  }
+
   const firstParticipant = formatThreadParticipant(
     activeMessageParticipants[0],
   );
