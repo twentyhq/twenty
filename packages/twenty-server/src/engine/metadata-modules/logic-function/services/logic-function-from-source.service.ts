@@ -3,16 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'twenty-shared/logic-function';
-import {
-  type CronTriggerSettings,
-  type DatabaseEventTriggerSettings,
-  type HttpRouteTriggerSettings,
-} from 'twenty-shared/application';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
@@ -21,11 +18,10 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type UpdateLogicFunctionFromSourceParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-from-source-params.type';
 import { type UpdateLogicFunctionMetadataParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-metadata-params.type';
+import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
-import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -36,6 +32,7 @@ export class LogicFunctionFromSourceService {
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly applicationService: ApplicationService,
     private readonly helperService: LogicFunctionFromSourceHelperService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
@@ -46,7 +43,6 @@ export class LogicFunctionFromSourceService {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
-    // Logic function doesn't exist yet, resolve application directly
     const { workspaceCustomFlatApplication: ownerFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -66,21 +62,34 @@ export class LogicFunctionFromSourceService {
         workspaceId,
       });
 
-      const flatLogicFunction = await this.helperService.createOneFromMetadata({
-        input: {
-          ...input,
+      const universalFlatLogicFunctionToCreate =
+        buildUniversalFlatLogicFunctionToCreate({
+          id: logicFunctionId,
+          name: input.name,
+          description: input.description,
+          timeoutSeconds: input.timeoutSeconds,
+          isTool: input.isTool,
           handlerName: input.source.handlerName,
           toolInputSchema: input.source.toolInputSchema,
           sourceHandlerPath,
           builtHandlerPath,
-          id: logicFunctionId,
           isBuildUpToDate: false,
-        },
+          cronTriggerSettings: input.cronTriggerSettings,
+          databaseEventTriggerSettings: input.databaseEventTriggerSettings,
+          httpRouteTriggerSettings: input.httpRouteTriggerSettings,
+          applicationUniversalIdentifier:
+            ownerFlatApplication.universalIdentifier,
+        });
+
+      await this.helperService.createOneFromMetadata({
+        universalFlatLogicFunctionToCreate,
         workspaceId,
-        ownerFlatApplication,
       });
 
-      return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+      return this.findFlatLogicFunctionByIdAndConvertToDto({
+        id: universalFlatLogicFunctionToCreate.id,
+        workspaceId,
+      });
     }
 
     const { handlerName, checksum } =
@@ -92,22 +101,35 @@ export class LogicFunctionFromSourceService {
           ownerFlatApplication.universalIdentifier,
       });
 
-    const flatLogicFunction = await this.helperService.createOneFromMetadata({
-      input: {
-        ...input,
+    const universalFlatLogicFunctionToCreate =
+      buildUniversalFlatLogicFunctionToCreate({
         id: logicFunctionId,
-        sourceHandlerPath,
-        builtHandlerPath,
+        name: input.name,
+        description: input.description,
+        timeoutSeconds: input.timeoutSeconds,
+        isTool: input.isTool,
         handlerName,
         checksum,
         toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
+        sourceHandlerPath,
+        builtHandlerPath,
         isBuildUpToDate: true,
-      },
+        cronTriggerSettings: input.cronTriggerSettings,
+        databaseEventTriggerSettings: input.databaseEventTriggerSettings,
+        httpRouteTriggerSettings: input.httpRouteTriggerSettings,
+        applicationUniversalIdentifier:
+          ownerFlatApplication.universalIdentifier,
+      });
+
+    await this.helperService.createOneFromMetadata({
+      universalFlatLogicFunctionToCreate,
       workspaceId,
-      ownerFlatApplication,
     });
 
-    return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+    return this.findFlatLogicFunctionByIdAndConvertToDto({
+      id: universalFlatLogicFunctionToCreate.id,
+      workspaceId,
+    });
   }
 
   async duplicateOneWithSource({
@@ -116,7 +138,7 @@ export class LogicFunctionFromSourceService {
   }: {
     existingLogicFunctionId: string;
     workspaceId: string;
-  }): Promise<FlatLogicFunction> {
+  }): Promise<{ id: string }> {
     const { flatLogicFunction: existingLogicFunction, ownerFlatApplication } =
       await this.helperService.findLogicFunctionAndApplicationOrThrow({
         id: existingLogicFunctionId,
@@ -145,34 +167,31 @@ export class LogicFunctionFromSourceService {
       applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
 
-    const created = await this.helperService.createOneFromMetadata({
-      input: {
+    const universalFlatLogicFunctionToCreate =
+      buildUniversalFlatLogicFunctionToCreate({
         id: newId,
-        universalIdentifier: v4(),
         name: existingLogicFunction.name,
-        description: existingLogicFunction.description ?? undefined,
+        description: existingLogicFunction.description,
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
+        toolInputSchema: existingLogicFunction.toolInputSchema,
         isTool: existingLogicFunction.isTool,
         isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
-        checksum: existingLogicFunction.checksum ?? '[default-checksum]',
+        checksum: existingLogicFunction.checksum,
         handlerName: existingLogicFunction.handlerName,
         sourceHandlerPath: toSourceHandlerPath,
         builtHandlerPath: toBuiltHandlerPath,
-        cronTriggerSettings: existingLogicFunction.cronTriggerSettings as
-          | JsonbProperty<CronTriggerSettings>
-          | undefined,
+        cronTriggerSettings: existingLogicFunction.cronTriggerSettings,
         databaseEventTriggerSettings:
-          existingLogicFunction.databaseEventTriggerSettings as
-            | JsonbProperty<DatabaseEventTriggerSettings>
-            | undefined,
+          existingLogicFunction.databaseEventTriggerSettings,
         httpRouteTriggerSettings:
-          existingLogicFunction.httpRouteTriggerSettings as
-            | JsonbProperty<HttpRouteTriggerSettings>
-            | undefined,
-      },
+          existingLogicFunction.httpRouteTriggerSettings,
+        applicationUniversalIdentifier:
+          ownerFlatApplication.universalIdentifier,
+      });
+
+    const created = await this.helperService.createOneFromMetadata({
+      universalFlatLogicFunctionToCreate,
       workspaceId,
-      ownerFlatApplication,
     });
 
     if (!isDefined(created)) {
@@ -182,7 +201,7 @@ export class LogicFunctionFromSourceService {
       );
     }
 
-    return created;
+    return { id: created.id };
   }
 
   async updateOne({
@@ -225,7 +244,7 @@ export class LogicFunctionFromSourceService {
       id,
       update: metadataUpdate,
       workspaceId,
-      ownerFlatApplication,
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
   }
 
@@ -306,7 +325,7 @@ export class LogicFunctionFromSourceService {
       id,
       update: { checksum, isBuildUpToDate: true },
       workspaceId,
-      ownerFlatApplication,
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     });
   }
 
@@ -369,6 +388,29 @@ export class LogicFunctionFromSourceService {
       workspaceId,
       applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
       sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+    });
+  }
+
+  private async findFlatLogicFunctionByIdAndConvertToDto({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<LogicFunctionDTO> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    return fromFlatLogicFunctionToLogicFunctionDto({
+      flatLogicFunction: findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: flatLogicFunctionMaps,
+      }),
     });
   }
 }

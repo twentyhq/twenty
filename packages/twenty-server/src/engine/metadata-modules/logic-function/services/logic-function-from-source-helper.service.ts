@@ -3,20 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { join } from 'path';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_SOURCE_HANDLER_PATH,
 } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
-import { type CreateLogicFunctionParams } from 'src/engine/metadata-modules/logic-function/types/create-logic-function-params.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type UpdateLogicFunctionMetadataParams } from 'src/engine/metadata-modules/logic-function/types/update-logic-function-metadata-params.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
-import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-flat-logic-function.util';
 import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
 import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
+import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -74,27 +72,20 @@ export class LogicFunctionFromSourceHelperService {
   }
 
   async createOneFromMetadata({
-    input,
+    universalFlatLogicFunctionToCreate,
     workspaceId,
-    ownerFlatApplication,
   }: {
-    input: CreateLogicFunctionParams;
-    ownerFlatApplication: FlatApplication;
+    universalFlatLogicFunctionToCreate: UniversalFlatLogicFunction & {
+      id: string;
+    };
     workspaceId: string;
-  }): Promise<FlatLogicFunction> {
-    const flatLogicFunctionToCreate =
-      fromCreateLogicFunctionInputToFlatLogicFunction({
-        createLogicFunctionInput: input,
-        workspaceId,
-        ownerFlatApplication,
-      });
-
+  }): Promise<UniversalFlatLogicFunction & { id: string }> {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             logicFunction: {
-              flatEntityToCreate: [flatLogicFunctionToCreate],
+              flatEntityToCreate: [universalFlatLogicFunctionToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -102,7 +93,7 @@ export class LogicFunctionFromSourceHelperService {
           workspaceId,
           isSystemBuild: false,
           applicationUniversalIdentifier:
-            ownerFlatApplication.universalIdentifier,
+            universalFlatLogicFunctionToCreate.applicationUniversalIdentifier,
         },
       );
 
@@ -113,28 +104,20 @@ export class LogicFunctionFromSourceHelperService {
       );
     }
 
-    return flatLogicFunctionToCreate;
+    return universalFlatLogicFunctionToCreate;
   }
 
   async updateOneFromMetadata({
     id,
     update,
     workspaceId,
-    ownerFlatApplication,
+    applicationUniversalIdentifier,
   }: {
     id: string;
     update: UpdateLogicFunctionMetadataParams;
     workspaceId: string;
-    ownerFlatApplication?: FlatApplication;
-  }) {
-    const resolvedOwnerFlatApplication =
-      ownerFlatApplication ??
-      (
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId },
-        )
-      ).workspaceCustomFlatApplication;
-
+    applicationUniversalIdentifier: string;
+  }): Promise<FlatLogicFunction> {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -161,8 +144,7 @@ export class LogicFunctionFromSourceHelperService {
           },
           workspaceId,
           isSystemBuild: false,
-          applicationUniversalIdentifier:
-            resolvedOwnerFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier,
         },
       );
 

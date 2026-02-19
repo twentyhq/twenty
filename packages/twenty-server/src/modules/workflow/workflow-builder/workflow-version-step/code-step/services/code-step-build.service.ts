@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import {
   WorkflowActionType,
   type WorkflowAction,
@@ -41,7 +40,7 @@ export class CodeStepBuildService {
   }: {
     existingLogicFunctionId: string;
     workspaceId: string;
-  }): Promise<FlatLogicFunction> {
+  }): Promise<{ id: string }> {
     return this.logicFunctionFromSourceService.duplicateOneWithSource({
       existingLogicFunctionId,
       workspaceId,

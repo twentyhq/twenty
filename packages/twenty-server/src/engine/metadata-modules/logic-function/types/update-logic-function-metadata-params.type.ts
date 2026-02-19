@@ -1,22 +1,9 @@
-import type {
-  CronTriggerSettings,
-  DatabaseEventTriggerSettings,
-  HttpRouteTriggerSettings,
-} from 'twenty-shared/application';
+import { type FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
-import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-
-export type UpdateLogicFunctionMetadataParams = {
-  name?: string;
-  description?: string;
-  timeoutSeconds?: number;
-  toolInputSchema?: object;
-  handlerName?: string;
-  sourceHandlerPath?: string;
-  isTool?: boolean;
-  isBuildUpToDate?: boolean;
-  checksum?: string;
-  cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
-  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
-  httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
-};
+export type UpdateLogicFunctionMetadataParams = Partial<
+  Pick<
+    FlatLogicFunction,
+    (typeof FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES)[number]
+  >
+>;

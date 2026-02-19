@@ -69,25 +69,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       copySourceAndBuiltForNewCodeStep: jest.fn().mockResolvedValue(undefined),
       duplicateCodeStepLogicFunction: jest.fn().mockResolvedValue({
         id: 'new-function-id',
-        name: 'Test Function',
-        description: 'Test Description',
-        workspaceId: mockWorkspaceId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        runtime: LogicFunctionRuntime.NODE22,
-        timeoutSeconds: 30,
-        sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
-        handlerName: 'main',
-        checksum: null,
-        toolInputSchema: null,
-        isTool: false,
-        universalIdentifier: 'universal-id',
-        applicationId: 'application-id',
-        cronTriggerSettings: null,
-        databaseEventTriggerSettings: null,
-        httpRouteTriggerSettings: null,
       }),
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
@@ -212,7 +193,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionFromSourceService.deleteOneWithSource).toHaveBeenCalledWith({
+      expect(
+        logicFunctionFromSourceService.deleteOneWithSource,
+      ).toHaveBeenCalledWith({
         id: 'function-id',
         workspaceId: mockWorkspaceId,
       });
