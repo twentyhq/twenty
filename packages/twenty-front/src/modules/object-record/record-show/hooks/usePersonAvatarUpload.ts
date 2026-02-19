@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -14,11 +13,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePersonAvatarUpload = (personRecordId: string) => {
-  const coreClient = useApolloCoreClient();
   const [uploadImage] = useUploadImageMutation();
-  const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation({
-    client: coreClient,
-  });
+  const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation();
   const { updateOneRecord } = useUpdateOneRecord();
 
   const isFilesFieldMigrated = useIsFeatureEnabled(
