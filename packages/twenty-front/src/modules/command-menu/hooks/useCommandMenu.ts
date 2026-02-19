@@ -10,8 +10,8 @@ import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/ad
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
@@ -23,6 +23,8 @@ export const useCommandMenu = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const store = useStore();
+
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -31,9 +33,9 @@ export const useCommandMenu = () => {
           .getValue();
 
         if (isCommandMenuOpened) {
-          jotaiStore.set(addToNavPayloadRegistryStateV2.atom, new Map());
+          store.set(addToNavPayloadRegistryStateV2.atom, new Map());
           set(isCommandMenuOpenedState, false);
-          jotaiStore.set(isCommandMenuOpenedStateV2.atom, false);
+          store.set(isCommandMenuOpenedStateV2.atom, false);
           set(isCommandMenuClosingState, true);
           closeAnyOpenDropdown();
           removeFocusItemFromFocusStackById({
@@ -41,7 +43,7 @@ export const useCommandMenu = () => {
           });
         }
       },
-    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById],
+    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store],
   );
 
   const openCommandMenu = useCallback(() => {

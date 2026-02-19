@@ -48,6 +48,32 @@ export class FileService {
     });
   }
 
+  async getFileStreamByPath({
+    workspaceId,
+    applicationId,
+    filepath,
+    fileFolder,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    filepath: string;
+    fileFolder: FileFolder;
+  }) {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: applicationId,
+        workspaceId,
+      },
+    });
+
+    return this.fileStorageService.readFile({
+      resourcePath: filepath,
+      fileFolder,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId,
+    });
+  }
+
   async getFileStreamById({
     fileId,
     workspaceId,
@@ -57,29 +83,27 @@ export class FileService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<Readable> {
-    {
-      const file = await this.fileRepository.findOneOrFail({
-        where: {
-          id: fileId,
-          workspaceId,
-          path: Like(`${fileFolder}/%`),
-        },
-      });
-
-      const application = await this.applicationRepository.findOneOrFail({
-        where: {
-          id: file.applicationId,
-          workspaceId,
-        },
-      });
-
-      return this.fileStorageService.readFile({
-        resourcePath: removeFileFolderFromFileEntityPath(file.path),
-        fileFolder,
-        applicationUniversalIdentifier: application.universalIdentifier,
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        id: fileId,
         workspaceId,
-      });
-    }
+        path: Like(`${fileFolder}/%`),
+      },
+    });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: file.applicationId,
+        workspaceId,
+      },
+    });
+
+    return this.fileStorageService.readFile({
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
+      fileFolder,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId,
+    });
   }
 
   signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {

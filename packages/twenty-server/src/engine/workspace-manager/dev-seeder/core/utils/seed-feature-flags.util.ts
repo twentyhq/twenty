@@ -111,6 +111,21 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_OTHER_FILE_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

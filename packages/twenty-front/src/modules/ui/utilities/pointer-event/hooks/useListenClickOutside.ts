@@ -1,9 +1,9 @@
+import { useCallback, useEffect, type RefObject } from 'react';
+
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useEffect, type RefObject } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
@@ -23,132 +23,120 @@ export const useListenClickOutside = <T extends Element>({
   listenerId,
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
-  const clickOutsideListenerIsMouseDownInsideState =
-    useRecoilComponentCallbackState(
-      clickOutsideListenerIsMouseDownInsideComponentState,
-      listenerId,
-    );
-  const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
-    clickOutsideListenerIsActivatedComponentState,
-    listenerId,
-  );
-  const clickOutsideListenerMouseDownHappenedState =
-    useRecoilComponentCallbackState(
-      clickOutsideListenerMouseDownHappenedComponentState,
-      listenerId,
-    );
+  const store = useStore();
 
-  const handleMouseDown = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (event: MouseEvent | TouchEvent) => {
-        const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(clickOutsideListenerIsActivatedState)
-          .getValue();
+  const handleMouseDown = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      const clickOutsideListenerIsActivated = store.get(
+        clickOutsideListenerIsActivatedComponentState.atomFamily({
+          instanceId: listenerId,
+        }),
+      );
 
-        set(clickOutsideListenerMouseDownHappenedState, true);
+      store.set(
+        clickOutsideListenerMouseDownHappenedComponentState.atomFamily({
+          instanceId: listenerId,
+        }),
+        true,
+      );
 
-        const isListening = clickOutsideListenerIsActivated && enabled;
+      const isListening = clickOutsideListenerIsActivated && enabled;
 
-        if (!isListening) {
-          return;
-        }
+      if (!isListening) {
+        return;
+      }
 
-        const clickedOnAtLeastOneRef = refs
-          .filter((ref) => !!ref.current)
-          .some((ref) => ref.current?.contains(event.target as Node));
+      const clickedOnAtLeastOneRef = refs
+        .filter((ref) => !!ref.current)
+        .some((ref) => ref.current?.contains(event.target as Node));
 
-        set(clickOutsideListenerIsMouseDownInsideState, clickedOnAtLeastOneRef);
-      },
-    [
-      clickOutsideListenerIsActivatedState,
-      clickOutsideListenerMouseDownHappenedState,
-      enabled,
-      refs,
-      clickOutsideListenerIsMouseDownInsideState,
-    ],
+      store.set(
+        clickOutsideListenerIsMouseDownInsideComponentState.atomFamily({
+          instanceId: listenerId,
+        }),
+        clickedOnAtLeastOneRef,
+      );
+    },
+    [listenerId, enabled, refs, store],
   );
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: MouseEvent | TouchEvent) => {
-        const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(clickOutsideListenerIsActivatedState)
-          .getValue();
+  const handleClickOutside = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      const clickOutsideListenerIsActivated = store.get(
+        clickOutsideListenerIsActivatedComponentState.atomFamily({
+          instanceId: listenerId,
+        }),
+      );
 
-        const isListening = clickOutsideListenerIsActivated && enabled;
+      const isListening = clickOutsideListenerIsActivated && enabled;
 
-        const isMouseDownInside = snapshot
-          .getLoadable(clickOutsideListenerIsMouseDownInsideState)
-          .getValue();
+      const isMouseDownInside = store.get(
+        clickOutsideListenerIsMouseDownInsideComponentState.atomFamily({
+          instanceId: listenerId,
+        }),
+      );
 
-        const hasMouseDownHappened = snapshot
-          .getLoadable(clickOutsideListenerMouseDownHappenedState)
-          .getValue();
+      const hasMouseDownHappened = store.get(
+        clickOutsideListenerMouseDownHappenedComponentState.atomFamily({
+          instanceId: listenerId,
+        }),
+      );
 
-        const clickedElement = event.target as HTMLElement;
-        let isClickedOnExcluded = false;
-        let currentElement: HTMLElement | null = clickedElement;
+      const clickedElement = event.target as HTMLElement;
+      let isClickedOnExcluded = false;
+      let currentElement: HTMLElement | null = clickedElement;
 
-        while (currentElement) {
-          const currentDataAttributes = currentElement.dataset;
-          const isGloballyExcluded =
-            currentDataAttributes?.globallyPreventClickOutside === 'true';
+      while (currentElement) {
+        const currentDataAttributes = currentElement.dataset;
+        const isGloballyExcluded =
+          currentDataAttributes?.globallyPreventClickOutside === 'true';
 
-          const clickOutsideId = currentDataAttributes?.clickOutsideId;
+        const clickOutsideId = currentDataAttributes?.clickOutsideId;
 
-          isClickedOnExcluded =
-            isGloballyExcluded ||
-            (isDefined(clickOutsideId) &&
-              isDefined(excludedClickOutsideIds) &&
-              excludedClickOutsideIds.includes(clickOutsideId));
+        isClickedOnExcluded =
+          isGloballyExcluded ||
+          (isDefined(clickOutsideId) &&
+            isDefined(excludedClickOutsideIds) &&
+            excludedClickOutsideIds.includes(clickOutsideId));
 
-          if (isClickedOnExcluded) {
-            break;
-          }
-
-          currentElement = currentElement.parentElement;
+        if (isClickedOnExcluded) {
+          break;
         }
 
-        const clickedOnAtLeastOneRef = refs
-          .filter((ref) => !!ref.current)
-          .some((ref) => ref.current?.contains(event.target as Node));
+        currentElement = currentElement.parentElement;
+      }
 
-        const shouldTrigger =
-          isListening &&
-          hasMouseDownHappened &&
-          !clickedOnAtLeastOneRef &&
-          !isMouseDownInside &&
-          !isClickedOnExcluded;
+      const clickedOnAtLeastOneRef = refs
+        .filter((ref) => !!ref.current)
+        .some((ref) => ref.current?.contains(event.target as Node));
 
-        if (CLICK_OUTSIDE_DEBUG_MODE) {
-          // eslint-disable-next-line no-console
-          console.log('click outside compare ref', {
-            listenerId,
-            shouldTrigger,
-            clickedOnAtLeastOneRef,
-            isMouseDownInside,
-            isListening,
-            hasMouseDownHappened,
-            isClickedOnExcluded,
-            enabled,
-            event,
-          });
-        }
+      const shouldTrigger =
+        isListening &&
+        hasMouseDownHappened &&
+        !clickedOnAtLeastOneRef &&
+        !isMouseDownInside &&
+        !isClickedOnExcluded;
 
-        if (shouldTrigger) {
-          callback(event);
-        }
-      },
-    [
-      clickOutsideListenerIsActivatedState,
-      enabled,
-      clickOutsideListenerIsMouseDownInsideState,
-      clickOutsideListenerMouseDownHappenedState,
-      refs,
-      excludedClickOutsideIds,
-      callback,
-      listenerId,
-    ],
+      if (CLICK_OUTSIDE_DEBUG_MODE) {
+        // eslint-disable-next-line no-console
+        console.log('click outside compare ref', {
+          listenerId,
+          shouldTrigger,
+          clickedOnAtLeastOneRef,
+          isMouseDownInside,
+          isListening,
+          hasMouseDownHappened,
+          isClickedOnExcluded,
+          enabled,
+          event,
+        });
+      }
+
+      if (shouldTrigger) {
+        callback(event);
+      }
+    },
+    [listenerId, enabled, refs, excludedClickOutsideIds, callback, store],
   );
 
   useEffect(() => {

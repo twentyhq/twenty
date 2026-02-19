@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { IconHelp, IconX } from '@ui/display/icon/components/TablerIcons';
-import { IconButton, LightButton } from '@ui/input';
+import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+import { LightButton, LightIconButton } from '@ui/input';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export type CalloutVariant =
@@ -14,22 +16,22 @@ const StyledCalloutContainer = styled.div<{ variant: CalloutVariant }>`
   align-items: flex-start;
   background-color: ${({ theme, variant }) =>
     variant === 'info'
-      ? theme.color.blue1
+      ? theme.accent.accent1
       : variant === 'warning'
-        ? theme.color.yellow1
+        ? theme.color.orange1
         : variant === 'success'
-          ? theme.color.green1
+          ? theme.color.turquoise1
           : variant === 'error'
             ? theme.color.red1
             : theme.color.gray1};
   border: 1px solid
     ${({ theme, variant }) =>
       variant === 'info'
-        ? theme.color.blue6
+        ? theme.accent.accent6
         : variant === 'warning'
-          ? theme.color.yellow6
+          ? theme.color.orange6
           : variant === 'success'
-            ? theme.color.green6
+            ? theme.color.turquoise6
             : variant === 'error'
               ? theme.color.red6
               : theme.color.gray6};
@@ -38,9 +40,11 @@ const StyledCalloutContainer = styled.div<{ variant: CalloutVariant }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  max-width: 512px;
+  overflow: hidden;
   padding: ${({ theme }) =>
     `${theme.spacing(3)} ${theme.spacing(3)} ${theme.spacing(2)}`};
+  width: 100%;
 `;
 
 const StyledHeader = styled.div`
@@ -49,6 +53,7 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
+  min-height: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledIconContainer = styled.div<{ variant: CalloutVariant }>`
@@ -56,13 +61,15 @@ const StyledIconContainer = styled.div<{ variant: CalloutVariant }>`
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  height: ${({ theme }) => theme.spacing(4)};
+  width: ${({ theme }) => theme.spacing(4)};
   color: ${({ theme, variant }) =>
     variant === 'info'
-      ? theme.color.blue9
+      ? theme.accent.accent9
       : variant === 'warning'
         ? theme.color.orange9
         : variant === 'success'
-          ? theme.color.green9
+          ? theme.color.turquoise9
           : variant === 'error'
             ? theme.color.red9
             : theme.color.gray9};
@@ -75,13 +82,18 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const StyledDescriptionWrapper = styled.div`
+const StyledDescriptionWrapper = styled.div<{ hasAction: boolean }>`
+  align-items: center;
   display: flex;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
   align-self: stretch;
+  padding-bottom: ${({ hasAction, theme }) =>
+    hasAction ? 0 : theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledDescription = styled.div`
@@ -104,10 +116,12 @@ export type CalloutProps = {
   variant: CalloutVariant;
   title: string;
   description: string;
+  Icon?: IconComponent;
   action?: {
     label: string;
     onClick: () => void;
   };
+  isClosable?: boolean;
   onClose?: () => void;
 };
 
@@ -115,25 +129,43 @@ export const Callout = ({
   variant,
   title,
   description,
+  Icon = IconHelp,
   action,
+  isClosable = false,
   onClose,
 }: CalloutProps) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  const handleClose = () => {
+    if (!isClosable) {
+      return;
+    }
+
+    setIsVisible(false);
+    onClose?.();
+  };
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <StyledCalloutContainer variant={variant}>
       <StyledHeader>
         <StyledIconContainer variant={variant}>
-          <IconHelp size={16} />
+          <Icon size={16} />
         </StyledIconContainer>
         <StyledTitle>{title}</StyledTitle>
-        <IconButton
-          Icon={IconX}
-          size="small"
-          variant="tertiary"
-          ariaLabel="Close"
-          onClick={onClose}
-        />
+        {isClosable && (
+          <LightIconButton
+            Icon={IconX}
+            size="small"
+            aria-label="Close"
+            onClick={handleClose}
+          />
+        )}
       </StyledHeader>
-      <StyledDescriptionWrapper>
+      <StyledDescriptionWrapper hasAction={isDefined(action)}>
         <StyledDescription>{description}</StyledDescription>
       </StyledDescriptionWrapper>
       {isDefined(action) && (

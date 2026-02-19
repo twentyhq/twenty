@@ -3,7 +3,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -20,7 +20,7 @@ export const SettingsRoleEditEffect = ({
   const [isInitialized, setIsInitialized] = useState(false);
 
   const role = useRecoilValue(settingsPersistedRoleFamilyState(roleId));
-  const setActiveTabId = useSetRecoilComponentState(
+  const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );

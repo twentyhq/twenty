@@ -6,7 +6,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -31,7 +31,7 @@ const StyledLink = styled(Link)`
 `;
 
 export const SettingsAI = () => {
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
   );

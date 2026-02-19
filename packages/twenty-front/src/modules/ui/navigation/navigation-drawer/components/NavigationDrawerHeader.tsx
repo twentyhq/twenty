@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div`
@@ -36,7 +36,7 @@ export const NavigationDrawerHeader = ({
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
 
-  const isNavigationDrawerExpanded = useRecoilValue(
+  const isNavigationDrawerExpanded = useRecoilValueV2(
     isNavigationDrawerExpandedState,
   );
 

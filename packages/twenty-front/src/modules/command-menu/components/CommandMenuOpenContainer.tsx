@@ -11,6 +11,7 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useStore } from 'jotai';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { WORKFLOW_DIAGRAM_CREATE_STEP_NODE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramCreateStepNodeClickOutsideId';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -19,8 +20,7 @@ import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useRef } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -58,20 +58,19 @@ export const CommandMenuOpenContainer = ({
     isSidePanelAnimatingStateV2,
   );
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: MouseEvent | TouchEvent) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
-          .getValue();
+  const store = useStore();
 
-        if (currentFocusId === SIDE_PANEL_FOCUS_ID) {
-          event.stopImmediatePropagation();
-          event.preventDefault();
-          closeCommandMenu();
-        }
-      },
-    [closeCommandMenu],
+  const handleClickOutside = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
+
+      if (currentFocusId === SIDE_PANEL_FOCUS_ID) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        closeCommandMenu();
+      }
+    },
+    [closeCommandMenu, store],
   );
 
   useListenClickOutside({

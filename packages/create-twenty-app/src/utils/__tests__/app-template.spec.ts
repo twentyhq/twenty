@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { copyBaseApplicationProject } from '@/utils/app-template';
+import { type ExampleOptions } from '@/types/scaffolding-options';
 
 // Mock fs-extra's copy function to skip copying base template (not available during tests)
 jest.mock('fs-extra', () => {
@@ -14,6 +15,24 @@ jest.mock('fs-extra', () => {
 
 const APPLICATION_FILE_NAME = 'application-config.ts';
 const DEFAULT_ROLE_FILE_NAME = 'default-role.ts';
+
+const ALL_EXAMPLES: ExampleOptions = {
+  includeExampleObject: true,
+  includeExampleField: true,
+  includeExampleLogicFunction: true,
+  includeExampleFrontComponent: true,
+  includeExampleView: true,
+  includeExampleNavigationMenuItem: true,
+};
+
+const NO_EXAMPLES: ExampleOptions = {
+  includeExampleObject: false,
+  includeExampleField: false,
+  includeExampleLogicFunction: false,
+  includeExampleFrontComponent: false,
+  includeExampleView: false,
+  includeExampleNavigationMenuItem: false,
+};
 
 describe('copyBaseApplicationProject', () => {
   let testAppDirectory: string;
@@ -41,6 +60,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     // Verify src/ folder exists
@@ -62,6 +82,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const packageJsonPath = join(testAppDirectory, 'package.json');
@@ -80,6 +101,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const gitignorePath = join(testAppDirectory, '.gitignore');
@@ -96,6 +118,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const yarnLockPath = join(testAppDirectory, 'yarn.lock');
@@ -111,6 +134,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const appConfigPath = join(testAppDirectory, 'src', APPLICATION_FILE_NAME);
@@ -148,6 +172,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const roleConfigPath = join(
@@ -192,6 +217,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: 'A test application',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     // Verify fs.copy was called with correct destination
@@ -208,6 +234,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'My Test App',
       appDescription: '',
       appDirectory: testAppDirectory,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const appConfigPath = join(testAppDirectory, 'src', APPLICATION_FILE_NAME);
@@ -225,6 +252,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'App One',
       appDescription: 'First app',
       appDirectory: firstAppDir,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     // Create second app
@@ -235,6 +263,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'App Two',
       appDescription: 'Second app',
       appDirectory: secondAppDir,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     // Read both app configs
@@ -267,6 +296,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'App One',
       appDescription: 'First app',
       appDirectory: firstAppDir,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     // Create second app
@@ -277,6 +307,7 @@ describe('copyBaseApplicationProject', () => {
       appDisplayName: 'App Two',
       appDescription: 'Second app',
       appDirectory: secondAppDir,
+      exampleOptions: ALL_EXAMPLES,
     });
 
     const firstRoleConfig = await fs.readFile(
@@ -298,5 +329,346 @@ describe('copyBaseApplicationProject', () => {
     expect(firstUuid).toBeDefined();
     expect(secondUuid).toBeDefined();
     expect(firstUuid).not.toBe(secondUuid);
+  });
+
+  describe('scaffolding modes', () => {
+    describe('exhaustive mode (all examples)', () => {
+      it('should create all example files when all options are enabled', async () => {
+        await copyBaseApplicationProject({
+          appName: 'my-test-app',
+          appDisplayName: 'My Test App',
+          appDescription: 'A test application',
+          appDirectory: testAppDirectory,
+          exampleOptions: ALL_EXAMPLES,
+        });
+
+        const srcPath = join(testAppDirectory, 'src');
+
+        expect(
+          await fs.pathExists(join(srcPath, 'objects', 'example-object.ts')),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(join(srcPath, 'fields', 'example-field.ts')),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'hello-world.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'front-components', 'hello-world.tsx'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(join(srcPath, 'views', 'example-view.ts')),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'navigation-menu-items',
+              'example-navigation-menu-item.ts',
+            ),
+          ),
+        ).toBe(true);
+      });
+    });
+
+    describe('minimal mode (no examples)', () => {
+      it('should create only core files when no examples are enabled', async () => {
+        await copyBaseApplicationProject({
+          appName: 'my-test-app',
+          appDisplayName: 'My Test App',
+          appDescription: 'A test application',
+          appDirectory: testAppDirectory,
+          exampleOptions: NO_EXAMPLES,
+        });
+
+        const srcPath = join(testAppDirectory, 'src');
+
+        // Core files should exist
+        expect(await fs.pathExists(join(srcPath, APPLICATION_FILE_NAME))).toBe(
+          true,
+        );
+        expect(
+          await fs.pathExists(join(srcPath, 'roles', DEFAULT_ROLE_FILE_NAME)),
+        ).toBe(true);
+
+        // Example files should not exist
+        expect(
+          await fs.pathExists(join(srcPath, 'objects', 'example-object.ts')),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(join(srcPath, 'fields', 'example-field.ts')),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'hello-world.ts'),
+          ),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'front-components', 'hello-world.tsx'),
+          ),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(join(srcPath, 'views', 'example-view.ts')),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(
+              srcPath,
+              'navigation-menu-items',
+              'example-navigation-menu-item.ts',
+            ),
+          ),
+        ).toBe(false);
+      });
+    });
+
+    describe('selective examples', () => {
+      it('should create only front component when only that option is enabled', async () => {
+        await copyBaseApplicationProject({
+          appName: 'my-test-app',
+          appDisplayName: 'My Test App',
+          appDescription: 'A test application',
+          appDirectory: testAppDirectory,
+          exampleOptions: {
+            includeExampleObject: false,
+            includeExampleField: false,
+            includeExampleLogicFunction: false,
+            includeExampleFrontComponent: true,
+            includeExampleView: false,
+            includeExampleNavigationMenuItem: false,
+          },
+        });
+
+        const srcPath = join(testAppDirectory, 'src');
+
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'front-components', 'hello-world.tsx'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(join(srcPath, 'objects', 'example-object.ts')),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(join(srcPath, 'fields', 'example-field.ts')),
+        ).toBe(false);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'hello-world.ts'),
+          ),
+        ).toBe(false);
+      });
+
+      it('should create only logic function when only that option is enabled', async () => {
+        await copyBaseApplicationProject({
+          appName: 'my-test-app',
+          appDisplayName: 'My Test App',
+          appDescription: 'A test application',
+          appDirectory: testAppDirectory,
+          exampleOptions: {
+            includeExampleObject: false,
+            includeExampleField: false,
+            includeExampleLogicFunction: true,
+            includeExampleFrontComponent: false,
+            includeExampleView: false,
+            includeExampleNavigationMenuItem: false,
+          },
+        });
+
+        const srcPath = join(testAppDirectory, 'src');
+
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'hello-world.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(join(srcPath, 'objects', 'example-object.ts')),
+        ).toBe(false);
+      });
+    });
+  });
+
+  describe('example object', () => {
+    it('should create example-object.ts with defineObject and correct structure', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const objectPath = join(
+        testAppDirectory,
+        'src',
+        'objects',
+        'example-object.ts',
+      );
+
+      expect(await fs.pathExists(objectPath)).toBe(true);
+
+      const content = await fs.readFile(objectPath, 'utf8');
+
+      expect(content).toContain(
+        "import { defineObject, FieldType } from 'twenty-sdk'",
+      );
+      expect(content).toContain('export default defineObject({');
+      expect(content).toContain(
+        'export const EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
+      );
+      expect(content).toContain('export const NAME_FIELD_UNIVERSAL_IDENTIFIER');
+      expect(content).toContain("nameSingular: 'exampleItem'");
+      expect(content).toContain("namePlural: 'exampleItems'");
+      expect(content).toContain('FieldType.TEXT');
+      expect(content).toContain(
+        'labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER',
+      );
+    });
+
+    it('should generate unique UUIDs for example objects across apps', async () => {
+      const firstAppDir = join(testAppDirectory, 'app1');
+      await fs.ensureDir(firstAppDir);
+      await copyBaseApplicationProject({
+        appName: 'app-one',
+        appDisplayName: 'App One',
+        appDescription: 'First app',
+        appDirectory: firstAppDir,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const secondAppDir = join(testAppDirectory, 'app2');
+      await fs.ensureDir(secondAppDir);
+      await copyBaseApplicationProject({
+        appName: 'app-two',
+        appDisplayName: 'App Two',
+        appDescription: 'Second app',
+        appDirectory: secondAppDir,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const firstContent = await fs.readFile(
+        join(firstAppDir, 'src', 'objects', 'example-object.ts'),
+        'utf8',
+      );
+      const secondContent = await fs.readFile(
+        join(secondAppDir, 'src', 'objects', 'example-object.ts'),
+        'utf8',
+      );
+
+      const uuidRegex =
+        /EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
+      const firstUuid = firstContent.match(uuidRegex)?.[1];
+      const secondUuid = secondContent.match(uuidRegex)?.[1];
+
+      expect(firstUuid).toBeDefined();
+      expect(secondUuid).toBeDefined();
+      expect(firstUuid).not.toBe(secondUuid);
+    });
+  });
+
+  describe('example field', () => {
+    it('should create example-field.ts with defineField referencing the object', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const fieldPath = join(
+        testAppDirectory,
+        'src',
+        'fields',
+        'example-field.ts',
+      );
+
+      expect(await fs.pathExists(fieldPath)).toBe(true);
+
+      const content = await fs.readFile(fieldPath, 'utf8');
+
+      expect(content).toContain(
+        "import { defineField, FieldType } from 'twenty-sdk'",
+      );
+      expect(content).toContain(
+        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
+      );
+      expect(content).toContain('export default defineField({');
+      expect(content).toContain(
+        'objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
+      );
+      expect(content).toContain('FieldType.NUMBER');
+      expect(content).toContain("name: 'priority'");
+    });
+  });
+
+  describe('example view', () => {
+    it('should create example-view.ts with defineView referencing the object', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const viewPath = join(
+        testAppDirectory,
+        'src',
+        'views',
+        'example-view.ts',
+      );
+
+      expect(await fs.pathExists(viewPath)).toBe(true);
+
+      const content = await fs.readFile(viewPath, 'utf8');
+
+      expect(content).toContain("import { defineView } from 'twenty-sdk'");
+      expect(content).toContain(
+        "import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'",
+      );
+      expect(content).toContain('export default defineView({');
+      expect(content).toContain(
+        'objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER',
+      );
+      expect(content).toContain("name: 'example-view'");
+    });
+  });
+
+  describe('example navigation menu item', () => {
+    it('should create example-navigation-menu-item.ts with defineNavigationMenuItem', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: ALL_EXAMPLES,
+      });
+
+      const navPath = join(
+        testAppDirectory,
+        'src',
+        'navigation-menu-items',
+        'example-navigation-menu-item.ts',
+      );
+
+      expect(await fs.pathExists(navPath)).toBe(true);
+
+      const content = await fs.readFile(navPath, 'utf8');
+
+      expect(content).toContain(
+        "import { defineNavigationMenuItem } from 'twenty-sdk'",
+      );
+      expect(content).toContain('export default defineNavigationMenuItem({');
+      expect(content).toContain("name: 'example-navigation-menu-item'");
+      expect(content).toContain("icon: 'IconList'");
+      expect(content).toContain('position: 0');
+    });
   });
 });

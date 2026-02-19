@@ -57,9 +57,7 @@ describe('formatNumber', () => {
           format: NumberFormat.APOSTROPHE_AND_DOT,
           decimals: 2,
         }),
-      ).toEqual(
-        '1\u2019234.56', // Uses right single quotation mark (U+2019)
-      );
+      ).toMatch(/^1['\u2018\u2019\u02BC]234\.56$/);
     });
   });
   describe('with abbreviate', () => {

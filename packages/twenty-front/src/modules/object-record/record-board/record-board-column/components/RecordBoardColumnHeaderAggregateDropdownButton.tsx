@@ -1,6 +1,6 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { type Nullable } from 'twenty-shared/types';
 import { Tag } from 'twenty-ui/components';
@@ -23,7 +23,7 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
   value?: Nullable<string | number>;
   tooltip?: Nullable<string>;
 }) => {
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     dropdownId,
   );

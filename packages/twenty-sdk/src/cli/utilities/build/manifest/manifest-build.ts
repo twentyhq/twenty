@@ -5,12 +5,14 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 import {
   type ApplicationConfig,
   type FrontComponentConfig,
   type LogicFunctionConfig,
 } from '@/sdk';
 import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
 import { glob } from 'fast-glob';
 import { readFile } from 'fs-extra';
@@ -25,12 +27,12 @@ import {
   type Manifest,
   type NavigationMenuItemManifest,
   type ObjectManifest,
+  type PageLayoutManifest,
   type RoleManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { injectDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/inject-default-fields-in-object-fields';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -67,6 +69,7 @@ export const buildManifest = async (
   const publicAssets: AssetManifest[] = [];
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
+  const pageLayouts: PageLayoutManifest[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -77,6 +80,7 @@ export const buildManifest = async (
   const publicAssetsFilePaths: string[] = [];
   const viewsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
+  const pageLayoutsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -213,6 +217,7 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
         break;
       }
       case ManifestEntityKey.Views: {
@@ -239,6 +244,21 @@ export const buildManifest = async (
         navigationMenuItems.push(extract.config);
         errors.push(...extract.errors);
         navigationMenuItemsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.PageLayouts: {
+        const extract = await extractManifestFromFile<PageLayoutConfig>({
+          appPath,
+          filePath,
+        });
+
+        const pageLayoutManifest: PageLayoutManifest = {
+          ...extract.config,
+        };
+
+        pageLayouts.push(pageLayoutManifest);
+        errors.push(...extract.errors);
+        pageLayoutsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.PublicAssets: {
@@ -281,6 +301,7 @@ export const buildManifest = async (
         publicAssets,
         views,
         navigationMenuItems,
+        pageLayouts,
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -293,6 +314,7 @@ export const buildManifest = async (
     publicAssets: publicAssetsFilePaths,
     views: viewsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
+    pageLayouts: pageLayoutsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };

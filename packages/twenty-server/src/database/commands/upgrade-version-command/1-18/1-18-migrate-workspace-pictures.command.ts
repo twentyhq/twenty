@@ -1,6 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import FileType from 'file-type';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
@@ -20,6 +21,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -27,6 +29,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getImageBufferFromUrl } from 'src/utils/image';
 
 @Command({
   name: 'upgrade:1-18:migrate-workspace-pictures',
@@ -44,6 +47,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileUrlService: FileUrlService,
+    private readonly secureHttpClientService: SecureHttpClientService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -135,14 +139,60 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
+    const isInWorkspaceLogo = workspace.logo.startsWith(
+      FileFolder.WorkspaceLogo,
+    );
+
+    const isTwentyIconLogo = workspace.logo.includes('twenty-icons');
+
+    if (!isTwentyIconLogo && !isInWorkspaceLogo) {
+      this.logger.log(
+        `Workspace logo is not a twenty icon or a workspace logo, skipping`,
+      );
+
+      return;
+    }
+
     this.logger.log(
       `Migrating workspace logo for workspace ${workspaceId}: ${workspace.logo}`,
     );
 
+    if (isInWorkspaceLogo) {
+      await this.migrateWorkspaceLogoFromWorkspaceFolder({
+        workspaceId,
+        logoPath: workspace.logo,
+        isDryRun,
+        workspaceCustomFlatApplication,
+        fileRepository,
+      });
+    }
+
+    if (isTwentyIconLogo) {
+      await this.migrateWorkspaceLogoFromTwentyIcons({
+        workspaceId,
+        logoUrl: workspace.logo,
+        isDryRun,
+        workspaceCustomFlatApplication,
+      });
+    }
+  }
+
+  private async migrateWorkspaceLogoFromWorkspaceFolder({
+    workspaceId,
+    logoPath,
+    isDryRun,
+    workspaceCustomFlatApplication,
+    fileRepository,
+  }: {
+    workspaceId: string;
+    logoPath: string;
+    isDryRun: boolean;
+    workspaceCustomFlatApplication: FlatApplication;
+    fileRepository: Repository<FileEntity>;
+  }): Promise<void> {
     try {
-      const { type: fileExtension } = extractFolderPathFilenameAndTypeOrThrow(
-        workspace.logo,
-      );
+      const { type: fileExtension } =
+        extractFolderPathFilenameAndTypeOrThrow(logoPath);
 
       const fileId = v4();
       const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
@@ -152,7 +202,7 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
         await this.fileStorageService.copyLegacy({
           from: {
             folderPath: `workspace-${workspaceId}`,
-            filename: workspace.logo,
+            filename: logoPath,
           },
           to: {
             folderPath: `${workspaceId}/${workspaceCustomFlatApplication.universalIdentifier}`,
@@ -181,13 +231,74 @@ export class MigrateWorkspacePicturesCommand extends ActiveOrSuspendedWorkspaces
       }
 
       this.logger.log(
-        `Migrated workspace logo for workspace ${workspaceId} (${workspace.logo} -> ${newResourcePath})`,
+        `Migrated workspace logo for workspace ${workspaceId} (${logoPath} -> ${newResourcePath})`,
       );
     } catch (error) {
       this.logger.error(
         `Failed to migrate workspace logo for workspace ${workspaceId}: ${error.message}`,
       );
       throw error;
+    }
+  }
+
+  private async migrateWorkspaceLogoFromTwentyIcons({
+    workspaceId,
+    logoUrl,
+    isDryRun,
+    workspaceCustomFlatApplication,
+  }: {
+    workspaceId: string;
+    logoUrl: string;
+    isDryRun: boolean;
+    workspaceCustomFlatApplication: FlatApplication;
+  }): Promise<void> {
+    try {
+      const httpClient = this.secureHttpClientService.getHttpClient();
+      const buffer = await getImageBufferFromUrl(logoUrl, httpClient);
+
+      const type = await FileType.fromBuffer(buffer);
+
+      if (!isDefined(type) || !type.mime.startsWith('image/')) {
+        this.logger.warn(
+          `Unable to detect image type for workspace logo ${logoUrl}, skipping`,
+        );
+
+        return;
+      }
+
+      const fileId = v4();
+      const newFilename = `${fileId}.${type.ext}`;
+      const newResourcePath = `${newFilename}`;
+
+      if (!isDryRun) {
+        const fileEntity = await this.fileStorageService.writeFile({
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          fileFolder: FileFolder.CorePicture,
+          resourcePath: newResourcePath,
+          sourceFile: buffer,
+          mimeType: type.mime,
+          fileId,
+          settings: {
+            isTemporaryFile: false,
+            toDelete: false,
+          },
+        });
+
+        await this.workspaceRepository.update(
+          { id: workspaceId },
+          { logoFileId: fileEntity.id },
+        );
+      }
+
+      this.logger.log(
+        `Migrated workspace logo from twenty-icons for workspace ${workspaceId} (${logoUrl} -> ${FileFolder.CorePicture}/${newResourcePath})`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to migrate workspace logo from twenty-icons for workspace ${workspaceId}: ${error.message}`,
+      );
     }
   }
 

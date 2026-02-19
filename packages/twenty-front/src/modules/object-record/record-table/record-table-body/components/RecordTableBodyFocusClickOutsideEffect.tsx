@@ -8,7 +8,7 @@ import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constan
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 type RecordTableBodyFocusClickOutsideEffectProps = {
   tableBodyRef: React.RefObject<HTMLDivElement>;
 };
@@ -20,7 +20,7 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
-  const currentFocusedItem = useRecoilValue(currentFocusedItemSelector);
+  const currentFocusedItem = useRecoilValueV2(currentFocusedItemSelector);
 
   const componentType = currentFocusedItem?.componentInstance.componentType;
 

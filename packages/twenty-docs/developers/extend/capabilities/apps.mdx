@@ -26,7 +26,7 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 Create a new app using the official scaffolder, then authenticate and start developing:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -41,6 +41,19 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+The scaffolder supports three modes for controlling which example files are included:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interactive: select which examples to include
+npx create-twenty-app@latest my-app --interactive
+```
+
 From here you can:
 
 ```bash filename="Terminal"
@@ -52,6 +65,9 @@ yarn twenty function:logs
 
 # Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute the post-install function
+yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
 yarn twenty app:uninstall
@@ -69,9 +85,9 @@ When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
 - Copies a minimal base application into `my-twenty-app/`
 - Adds a local `twenty-sdk` dependency and Yarn 4 configuration
 - Creates config files and scripts wired to the `twenty` CLI
-- Generates a default application config and a default function role
+- Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
 
-A freshly scaffolded app looks like this:
+A freshly scaffolded app with the default `--exhaustive` mode looks like this:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -90,11 +106,22 @@ my-twenty-app/
   ├── application-config.ts           # Required - main application configuration
   ├── roles/
   │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   └── hello-world.ts                # Example logic function
-  └── front-components/
-      └── hello-world.tsx               # Example front component
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Example sidebar navigation link
 ```
+
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
 
 At a high level:
 
@@ -118,6 +145,8 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 | `defineFrontComponent()` | Front component definitions |
 | `defineRole()` | Role definitions |
 | `defineField()` | Field extensions for existing objects |
+| `defineView()` | Saved view definitions |
+| `defineNavigationMenuItem()` | Navigation menu item definitions |
 
 <Note>
 **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
@@ -189,6 +218,8 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineFrontComponent()` | Define front components for custom UI |
 | `defineRole()` | Configure role permissions and object access |
 | `defineField()` | Extend existing objects with additional fields |
+| `defineView()` | Define saved views for objects |
+| `defineNavigationMenuItem()` | Define sidebar navigation links |
 
 These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
@@ -289,6 +320,7 @@ Every app has a single `application-config.ts` file that describes:
 - **Who the app is**: identifiers, display name, and description.
 - **How its functions run**: which role they use for permissions.
 - **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+- **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -296,6 +328,7 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -311,6 +344,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -318,6 +352,7 @@ Notes:
 - `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
 - `defaultRoleUniversalIdentifier` must match the role file (see below).
+- `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### Roles and permissions
 
@@ -449,6 +484,54 @@ Common trigger types:
 Notes:
 - The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
 - You can mix multiple trigger types in a single function.
+
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Key points:
+- Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+- The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+- The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+- Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
 ### Route trigger payload
 

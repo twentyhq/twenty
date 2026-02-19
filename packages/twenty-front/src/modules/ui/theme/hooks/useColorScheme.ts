@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
   type IconComponent,
@@ -19,7 +20,9 @@ export const useColorScheme = () => {
   );
 
   const { updateOneRecord } = useUpdateOneRecord();
-  const setPersistedColorScheme = useSetRecoilState(persistedColorSchemeState);
+  const setPersistedColorScheme = useSetRecoilStateV2(
+    persistedColorSchemeState,
+  );
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 

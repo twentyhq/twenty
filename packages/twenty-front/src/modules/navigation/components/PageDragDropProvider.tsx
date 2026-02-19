@@ -24,7 +24,7 @@ import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/ad
 import { getDropTargetIdFromDestination } from '@/navigation-menu-item/utils/getDropTargetIdFromDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -35,8 +35,8 @@ type PageDragDropProviderProps = {
 export const PageDragDropProvider = ({
   children,
 }: PageDragDropProviderProps) => {
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const [isDragging, setIsDragging] = useState(false);
   const [sourceDroppableId, setSourceDroppableId] = useState<string | null>(
@@ -53,6 +53,7 @@ export const PageDragDropProvider = ({
     setAddToNavigationFallbackDestination,
   ] = useState<{ droppableId: string; index: number } | null>(null);
 
+  const store = useStore();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
   const { handleNavigationMenuItemDragAndDrop } =
@@ -95,7 +96,7 @@ export const PageDragDropProvider = ({
           setActiveDropTargetId(dropTargetId);
 
           const payload =
-            jotaiStore
+            store
               .get(addToNavPayloadRegistryStateV2.atom)
               .get(update.draggableId) ?? null;
           const folderId = validateAndExtractWorkspaceFolderId(
@@ -112,7 +113,7 @@ export const PageDragDropProvider = ({
           );
         }
       }) as OnDragUpdateResponder,
-    [addToNavigationFallbackDestination],
+    [addToNavigationFallbackDestination, store],
   );
 
   const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
@@ -136,7 +137,7 @@ export const PageDragDropProvider = ({
       return;
     }
 
-    if (isNavigationMenuItemEnabled) {
+    if (isNavigationMenuItemEditingEnabled) {
       const isWorkspaceDrop =
         isWorkspaceDroppableId(result.source?.droppableId) &&
         isWorkspaceDroppableId(result.destination?.droppableId);

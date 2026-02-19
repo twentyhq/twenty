@@ -1,48 +1,27 @@
 import { useQuery } from '@apollo/client';
+import { useMemo } from 'react';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { type RecordGqlOperationSignature } from 'twenty-shared/types';
-import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
+import { OBJECT_RECORD_COUNTS } from '@/object-metadata/graphql/queries';
 
-export const useCombinedGetTotalCount = ({
-  objectMetadataItems,
-  skip = false,
-}: {
-  objectMetadataItems: ObjectMetadataItem[];
-  skip?: boolean;
-}) => {
-  const operationSignatures = objectMetadataItems.map(
-    (objectMetadataItem) =>
-      ({
-        objectNameSingular: objectMetadataItem.nameSingular,
-        variables: {},
-        fields: {
-          id: true,
-        },
-      }) satisfies RecordGqlOperationSignature,
-  );
+type ObjectRecordCountsResult = {
+  objectRecordCounts: {
+    objectNamePlural: string;
+    totalCount: number;
+  }[];
+};
 
-  const apolloCoreClient = useApolloCoreClient();
-  const findManyQuery = useGenerateCombinedFindManyRecordsQuery({
-    operationSignatures,
-  });
+export const useCombinedGetTotalCount = () => {
+  const { data } = useQuery<ObjectRecordCountsResult>(OBJECT_RECORD_COUNTS);
 
-  const { data } = useQuery<CombinedFindManyRecordsQueryResult>(
-    findManyQuery ?? EMPTY_QUERY,
-    {
-      skip,
-      client: apolloCoreClient,
-    },
-  );
-
-  const totalCountByObjectMetadataItemNamePlural = Object.fromEntries(
-    Object.entries(data ?? {}).map(([namePlural, objectRecordConnection]) => [
-      namePlural,
-      objectRecordConnection.totalCount,
-    ]),
+  const totalCountByObjectMetadataItemNamePlural = useMemo(
+    () =>
+      Object.fromEntries(
+        (data?.objectRecordCounts ?? []).map((item) => [
+          item.objectNamePlural,
+          item.totalCount,
+        ]),
+      ),
+    [data],
   );
 
   return {
