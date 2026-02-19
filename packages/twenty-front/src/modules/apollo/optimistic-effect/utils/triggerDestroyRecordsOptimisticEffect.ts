@@ -57,14 +57,20 @@ export const triggerDestroyRecordsOptimisticEffect = ({
           rootQueryCachedResponse,
         );
 
-        const recordsMatchingRootQueryFilter = recordsToDestroy.filter(
-          (record) =>
-            isRecordMatchingFilter({
-              record,
-              filter: rootQueryVariables?.filter ?? {},
-              objectMetadataItem,
-            }),
-        );
+        let recordsMatchingRootQueryFilter: RecordGqlNode[];
+
+        try {
+          recordsMatchingRootQueryFilter = recordsToDestroy.filter(
+            (record) =>
+              isRecordMatchingFilter({
+                record,
+                filter: rootQueryVariables?.filter ?? {},
+                objectMetadataItem,
+              }),
+          );
+        } catch {
+          recordsMatchingRootQueryFilter = [];
+        }
 
         const newTotalCount = isDefined(totalCount)
           ? Math.max(totalCount - recordsMatchingRootQueryFilter.length, 0)

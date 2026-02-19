@@ -80,12 +80,18 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
 
         for (const updatedRecord of updatedRecords) {
-          const updatedRecordMatchesThisRootQueryFilter =
-            isRecordMatchingFilter({
-              record: updatedRecord,
-              filter: rootQueryFilter ?? {},
-              objectMetadataItem,
-            });
+          let updatedRecordMatchesThisRootQueryFilter: boolean;
+
+          try {
+            updatedRecordMatchesThisRootQueryFilter =
+              isRecordMatchingFilter({
+                record: updatedRecord,
+                filter: rootQueryFilter ?? {},
+                objectMetadataItem,
+              });
+          } catch {
+            continue;
+          }
 
           const updatedRecordFoundInRootQueryEdges = isDefined(
             rootQueryCurrentEdges.find(

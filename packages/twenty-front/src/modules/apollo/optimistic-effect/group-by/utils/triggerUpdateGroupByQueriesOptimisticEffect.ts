@@ -118,11 +118,17 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
           > = new Map();
 
           for (const record of records) {
-            const recordMatchesFilter = isRecordMatchingFilter({
-              record,
-              filter: queryFilter ?? {},
-              objectMetadataItem,
-            });
+            let recordMatchesFilter: boolean;
+
+            try {
+              recordMatchesFilter = isRecordMatchingFilter({
+                record,
+                filter: queryFilter ?? {},
+                objectMetadataItem,
+              });
+            } catch {
+              recordMatchesFilter = false;
+            }
 
             if (
               shouldMatchRootQueryFilter &&

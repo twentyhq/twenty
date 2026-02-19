@@ -58,11 +58,17 @@ export const processGroupByConnectionWithRecords = ({
   let totalCountDelta = 0;
 
   for (const record of records) {
-    const recordMatchesFilter = isRecordMatchingFilter({
-      record,
-      filter: queryFilter ?? {},
-      objectMetadataItem,
-    });
+    let recordMatchesFilter: boolean;
+
+    try {
+      recordMatchesFilter = isRecordMatchingFilter({
+        record,
+        filter: queryFilter ?? {},
+        objectMetadataItem,
+      });
+    } catch {
+      recordMatchesFilter = false;
+    }
 
     const belongsToGroup = doesRecordBelongToGroup(
       record,

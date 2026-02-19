@@ -76,17 +76,24 @@ export const triggerUpdateRecordOptimisticEffect = ({
         const rootQueryFilter = rootQueryVariables?.filter;
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
 
-        const updatedRecordMatchesThisRootQueryFilter = isRecordMatchingFilter({
-          record: updatedRecord,
-          filter: rootQueryFilter ?? {},
-          objectMetadataItem,
-        });
+        let updatedRecordMatchesThisRootQueryFilter: boolean;
+        let currentRecordIndexInRootQueryEdges: boolean;
 
-        const currentRecordIndexInRootQueryEdges = isRecordMatchingFilter({
-          record: currentRecord,
-          filter: rootQueryFilter ?? {},
-          objectMetadataItem,
-        });
+        try {
+          updatedRecordMatchesThisRootQueryFilter = isRecordMatchingFilter({
+            record: updatedRecord,
+            filter: rootQueryFilter ?? {},
+            objectMetadataItem,
+          });
+
+          currentRecordIndexInRootQueryEdges = isRecordMatchingFilter({
+            record: currentRecord,
+            filter: rootQueryFilter ?? {},
+            objectMetadataItem,
+          });
+        } catch {
+          return rootQueryCachedResponse;
+        }
 
         const totalCount = readField<number | undefined>(
           'totalCount',
