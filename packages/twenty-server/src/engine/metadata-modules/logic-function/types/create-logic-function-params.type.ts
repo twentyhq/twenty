@@ -1,9 +1,8 @@
-import {
+import type {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
-
 import type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';

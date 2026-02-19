@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -43,7 +43,7 @@ export class WorkflowToolWorkspaceService {
     workflowSchemaService: WorkflowSchemaWorkspaceService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
-    logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    logicFunctionService: LogicFunctionService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     this.deps = {
@@ -55,7 +55,7 @@ export class WorkflowToolWorkspaceService {
       workflowSchemaService,
       globalWorkspaceOrmManager,
       recordPositionService,
-      logicFunctionFromSourceService,
+      logicFunctionService,
       flatEntityMapsCacheService,
     };
   }

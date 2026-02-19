@@ -22,7 +22,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
@@ -47,7 +47,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     protected readonly dataSourceService: DataSourceService,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
-    private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
+    private readonly logicFunctionService: LogicFunctionService,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
@@ -208,7 +208,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       );
     }
 
-    await this.logicFunctionMetadataService.createOne({
+    await this.logicFunctionService.createOneFromParams({
       input: {
         id: newLogicFunctionId,
         name: oldLogicFunction.name,

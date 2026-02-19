@@ -11,7 +11,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-flat-logic-function.util';
@@ -21,14 +21,12 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 
 @Injectable()
 export class CodeStepBuildService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
-    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
   ) {}
@@ -40,7 +38,7 @@ export class CodeStepBuildService {
     logicFunctionId: string;
     workspaceId: string;
   }) {
-    return await this.logicFunctionFromSourceService.createOne({
+    return await this.logicFunctionService.createOne({
       input: {
         id: logicFunctionId,
         name: 'A Code Step',
@@ -130,7 +128,7 @@ export class CodeStepBuildService {
         ownerFlatApplication: resolvedOwnerFlatApplication,
       });
 
-    const created = await this.logicFunctionMetadataService.createOne({
+    const created = await this.logicFunctionService.createOneFromParams({
       input: {
         ...newFlatLogicFunction,
         description: newFlatLogicFunction.description ?? undefined,
@@ -220,7 +218,7 @@ export class CodeStepBuildService {
         continue;
       }
 
-      await this.logicFunctionFromSourceService.buildOneFromSource({
+      await this.logicFunctionService.buildOneFromSource({
         workspaceId,
         id: logicFunctionId,
       });
