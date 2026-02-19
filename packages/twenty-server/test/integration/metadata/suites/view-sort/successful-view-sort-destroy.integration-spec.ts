@@ -3,7 +3,6 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-core-view-sort.util';
-import { deleteOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/delete-one-core-view-sort.util';
 import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
@@ -85,13 +84,13 @@ describe('View Sort deletion should succeed', () => {
     });
   });
 
-  it('should soft delete a view sort', async () => {
+  it('should hard delete (destroy) a view sort', async () => {
     const { data: createData } = await createOneCoreViewSort({
       expectToFail: false,
       input: {
         viewId: createdViewId,
         fieldMetadataId: testFieldMetadataId,
-        direction: ViewSortDirection.ASC,
+        direction: ViewSortDirection.DESC,
       },
     });
 
@@ -99,17 +98,11 @@ describe('View Sort deletion should succeed', () => {
 
     jestExpectToBeDefined(viewSortId);
 
-    const { data: deleteData } = await deleteOneCoreViewSort({
-      expectToFail: false,
+    const { data: destroyData } = await destroyOneCoreViewSort({
       input: { id: viewSortId },
+      expectToFail: false,
     });
 
-    expect(deleteData.deleteCoreViewSort).toBe(true);
-
-    // Clean up
-    await destroyOneCoreViewSort({
-      expectToFail: false,
-      input: { id: viewSortId },
-    });
+    expect(destroyData.destroyCoreViewSort).toBe(true);
   });
 });
