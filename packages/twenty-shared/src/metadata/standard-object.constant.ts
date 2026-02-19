@@ -919,6 +919,18 @@ export const STANDARD_OBJECTS = {
       deletedAt: {
         universalIdentifier: '20202020-a1b5-40b4-9db4-9e0f1a2b3c4d',
       },
+      createdBy: {
+        universalIdentifier: 'f882a070-3393-4197-8140-b5858c6f7284',
+      },
+      updatedBy: {
+        universalIdentifier: '107d13dc-a8ff-493c-8d04-72688c68f8c1',
+      },
+      position: {
+        universalIdentifier: '76fcf020-482a-4d6c-b7b1-ccd6410299fc',
+      },
+      searchVector: {
+        universalIdentifier: '38633a97-0e88-44de-9903-b8c9e0f59a36',
+      },
       messageChannelMessageAssociation: {
         universalIdentifier: '20202020-d4e5-f6a7-b8c9-012345678901',
       },
