@@ -503,7 +503,6 @@ export class PageLayoutUpdateService {
                 flatFieldMetadataMaps.universalIdentifierById,
               viewFieldGroupUniversalIdentifierById:
                 flatViewFieldGroupMaps.universalIdentifierById,
-              shouldThrowOnMissingIdentifier: true,
             }),
         };
       },

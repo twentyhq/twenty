@@ -45,6 +45,7 @@ import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/naviga
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -123,7 +124,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
 
   const dropdownId = `navigation-menu-item-folder-edit-${folder.id}`;
 
-  const isDropdownOpenComponent = useRecoilComponentValue(
+  const isDropdownOpenComponent = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     dropdownId,
   );

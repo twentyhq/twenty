@@ -888,6 +888,9 @@ export const STANDARD_OBJECTS = {
       searchVector: {
         universalIdentifier: 'edddd409-d9f0-4b93-8e3f-37faef6a3387',
       },
+      messageFolders: {
+        universalIdentifier: '20202020-c3d4-e5f6-a7b8-901234567890',
+      },
     },
     indexes: {
       messageChannelIdIndex: {
@@ -898,6 +901,40 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1a16b1c5-2447-4a9d-1b8c-45f6a47989a6',
+      },
+    },
+  },
+  messageChannelMessageAssociationMessageFolder: {
+    universalIdentifier: '20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a',
+    fields: {
+      id: {
+        universalIdentifier: '20202020-a1b2-40b1-8ab1-6b7c8d9e0f1a',
+      },
+      createdAt: {
+        universalIdentifier: '20202020-a1b3-40b2-9bb2-7c8d9e0f1a2b',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-a1b4-40b3-8cb3-8d9e0f1a2b3c',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-a1b5-40b4-9db4-9e0f1a2b3c4d',
+      },
+      messageChannelMessageAssociation: {
+        universalIdentifier: '20202020-d4e5-f6a7-b8c9-012345678901',
+      },
+      messageFolder: {
+        universalIdentifier: '20202020-e5f6-a7b8-c9d0-123456789012',
+      },
+    },
+    indexes: {
+      messageChannelMessageAssociationIdIndex: {
+        universalIdentifier: '2b38d3e7-5779-4c1f-4e0f-78c9d70d1de9',
+      },
+      messageFolderIdIndex: {
+        universalIdentifier: '3c49e4f8-6880-4d2a-5f1a-89d0e81e2ef0',
+      },
+      messageChannelMessageAssociationIdMessageFolderIdUniqueIndex: {
+        universalIdentifier: '4d50f5a9-7991-4e3b-6a2b-90e1f92f3f01',
       },
     },
   },
@@ -1037,6 +1074,9 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: '5f2d3937-bafd-4d71-b4cb-b34037efd2e1',
+      },
+      messageChannelMessageAssociationMessageFolders: {
+        universalIdentifier: '20202020-f6a7-b8c9-d0e1-234567890123',
       },
     },
     indexes: {

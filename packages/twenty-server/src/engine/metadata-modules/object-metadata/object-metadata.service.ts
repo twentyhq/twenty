@@ -473,19 +473,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         });
     }
 
-    const isNavigationMenuItemEnabled =
-      existingFeatureFlagsMap[FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED] ??
-      false;
-
-    const flatNavigationMenuItemToCreate = isNavigationMenuItemEnabled
-      ? await this.computeFlatNavigationMenuItemToCreate({
-          view: flatDefaultViewToCreate,
-          workspaceId,
-          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-          workspaceCustomApplicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        })
-      : null;
+    const flatNavigationMenuItemToCreate =
+      await this.computeFlatNavigationMenuItemToCreate({
+        view: flatDefaultViewToCreate,
+        workspaceId,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -592,12 +587,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    if (!isNavigationMenuItemEnabled) {
-      await this.createWorkspaceFavoriteForNewObjectDefaultView({
-        view: flatDefaultViewToCreate,
-        workspaceId,
-      });
-    }
+    await this.createWorkspaceFavoriteForNewObjectDefaultView({
+      view: flatDefaultViewToCreate,
+      workspaceId,
+    });
 
     return createdFlatObjectMetadata;
   }
