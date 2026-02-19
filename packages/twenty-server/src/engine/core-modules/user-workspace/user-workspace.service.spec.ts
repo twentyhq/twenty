@@ -26,6 +26,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -75,6 +76,12 @@ describe('UserWorkspaceService', () => {
           provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             findOneOrFail: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(RoleEntity),
+          useValue: {
+            findOne: jest.fn(),
           },
         },
         {
