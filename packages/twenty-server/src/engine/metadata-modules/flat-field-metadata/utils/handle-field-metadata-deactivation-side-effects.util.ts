@@ -99,10 +99,25 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
   }));
 
+  // Filter out viewFields and viewFilters belonging to views that are being
+  // deleted. The DB CASCADE on the viewId FK will automatically remove them
+  // when the view is deleted, so explicit delete actions are redundant.
+  // Including them can cause race-condition failures when the runner's cache
+  // no longer contains the viewField/viewFilter at transpilation time.
+  const viewIdsToDeleteSet = new Set(viewIdsToDelete);
+
+  const filteredFlatViewFieldsToDelete = flatViewFieldsToDelete.filter(
+    (viewField) => !viewIdsToDeleteSet.has(viewField.viewId),
+  );
+
+  const filteredFlatViewFiltersToDelete = flatViewFiltersToDelete.filter(
+    (viewFilter) => !viewIdsToDeleteSet.has(viewFilter.viewId),
+  );
+
   return {
     flatViewsToUpdate,
     flatViewsToDelete,
-    flatViewFieldsToDelete,
-    flatViewFiltersToDelete,
+    flatViewFieldsToDelete: filteredFlatViewFieldsToDelete,
+    flatViewFiltersToDelete: filteredFlatViewFiltersToDelete,
   };
 };
