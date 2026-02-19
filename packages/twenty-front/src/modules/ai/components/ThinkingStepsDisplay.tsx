@@ -26,7 +26,7 @@ import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -277,7 +277,7 @@ const ThinkingToolStepRow = ({
     ? unwrappedResult.data.result
     : unwrappedOutput;
   const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}-${rowIndex}`;
-  const activeToolTabId = useRecoilComponentValue(
+  const activeToolTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
     toolTabListComponentInstanceId,
   );

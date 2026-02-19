@@ -13,7 +13,7 @@ import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculate
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useRecoilCallback } from 'recoil';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +35,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   );
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-  const setActiveTabId = useSetRecoilComponentState(
+  const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     tabListInstanceId,
   );

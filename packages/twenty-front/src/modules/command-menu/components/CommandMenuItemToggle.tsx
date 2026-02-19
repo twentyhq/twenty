@@ -1,5 +1,5 @@
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { MenuItemToggle, type MenuItemToggleProps } from 'twenty-ui/navigation';
 
 export type CommandMenuItemToggleProps = MenuItemToggleProps & {
@@ -7,7 +7,7 @@ export type CommandMenuItemToggleProps = MenuItemToggleProps & {
 };
 
 export const CommandMenuItemToggle = (props: CommandMenuItemToggleProps) => {
-  const isSelectedItemId = useRecoilComponentFamilyValue(
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
     props.id,
   );

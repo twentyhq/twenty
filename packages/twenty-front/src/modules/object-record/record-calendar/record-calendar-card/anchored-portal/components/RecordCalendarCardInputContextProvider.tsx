@@ -11,8 +11,8 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 type RecordCalendarCardInputContextProviderProps = {
   children: React.ReactNode;
@@ -58,25 +58,22 @@ export const RecordCalendarCardInputContextProvider = ({
     closeInlineCellAndResetEditModePosition();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    ({ snapshot }) =>
-      ({ newValue, event, skipPersist }) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
-          .getValue();
+  const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
+    ({ newValue, event, skipPersist }) => {
+      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
 
-        if (currentFocusId !== instanceId) {
-          return;
-        }
-        event?.preventDefault();
-        event?.stopImmediatePropagation();
+      if (currentFocusId !== instanceId) {
+        return;
+      }
+      event?.preventDefault();
+      event?.stopImmediatePropagation();
 
-        if (skipPersist !== true) {
-          persistFieldFromFieldInputContext(newValue);
-        }
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
 
-        closeInlineCellAndResetEditModePosition();
-      },
+      closeInlineCellAndResetEditModePosition();
+    },
     [
       closeInlineCellAndResetEditModePosition,
       instanceId,

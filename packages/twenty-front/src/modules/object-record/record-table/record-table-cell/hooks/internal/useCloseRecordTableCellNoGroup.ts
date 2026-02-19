@@ -6,8 +6,8 @@ import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-t
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 
 export const useCloseRecordTableCellNoGroup = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
@@ -21,21 +21,19 @@ export const useCloseRecordTableCellNoGroup = () => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
-    clickOutsideListenerIsActivatedComponentState,
-    RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
-  );
-
-  const closeTableCellNoGroup = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        toggleClickOutside(true);
-        setDragSelectionStartEnabled(true);
-        closeCurrentTableCellInEditMode();
-        set(clickOutsideListenerIsActivatedState, true);
-      },
+  const closeTableCellNoGroup = useCallback(
+    () => {
+      toggleClickOutside(true);
+      setDragSelectionStartEnabled(true);
+      closeCurrentTableCellInEditMode();
+      jotaiStore.set(
+        clickOutsideListenerIsActivatedComponentState.atomFamily({
+          instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+        }),
+        true,
+      );
+    },
     [
-      clickOutsideListenerIsActivatedState,
       closeCurrentTableCellInEditMode,
       setDragSelectionStartEnabled,
       toggleClickOutside,

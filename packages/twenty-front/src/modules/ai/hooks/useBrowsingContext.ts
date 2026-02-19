@@ -14,6 +14,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
@@ -84,13 +85,11 @@ export const useGetBrowsingContext = () => {
           if (isDefined(pageLayoutId)) {
             const tabListInstanceId =
               getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-            const activeTabId = snapshot
-              .getLoadable(
-                activeTabIdComponentState.atomFamily({
-                  instanceId: tabListInstanceId,
-                }),
-              )
-              .getValue();
+            const activeTabId = jotaiStore.get(
+              activeTabIdComponentState.atomFamily({
+                instanceId: tabListInstanceId,
+              }),
+            );
 
             return {
               ...recordContext,

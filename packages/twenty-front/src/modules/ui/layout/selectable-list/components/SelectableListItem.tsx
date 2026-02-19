@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useRef } from 'react';
 
 import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +25,7 @@ export const SelectableListItem = ({
   children,
   onEnter,
 }: SelectableListItemProps) => {
-  const isSelectedItemId = useRecoilComponentFamilyValue(
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
     itemId,
   );

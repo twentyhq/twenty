@@ -1,6 +1,8 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { RecoilRoot, type MutableSnapshot } from 'recoil';
 
@@ -19,14 +21,16 @@ export const PageLayoutTestWrapper = ({
   const instanceId = instanceIdFromProps ?? PAGE_LAYOUT_TEST_INSTANCE_ID;
 
   return (
-    <PageLayoutComponentInstanceContext.Provider value={{ instanceId }}>
-      <TabListComponentInstanceContext.Provider
-        value={{
-          instanceId: getTabListInstanceIdFromPageLayoutId(instanceId),
-        }}
-      >
-        <RecoilRoot initializeState={initializeState}>{children}</RecoilRoot>
-      </TabListComponentInstanceContext.Provider>
-    </PageLayoutComponentInstanceContext.Provider>
+    <JotaiProvider store={jotaiStore}>
+      <PageLayoutComponentInstanceContext.Provider value={{ instanceId }}>
+        <TabListComponentInstanceContext.Provider
+          value={{
+            instanceId: getTabListInstanceIdFromPageLayoutId(instanceId),
+          }}
+        >
+          <RecoilRoot initializeState={initializeState}>{children}</RecoilRoot>
+        </TabListComponentInstanceContext.Provider>
+      </PageLayoutComponentInstanceContext.Provider>
+    </JotaiProvider>
   );
 };

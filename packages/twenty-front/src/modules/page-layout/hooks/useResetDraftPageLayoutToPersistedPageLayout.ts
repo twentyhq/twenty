@@ -7,6 +7,7 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,10 +37,9 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     componentInstanceId,
   );
 
-  const activeTabIdState = useRecoilComponentCallbackState(
-    activeTabIdComponentState,
-    tabListComponentInstanceId,
-  );
+  const activeTabIdAtom = activeTabIdComponentState.atomFamily({
+    instanceId: tabListComponentInstanceId,
+  });
 
   const resetDraftPageLayoutToPersistedPageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -49,9 +49,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
           .getValue();
 
         if (isDefined(pageLayoutPersisted)) {
-          const currentActiveTabId = snapshot
-            .getLoadable(activeTabIdState)
-            .getValue();
+          const currentActiveTabId = jotaiStore.get(activeTabIdAtom);
 
           const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
           const isActiveTabInPersistedTabs =
@@ -61,7 +59,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
             !isActiveTabInPersistedTabs &&
             pageLayoutPersisted.tabs.length > 0
           ) {
-            set(activeTabIdState, pageLayoutPersisted.tabs[0].id);
+            jotaiStore.set(activeTabIdAtom, pageLayoutPersisted.tabs[0].id);
           }
 
           set(pageLayoutDraftState, {
@@ -80,7 +78,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       pageLayoutDraftState,
       pageLayoutPersistedState,
       pageLayoutCurrentLayoutsState,
-      activeTabIdState,
+      activeTabIdAtom,
     ],
   );
 

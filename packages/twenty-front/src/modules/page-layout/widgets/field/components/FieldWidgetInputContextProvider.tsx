@@ -8,7 +8,8 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 
 type FieldWidgetInputContextProviderProps = {
   children: React.ReactNode;
@@ -46,25 +47,22 @@ export const FieldWidgetInputContextProvider = ({
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    ({ snapshot }) =>
-      ({ newValue, event, skipPersist }) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
-          .getValue();
+  const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
+    ({ newValue, event, skipPersist }) => {
+      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
 
-        if (currentFocusId !== instanceId) {
-          return;
-        }
-        event?.preventDefault();
-        event?.stopImmediatePropagation();
+      if (currentFocusId !== instanceId) {
+        return;
+      }
+      event?.preventDefault();
+      event?.stopImmediatePropagation();
 
-        if (skipPersist !== true) {
-          persistFieldFromFieldInputContext(newValue);
-        }
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
 
-        closeInlineCell();
-      },
+      closeInlineCell();
+    },
     [closeInlineCell, instanceId, persistFieldFromFieldInputContext],
   );
 

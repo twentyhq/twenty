@@ -1,5 +1,6 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { act, renderHook } from '@testing-library/react';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
@@ -10,6 +11,13 @@ import {
 
 describe('usePageLayoutHandleLayoutChange', () => {
   it('should update layouts for specific tab only', () => {
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+      }),
+      'tab-1',
+    );
+
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
@@ -19,20 +27,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
         ),
       }),
       {
-        wrapper: ({ children }) => (
-          <PageLayoutTestWrapper
-            initializeState={({ set }) => {
-              set(
-                activeTabIdComponentState.atomFamily({
-                  instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
-                }),
-                'tab-1',
-              );
-            }}
-          >
-            {children}
-          </PageLayoutTestWrapper>
-        ),
+        wrapper: PageLayoutTestWrapper,
       },
     );
 
@@ -57,6 +52,13 @@ describe('usePageLayoutHandleLayoutChange', () => {
   });
 
   it('should isolate layouts between different tabs', () => {
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+      }),
+      'tab-1',
+    );
+
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
@@ -66,20 +68,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
         ),
       }),
       {
-        wrapper: ({ children }) => (
-          <PageLayoutTestWrapper
-            initializeState={({ set }) => {
-              set(
-                activeTabIdComponentState.atomFamily({
-                  instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
-                }),
-                'tab-1',
-              );
-            }}
-          >
-            {children}
-          </PageLayoutTestWrapper>
-        ),
+        wrapper: PageLayoutTestWrapper,
       },
     );
 

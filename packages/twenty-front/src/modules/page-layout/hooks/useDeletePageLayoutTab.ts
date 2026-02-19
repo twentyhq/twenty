@@ -7,6 +7,7 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 
 export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
@@ -26,10 +27,10 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   );
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-  const activeTabIdState = useRecoilComponentCallbackState(
-    activeTabIdComponentState,
-    tabListInstanceId,
-  );
+
+  const activeTabIdAtom = activeTabIdComponentState.atomFamily({
+    instanceId: tabListInstanceId,
+  });
 
   const deleteTab = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -42,7 +43,7 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         const sorted = sortTabsByPosition(draft.tabs);
         const index = sorted.findIndex((t) => t.id === tabId);
 
-        const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
+        const activeTabId = jotaiStore.get(activeTabIdAtom);
 
         const allLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
@@ -58,10 +59,10 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         if (activeTabId === tabId) {
           const neighbor = index > 0 ? sorted[index - 1] : sorted[index + 1];
           const nextActiveId = neighbor?.id ?? null;
-          set(activeTabIdState, nextActiveId);
+          jotaiStore.set(activeTabIdAtom, nextActiveId);
         }
       },
-    [pageLayoutCurrentLayoutsState, pageLayoutDraftState, activeTabIdState],
+    [pageLayoutCurrentLayoutsState, pageLayoutDraftState, activeTabIdAtom],
   );
 
   return { deleteTab };

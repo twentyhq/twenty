@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
@@ -8,7 +8,7 @@ import {
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
@@ -75,19 +75,16 @@ export const DateInput = ({
     onEscape(internalValue);
   };
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      (event: MouseEvent | TouchEvent) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
-          .getValue();
+  const handleClickOutside = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
 
-        if (currentFocusId === instanceId) {
-          closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-          closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-          onClickOutside(event, internalValue);
-        }
-      },
+      if (currentFocusId === instanceId) {
+        closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+        closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
+        onClickOutside(event, internalValue);
+      }
+    },
     [
       instanceId,
       closeDropdownYearSelect,

@@ -115,7 +115,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
         emitSidePanelCloseEvent();
         set(isCommandMenuClosingState, false);
-        set(
+        jotaiStore.set(
           activeTabIdComponentState.atomFamily({
             instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
           }),
@@ -125,7 +125,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         for (const [pageId, morphItems] of snapshot
           .getLoadable(commandMenuNavigationMorphItemsByPageState)
           .getValue()) {
-          set(
+          jotaiStore.set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,

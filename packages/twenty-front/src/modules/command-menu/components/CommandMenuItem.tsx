@@ -5,7 +5,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -44,7 +44,7 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const isSelectedItemId = useRecoilComponentFamilyValue(
+  const isSelectedItemId = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
     id,
   );
