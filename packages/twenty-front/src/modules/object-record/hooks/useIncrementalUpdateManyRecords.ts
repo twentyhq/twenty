@@ -5,7 +5,7 @@ import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIn
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 
 const DEFAULT_DELAY_BETWEEN_MUTATIONS_MS = 50;

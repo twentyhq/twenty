@@ -38,7 +38,12 @@ export const ObjectFilterDropdownDateInput = () => {
     useApplyObjectFilterDropdownFilterValue();
 
   const handleAbsoluteDateChange = (newPlainDate: string | null) => {
-    const newFilterValue = newPlainDate ?? '';
+    if (!isDefined(newPlainDate)) {
+      applyObjectFilterDropdownFilterValue('', '');
+      return;
+    }
+
+    const newFilterValue = newPlainDate;
 
     // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
@@ -91,6 +96,7 @@ export const ObjectFilterDropdownDateInput = () => {
       ? handleRelativeDateChange(null)
       : handleAbsoluteDateChange(null);
   };
+
   const resolvedValue = objectFilterDropdownCurrentRecordFilter
     ? resolveDateFilter(objectFilterDropdownCurrentRecordFilter)
     : null;
@@ -100,7 +106,7 @@ export const ObjectFilterDropdownDateInput = () => {
       ? resolvedValue
       : undefined;
 
-  const plainDateValue =
+  const safePlainDateValue: string | undefined =
     resolvedValue && typeof resolvedValue === 'string'
       ? resolvedValue
       : undefined;
@@ -110,7 +116,7 @@ export const ObjectFilterDropdownDateInput = () => {
       instanceId={`object-filter-dropdown-date-input`}
       relativeDate={relativeDate}
       isRelative={isRelativeOperand}
-      plainDateString={plainDateValue ?? null}
+      plainDateString={safePlainDateValue ?? null}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       onClear={handleClear}

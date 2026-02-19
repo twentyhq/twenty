@@ -4,14 +4,22 @@ import {
   type EsbuildWatcher,
 } from '@/cli/utilities/build/common/esbuild-watcher';
 import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watcher';
+import { TscWatcher } from '@/cli/utilities/build/common/tsc-watcher';
+import { type TypecheckError } from '@/cli/utilities/build/common/typecheck-plugin';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-import { type UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import type { Location } from 'esbuild';
 import { type EventName } from 'chokidar/handler.js';
 import { ASSETS_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+
+export type FileBuiltEvent = {
+  fileFolder: FileFolder;
+  builtPath: string;
+  sourcePath: string;
+  checksum: string;
+};
 
 export type StartWatchersOrchestratorStepOutput = {
   watchersStarted: boolean;
@@ -21,24 +29,25 @@ export class StartWatchersOrchestratorStep {
   private state: OrchestratorState;
   private scheduleSync: () => void;
   private notify: () => void;
-  private uploadFilesStep: UploadFilesOrchestratorStep;
+  private onFileBuilt: (event: FileBuiltEvent) => void;
 
   private manifestWatcher: ManifestWatcher | null = null;
   private logicFunctionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
   private assetWatcher: FileUploadWatcher | null = null;
   private dependencyWatcher: FileUploadWatcher | null = null;
+  private tscWatcher: TscWatcher | null = null;
 
   constructor(options: {
     state: OrchestratorState;
     scheduleSync: () => void;
     notify: () => void;
-    uploadFilesStep: UploadFilesOrchestratorStep;
+    onFileBuilt: (event: FileBuiltEvent) => void;
   }) {
     this.state = options.state;
     this.scheduleSync = options.scheduleSync;
     this.notify = options.notify;
-    this.uploadFilesStep = options.uploadFilesStep;
+    this.onFileBuilt = options.onFileBuilt;
   }
 
   async start(): Promise<void> {
@@ -74,6 +83,8 @@ export class StartWatchersOrchestratorStep {
   }
 
   async close(): Promise<void> {
+    this.tscWatcher?.close();
+
     await Promise.all([
       this.manifestWatcher?.close(),
       this.logicFunctionsWatcher?.close(),
@@ -117,32 +128,20 @@ export class StartWatchersOrchestratorStep {
     this.notify();
   }
 
-  private handleFileBuilt({
-    fileFolder,
-    builtPath,
-    sourcePath,
-    checksum,
-  }: {
-    fileFolder: FileFolder;
-    builtPath: string;
-    sourcePath: string;
-    checksum: string;
-  }): void {
+  private handleFileBuilt(event: FileBuiltEvent): void {
     this.state.addEvent({
-      message: `Successfully built ${builtPath}`,
+      message: `Successfully built ${event.builtPath}`,
       status: 'success',
     });
 
-    this.state.steps.uploadFiles.output.builtFileInfos.set(builtPath, {
-      checksum,
-      builtPath,
-      sourcePath,
-      fileFolder,
+    this.state.steps.uploadFiles.output.builtFileInfos.set(event.builtPath, {
+      checksum: event.checksum,
+      builtPath: event.builtPath,
+      sourcePath: event.sourcePath,
+      fileFolder: event.fileFolder,
     });
 
-    if (this.state.steps.uploadFiles.output.fileUploader) {
-      this.uploadFilesStep.uploadFile(builtPath, sourcePath, fileFolder);
-    }
+    this.onFileBuilt(event);
 
     this.notify();
     this.scheduleSync();
@@ -153,6 +152,7 @@ export class StartWatchersOrchestratorStep {
     frontComponents: string[],
   ): Promise<void> {
     await Promise.all([
+      this.startTscWatcher(),
       this.startLogicFunctionsWatcher(logicFunctions),
       this.startFrontComponentsWatcher(frontComponents),
       this.startAssetWatcher(),
@@ -206,5 +206,32 @@ export class StartWatchersOrchestratorStep {
     });
 
     this.dependencyWatcher.start();
+  }
+
+  private async startTscWatcher(): Promise<void> {
+    this.tscWatcher = new TscWatcher({
+      appPath: this.state.appPath,
+      onErrors: this.handleTypecheckErrors.bind(this),
+    });
+
+    await this.tscWatcher.start();
+  }
+
+  private handleTypecheckErrors(errors: TypecheckError[]): void {
+    if (errors.length === 0) {
+      this.state.addEvent({
+        message: 'Typecheck passed',
+        status: 'success',
+      });
+    } else {
+      this.state.applyStepEvents(
+        errors.map((error) => ({
+          message: `Type error in ${error.file}(${error.line},${error.column}): ${error.text}`,
+          status: 'error' as const,
+        })),
+      );
+    }
+
+    this.notify();
   }
 }

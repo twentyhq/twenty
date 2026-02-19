@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
-import { useListenToObjectRecordEventsForQuery } from '@/sse-db-event/hooks/useListenToObjectRecordEventsForQuery';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 
 export const RecordBoardSSESubscribeEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
@@ -13,7 +13,7 @@ export const RecordBoardSSESubscribeEffect = () => {
 
   const queryId = `record-board-${recordBoardId}`;
 
-  useListenToObjectRecordEventsForQuery({
+  useListenToEventsForQuery({
     queryId,
     operationSignature: {
       objectNameSingular: objectMetadataItem.nameSingular,

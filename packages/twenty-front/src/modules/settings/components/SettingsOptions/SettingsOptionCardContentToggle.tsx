@@ -3,13 +3,17 @@ import {
   StyledSettingsCardContent,
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import {
+  type IconComponent,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 
 const StyledSettingsCardToggleContent = styled(StyledSettingsCardContent)`
@@ -27,6 +31,7 @@ const StyledSettingsCardToggleButton = styled(Toggle)<{
 }>`
   align-self: ${({ toggleCentered }) =>
     toggleCentered ? 'center' : 'flex-start'};
+  flex-shrink: 0;
   margin-left: auto;
 `;
 
@@ -39,7 +44,7 @@ const StyledSettingsCardToggleCover = styled.span`
 type SettingsOptionCardContentToggleProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: React.ReactNode;
+  description?: string;
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;
@@ -70,17 +75,19 @@ export const SettingsOptionCardContentToggle = ({
             <SettingsOptionIconCustomizer Icon={Icon} />
           </StyledSettingsCardIcon>
         )}
-        <div>
+        <StyledSettingsCardTextContainer>
           <StyledSettingsCardTitle>
             <label htmlFor={toggleId}>
               {title}
               <StyledSettingsCardToggleCover />
             </label>
           </StyledSettingsCardTitle>
-          <StyledSettingsCardDescription>
-            {description}
-          </StyledSettingsCardDescription>
-        </div>
+          {description && (
+            <StyledSettingsCardDescription>
+              <OverflowingTextWithTooltip text={description} />
+            </StyledSettingsCardDescription>
+          )}
+        </StyledSettingsCardTextContainer>
         <StyledSettingsCardToggleButton
           id={toggleId}
           value={checked}

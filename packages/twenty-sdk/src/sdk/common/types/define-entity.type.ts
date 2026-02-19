@@ -2,6 +2,7 @@ import { type ApplicationConfig } from '@/sdk/application/application-config';
 import { type FrontComponentConfig } from '@/sdk/front-component-config';
 import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
 import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
 import {
   type FieldManifest,
@@ -23,7 +24,8 @@ export type DefinableEntity =
   | LogicFunctionConfig
   | RoleManifest
   | ViewConfig
-  | NavigationMenuItemManifest;
+  | NavigationMenuItemManifest
+  | PageLayoutConfig;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: T,

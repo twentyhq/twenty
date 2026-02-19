@@ -1,4 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsLogicFunctionsTable } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -40,7 +41,7 @@ export const SettingsApplicationDetailContentTab = ({
       )
       .map((objectMetadataItem) => {
         const nonSystemFields = objectMetadataItem.fields.filter(
-          (field) => !field.isSystem,
+          (field) => !isHiddenSystemField(field),
         );
 
         const fields: ApplicationDataTableFieldItem[] = nonSystemFields.map(

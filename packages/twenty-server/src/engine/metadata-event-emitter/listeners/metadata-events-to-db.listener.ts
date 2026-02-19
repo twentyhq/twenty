@@ -8,13 +8,15 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
 import { CallWebhookJobsForMetadataJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs-for-metadata.job';
-import { AllMetadataEventType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
+import { type AllMetadataEventType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 @Injectable()
 export class MetadataEventsToDbListener {
   constructor(
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
+    private readonly workspaceEventEmitterService: WorkspaceEventEmitterService,
   ) {}
 
   @OnEvent('metadata.*.created')
@@ -49,5 +51,9 @@ export class MetadataEventsToDbListener {
     >(CallWebhookJobsForMetadataJob.name, metadataEventBatch, {
       retryLimit: 3,
     });
+
+    if (metadataEventBatch.events.length > 0) {
+      await this.workspaceEventEmitterService.publish(metadataEventBatch);
+    }
   }
 }

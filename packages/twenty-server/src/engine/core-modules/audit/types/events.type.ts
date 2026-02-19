@@ -23,13 +23,13 @@ import {
   type CustomDomainDeactivatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import {
-  type MONITORING_EVENT,
-  type MonitoringTrackEvent,
-} from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
-import {
   type LOGIC_FUNCTION_EXECUTED_EVENT,
   type LogicFunctionExecutedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
+import {
+  type MONITORING_EVENT,
+  type MonitoringTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
   type USER_SIGNUP_EVENT,
   type UserSignupTrackEvent,

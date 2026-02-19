@@ -5,9 +5,7 @@ import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RemoveFromFavoritesSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -16,9 +14,6 @@ export const RemoveFromFavoritesSingleRecordAction = () => {
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
-  );
 
   const { deleteFavorite } = useDeleteFavorite();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
@@ -27,28 +22,21 @@ export const RemoveFromFavoritesSingleRecordAction = () => {
     (favorite) => favorite.recordId === recordId,
   );
 
-  const foundNavigationMenuItem = isNavigationMenuItemEnabled
-    ? [...navigationMenuItems, ...workspaceNavigationMenuItems].find(
-        (item) =>
-          item.targetRecordId === recordId &&
-          item.targetObjectMetadataId === objectMetadataItem.id,
-      )
-    : undefined;
+  const foundNavigationMenuItem = [
+    ...navigationMenuItems,
+    ...workspaceNavigationMenuItems,
+  ].find(
+    (item) =>
+      item.targetRecordId === recordId &&
+      item.targetObjectMetadataId === objectMetadataItem.id,
+  );
 
   const handleClick = () => {
-    if (isNavigationMenuItemEnabled) {
-      if (!isDefined(foundNavigationMenuItem)) {
-        return;
-      }
-
-      deleteNavigationMenuItem(foundNavigationMenuItem.id);
+    if (!isDefined(foundNavigationMenuItem) || !isDefined(foundFavorite)) {
       return;
     }
 
-    if (!isDefined(foundFavorite)) {
-      return;
-    }
-
+    deleteNavigationMenuItem(foundNavigationMenuItem.id);
     deleteFavorite(foundFavorite.id);
   };
 
