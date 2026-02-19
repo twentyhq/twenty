@@ -11,7 +11,7 @@ import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
   const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       ({
         workflowSelectedNode,
         stepExecutionStatus,

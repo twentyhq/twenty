@@ -1,12 +1,10 @@
 import { renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
+import { Provider, useAtomValue } from 'jotai';
+import { type ReactNode, act } from 'react';
 import { RecoilRoot } from 'recoil';
-import { Provider } from 'jotai';
-import { useAtomValue } from 'jotai';
 
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { act } from 'react';
 
 const modalId = 'test-modal-id';
 

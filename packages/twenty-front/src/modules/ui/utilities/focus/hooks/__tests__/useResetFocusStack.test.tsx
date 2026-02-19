@@ -4,7 +4,10 @@ import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocus
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { jotaiStore, resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';

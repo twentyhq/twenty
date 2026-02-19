@@ -14,7 +14,6 @@ export const useGlobalHotkeysCallback = (
 ) => {
   const dependencyArray = Array.isArray(dependencies) ? dependencies : [];
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(
     ({
       callback,

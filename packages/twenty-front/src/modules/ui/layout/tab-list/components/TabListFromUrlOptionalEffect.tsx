@@ -15,7 +15,9 @@ export const TabListFromUrlOptionalEffect = ({
 }: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
   const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
-  const setActiveTabId = useSetRecoilComponentStateV2(activeTabIdComponentState);
+  const setActiveTabId = useSetRecoilComponentStateV2(
+    activeTabIdComponentState,
+  );
 
   const hash = location.hash.replace('#', '');
 

@@ -21,24 +21,21 @@ export const useCloseRecordTableCellInGroup = () => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const closeTableCellInGroup = useCallback(
-    () => {
-      toggleClickOutside(true);
-      setDragSelectionStartEnabled(true);
-      closeCurrentTableCellInEditMode();
-      jotaiStore.set(
-        clickOutsideListenerIsActivatedComponentState.atomFamily({
-          instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
-        }),
-        true,
-      );
-    },
-    [
-      closeCurrentTableCellInEditMode,
-      setDragSelectionStartEnabled,
-      toggleClickOutside,
-    ],
-  );
+  const closeTableCellInGroup = useCallback(() => {
+    toggleClickOutside(true);
+    setDragSelectionStartEnabled(true);
+    closeCurrentTableCellInEditMode();
+    jotaiStore.set(
+      clickOutsideListenerIsActivatedComponentState.atomFamily({
+        instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+      }),
+      true,
+    );
+  }, [
+    closeCurrentTableCellInEditMode,
+    setDragSelectionStartEnabled,
+    toggleClickOutside,
+  ]);
 
   return {
     closeTableCellInGroup,

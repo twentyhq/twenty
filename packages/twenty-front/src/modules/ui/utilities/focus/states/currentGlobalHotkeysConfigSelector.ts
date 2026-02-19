@@ -17,5 +17,4 @@ export const currentGlobalHotkeysConfigSelector =
 
       return lastFocusStackItem.globalHotkeysConfig;
     },
-  },
-);
+  });
