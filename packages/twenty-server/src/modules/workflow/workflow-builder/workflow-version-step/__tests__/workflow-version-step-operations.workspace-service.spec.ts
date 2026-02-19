@@ -6,7 +6,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -26,7 +26,7 @@ const mockWorkspaceId = 'workspace-id';
 describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let service: WorkflowVersionStepOperationsWorkspaceService;
   let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
-  let logicFunctionService: jest.Mocked<LogicFunctionService>;
+  let logicFunctionFromSourceService: jest.Mocked<LogicFunctionFromSourceService>;
   let codeStepBuildService: jest.Mocked<CodeStepBuildService>;
   let agentRepository: jest.Mocked<any>;
   let roleTargetRepository: jest.Mocked<any>;
@@ -91,10 +91,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       }),
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
-    logicFunctionService = {
-      createOneFromParams: jest.fn(),
+    logicFunctionFromSourceService = {
       deleteOne: jest.fn(),
-    } as unknown as jest.Mocked<LogicFunctionService>;
+    } as unknown as jest.Mocked<LogicFunctionFromSourceService>;
 
     agentRepository = {
       findOne: jest.fn(),
@@ -138,8 +137,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: globalWorkspaceOrmManager,
         },
         {
-          provide: LogicFunctionService,
-          useValue: logicFunctionService,
+          provide: LogicFunctionFromSourceService,
+          useValue: logicFunctionFromSourceService,
         },
         {
           provide: CodeStepBuildService,
@@ -213,7 +212,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionService.deleteOne).toHaveBeenCalledWith({
+      expect(logicFunctionFromSourceService.deleteOne).toHaveBeenCalledWith({
         id: 'function-id',
         workspaceId: mockWorkspaceId,
       });
@@ -323,10 +322,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
       };
-
-      logicFunctionService.createOneFromParams.mockResolvedValue(
-        mockFlatLogicFunction,
-      );
 
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
@@ -439,10 +434,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
             universalIdentifiersByApplicationId: {},
           },
         },
-      );
-
-      logicFunctionService.createOneFromParams.mockResolvedValue(
-        mockNewFlatLogicFunction,
       );
 
       const clonedStep = await service.cloneStep({

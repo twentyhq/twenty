@@ -5,6 +5,11 @@ import { join } from 'path';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'twenty-shared/logic-function';
+import {
+  type CronTriggerSettings,
+  type DatabaseEventTriggerSettings,
+  type HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -33,11 +38,12 @@ import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/meta
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
 import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class LogicFunctionService {
+export class LogicFunctionFromSourceService {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
@@ -46,7 +52,7 @@ export class LogicFunctionService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
-  async createOne({
+  async createOneFromSource({
     input,
     workspaceId,
   }: {
@@ -116,7 +122,7 @@ export class LogicFunctionService {
     return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
   }
 
-  async createOneFromParams({
+  private async createOneFromParams({
     input,
     workspaceId,
     ownerFlatApplication,
@@ -165,6 +171,97 @@ export class LogicFunctionService {
     }
 
     return flatLogicFunctionToCreate;
+  }
+
+  async duplicateOneWithSource({
+    existingLogicFunctionId,
+    workspaceId,
+  }: {
+    existingLogicFunctionId: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const existingLogicFunction = findFlatLogicFunctionOrThrow({
+      id: existingLogicFunctionId,
+      flatLogicFunctionMaps,
+    });
+
+    const ownerFlatApplication = (
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      )
+    ).workspaceCustomFlatApplication;
+
+    const newId = v4();
+
+    const { sourceHandlerPath, builtHandlerPath } = existingLogicFunction;
+
+    const toSourceHandlerPath = sourceHandlerPath.replace(
+      existingLogicFunction.id,
+      newId,
+    );
+    const toBuiltHandlerPath = builtHandlerPath.replace(
+      existingLogicFunction.id,
+      newId,
+    );
+
+    await this.logicFunctionResourceService.copyResources({
+      fromSourceHandlerPath: sourceHandlerPath,
+      toSourceHandlerPath,
+      fromBuiltHandlerPath: builtHandlerPath,
+      toBuiltHandlerPath,
+      workspaceId,
+      applicationUniversalIdentifier:
+        ownerFlatApplication.universalIdentifier,
+    });
+
+    const created = await this.createOneFromParams({
+      input: {
+        id: newId,
+        universalIdentifier: v4(),
+        name: existingLogicFunction.name,
+        description: existingLogicFunction.description ?? undefined,
+        timeoutSeconds: existingLogicFunction.timeoutSeconds,
+        toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
+        isTool: existingLogicFunction.isTool,
+        isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
+        checksum:
+          existingLogicFunction.checksum ?? '[default-checksum]',
+        handlerName: existingLogicFunction.handlerName,
+        sourceHandlerPath: toSourceHandlerPath,
+        builtHandlerPath: toBuiltHandlerPath,
+        cronTriggerSettings:
+          existingLogicFunction.cronTriggerSettings as
+            | JsonbProperty<CronTriggerSettings>
+            | undefined,
+        databaseEventTriggerSettings:
+          existingLogicFunction.databaseEventTriggerSettings as
+            | JsonbProperty<DatabaseEventTriggerSettings>
+            | undefined,
+        httpRouteTriggerSettings:
+          existingLogicFunction.httpRouteTriggerSettings as
+            | JsonbProperty<HttpRouteTriggerSettings>
+            | undefined,
+      },
+      workspaceId,
+      ownerFlatApplication,
+    });
+
+    if (!isDefined(created)) {
+      throw new LogicFunctionException(
+        'Failed to duplicate logic function',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    return created;
   }
 
   async updateOne({

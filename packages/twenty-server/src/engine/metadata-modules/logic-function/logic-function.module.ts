@@ -17,7 +17,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -42,10 +42,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SecretEncryptionModule,
   ],
   providers: [
-    LogicFunctionService,
+    LogicFunctionFromSourceService,
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
-  exports: [LogicFunctionService],
+  exports: [LogicFunctionFromSourceService],
 })
 export class LogicFunctionModule {}

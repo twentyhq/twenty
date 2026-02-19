@@ -23,7 +23,7 @@ import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
@@ -37,7 +37,7 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class LogicFunctionResolver {
   constructor(
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly subscriptionService: SubscriptionService,
   ) {}
@@ -140,7 +140,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      return await this.logicFunctionService.deleteOne({
+      return await this.logicFunctionFromSourceService.deleteOne({
         id,
         workspaceId,
       });
@@ -156,7 +156,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      return await this.logicFunctionService.createOne({
+      return await this.logicFunctionFromSourceService.createOneFromSource({
         input,
         workspaceId,
       });
@@ -172,7 +172,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionExecutionResultDTO> {
     try {
-      return await this.logicFunctionService.executeOne({
+      return await this.logicFunctionFromSourceService.executeOne({
         id,
         payload,
         workspaceId,
@@ -189,7 +189,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      return await this.logicFunctionService.getSourceCode({
+      return await this.logicFunctionFromSourceService.getSourceCode({
         id,
         workspaceId,
       });
@@ -205,7 +205,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     try {
-      await this.logicFunctionService.updateOne({
+      await this.logicFunctionFromSourceService.updateOne({
         id,
         update,
         workspaceId,
