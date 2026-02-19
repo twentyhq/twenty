@@ -1,7 +1,6 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_OBJECT } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorObject';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
@@ -150,7 +149,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       ? isNonEmptyString(navigationMenuItem?.color)
         ? navigationMenuItem.color
         : (getStandardObjectIconColor(objectMetadataItem.nameSingular) ??
-          DEFAULT_NAVIGATION_MENU_ITEM_COLOR_OBJECT)
+          'gray')
       : undefined;
 
   const secondaryLabel =
