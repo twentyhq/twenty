@@ -136,14 +136,18 @@ export const triggerCreateRecordsOptimisticEffect = ({
                 isDefined(rootQueryFilter) &&
                 shouldMatchRootQueryFilter === true
               ) {
-                const recordToCreateMatchesThisRootQueryFilter =
-                  isRecordMatchingFilter({
-                    record: recordToCreate,
-                    filter: rootQueryFilter,
-                    objectMetadataItem,
-                  });
+                try {
+                  const recordToCreateMatchesThisRootQueryFilter =
+                    isRecordMatchingFilter({
+                      record: recordToCreate,
+                      filter: rootQueryFilter,
+                      objectMetadataItem,
+                    });
 
-                if (!recordToCreateMatchesThisRootQueryFilter) {
+                  if (!recordToCreateMatchesThisRootQueryFilter) {
+                    return false;
+                  }
+                } catch {
                   return false;
                 }
               }
