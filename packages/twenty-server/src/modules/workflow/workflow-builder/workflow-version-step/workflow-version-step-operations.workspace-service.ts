@@ -9,6 +9,7 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
+  getFunctionInputFromInputSchema,
   type StepIfElseBranch,
 } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
@@ -181,7 +182,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionInput: newLogicFunction.toolInputSchema ?? {},
+                logicFunctionInput: isDefined(newLogicFunction.toolInputSchema)
+                  ? (getFunctionInputFromInputSchema([
+                      newLogicFunction.toolInputSchema,
+                    ])[0] ?? {})
+                  : {},
               },
             },
           },

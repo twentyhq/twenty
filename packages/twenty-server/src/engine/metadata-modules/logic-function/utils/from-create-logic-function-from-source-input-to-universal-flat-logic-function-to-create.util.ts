@@ -42,8 +42,7 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       name,
       description: description ?? null,
       runtime: LogicFunctionRuntime.NODE22,
-      timeoutSeconds:
-        createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
+      timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       checksum,
       toolInputSchema,
       isTool: createLogicFunctionFromSourceInput.isTool ?? false,
@@ -54,8 +53,7 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       cronTriggerSettings:
         createLogicFunctionFromSourceInput.cronTriggerSettings ?? null,
       databaseEventTriggerSettings:
-        createLogicFunctionFromSourceInput.databaseEventTriggerSettings ??
-        null,
+        createLogicFunctionFromSourceInput.databaseEventTriggerSettings ?? null,
       httpRouteTriggerSettings:
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
       createdAt: now,

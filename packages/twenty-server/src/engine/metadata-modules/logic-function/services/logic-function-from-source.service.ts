@@ -66,7 +66,10 @@ export class LogicFunctionFromSourceService {
       const universalFlatLogicFunctionToCreate =
         fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate(
           {
-            createLogicFunctionFromSourceInput: { ...input, id: logicFunctionId },
+            createLogicFunctionFromSourceInput: {
+              ...input,
+              id: logicFunctionId,
+            },
             sourceHandlerPath,
             builtHandlerPath,
             handlerName: input.source.handlerName,
