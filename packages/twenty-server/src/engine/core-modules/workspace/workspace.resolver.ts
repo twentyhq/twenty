@@ -475,12 +475,8 @@ export class WorkspaceResolver {
   )
   async enterprisePortalSession(
     @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
-    @AuthUser() user?: UserEntity,
   ): Promise<string | null> {
-    return this.enterpriseKeyService.getPortalUrl(
-      returnUrlPath ?? undefined,
-      user?.email,
-    );
+    return this.enterpriseKeyService.getPortalUrl(returnUrlPath ?? undefined);
   }
 
   @Query(() => String, { nullable: true })

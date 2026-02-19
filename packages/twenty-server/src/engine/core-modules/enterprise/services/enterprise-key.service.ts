@@ -316,10 +316,7 @@ export class EnterpriseKeyService implements OnModuleInit {
     }
   }
 
-  async getPortalUrl(
-    returnUrl?: string,
-    userEmail?: string,
-  ): Promise<string | null> {
+  async getPortalUrl(returnUrl?: string): Promise<string | null> {
     if (!this.twentyConfigService.isSelfHost()) {
       return null;
     }
@@ -335,14 +332,6 @@ export class EnterpriseKeyService implements OnModuleInit {
 
     if (enterpriseKey && isDefined(this.cachedKeyPayload)) {
       return this.requestPortalUrlWithKey(apiUrl, enterpriseKey, returnUrl);
-    }
-
-    if (userEmail?.trim()) {
-      return this.requestPortalUrlForNewUser(
-        apiUrl,
-        userEmail.trim(),
-        returnUrl,
-      );
     }
 
     return null;
@@ -376,40 +365,6 @@ export class EnterpriseKeyService implements OnModuleInit {
     } catch (error) {
       this.logger.warn(
         `Enterprise portal request failed: ${error instanceof Error ? error.message : 'Network error'}`,
-      );
-
-      return null;
-    }
-  }
-
-  private async requestPortalUrlForNewUser(
-    apiUrl: string,
-    userEmail: string,
-    returnUrl?: string,
-  ): Promise<string | null> {
-    const portalSessionNewUrl = `${apiUrl}/portal-session-new`;
-
-    try {
-      const response = await fetch(portalSessionNewUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, returnUrl }),
-      });
-
-      if (!response.ok) {
-        this.logger.warn(
-          `Enterprise portal-session-new request failed with status ${response.status}`,
-        );
-
-        return null;
-      }
-
-      const data = await response.json();
-
-      return data.url ?? null;
-    } catch (error) {
-      this.logger.warn(
-        `Enterprise portal-session-new request failed: ${error instanceof Error ? error.message : 'Network error'}`,
       );
 
       return null;
