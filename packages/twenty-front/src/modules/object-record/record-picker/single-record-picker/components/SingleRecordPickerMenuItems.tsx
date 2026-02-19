@@ -15,7 +15,7 @@ import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-rec
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -54,7 +54,7 @@ export const SingleRecordPickerMenuItems = ({
   );
 
   const isSelectedSelectNoneButton = useRecoilComponentFamilyValueV2(
-    isSelectedItemIdComponentFamilySelector,
+    isSelectedItemIdComponentFamilyState,
     selectableListComponentInstanceId,
     'select-none',
   );

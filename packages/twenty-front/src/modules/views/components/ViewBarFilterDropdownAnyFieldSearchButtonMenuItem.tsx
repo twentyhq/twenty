@@ -1,5 +1,5 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
@@ -30,7 +30,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
   );
 
   const isSelected = useRecoilComponentFamilyValueV2(
-    isSelectedItemIdComponentFamilySelector,
+    isSelectedItemIdComponentFamilyState,
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
   );
 

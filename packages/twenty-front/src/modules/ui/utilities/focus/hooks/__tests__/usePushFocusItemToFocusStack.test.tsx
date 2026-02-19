@@ -3,17 +3,19 @@ import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocus
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import {
-  jotaiStore,
-  resetJotaiStore,
-} from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
-import { Provider as JotaiProvider } from 'jotai';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-);
+const createTestWrapper = () => {
+  const store = createStore();
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <JotaiProvider store={store}>{children}</JotaiProvider>
+  );
+
+  return Wrapper;
+};
 
 const renderHooks = () => {
   const { result } = renderHook(
@@ -29,7 +31,7 @@ const renderHooks = () => {
       };
     },
     {
-      wrapper: Wrapper,
+      wrapper: createTestWrapper(),
     },
   );
 
@@ -37,10 +39,6 @@ const renderHooks = () => {
 };
 
 describe('usePushFocusItemToFocusStack', () => {
-  beforeEach(() => {
-    resetJotaiStore();
-  });
-
   it('should push focus item to the stack', async () => {
     const { result } = renderHooks();
 

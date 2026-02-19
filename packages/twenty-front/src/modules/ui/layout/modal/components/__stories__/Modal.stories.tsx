@@ -1,46 +1,38 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { type Decorator } from '@storybook/react-vite';
+
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useMemo } from 'react';
-import { createStore, Provider } from 'jotai';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
 
-const JotaiInitDecorator = (Story: React.ComponentType) => {
-  const store = useMemo(() => {
-    const jotaiStore = createStore();
-    jotaiStore.set(
-      isModalOpenedComponentState.atomFamily({
-        instanceId: 'modal-id',
-      }),
-      true,
-    );
-    jotaiStore.set(focusStackState.atom, [
-      {
-        focusId: 'modal-id',
-        componentInstance: {
-          componentType: FocusComponentType.MODAL,
-          componentInstanceId: 'modal-id',
-        },
-        globalHotkeysConfig: {
-          enableGlobalHotkeysWithModifiers: true,
-          enableGlobalHotkeysConflictingWithKeyboard: true,
-        },
-      },
-    ]);
-    return jotaiStore;
-  }, []);
-
-  return (
-    <Provider store={store}>
-      <Story />
-    </Provider>
+const JotaiInitDecorator: Decorator = (Story) => {
+  jotaiStore.set(
+    isModalOpenedComponentState.atomFamily({
+      instanceId: 'modal-id',
+    }),
+    true,
   );
+  jotaiStore.set(focusStackState.atom, [
+    {
+      focusId: 'modal-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'modal-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
+      },
+    },
+  ]);
+  return <Story />;
 };
 
 const meta: Meta<typeof Modal> = {

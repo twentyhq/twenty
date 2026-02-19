@@ -2,7 +2,7 @@ import { type ActionDisplayProps } from '@/action-menu/actions/display/component
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +32,7 @@ export const ActionDropdownItem = ({
   );
 
   const isSelected = useRecoilComponentFamilyValueV2(
-    isSelectedItemIdComponentFamilySelector,
+    isSelectedItemIdComponentFamilyState,
     action.key,
     selectableListInstanceId,
   );
