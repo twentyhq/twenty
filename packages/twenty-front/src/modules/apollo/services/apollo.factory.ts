@@ -4,7 +4,7 @@ import {
   ApolloLink,
   type FetchResult,
   fromPromise,
-  type Observable,
+  Observable,
   type Operation,
   type ServerError,
   type ServerParseError,
@@ -181,7 +181,16 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             });
         }
 
-        return fromPromise(renewalPromise).flatMap(() => forward(operation));
+        return fromPromise(renewalPromise).flatMap(() => {
+          // If token pair is not available after renewal attempt,
+          // don't retry the operation — renewal has failed and the
+          // user has already been redirected to the sign-in page.
+          if (isUndefinedOrNull(getTokenPair())) {
+            return new Observable<FetchResult>(() => {});
+          }
+
+          return forward(operation);
+        });
       };
 
       const sendToSentry = ({
