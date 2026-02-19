@@ -8,6 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { join } from 'path';
+
 import { Request, Response } from 'express';
 import { FileFolder } from 'twenty-shared/types';
 
@@ -45,12 +47,14 @@ export class FileController {
     @Param('applicationId')
     applicationId: string,
   ) {
+    const filepath = join(...req.params.path);
+
     try {
       const fileStream = await this.fileService.getFileStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
-        filepath: req.path,
+        filepath,
       });
 
       fileStream.on('error', () => {
