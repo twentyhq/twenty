@@ -174,14 +174,27 @@ export class MessageImportExceptionHandlerService {
           ? exception.throttleRetryAfter
           : undefined;
 
-      await messageChannelRepository.update(
-        { id: messageChannel.id },
-        {
-          throttleRetryAfter: isDefined(throttleRetryAfter)
-            ? throttleRetryAfter.toISOString()
-            : null,
-        },
-      );
+      try {
+        await messageChannelRepository.update(
+          { id: messageChannel.id },
+          {
+            throttleRetryAfter: isDefined(throttleRetryAfter)
+              ? throttleRetryAfter.toISOString()
+              : null,
+          },
+        );
+      } catch (updateError) {
+        if (
+          !(
+            updateError instanceof Error &&
+            updateError.message.includes(
+              'Field metadata for field "throttleRetryAfter" is missing',
+            )
+          )
+        ) {
+          throw updateError;
+        }
+      }
     }, authContext);
 
     switch (syncStep) {

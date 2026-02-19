@@ -202,16 +202,37 @@ export class MessagingMessagesImportService {
             'messageChannel',
           );
 
-        await messageChannelRepository.update(
-          {
-            id: messageChannel.id,
-          },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-          },
-        );
+        try {
+          await messageChannelRepository.update(
+            {
+              id: messageChannel.id,
+            },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+            },
+          );
+        } catch (updateError) {
+          if (
+            updateError instanceof Error &&
+            updateError.message.includes(
+              'Field metadata for field "throttleRetryAfter" is missing',
+            )
+          ) {
+            await messageChannelRepository.update(
+              {
+                id: messageChannel.id,
+              },
+              {
+                throttleFailureCount: 0,
+                syncStageStartedAt: null,
+              },
+            );
+          } else {
+            throw updateError;
+          }
+        }
 
         return await this.trackMessageImportCompleted(
           messageChannel,
