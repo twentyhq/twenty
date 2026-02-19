@@ -1,7 +1,9 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-
-import { type Decorator } from '@storybook/react-vite';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';

@@ -53,7 +53,7 @@ export const useKeyboardShortcutMenu = () => {
     } else {
       closeKeyboardShortcutMenu();
     }
-  }, [closeKeyboardShortcutMenu, openKeyboardShortcutMenu]);
+  }, [store, closeKeyboardShortcutMenu, openKeyboardShortcutMenu]);
 
   return {
     toggleKeyboardShortcutMenu,
