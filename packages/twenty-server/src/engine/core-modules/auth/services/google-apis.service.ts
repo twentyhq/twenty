@@ -13,6 +13,8 @@ import { CreateMessageChannelService } from 'src/engine/core-modules/auth/servic
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -63,6 +65,7 @@ export class GoogleAPIsService {
     private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
     private readonly googleAPIScopesService: GoogleAPIScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -92,9 +95,15 @@ export class GoogleAPIsService {
       'MESSAGING_PROVIDER_GMAIL_ENABLED',
     );
 
+    const isDraftEmailEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
+      workspaceId,
+    );
+
     const { scopes, isValid } =
       await this.googleAPIScopesService.getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
         input.accessToken,
+        isDraftEmailEnabled,
       );
 
     if (!isValid) {
