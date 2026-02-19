@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import {
   type Hotkey,
   type OptionsOrDependencyArray,
@@ -12,6 +12,8 @@ import { logDebug } from '~/utils/logDebug';
 export const useGlobalHotkeysCallback = (
   dependencies?: OptionsOrDependencyArray,
 ) => {
+  const store = useStore();
+
   const dependencyArray = Array.isArray(dependencies) ? dependencies : [];
 
   return useCallback(
@@ -28,7 +30,7 @@ export const useGlobalHotkeysCallback = (
       callback: (keyboardEvent: KeyboardEvent, hotkeysEvent: Hotkey) => void;
       preventDefault?: boolean;
     }) => {
-      const currentGlobalHotkeysConfig = jotaiStore.get(
+      const currentGlobalHotkeysConfig = store.get(
         currentGlobalHotkeysConfigSelector.atom,
       );
 
@@ -78,6 +80,6 @@ export const useGlobalHotkeysCallback = (
 
       return callback(keyboardEvent, hotkeysEvent);
     },
-    dependencyArray,
+    [...dependencyArray, store],
   );
 };

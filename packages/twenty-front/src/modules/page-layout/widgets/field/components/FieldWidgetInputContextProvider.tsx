@@ -8,7 +8,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 type FieldWidgetInputContextProviderProps = {
@@ -18,6 +18,7 @@ type FieldWidgetInputContextProviderProps = {
 export const FieldWidgetInputContextProvider = ({
   children,
 }: FieldWidgetInputContextProviderProps) => {
+  const store = useStore();
   const { closeInlineCell } = useInlineCell();
 
   const instanceId = useAvailableComponentInstanceId(
@@ -49,7 +50,7 @@ export const FieldWidgetInputContextProvider = ({
 
   const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
     ({ newValue, event, skipPersist }) => {
-      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId !== instanceId) {
         return;
@@ -63,7 +64,7 @@ export const FieldWidgetInputContextProvider = ({
 
       closeInlineCell();
     },
-    [closeInlineCell, instanceId, persistFieldFromFieldInputContext],
+    [closeInlineCell, instanceId, persistFieldFromFieldInputContext, store],
   );
 
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {

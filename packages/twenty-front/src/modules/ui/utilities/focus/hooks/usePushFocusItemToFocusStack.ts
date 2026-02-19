@@ -5,7 +5,7 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { type FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { logDebug } from '~/utils/logDebug';
 
 const addOrMoveItemToTheTopOfTheStack = ({
@@ -23,6 +23,8 @@ const addOrMoveItemToTheTopOfTheStack = ({
 ];
 
 export const usePushFocusItemToFocusStack = () => {
+  const store = useStore();
+
   const pushFocusItemToFocusStack = useCallback(
     ({
       focusId,
@@ -51,14 +53,14 @@ export const usePushFocusItemToFocusStack = () => {
         },
       };
 
-      const currentFocusStack = jotaiStore.get(focusStackState.atom);
+      const currentFocusStack = store.get(focusStackState.atom);
 
       const newFocusStack = addOrMoveItemToTheTopOfTheStack({
         focusStackItem,
         currentFocusStack,
       });
 
-      jotaiStore.set(focusStackState.atom, newFocusStack);
+      store.set(focusStackState.atom, newFocusStack);
 
       if (DEBUG_FOCUS_STACK) {
         logDebug(`DEBUG: pushFocusItemToFocusStack ${focusId}`, {
@@ -67,7 +69,7 @@ export const usePushFocusItemToFocusStack = () => {
         });
       }
     },
-    [],
+    [store],
   );
 
   return { pushFocusItemToFocusStack };

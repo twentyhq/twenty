@@ -8,7 +8,7 @@ import {
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { type Nullable } from 'twenty-ui/utilities';
 
 export type DateInputProps = {
@@ -39,6 +39,8 @@ export const DateInput = ({
   onSubmit,
   hideHeaderInput,
 }: DateInputProps) => {
+  const store = useStore();
+
   const [internalValue, setInternalValue] = useState(value);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -77,7 +79,7 @@ export const DateInput = ({
 
   const handleClickOutside = useCallback(
     (event: MouseEvent | TouchEvent) => {
-      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId === instanceId) {
         closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
@@ -91,6 +93,7 @@ export const DateInput = ({
       closeDropdownMonthSelect,
       onClickOutside,
       internalValue,
+      store,
     ],
   );
 

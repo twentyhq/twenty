@@ -14,10 +14,12 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
+  const store = useStore();
+
   const getBrowsingContext = useRecoilCallback(
     ({ snapshot }) =>
       (): BrowsingContext | null => {
@@ -85,7 +87,7 @@ export const useGetBrowsingContext = () => {
           if (isDefined(pageLayoutId)) {
             const tabListInstanceId =
               getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-            const activeTabId = jotaiStore.get(
+            const activeTabId = store.get(
               activeTabIdComponentState.atomFamily({
                 instanceId: tabListInstanceId,
               }),
@@ -153,7 +155,7 @@ export const useGetBrowsingContext = () => {
 
         return null;
       },
-    [],
+    [store],
   );
 
   return { getBrowsingContext };

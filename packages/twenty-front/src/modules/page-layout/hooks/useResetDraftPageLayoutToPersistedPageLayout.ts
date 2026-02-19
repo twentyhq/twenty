@@ -7,7 +7,7 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,6 +19,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     pageLayoutIdFromProps,
   );
 
+  const store = useStore();
   const tabListComponentInstanceId =
     getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
@@ -49,7 +50,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
           .getValue();
 
         if (isDefined(pageLayoutPersisted)) {
-          const currentActiveTabId = jotaiStore.get(activeTabIdAtom);
+          const currentActiveTabId = store.get(activeTabIdAtom);
 
           const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
           const isActiveTabInPersistedTabs =
@@ -59,7 +60,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
             !isActiveTabInPersistedTabs &&
             pageLayoutPersisted.tabs.length > 0
           ) {
-            jotaiStore.set(activeTabIdAtom, pageLayoutPersisted.tabs[0].id);
+            store.set(activeTabIdAtom, pageLayoutPersisted.tabs[0].id);
           }
 
           set(pageLayoutDraftState, {
@@ -79,6 +80,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       pageLayoutPersistedState,
       pageLayoutCurrentLayoutsState,
       activeTabIdAtom,
+      store,
     ],
   );
 

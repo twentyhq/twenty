@@ -2,13 +2,15 @@ import { useCallback } from 'react';
 
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { logDebug } from '~/utils/logDebug';
 
 export const useRemoveFocusItemFromFocusStackById = () => {
+  const store = useStore();
+
   const removeFocusItemFromFocusStackById = useCallback(
     ({ focusId }: { focusId: string }) => {
-      const focusStack = jotaiStore.get(focusStackState.atom);
+      const focusStack = store.get(focusStackState.atom);
 
       const removedFocusItem = focusStack.find(
         (focusStackItem) => focusStackItem.focusId === focusId,
@@ -22,7 +24,7 @@ export const useRemoveFocusItemFromFocusStackById = () => {
         (focusStackItem) => focusStackItem.focusId !== focusId,
       );
 
-      jotaiStore.set(focusStackState.atom, newFocusStack);
+      store.set(focusStackState.atom, newFocusStack);
 
       if (DEBUG_FOCUS_STACK) {
         logDebug(`DEBUG: removeFocusItemFromFocusStack ${focusId}`, {
@@ -30,7 +32,7 @@ export const useRemoveFocusItemFromFocusStackById = () => {
         });
       }
     },
-    [],
+    [store],
   );
 
   return { removeFocusItemFromFocusStackById };

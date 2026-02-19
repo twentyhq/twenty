@@ -11,7 +11,7 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 type RecordCalendarCardInputContextProviderProps = {
@@ -21,6 +21,7 @@ type RecordCalendarCardInputContextProviderProps = {
 export const RecordCalendarCardInputContextProvider = ({
   children,
 }: RecordCalendarCardInputContextProviderProps) => {
+  const store = useStore();
   const { closeInlineCell } = useInlineCell();
   const setRecordCalendarCardEditModePosition = useSetRecoilComponentState(
     recordCalendarCardEditModePositionComponentState,
@@ -60,7 +61,7 @@ export const RecordCalendarCardInputContextProvider = ({
 
   const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
     ({ newValue, event, skipPersist }) => {
-      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId !== instanceId) {
         return;
@@ -78,6 +79,7 @@ export const RecordCalendarCardInputContextProvider = ({
       closeInlineCellAndResetEditModePosition,
       instanceId,
       persistFieldFromFieldInputContext,
+      store,
     ],
   );
 

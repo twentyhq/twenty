@@ -16,7 +16,7 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateWidgetMinimumSizeForGraphType';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated-metadata/graphql';
@@ -46,6 +46,8 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
+
+  const store = useStore();
 
   const getConfigToUpdateAfterGraphTypeChange = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -160,7 +162,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
           };
         }
 
-        const activeTabId = jotaiStore.get(
+        const activeTabId = store.get(
           activeTabIdComponentState.atomFamily({
             instanceId: tabListInstanceId,
           }),
@@ -188,6 +190,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       objectMetadataItems,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
+      store,
       tabListInstanceId,
       widget.objectMetadataId,
     ],

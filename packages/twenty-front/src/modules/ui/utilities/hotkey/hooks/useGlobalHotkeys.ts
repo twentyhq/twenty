@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
   type HotkeyCallback,
@@ -26,6 +26,8 @@ export const useGlobalHotkeys = ({
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
+  const store = useStore();
+
   const callGlobalHotkeysCallback = useGlobalHotkeysCallback(dependencies);
 
   const enableOnContentEditable = isDefined(options?.enableOnContentEditable)
@@ -46,15 +48,15 @@ export const useGlobalHotkeys = ({
 
   const handleCallback = useCallback(
     async (keyboardEvent: KeyboardEvent, hotkeysEvent: any) => {
-      const pendingHotkey = jotaiStore.get(pendingHotkeyState.atom);
+      const pendingHotkey = store.get(pendingHotkeyState.atom);
 
       if (!pendingHotkey) {
         callback(keyboardEvent, hotkeysEvent);
       }
 
-      jotaiStore.set(pendingHotkeyState.atom, null);
+      store.set(pendingHotkeyState.atom, null);
     },
-    [callback],
+    [callback, store],
   );
 
   return useHotkeys(

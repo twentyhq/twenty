@@ -7,7 +7,7 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
@@ -26,6 +26,7 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
+  const store = useStore();
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const activeTabIdAtom = activeTabIdComponentState.atomFamily({
@@ -43,7 +44,7 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         const sorted = sortTabsByPosition(draft.tabs);
         const index = sorted.findIndex((t) => t.id === tabId);
 
-        const activeTabId = jotaiStore.get(activeTabIdAtom);
+        const activeTabId = store.get(activeTabIdAtom);
 
         const allLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
@@ -59,10 +60,15 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         if (activeTabId === tabId) {
           const neighbor = index > 0 ? sorted[index - 1] : sorted[index + 1];
           const nextActiveId = neighbor?.id ?? null;
-          jotaiStore.set(activeTabIdAtom, nextActiveId);
+          store.set(activeTabIdAtom, nextActiveId);
         }
       },
-    [pageLayoutCurrentLayoutsState, pageLayoutDraftState, activeTabIdAtom],
+    [
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      activeTabIdAtom,
+      store,
+    ],
   );
 
   return { deleteTab };

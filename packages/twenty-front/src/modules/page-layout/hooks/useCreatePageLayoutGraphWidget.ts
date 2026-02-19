@@ -16,7 +16,7 @@ import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -34,6 +34,7 @@ export const useCreatePageLayoutGraphWidget = (
     pageLayoutIdFromProps,
   );
 
+  const store = useStore();
   const { timeZone, calendarStartDay } = useDateTimeFormat();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
@@ -60,7 +61,7 @@ export const useCreatePageLayoutGraphWidget = (
       }: {
         fieldSelection?: GraphWidgetFieldSelection;
       }): PageLayoutWidget => {
-        const activeTabId = jotaiStore.get(
+        const activeTabId = store.get(
           activeTabIdComponentState.atomFamily({
             instanceId: tabListInstanceId,
           }),
@@ -172,6 +173,7 @@ export const useCreatePageLayoutGraphWidget = (
       pageLayoutDraggedAreaState,
       timeZone,
       calendarStartDay,
+      store,
     ],
   );
 

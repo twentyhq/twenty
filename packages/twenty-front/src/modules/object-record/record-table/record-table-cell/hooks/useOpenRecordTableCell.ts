@@ -29,7 +29,7 @@ import { useFocusRecordTableCell } from '@/object-record/record-table/record-tab
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 
 export type OpenTableCellArgs = {
@@ -43,6 +43,7 @@ export type OpenTableCellArgs = {
 
 export const useOpenRecordTableCell = (recordTableId: string) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+  const store = useStore();
 
   const setCurrentTableCellInEditModePosition = useSetRecoilComponentState(
     recordTableCellEditModePositionComponentState,
@@ -87,7 +88,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         recordId,
         isNavigating,
       }: OpenTableCellArgs) => {
-        jotaiStore.set(
+        store.set(
           clickOutsideListenerIsActivatedComponentState.atomFamily({
             instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
           }),
@@ -184,6 +185,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       openRecordFromIndexView,
       activateRecordTableRow,
       unfocusRecordTableRow,
+      store,
     ],
   );
 

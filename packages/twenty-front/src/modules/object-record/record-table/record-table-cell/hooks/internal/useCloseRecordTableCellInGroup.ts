@@ -6,11 +6,12 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useCloseRecordTableCellInGroup = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
+  const store = useStore();
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -25,7 +26,7 @@ export const useCloseRecordTableCellInGroup = () => {
     toggleClickOutside(true);
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
-    jotaiStore.set(
+    store.set(
       clickOutsideListenerIsActivatedComponentState.atomFamily({
         instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
       }),
@@ -35,6 +36,7 @@ export const useCloseRecordTableCellInGroup = () => {
     closeCurrentTableCellInEditMode,
     setDragSelectionStartEnabled,
     toggleClickOutside,
+    store,
   ]);
 
   return {

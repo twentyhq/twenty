@@ -2,7 +2,7 @@ import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-r
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { useRecoilCallback } from 'recoil';
@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
+  const store = useStore();
+
   const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(
     ({ snapshot }) =>
       ({
@@ -28,7 +30,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
           instanceId: commandMenuPageInfo.instanceId,
         });
 
-        const activeWorkflowRunRightDrawerTab = jotaiStore.get(
+        const activeWorkflowRunRightDrawerTab = store.get(
           activeTabIdAtom,
         ) as WorkflowRunTabId | null;
 
@@ -45,7 +47,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
             ? WorkflowRunTabId.NODE
             : WorkflowRunTabId.OUTPUT;
 
-          jotaiStore.set(activeTabIdAtom, defaultTabId);
+          store.set(activeTabIdAtom, defaultTabId);
 
           return;
         }
@@ -56,10 +58,10 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
           (isOutputTabDisabled &&
             activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
         ) {
-          jotaiStore.set(activeTabIdAtom, WorkflowRunTabId.NODE);
+          store.set(activeTabIdAtom, WorkflowRunTabId.NODE);
         }
       },
-    [],
+    [store],
   );
 
   return {

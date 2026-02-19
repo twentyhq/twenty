@@ -11,7 +11,7 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { WORKFLOW_DIAGRAM_CREATE_STEP_NODE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramCreateStepNodeClickOutsideId';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -58,9 +58,11 @@ export const CommandMenuOpenContainer = ({
     isSidePanelAnimatingStateV2,
   );
 
+  const store = useStore();
+
   const handleClickOutside = useCallback(
     (event: MouseEvent | TouchEvent) => {
-      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId === SIDE_PANEL_FOCUS_ID) {
         event.stopImmediatePropagation();
@@ -68,7 +70,7 @@ export const CommandMenuOpenContainer = ({
         closeCommandMenu();
       }
     },
-    [closeCommandMenu],
+    [closeCommandMenu, store],
   );
 
   useListenClickOutside({

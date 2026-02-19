@@ -3,7 +3,7 @@ import { useCallback, useEffect, type RefObject } from 'react';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
@@ -23,15 +23,17 @@ export const useListenClickOutside = <T extends Element>({
   listenerId,
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
+  const store = useStore();
+
   const handleMouseDown = useCallback(
     (event: MouseEvent | TouchEvent) => {
-      const clickOutsideListenerIsActivated = jotaiStore.get(
+      const clickOutsideListenerIsActivated = store.get(
         clickOutsideListenerIsActivatedComponentState.atomFamily({
           instanceId: listenerId,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         clickOutsideListenerMouseDownHappenedComponentState.atomFamily({
           instanceId: listenerId,
         }),
@@ -48,19 +50,19 @@ export const useListenClickOutside = <T extends Element>({
         .filter((ref) => !!ref.current)
         .some((ref) => ref.current?.contains(event.target as Node));
 
-      jotaiStore.set(
+      store.set(
         clickOutsideListenerIsMouseDownInsideComponentState.atomFamily({
           instanceId: listenerId,
         }),
         clickedOnAtLeastOneRef,
       );
     },
-    [listenerId, enabled, refs],
+    [listenerId, enabled, refs, store],
   );
 
   const handleClickOutside = useCallback(
     (event: MouseEvent | TouchEvent) => {
-      const clickOutsideListenerIsActivated = jotaiStore.get(
+      const clickOutsideListenerIsActivated = store.get(
         clickOutsideListenerIsActivatedComponentState.atomFamily({
           instanceId: listenerId,
         }),
@@ -68,13 +70,13 @@ export const useListenClickOutside = <T extends Element>({
 
       const isListening = clickOutsideListenerIsActivated && enabled;
 
-      const isMouseDownInside = jotaiStore.get(
+      const isMouseDownInside = store.get(
         clickOutsideListenerIsMouseDownInsideComponentState.atomFamily({
           instanceId: listenerId,
         }),
       );
 
-      const hasMouseDownHappened = jotaiStore.get(
+      const hasMouseDownHappened = store.get(
         clickOutsideListenerMouseDownHappenedComponentState.atomFamily({
           instanceId: listenerId,
         }),
@@ -134,7 +136,7 @@ export const useListenClickOutside = <T extends Element>({
         callback(event);
       }
     },
-    [listenerId, enabled, refs, excludedClickOutsideIds, callback],
+    [listenerId, enabled, refs, excludedClickOutsideIds, callback, store],
   );
 
   useEffect(() => {

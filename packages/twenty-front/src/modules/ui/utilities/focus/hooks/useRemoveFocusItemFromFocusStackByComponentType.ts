@@ -3,13 +3,15 @@ import { useCallback } from 'react';
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { type FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { logDebug } from '~/utils/logDebug';
 
 export const useRemoveLastFocusItemFromFocusStackByComponentType = () => {
+  const store = useStore();
+
   const removeLastFocusItemFromFocusStackByComponentType = useCallback(
     ({ componentType }: { componentType: FocusComponentType }) => {
-      const focusStack = jotaiStore.get(focusStackState.atom);
+      const focusStack = store.get(focusStackState.atom);
 
       const lastMatchingIndex = focusStack.findLastIndex(
         (focusStackItem) =>
@@ -31,7 +33,7 @@ export const useRemoveLastFocusItemFromFocusStackByComponentType = () => {
         (_, index) => index !== lastMatchingIndex,
       );
 
-      jotaiStore.set(focusStackState.atom, newFocusStack);
+      store.set(focusStackState.atom, newFocusStack);
 
       if (DEBUG_FOCUS_STACK) {
         logDebug(
@@ -43,7 +45,7 @@ export const useRemoveLastFocusItemFromFocusStackByComponentType = () => {
         );
       }
     },
-    [],
+    [store],
   );
 
   return { removeLastFocusItemFromFocusStackByComponentType };

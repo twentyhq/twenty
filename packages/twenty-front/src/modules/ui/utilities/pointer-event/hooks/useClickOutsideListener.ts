@@ -2,12 +2,14 @@ import { useCallback } from 'react';
 
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 export const useClickOutsideListener = (instanceId: string) => {
+  const store = useStore();
+
   const toggleClickOutside = useCallback(
     (activated: boolean) => {
-      jotaiStore.set(
+      store.set(
         clickOutsideListenerIsActivatedComponentState.atomFamily({
           instanceId,
         }),
@@ -15,7 +17,7 @@ export const useClickOutsideListener = (instanceId: string) => {
       );
 
       if (!activated) {
-        jotaiStore.set(
+        store.set(
           clickOutsideListenerMouseDownHappenedComponentState.atomFamily({
             instanceId,
           }),
@@ -23,7 +25,7 @@ export const useClickOutsideListener = (instanceId: string) => {
         );
       }
     },
-    [instanceId],
+    [instanceId, store],
   );
 
   return {

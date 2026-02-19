@@ -24,7 +24,7 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,
-} from '~/generated/graphql';
+} from '~/generated-metadata/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -139,7 +139,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
                   groupByFieldMetadataId:
-                    configuration.secondaryAxisGroupByFieldMetadataId,
+                    configuration.secondaryAxisGroupByFieldMetadataId ?? '',
                 })}
                 selected={
                   configuration.secondaryAxisOrderBy === sortOption.value

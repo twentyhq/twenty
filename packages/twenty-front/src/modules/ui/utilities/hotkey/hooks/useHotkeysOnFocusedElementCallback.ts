@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import {
   type Hotkey,
   type OptionsOrDependencyArray,
@@ -12,6 +12,8 @@ import { logDebug } from '~/utils/logDebug';
 export const useHotkeysOnFocusedElementCallback = (
   dependencies?: OptionsOrDependencyArray,
 ) => {
+  const store = useStore();
+
   const dependencyArray = Array.isArray(dependencies) ? dependencies : [];
 
   return useCallback(
@@ -28,7 +30,7 @@ export const useHotkeysOnFocusedElementCallback = (
       focusId: string;
       preventDefault?: boolean;
     }) => {
-      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId !== focusId) {
         if (DEBUG_FOCUS_STACK) {
@@ -67,6 +69,6 @@ export const useHotkeysOnFocusedElementCallback = (
 
       return callback(keyboardEvent, hotkeysEvent);
     },
-    dependencyArray,
+    [...dependencyArray, store],
   );
 };

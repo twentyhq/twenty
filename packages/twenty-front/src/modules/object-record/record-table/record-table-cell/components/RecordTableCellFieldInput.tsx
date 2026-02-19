@@ -11,11 +11,12 @@ import {
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const RecordTableCellFieldInput = () => {
   const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
+  const store = useStore();
 
   const instanceId = useAvailableComponentInstanceId(
     RecordFieldComponentInstanceContext,
@@ -47,7 +48,7 @@ export const RecordTableCellFieldInput = () => {
 
   const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
     ({ newValue, event, skipPersist }) => {
-      const currentFocusId = jotaiStore.get(currentFocusIdSelector.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId !== instanceId) {
         return;
@@ -61,7 +62,7 @@ export const RecordTableCellFieldInput = () => {
 
       onCloseTableCell();
     },
-    [onCloseTableCell, instanceId, persistFieldFromFieldInputContext],
+    [onCloseTableCell, instanceId, persistFieldFromFieldInputContext, store],
   );
 
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
