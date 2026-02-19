@@ -17,7 +17,6 @@ import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationComma
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
-import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
@@ -57,7 +56,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateTaskTargetToMorphRelationsCommand: MigrateTaskTargetToMorphRelationsCommand,
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
     protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
 
     // 1.18 Commands
@@ -94,7 +92,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.deleteFileRecordsAndUpdateTableCommand,
-      this.migrateWorkflowCodeStepsCommand,
       this.backfillApplicationPackageFilesCommand,
       this.fixMorphRelationFieldNamesCommand,
     ];
