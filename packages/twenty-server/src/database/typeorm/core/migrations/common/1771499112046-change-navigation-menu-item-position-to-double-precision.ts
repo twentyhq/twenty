@@ -7,19 +7,13 @@ export class ChangeNavigationMenuItemPositionToDoublePrecision1771499112046
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "position"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "position" double precision NOT NULL`,
+      `ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "position" TYPE double precision`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" DROP COLUMN "position"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD "position" integer NOT NULL`,
+      `ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "position" TYPE integer`,
     );
   }
 }
