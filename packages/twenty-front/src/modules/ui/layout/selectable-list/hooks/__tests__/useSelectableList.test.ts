@@ -1,12 +1,12 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
+import { Provider } from 'jotai';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 const selectableListComponentInstanceId = 'testId';
 const testArr = [['1'], ['2'], ['3']];
@@ -16,12 +16,12 @@ describe('useSelectableList', () => {
   it('Should setSelectableItemIds', async () => {
     const { result } = renderHook(
       () => {
-        const setSelectableItemIds = useSetRecoilComponentState(
+        const setSelectableItemIds = useSetRecoilComponentStateV2(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
 
-        const selectableItemIds = useRecoilComponentValue(
+        const selectableItemIds = useRecoilComponentValueV2(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
@@ -32,7 +32,7 @@ describe('useSelectableList', () => {
         };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: Provider,
       },
     );
 
@@ -52,11 +52,11 @@ describe('useSelectableList', () => {
           selectableListComponentInstanceId,
         );
 
-        const selectedItemId = useRecoilComponentValue(
+        const selectedItemId = useRecoilComponentValueV2(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );
-        const setSelectedItemId = useSetRecoilComponentState(
+        const setSelectedItemId = useSetRecoilComponentStateV2(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );
@@ -67,7 +67,7 @@ describe('useSelectableList', () => {
         };
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: Provider,
       },
     );
 

@@ -1,15 +1,16 @@
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSortedArray = <T>(
   arrayToSort: T[],
   tableMetadata: TableMetadata<T>,
 ): T[] => {
-  const sortedFieldByTable = useRecoilValue(
-    sortedFieldByTableFamilyState({ tableId: tableMetadata.tableId }),
+  const sortedFieldByTable = useFamilyRecoilValueV2(
+    sortedFieldByTableFamilyState,
+    { tableId: tableMetadata.tableId },
   );
 
   const initialSort = tableMetadata.initialSort;

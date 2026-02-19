@@ -931,34 +931,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }, authContext);
   }
 
-  public async deleteWorkspaceAllObjectMetadata({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }) {
-    const { flatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const deleteObjectInputs = Object.keys(
-      flatObjectMetadataMaps.universalIdentifierById,
-    )
-      .filter(isDefined)
-      .map<DeleteOneObjectInput>((id) => ({
-        id,
-      }));
-
-    await this.deleteManyObjectMetadatas({
-      deleteObjectInputs,
-      workspaceId,
-      isSystemBuild: true,
-    });
-  }
-
   public async findOneWithinWorkspace(
     workspaceId: string,
     options: FindOneOptions<ObjectMetadataEntity>,

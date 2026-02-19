@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
@@ -110,7 +111,7 @@ export const SettingsObjectFieldTable = ({
     const filteredBySystem = showSystemFields
       ? settingsObjectFields
       : settingsObjectFields?.filter(
-          (fieldMetadataItem) => !fieldMetadataItem.isSystem,
+          (fieldMetadataItem) => !isHiddenSystemField(fieldMetadataItem),
         );
 
     const fieldsToDisplay = excludeRelations

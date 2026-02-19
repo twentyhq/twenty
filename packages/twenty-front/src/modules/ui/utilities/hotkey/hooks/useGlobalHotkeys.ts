@@ -1,12 +1,14 @@
+import { useCallback } from 'react';
+
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
+import { useStore } from 'jotai';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
   type HotkeyCallback,
   type Keys,
   type Options,
 } from 'react-hotkeys-hook/dist/types';
-import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
@@ -24,6 +26,8 @@ export const useGlobalHotkeys = ({
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
+  const store = useStore();
+
   const callGlobalHotkeysCallback = useGlobalHotkeysCallback(dependencies);
 
   const enableOnContentEditable = isDefined(options?.enableOnContentEditable)
@@ -42,20 +46,17 @@ export const useGlobalHotkeys = ({
     ? options.ignoreModifiers === true
     : false;
 
-  const handleCallback = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (keyboardEvent: KeyboardEvent, hotkeysEvent: any) => {
-        const pendingHotkey = snapshot
-          .getLoadable(pendingHotkeyState)
-          .getValue();
+  const handleCallback = useCallback(
+    async (keyboardEvent: KeyboardEvent, hotkeysEvent: any) => {
+      const pendingHotkey = store.get(pendingHotkeyState.atom);
 
-        if (!pendingHotkey) {
-          callback(keyboardEvent, hotkeysEvent);
-        }
+      if (!pendingHotkey) {
+        callback(keyboardEvent, hotkeysEvent);
+      }
 
-        set(pendingHotkeyState, null);
-      },
-    [callback],
+      store.set(pendingHotkeyState.atom, null);
+    },
+    [callback, store],
   );
 
   return useHotkeys(

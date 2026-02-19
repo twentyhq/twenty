@@ -151,6 +151,8 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
         {
           buildOptions: {
             isSystemBuild: true,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
           },
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: {
@@ -166,8 +168,7 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
+
           idByUniversalIdentifierByMetadataName,
         },
       );

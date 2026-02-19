@@ -4,7 +4,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseAnyOpenDropdown = () => {
@@ -13,14 +13,14 @@ export const useCloseAnyOpenDropdown = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const store = useStore();
+
   const closeAnyOpenDropdown = useCallback(() => {
-    const previousDropdownFocusId = jotaiStore.get(
+    const previousDropdownFocusId = store.get(
       previousDropdownFocusIdState.atom,
     );
 
-    const activeDropdownFocusId = jotaiStore.get(
-      activeDropdownFocusIdState.atom,
-    );
+    const activeDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
     const thereIsNoDropdownOpen =
       !isDefined(activeDropdownFocusId) && !isDefined(previousDropdownFocusId);
@@ -45,9 +45,9 @@ export const useCloseAnyOpenDropdown = () => {
       });
     }
 
-    jotaiStore.set(previousDropdownFocusIdState.atom, null);
-    jotaiStore.set(activeDropdownFocusIdState.atom, null);
-  }, [closeDropdown, removeFocusItemFromFocusStackById]);
+    store.set(previousDropdownFocusIdState.atom, null);
+    store.set(activeDropdownFocusIdState.atom, null);
+  }, [closeDropdown, removeFocusItemFromFocusStackById, store]);
 
   return { closeAnyOpenDropdown };
 };

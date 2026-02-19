@@ -51,9 +51,15 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Field type POSITION is a system type and cannot be created manually.",
-                "userFriendlyMessage": "Field type POSITION is a system type and cannot be created manually.",
-                "value": "POSITION",
+                "message": "Field type POSITION must be named "position", got "positionField"",
+                "userFriendlyMessage": "Field type POSITION must be named "position"",
+                "value": "positionField",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Field type POSITION must be a system field",
+                "userFriendlyMessage": "Field type POSITION must be a system field",
+                "value": false,
               },
             ],
             "flatEntityMinimalInformation": {
