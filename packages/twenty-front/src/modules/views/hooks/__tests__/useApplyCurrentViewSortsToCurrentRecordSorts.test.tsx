@@ -105,6 +105,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
 
     expect(result.current.currentSorts).toEqual([
       {
+        __typename: 'ViewSort',
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,

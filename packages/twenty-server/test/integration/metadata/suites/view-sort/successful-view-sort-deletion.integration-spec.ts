@@ -102,10 +102,11 @@ describe('View Sort deletion should succeed', () => {
 
     const { data: deleteData } = await deleteOneCoreViewSort({
       expectToFail: false,
-      viewSortId,
+      input: { id: viewSortId },
     });
 
-    expect(deleteData.deleteCoreViewSort).toBe(true);
+    expect(deleteData.deleteCoreViewSort.id).toBe(viewSortId);
+    expect(deleteData.deleteCoreViewSort.deletedAt).toBeDefined();
 
     const { data: findData } = await findCoreViewSorts({
       expectToFail: false,
@@ -120,7 +121,7 @@ describe('View Sort deletion should succeed', () => {
 
     await destroyOneCoreViewSort({
       expectToFail: false,
-      viewSortId,
+      input: { id: viewSortId },
     });
   });
 
@@ -140,9 +141,9 @@ describe('View Sort deletion should succeed', () => {
 
     const { data: destroyData } = await destroyOneCoreViewSort({
       expectToFail: false,
-      viewSortId,
+      input: { id: viewSortId },
     });
 
-    expect(destroyData.destroyCoreViewSort).toBe(true);
+    expect(destroyData.destroyCoreViewSort.id).toBe(viewSortId);
   });
 });

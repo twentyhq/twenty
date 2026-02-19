@@ -26,7 +26,7 @@ describe('View Sort deletion should fail', () => {
     async ({ context }) => {
       const { errors } = await deleteOneCoreViewSort({
         expectToFail: true,
-        viewSortId: context.viewSortId,
+        input: { id: context.viewSortId },
       });
 
       expectOneNotInternalServerErrorSnapshot({
@@ -38,7 +38,7 @@ describe('View Sort deletion should fail', () => {
   it('should fail when destroying non-existent view sort', async () => {
     const { errors } = await destroyOneCoreViewSort({
       expectToFail: true,
-      viewSortId: v4(),
+      input: { id: v4() },
     });
 
     expectOneNotInternalServerErrorSnapshot({

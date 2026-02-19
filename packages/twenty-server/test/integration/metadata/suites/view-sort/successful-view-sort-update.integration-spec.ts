@@ -104,7 +104,7 @@ describe('View Sort update should succeed', () => {
     if (createdViewSortId) {
       await destroyOneCoreViewSort({
         expectToFail: false,
-        viewSortId: createdViewSortId,
+        input: { id: createdViewSortId },
       });
       createdViewSortId = '';
     }
