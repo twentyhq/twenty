@@ -28,17 +28,6 @@ export class ObjectRecordCountService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    const tableNameToNamePlural = new Map<string, string>();
-
-    for (const flatObjectMetadata of flatObjectMetadatas) {
-      const tableName = computeTableName(
-        flatObjectMetadata.nameSingular,
-        flatObjectMetadata.isCustom,
-      );
-
-      tableNameToNamePlural.set(tableName, flatObjectMetadata.namePlural);
-    }
-
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const dataSource =
@@ -65,16 +54,15 @@ export class ObjectRecordCountService {
       );
     }
 
-    return flatObjectMetadatas.map((flatObjectMetadata) => {
-      const tableName = computeTableName(
-        flatObjectMetadata.nameSingular,
-        flatObjectMetadata.isCustom,
-      );
-
-      return {
-        objectNamePlural: flatObjectMetadata.namePlural,
-        totalCount: countByTableName.get(tableName) ?? 0,
-      };
-    });
+    return flatObjectMetadatas.map((flatObjectMetadata) => ({
+      objectNamePlural: flatObjectMetadata.namePlural,
+      totalCount:
+        countByTableName.get(
+          computeTableName(
+            flatObjectMetadata.nameSingular,
+            flatObjectMetadata.isCustom,
+          ),
+        ) ?? 0,
+    }));
   }
 }
