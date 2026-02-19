@@ -6,4 +6,5 @@ export type FrontComponentManifest = {
   builtComponentPath: string;
   builtComponentChecksum: string;
   componentName: string;
+  isHeadless?: boolean;
 };
