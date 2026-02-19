@@ -51,6 +51,12 @@ export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { definePageLayout } from './page-layouts/define-page-layout';
 export type { PageLayoutConfig } from './page-layouts/page-layout-config';
+export {
+  AggregateOperations,
+  ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
+export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
 export { defineView } from './views/define-view';

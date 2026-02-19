@@ -24,7 +24,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
     gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-    position: pageLayoutWidgetManifest.position ?? null,
+    position: null,
     universalConfiguration:
       pageLayoutWidgetManifest.configuration as UniversalFlatPageLayoutWidget['universalConfiguration'],
     createdAt: now,

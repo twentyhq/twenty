@@ -27,40 +27,53 @@ Os aplicativos permitem criar e gerenciar personalizações do Twenty **como có
 Crie um novo aplicativo usando o gerador oficial, depois autentique-se e comece a desenvolver:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Criar a estrutura de um novo app (inclui todos os exemplos por padrão)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
+# Se você não usa yarn@4
 corepack enable
 yarn install
 
-# Authenticate using your API key (you'll be prompted)
+# Autentique-se usando sua chave de API (você será solicitado)
 yarn twenty auth:login
 
-# Start dev mode: automatically syncs local changes to your workspace
+# Iniciar modo de desenvolvimento: sincroniza automaticamente as alterações locais com seu workspace
 yarn twenty app:dev
+```
+
+O gerador de estrutura oferece suporte a três modos para controlar quais arquivos de exemplo são incluídos:
+
+```bash filename="Terminal"
+# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação)
+npx create-twenty-app@latest my-app
+
+# Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interativo: selecione quais exemplos incluir
+npx create-twenty-app@latest my-app --interactive
 ```
 
 A partir daqui você pode:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adicionar uma nova entidade à sua aplicação (assistido)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Acompanhar os logs das funções da sua aplicação
 yarn twenty function:logs
 
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
+# Executar uma função pelo nome
+yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
 
-# Execute the post-install function
+# Executar a função de pós-instalação
 yarn twenty function:execute --postInstall
 
-# Uninstall the application from the current workspace
+# Desinstalar a aplicação do espaço de trabalho atual
 yarn twenty app:uninstall
 
-# Display commands' help
+# Exibir a ajuda dos comandos
 yarn twenty help
 ```
 
@@ -73,9 +86,9 @@ Ao executar `npx create-twenty-app@latest my-twenty-app`, o gerador:
 * Copia um aplicativo base mínimo para `my-twenty-app/`
 * Adiciona uma dependência local `twenty-sdk` e a configuração do Yarn 4
 * Cria arquivos de configuração e scripts conectados à CLI `twenty`
-* Generates a default application config, a default function role, and a post-install function
+* Gera arquivos principais (configuração da aplicação, papel padrão para funções de lógica, função de pós-instalação) além de arquivos de exemplo com base no modo de geração de estrutura
 
-Um aplicativo recém-criado pelo scaffold fica assim:
+Um app recém-criado com o modo padrão `--exhaustive` fica assim:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -89,17 +102,27 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Pasta de recursos públicos (imagens, fontes, etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obrigatório - configuração principal da aplicação
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Papel padrão para funções de lógica
+  ├── objects/
+  │   └── example-object.ts             # Exemplo de definição de objeto personalizado
+  ├── fields/
+  │   └── example-field.ts              # Exemplo de definição de campo independente
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
-  └── front-components/
-      └── hello-world.tsx               # Example front component
+  │   ├── hello-world.ts                # Exemplo de função de lógica
+  │   └── post-install.ts               # Função de lógica de pós-instalação
+  ├── front-components/
+  │   └── hello-world.tsx               # Exemplo de componente de front-end
+  ├── views/
+  │   └── example-view.ts                # Exemplo de definição de visualização salva
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Exemplo de link de navegação da barra lateral
 ```
+
+Com `--minimal`, apenas os arquivos principais são criados (`application-config.ts`, `roles/default-role.ts` e `logic-functions/post-install.ts`). Com `--interactive`, você escolhe quais arquivos de exemplo incluir.
 
 Em alto nível:
 
@@ -116,13 +139,15 @@ Em alto nível:
 
 O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas **`export default define<Entity>({...})`**. Cada tipo de entidade tem uma função utilitária correspondente exportada de `twenty-sdk`:
 
-| Função utilitária        | Tipo de entidade                            |
-| ------------------------ | ------------------------------------------- |
-| `defineObject()`         | Definições de objetos personalizados        |
-| `defineLogicFunction()`  | Definições de funções de lógica             |
-| `defineFrontComponent()` | Definições de componentes de front-end      |
-| `defineRole()`           | Definições de papéis                        |
-| `defineField()`          | Extensões de campos para objetos existentes |
+| Função utilitária            | Tipo de entidade                            |
+| ---------------------------- | ------------------------------------------- |
+| `defineObject()`             | Definições de objetos personalizados        |
+| `defineLogicFunction()`      | Definições de funções de lógica             |
+| `defineFrontComponent()`     | Definições de componentes de front-end      |
+| `defineRole()`               | Definições de papéis                        |
+| `defineField()`              | Extensões de campos para objetos existentes |
+| `defineView()`               | Definições de visualizações salvas          |
+| `defineNavigationMenuItem()` | Definições de itens do menu de navegação    |
 
 <Note>
   **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
@@ -187,14 +212,16 @@ O twenty-sdk fornece blocos de construção tipados e funções utilitárias que
 
 O SDK fornece funções utilitárias para definir as entidades do seu app. Conforme descrito em [Detecção de entidades](#entity-detection), você deve usar `export default define<Entity>({...})` para que suas entidades sejam detectadas:
 
-| Função                   | Finalidade                                                   |
-| ------------------------ | ------------------------------------------------------------ |
-| `defineApplication()`    | Configurar metadados do aplicativo (obrigatório, um por app) |
-| `defineObject()`         | Define objetos personalizados com campos                     |
-| `defineLogicFunction()`  | Defina funções de lógica com handlers                        |
-| `defineFrontComponent()` | Definir componentes de front-end para UI personalizada       |
-| `defineRole()`           | Configura permissões de papéis e acesso a objetos            |
-| `defineField()`          | Estender objetos existentes com campos adicionais            |
+| Função                       | Finalidade                                                   |
+| ---------------------------- | ------------------------------------------------------------ |
+| `defineApplication()`        | Configurar metadados do aplicativo (obrigatório, um por app) |
+| `defineObject()`             | Define objetos personalizados com campos                     |
+| `defineLogicFunction()`      | Defina funções de lógica com handlers                        |
+| `defineFrontComponent()`     | Definir componentes de front-end para UI personalizada       |
+| `defineRole()`               | Configura permissões de papéis e acesso a objetos            |
+| `defineField()`              | Estender objetos existentes com campos adicionais            |
+| `defineView()`               | Define visualizações salvas para objetos                     |
+| `defineNavigationMenuItem()` | Define links de navegação da barra lateral                   |
 
 Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
 
@@ -294,7 +321,7 @@ Todo aplicativo tem um único arquivo `application-config.ts` que descreve:
 * **O que é o aplicativo**: identificadores, nome de exibição e descrição.
 * **Como suas funções são executadas**: qual papel usam para permissões.
 * **Variáveis (opcional)**: pares chave–valor expostos às suas funções como variáveis de ambiente.
-* **(Optional) post-install function**: a logic function that runs after the app is installed.
+* **(Opcional) função de pós-instalação**: uma função de lógica que é executada após a instalação da aplicação.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -327,7 +354,7 @@ Notas:
 * `universalIdentifier` são IDs determinísticos que você controla; gere-os uma vez e mantenha-os estáveis entre sincronizações.
 * `applicationVariables` tornam-se variáveis de ambiente para suas funções (por exemplo, `DEFAULT_RECIPIENT_NAME` fica disponível como `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corresponder ao arquivo do papel (veja abaixo).
-* `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
+* `postInstallLogicFunctionUniversalIdentifier` (opcional) aponta para uma função de lógica que é executada automaticamente após a instalação da aplicação. Consulte [Funções de pós-instalação](#post-install-functions).
 
 #### Papéis e permissões
 
@@ -466,11 +493,11 @@ Notas:
 * O array `triggers` é opcional. Funções sem gatilhos podem ser usadas como funções utilitárias chamadas por outras funções.
 * Você pode misturar vários tipos de gatilho em uma única função.
 
-### Post-install functions
+### Funções de pós-instalação
 
-A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+Uma função de pós-instalação é uma função de lógica que é executada automaticamente após a sua aplicação ser instalada em um espaço de trabalho. Isso é útil para tarefas de configuração únicas, como preencher dados padrão, criar registros iniciais ou configurar as configurações do espaço de trabalho.
 
-When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+Ao criar a estrutura de um novo app com `create-twenty-app`, uma função de pós-instalação é gerada para você em `src/logic-functions/post-install.ts`:
 
 ```typescript
 // src/logic-functions/post-install.ts
@@ -491,7 +518,7 @@ export default defineLogicFunction({
 });
 ```
 
-The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+A função é conectada ao seu app referenciando seu identificador universal em `application-config.ts`:
 
 ```typescript
 import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
@@ -502,7 +529,7 @@ export default defineApplication({
 });
 ```
 
-You can also manually execute the post-install function at any time using the CLI:
+Você também pode executar manualmente a função de pós-instalação a qualquer momento usando a CLI:
 
 ```bash filename="Terminal"
 yarn twenty function:execute --postInstall
@@ -510,10 +537,10 @@ yarn twenty function:execute --postInstall
 
 Pontos-chave:
 
-* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
-* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
+* As funções de pós-instalação são funções de lógica padrão — elas usam `defineLogicFunction()` como qualquer outra função.
+* O campo `postInstallLogicFunctionUniversalIdentifier` em `defineApplication()` é opcional. Se omitido, nenhuma função é executada após a instalação.
+* O tempo limite padrão é definido como 300 segundos (5 minutos) para permitir tarefas de configuração mais longas, como o pré-carregamento de dados.
+* As funções de pós-instalação não precisam de gatilhos — elas são invocadas pela plataforma durante a instalação ou manualmente via `function:execute --postInstall`.
 
 ### Payload de gatilho de rota
 

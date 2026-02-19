@@ -8,9 +8,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const DeleteSingleRecordAction = () => {
   const { recordIndexId, objectMetadataItem } =
@@ -29,9 +27,7 @@ export const DeleteSingleRecordAction = () => {
 
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
-  );
+
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
   const { removeNavigationMenuItemsByTargetRecordIds } =
@@ -50,15 +46,13 @@ export const DeleteSingleRecordAction = () => {
       deleteFavorite(foundFavorite.id);
     }
 
-    if (isNavigationMenuItemEnabled) {
-      const foundNavigationMenuItem = [
-        ...navigationMenuItems,
-        ...workspaceNavigationMenuItems,
-      ].find((item) => item.targetRecordId === recordId);
+    const foundNavigationMenuItem = [
+      ...navigationMenuItems,
+      ...workspaceNavigationMenuItems,
+    ].find((item) => item.targetRecordId === recordId);
 
-      if (isDefined(foundNavigationMenuItem)) {
-        removeNavigationMenuItemsByTargetRecordIds([recordId]);
-      }
+    if (isDefined(foundNavigationMenuItem)) {
+      removeNavigationMenuItemsByTargetRecordIds([recordId]);
     }
 
     await deleteOneRecord(recordId);

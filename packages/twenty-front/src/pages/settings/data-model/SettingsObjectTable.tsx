@@ -58,11 +58,8 @@ export const SettingsObjectTable = ({
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
-  const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
-    {
-      objectMetadataItems,
-    },
-  );
+  const { totalCountByObjectMetadataItemNamePlural } =
+    useCombinedGetTotalCount();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

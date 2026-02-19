@@ -10,6 +10,7 @@ import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouse
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
+import { Separator } from '@/settings/components/Separator';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
@@ -237,7 +238,7 @@ export const SettingsSecurity = () => {
             <Card rounded>
               <SettingsOptionCardContentButton
                 Icon={IconHistory}
-                title={t`Audit Logs`}
+                title={t`Workspace Events`}
                 description={
                   !isClickHouseConfigured
                     ? t`ClickHouse is required for audit logs. Contact your administrator.`
@@ -260,16 +261,19 @@ export const SettingsSecurity = () => {
                 }
               />
               {isEventLogsEnabled && (
-                <SettingsOptionCardContentCounter
-                  Icon={IconClockHour8}
-                  title={t`Log retention`}
-                  description={t`Number of days to retain audit logs (30-1095 days)`}
-                  value={currentWorkspace?.eventLogRetentionDays ?? 90}
-                  onChange={handleEventLogRetentionDaysChange}
-                  minValue={30}
-                  maxValue={1095}
-                  showButtons={false}
-                />
+                <>
+                  <Separator />
+                  <SettingsOptionCardContentCounter
+                    Icon={IconClockHour8}
+                    title={t`Log retention`}
+                    description={t`Number of days to retain audit logs (30-1095 days)`}
+                    value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                    onChange={handleEventLogRetentionDaysChange}
+                    minValue={30}
+                    maxValue={1095}
+                    showButtons={false}
+                  />
+                </>
               )}
             </Card>
           </Section>

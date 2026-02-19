@@ -2,8 +2,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import {
   type PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
-  type PageLayoutWidgetPosition,
-  type PageLayoutWidgetUniversalConfiguration,
+  type PageLayoutWidgetUniversalConfiguration
 } from '@/types';
 
 export type PageLayoutWidgetManifest = SyncableEntityOptions & {
@@ -11,7 +10,6 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   type: string;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
-  position?: PageLayoutWidgetPosition;
   configuration: PageLayoutWidgetUniversalConfiguration;
 };
 

@@ -27,6 +27,7 @@ import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/comma
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
 import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
+import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -67,6 +68,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillStandardViewsAndFieldMetadataCommand: BackfillStandardViewsAndFieldMetadataCommand,
     protected readonly migrateWorkspacePicturesCommand: MigrateWorkspacePicturesCommand,
     protected readonly migrateWorkflowSendEmailAttachmentsCommand: MigrateWorkflowSendEmailAttachmentsCommand,
+
+    // 1.19 Commands
+    protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
   ) {
     super(
       workspaceRepository,
@@ -103,10 +107,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillStandardViewsAndFieldMetadataCommand,
     ];
 
+    const commands_1190: VersionCommands = [
+      this.backfillMessageChannelMessageAssociationMessageFolderCommand,
+    ];
+
     this.allCommands = {
       '1.16.0': commands_1160,
       '1.17.0': commands_1170,
       '1.18.0': commands_1180,
+      '1.19.0': commands_1190,
     };
   }
 

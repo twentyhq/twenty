@@ -26,6 +26,7 @@ import { currentFavoriteFolderIdStateV2 } from '@/ui/navigation/navigation-drawe
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
@@ -95,7 +96,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const dropdownId = `favorite-folder-edit-${folder.folderId}`;
 
-  const isDropdownOpenComponent = useRecoilComponentValue(
+  const isDropdownOpenComponent = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     dropdownId,
   );

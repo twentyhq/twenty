@@ -27,7 +27,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
   correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
-  recordFilter: RecordFilter;
+  recordFilter: Omit<RecordFilter, 'id'>;
 };
 
 export const getEmptyRecordGqlOperationFilter = ({

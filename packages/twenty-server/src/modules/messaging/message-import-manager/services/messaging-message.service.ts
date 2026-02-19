@@ -28,6 +28,7 @@ type MessageAccumulator = {
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id'>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
+    | 'id'
     | 'messageChannelId'
     | 'messageId'
     | 'messageExternalId'
@@ -51,6 +52,10 @@ export class MessagingMessageService {
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     messageExternalIdsAndIdsMap: Map<string, string>;
+    messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
+      string,
+      string
+    >;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -176,15 +181,16 @@ export class MessagingMessageService {
             )
           ) {
             messageAccumulator.messageChannelMessageAssociationToCreate = {
+              id: v4(),
               messageChannelId,
               messageId: newOrExistingMessageId,
               messageExternalId: message.externalId,
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
             };
-
-            messageAccumulatorMap.set(message.externalId, messageAccumulator);
           }
+
+          messageAccumulatorMap.set(message.externalId, messageAccumulator);
         }
 
         const messageThreadsToCreate = Array.from(
@@ -219,6 +225,8 @@ export class MessagingMessageService {
         );
 
         const messageExternalIdsAndIdsMap = new Map<string, string>();
+        const messageExternalIdToMessageChannelMessageAssociationIdMap =
+          new Map<string, string>();
 
         for (const [
           externalId,
@@ -237,11 +245,25 @@ export class MessagingMessageService {
               accumulator.existingMessageInDB.id,
             );
           }
+
+          const createdAssociationId =
+            accumulator.messageChannelMessageAssociationToCreate?.id;
+          const existingAssociationId =
+            accumulator.existingMessageChannelMessageAssociationInDB?.id;
+          const associationId = createdAssociationId ?? existingAssociationId;
+
+          if (isDefined(associationId)) {
+            messageExternalIdToMessageChannelMessageAssociationIdMap.set(
+              externalId,
+              associationId,
+            );
+          }
         }
 
         return {
           createdMessages: messagesToCreate,
           messageExternalIdsAndIdsMap,
+          messageExternalIdToMessageChannelMessageAssociationIdMap,
         };
       },
       authContext,
