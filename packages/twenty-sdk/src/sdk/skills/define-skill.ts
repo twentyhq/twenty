@@ -1,25 +1,26 @@
+import z from 'zod';
+
 import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import { type SkillManifest } from 'twenty-shared/application';
 
+const skillManifestSchema = z.object({
+  universalIdentifier: z
+    .string()
+    .min(1, 'Skill must have a universalIdentifier'),
+  name: z.string().min(1, 'Skill must have a name'),
+  label: z.string().min(1, 'Skill must have a label'),
+  content: z.string().min(1, 'Skill must have content'),
+  icon: z.string().optional(),
+  description: z.string().optional(),
+});
+
 export const defineSkill: DefineEntity<SkillManifest> = (config) => {
-  const errors: string[] = [];
+  const result = skillManifestSchema.safeParse(config);
 
-  if (!config.universalIdentifier) {
-    errors.push('Skill must have a universalIdentifier');
-  }
-
-  if (!config.name) {
-    errors.push('Skill must have a name');
-  }
-
-  if (!config.label) {
-    errors.push('Skill must have a label');
-  }
-
-  if (!config.content) {
-    errors.push('Skill must have content');
-  }
+  const errors = result.success
+    ? []
+    : result.error.issues.map((issue) => issue.message);
 
   return createValidationResult({ config, errors });
 };
