@@ -48,6 +48,32 @@ export class FileService {
     });
   }
 
+  async getFileStreamByPath({
+    workspaceId,
+    applicationId,
+    filepath,
+    fileFolder,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    filepath: string;
+    fileFolder: FileFolder;
+  }) {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: applicationId,
+        workspaceId,
+      },
+    });
+
+    return this.fileStorageService.readFile({
+      resourcePath: filepath,
+      fileFolder,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId,
+    });
+  }
+
   async getFileStreamById({
     fileId,
     workspaceId,
