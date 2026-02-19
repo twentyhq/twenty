@@ -61,7 +61,6 @@ const StyledFolderDroppableContent = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
   padding-bottom: ${({ theme, $compact }) => ($compact ? 0 : theme.spacing(2))};
 `;
 
