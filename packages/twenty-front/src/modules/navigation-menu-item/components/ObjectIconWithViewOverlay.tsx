@@ -78,7 +78,7 @@ export const ObjectIconWithViewOverlay = ({
         <ViewIcon
           size={theme.spacing(2.5)}
           stroke={theme.icon.stroke.sm}
-          color={theme.grayScale.gray11}
+          color={theme.grayScale.gray10}
         />
       </StyledViewOverlay>
     </StyledCompositeContainer>
