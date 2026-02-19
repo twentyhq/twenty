@@ -129,7 +129,17 @@ export const InviteTeam = () => {
             .filter((email) => email.length > 0),
         ),
       );
-      const result = await sendInvitation({ emails });
+
+      if (emails.length === 0) {
+        setNextOnboardingStatus();
+        return;
+      }
+
+      const roleId = currentWorkspace?.defaultRole?.id;
+      const result = await sendInvitation({
+        emails,
+        ...(isDefined(roleId) ? { roleId } : {}),
+      });
 
       if (isDefined(result.errors)) {
         throw result.errors;
@@ -145,7 +155,13 @@ export const InviteTeam = () => {
 
       setNextOnboardingStatus();
     },
-    [enqueueSuccessSnackBar, sendInvitation, setNextOnboardingStatus, t],
+    [
+      currentWorkspace?.defaultRole?.id,
+      enqueueSuccessSnackBar,
+      sendInvitation,
+      setNextOnboardingStatus,
+      t,
+    ],
   );
 
   const handleSkip = async () => {

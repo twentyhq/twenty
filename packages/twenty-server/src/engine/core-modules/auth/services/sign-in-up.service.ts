@@ -207,6 +207,7 @@ export class SignInUpService {
     const updatedUser = await this.signInUpOnExistingWorkspace({
       workspace: invitationValidation.workspace,
       userData: params.userData,
+      roleId: params.invitation.context?.roleId,
     });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -255,6 +256,7 @@ export class SignInUpService {
   async signInUpOnExistingWorkspace(
     params: {
       workspace: WorkspaceEntity;
+      roleId?: string | null;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
@@ -281,6 +283,7 @@ export class SignInUpService {
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
         params.workspace,
+        params.roleId,
       );
 
       return user;
@@ -296,6 +299,7 @@ export class SignInUpService {
     await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
       user,
       params.workspace,
+      params.roleId,
     );
 
     return user;

@@ -153,7 +153,11 @@ export class WorkspaceInvitationService {
     return appTokens.map(castAppTokenToWorkspaceInvitationUtil);
   }
 
-  async createWorkspaceInvitation(email: string, workspace: WorkspaceEntity) {
+  async createWorkspaceInvitation(
+    email: string,
+    workspace: WorkspaceEntity,
+    roleId?: string,
+  ) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
       email.toLowerCase(),
@@ -185,7 +189,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.generateInvitationToken(workspace.id, email);
+    return this.generateInvitationToken(workspace.id, email, roleId);
   }
 
   async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
@@ -238,13 +242,19 @@ export class WorkspaceInvitationService {
 
     await this.appTokenRepository.delete(appToken.id);
 
-    return this.sendInvitations([appToken.context.email], workspace, sender);
+    return this.sendInvitations(
+      [appToken.context.email],
+      workspace,
+      sender,
+      appToken.context.roleId,
+    );
   }
 
   async sendInvitations(
     emails: string[],
     workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
+    roleId?: string,
     usePersonalInvitation = true,
   ): Promise<SendInvitationsOutput> {
     if (!workspace?.inviteHash) {
@@ -263,6 +273,7 @@ export class WorkspaceInvitationService {
           const appToken = await this.createWorkspaceInvitation(
             email,
             workspace,
+            roleId,
           );
 
           if (!appToken.context?.email) {
@@ -380,11 +391,11 @@ export class WorkspaceInvitationService {
             acc.errors.push(reason?.message ?? 'Unknown error');
           }
         } else {
-          acc.result.push(
-            invitation.value.isPersonalInvitation
-              ? castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken)
-              : { email: invitation.value.email },
-          );
+          if (invitation.value.isPersonalInvitation) {
+            acc.result.push(
+              castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken),
+            );
+          }
         }
 
         return acc;
@@ -398,7 +409,11 @@ export class WorkspaceInvitationService {
     };
   }
 
-  async generateInvitationToken(workspaceId: string, email: string) {
+  async generateInvitationToken(
+    workspaceId: string,
+    email: string,
+    roleId?: string,
+  ) {
     const expiresIn = this.twentyConfigService.get(
       'INVITATION_TOKEN_EXPIRES_IN',
     );
@@ -419,6 +434,7 @@ export class WorkspaceInvitationService {
       value: crypto.randomBytes(32).toString('hex'),
       context: {
         email,
+        ...(isDefined(roleId) ? { roleId } : {}),
       },
     });
 

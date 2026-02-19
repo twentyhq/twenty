@@ -5,25 +5,53 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconSend } from 'twenty-ui/display';
+import {
+  IconLock,
+  IconSend,
+  IconUser,
+  type IconComponent,
+  useIcons,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
   padding-bottom: ${({ theme }) => theme.spacing(3)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-wrap: wrap;
+  }
 `;
 
 const StyledLinkContainer = styled.div`
-  flex: 1;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  flex: 1 1 auto;
+  min-width: 0;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex: 1 1 100%;
+  }
+`;
+
+const StyledRoleContainer = styled.div`
+  flex: 0 0 96px;
+  min-width: 96px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex: 1 1 100%;
+  }
 `;
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;
@@ -59,18 +87,43 @@ const validationSchema = z
         });
       }
     }),
+    roleId: z.string().min(1),
   })
   .required();
 
 type FormInput = {
   emails: string;
+  roleId: string;
 };
 
-export const WorkspaceInviteTeam = () => {
+type WorkspaceInviteTeamProps = {
+  roles: RoleWithPartialMembers[];
+};
+
+export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
+
+  const roleOptions: Array<{
+    label: string;
+    value: string;
+    Icon?: IconComponent;
+  }> = roles
+    .filter((role) => role.canBeAssignedToUsers)
+    .map((role) => ({
+      label: role.label,
+      value: role.id,
+      Icon: getIcon(role.icon) ?? IconUser,
+    }));
+
+  const emptyRoleOption = {
+    label: t`Role`,
+    value: '',
+    Icon: IconLock,
+  };
 
   const { reset, handleSubmit, control, formState, watch } = useForm<FormInput>(
     {
@@ -78,14 +131,17 @@ export const WorkspaceInviteTeam = () => {
       resolver: zodResolver(validationSchema),
       defaultValues: {
         emails: '',
+        roleId: '',
       },
     },
   );
   const isEmailsEmpty = !watch('emails');
+  const selectedRoleId = watch('roleId');
+  const isRoleEmpty = !selectedRoleId;
 
-  const submit = handleSubmit(async ({ emails }) => {
+  const submit = handleSubmit(async ({ emails, roleId }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
-    const { data } = await sendInvitation({ emails: emailsList });
+    const { data } = await sendInvitation({ emails: emailsList, roleId });
     if (!isDefined(data)) {
       return;
     }
@@ -142,13 +198,39 @@ export const WorkspaceInviteTeam = () => {
             }}
           />
         </StyledLinkContainer>
+        <StyledRoleContainer>
+          <Controller
+            name="roleId"
+            control={control}
+            render={({ field: { value, onChange } }) => {
+              return (
+                <Select
+                  dropdownId="workspace-invite-team-role"
+                  options={roleOptions}
+                  emptyOption={emptyRoleOption}
+                  value={value}
+                  onChange={onChange}
+                  withSearchInput
+                  fullWidth
+                  disabled={roleOptions.length === 0}
+                />
+              );
+            }}
+          />
+        </StyledRoleContainer>
         <Button
           Icon={IconSend}
           variant="primary"
           accent="blue"
           title={t`Invite`}
           type="submit"
-          disabled={isEmailsEmpty || !!errors.emails}
+          disabled={
+            isEmailsEmpty ||
+            isRoleEmpty ||
+            roleOptions.length === 0 ||
+            !!errors.emails ||
+            !!errors.roleId
+          }
         />
       </StyledContainer>
     </form>

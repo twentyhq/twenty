@@ -1,7 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -16,7 +19,13 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -37,6 +46,8 @@ export class WorkspaceInvitationResolver {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
   @Mutation(() => String)
@@ -118,10 +129,34 @@ export class WorkspaceInvitationResolver {
         authContext,
       );
 
+    if (isDefined(sendInviteLinkInput.roleId)) {
+      const role = await this.roleRepository.findOne({
+        where: {
+          id: sendInviteLinkInput.roleId,
+          workspaceId: workspace.id,
+        },
+      });
+
+      if (!role) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_NOT_FOUND,
+          PermissionsExceptionCode.ROLE_NOT_FOUND,
+        );
+      }
+
+      if (!role.canBeAssignedToUsers) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+          PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        );
+      }
+    }
+
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,
       workspace,
       workspaceMember,
+      sendInviteLinkInput.roleId ?? undefined,
     );
   }
 }

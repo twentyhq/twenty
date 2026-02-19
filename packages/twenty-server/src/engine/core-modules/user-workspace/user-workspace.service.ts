@@ -148,6 +148,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async addUserToWorkspaceIfUserNotInWorkspace(
     user: UserEntity,
     workspace: WorkspaceEntity,
+    roleId?: string | null,
   ) {
     let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
@@ -163,9 +164,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
       await this.createWorkspaceMember(workspace.id, user);
 
-      const defaultRoleId = workspace.defaultRoleId;
+      const resolvedRoleId = isDefined(roleId)
+        ? roleId
+        : workspace.defaultRoleId;
 
-      if (!isDefined(defaultRoleId)) {
+      if (!isDefined(resolvedRoleId)) {
         throw new PermissionsException(
           PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
           PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
@@ -175,7 +178,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId: workspace.id,
         userWorkspaceIds: [userWorkspace.id],
-        roleId: defaultRoleId,
+        roleId: resolvedRoleId,
       });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(

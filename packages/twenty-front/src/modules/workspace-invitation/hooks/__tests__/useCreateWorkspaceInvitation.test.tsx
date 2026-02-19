@@ -19,7 +19,7 @@ describe('useCreateWorkspaceInvitation', () => {
   });
 
   it('Send invitations', async () => {
-    const params = { emails: ['test@test.com'] };
+    const params = { emails: ['test@test.com'], roleId: 'role-id' };
     renderHook(
       () => {
         const { sendInvitation } = useCreateWorkspaceInvitation();
