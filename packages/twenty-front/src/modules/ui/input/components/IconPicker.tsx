@@ -10,7 +10,10 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { IconPickerScrollEffect } from '@/ui/input/hooks/IconPickerScrollEffect';
-import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
+import {
+  ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+  iconPickerVisibleCountState,
+} from '@/ui/input/states/iconPickerVisibleCountState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
@@ -164,7 +167,10 @@ export const IconPicker = ({
     maxIconsVisible;
 
   const resetIconPickerVisibleCount = useCallback(() => {
-    store.set(iconPickerVisibleCountState.atomFamily(dropdownId), 25);
+    store.set(
+      iconPickerVisibleCountState.atomFamily(dropdownId),
+      ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+    );
   }, [store, dropdownId]);
 
   const { getIcons, getIcon } = useIcons();

@@ -1,7 +1,10 @@
-import { createFamilyStateWithLocalStorageV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateWithLocalStorageV2';
+import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
 
-export const isNavigationSectionOpenFamilyState =
-  createFamilyStateWithLocalStorageV2<boolean, string>({
-    key: 'isNavigationSectionOpenFamilyState',
-    defaultValue: true,
-  });
+export const isNavigationSectionOpenFamilyState = createFamilyStateV2<
+  boolean,
+  string
+>({
+  key: 'isNavigationSectionOpenFamilyState',
+  defaultValue: true,
+  useLocalStorage: true,
+});

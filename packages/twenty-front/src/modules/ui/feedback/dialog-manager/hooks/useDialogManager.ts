@@ -47,13 +47,13 @@ export const useDialogManager = () => {
           if (prev.queue.length >= prev.maxQueue) {
             return {
               ...prev,
-              queue: [...prev.queue.slice(1), newValue] as DialogOptions[],
+              queue: [...prev.queue.slice(1), newValue],
             };
           }
 
           return {
             ...prev,
-            queue: [...prev.queue, newValue] as DialogOptions[],
+            queue: [...prev.queue, newValue],
           };
         },
       ),
@@ -64,7 +64,7 @@ export const useDialogManager = () => {
     setDialogQueue({
       id: v4(),
       ...options,
-    } as DialogOptions);
+    });
   };
 
   return { closeDialog, enqueueDialog };
