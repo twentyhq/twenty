@@ -1,4 +1,5 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { CommandMenuEditColorOption } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption';
 import { CommandMenuEditFolderPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView';
@@ -9,16 +10,22 @@ import { CommandMenuEditOwnerSection } from '@/command-menu/pages/navigation-men
 import { useNavigationMenuItemEditOrganizeActions } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
+import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { IconPlus } from 'twenty-ui/display';
+
+const ADD_ITEM_TO_FOLDER_ACTION_ID = 'add-item-to-folder';
 
 const StyledCommandMenuPlaceholder = styled.p`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -55,6 +62,25 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
   } = useNavigationMenuItemEditOrganizeActions();
 
   const { updateLinkInDraft } = useUpdateLinkInDraft();
+  const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
+
+  const handleAddItemToFolder = () => {
+    if (
+      !selectedItem ||
+      selectedItem.itemType !== NavigationMenuItemType.FOLDER
+    ) {
+      return;
+    }
+    const folderItemCount = workspaceNavigationMenuItems.filter(
+      (item) => (item.folderId ?? null) === selectedItem.id,
+    ).length;
+    openAddItemToFolderPage({
+      targetFolderId: selectedItem.id,
+      targetIndex: folderItemCount,
+      resetNavigationStack: false,
+    });
+  };
 
   if (!selectedNavigationMenuItemInEditMode || !selectedItemLabel) {
     return (
@@ -115,10 +141,25 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
       return (
         <CommandMenuList
           commandGroups={[]}
-          selectableItemIds={getOrganizeActionsSelectableItemIds(false)}
+          selectableItemIds={[
+            ADD_ITEM_TO_FOLDER_ACTION_ID,
+            ...getOrganizeActionsSelectableItemIds(false),
+          ]}
         >
           {selectedItem && (
             <CommandGroup heading={t`Customize`}>
+              <SelectableListItem
+                itemId={ADD_ITEM_TO_FOLDER_ACTION_ID}
+                onEnter={handleAddItemToFolder}
+              >
+                <CommandMenuItem
+                  Icon={IconPlus}
+                  label={t`Add item to folder`}
+                  id={ADD_ITEM_TO_FOLDER_ACTION_ID}
+                  onClick={handleAddItemToFolder}
+                  hasSubMenu
+                />
+              </SelectableListItem>
               <CommandMenuEditColorOption
                 navigationMenuItemId={selectedItem.id}
                 color={selectedItem.color}

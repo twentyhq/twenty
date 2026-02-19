@@ -14,9 +14,8 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 
-import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
+import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -29,7 +28,6 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
@@ -118,10 +116,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const setCurrentFolderId = useSetRecoilStateV2(
     currentNavigationMenuItemFolderIdStateV2,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
-    addMenuItemInsertionContextStateV2,
-  );
-  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
 
   const isOpen = openNavigationMenuItemFolderIds.includes(folderId);
 
@@ -131,14 +126,9 @@ export const WorkspaceNavigationMenuItemsFolder = ({
       : navigationMenuItems.length;
 
   const handleAddMenuItemToFolder = () => {
-    setAddMenuItemInsertionContext({
+    openAddItemToFolderPage({
       targetFolderId: folderId,
       targetIndex: navigationMenuItems.length,
-    });
-    navigateCommandMenu({
-      page: CommandMenuPages.NavigationMenuAddItem,
-      pageTitle: t`New sidebar item`,
-      pageIcon: IconPlus,
       resetNavigationStack: true,
     });
   };
