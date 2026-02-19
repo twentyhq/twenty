@@ -21,8 +21,9 @@ import {
 
 import type { InputJsonSchema } from 'twenty-shared/logic-function';
 
-import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @InputType()
 export class CreateLogicFunction {
@@ -72,8 +73,8 @@ export class CreateLogicFunction {
   checksum?: string;
 
   @IsString()
-  @Matches(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
-    message: 'handlerName must be a valid JavaScript identifier',
+  @Matches(HANDLER_NAME_REGEX, {
+    message: 'handlerName must be a valid JavaScript identifier or dotted path',
   })
   @Field({ nullable: false })
   handlerName: string;
