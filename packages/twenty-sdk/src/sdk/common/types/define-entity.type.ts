@@ -8,6 +8,7 @@ import {
   type FieldManifest,
   type NavigationMenuItemManifest,
   type RoleManifest,
+  type SkillManifest,
 } from 'twenty-shared/application';
 
 export type ValidationResult<T> = {
@@ -23,6 +24,7 @@ export type DefinableEntity =
   | FrontComponentConfig
   | LogicFunctionConfig
   | RoleManifest
+  | SkillManifest
   | ViewConfig
   | NavigationMenuItemManifest
   | PageLayoutConfig;
