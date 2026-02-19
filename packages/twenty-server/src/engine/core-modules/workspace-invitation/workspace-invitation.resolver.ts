@@ -108,12 +108,7 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsOutput> {
-    if (sendInviteLinkInput.roleId === null) {
-      throw new PermissionsException(
-        'roleId cannot be null',
-        PermissionsExceptionCode.INVALID_ARG,
-      );
-    }
+    const roleId = sendInviteLinkInput.roleId ?? undefined;
 
     const authContext = buildSystemAuthContext(workspace.id);
 
@@ -136,10 +131,10 @@ export class WorkspaceInvitationResolver {
         authContext,
       );
 
-    if (isDefined(sendInviteLinkInput.roleId)) {
+    if (isDefined(roleId)) {
       const role = await this.roleRepository.findOne({
         where: {
-          id: sendInviteLinkInput.roleId,
+          id: roleId,
           workspaceId: workspace.id,
         },
       });
@@ -163,7 +158,7 @@ export class WorkspaceInvitationResolver {
       sendInviteLinkInput.emails,
       workspace,
       workspaceMember,
-      sendInviteLinkInput.roleId ?? undefined,
+      roleId,
     );
   }
 }

@@ -153,71 +153,85 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     workspace: WorkspaceEntity,
     roleId?: string | null,
   ) {
-    let userWorkspace = await this.checkUserWorkspaceExists(
+    const existingUserWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
     );
 
-    if (!userWorkspace) {
-      userWorkspace = await this.create({
-        userId: user.id,
-        workspaceId: workspace.id,
-        isExistingUser: true,
+    if (existingUserWorkspace) {
+      return;
+    }
+
+    const resolvedRoleId = await this.resolveRoleIdForNewMember(
+      roleId,
+      workspace,
+    );
+
+    const userWorkspace = await this.create({
+      userId: user.id,
+      workspaceId: workspace.id,
+      isExistingUser: true,
+    });
+
+    await this.createWorkspaceMember(workspace.id, user);
+
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      workspaceId: workspace.id,
+      userWorkspaceIds: [userWorkspace.id],
+      roleId: resolvedRoleId,
+    });
+
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      workspace.id,
+      user.email,
+    );
+
+    await this.onboardingService.setOnboardingCreateProfilePending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+  }
+
+  private async resolveRoleIdForNewMember(
+    roleId: string | null | undefined,
+    workspace: WorkspaceEntity,
+  ): Promise<string> {
+    if (isDefined(roleId)) {
+      const role = await this.roleRepository.findOne({
+        where: {
+          id: roleId,
+          workspaceId: workspace.id,
+        },
       });
 
-      await this.createWorkspaceMember(workspace.id, user);
-
-      if (isDefined(roleId)) {
-        const role = await this.roleRepository.findOne({
-          where: {
-            id: roleId,
-            workspaceId: workspace.id,
-          },
-        });
-
-        if (!role) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.ROLE_NOT_FOUND,
-            PermissionsExceptionCode.ROLE_NOT_FOUND,
-          );
-        }
-
-        if (!role.canBeAssignedToUsers) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-            PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-          );
-        }
-      }
-
-      const resolvedRoleId = isDefined(roleId)
-        ? roleId
-        : workspace.defaultRoleId;
-
-      if (!isDefined(resolvedRoleId)) {
+      if (!role) {
         throw new PermissionsException(
-          PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
-          PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+          PermissionsExceptionMessage.ROLE_NOT_FOUND,
+          PermissionsExceptionCode.ROLE_NOT_FOUND,
         );
       }
 
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId: workspace.id,
-        userWorkspaceIds: [userWorkspace.id],
-        roleId: resolvedRoleId,
-      });
+      if (!role.canBeAssignedToUsers) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+          PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        );
+      }
 
-      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-        workspace.id,
-        user.email,
-      );
-
-      await this.onboardingService.setOnboardingCreateProfilePending({
-        userId: user.id,
-        workspaceId: workspace.id,
-        value: true,
-      });
+      return roleId;
     }
+
+    const defaultRoleId = workspace.defaultRoleId;
+
+    if (!isDefined(defaultRoleId)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      );
+    }
+
+    return defaultRoleId;
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
