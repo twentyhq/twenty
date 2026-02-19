@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -17,9 +18,8 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { isDefined } from 'twenty-shared/utils';
 
-const OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA =
+const OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATE =
   STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
     .universalIdentifier;
 const FIELD_UNIVERSAL_IDENTIFIERS_TO_CREATE = Object.values(
@@ -61,7 +61,7 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
 
     const existingObject = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA,
+      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATE,
     });
 
     if (existingObject) {
@@ -95,7 +95,7 @@ export class BackfillMessageChannelMessageAssociationMessageFolderCommand extend
     const flatObjectMetadataToCreate =
       findFlatEntityByUniversalIdentifierOrThrow({
         flatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
-        universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATEA,
+        universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER_TO_CREATE,
       });
 
     const flatFieldMetadataToCreateOnObject =
