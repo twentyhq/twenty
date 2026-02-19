@@ -1,160 +1,115 @@
-import { Node, Project, type SourceFile, ts } from 'ts-morph';
+const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
+  /import\s*\{[^}]*\bdefineFrontComponent\b[^}]*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
-const project = new Project({
-  useInMemoryFileSystem: true,
-  compilerOptions: { jsx: ts.JsxEmit.ReactJSX },
-});
+const removeDefineFrontComponentFromImport = (
+  importStatement: string,
+): string => {
+  const withoutDefineFrontComponent = importStatement.replace(
+    /,?\s*\bdefineFrontComponent\b\s*,?/,
+    (match) => {
+      if (match.startsWith(',') && match.endsWith(',')) {
+        return ',';
+      }
 
-const removeDefineFrontComponentFromImports = (
-  sourceFile: SourceFile,
-): void => {
-  for (const importDeclaration of sourceFile.getImportDeclarations()) {
-    const defineFrontComponentSpecifier = importDeclaration
-      .getNamedImports()
-      .find((specifier) => specifier.getName() === 'defineFrontComponent');
+      return '';
+    },
+  );
 
-    if (!defineFrontComponentSpecifier) {
-      continue;
-    }
+  const remainingImportsMatch = withoutDefineFrontComponent.match(
+    /import\s*\{([^}]*)\}\s*from/,
+  );
 
-    defineFrontComponentSpecifier.remove();
-
-    if (importDeclaration.getNamedImports().length === 0) {
-      importDeclaration.remove();
-    }
+  if (!remainingImportsMatch || remainingImportsMatch[1].trim().length === 0) {
+    return '';
   }
+
+  return withoutDefineFrontComponent;
 };
 
-const extractComponentNameFromDefaultExport = (
-  sourceFile: SourceFile,
-): string | null => {
-  for (const statement of sourceFile.getStatements()) {
-    if (!Node.isExportAssignment(statement) || statement.isExportEquals()) {
-      continue;
-    }
+const extractComponentNameFromExport = (
+  sourceCode: string,
+): { fullMatch: string; componentName: string } | null => {
+  const exportStart = sourceCode.indexOf('export default defineFrontComponent');
 
-    const expression = statement.getExpression();
-
-    if (
-      !Node.isCallExpression(expression) ||
-      expression.getExpression().getText() !== 'defineFrontComponent'
-    ) {
-      continue;
-    }
-
-    const [configArg] = expression.getArguments();
-
-    if (!configArg || !Node.isObjectLiteralExpression(configArg)) {
-      throw new Error(
-        'defineFrontComponent must be called with an object literal argument',
-      );
-    }
-
-    const componentProperty = configArg.getProperty('component');
-
-    if (!componentProperty) {
-      throw new Error(
-        'defineFrontComponent config must include a "component" property',
-      );
-    }
-
-    if (Node.isShorthandPropertyAssignment(componentProperty)) {
-      return componentProperty.getName();
-    }
-
-    if (!Node.isPropertyAssignment(componentProperty)) {
-      throw new Error(
-        'Unexpected syntax for "component" property in defineFrontComponent config',
-      );
-    }
-
-    const initializer = componentProperty.getInitializer();
-
-    if (!initializer) {
-      throw new Error('"component" property must have a value');
-    }
-
-    return initializer.getText();
+  if (exportStart === -1) {
+    return null;
   }
 
-  return null;
-};
+  const parenStart = sourceCode.indexOf('(', exportStart);
 
-const removeExportFromComponentDeclaration = (
-  sourceFile: SourceFile,
-  componentName: string,
-): void => {
-  for (const statement of sourceFile.getStatements()) {
-    if (
-      Node.isVariableStatement(statement) &&
-      statement.isExported() &&
-      statement
-        .getDeclarationList()
-        .getDeclarations()
-        .some((declaration) => declaration.getName() === componentName)
-    ) {
-      statement.setIsExported(false);
+  if (parenStart === -1) {
+    return null;
+  }
 
-      return;
-    }
+  let depth = 0;
+  let parenEnd = -1;
 
-    if (
-      Node.isFunctionDeclaration(statement) &&
-      statement.isExported() &&
-      !statement.isDefaultExport() &&
-      statement.getName() === componentName
-    ) {
-      statement.setIsExported(false);
+  for (let i = parenStart; i < sourceCode.length; i++) {
+    if (sourceCode[i] === '(') {
+      depth++;
+    } else if (sourceCode[i] === ')') {
+      depth--;
 
-      return;
+      if (depth === 0) {
+        parenEnd = i;
+        break;
+      }
     }
   }
-};
 
-const replaceDefaultExportWithRenderFunction = (
-  sourceFile: SourceFile,
-  componentName: string,
-): void => {
-  for (const statement of sourceFile.getStatements()) {
-    if (!Node.isExportAssignment(statement) || statement.isExportEquals()) {
-      continue;
-    }
-
-    statement.replaceWithText(
-      `export default function __renderFrontComponent(__container) {` +
-        ` __createRoot(__container).render(` +
-        `__frontComponentJsx(${componentName}, {})); }`,
-    );
-
-    return;
+  if (parenEnd === -1) {
+    return null;
   }
+
+  let endIndex = parenEnd + 1;
+
+  if (sourceCode[endIndex] === ';') {
+    endIndex++;
+  }
+
+  const fullMatch = sourceCode.slice(exportStart, endIndex);
+  const configContent = sourceCode.slice(parenStart + 1, parenEnd);
+  const componentMatch = configContent.match(/\bcomponent\s*:\s*(\w+)/);
+
+  if (!componentMatch) {
+    return null;
+  }
+
+  return { fullMatch, componentName: componentMatch[1] };
 };
 
 export const unwrapDefineFrontComponentToDirectExport = (
   sourceCode: string,
 ): string => {
-  const existingFile = project.getSourceFile('component.tsx');
+  let transformedSource = sourceCode.replace(
+    DEFINE_FRONT_COMPONENT_IMPORT_PATTERN,
+    (match) => removeDefineFrontComponentFromImport(match),
+  );
 
-  if (existingFile) {
-    project.removeSourceFile(existingFile);
+  const extracted = extractComponentNameFromExport(transformedSource);
+
+  if (extracted) {
+    const { fullMatch, componentName } = extracted;
+
+    const exportedComponentDeclarationPattern = new RegExp(
+      `export\\s+(const|function)\\s+${componentName}\\b`,
+    );
+
+    transformedSource = transformedSource.replace(
+      exportedComponentDeclarationPattern,
+      `$1 ${componentName}`,
+    );
+
+    transformedSource =
+      `import { createRoot as __createRoot } from 'react-dom/client';\n` +
+      `import { jsx as __frontComponentJsx } from 'react/jsx-runtime';\n` +
+      transformedSource;
+
+    transformedSource = transformedSource.replace(
+      fullMatch,
+      `export default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(${componentName}, {})); }`,
+    );
   }
 
-  const sourceFile = project.createSourceFile('component.tsx', sourceCode);
-
-  const componentName = extractComponentNameFromDefaultExport(sourceFile);
-
-  if (!componentName) {
-    return sourceCode;
-  }
-
-  removeDefineFrontComponentFromImports(sourceFile);
-  removeExportFromComponentDeclaration(sourceFile, componentName);
-  replaceDefaultExportWithRenderFunction(sourceFile, componentName);
-
-  sourceFile.insertStatements(0, [
-    `import { createRoot as __createRoot } from 'react-dom/client';`,
-    `import { jsx as __frontComponentJsx } from 'react/jsx-runtime';`,
-  ]);
-
-  return sourceFile.getFullText();
+  return transformedSource;
 };
