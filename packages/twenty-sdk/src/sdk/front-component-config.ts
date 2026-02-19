@@ -1,14 +1,11 @@
 import {
-  type CommandMenuItemManifest,
+  type FrontComponentCommandManifest,
   type FrontComponentManifest,
 } from 'twenty-shared/application';
 
 export type FrontComponentType = React.ComponentType<any>;
 
-export type FrontComponentCommandConfig = Omit<
-  CommandMenuItemManifest,
-  'frontComponentUniversalIdentifier'
->;
+export type FrontComponentCommandConfig = FrontComponentCommandManifest;
 
 export type FrontComponentConfig = Omit<
   FrontComponentManifest,
@@ -18,5 +15,4 @@ export type FrontComponentConfig = Omit<
   | 'componentName'
 > & {
   component: FrontComponentType;
-  command?: FrontComponentCommandConfig;
 };

@@ -26,7 +26,10 @@ export type {
   RelationFieldManifest,
   FieldManifest,
 } from './fieldManifestType';
-export type { FrontComponentManifest } from './frontComponentManifestType';
+export type {
+  FrontComponentCommandManifest,
+  FrontComponentManifest,
+} from './frontComponentManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,

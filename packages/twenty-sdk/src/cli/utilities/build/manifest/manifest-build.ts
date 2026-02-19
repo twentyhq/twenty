@@ -21,7 +21,6 @@ import {
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
-  type CommandMenuItemManifest,
   type FieldManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
@@ -71,7 +70,6 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
-  const commandMenuItems: CommandMenuItemManifest[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -204,7 +202,7 @@ export const buildManifest = async (
 
         errors.push(...extract.errors);
 
-        const { component, command, ...rest } = extract.config;
+        const { component, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -218,13 +216,6 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
-
-        if (command) {
-          commandMenuItems.push({
-            ...command,
-            frontComponentUniversalIdentifier: rest.universalIdentifier,
-          });
-        }
 
         break;
       }
@@ -310,7 +301,6 @@ export const buildManifest = async (
         views,
         navigationMenuItems,
         pageLayouts,
-        commandMenuItems,
       };
 
   const entityFilePaths: EntityFilePaths = {

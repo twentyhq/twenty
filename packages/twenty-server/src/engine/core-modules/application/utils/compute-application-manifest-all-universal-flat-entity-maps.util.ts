@@ -118,6 +118,25 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
       },
     );
+
+    if (frontComponentManifest.command) {
+      addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+        {
+          metadataName: 'commandMenuItem',
+          universalFlatEntity:
+            fromCommandMenuItemManifestToUniversalFlatCommandMenuItem({
+              commandMenuItemManifest: {
+                ...frontComponentManifest.command,
+                frontComponentUniversalIdentifier:
+                  frontComponentManifest.universalIdentifier,
+              },
+              applicationUniversalIdentifier,
+              now,
+            }),
+          universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
+        },
+      );
+    }
   }
 
   for (const roleManifest of manifest.roles) {
@@ -288,21 +307,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         );
       }
     }
-  }
-
-  for (const commandMenuItemManifest of manifest.commandMenuItems ?? []) {
-    addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
-      {
-        metadataName: 'commandMenuItem',
-        universalFlatEntity:
-          fromCommandMenuItemManifestToUniversalFlatCommandMenuItem({
-            commandMenuItemManifest,
-            applicationUniversalIdentifier,
-            now,
-          }),
-        universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
-      },
-    );
   }
 
   return allUniversalFlatEntityMaps;
