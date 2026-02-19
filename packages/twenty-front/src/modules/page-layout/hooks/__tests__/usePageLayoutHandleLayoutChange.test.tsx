@@ -1,7 +1,7 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { act, renderHook } from '@testing-library/react';
+import { useSetAtom } from 'jotai';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import {
@@ -11,13 +11,6 @@ import {
 
 describe('usePageLayoutHandleLayoutChange', () => {
   it('should update layouts for specific tab only', () => {
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
-      }),
-      'tab-1',
-    );
-
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
@@ -25,11 +18,20 @@ describe('usePageLayoutHandleLayoutChange', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
+        setActiveTabId: useSetAtom(
+          activeTabIdComponentState.atomFamily({
+            instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+          }),
+        ),
       }),
       {
         wrapper: PageLayoutTestWrapper,
       },
     );
+
+    act(() => {
+      result.current.setActiveTabId('tab-1');
+    });
 
     const newLayouts = {
       desktop: [
@@ -47,18 +49,11 @@ describe('usePageLayoutHandleLayoutChange', () => {
     });
 
     expect(result.current.layouts['tab-1']).toEqual(newLayouts);
-    expect(result.current.layouts['tab-1']).not.toBe(newLayouts); // Ensure a clone was set, not the same reference
+    expect(result.current.layouts['tab-1']).not.toBe(newLayouts);
     expect(result.current.layouts['tab-2']).toBeUndefined();
   });
 
   it('should isolate layouts between different tabs', () => {
-    jotaiStore.set(
-      activeTabIdComponentState.atomFamily({
-        instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
-      }),
-      'tab-1',
-    );
-
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
@@ -66,11 +61,20 @@ describe('usePageLayoutHandleLayoutChange', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
+        setActiveTabId: useSetAtom(
+          activeTabIdComponentState.atomFamily({
+            instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+          }),
+        ),
       }),
       {
         wrapper: PageLayoutTestWrapper,
       },
     );
+
+    act(() => {
+      result.current.setActiveTabId('tab-1');
+    });
 
     const tab1Layouts = {
       desktop: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2 }],
@@ -81,8 +85,6 @@ describe('usePageLayoutHandleLayoutChange', () => {
       result.current.handler.handleLayoutChange([], tab1Layouts);
     });
 
-    // Unfortunately we can't properly test tab switching with the current renderHook API
-    // since we can't change the activeTabId after initialization in a simple way
     expect(result.current.layouts['tab-1']).toEqual(tab1Layouts);
   });
 
