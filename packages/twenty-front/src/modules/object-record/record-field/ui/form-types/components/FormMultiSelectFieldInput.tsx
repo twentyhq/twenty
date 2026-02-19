@@ -1,5 +1,5 @@
-import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
@@ -69,7 +69,7 @@ const StyledPlaceholder = styled(FormFieldPlaceholder)`
   width: 100%;
 `;
 
-const safeParsedValue = (value: string) => {
+export const safeParsedValue = (value: string) => {
   try {
     return JSON.parse(value);
   } catch {

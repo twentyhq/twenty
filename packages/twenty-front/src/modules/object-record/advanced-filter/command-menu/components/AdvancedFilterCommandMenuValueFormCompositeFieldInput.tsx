@@ -1,10 +1,12 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { FormCountryMultiSelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountryMultiSelectInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormRelationToOneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRelationToOneFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { FormWorkspaceMemberMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberMultiSelectFieldInput';
+
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -23,9 +25,11 @@ const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(
 export const AdvancedFilterCommandMenuValueFormCompositeFieldInput = ({
   recordFilter,
   onChange,
+  onClear,
 }: {
   recordFilter: RecordFilter;
   onChange: (newValue: JsonValue) => void;
+  onClear: () => void;
 }) => {
   const { VariablePicker } = useContext(AdvancedFilterContext);
 
@@ -98,11 +102,13 @@ export const AdvancedFilterCommandMenuValueFormCompositeFieldInput = ({
             VariablePicker={VariablePicker}
           />
         ) : recordFilter.subFieldName === 'workspaceMemberId' ? (
-          <FormWorkspaceMemberMultiSelectFieldInput
+          <FormRelationToOneFieldInput
+            objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
             defaultValue={recordFilter.value}
             onChange={onChange}
-            readonly={readonly}
+            onClear={onClear}
             VariablePicker={VariablePicker}
+            readonly={readonly}
           />
         ) : (
           <FormTextFieldInput

@@ -4,7 +4,6 @@ import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/obj
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -14,7 +13,6 @@ import { type RelationFilterValue } from '@/views/view-filter-value/types/Relati
 import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
-  isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
@@ -38,10 +36,6 @@ export const ObjectFilterDropdownActorSelect = ({
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
-
-  const selectedOperandInDropdown = useRecoilComponentValue(
-    selectedOperandInDropdownComponentState,
-  );
 
   const objectFilterDropdownSearchInput = useRecoilComponentValue(
     objectFilterDropdownSearchInputComponentState,
@@ -141,18 +135,16 @@ export const ObjectFilterDropdownActorSelect = ({
         ? t`${numberOfSelectedItems} workspace members`
         : selectedItemNames.join(', ');
 
-    if (isDefined(selectedOperandInDropdown)) {
-      const newFilterValue =
-        newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
-          ? JSON.stringify({
-              isCurrentWorkspaceMemberSelected:
-                newIsCurrentWorkspaceMemberSelected,
-              selectedRecordIds: newSelectedRecordIds,
-            } satisfies RelationFilterValue)
-          : '';
+    const newFilterValue =
+      newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
+        ? JSON.stringify({
+            isCurrentWorkspaceMemberSelected:
+              newIsCurrentWorkspaceMemberSelected,
+            selectedRecordIds: newSelectedRecordIds,
+          } satisfies RelationFilterValue)
+        : '';
 
-      applyObjectFilterDropdownFilterValue(newFilterValue, filterDisplayValue);
-    }
+    applyObjectFilterDropdownFilterValue(newFilterValue, filterDisplayValue);
   };
 
   return (
