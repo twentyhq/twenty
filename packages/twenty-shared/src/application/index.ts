@@ -50,6 +50,7 @@ export type {
   FieldPermissionManifest,
   RoleManifest,
 } from './roleManifestType';
+export type { SkillManifest } from './skillManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
   ViewManifestFilterValue,
