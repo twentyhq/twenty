@@ -11,6 +11,7 @@ import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/utils/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/utils/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/utils/from-role-manifest-to-universal-flat-role.util';
+import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/utils/from-skill-manifest-to-universal-flat-skill.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/utils/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/utils/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/utils/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -145,6 +146,20 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         metadataName: 'role',
         universalFlatEntity: fromRoleManifestToUniversalFlatRole({
           roleManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
+      },
+    );
+  }
+
+  for (const skillManifest of manifest.skills ?? []) {
+    addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+      {
+        metadataName: 'skill',
+        universalFlatEntity: fromSkillManifestToUniversalFlatSkill({
+          skillManifest,
           applicationUniversalIdentifier,
           now,
         }),

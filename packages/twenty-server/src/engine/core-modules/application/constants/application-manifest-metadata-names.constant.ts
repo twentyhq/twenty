@@ -6,6 +6,7 @@ export const APPLICATION_MANIFEST_METADATA_NAMES = [
   'logicFunction',
   'frontComponent',
   'role',
+  'skill',
   'view',
   'viewField',
   'viewFieldGroup',
