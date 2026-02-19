@@ -17,8 +17,11 @@ export const Action = ({ execute }: ActionProps) => {
     hasExecutedRef.current = true;
 
     const run = async () => {
-      await execute();
-      await unmountFrontComponent();
+      try {
+        await execute();
+      } finally {
+        await unmountFrontComponent();
+      }
     };
 
     run();

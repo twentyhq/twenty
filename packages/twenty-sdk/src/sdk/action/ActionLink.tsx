@@ -28,8 +28,11 @@ export const ActionLink = <T extends AppPath>({
     hasExecutedRef.current = true;
 
     const run = async () => {
-      await navigate(to, params, queryParams, options);
-      await unmountFrontComponent();
+      try {
+        await navigate(to, params, queryParams, options);
+      } finally {
+        await unmountFrontComponent();
+      }
     };
 
     run();
