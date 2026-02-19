@@ -1,8 +1,7 @@
-import { atom } from 'recoil';
-import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const isAdvancedModeEnabledState = atom<boolean>({
+export const isAdvancedModeEnabledState = createStateV2<boolean>({
   key: 'isAdvancedModeEnabledAtom',
-  default: false,
-  effects: [localStorageEffect()],
+  defaultValue: false,
+  useLocalStorage: true,
 });

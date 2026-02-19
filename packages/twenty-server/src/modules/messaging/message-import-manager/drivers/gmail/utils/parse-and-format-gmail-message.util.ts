@@ -84,6 +84,7 @@ export const parseAndFormatGmailMessage = (
     participants,
     text: sanitizeString(textWithoutReplyQuotations),
     attachments,
+    messageFolderExternalIds: labelIds,
     labelIds,
   };
 };

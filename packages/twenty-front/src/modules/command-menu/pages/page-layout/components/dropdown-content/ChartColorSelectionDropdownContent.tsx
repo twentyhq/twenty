@@ -13,7 +13,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -35,7 +35,7 @@ export const ChartColorSelectionDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
     dropdownId,
   );

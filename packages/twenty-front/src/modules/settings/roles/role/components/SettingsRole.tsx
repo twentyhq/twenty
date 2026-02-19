@@ -14,7 +14,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { t } from '@lingui/core/macro';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -35,7 +35,7 @@ type SettingsRoleProps = {
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useRecoilComponentValueV2(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );

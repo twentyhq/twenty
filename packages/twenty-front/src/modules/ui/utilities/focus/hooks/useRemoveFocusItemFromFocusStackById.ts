@@ -1,35 +1,38 @@
+import { useCallback } from 'react';
+
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { logDebug } from '~/utils/logDebug';
 
 export const useRemoveFocusItemFromFocusStackById = () => {
-  const removeFocusItemFromFocusStackById = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({ focusId }: { focusId: string }) => {
-        const focusStack = snapshot.getLoadable(focusStackState).getValue();
+  const store = useStore();
 
-        const removedFocusItem = focusStack.find(
-          (focusStackItem) => focusStackItem.focusId === focusId,
-        );
+  const removeFocusItemFromFocusStackById = useCallback(
+    ({ focusId }: { focusId: string }) => {
+      const focusStack = store.get(focusStackState.atom);
 
-        if (!removedFocusItem) {
-          return;
-        }
+      const removedFocusItem = focusStack.find(
+        (focusStackItem) => focusStackItem.focusId === focusId,
+      );
 
-        const newFocusStack = focusStack.filter(
-          (focusStackItem) => focusStackItem.focusId !== focusId,
-        );
+      if (!removedFocusItem) {
+        return;
+      }
 
-        set(focusStackState, newFocusStack);
+      const newFocusStack = focusStack.filter(
+        (focusStackItem) => focusStackItem.focusId !== focusId,
+      );
 
-        if (DEBUG_FOCUS_STACK) {
-          logDebug(`DEBUG: removeFocusItemFromFocusStack ${focusId}`, {
-            newFocusStack,
-          });
-        }
-      },
-    [],
+      store.set(focusStackState.atom, newFocusStack);
+
+      if (DEBUG_FOCUS_STACK) {
+        logDebug(`DEBUG: removeFocusItemFromFocusStack ${focusId}`, {
+          newFocusStack,
+        });
+      }
+    },
+    [store],
   );
 
   return { removeFocusItemFromFocusStackById };

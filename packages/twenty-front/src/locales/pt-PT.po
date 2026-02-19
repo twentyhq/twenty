@@ -1974,7 +1974,6 @@ msgstr "Anexos"
 
 #. js-lingui-id: EPEFrH
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Audit Logs"
 msgstr ""
@@ -2251,9 +2250,9 @@ msgstr "Castanho"
 msgid "Build a dashboard that shows: (1) total pipeline value by stage for the last 3 months, (2) count of deals won vs lost per month, (3) average deal size. Use our standard pipeline stages."
 msgstr ""
 
-#. js-lingui-id: 8SlslB
+#. js-lingui-id: alSW5d
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
-msgid "Build many-to-many relations. <0>Learn more</0>"
+msgid "Build many-to-many relations"
 msgstr ""
 
 #. js-lingui-id: +7fBMP
@@ -2615,7 +2614,7 @@ msgid "Choose the fields that will identify your records"
 msgstr "Escolha os campos que identificarão seus registros"
 
 #. js-lingui-id: hIJigY
-#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
 msgid "Choose the format used to display date value"
 msgstr "Escolha o formato usado para exibir o valor da data"
 
@@ -5041,10 +5040,10 @@ msgstr ""
 msgid "Enter filter"
 msgstr "Introduza o filtro"
 
-#. js-lingui-id: 9/30HU
-#: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
-msgid "Enter in <0>Unicode</0> format"
-msgstr "Digite no formato <0>Unicode</0>"
+#. js-lingui-id: f09Lhk
+#: src/modules/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm.tsx
+msgid "Enter in Unicode format"
+msgstr ""
 
 #. js-lingui-id: 9CjMQ7
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
@@ -14212,6 +14211,7 @@ msgid "Workspace Domain"
 msgstr "Domínio do espaço de trabalho"
 
 #. js-lingui-id: J2q6WC
+#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 msgid "Workspace Events"
 msgstr ""

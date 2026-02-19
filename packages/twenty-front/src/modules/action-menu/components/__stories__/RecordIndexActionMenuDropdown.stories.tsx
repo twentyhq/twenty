@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
@@ -10,6 +11,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 
@@ -21,44 +23,48 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',
   component: RecordIndexActionMenuDropdown,
   decorators: [
-    (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(
-            recordIndexActionMenuDropdownPositionComponentState.atomFamily({
-              instanceId: 'action-menu-dropdown-story',
-            }),
-            { x: 10, y: 10 },
-          );
+    (Story) => {
+      jotaiStore.set(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: 'action-menu-dropdown-story-action-menu',
+        }),
+        true,
+      );
 
-          set(
-            isDropdownOpenComponentState.atomFamily({
-              instanceId: 'action-menu-dropdown-story-action-menu',
-            }),
-            true,
-          );
-        }}
-      >
-        <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: 'story-action-menu' }}
-        >
-          <ActionMenuContext.Provider
-            value={{
-              isInRightDrawer: true,
-              displayType: 'dropdownItem',
-              actionMenuType: 'index-page-action-menu-dropdown',
-              actions: createMockActionMenuActions({
-                deleteMock,
-                addToFavoritesMock,
-                exportMock,
-              }),
+      return (
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot
+            initializeState={({ set }) => {
+              set(
+                recordIndexActionMenuDropdownPositionComponentState.atomFamily({
+                  instanceId: 'action-menu-dropdown-story',
+                }),
+                { x: 10, y: 10 },
+              );
             }}
           >
-            <Story />
-          </ActionMenuContext.Provider>
-        </ActionMenuComponentInstanceContext.Provider>
-      </RecoilRoot>
-    ),
+            <ActionMenuComponentInstanceContext.Provider
+              value={{ instanceId: 'story-action-menu' }}
+            >
+              <ActionMenuContext.Provider
+                value={{
+                  isInRightDrawer: true,
+                  displayType: 'dropdownItem',
+                  actionMenuType: 'index-page-action-menu-dropdown',
+                  actions: createMockActionMenuActions({
+                    deleteMock,
+                    addToFavoritesMock,
+                    exportMock,
+                  }),
+                }}
+              >
+                <Story />
+              </ActionMenuContext.Provider>
+            </ActionMenuComponentInstanceContext.Provider>
+          </RecoilRoot>
+        </JotaiProvider>
+      );
+    },
     ContextStoreDecorator,
     RouterDecorator,
   ],

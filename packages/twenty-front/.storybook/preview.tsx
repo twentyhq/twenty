@@ -9,6 +9,8 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // eslint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
+// eslint-disable-next-line no-restricted-imports
+import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
@@ -83,6 +85,10 @@ const preview: Preview = {
     },
     RootDecorator,
   ],
+
+  beforeEach: () => {
+    resetJotaiStore();
+  },
 
   loaders: [mswLoader],
 

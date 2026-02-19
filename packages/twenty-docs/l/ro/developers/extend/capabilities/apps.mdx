@@ -27,7 +27,7 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
 
 ```bash filename="Terminal"
-# Creează scheletul unei aplicații noi
+# Creează scheletul unei aplicații noi (include toate exemplele în mod implicit)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -42,6 +42,19 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+Generatorul de schelet acceptă trei moduri pentru a controla ce fișiere de exemplu sunt incluse:
+
+```bash filename="Terminal"
+# Implicit (exhaustiv): toate exemplele (obiect, câmp, funcție logică, componentă de interfață, vizualizare, element de meniu de navigare)
+npx create-twenty-app@latest my-app
+
+# Minimal: doar fișierele de bază (application-config.ts și default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interactiv: selectezi ce exemple să incluzi
+npx create-twenty-app@latest my-app --interactive
+```
+
 De aici puteți:
 
 ```bash filename="Terminal"
@@ -53,6 +66,9 @@ yarn twenty function:logs
 
 # Execută o funcție după nume
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execută funcția post-instalare
+yarn twenty function:execute --postInstall
 
 # Dezinstalează aplicația din spațiul de lucru curent
 yarn twenty app:uninstall
@@ -70,9 +86,9 @@ Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
 * Copiază o aplicație de bază minimală în `my-twenty-app/`
 * Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
 * Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
-* Generează o configurație implicită a aplicației și un rol implicit pentru funcții
+* Generează fișierele de bază (configurația aplicației, rolul implicit al funcțiilor, funcția post-instalare) plus fișiere de exemplu în funcție de modul de generare a scheletului
 
-O aplicație nou generată arată astfel:
+O aplicație proaspăt generată cu modul implicit `--exhaustive` arată astfel:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -86,16 +102,27 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obligatoriu - configurația principală a aplicației
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Rol implicit pentru funcțiile logice
+  ├── objects/
+  │   └── example-object.ts             # Exemplu de definiție a unui obiect personalizat
+  ├── fields/
+  │   └── example-field.ts              # Exemplu de definiție de câmp independent
   ├── logic-functions/
-  │   └── hello-world.ts                # Example logic function
-  └── front-components/
-      └── hello-world.tsx               # Example front component
+  │   ├── hello-world.ts                # Exemplu de funcție logică
+  │   └── post-install.ts               # Funcție logică post-instalare
+  ├── front-components/
+  │   └── hello-world.tsx               # Exemplu de componentă de interfață
+  ├── views/
+  │   └── example-view.ts                # Exemplu de definiție a unei vizualizări salvate
+  └── navigation-menu-items/
+      └── example-navigation-menu-item.ts # Exemplu de link de navigare în bara laterală
 ```
+
+Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts` și `logic-functions/post-install.ts`). Cu `--interactive`, alegi ce fișiere de exemplu să incluzi.
 
 Pe scurt:
 
@@ -112,13 +139,15 @@ Pe scurt:
 
 SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
 
-| Funcție ajutătoare       | Tipul entității                             |
-| ------------------------ | ------------------------------------------- |
-| `defineObject()`         | Definiții de obiecte personalizate          |
-| `defineLogicFunction()`  | Definiții de funcții de logică              |
-| `defineFrontComponent()` | Definiții ale componentelor de interfață    |
-| `defineRole()`           | Definiții de rol                            |
-| `defineField()`          | Extensii de câmp pentru obiectele existente |
+| Funcție ajutătoare           | Tipul entității                                |
+| ---------------------------- | ---------------------------------------------- |
+| `defineObject()`             | Definiții de obiecte personalizate             |
+| `defineLogicFunction()`      | Definiții de funcții de logică                 |
+| `defineFrontComponent()`     | Definiții ale componentelor de interfață       |
+| `defineRole()`               | Definiții de rol                               |
+| `defineField()`              | Extensii de câmp pentru obiectele existente    |
+| `defineView()`               | Definiții pentru vizualizări salvate           |
+| `defineNavigationMenuItem()` | Definiții pentru elemente de meniu de navigare |
 
 <Note>
   **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
@@ -183,14 +212,16 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
 
-| Funcție                  | Scop                                                                   |
-| ------------------------ | ---------------------------------------------------------------------- |
-| `defineApplication()`    | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
-| `defineObject()`         | Definiți obiecte personalizate cu câmpuri                              |
-| `defineLogicFunction()`  | Definiți funcții de logică cu handleri                                 |
-| `defineFrontComponent()` | Definiți componente Front pentru interfața de utilizator personalizată |
-| `defineRole()`           | Configurați permisiunile rolurilor și accesul la obiecte               |
-| `defineField()`          | Extindeți obiectele existente cu câmpuri suplimentare                  |
+| Funcție                      | Scop                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| `defineApplication()`        | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
+| `defineObject()`             | Definiți obiecte personalizate cu câmpuri                              |
+| `defineLogicFunction()`      | Definiți funcții de logică cu handleri                                 |
+| `defineFrontComponent()`     | Definiți componente Front pentru interfața de utilizator personalizată |
+| `defineRole()`               | Configurați permisiunile rolurilor și accesul la obiecte               |
+| `defineField()`              | Extindeți obiectele existente cu câmpuri suplimentare                  |
+| `defineView()`               | Definește vizualizări salvate pentru obiecte                           |
+| `defineNavigationMenuItem()` | Definește linkuri de navigare în bara laterală                         |
 
 Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
@@ -290,6 +321,7 @@ Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
 * **Cine este aplicația**: identificatori, nume de afișare și descriere.
 * **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
 * **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
+* **(Opțional) funcție post-instalare**: o funcție logică care rulează după instalarea aplicației.
 
 Folosiți `defineApplication()` pentru a defini configurația aplicației:
 
@@ -297,6 +329,7 @@ Folosiți `defineApplication()` pentru a defini configurația aplicației:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -312,6 +345,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -320,6 +354,7 @@ Notițe:
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
+* `postInstallLogicFunctionUniversalIdentifier` (opțional) indică o funcție logică care rulează automat după instalarea aplicației. Vezi [Funcții post-instalare](#post-install-functions).
 
 #### Roluri și permisiuni
 
@@ -457,6 +492,55 @@ Notițe:
 
 * Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
 * Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
+
+### Funcții post-instalare
+
+O funcție post-instalare este o funcție logică care rulează automat după instalarea aplicației într-un spațiu de lucru. Aceasta este utilă pentru sarcini de configurare unice, cum ar fi popularea cu date implicite, crearea înregistrărilor inițiale sau configurarea setărilor spațiului de lucru.
+
+Când creezi scheletul unei aplicații noi cu `create-twenty-app`, este generată o funcție post-instalare la `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Funcția este integrată în aplicația ta prin referirea la identificatorul său universal în `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Poți, de asemenea, să execuți manual funcția post-instalare oricând folosind CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Puncte cheie:
+
+* Funcțiile post-instalare sunt funcții logice standard — folosesc `defineLogicFunction()` la fel ca orice altă funcție.
+* Câmpul `postInstallLogicFunctionUniversalIdentifier` din `defineApplication()` este opțional. Dacă este omis, nu rulează nicio funcție după instalare.
+* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
+* Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `function:execute --postInstall`.
 
 ### Payload-ul declanșatorului de rută
 

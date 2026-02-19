@@ -14,6 +14,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
+import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
@@ -126,7 +127,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
     additionalCacheDataMaps,
-    applicationUniversalIdentifier,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -994,6 +994,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    const { objectMetadata } = crossEntityTransversalValidation({
+      optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
+      orchestratorActionsReport,
+    });
+
+    orchestratorFailureReport.objectMetadata.push(...objectMetadata);
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -1013,7 +1020,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     return {
       status: 'success',
       workspaceMigration: {
-        applicationUniversalIdentifier,
+        applicationUniversalIdentifier:
+          buildOptions.applicationUniversalIdentifier,
         actions: [
           // Object and fields and indexes
           ...aggregatedOrchestratorActionsReport.index.delete,

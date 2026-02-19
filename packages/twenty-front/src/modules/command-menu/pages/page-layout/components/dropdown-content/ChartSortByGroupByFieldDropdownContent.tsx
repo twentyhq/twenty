@@ -18,12 +18,12 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
-  type GraphOrderBy,
-  GraphOrderBy as GraphOrderByEnum,
+  GraphOrderBy,
+  type GraphOrderBy as GraphOrderByType,
 } from '~/generated-metadata/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
@@ -53,7 +53,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
     dropdownId,
   );
@@ -74,12 +74,12 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     return null;
   }
 
-  const handleSelectSortOption = (orderBy: GraphOrderBy) => {
+  const handleSelectSortOption = (orderBy: GraphOrderByType) => {
     const configToUpdate: Record<string, unknown> = {
       secondaryAxisOrderBy: orderBy,
     };
 
-    if (orderBy === GraphOrderByEnum.MANUAL) {
+    if (orderBy === GraphOrderBy.MANUAL) {
       const existingManualSortOrder =
         configuration.secondaryAxisManualSortOrder;
 
@@ -94,7 +94,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
       return;
     }
 
-    if (configuration.secondaryAxisOrderBy === GraphOrderByEnum.MANUAL) {
+    if (configuration.secondaryAxisOrderBy === GraphOrderBy.MANUAL) {
       configToUpdate.secondaryAxisManualSortOrder = null;
     }
 
@@ -125,7 +125,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
         selectableItemIdArray={availableOptions.map((option) => option.value)}
       >
         {availableOptions.map((sortOption) => {
-          const isManualOption = sortOption.value === GraphOrderByEnum.MANUAL;
+          const isManualOption = sortOption.value === GraphOrderBy.MANUAL;
 
           return (
             <SelectableListItem
@@ -138,7 +138,8 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
               <MenuItemSelect
                 text={getGroupBySortOptionLabel({
                   graphOrderBy: sortOption.value,
-                  groupByFieldMetadataId: secondaryAxisField.id,
+                  groupByFieldMetadataId:
+                    configuration.secondaryAxisGroupByFieldMetadataId ?? '',
                 })}
                 selected={
                   configuration.secondaryAxisOrderBy === sortOption.value

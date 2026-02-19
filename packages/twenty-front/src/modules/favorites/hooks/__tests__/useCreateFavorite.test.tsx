@@ -23,6 +23,23 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
+jest.mock(
+  '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData',
+  () => ({
+    usePrefetchedNavigationMenuItemsData: () => ({
+      navigationMenuItems: [],
+      workspaceNavigationMenuItems: [],
+      currentWorkspaceMemberId: '1',
+    }),
+  }),
+);
+
+jest.mock('@/favorites/hooks/usePrefetchedFavoritesFoldersData', () => ({
+  usePrefetchedFavoritesFoldersData: () => ({
+    favoriteFolders: [],
+  }),
+}));
+
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
