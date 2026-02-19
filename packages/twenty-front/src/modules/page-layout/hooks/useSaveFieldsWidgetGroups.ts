@@ -1,7 +1,8 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { computeFieldsWidgetFieldDiff } from '@/page-layout/utils/computeFieldsWidgetFieldDiff';
+import { computeFieldsWidgetGroupDiff } from '@/page-layout/utils/computeFieldsWidgetGroupDiff';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { usePerformViewFieldGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFieldGroupAPIPersist';
@@ -15,103 +16,6 @@ import {
 
 type UseSaveFieldsWidgetGroupsParams = {
   pageLayoutId: string;
-};
-
-const computeGroupDiff = (
-  persistedGroups: FieldsWidgetGroup[],
-  draftGroups: FieldsWidgetGroup[],
-) => {
-  const persistedGroupIds = new Set(persistedGroups.map((g) => g.id));
-  const draftGroupIds = new Set(draftGroups.map((g) => g.id));
-
-  const createdGroups = draftGroups.filter((g) => !persistedGroupIds.has(g.id));
-
-  const deletedGroups = persistedGroups.filter((g) => !draftGroupIds.has(g.id));
-
-  const updatedGroups = draftGroups.filter((draftGroup) => {
-    if (!persistedGroupIds.has(draftGroup.id)) {
-      return false;
-    }
-
-    const persistedGroup = persistedGroups.find((g) => g.id === draftGroup.id);
-
-    if (!isDefined(persistedGroup)) {
-      return false;
-    }
-
-    return (
-      persistedGroup.name !== draftGroup.name ||
-      persistedGroup.position !== draftGroup.position ||
-      persistedGroup.isVisible !== draftGroup.isVisible
-    );
-  });
-
-  return { createdGroups, deletedGroups, updatedGroups };
-};
-
-const computeFieldDiff = (
-  persistedGroups: FieldsWidgetGroup[],
-  draftGroups: FieldsWidgetGroup[],
-) => {
-  const fieldUpdates: Array<{
-    viewFieldId: string;
-    isVisible?: boolean;
-    position?: number;
-    viewFieldGroupId?: string;
-  }> = [];
-
-  // Build a map of persisted fields by their viewFieldId for quick lookup
-  const persistedFieldMap = new Map<
-    string,
-    {
-      isVisible: boolean;
-      position: number;
-      groupId: string;
-    }
-  >();
-
-  for (const group of persistedGroups) {
-    for (const field of group.fields) {
-      if (isDefined(field.viewFieldId)) {
-        persistedFieldMap.set(field.viewFieldId, {
-          isVisible: field.isVisible,
-          position: field.position,
-          groupId: group.id,
-        });
-      }
-    }
-  }
-
-  // Compare each field in the draft against its persisted state
-  for (const draftGroup of draftGroups) {
-    for (const draftField of draftGroup.fields) {
-      if (!isDefined(draftField.viewFieldId)) {
-        continue;
-      }
-
-      const persistedField = persistedFieldMap.get(draftField.viewFieldId);
-
-      if (!isDefined(persistedField)) {
-        continue;
-      }
-
-      const hasVisibilityChange =
-        persistedField.isVisible !== draftField.isVisible;
-      const hasPositionChange = persistedField.position !== draftField.position;
-      const hasGroupChange = persistedField.groupId !== draftGroup.id;
-
-      if (hasVisibilityChange || hasPositionChange || hasGroupChange) {
-        fieldUpdates.push({
-          viewFieldId: draftField.viewFieldId,
-          ...(hasVisibilityChange ? { isVisible: draftField.isVisible } : {}),
-          ...(hasPositionChange ? { position: draftField.position } : {}),
-          ...(hasGroupChange ? { viewFieldGroupId: draftGroup.id } : {}),
-        });
-      }
-    }
-  }
-
-  return fieldUpdates;
 };
 
 export const useSaveFieldsWidgetGroups = ({
@@ -204,7 +108,7 @@ export const useSaveFieldsWidgetGroups = ({
 
           // Compute group-level diffs
           const { createdGroups, deletedGroups, updatedGroups } =
-            computeGroupDiff(persistedGroups, draftGroups);
+            computeFieldsWidgetGroupDiff(persistedGroups, draftGroups);
 
           // Create new groups
           if (createdGroups.length > 0) {
@@ -245,7 +149,10 @@ export const useSaveFieldsWidgetGroups = ({
           }
 
           // Compute and apply field-level diffs
-          const fieldUpdates = computeFieldDiff(persistedGroups, draftGroups);
+          const fieldUpdates = computeFieldsWidgetFieldDiff(
+            persistedGroups,
+            draftGroups,
+          );
 
           if (fieldUpdates.length > 0) {
             const viewFieldUpdateInputs = fieldUpdates.map(
