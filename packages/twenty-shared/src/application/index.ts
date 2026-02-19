@@ -8,6 +8,12 @@
  */
 
 export type {
+  AgentTextResponseFormat,
+  AgentJsonResponseFormat,
+  AgentResponseFormatManifest,
+  AgentManifest,
+} from './agentManifestType';
+export type {
   ApplicationMarketplaceData,
   ApplicationManifest,
 } from './applicationType';
