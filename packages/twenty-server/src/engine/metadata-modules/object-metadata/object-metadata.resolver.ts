@@ -52,8 +52,18 @@ export class ObjectMetadataResolver {
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: I18nContext,
   ): Promise<ObjectRecordCountDTO[]> {
-    return this.objectRecordCountService.getRecordCounts(workspaceId);
+    try {
+      return await this.objectRecordCountService.getRecordCounts(workspaceId);
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
+
+      return [];
+    }
   }
 
   @ResolveField(() => String, { nullable: true })

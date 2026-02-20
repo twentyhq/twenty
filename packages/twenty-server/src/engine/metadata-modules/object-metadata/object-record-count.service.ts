@@ -35,11 +35,12 @@ export class ObjectRecordCountService {
 
     const rows: { relname: string; approximate_count: number }[] =
       await dataSource.query(
-        `SELECT relname, reltuples::bigint AS approximate_count
+        `SELECT relname, GREATEST(0, reltuples)::bigint AS approximate_count
          FROM pg_class c
          JOIN pg_namespace n ON c.relnamespace = n.oid
          WHERE n.nspname = $1
-         AND c.relkind = 'r'`,
+         AND c.relkind = 'r'
+         AND reltuples >= 0`,
         [schemaName],
         undefined,
         { shouldBypassPermissionChecks: true },
