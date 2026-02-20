@@ -28,13 +28,12 @@ export const setFrontComponentExecutionContext = (
   }
 };
 
-export const getFrontComponentExecutionContext = ():
-  | FrontComponentExecutionContext
-  | undefined => {
-  return (globalThis as Record<string, unknown>)[CONTEXT_KEY] as
-    | FrontComponentExecutionContext
-    | undefined;
-};
+export const getFrontComponentExecutionContext =
+  (): FrontComponentExecutionContext => {
+    return (globalThis as Record<string, unknown>)[
+      CONTEXT_KEY
+    ] as FrontComponentExecutionContext;
+  };
 
 export const subscribeToFrontComponentExecutionContext = (
   listener: Listener,

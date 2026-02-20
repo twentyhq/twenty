@@ -2,9 +2,9 @@ import { type FrontComponentExecutionContext } from '../types/FrontComponentExec
 import { useFrontComponentExecutionContext } from './useFrontComponentExecutionContext';
 
 const selectFrontComponentId = (
-  context: FrontComponentExecutionContext | undefined,
-): string | undefined => context?.frontComponentId;
+  context: FrontComponentExecutionContext,
+): string => context.frontComponentId;
 
-export const useFrontComponentId = (): string | undefined => {
+export const useFrontComponentId = (): string => {
   return useFrontComponentExecutionContext(selectFrontComponentId);
 };
