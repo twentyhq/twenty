@@ -11,6 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 
 type CommandMenuEditObjectViewBaseProps = OrganizeActionsProps & {
   onOpenFolderPicker: () => void;
+  showColorOption?: boolean;
 };
 
 export const CommandMenuEditObjectViewBase = ({
@@ -22,6 +23,7 @@ export const CommandMenuEditObjectViewBase = ({
   onRemove,
   onAddBefore,
   onAddAfter,
+  showColorOption = false,
 }: CommandMenuEditObjectViewBaseProps) => {
   const { t } = useLingui();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
@@ -29,7 +31,7 @@ export const CommandMenuEditObjectViewBase = ({
 
   return (
     <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      {selectedItem && (
+      {showColorOption && selectedItem && (
         <CommandGroup heading={t`Customize`}>
           <CommandMenuEditColorOption
             navigationMenuItemId={selectedItem.id}

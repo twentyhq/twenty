@@ -2,6 +2,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
@@ -65,6 +66,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
 
   const { getIcon } = useIcons();
+  const objectNavItemColor = useObjectNavItemColor(
+    objectMetadataItem.nameSingular,
+  );
   const location = useLocation();
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
@@ -138,7 +142,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
           <ObjectIconWithViewOverlay
             ObjectIcon={getIcon(objectMetadataItem.icon)}
             ViewIcon={getIcon(navigationMenuItem!.Icon!)}
-            objectColor={navigationMenuItem?.color}
+            objectColor={objectNavItemColor}
           />
         )
       : getIcon(objectMetadataItem.icon);

@@ -10,6 +10,7 @@ import { CommandMenuEditOwnerSection } from '@/command-menu/pages/navigation-men
 import { useNavigationMenuItemEditOrganizeActions } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { ViewKey } from '@/views/types/ViewKey';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
@@ -113,6 +114,11 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
           onRemove={onRemove}
           onAddBefore={onAddBefore}
           onAddAfter={onAddAfter}
+          showColorOption={
+            selectedItem &&
+            'viewKey' in selectedItem &&
+            selectedItem.viewKey === ViewKey.Index
+          }
         />
       );
     case NavigationMenuItemType.LINK:

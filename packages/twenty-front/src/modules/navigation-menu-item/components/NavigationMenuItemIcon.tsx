@@ -8,8 +8,9 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
+import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -40,6 +41,9 @@ export const NavigationMenuItemIcon = ({
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === navigationMenuItem.objectNameSingular,
   );
+  const objectNavItemColor = useObjectNavItemColor(
+    navigationMenuItem.objectNameSingular ?? '',
+  );
   const objectIconForView =
     objectMetadataItem?.icon != null
       ? getIcon(objectMetadataItem.icon)
@@ -55,11 +59,7 @@ export const NavigationMenuItemIcon = ({
       <ObjectIconWithViewOverlay
         ObjectIcon={objectIconForView}
         ViewIcon={getIcon(navigationMenuItem.Icon!)}
-        objectColor={
-          isNavigationMenuItemEditingEnabled
-            ? (navigationMenuItem.color ?? undefined)
-            : undefined
-        }
+        objectColor={objectNavItemColor}
       />
     );
   }
