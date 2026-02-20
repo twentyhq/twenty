@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
@@ -11,17 +10,33 @@ import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entit
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build-system-auth-context.util';
-import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import {
+  createExecuteToolTool,
+  EXECUTE_TOOL_TOOL_NAME,
+  executeToolInputSchema,
+} from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
+import {
+  createGetToolCatalogTool,
+  GET_TOOL_CATALOG_TOOL_NAME,
+  getToolCatalogInputSchema,
+} from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
+import {
+  createLearnToolsTool,
+  LEARN_TOOLS_TOOL_NAME,
+  learnToolsInputSchema,
+} from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
+import {
+  createLoadSkillTool,
+  LOAD_SKILL_TOOL_NAME,
+  loadSkillInputSchema,
+} from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class McpProtocolService {
@@ -31,9 +46,7 @@ export class McpProtocolService {
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly skillService: SkillService,
   ) {}
 
   async checkAiEnabled(workspaceId: string): Promise<void> {
@@ -96,69 +109,68 @@ export class McpProtocolService {
     return roleId;
   }
 
-  private async buildAuthContext(
+  private async buildMcpToolSet(
     workspace: WorkspaceEntity,
-    userWorkspaceId?: string,
-    apiKey?: ApiKeyEntity,
-  ): Promise<WorkspaceAuthContext> {
-    if (isDefined(apiKey)) {
-      return buildApiKeyAuthContext({ workspace, apiKey });
-    }
+    roleId: string,
+    options?: {
+      authContext?: WorkspaceAuthContext;
+      userId?: string;
+      userWorkspaceId?: string;
+    },
+  ): Promise<ToolSet> {
+    const toolContext = {
+      workspaceId: workspace.id,
+      roleId,
+      authContext: options?.authContext,
+      userId: options?.userId,
+      userWorkspaceId: options?.userWorkspaceId,
+    };
 
-    if (isDefined(userWorkspaceId)) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          id: userWorkspaceId,
-        },
-        relations: {
-          user: true,
-        },
-      });
+    const preloadedTools = await this.toolRegistry.getToolsByName(
+      COMMON_PRELOAD_TOOLS,
+      toolContext,
+    );
 
-      const user = userWorkspace?.user;
-
-      if (!isDefined(user)) {
-        throw new HttpException('User not found', HttpStatus.FORBIDDEN);
-      }
-
-      const { flatWorkspaceMemberMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspace.id, [
-          'flatWorkspaceMemberMaps',
-        ]);
-
-      const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
-
-      const workspaceMember = isDefined(workspaceMemberId)
-        ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
-        : undefined;
-
-      if (!isDefined(workspaceMemberId) || !isDefined(workspaceMember)) {
-        throw new HttpException(
-          'Workspace member not found',
-          HttpStatus.FORBIDDEN,
-        );
-      }
-
-      return buildUserAuthContext({
-        workspace,
-        userWorkspaceId,
-        user,
-        workspaceMemberId,
-        workspaceMember,
-      });
-    }
-
-    return buildSystemAuthContext({ workspace });
+    return {
+      ...preloadedTools,
+      [GET_TOOL_CATALOG_TOOL_NAME]: {
+        ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
+          userId: options?.userId,
+          userWorkspaceId: options?.userWorkspaceId,
+        }),
+        inputSchema: zodSchema(getToolCatalogInputSchema),
+      },
+      [LEARN_TOOLS_TOOL_NAME]: {
+        ...createLearnToolsTool(this.toolRegistry, toolContext),
+        inputSchema: zodSchema(learnToolsInputSchema),
+      },
+      [EXECUTE_TOOL_TOOL_NAME]: {
+        ...createExecuteToolTool(
+          this.toolRegistry,
+          toolContext,
+          preloadedTools,
+        ),
+        inputSchema: zodSchema(executeToolInputSchema),
+      },
+      [LOAD_SKILL_TOOL_NAME]: {
+        ...createLoadSkillTool((names) =>
+          this.skillService.findFlatSkillsByNames(names, workspace.id),
+        ),
+        inputSchema: zodSchema(loadSkillInputSchema),
+      },
+    };
   }
 
   async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
       workspace,
+      userId,
       userWorkspaceId,
       apiKey,
     }: {
       workspace: WorkspaceEntity;
+      userId?: string;
       userWorkspaceId?: string;
       apiKey: ApiKeyEntity | undefined;
     },
@@ -186,28 +198,15 @@ export class McpProtocolService {
         apiKey,
       );
 
-      const authContext = await this.buildAuthContext(
-        workspace,
-        userWorkspaceId,
-        apiKey,
-      );
+      const authContext = isDefined(apiKey)
+        ? buildApiKeyAuthContext({ workspace, apiKey })
+        : undefined;
 
-      // Exclude code_interpreter from MCP to prevent recursive execution attacks
-      // (code running in the sandbox could call code_interpreter via MCP)
-      const toolSet = await this.toolRegistry.getToolsByCategories(
-        {
-          workspaceId: workspace.id,
-          roleId,
-          rolePermissionConfig: { unionOf: [roleId] },
-          authContext,
-          userWorkspaceId,
-        },
-        {
-          categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
-          excludeTools: [ToolType.CODE_INTERPRETER],
-          wrapWithErrorContext: false,
-        },
-      );
+      const toolSet = await this.buildMcpToolSet(workspace, roleId, {
+        authContext,
+        userId,
+        userWorkspaceId,
+      });
 
       if (method === 'tools/call' && params) {
         return await this.mcpToolExecutorService.handleToolCall(
