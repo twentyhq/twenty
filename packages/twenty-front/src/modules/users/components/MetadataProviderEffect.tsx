@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
@@ -15,6 +15,8 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useStore } from 'jotai';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -41,7 +43,7 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 export const MetadataProviderEffect = () => {
   const location = useLocation();
 
-  const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
+  const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilStateV2(
     isCurrentUserLoadedState,
   );
 
@@ -49,10 +51,12 @@ export const MetadataProviderEffect = () => {
     useState(false);
   const [localAreViewsLoaded, setLocalAreViewsLoaded] = useState(false);
 
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
-  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
+  const setCurrentUser = useSetRecoilStateV2(currentUserState);
+  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+  const setCurrentUserWorkspace = useSetRecoilStateV2(
+    currentUserWorkspaceState,
+  );
+  const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
   const setLogicFunctions = useSetRecoilState(logicFunctionsState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
@@ -105,13 +109,13 @@ export const MetadataProviderEffect = () => {
     [],
   );
 
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  const setCurrentWorkspaceMember = useSetRecoilStateV2(
     currentWorkspaceMemberState,
   );
-  const setCurrentWorkspaceMembers = useSetRecoilState(
+  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
+  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilStateV2(
     currentWorkspaceDeletedMembersState,
   );
 

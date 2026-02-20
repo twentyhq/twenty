@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useEffect } from 'react';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { type Favorite } from '@/favorites/types/Favorite';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -28,7 +28,7 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
   );
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 

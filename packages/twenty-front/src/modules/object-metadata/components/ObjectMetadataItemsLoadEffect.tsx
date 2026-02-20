@@ -1,16 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useEffect, useState } from 'react';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const ObjectMetadataItemsLoadEffect = () => {
-  const currentUser = useRecoilValue(currentUserState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentUser = useRecoilValueV2(currentUserState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();

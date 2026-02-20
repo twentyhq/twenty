@@ -5,6 +5,7 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useLocation, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -49,7 +50,9 @@ export const usePageChangeEffectNavigateLocation = () => {
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
-  const verifyEmailRedirectPath = useRecoilValue(verifyEmailRedirectPathState);
+  const verifyEmailRedirectPath = useRecoilValueV2(
+    verifyEmailRedirectPathState,
+  );
 
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&

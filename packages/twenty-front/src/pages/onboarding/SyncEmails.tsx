@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -58,7 +59,7 @@ export const SyncEmails = () => {
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
-  const [lastAuthenticatedMethod] = useRecoilState(
+  const [lastAuthenticatedMethod] = useRecoilStateV2(
     lastAuthenticatedMethodState,
   );
   const [skipSyncEmailOnboardingStatusMutation] =

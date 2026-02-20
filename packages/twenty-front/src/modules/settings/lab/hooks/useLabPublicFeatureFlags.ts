@@ -3,7 +3,7 @@ import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFe
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type FeatureFlagKey,
@@ -12,7 +12,7 @@ import {
 
 export const useLabPublicFeatureFlags = () => {
   const [error, setError] = useState<string | null>(null);
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
   const labPublicFeatureFlags = useRecoilValueV2(labPublicFeatureFlagsStateV2);

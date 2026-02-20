@@ -1,15 +1,15 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
-
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useRecoilCallback } from 'recoil';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 export const useRequestFreshCaptchaToken = () => {
-  const setCaptchaToken = useSetRecoilState(captchaTokenState);
-  const setIsRequestingCaptchaToken = useSetRecoilState(
+  const setCaptchaToken = useSetRecoilStateV2(captchaTokenState);
+  const setIsRequestingCaptchaToken = useSetRecoilStateV2(
     isRequestingCaptchaTokenState,
   );
 

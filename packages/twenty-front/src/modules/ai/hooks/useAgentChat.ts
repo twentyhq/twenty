@@ -1,5 +1,3 @@
-import { useSetRecoilState } from 'recoil';
-
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
 import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
@@ -23,7 +21,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
-  const setTokenPair = useSetRecoilState(tokenPairState);
+  const setTokenPair = useSetRecoilStateV2(tokenPairState);
   const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
 
   const { getBrowsingContext } = useGetBrowsingContext();

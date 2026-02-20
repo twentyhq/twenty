@@ -1,6 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
+import { useRecoilValue } from 'recoil';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
@@ -20,8 +21,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   H2Title,
@@ -60,8 +61,8 @@ export const SettingsAdminWorkspaceContent = ({
 }: SettingsAdminWorkspaceContentProps) => {
   const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentUser] = useRecoilState(currentUserState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [currentUser] = useRecoilStateV2(currentUserState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
   const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);

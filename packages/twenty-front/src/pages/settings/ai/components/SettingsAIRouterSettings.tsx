@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
@@ -23,6 +22,7 @@ import { H2Title, IconBolt, IconBrain } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 
 const StyledSelectContainer = styled.div`
   justify-content: flex-end;
@@ -38,7 +38,7 @@ const StyledErrorMessage = styled.div`
 
 export const SettingsAIRouterSettings = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();

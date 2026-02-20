@@ -1,8 +1,10 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 describe('useUserTimezone', () => {
   const originalIntl = global.Intl;
@@ -24,7 +26,9 @@ describe('useUserTimezone', () => {
 
   it('should return system timezone when currentWorkspaceMember is null', () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <RecoilRoot>{children}</RecoilRoot>
+      <JotaiProvider store={jotaiStore}>
+        <RecoilRoot>{children}</RecoilRoot>
+      </JotaiProvider>
     );
 
     const { result } = renderHook(() => useUserTimezone(), {
@@ -40,29 +44,28 @@ describe('useUserTimezone', () => {
       children,
     }: {
       children: React.ReactNode;
-    }) => (
-      <RecoilRoot
-        initializeState={(snapshot) => {
-          snapshot.set(currentWorkspaceMemberState, {
-            id: 'workspace-member-id',
-            name: {
-              firstName: 'John',
-              lastName: 'Doe',
-            },
-            colorScheme: 'Light',
-            locale: 'en-US',
-            userEmail: 'john@example.com',
-            timeZone: 'system',
-            dateFormat: null,
-            timeFormat: null,
-            numberFormat: null,
-            calendarStartDay: null,
-          });
-        }}
-      >
-        {children}
-      </RecoilRoot>
-    );
+    }) => {
+      jotaiStore.set(currentWorkspaceMemberState.atom, {
+        id: 'workspace-member-id',
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        colorScheme: 'Light',
+        locale: 'en-US',
+        userEmail: 'john@example.com',
+        timeZone: 'system',
+        dateFormat: null,
+        timeFormat: null,
+        numberFormat: null,
+        calendarStartDay: null,
+      });
+      return (
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>{children}</RecoilRoot>
+        </JotaiProvider>
+      );
+    };
 
     const { result } = renderHook(() => useUserTimezone(), {
       wrapper: WrapperWithSystemTimezone,

@@ -8,7 +8,7 @@ import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCapt
 import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -21,9 +21,9 @@ enum LoadingStatus {
 }
 
 export const SignInUpWorkspaceScopeFormEffect = () => {
-  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useRecoilValueV2(workspaceAuthProvidersState);
 
-  const isRequestingCaptchaToken = useRecoilValue(
+  const isRequestingCaptchaToken = useRecoilValueV2(
     isRequestingCaptchaTokenState,
   );
 
@@ -38,7 +38,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
 
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
 
   useEffect(() => {
     if (!workspaceAuthProviders) {

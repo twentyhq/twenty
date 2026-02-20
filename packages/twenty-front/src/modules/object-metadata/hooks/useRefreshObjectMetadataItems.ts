@@ -6,6 +6,7 @@ import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoa
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FetchPolicy, useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { type ObjectPermissions } from 'twenty-shared/types';
@@ -41,9 +42,9 @@ export const useRefreshObjectMetadataItems = (
           'readableFields' | 'updatableFields'
         >[],
       ) => {
-        const currentUserWorkspace = snapshot
-          .getLoadable(currentUserWorkspaceState)
-          .getValue();
+        const currentUserWorkspace = jotaiStore.get(
+          currentUserWorkspaceState.atom,
+        );
 
         if (!isDefined(currentUserWorkspace)) {
           return;
@@ -82,11 +83,8 @@ export const useRefreshObjectMetadataItems = (
           set(shouldAppBeLoadingState, false);
         }
 
-        if (
-          snapshot.getLoadable(isAppEffectRedirectEnabledState).getValue() ===
-          false
-        ) {
-          set(isAppEffectRedirectEnabledState, true);
+        if (jotaiStore.get(isAppEffectRedirectEnabledState.atom) === false) {
+          jotaiStore.set(isAppEffectRedirectEnabledState.atom, true);
         }
 
         return newObjectMetadataItems;

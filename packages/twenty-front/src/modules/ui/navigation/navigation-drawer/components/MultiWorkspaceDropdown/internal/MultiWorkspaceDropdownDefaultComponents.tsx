@@ -23,6 +23,7 @@ import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -56,11 +57,11 @@ const StyledDescription = styled.div`
 `;
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const availableWorkspaces = useRecoilValueV2(availableWorkspacesState);
   const availableWorkspacesCount =
     countAvailableWorkspaces(availableWorkspaces);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();

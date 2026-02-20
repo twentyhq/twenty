@@ -2,6 +2,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -28,8 +29,8 @@ const insertScript = ({
 };
 
 export const useInstantiateSupportChat = () => {
-  const currentUser = useRecoilValue(currentUserState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentUser = useRecoilValueV2(currentUserState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
   const loading = useIsPrefetchLoading();

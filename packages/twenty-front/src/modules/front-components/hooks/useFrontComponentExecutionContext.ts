@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
@@ -6,13 +5,14 @@ import {
 import { type AppPath } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = (): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
 } => {
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useRecoilValueV2(currentUserState);
   const navigateApp = useNavigateApp();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (

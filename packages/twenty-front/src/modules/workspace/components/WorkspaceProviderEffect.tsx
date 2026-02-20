@@ -4,6 +4,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useEffect, useCallback } from 'react';
 
 import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
@@ -16,7 +17,7 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
-  const lastAuthenticatedWorkspaceDomain = useRecoilValue(
+  const lastAuthenticatedWorkspaceDomain = useRecoilValueV2(
     lastAuthenticatedWorkspaceDomainState,
   );
 

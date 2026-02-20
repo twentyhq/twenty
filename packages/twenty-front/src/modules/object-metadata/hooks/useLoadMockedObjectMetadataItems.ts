@@ -1,6 +1,7 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -22,11 +23,8 @@ export const useLoadMockedObjectMetadataItems = () => {
           set(shouldAppBeLoadingState, false);
         }
 
-        if (
-          snapshot.getLoadable(isAppEffectRedirectEnabledState).getValue() ===
-          false
-        ) {
-          set(isAppEffectRedirectEnabledState, true);
+        if (jotaiStore.get(isAppEffectRedirectEnabledState.atom) === false) {
+          jotaiStore.set(isAppEffectRedirectEnabledState.atom, true);
         }
       },
     [],

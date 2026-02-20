@@ -45,7 +45,7 @@ type UseClientConfigResult = {
 
 export const useClientConfig = (): UseClientConfigResult => {
   const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
-  const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
+  const setDomainConfiguration = useSetRecoilStateV2(domainConfigurationState);
   const setAuthProviders = useSetRecoilStateV2(authProvidersState);
   const setAiModels = useSetRecoilStateV2(aiModelsState);
 

@@ -1,10 +1,10 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
@@ -19,7 +19,9 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   filteredWorkspaceMembers,
   onSelect,
 }: SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps) => {
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useRecoilValueV2(
+    currentWorkspaceMembersState,
+  );
 
   if (loading) {
     return null;

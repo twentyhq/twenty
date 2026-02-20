@@ -1,12 +1,9 @@
-import { atom } from 'recoil';
-
 import { type AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-const LAST_AUTHENTICATED_METHOD_STORAGE_KEY = 'lastAuthenticatedMethodState';
-
-export const lastAuthenticatedMethodState = atom<AuthenticatedMethod | null>({
-  key: LAST_AUTHENTICATED_METHOD_STORAGE_KEY,
-  default: null,
-  effects: [localStorageEffect()],
-});
+export const lastAuthenticatedMethodState =
+  createStateV2<AuthenticatedMethod | null>({
+    key: 'lastAuthenticatedMethodState',
+    defaultValue: null,
+    useLocalStorage: true,
+  });

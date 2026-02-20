@@ -1,4 +1,4 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type User } from '~/generated-metadata/graphql';
 
 export type CurrentUser = Pick<
@@ -15,7 +15,7 @@ export type CurrentUser = Pick<
   | 'hasPassword'
 >;
 
-export const currentUserState = createState<CurrentUser | null>({
+export const currentUserState = createStateV2<CurrentUser | null>({
   key: 'currentUserState',
   defaultValue: null,
 });
