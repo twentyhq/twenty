@@ -1,7 +1,9 @@
-import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
+import {
+  type AppPath,
+  type CommandMenuPages,
+  type NavigateOptions,
+} from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
-
-import { type OpenSidePanelPageParams } from '../functions/openSidePanelPage';
 
 export type NavigateFunction = <T extends AppPath>(
   to: T,
@@ -10,9 +12,12 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type OpenSidePanelPageFunction = (
-  params: OpenSidePanelPageParams,
-) => Promise<void>;
+export type OpenSidePanelPageFunction = (params: {
+  page: CommandMenuPages;
+  pageTitle: string;
+  pageIcon?: string;
+  shouldResetSearchState?: boolean;
+}) => Promise<void>;
 
 export type UnmountFrontComponentFunction = () => Promise<void>;
 

@@ -1,4 +1,3 @@
-import { type CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -6,20 +5,7 @@ import {
   type OpenSidePanelPageFunction,
 } from '../globals/frontComponentHostCommunicationApi';
 
-export type OpenSidePanelPageParams = {
-  page: CommandMenuPages;
-  pageTitle: string;
-  pageIcon?: string;
-  shouldResetSearchState?: boolean;
-};
-
-export const setOpenSidePanelPage = (fn: OpenSidePanelPageFunction): void => {
-  frontComponentHostCommunicationApi.openSidePanelPage = fn;
-};
-
-export const openSidePanelPage: OpenSidePanelPageFunction = (
-  params: OpenSidePanelPageParams,
-): Promise<void> => {
+export const openSidePanelPage: OpenSidePanelPageFunction = (params) => {
   const openSidePanelPageFunction =
     frontComponentHostCommunicationApi.openSidePanelPage;
 

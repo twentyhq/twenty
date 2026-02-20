@@ -17,9 +17,6 @@ import { installStylePropertyOnRemoteElements } from '@/front-component-renderer
 import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
-import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
-import { setOpenSidePanelPage } from '@/sdk/front-component-api/functions/openSidePanelPage';
-import { setUnmountFrontComponent } from '@/sdk/front-component-api/functions/unmountFrontComponent';
 
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
@@ -91,9 +88,12 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
   async () => {
     const hostApi =
       ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
-    setNavigate(hostApi.navigate);
-    setOpenSidePanelPage(hostApi.openSidePanelPage);
-    setUnmountFrontComponent(hostApi.unmountFrontComponent);
+
+    frontComponentHostCommunicationApi.navigate = hostApi.navigate;
+    frontComponentHostCommunicationApi.openSidePanelPage =
+      hostApi.openSidePanelPage;
+    frontComponentHostCommunicationApi.unmountFrontComponent =
+      hostApi.unmountFrontComponent;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (
