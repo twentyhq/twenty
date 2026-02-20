@@ -10,7 +10,6 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -29,7 +28,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
     isRequestingCaptchaTokenState,
   );
 
-  const captcha = useRecoilValue(captchaState);
+  const captcha = useRecoilValueV2(captchaState);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(
     LoadingStatus.Loading,

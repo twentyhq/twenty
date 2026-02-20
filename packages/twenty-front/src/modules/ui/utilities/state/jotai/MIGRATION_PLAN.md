@@ -120,7 +120,7 @@ ui/field/display/states/filePreviewState.ts
 
 ---
 
-## PR 4: Auth, Domain Manager, App, Captcha, Chrome Extension
+## PR 4: Auth, Domain Manager, App, Captcha, Chrome Extension ✅ DONE
 
 Core authentication and app-level states. Very widely imported (~195 external imports for auth).
 

@@ -1,5 +1,3 @@
-import { useRecoilValue } from 'recoil';
-
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -26,7 +24,9 @@ export const WorkspaceProviderEffect = () => {
 
   const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useRecoilValueV2(
+    isMultiWorkspaceEnabledState,
+  );
 
   const { initializeQueryParamState } = useInitializeQueryParamState();
 

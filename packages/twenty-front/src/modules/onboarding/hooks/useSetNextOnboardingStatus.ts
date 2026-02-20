@@ -14,7 +14,6 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   OnboardingStatus,
   PermissionFlagType,
@@ -66,7 +65,7 @@ const getNextOnboardingStatus = ({
 export const useSetNextOnboardingStatus = () => {
   const currentUser = useRecoilValueV2(currentUserState);
   const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
   const permissionMap = usePermissionFlagMap();
   const isAccountSyncEnabled =
     permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];

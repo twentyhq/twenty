@@ -3,14 +3,13 @@ import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoad
 import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCaptcha = () => {
-  const captcha = useRecoilValue(captchaState);
+  const captcha = useRecoilValueV2(captchaState);
   const captchaToken = useRecoilValueV2(captchaTokenState);
-  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
+  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
   const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
 
   const isClientConfigLoaded = clientConfigApiStatus.isLoadedOnce;

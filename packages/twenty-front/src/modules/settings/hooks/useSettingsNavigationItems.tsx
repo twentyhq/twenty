@@ -11,7 +11,6 @@ import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navig
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import {
   IconApi,
@@ -63,9 +62,9 @@ export type SettingsNavigationItem = {
 };
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
-  const billing = useRecoilValue(billingState);
+  const billing = useRecoilValueV2(billingState);
   const { signOut } = useAuth();
-  const supportChat = useRecoilValue(supportChatState);
+  const supportChat = useRecoilValueV2(supportChatState);
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;

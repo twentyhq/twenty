@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import {
@@ -39,7 +38,7 @@ export const useSignInUpForm = () => {
 
   const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
 
-  const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+  const isDeveloperDefaultSignInPrefilled = useRecoilValueV2(
     isDeveloperDefaultSignInPrefilledState,
   );
   const [searchParams] = useSearchParams();

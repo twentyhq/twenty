@@ -18,7 +18,6 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -67,7 +66,7 @@ export const InviteTeam = () => {
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
   const hasCalendarBooking = isDefined(calendarBookingPageId);
 
   const {

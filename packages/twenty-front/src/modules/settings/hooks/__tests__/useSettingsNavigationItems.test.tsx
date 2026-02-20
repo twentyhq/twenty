@@ -3,7 +3,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
@@ -50,16 +50,10 @@ const mockBilling: Billing = {
   __typename: 'Billing',
 };
 
-const initializeState = ({ set }: MutableSnapshot) => {
-  // currentUserState is now a Jotai state, set it directly
-  jotaiStore.set(currentUserState.atom, mockCurrentUser);
-  set(billingState, mockBilling);
-};
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot initializeState={initializeState}>
+      <RecoilRoot>
         <MemoryRouter>
           <I18nProvider i18n={i18n}>
             <SnackBarComponentInstanceContext.Provider
@@ -78,9 +72,17 @@ jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
   usePermissionFlagMap: jest.fn(),
 }));
 
+jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
+  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
+    redirectToWorkspaceDomain: jest.fn(),
+  })),
+}));
+
 describe('useSettingsNavigationItems', () => {
   beforeEach(() => {
     resetJotaiStore();
+    jotaiStore.set(currentUserState.atom, mockCurrentUser);
+    jotaiStore.set(billingState.atom, mockBilling);
   });
 
   it('should hide workspace settings when no permissions', () => {

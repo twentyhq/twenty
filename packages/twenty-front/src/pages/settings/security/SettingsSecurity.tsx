@@ -64,8 +64,10 @@ export const SettingsSecurity = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const isClickHouseConfigured = useRecoilValue(isClickHouseConfiguredState);
+  const isMultiWorkspaceEnabled = useRecoilValueV2(
+    isMultiWorkspaceEnabledState,
+  );
+  const isClickHouseConfigured = useRecoilValueV2(isClickHouseConfiguredState);
   const authProviders = useRecoilValueV2(authProvidersState);
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(

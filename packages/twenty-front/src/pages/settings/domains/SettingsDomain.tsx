@@ -13,7 +13,7 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -35,7 +35,7 @@ export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
   const { t } = useLingui();
-  const isCloudflareIntegrationEnabled = useRecoilValue(
+  const isCloudflareIntegrationEnabled = useRecoilValueV2(
     isCloudflareIntegrationEnabledState,
   );
 

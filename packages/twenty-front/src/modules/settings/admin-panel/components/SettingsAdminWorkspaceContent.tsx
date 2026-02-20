@@ -1,7 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
-import { useRecoilValue } from 'recoil';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
@@ -59,7 +58,7 @@ const StyledButtonContainer = styled.div`
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
 }: SettingsAdminWorkspaceContentProps) => {
-  const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useRecoilValueV2(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentUser] = useRecoilStateV2(currentUserState);
   const currentWorkspace = useRecoilValueV2(currentWorkspaceState);

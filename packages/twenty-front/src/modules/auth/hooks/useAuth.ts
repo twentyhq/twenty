@@ -4,13 +4,9 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
-  useRecoilValue,
 } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 
-import { billingState } from '@/client-config/states/billingState';
-import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useCheckUserExistsLazyQuery,
@@ -27,7 +23,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -49,11 +44,8 @@ import {
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { apiConfigState } from '@/client-config/states/apiConfigState';
-import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -82,8 +74,10 @@ export const useAuth = () => {
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const isEmailVerificationRequired = useRecoilValue(
+  const isMultiWorkspaceEnabled = useRecoilValueV2(
+    isMultiWorkspaceEnabledState,
+  );
+  const isEmailVerificationRequired = useRecoilValueV2(
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -136,26 +130,12 @@ export const useAuth = () => {
         const authProvidersValue = jotaiStore.get(
           workspaceAuthProvidersState.atom,
         );
-        const billing = snapshot.getLoadable(billingState).getValue();
-        const isDeveloperDefaultSignInPrefilled = snapshot
-          .getLoadable(isDeveloperDefaultSignInPrefilledState)
-          .getValue();
-        const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const captcha = snapshot.getLoadable(captchaState).getValue();
-        const clientConfigApiStatus = snapshot
-          .getLoadable(clientConfigApiStatusState)
-          .getValue();
         const isCurrentUserLoadedValue = jotaiStore.get(
           isCurrentUserLoadedState.atom,
         );
-        const isMultiWorkspaceEnabled = snapshot
-          .getLoadable(isMultiWorkspaceEnabledState)
-          .getValue();
         const domainConfigurationValue = jotaiStore.get(
           domainConfigurationState.atom,
         );
-        const apiConfig = snapshot.getLoadable(apiConfigState).getValue();
-        const sentryConfig = snapshot.getLoadable(sentryConfigState).getValue();
         const workspacePublicDataValue = jotaiStore.get(
           workspacePublicDataState.atom,
         );
@@ -166,18 +146,7 @@ export const useAuth = () => {
           isCaptchaScriptLoadedState.atom,
         );
 
-        const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(billingState, billing);
-          set(
-            isDeveloperDefaultSignInPrefilledState,
-            isDeveloperDefaultSignInPrefilled,
-          );
-          set(supportChatState, supportChat);
-          set(captchaState, captcha);
-          set(apiConfigState, apiConfig);
-          set(sentryConfigState, sentryConfig);
-          set(clientConfigApiStatusState, clientConfigApiStatus);
-          set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
+        const initialSnapshot = emptySnapshot.map(() => {
           return undefined;
         });
 

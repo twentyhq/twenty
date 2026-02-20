@@ -9,7 +9,7 @@ import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import {
   email,
@@ -162,12 +162,12 @@ describe('useAuth', () => {
         const workspaceAuthProviders = useRecoilValueV2(
           workspaceAuthProvidersState,
         );
-        const billing = useRecoilValue(billingState);
-        const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+        const billing = useRecoilValueV2(billingState);
+        const isDeveloperDefaultSignInPrefilled = useRecoilValueV2(
           isDeveloperDefaultSignInPrefilledState,
         );
-        const supportChat = useRecoilValue(supportChatState);
-        const isMultiWorkspaceEnabled = useRecoilValue(
+        const supportChat = useRecoilValueV2(supportChatState);
+        const isMultiWorkspaceEnabled = useRecoilValueV2(
           isMultiWorkspaceEnabledState,
         );
         return {

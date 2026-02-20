@@ -95,7 +95,7 @@ export const EventRow = ({
 }: EventRowProps) => {
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );
 

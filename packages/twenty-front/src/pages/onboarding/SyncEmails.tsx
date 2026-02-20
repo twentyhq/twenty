@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { Key } from 'ts-key-enum';
 
@@ -87,16 +87,18 @@ export const SyncEmails = () => {
   const userAuthenticatedWithSSO =
     lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
-  const isGoogleMessagingEnabled = useRecoilValue(
+  const isGoogleMessagingEnabled = useRecoilValueV2(
     isGoogleMessagingEnabledState,
   );
-  const isMicrosoftMessagingEnabled = useRecoilValue(
+  const isMicrosoftMessagingEnabled = useRecoilValueV2(
     isMicrosoftMessagingEnabledState,
   );
 
-  const isGoogleCalendarEnabled = useRecoilValue(isGoogleCalendarEnabledState);
+  const isGoogleCalendarEnabled = useRecoilValueV2(
+    isGoogleCalendarEnabledState,
+  );
 
-  const isMicrosoftCalendarEnabled = useRecoilValue(
+  const isMicrosoftCalendarEnabled = useRecoilValueV2(
     isMicrosoftCalendarEnabledState,
   );
 
