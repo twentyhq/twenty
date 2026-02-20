@@ -311,6 +311,11 @@ msgstr "{morphRelationCount} Objekte"
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 msgstr "{num, selectordinal, one {{num}.} other {{num}.}}"
 
+#. js-lingui-id: fTSz8d
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
+msgid "{numberOfSelectedItems} workspace members"
+msgstr ""
+
 #. js-lingui-id: 7kYa/u
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{objectLabelPlural} ({totalCount})"
