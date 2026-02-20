@@ -807,9 +807,9 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 * API 密钥的权限由 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
 * 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `defaultRoleUniversalIdentifier` 指向该角色的通用标识符。
 
-#### Uploading files
+#### 上传文件
 
-The generated `Twenty` client includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Because standard GraphQL clients do not support multipart file uploads natively, the client provides this dedicated method that implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec) under the hood.
+生成的 `Twenty` 客户端包含一个 `uploadFile` 方法，用于将文件附加到工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
 
 ```typescript
 import Twenty from '~/generated';
@@ -830,7 +830,7 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-The method signature:
+方法签名：
 
 ```typescript
 uploadFile(

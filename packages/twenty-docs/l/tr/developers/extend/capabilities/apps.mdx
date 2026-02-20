@@ -807,9 +807,9 @@ Notlar:
 * API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
 * Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `defaultRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
 
-#### Uploading files
+#### Dosya yükleme
 
-The generated `Twenty` client includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Because standard GraphQL clients do not support multipart file uploads natively, the client provides this dedicated method that implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec) under the hood.
+Oluşturulan `Twenty` istemcisi, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
 
 ```typescript
 import Twenty from '~/generated';
@@ -830,7 +830,7 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-The method signature:
+Yöntem imzası:
 
 ```typescript
 uploadFile(

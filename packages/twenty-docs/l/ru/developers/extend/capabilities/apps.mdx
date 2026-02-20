@@ -807,9 +807,9 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 * Права ключа API определяются ролью, на которую ссылается ваш `application-config.ts` через `defaultRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
 * Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Предоставляйте только те права, которые нужны вашим функциям, затем укажите в `defaultRoleUniversalIdentifier` универсальный идентификатор этой роли.
 
-#### Uploading files
+#### Загрузка файлов
 
-The generated `Twenty` client includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Because standard GraphQL clients do not support multipart file uploads natively, the client provides this dedicated method that implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec) under the hood.
+Сгенерированный клиент `Twenty` включает метод `uploadFile` для прикрепления файлов к полям типа «файл» в объектах вашего рабочего пространства. Поскольку стандартные клиенты GraphQL изначально не поддерживают многочастовую загрузку файлов, клиент предоставляет специальный метод, который под капотом реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
 import Twenty from '~/generated';
@@ -830,7 +830,7 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-The method signature:
+Сигнатура метода:
 
 ```typescript
 uploadFile(
