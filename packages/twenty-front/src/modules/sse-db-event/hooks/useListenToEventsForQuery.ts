@@ -1,6 +1,6 @@
 import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
   type MetadataGqlOperationSignature,
@@ -16,9 +16,12 @@ export const useListenToEventsForQuery = ({
     | RecordGqlOperationSignature
     | MetadataGqlOperationSignature;
 }) => {
+  const operationSignatureRef = useRef(operationSignature);
+  operationSignatureRef.current = operationSignature;
+
   const changeQueryIdListenState = useRecoilCallback(
     ({ set, snapshot }) =>
-      (shouldListen: boolean, queryId: string) => {
+      (shouldListen: boolean, targetQueryId: string) => {
         const currentRequiredQueryListeners = getSnapshotValue(
           snapshot,
           requiredQueryListenersState,
@@ -26,7 +29,7 @@ export const useListenToEventsForQuery = ({
 
         const listeningForThisQueryIsActive =
           currentRequiredQueryListeners.some(
-            (listener) => listener.queryId === queryId,
+            (listener) => listener.queryId === targetQueryId,
           );
 
         if (shouldListen === listeningForThisQueryIsActive) {
@@ -36,18 +39,21 @@ export const useListenToEventsForQuery = ({
         if (shouldListen) {
           set(requiredQueryListenersState, [
             ...currentRequiredQueryListeners,
-            { queryId, operationSignature },
+            {
+              queryId: targetQueryId,
+              operationSignature: operationSignatureRef.current,
+            },
           ]);
         } else {
           set(
             requiredQueryListenersState,
             currentRequiredQueryListeners.filter(
-              (listener) => listener.queryId !== queryId,
+              (listener) => listener.queryId !== targetQueryId,
             ),
           );
         }
       },
-    [operationSignature],
+    [],
   );
 
   useEffect(() => {
