@@ -15,6 +15,7 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 
 * 以代码定义自定义对象和字段（受管理的数据模型）
 * 构建带有自定义触发器的逻辑函数
+* 为 AI 智能体定义技能
 * 将同一个应用部署到多个工作空间
 
 ## 先决条件
@@ -45,7 +46,7 @@ yarn twenty app:dev
 The scaffolder supports three modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -118,8 +119,10 @@ my-twenty-app/
   │   └── hello-world.tsx               # Example front component
   ├── views/
   │   └── example-view.ts                # Example saved view definition
-  └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Example sidebar navigation link
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
@@ -148,6 +151,7 @@ With `--minimal`, only the core files are created (`application-config.ts`, `rol
 | `defineField()`              | 现有对象的字段扩展                        |
 | `defineView()`               | Saved view definitions           |
 | `defineNavigationMenuItem()` | Navigation menu item definitions |
+| `defineSkill()`              | AI agent skill definitions       |
 
 <Note>
   **文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
@@ -169,7 +173,7 @@ export default defineObject({
 后续命令将添加更多文件和文件夹：
 
 * `yarn twenty app:dev` 将在 `node_modules/twenty-sdk/generated` 中自动生成一个类型化的 API 客户端（类型化的 Twenty 客户端 + 工作区类型）。
-* `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
+* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## 身份验证
 
@@ -222,6 +226,7 @@ twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以�
 | `defineField()`              | 为现有对象扩展额外字段                     |
 | `defineView()`               | Define saved views for objects  |
 | `defineNavigationMenuItem()` | Define sidebar navigation links |
+| `defineSkill()`              | Define AI agent skills          |
 
 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
 
@@ -740,6 +745,41 @@ export default defineFrontComponent({
 
 * **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新前端组件的选项。
 * **手动**：创建一个新的 `*.front-component.tsx` 文件，并使用 `defineFrontComponent()`。
+
+### 技能
+
+Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+关键点：
+
+* `name` is a unique identifier string for the skill (kebab-case recommended).
+* `label` is the human-readable display name shown in the UI.
+* `content` contains the skill instructions — this is the text the AI agent uses.
+* `icon` (optional) sets the icon displayed in the UI.
+* `description` (optional) provides additional context about the skill's purpose.
+
+You can create new skills in two ways:
+
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
+* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
 ### 生成的类型化客户端
 
