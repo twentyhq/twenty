@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -71,7 +70,6 @@ export const WorkspaceNavigationMenuItems = () => {
   const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
     openNavigationMenuItemFolderIdsStateV2,
   );
-  const navigate = useNavigate();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
