@@ -1,6 +1,6 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
@@ -29,10 +29,10 @@ export const FrontComponentWorkerEffect = ({
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (isInitialized) {
+    if (isInitializedRef.current) {
       return;
     }
 
@@ -56,7 +56,6 @@ export const FrontComponentWorkerEffect = ({
     });
 
     setThread(thread);
-    setIsInitialized(true);
 
     thread.imports
       .render(newReceiver.connection, {
@@ -69,6 +68,7 @@ export const FrontComponentWorkerEffect = ({
       });
 
     setReceiver(newReceiver);
+    isInitializedRef.current = true;
 
     return () => {
       setThread(null);
@@ -82,7 +82,6 @@ export const FrontComponentWorkerEffect = ({
     setReceiver,
     setThread,
     frontComponentHostCommunicationApi,
-    isInitialized,
   ]);
 
   return null;
