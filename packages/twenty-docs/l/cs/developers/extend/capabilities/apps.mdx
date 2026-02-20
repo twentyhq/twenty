@@ -46,13 +46,13 @@ yarn twenty app:dev
 Nástroj pro generování kostry podporuje tři režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Výchozí (úplný): všechny příklady (objekt, pole, logická funkce, front-endová komponenta, zobrazení, položka navigační nabídky, dovednost)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Minimální: pouze základní soubory (application-config.ts a default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# Interaktivní: vyberte, které příklady zahrnout
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -103,26 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Výchozí role pro logické funkce
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Ukázková definice vlastního objektu
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Ukázková samostatná definice pole
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Ukázková logická funkce
+  │   └── post-install.ts               # Postinstalační logická funkce
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Ukázková front-endová komponenta
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Ukázková definice uloženého zobrazení
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Ukázkový odkaz postranní navigace
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Ukázková definice dovednosti agenta AI
 ```
 
 S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
@@ -151,7 +151,7 @@ SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`e
 | `defineField()`              | Rozšíření polí u existujících objektů |
 | `defineView()`               | Definice uložených zobrazení          |
 | `defineNavigationMenuItem()` | Definice položek navigační nabídky    |
-| `defineSkill()`              | AI agent skill definitions            |
+| `defineSkill()`              | Definice dovedností agenta AI         |
 
 <Note>
   **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
@@ -173,7 +173,7 @@ export default defineObject({
 Pozdější příkazy přidají další soubory a složky:
 
 * `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
 
@@ -226,7 +226,7 @@ SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je pop
 | `defineField()`              | Rozšiřte existující objekty o další pole                          |
 | `defineView()`               | Definujte uložená zobrazení pro objekty                           |
 | `defineNavigationMenuItem()` | Definujte odkazy postranní navigace                               |
-| `defineSkill()`              | Define AI agent skills                                            |
+| `defineSkill()`              | Definuje dovednosti agenta AI                                     |
 
 Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
@@ -748,7 +748,7 @@ Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 ### Dovednosti
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Dovednosti definují znovupoužitelné pokyny a schopnosti, které mohou agenti AI používat ve vašem pracovním prostoru. K definování dovedností s vestavěnou validací použijte `defineSkill()`:
 
 ```typescript
 // src/skills/example-skill.ts
@@ -770,16 +770,16 @@ export default defineSkill({
 
 Hlavní body:
 
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+* `name` je jedinečný identifikátor dovednosti (doporučuje se kebab-case).
+* `label` je uživatelsky čitelný název zobrazovaný v UI.
+* `content` obsahuje pokyny dovednosti — je to text, který agent AI používá.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `description` (volitelné) poskytuje doplňující kontext o účelu dovednosti.
 
-You can create new skills in two ways:
+Nové dovednosti můžete vytvářet dvěma způsoby:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
-* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou dovednost.
+* **Ruční**: Vytvořte nový soubor a použijte `defineSkill()` podle stejného vzoru.
 
 ### Generovaný typovaný klient
 

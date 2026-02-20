@@ -17,6 +17,7 @@ import { installStylePropertyOnRemoteElements } from '@/front-component-renderer
 import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
+import { frontComponentHostCommunicationApi } from '@/sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';

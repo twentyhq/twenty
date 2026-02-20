@@ -2333,6 +2333,7 @@ export type Mutation = {
   /** @deprecated Use uploadFilesFieldFile instead */
   uploadFile: SignedFile;
   uploadFilesFieldFile: FileWithSignedUrl;
+  uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
   uploadImage: SignedFile;
   uploadWorkflowFile: FileWithSignedUrl;
   uploadWorkspaceLogo: FileWithSignedUrl;
@@ -3148,6 +3149,12 @@ export type MutationUploadFileArgs = {
 
 export type MutationUploadFilesFieldFileArgs = {
   fieldMetadataId: Scalars['String'];
+  file: Scalars['Upload'];
+};
+
+
+export type MutationUploadFilesFieldFileByUniversalIdentifierArgs = {
+  fieldMetadataUniversalIdentifier: Scalars['String'];
   file: Scalars['Upload'];
 };
 

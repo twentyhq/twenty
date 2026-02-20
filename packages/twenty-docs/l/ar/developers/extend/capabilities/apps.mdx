@@ -46,13 +46,13 @@ yarn twenty app:dev
 يدعم المُنشئ ثلاثة أوضاع للتحكم في ملفات الأمثلة التي سيتم تضمينها:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# الافتراضي (شامل): جميع الأمثلة (كائن، حقل، دالة منطقية، مكوّن الواجهة الأمامية، عرض، عنصر قائمة التنقل، مهارة)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# الأدنى: الملفات الأساسية فقط (application-config.ts و default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# التفاعلي: اختر الأمثلة التي تريد تضمينها
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -103,26 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # مجلد الأصول العامة (صور، خطوط، إلخ)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # مطلوب - إعدادات التطبيق الرئيسية
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # الدور الافتراضي للدوال المنطقية
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # تعريف كائن مخصص — مثال
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # تعريف حقل مستقل — مثال
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # دالة منطقية — مثال
+  │   └── post-install.ts               # دالة منطقية لما بعد التثبيت
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # مكوّن واجهة أمامية — مثال
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # تعريف عرض محفوظ — مثال
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # رابط تنقّل في الشريط الجانبي — مثال
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # تعريف مهارة لوكيل الذكاء الاصطناعي — مثال
 ```
 
 مع `--minimal`، سيتم إنشاء الملفات الأساسية فقط (`application-config.ts` و`roles/default-role.ts` و`logic-functions/post-install.ts`). مع `--interactive`، تختار ملفات الأمثلة التي تريد تضمينها.
@@ -142,16 +142,16 @@ my-twenty-app/
 
 يكتشف SDK الكيانات عبر تحليل ملفات TypeScript الخاصة بك بحثًا عن استدعاءات **`export default define<Entity>({...})`**. يحتوي كل نوع كيان على دالة مساعدة مقابلة يتم تصديرها من `twenty-sdk`:
 
-| دالة مساعدة                  | نوع الكيان                        |
-| ---------------------------- | --------------------------------- |
-| `defineObject()`             | تعريفات كائنات مخصصة              |
-| `defineLogicFunction()`      | تعريفات الوظائف المنطقية          |
-| `defineFrontComponent()`     | Front component definitions       |
-| `defineRole()`               | تعريفات الأدوار                   |
-| `defineField()`              | امتدادات الحقول للكائنات الموجودة |
-| `defineView()`               | تعريفات العروض المحفوظة           |
-| `defineNavigationMenuItem()` | تعريفات عناصر قائمة التنقل        |
-| `defineSkill()`              | AI agent skill definitions        |
+| دالة مساعدة                  | نوع الكيان                           |
+| ---------------------------- | ------------------------------------ |
+| `defineObject()`             | تعريفات كائنات مخصصة                 |
+| `defineLogicFunction()`      | تعريفات الوظائف المنطقية             |
+| `defineFrontComponent()`     | Front component definitions          |
+| `defineRole()`               | تعريفات الأدوار                      |
+| `defineField()`              | امتدادات الحقول للكائنات الموجودة    |
+| `defineView()`               | تعريفات العروض المحفوظة              |
+| `defineNavigationMenuItem()` | تعريفات عناصر قائمة التنقل           |
+| `defineSkill()`              | تعريفات مهارات وكيل الذكاء الاصطناعي |
 
 <Note>
   **تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
@@ -173,7 +173,7 @@ export default defineObject({
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
 * `yarn twenty app:dev` سيولّد تلقائيًا عميل API مضبوط الأنواع في `node_modules/twenty-sdk/generated` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
 
@@ -226,7 +226,7 @@ yarn twenty auth:status
 | `defineField()`              | وسّع الكائنات الموجودة بحقول إضافية                  |
 | `defineView()`               | تعريف العروض المحفوظة للكائنات                       |
 | `defineNavigationMenuItem()` | تعريف روابط التنقل في الشريط الجانبي                 |
-| `defineSkill()`              | Define AI agent skills                               |
+| `defineSkill()`              | عرّف مهارات وكيل الذكاء الاصطناعي                    |
 
 تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
 
@@ -748,7 +748,7 @@ export default defineFrontComponent({
 
 ### المهارات
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+تُحدِّد المهارات تعليمات وإمكانات قابلة لإعادة الاستخدام يمكن لوكلاء الذكاء الاصطناعي استخدامها داخل مساحة العمل لديك. استخدم `defineSkill()` لتعريف مهارات مع تحقّق مدمج:
 
 ```typescript
 // src/skills/example-skill.ts
@@ -757,29 +757,29 @@ import { defineSkill } from 'twenty-sdk';
 export default defineSkill({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'sales-outreach',
-  label: 'Sales Outreach',
-  description: 'Guides the AI agent through a structured sales outreach process',
+  label: 'التواصل البيعي',
+  description: 'يرشد وكيل الذكاء الاصطناعي خلال عملية منظّمة للتواصل البيعي',
   icon: 'IconBrain',
-  content: `You are a sales outreach assistant. When reaching out to a prospect:
-1. Research the company and recent news
-2. Identify the prospect's role and likely pain points
-3. Draft a personalized message referencing specific details
-4. Keep the tone professional but conversational`,
+  content: `أنت مساعد للتواصل البيعي. عند التواصل مع عميل محتمل:
+1. ابحث عن الشركة وآخر الأخبار
+2. حدِّد دور العميل المحتمل ونقاط الألم المرجّحة
+3. صِغ رسالة مخصّصة تشير إلى تفاصيل محدّدة
+4. حافظ على نبرة احترافية ولكن حوارية`,
 });
 ```
 
 النقاط الرئيسية:
 
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+* `name` هي سلسلة معرّف فريدة للمهارة (يُنصَح باستخدام kebab-case).
+* `label` هو اسم العرض المقروء للبشر الظاهر في واجهة المستخدم.
+* `content` يحتوي على تعليمات المهارة — وهو النص الذي يستخدمه وكيل الذكاء الاصطناعي.
+* `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
+* `description` (اختياري) يوفّر سياقًا إضافيًا حول غرض المهارة.
 
-You can create new skills in two ways:
+يمكنك إنشاء مهارات جديدة بطريقتين:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
-* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+* **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة مهارة جديدة.
+* **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineSkill()` مع اتباع النمط نفسه.
 
 ### عميل مُولَّد مضبوط الأنواع
 
