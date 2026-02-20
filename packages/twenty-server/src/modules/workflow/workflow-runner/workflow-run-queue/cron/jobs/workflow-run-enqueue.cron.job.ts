@@ -12,6 +12,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -68,11 +72,20 @@ export class WorkflowRunEnqueueCronJob {
           enqueuedCount++;
         }
       } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: {
-            id: workspace.id,
-          },
-        });
+        if (
+          error instanceof TwentyORMException &&
+          error.code === TwentyORMExceptionCode.MALFORMED_METADATA
+        ) {
+          this.logger.warn(
+            `Skipping workspace ${workspace.id}: workspace metadata not available yet`,
+          );
+        } else {
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: {
+              id: workspace.id,
+            },
+          });
+        }
       }
     }
 
