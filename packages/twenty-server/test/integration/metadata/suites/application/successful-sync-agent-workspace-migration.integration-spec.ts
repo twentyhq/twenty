@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
-const TEST_SKILL_ID = uuidv4();
+const TEST_AGENT_ID = uuidv4();
 
-describe('syncApplication - skill', () => {
+describe('syncApplication - agent', () => {
   let appCreated = false;
 
   beforeAll(async () => {
@@ -34,7 +34,7 @@ describe('syncApplication - skill', () => {
     });
   });
 
-  it('should sync a skill then update it on second sync', async () => {
+  it('should sync an agent then update it on second sync', async () => {
     const initialManifest: Manifest = {
       application: {
         universalIdentifier: TEST_APP_ID,
@@ -47,7 +47,19 @@ describe('syncApplication - skill', () => {
         yarnLockChecksum: null,
         apiClientChecksum: null,
       },
-      agents: [],
+      agents: [
+        {
+          universalIdentifier: TEST_AGENT_ID,
+          name: 'test-agent',
+          label: 'Test Agent',
+          description: 'An agent for testing',
+          icon: 'IconRobot',
+          prompt: 'You are a helpful test assistant.',
+          modelId: 'gpt-4o',
+          responseFormat: { type: 'text' },
+          evaluationInputs: ['test input 1'],
+        },
+      ],
       roles: [
         {
           universalIdentifier: TEST_ROLE_ID,
@@ -55,16 +67,7 @@ describe('syncApplication - skill', () => {
           description: 'A test role',
         },
       ],
-      skills: [
-        {
-          universalIdentifier: TEST_SKILL_ID,
-          name: 'test-skill',
-          label: 'Test Skill',
-          description: 'A skill for testing',
-          icon: 'IconBrain',
-          content: '# Test Skill\n\nThis is a test skill.',
-        },
-      ],
+      skills: [],
       objects: [],
       fields: [],
       logicFunctions: [],
@@ -86,15 +89,18 @@ describe('syncApplication - skill', () => {
 
     const updatedManifest: Manifest = {
       ...initialManifest,
-      skills: [
+      agents: [
         {
-          universalIdentifier: TEST_SKILL_ID,
-          name: 'test-skill',
-          label: 'Test Skill Updated',
-          description: 'An updated skill for testing',
-          icon: 'IconBrain',
-          content:
-            '# Test Skill\n\nThis is an updated test skill with more content.',
+          universalIdentifier: TEST_AGENT_ID,
+          name: 'test-agent',
+          label: 'Test Agent Updated',
+          description: 'An updated agent for testing',
+          icon: 'IconRobot',
+          prompt:
+            'You are an updated helpful test assistant with more capabilities.',
+          modelId: 'gpt-4o',
+          responseFormat: { type: 'text' },
+          evaluationInputs: ['test input 1', 'test input 2'],
         },
       ],
     };
