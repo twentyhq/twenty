@@ -94,6 +94,12 @@ export class ImapClientProvider {
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
     });
 
+    client.on('error', (error: Error) => {
+      this.logger.error(
+        `IMAP client error for ${connectedAccount.handle}: ${error.message}`,
+      );
+    });
+
     try {
       await client.connect();
 

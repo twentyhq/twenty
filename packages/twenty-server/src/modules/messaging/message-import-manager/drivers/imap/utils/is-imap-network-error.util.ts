@@ -27,24 +27,33 @@ const NODEJS_NETWORK_ERROR_CODES = [
   MessageNetworkExceptionCode.EHOSTUNREACH,
 ];
 
+const IMAPFLOW_CONNECTION_ERROR_MESSAGES = ['Connection not available'];
+
 export const isImapNetworkError = (error: Error): boolean => {
   const errorWithCode = error as { code?: string };
 
-  if (!isDefined(errorWithCode.code)) {
-    return false;
-  }
+  if (isDefined(errorWithCode.code)) {
+    if (IMAPFLOW_TIMEOUT_ERROR_CODES.includes(errorWithCode.code)) {
+      return true;
+    }
 
-  if (IMAPFLOW_TIMEOUT_ERROR_CODES.includes(errorWithCode.code)) {
-    return true;
-  }
+    if (IMAPFLOW_CONNECTION_ERROR_CODES.includes(errorWithCode.code)) {
+      return true;
+    }
 
-  if (IMAPFLOW_CONNECTION_ERROR_CODES.includes(errorWithCode.code)) {
-    return true;
+    if (
+      NODEJS_NETWORK_ERROR_CODES.includes(
+        errorWithCode.code as MessageNetworkExceptionCode,
+      )
+    ) {
+      return true;
+    }
   }
 
   if (
-    NODEJS_NETWORK_ERROR_CODES.includes(
-      errorWithCode.code as MessageNetworkExceptionCode,
+    error.message &&
+    IMAPFLOW_CONNECTION_ERROR_MESSAGES.some((msg) =>
+      error.message.includes(msg),
     )
   ) {
     return true;
