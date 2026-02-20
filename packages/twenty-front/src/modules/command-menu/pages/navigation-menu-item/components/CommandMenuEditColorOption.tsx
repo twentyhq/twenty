@@ -7,8 +7,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
 import { IconColorSwatch } from 'twenty-ui/display';
 import {
   DEFAULT_COLOR_LABELS,
@@ -43,13 +44,13 @@ export const CommandMenuEditColorOption = ({
 
   const query = searchValue.trim().toLowerCase();
 
-  const filteredColorNames = !isDefined(query)
-    ? MAIN_COLOR_NAMES
-    : MAIN_COLOR_NAMES.filter(
+  const filteredColorNames = isNonEmptyString(query)
+    ? MAIN_COLOR_NAMES.filter(
         (colorName) =>
           colorName.toLowerCase().includes(query) ||
           (DEFAULT_COLOR_LABELS[colorName] ?? '').toLowerCase().includes(query),
-      );
+      )
+    : MAIN_COLOR_NAMES;
 
   const handleSelectColor = (selectedColor: ThemeColor) => {
     updateNavigationMenuItemInDraft(navigationMenuItemId, {
