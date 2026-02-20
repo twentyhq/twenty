@@ -46,6 +46,7 @@ export {
   IconBrandGoogle,
   IconBrandGraphql,
   IconBrandLinkedin,
+  IconBrandOpenai,
   IconBrandX,
   IconBriefcase,
   IconBroadcast,

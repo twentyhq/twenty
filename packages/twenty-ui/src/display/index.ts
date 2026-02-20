@@ -34,6 +34,7 @@ export { CommandBlock } from './command-block/components/CommandBlock';
 export type { IconProps } from './icon/components/Icon';
 export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';
+export { IconAnthropic } from './icon/components/IconAnthropic';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
 export { IconGoogle } from './icon/components/IconGoogle';
@@ -117,6 +118,7 @@ export {
   IconBrandGoogle,
   IconBrandGraphql,
   IconBrandLinkedin,
+  IconBrandOpenai,
   IconBrandX,
   IconBriefcase,
   IconBroadcast,
