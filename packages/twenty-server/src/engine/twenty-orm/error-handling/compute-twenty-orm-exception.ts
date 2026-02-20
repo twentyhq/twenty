@@ -58,6 +58,13 @@ export const computeTwentyORMException = async (
       );
     }
 
+    if (errorCode === POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION) {
+      return new TwentyORMException(
+        'Record violates a foreign key constraint. Please ensure related records exist.',
+        TwentyORMExceptionCode.INVALID_INPUT,
+      );
+    }
+
     if (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
