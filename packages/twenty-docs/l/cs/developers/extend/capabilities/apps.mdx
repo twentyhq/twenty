@@ -841,18 +841,18 @@ uploadFile(
 ): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
 ```
 
-| Parametr                           | Typ      | Popis                                                                     |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | The raw file contents                                                     |
-| `filename`                         | `string` | The name of the file (used for storage and display)                       |
-| `contentType`                      | `string` | MIME type of the file (defaults to `application/octet-stream` if omitted) |
-| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object           |
+| Parametr                           | Typ      | Popis                                                                       |
+| ---------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Surový obsah souboru                                                        |
+| `filename`                         | `string` | Název souboru (používá se pro ukládání a zobrazení)                         |
+| `contentType`                      | `string` | Typ MIME souboru (pokud je vynechán, výchozí je `application/octet-stream`) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` pole typu souboru ve vašem objektu                    |
 
 Hlavní body:
 
-* The method sends the file to the **metadata endpoint** (not the main GraphQL endpoint), where the upload mutation is resolved.
-* It uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed — consistent with how apps reference fields everywhere else.
-* The returned `url` is a signed URL you can use to access the uploaded file.
+* Metoda odešle soubor na **koncový bod metadat** (nikoli na hlavní koncový bod GraphQL), kde se provede mutace nahrání.
+* Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje ve všech pracovních prostorech, kde je vaše aplikace nainstalována — v souladu s tím, jak aplikace odkazují na pole všude jinde.
+* Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
 
 ### Příklad Hello World
 

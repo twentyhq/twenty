@@ -841,18 +841,18 @@ uploadFile(
 ): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
 ```
 
-| Parametre                          | Tür      | Açıklama                                                                  |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | The raw file contents                                                     |
-| `filename`                         | `string` | The name of the file (used for storage and display)                       |
-| `contentType`                      | `string` | MIME type of the file (defaults to `application/octet-stream` if omitted) |
-| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object           |
+| Parametre                          | Tür      | Açıklama                                                                                   |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                                                       |
+| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)                                     |
+| `contentType`                      | `string` | Dosyanın MIME türü (belirtilmezse varsayılan olarak `application/octet-stream` kullanılır) |
+| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                              |
 
 Önemli noktalar:
 
-* The method sends the file to the **metadata endpoint** (not the main GraphQL endpoint), where the upload mutation is resolved.
-* It uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed — consistent with how apps reference fields everywhere else.
-* The returned `url` is a signed URL you can use to access the uploaded file.
+* Yöntem dosyayı, yükleme mutasyonunun çözümlendiği **metadata endpoint**'e (ana GraphQL endpoint'ine değil) gönderir.
+* Alan için `universalIdentifier` kullanılır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır — uygulamaların başka her yerde alanlara nasıl atıfta bulunduğuyla tutarlıdır.
+* Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
 
 ### Hello World örneği
 

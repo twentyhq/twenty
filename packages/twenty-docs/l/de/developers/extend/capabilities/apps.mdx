@@ -841,18 +841,18 @@ uploadFile(
 ): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
 ```
 
-| Parameter                          | Typ      | Beschreibung                                                              |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | The raw file contents                                                     |
-| `filename`                         | `string` | The name of the file (used for storage and display)                       |
-| `contentType`                      | `string` | MIME type of the file (defaults to `application/octet-stream` if omitted) |
-| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object           |
+| Parameter                          | Typ      | Beschreibung                                                                    |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Der Rohinhalt der Datei                                                         |
+| `filename`                         | `string` | Der Name der Datei (wird für Speicherung und Anzeige verwendet)                 |
+| `contentType`                      | `string` | MIME-Typ der Datei (standardmäßig `application/octet-stream`, wenn weggelassen) |
+| `fieldMetadataUniversalIdentifier` | `string` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt                    |
 
 Hauptpunkte:
 
-* The method sends the file to the **metadata endpoint** (not the main GraphQL endpoint), where the upload mutation is resolved.
-* It uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed — consistent with how apps reference fields everywhere else.
-* The returned `url` is a signed URL you can use to access the uploaded file.
+* Die Methode sendet die Datei an den **metadata endpoint** (nicht den main GraphQL endpoint), wo die Upload-Mutation ausgeführt wird.
+* Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist — im Einklang damit, wie Apps Felder überall sonst referenzieren.
+* Die zurückgegebene `url` ist eine signierte URL, mit der Sie auf die hochgeladene Datei zugreifen können.
 
 ### Hello-World-Beispiel
 

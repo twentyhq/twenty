@@ -841,18 +841,18 @@ uploadFile(
 ): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
 ```
 
-| 参数                                 | 类型       | 描述                                                                        |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | The raw file contents                                                     |
-| `filename`                         | `string` | The name of the file (used for storage and display)                       |
-| `contentType`                      | `string` | MIME type of the file (defaults to `application/octet-stream` if omitted) |
-| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object           |
+| 参数                                 | 类型       | 描述                                               |
+| ---------------------------------- | -------- | ------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | 原始文件内容                                           |
+| `filename`                         | `string` | 文件名称（用于存储和显示）                                    |
+| `contentType`                      | `string` | 文件的 MIME 类型（如果省略，默认为 `application/octet-stream`） |
+| `fieldMetadataUniversalIdentifier` | `string` | 你的对象上文件类型字段的 `universalIdentifier`               |
 
 关键点：
 
-* The method sends the file to the **metadata endpoint** (not the main GraphQL endpoint), where the upload mutation is resolved.
-* It uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed — consistent with how apps reference fields everywhere else.
-* The returned `url` is a signed URL you can use to access the uploaded file.
+* 该方法将文件发送到**元数据端点**（而不是主 GraphQL 端点），在那里处理上传变更操作。
+* 它使用该字段的 `universalIdentifier`（而不是其工作区特定的 ID），因此你的上传代码可以在安装了你的应用的任何工作区中使用——这与应用在其他地方引用字段的方式保持一致。
+* 返回的 `url` 是一个签名 URL，你可以用它来访问已上传的文件。
 
 ### Hello World 示例
 
