@@ -23,6 +23,23 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
+      // Handle ApolloErrors with server network errors (5xx) as transient
+      // infrastructure issues — show a user-friendly message without
+      // reporting to Sentry since these are not application bugs.
+      if (
+        error.name === 'ApolloError' &&
+        isDefined(error.networkError?.statusCode) &&
+        error.networkError.statusCode >= 500
+      ) {
+        enqueueErrorSnackBar({
+          message: 'Network error: the server is temporarily unavailable.',
+          options: {
+            dedupeKey: 'server-network-error',
+          },
+        });
+        return;
+      }
+
       const isAbortError =
         error.networkError?.name === 'AbortError' ||
         error.name === 'AbortError';
