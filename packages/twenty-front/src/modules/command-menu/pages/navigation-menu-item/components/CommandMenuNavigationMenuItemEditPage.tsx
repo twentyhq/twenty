@@ -10,6 +10,7 @@ import { CommandMenuEditOwnerSection } from '@/command-menu/pages/navigation-men
 import { useNavigationMenuItemEditOrganizeActions } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
@@ -168,7 +169,7 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
               </SelectableListItem>
               <CommandMenuEditColorOption
                 navigationMenuItemId={selectedItem.id}
-                color={selectedItem.color}
+                color={parseThemeColor(selectedItem.color)}
               />
             </CommandGroup>
           )}
@@ -194,7 +195,7 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
             <CommandGroup heading={t`Customize`}>
               <CommandMenuEditColorOption
                 navigationMenuItemId={selectedItem.id}
-                color={selectedItem.color}
+                color={parseThemeColor(selectedItem.color)}
               />
             </CommandGroup>
           )}

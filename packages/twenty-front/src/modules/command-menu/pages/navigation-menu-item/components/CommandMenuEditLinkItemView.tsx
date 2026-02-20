@@ -13,6 +13,7 @@ import {
 import { CommandMenuEditOwnerSection } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditOwnerSection';
 import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
+import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 type CommandMenuEditLinkItemViewProps = OrganizeActionsProps & {
@@ -43,7 +44,7 @@ export const CommandMenuEditLinkItemView = ({
       <CommandGroup heading={t`Customize`}>
         <CommandMenuEditColorOption
           navigationMenuItemId={selectedItem.id}
-          color={selectedItem.color}
+          color={parseThemeColor(selectedItem.color)}
         />
         <TextInput
           fullWidth

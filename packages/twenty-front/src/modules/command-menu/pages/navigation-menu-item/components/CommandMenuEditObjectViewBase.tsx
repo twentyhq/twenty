@@ -7,6 +7,7 @@ import {
 } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
+import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { useLingui } from '@lingui/react/macro';
 
 type CommandMenuEditObjectViewBaseProps = OrganizeActionsProps & {
@@ -35,7 +36,7 @@ export const CommandMenuEditObjectViewBase = ({
         <CommandGroup heading={t`Customize`}>
           <CommandMenuEditColorOption
             navigationMenuItemId={selectedItem.id}
-            color={selectedItem.color}
+            color={parseThemeColor(selectedItem.color)}
           />
         </CommandGroup>
       )}

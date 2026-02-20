@@ -50,7 +50,7 @@ const COLOR_LABELS: ColorLabels = {
 
 type CommandMenuEditColorOptionProps = {
   navigationMenuItemId: string;
-  color: string | null | undefined;
+  color: ThemeColor;
 };
 
 export const CommandMenuEditColorOption = ({
@@ -63,7 +63,7 @@ export const CommandMenuEditColorOption = ({
   const { closeDropdown } = useCloseDropdown();
 
   const [searchValue, setSearchValue] = useState('');
-  const themeColor = (color ?? 'gray') as ThemeColor;
+  const themeColor = color ?? 'gray';
   const colorLabel = COLOR_LABELS[themeColor] ?? capitalize(themeColor);
 
   const query = searchValue.trim().toLowerCase();
