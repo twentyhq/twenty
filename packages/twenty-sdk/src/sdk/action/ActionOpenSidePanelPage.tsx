@@ -33,14 +33,16 @@ export const ActionOpenSidePanelPage = ({
     const run = async () => {
       onClick?.();
 
-      await openSidePanelPage({
-        page,
-        pageTitle,
-        pageIcon,
-        shouldResetSearchState,
-      });
-
-      await unmountFrontComponent();
+      try {
+        await openSidePanelPage({
+          page,
+          pageTitle,
+          pageIcon,
+          shouldResetSearchState,
+        });
+      } finally {
+        await unmountFrontComponent();
+      }
     };
 
     run();
