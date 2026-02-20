@@ -118,6 +118,13 @@ export class GoogleAPIsService {
         input.accessToken,
       );
 
+    if (!isMessagingAvailable && !isCalendarAvailable) {
+      throw new AuthException(
+        'Unable to connect: Neither Gmail nor Calendar services are available for this account',
+        AuthExceptionCode.INSUFFICIENT_SCOPES,
+      );
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(

@@ -127,7 +127,11 @@ export class GoogleApisServiceAvailabilityService {
     const isFailedPrecondition = firstError.reason === 'failedPrecondition';
     const isServiceNotEnabled =
       firstError.message?.includes('service not enabled') ?? false;
+    const isPreconditionCheckFailed =
+      firstError.message === 'Precondition check failed.';
 
-    return isFailedPrecondition && isServiceNotEnabled;
+    return (
+      isFailedPrecondition && (isServiceNotEnabled || isPreconditionCheckFailed)
+    );
   }
 }
