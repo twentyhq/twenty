@@ -94,6 +94,43 @@ export default class Twenty {
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
+
+  async uploadFile(
+    fileBuffer: Buffer,
+    filename: string,
+    contentType: string = 'application/octet-stream',
+    fieldMetadataUniversalIdentifier: string,
+  ): Promise<{ path: string; token: string }> {
+    const form = new FormData();
+
+    form.append(
+      'operations',
+      JSON.stringify({
+        query: \`\mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
+        uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
+      }\`\,
+        variables: { file: null, fieldMetadataUniversalIdentifier },
+      }),
+    );
+    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
+    form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
+
+    const response = await fetch(\`\${this.apiUrl}/metadata\`, {
+      method: 'POST',
+      headers: {
+        Authorization: this.authorizationToken,
+      },
+      body: form,
+    });
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new GenqlError(result.errors, result.data);
+    }
+
+    return result.data.uploadFile;
+  }
 }
 
 `;
