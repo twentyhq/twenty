@@ -1,5 +1,5 @@
 import { defineFunction } from 'twenty-sdk';
-import { createClient } from '../../generated';
+import { createClient } from 'twenty-sdk/core-api';
 
 // TODO: import from twenty-sdk when 0.4.0 is deployed
 type ServerlessFunctionEvent<TBody = object> = {

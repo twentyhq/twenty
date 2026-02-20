@@ -416,10 +416,10 @@ export default defineRole({
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/core-api';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -583,9 +583,9 @@ const handler = async (event: RoutePayload) => {
 `yarn app:dev` は `node_modules/twenty-sdk/generated` に型付き Twenty クライアントを自動生成します。 関数内で使用します：
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/core-api';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 

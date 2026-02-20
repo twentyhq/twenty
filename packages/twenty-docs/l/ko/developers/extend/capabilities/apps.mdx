@@ -418,10 +418,10 @@ The `universalIdentifier` of this role is then referenced in `application.config
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/core-api';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -585,9 +585,9 @@ const handler = async (event: RoutePayload) => {
 `yarn app:dev`는 `node_modules/twenty-sdk/generated`에 타입드 Twenty 클라이언트를 자동으로 생성합니다. 함수에서 사용하세요:
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/core-api';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 

@@ -428,10 +428,10 @@ Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/core-api';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -648,10 +648,10 @@ Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a posk
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/core-api';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -746,9 +746,9 @@ Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 Typovaný klient je automaticky generován pomocí `yarn twenty app:dev` a ukládá se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/core-api';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 

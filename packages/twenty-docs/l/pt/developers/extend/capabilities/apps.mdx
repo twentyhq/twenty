@@ -428,10 +428,10 @@ Cada arquivo de função usa `defineLogicFunction()` para exportar uma configura
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/core-api';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -648,10 +648,10 @@ Para marcar uma função lógica como ferramenta, defina `isTool: true` e forne�
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/core-api';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -746,9 +746,9 @@ Você pode criar novos componentes de front-end de duas formas:
 O cliente tipado é gerado automaticamente pelo `yarn twenty app:dev` e armazenado em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho. Use-o em suas funções:
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/core-api';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 

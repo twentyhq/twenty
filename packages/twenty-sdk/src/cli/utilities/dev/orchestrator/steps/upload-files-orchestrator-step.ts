@@ -13,7 +13,12 @@ import {
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
-const API_CLIENT_FILES = ['types.ts', 'schema.ts'];
+const API_CLIENT_FILES = [
+  'core/types.ts',
+  'core/schema.ts',
+  'metadata/types.ts',
+  'metadata/schema.ts',
+];
 
 export type UploadFilesOrchestratorStepOutput = {
   fileUploader: FileUploader | null;
@@ -128,6 +133,8 @@ export class UploadFilesOrchestratorStep {
     const outputDir = join(appPath, OUTPUT_DIR, API_CLIENT_DIR);
 
     await fs.ensureDir(outputDir);
+    await fs.ensureDir(join(outputDir, 'core'));
+    await fs.ensureDir(join(outputDir, 'metadata'));
 
     for (const fileName of API_CLIENT_FILES) {
       const absoluteSourcePath = join(generatedDir, fileName);

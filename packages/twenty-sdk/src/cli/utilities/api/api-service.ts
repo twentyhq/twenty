@@ -415,8 +415,10 @@ export class ApiService {
 
   async getSchema(options?: {
     authToken?: string;
+    endpoint?: '/graphql' | '/metadata';
   }): Promise<ApiResponse<string>> {
     try {
+      const endpoint = options?.endpoint ?? '/graphql';
       const introspectionQuery = getIntrospectionQuery();
 
       const headers: Record<string, string> = {
@@ -429,7 +431,7 @@ export class ApiService {
       }
 
       const response = await this.client.post(
-        '/graphql',
+        endpoint,
         {
           query: introspectionQuery,
         },

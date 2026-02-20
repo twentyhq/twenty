@@ -25,22 +25,66 @@ export class ClientService {
     const outputPath = this.resolveGeneratedPath(appPath);
     const tempPath = `${outputPath}.tmp`;
 
-    const getSchemaResponse = await this.apiService.getSchema({ authToken });
+    await fs.ensureDir(tempPath);
+    await fs.emptyDir(tempPath);
+
+    await this.generateSubClient({
+      authToken,
+      endpoint: '/graphql',
+      subDir: 'core',
+      className: 'CoreApiClient',
+      urlSuffix: '/graphql',
+      tempPath,
+    });
+
+    await this.generateSubClient({
+      authToken,
+      endpoint: '/metadata',
+      subDir: 'metadata',
+      className: 'MetadataApiClient',
+      urlSuffix: '/metadata',
+      tempPath,
+    });
+
+    await fs.remove(outputPath);
+    await fs.move(tempPath, outputPath);
+  }
+
+  private async generateSubClient({
+    authToken,
+    endpoint,
+    subDir,
+    className,
+    urlSuffix,
+    tempPath,
+  }: {
+    authToken?: string;
+    endpoint: '/graphql' | '/metadata';
+    subDir: string;
+    className: string;
+    urlSuffix: string;
+    tempPath: string;
+  }): Promise<void> {
+    const getSchemaResponse = await this.apiService.getSchema({
+      authToken,
+      endpoint,
+    });
 
     if (!getSchemaResponse.success) {
       throw new Error(
-        `Failed to introspect schema: ${JSON.stringify(getSchemaResponse.error)}`,
+        `Failed to introspect schema (${endpoint}): ${JSON.stringify(getSchemaResponse.error)}`,
       );
     }
 
     const { data: schema } = getSchemaResponse;
 
-    await fs.ensureDir(tempPath);
-    await fs.emptyDir(tempPath);
+    const subPath = join(tempPath, subDir);
+
+    await fs.ensureDir(subPath);
 
     await generate({
       schema,
-      output: tempPath,
+      output: subPath,
       scalarTypes: {
         DateTime: 'string',
         JSON: 'Record<string, unknown>',
@@ -48,32 +92,33 @@ export class ClientService {
       },
     });
 
-    await this.injectTwentyClient(tempPath);
-
-    await fs.remove(outputPath);
-    await fs.move(tempPath, outputPath);
+    await this.injectApiClient(subPath, className, urlSuffix);
   }
 
   private resolveGeneratedPath(appPath: string): string {
     return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
   }
 
-  private async injectTwentyClient(output: string) {
-    const twentyClientContent = `
+  private async injectApiClient(
+    output: string,
+    className: string,
+    urlSuffix: string,
+  ) {
+    const clientContent = `
 
 // ----------------------------------------------------
-// Custom Twenty client (auto-injected)
+// ${className} (auto-injected)
 // ----------------------------------------------------
 
 const defaultOptions: ClientOptions = {
-  url: \`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\`,
+  url: \`\${process.env.${DEFAULT_API_URL_NAME}}${urlSuffix}\`,
   headers: {
     'Content-Type': 'application/json',
     Authorization: \`Bearer \${process.env.${DEFAULT_API_KEY_NAME}}\`,
   },
 }
 
-export default class Twenty {
+export class ${className} {
   private client: Client;
 
   constructor(options?: ClientOptions) {
@@ -98,6 +143,6 @@ export default class Twenty {
 
 `;
 
-    await fs.appendFile(join(output, 'index.ts'), twentyClientContent);
+    await fs.appendFile(join(output, 'index.ts'), clientContent);
   }
 }

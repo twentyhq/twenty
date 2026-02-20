@@ -12,9 +12,9 @@ import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-pl
 import * as esbuild from 'esbuild';
 import path from 'path';
 import {
-  OUTPUT_DIR,
-  NODE_ESM_CJS_BANNER,
   GENERATED_DIR,
+  NODE_ESM_CJS_BANNER,
+  OUTPUT_DIR,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
@@ -193,20 +193,33 @@ export class EsbuildWatcher implements RestartableWatcher {
   }
 }
 
-// Resolves twenty-sdk/generated to the actual file path so esbuild
-// bundles it instead of treating it as external (via twenty-sdk/*)
+// Resolves twenty-sdk/core-api and twenty-sdk/metadata-api to actual file paths
+// so esbuild bundles them instead of treating them as external (via twenty-sdk/*)
+const SUBPATH_TO_GENERATED_DIR: Record<string, string> = {
+  'twenty-sdk/core-api': 'core',
+  'twenty-sdk/metadata-api': 'metadata',
+};
+
 const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
   name: 'sdk-generated-resolver',
   setup: (build) => {
-    build.onResolve({ filter: /^twenty-sdk\/generated/ }, () => ({
-      path: path.join(
-        appPath,
-        'node_modules',
-        'twenty-sdk',
-        GENERATED_DIR,
-        'index.ts',
-      ),
-    }));
+    build.onResolve(
+      { filter: /^twenty-sdk\/(core-api|metadata-api)$/ },
+      (args) => {
+        const subDir = SUBPATH_TO_GENERATED_DIR[args.path];
+
+        return {
+          path: path.join(
+            appPath,
+            'node_modules',
+            'twenty-sdk',
+            GENERATED_DIR,
+            subDir,
+            'index.ts',
+          ),
+        };
+      },
+    );
   },
 });
 

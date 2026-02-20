@@ -5,7 +5,7 @@ import {
   type ObjectRecordCreateEvent,
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk';
-import Twenty, { type Person } from '../generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/core-api';
 
 const MAILCHIMP_API_URL: string =
   process.env.MAILCHIMP_SERVER_PREFIX !== '' &&
@@ -88,7 +88,7 @@ type DatabaseEvent =
   | DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const fetchCompanyData = async (companyId: string): Promise<twentyCompany> => {
-  const { company } = await new Twenty().query({
+  const { company } = await new CoreApiClient().query({
     company: {
       __args: { filter: { id: { eq: companyId } } },
       name: true,
