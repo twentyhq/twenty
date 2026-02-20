@@ -96,27 +96,23 @@ export const useUpdateDroppedRecordOnBoard = () => {
           recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
         );
 
-        if (positionOfDroppedRecordInInitialRecordIds === -1) {
-          throw new Error(
-            `Cannot find record id in initial record group ids on drop, this should not happen`,
-          );
-        }
+        if (positionOfDroppedRecordInInitialRecordIds !== -1) {
+          const newInitialGroupRecordIds =
+            currentRecordIdsInInitialRecordGroup.toSpliced(
+              positionOfDroppedRecordInInitialRecordIds,
+              1,
+            );
 
-        const newInitialGroupRecordIds =
-          currentRecordIdsInInitialRecordGroup.toSpliced(
-            positionOfDroppedRecordInInitialRecordIds,
-            1,
-          );
-
-        if (movingInsideSameRecordGroup) {
-          currentRecordIdsInTargetRecordGroup = newInitialGroupRecordIds;
-        } else {
-          set(
-            recordIndexRecordIdsByGroupCallbackFamilyState(
-              initialRecordGroupId,
-            ),
-            newInitialGroupRecordIds,
-          );
+          if (movingInsideSameRecordGroup) {
+            currentRecordIdsInTargetRecordGroup = newInitialGroupRecordIds;
+          } else {
+            set(
+              recordIndexRecordIdsByGroupCallbackFamilyState(
+                initialRecordGroupId,
+              ),
+              newInitialGroupRecordIds,
+            );
+          }
         }
 
         const targetGroupRecordsWithIds = extractRecordPositions(
