@@ -149,10 +149,10 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
 
     const meteredPrices = result.meteredProducts[0].prices;
 
-    expect(meteredPrices[0].tiers[0]).toEqual(
+    expect(meteredPrices![0].tiers[0]).toEqual(
       expect.objectContaining({ upTo: 50000 }),
     );
-    expect(meteredPrices[0].tiers[1]).toEqual(
+    expect(meteredPrices![0].tiers[1]).toEqual(
       expect.objectContaining({ upTo: null }),
     );
   });

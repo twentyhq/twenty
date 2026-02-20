@@ -43,8 +43,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
   return {
     tiers:
       billingPrice?.tiers?.map((tier) => ({
-        upTo:
-          tier.up_to !== null ? toDisplayCredits(tier.up_to) : tier.up_to,
+        upTo: tier.up_to !== null ? toDisplayCredits(tier.up_to) : tier.up_to,
         flatAmount: tier.flat_amount,
         unitAmount: tier.unit_amount,
       })) ?? [],
