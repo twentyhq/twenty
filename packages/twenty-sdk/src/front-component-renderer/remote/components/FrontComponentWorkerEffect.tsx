@@ -73,6 +73,7 @@ export const FrontComponentWorkerEffect = ({
     return () => {
       setThread(null);
       worker.terminate();
+      isInitializedRef.current = false;
     };
   }, [
     componentUrl,
