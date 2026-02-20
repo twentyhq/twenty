@@ -57,8 +57,14 @@ export const useSaveFieldsWidgetGroups = ({
         const allDraftGroups = snapshot
           .getLoadable(fieldsWidgetGroupsDraftState)
           .getValue();
+        const allPersistedGroups = snapshot
+          .getLoadable(fieldsWidgetGroupsPersistedState)
+          .getValue();
 
-        const widgetIds = Object.keys(allDraftGroups);
+        const widgetIds = new Set([
+          ...Object.keys(allDraftGroups),
+          ...Object.keys(allPersistedGroups),
+        ]);
 
         for (const widgetId of widgetIds) {
           const draftGroups = allDraftGroups[widgetId] ?? [];
