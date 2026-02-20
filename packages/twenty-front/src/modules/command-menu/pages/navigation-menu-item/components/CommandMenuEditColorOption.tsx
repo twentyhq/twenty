@@ -1,11 +1,3 @@
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { capitalize } from 'twenty-shared/utils';
-import { IconColorSwatch } from 'twenty-ui/display';
-import { type ColorLabels, MenuItemSelectColor } from 'twenty-ui/navigation';
-import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
-
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useUpdateNavigationMenuItemInDraft } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItemInDraft';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -13,6 +5,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { IconColorSwatch } from 'twenty-ui/display';
+import { type ColorLabels, MenuItemSelectColor } from 'twenty-ui/navigation';
+import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 const NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID = 'navigation-menu-item-color';
 
@@ -69,7 +68,7 @@ export const CommandMenuEditColorOption = ({
 
   const query = searchValue.trim().toLowerCase();
 
-  const filteredColorNames = !query
+  const filteredColorNames = !isDefined(query)
     ? MAIN_COLOR_NAMES
     : MAIN_COLOR_NAMES.filter(
         (colorName) =>
