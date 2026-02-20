@@ -176,13 +176,25 @@ export class ActorFromAuthContextService {
               { shouldBypassPermissionChecks: true },
             );
 
-          const workspaceMember = await workspaceMemberRepository.findOneOrFail(
-            {
-              where: {
-                userId: user.id,
-              },
+          const workspaceMember = await workspaceMemberRepository.findOne({
+            where: {
+              userId: user.id,
             },
-          );
+          });
+
+          if (!workspaceMember) {
+            this.logger.warn(
+              `Workspace member not found for userId ${user.id} in workspace ${workspace.id}`,
+            );
+
+            return buildCreatedByFromFullNameMetadata({
+              fullNameMetadata: {
+                firstName: user.firstName ?? '',
+                lastName: user.lastName ?? '',
+              },
+              workspaceMemberId: '',
+            });
+          }
 
           return buildCreatedByFromFullNameMetadata({
             fullNameMetadata: workspaceMember.name,

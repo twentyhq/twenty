@@ -34,7 +34,7 @@ const fromFullNameMetadataToName = ({
 describe('ActorFromAuthContextService', () => {
   let service: ActorFromAuthContextService;
   const mockWorkspaceMemberRepository = {
-    findOneOrFail: jest.fn(),
+    findOne: jest.fn(),
   };
   const globalWorkspaceOrmManager: jest.Mocked<
     Pick<
@@ -137,7 +137,7 @@ describe('ActorFromAuthContextService', () => {
         },
       } as const satisfies Partial<WorkspaceMemberWorkspaceEntity>;
 
-      mockWorkspaceMemberRepository.findOneOrFail.mockResolvedValueOnce(
+      mockWorkspaceMemberRepository.findOne.mockResolvedValueOnce(
         mockedWorkspaceMember,
       );
 
@@ -177,7 +177,7 @@ describe('ActorFromAuthContextService', () => {
         },
       } as const satisfies Partial<WorkspaceMemberWorkspaceEntity>;
 
-      mockWorkspaceMemberRepository.findOneOrFail.mockResolvedValueOnce(
+      mockWorkspaceMemberRepository.findOne.mockResolvedValueOnce(
         mockedWorkspaceMember,
       );
 
