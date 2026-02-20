@@ -23,8 +23,8 @@ import {
   useSignUpMutation,
   useVerifyEmailAndGetLoginTokenMutation,
   useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
-  type AuthTokenPair,
   type AuthToken,
+  type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';

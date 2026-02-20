@@ -1,11 +1,11 @@
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAppWindow,

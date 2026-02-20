@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -67,6 +68,13 @@ export const useExecuteTasksOnAnyLocationChange = () => {
               instanceId: pageLayoutId,
             }),
             false,
+          );
+
+          set(
+            hasInitializedFieldsWidgetGroupsDraftComponentState.atomFamily({
+              instanceId: pageLayoutId,
+            }),
+            {},
           );
 
           set(currentPageLayoutIdState, null);

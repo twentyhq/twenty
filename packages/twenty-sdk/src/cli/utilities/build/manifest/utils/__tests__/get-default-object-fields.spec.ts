@@ -22,7 +22,7 @@ describe('getDefaultObjectFields', () => {
   it('should return an array of 9 default fields', () => {
     const fields = getDefaultObjectFields(mockObjectConfig);
 
-    expect(fields).toHaveLength(7);
+    expect(fields).toHaveLength(9);
   });
 
   it('should include an id field with UUID type', () => {
@@ -59,15 +59,26 @@ describe('getDefaultObjectFields', () => {
     });
   });
 
-  it('should include updatedAt and deletedAt fields with DATE_TIME type', () => {
+  it('should include createdAt, updatedAt and deletedAt fields with DATE_TIME type', () => {
     const fields = getDefaultObjectFields(mockObjectConfig);
-    const updatedAtFields = fields.filter(
-      (field) => field.name === 'updatedAt',
-    );
+    const createdAtField = fields.find((field) => field.name === 'createdAt');
+    const updatedAtField = fields.find((field) => field.name === 'updatedAt');
     const deletedAtField = fields.find((field) => field.name === 'deletedAt');
 
-    expect(updatedAtFields).toHaveLength(1);
-    expect(updatedAtFields[0]).toEqual({
+    expect(createdAtField).toBeDefined();
+    expect(createdAtField).toEqual({
+      name: 'createdAt',
+      label: 'Creation date',
+      description: 'Creation date',
+      icon: 'IconCalendar',
+      isNullable: false,
+      defaultValue: 'now',
+      type: FieldMetadataType.DATE_TIME,
+      universalIdentifier: expectedUniversalId('createdAt'),
+    });
+
+    expect(updatedAtField).toBeDefined();
+    expect(updatedAtField).toEqual({
       name: 'updatedAt',
       label: 'Last update',
       description: 'Last time the record was changed',
@@ -121,6 +132,42 @@ describe('getDefaultObjectFields', () => {
     });
   });
 
+  it('should include a position field with POSITION type', () => {
+    const fields = getDefaultObjectFields(mockObjectConfig);
+    const positionField = fields.find((field) => field.name === 'position');
+
+    expect(positionField).toBeDefined();
+    expect(positionField).toEqual({
+      name: 'position',
+      label: 'Position',
+      description: 'Position',
+      icon: 'IconHierarchy2',
+      isNullable: false,
+      defaultValue: 0,
+      type: FieldMetadataType.POSITION,
+      universalIdentifier: expectedUniversalId('position'),
+    });
+  });
+
+  it('should include a searchVector field with TS_VECTOR type', () => {
+    const fields = getDefaultObjectFields(mockObjectConfig);
+    const searchVectorField = fields.find(
+      (field) => field.name === 'searchVector',
+    );
+
+    expect(searchVectorField).toBeDefined();
+    expect(searchVectorField).toEqual({
+      name: 'searchVector',
+      label: 'Search vector',
+      description: 'Search vector',
+      icon: 'IconSearch',
+      isNullable: true,
+      defaultValue: null,
+      type: FieldMetadataType.TS_VECTOR,
+      universalIdentifier: expectedUniversalId('searchVector'),
+    });
+  });
+
   it('should generate deterministic universalIdentifiers based on objectConfig', () => {
     const firstResult = getDefaultObjectFields(mockObjectConfig);
     const secondResult = getDefaultObjectFields(mockObjectConfig);
@@ -160,6 +207,8 @@ describe('getDefaultObjectFields', () => {
       'deletedAt',
       'createdBy',
       'updatedBy',
+      'position',
+      'searchVector',
     ]);
   });
 });

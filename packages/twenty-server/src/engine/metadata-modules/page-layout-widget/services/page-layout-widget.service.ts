@@ -244,6 +244,7 @@ export class PageLayoutWidgetService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatViewFieldGroupMaps,
+      flatViewMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -253,6 +254,7 @@ export class PageLayoutWidgetService {
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
             'flatViewFieldGroupMaps',
+            'flatViewMaps',
           ],
         },
       );
@@ -266,6 +268,7 @@ export class PageLayoutWidgetService {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatViewFieldGroupMaps,
+        flatViewMaps,
       });
 
     if (isDefined(createInput.configuration)) {
@@ -325,6 +328,7 @@ export class PageLayoutWidgetService {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+      flatViewMaps: existingFlatViewMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -332,6 +336,7 @@ export class PageLayoutWidgetService {
           'flatObjectMetadataMaps',
           'flatFieldMetadataMaps',
           'flatViewFieldGroupMaps',
+          'flatViewMaps',
         ],
       },
     );
@@ -365,6 +370,7 @@ export class PageLayoutWidgetService {
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+        flatViewMaps: existingFlatViewMaps,
       });
 
     const shouldValidateChartFields =

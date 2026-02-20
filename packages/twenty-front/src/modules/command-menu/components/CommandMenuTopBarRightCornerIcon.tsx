@@ -1,10 +1,10 @@
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconEdit, IconSparkles } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';

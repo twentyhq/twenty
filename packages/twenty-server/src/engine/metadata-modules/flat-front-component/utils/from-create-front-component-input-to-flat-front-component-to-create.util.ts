@@ -33,6 +33,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     builtComponentPath: createFrontComponentInput.builtComponentPath,
     componentName: createFrontComponentInput.componentName,
     builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
+    isHeadless: false,
     workspaceId,
     createdAt: now,
     updatedAt: now,

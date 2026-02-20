@@ -6,14 +6,14 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
-import { useStore } from 'jotai';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {

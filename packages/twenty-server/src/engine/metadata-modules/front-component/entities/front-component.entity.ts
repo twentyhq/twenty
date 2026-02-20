@@ -34,6 +34,9 @@ export class FrontComponentEntity
   @Column({ nullable: false })
   builtComponentChecksum: string;
 
+  @Column({ default: false })
+  isHeadless: boolean;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

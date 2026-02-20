@@ -4,10 +4,12 @@ import {
   IconLayoutKanban,
   IconTable,
 } from 'twenty-ui/display';
+
 export enum ViewType {
   Table = 'table',
   Kanban = 'kanban',
   Calendar = 'calendar',
+  FieldsWidget = 'fields_widget',
 }
 
 const VIEW_TYPE_ICON_MAPPING = [

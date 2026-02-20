@@ -1,5 +1,5 @@
-import { useUpdateFrontComponentApolloCache } from '@/front-components/hooks/useUpdateFrontComponentApolloCache';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { useUpdateFrontComponentApolloCache } from '@/front-components/hooks/useUpdateFrontComponentApolloCache';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import {
   AllMetadataName,

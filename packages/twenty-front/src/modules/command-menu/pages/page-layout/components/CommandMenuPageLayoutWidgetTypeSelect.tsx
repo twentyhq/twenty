@@ -6,7 +6,6 @@ import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layo
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/command-menu/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { isExistingWidgetMissingOrDifferentType } from '@/command-menu/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useCreatePageLayoutFrontComponentWidget } from '@/page-layout/hooks/useCreatePageLayoutFrontComponentWidget';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
@@ -22,6 +21,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
 import { t } from '@lingui/core/macro';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlignBoxLeftTop,

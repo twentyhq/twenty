@@ -10,11 +10,11 @@ import { CommandMenuObjectViewRecordInfo } from '@/command-menu/components/Comma
 import { CommandMenuPageLayoutInfo } from '@/command-menu/components/CommandMenuPageLayoutInfo';
 import { CommandMenuRecordInfo } from '@/command-menu/components/CommandMenuRecordInfo';
 import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMenuWorkflowStepInfo';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
 

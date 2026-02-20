@@ -15,6 +15,7 @@ description: Создавайте и управляйте настройками
 
 * Определяйте пользовательские объекты и поля в виде кода (управляемая модель данных)
 * Создавайте логические функции с пользовательскими триггерами
+* Определите навыки для ИИ-агентов
 * Развёртывайте одно и то же приложение в нескольких рабочих пространствах
 
 ## Требования
@@ -45,13 +46,13 @@ yarn twenty app:dev
 Генератор каркаса поддерживает три режима для управления тем, какие примерные файлы включаются:
 
 ```bash filename="Terminal"
-# По умолчанию (полный набор): все примеры (объект, поле, логическая функция, фронтенд-компонент, представление, пункт меню навигации)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
 npx create-twenty-app@latest my-app
 
-# Минимальный: только основные файлы (application-config.ts и default-role.ts)
+# Minimal: only core files (application-config.ts and default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Интерактивный: выбрать, какие примеры включить
+# Interactive: select which examples to include
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -102,24 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Папка публичных ресурсов (изображения, шрифты и т. д.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Обязательный — основная конфигурация приложения
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Роль по умолчанию для логических функций
+  │   └── default-role.ts               # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Пример определения пользовательского объекта
+  │   └── example-object.ts             # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Пример определения отдельного поля
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Пример логической функции
-  │   └── post-install.ts               # Постустановочная логическая функция
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   ├── front-components/
-  │   └── hello-world.tsx               # Пример фронтенд-компонента
+  │   └── hello-world.tsx               # Example front component
   ├── views/
-  │   └── example-view.ts                # Пример определения сохранённого представления
-  └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Пример ссылки боковой панели навигации
+  │   └── example-view.ts                # Example saved view definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 С `--minimal` создаются только основные файлы (`application-config.ts`, `roles/default-role.ts` и `logic-functions/post-install.ts`). С `--interactive` вы выбираете, какие примерные файлы включить.
@@ -148,6 +151,7 @@ SDK обнаруживает сущности, разбирая ваши фай�
 | `defineField()`              | Расширения полей для существующих объектов |
 | `defineView()`               | Определения сохранённых представлений      |
 | `defineNavigationMenuItem()` | Определения пунктов меню навигации         |
+| `defineSkill()`              | AI agent skill definitions                 |
 
 <Note>
   **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
@@ -169,7 +173,7 @@ export default defineObject({
 Позднее команды добавят больше файлов и папок:
 
 * `yarn twenty app:dev` автоматически сгенерирует типизированный клиент API в `node_modules/twenty-sdk/generated` (типизированный клиент Twenty + типы рабочего пространства).
-* `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов или ролей.
+* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Аутентификация
 
@@ -222,6 +226,7 @@ SDK предоставляет вспомогательные функции д�
 | `defineField()`              | Расширение существующих объектов дополнительными полями                |
 | `defineView()`               | Определяйте сохранённые представления для объектов                     |
 | `defineNavigationMenuItem()` | Определяйте ссылки боковой панели навигации                            |
+| `defineSkill()`              | Define AI agent skills                                                 |
 
 Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
@@ -740,6 +745,41 @@ export default defineFrontComponent({
 
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового фронтенд-компонента.
 * **Вручную**: Создайте новый файл `*.front-component.tsx` и используйте `defineFrontComponent()`.
+
+### Навыки
+
+Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Основные моменты:
+
+* `name` is a unique identifier string for the skill (kebab-case recommended).
+* `label` is the human-readable display name shown in the UI.
+* `content` contains the skill instructions — this is the text the AI agent uses.
+* `icon` (optional) sets the icon displayed in the UI.
+* `description` (optional) provides additional context about the skill's purpose.
+
+You can create new skills in two ways:
+
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
+* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
 ### Сгенерированный типизированный клиент
 

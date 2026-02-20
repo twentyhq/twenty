@@ -27,7 +27,7 @@ export type LoadSkillFunction = (names: string[]) => Promise<FlatSkill[]>;
 
 export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
   description:
-    'Load specialized skills/expertise by name. Returns detailed instructions for workflows, data manipulation, dashboards, metadata, or research.',
+    'Load specialized skills for complex tasks. Returns detailed step-by-step instructions for building workflows, dashboards, manipulating data, or managing metadata. Call this before attempting complex operations.',
   inputSchema: loadSkillInputSchema,
   execute: async (parameters: LoadSkillInput): Promise<LoadSkillResult> => {
     const { skillNames } = parameters;

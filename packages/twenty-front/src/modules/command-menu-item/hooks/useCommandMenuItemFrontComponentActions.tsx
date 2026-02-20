@@ -6,6 +6,7 @@ import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpen
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
@@ -35,6 +36,7 @@ type BuildActionFromItemParams = {
     pageTitle: string;
     pageIcon: IconComponent;
   }) => void;
+  mountHeadlessFrontComponent: (frontComponentId: string) => void;
 };
 
 const buildActionFromItem = ({
@@ -44,10 +46,25 @@ const buildActionFromItem = ({
   isPinned,
   getIcon,
   openFrontComponentInCommandMenu,
+  mountHeadlessFrontComponent,
 }: BuildActionFromItemParams) => {
   const displayLabel = item.label;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+
+  const isHeadless = item.frontComponent?.isHeadless === true;
+
+  const handleClick = () => {
+    if (isHeadless) {
+      mountHeadlessFrontComponent(item.frontComponentId);
+    } else {
+      openFrontComponentInCommandMenu({
+        frontComponentId: item.frontComponentId,
+        pageTitle: displayLabel,
+        pageIcon: Icon,
+      });
+    }
+  };
 
   return {
     type: ActionType.FrontComponent,
@@ -61,14 +78,8 @@ const buildActionFromItem = ({
     shouldBeRegistered: () => true,
     component: (
       <Action
-        onClick={() =>
-          openFrontComponentInCommandMenu({
-            frontComponentId: item.frontComponentId,
-            pageTitle: displayLabel,
-            pageIcon: Icon,
-          })
-        }
-        closeSidePanelOnCommandMenuListActionExecution={false}
+        onClick={handleClick}
+        closeSidePanelOnCommandMenuListActionExecution={isHeadless}
       />
     ),
   };
@@ -78,6 +89,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
   const { getIcon } = useIcons();
   const { openFrontComponentInCommandMenu } =
     useOpenFrontComponentInCommandMenu();
+  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
   const isPageInEditMode = useRecoilComponentValue(
     contextStoreIsPageInEditModeComponentState,
@@ -140,6 +152,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       isPinned: !isPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
+      mountHeadlessFrontComponent,
     }),
   );
 
@@ -151,6 +164,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       isPinned: !isPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
+      mountHeadlessFrontComponent,
     }),
   );
 

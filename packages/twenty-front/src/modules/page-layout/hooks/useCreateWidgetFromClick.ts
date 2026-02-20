@@ -1,10 +1,10 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoordinates';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 export const useCreateWidgetFromClick = () => {
   const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(

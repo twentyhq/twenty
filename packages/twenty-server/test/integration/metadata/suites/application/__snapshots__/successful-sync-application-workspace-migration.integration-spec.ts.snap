@@ -348,3 +348,77 @@ exports[`syncApplication should return workspace migration actions on initial sy
   },
 }
 `;
+
+exports[`syncApplication should sync a skill then update it on second sync 1`] = `
+{
+  "syncApplication": {
+    "actions": [
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllTools": false,
+          "canBeAssignedToAgents": true,
+          "canBeAssignedToApiKeys": true,
+          "canBeAssignedToUsers": true,
+          "canDestroyAllObjectRecords": false,
+          "canReadAllObjectRecords": false,
+          "canSoftDeleteAllObjectRecords": false,
+          "canUpdateAllObjectRecords": false,
+          "canUpdateAllSettings": false,
+          "createdAt": Any<String>,
+          "description": "A test role",
+          "icon": null,
+          "isEditable": true,
+          "label": "Test Role",
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "role",
+        "type": "create",
+      },
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "content": "# Test Skill
+
+This is a test skill.",
+          "createdAt": Any<String>,
+          "description": "A skill for testing",
+          "icon": "IconBrain",
+          "isActive": true,
+          "isCustom": false,
+          "label": "Test Skill",
+          "name": "test-skill",
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "skill",
+        "type": "create",
+      },
+    ],
+    "applicationUniversalIdentifier": Any<String>,
+  },
+}
+`;
+
+exports[`syncApplication should sync a skill then update it on second sync 2`] = `
+{
+  "syncApplication": {
+    "actions": [
+      {
+        "metadataName": "skill",
+        "type": "update",
+        "universalIdentifier": Any<String>,
+        "update": {
+          "content": "# Test Skill
+
+This is an updated test skill with more content.",
+          "description": "An updated skill for testing",
+          "label": "Test Skill Updated",
+        },
+      },
+    ],
+    "applicationUniversalIdentifier": Any<String>,
+  },
+}
+`;

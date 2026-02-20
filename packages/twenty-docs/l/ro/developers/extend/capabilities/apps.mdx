@@ -15,6 +15,7 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 
 * Definiți obiecte și câmpuri personalizate sub formă de cod (model de date gestionat)
 * Creați funcții de logică cu declanșatoare personalizate
+* Definiți abilități pentru agenți de IA
 * Implementați aceeași aplicație în mai multe spații de lucru
 
 ## Cerințe
@@ -45,7 +46,7 @@ yarn twenty app:dev
 Generatorul de schelet acceptă trei moduri pentru a controla ce fișiere de exemplu sunt incluse:
 
 ```bash filename="Terminal"
-# Implicit (exhaustiv): toate exemplele (obiect, câmp, funcție logică, componentă de interfață, vizualizare, element de meniu de navigare)
+# Implicit (exhaustiv): toate exemplele (obiect, câmp, funcție logică, componentă de interfață, vizualizare, element de meniu de navigare, abilitate)
 npx create-twenty-app@latest my-app
 
 # Minimal: doar fișierele de bază (application-config.ts și default-role.ts)
@@ -118,8 +119,10 @@ my-twenty-app/
   │   └── hello-world.tsx               # Exemplu de componentă de interfață
   ├── views/
   │   └── example-view.ts                # Exemplu de definiție a unei vizualizări salvate
-  └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Exemplu de link de navigare în bara laterală
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Exemplu de link de navigare în bara laterală
+  └── skills/
+      └── example-skill.ts                # Exemplu de definiție a unei abilități a agentului AI
 ```
 
 Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts` și `logic-functions/post-install.ts`). Cu `--interactive`, alegi ce fișiere de exemplu să incluzi.
@@ -148,6 +151,7 @@ SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri 
 | `defineField()`              | Extensii de câmp pentru obiectele existente    |
 | `defineView()`               | Definiții pentru vizualizări salvate           |
 | `defineNavigationMenuItem()` | Definiții pentru elemente de meniu de navigare |
+| `defineSkill()`              | Definiții ale abilităților agentului AI        |
 
 <Note>
   **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
@@ -169,7 +173,7 @@ export default defineObject({
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
 * `yarn twenty app:dev` va genera automat un client API tipizat în `node_modules/twenty-sdk/generated` (client Twenty tipizat + tipuri ale spațiului de lucru).
-* `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end sau rolurile personalizate.
+* `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end, rolurile, abilitățile și altele.
 
 ## Autentificare
 
@@ -222,6 +226,7 @@ SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. D
 | `defineField()`              | Extindeți obiectele existente cu câmpuri suplimentare                  |
 | `defineView()`               | Definește vizualizări salvate pentru obiecte                           |
 | `defineNavigationMenuItem()` | Definește linkuri de navigare în bara laterală                         |
+| `defineSkill()`              | Definiți abilități pentru agentul AI                                   |
 
 Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
@@ -740,6 +745,41 @@ Puteți crea componente Front noi în două moduri:
 
 * **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o componentă frontend nouă.
 * **Manual**: Creați un fișier nou `*.front-component.tsx` și folosiți `defineFrontComponent()`.
+
+### Abilități
+
+Abilitățile definesc instrucțiuni și capabilități reutilizabile pe care agenții AI le pot folosi în spațiul dvs. de lucru. Folosiți `defineSkill()` pentru a defini abilități cu validare încorporată:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Abordare de vânzări',
+  description: 'Ghidează agentul AI printr-un proces structurat de abordare de vânzări',
+  icon: 'IconBrain',
+  content: `Ești un asistent pentru abordare de vânzări. Când contactezi un potențial client:
+1. Cercetează compania și noutățile recente
+2. Identifică rolul potențialului client și probabilele puncte sensibile
+3. Redactează un mesaj personalizat care face referire la detalii specifice
+4. Păstrează un ton profesionist, dar conversațional`,
+});
+```
+
+Puncte cheie:
+
+* `name` este un șir identificator unic pentru abilitate (se recomandă kebab-case).
+* `label` este numele lizibil afișat în interfața cu utilizatorul (UI).
+* `content` conține instrucțiunile abilității — acesta este textul pe care agentul AI îl folosește.
+* `icon` (opțional) setează pictograma afișată în UI.
+* `description` (opțional) oferă context suplimentar despre scopul abilității.
+
+Puteți crea abilități noi în două moduri:
+
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o abilitate nouă.
+* **Manual**: Creați un fișier nou și folosiți `defineSkill()`, urmând același model.
 
 ### Client tipizat generat
 

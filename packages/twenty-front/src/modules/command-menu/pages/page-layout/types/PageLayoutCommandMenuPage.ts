@@ -1,4 +1,4 @@
-import { type CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { type CommandMenuPages } from 'twenty-shared/types';
 
 export type PageLayoutCommandMenuPage =
   | CommandMenuPages.PageLayoutWidgetTypeSelect
