@@ -25,6 +25,7 @@ import {
   SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
+import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -98,10 +99,11 @@ export class SearchService {
 
               return {
                 objectMetadataItem: flatObjectMetadata,
-                records: await this.buildSearchQueryAndGetRecords({
+                records: await this.buildSearchQueryAndGetRecordsWithFallback({
                   entityManager: repository,
                   flatObjectMetadata,
                   flatFieldMetadataMaps,
+                  searchInput,
                   searchTerms: formatSearchTerms(searchInput, 'and'),
                   searchTermsOr: formatSearchTerms(searchInput, 'or'),
                   limit: limit as number,
@@ -147,6 +149,70 @@ export class SearchService {
         return true;
       },
     );
+  }
+
+  // Runs a fast tsvector query first (uses GIN index). On the first page only,
+  // if not enough results, falls back to an ILIKE query on the searchVector
+  // text representation to catch cases where tsvector tokenization fails
+  // (e.g. continuous CJK text). Skipped on subsequent pages since any ILIKE-only
+  // matches would already have appeared on page 1 with rank 0.
+  async buildSearchQueryAndGetRecordsWithFallback<
+    Entity extends ObjectLiteral,
+  >({
+    entityManager,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    searchInput,
+    searchTerms,
+    searchTermsOr,
+    limit,
+    filter,
+    after,
+  }: {
+    entityManager: WorkspaceRepository<Entity>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    searchInput: string;
+    searchTerms: string;
+    searchTermsOr: string;
+    limit: number;
+    filter: ObjectRecordFilterInput;
+    after?: string;
+  }) {
+    const tsvectorResults = await this.buildSearchQueryAndGetRecords({
+      entityManager,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      searchTerms,
+      searchTermsOr,
+      limit,
+      filter,
+      after,
+    });
+
+    if (
+      tsvectorResults.length >= limit ||
+      !isNonEmptyString(searchInput.trim()) ||
+      isDefined(after)
+    ) {
+      return tsvectorResults;
+    }
+
+    const tsvectorRecordIds = new Set(
+      tsvectorResults.map((record) => record.id as string),
+    );
+
+    const fallbackResults = await this.buildIlikeFallbackQuery({
+      entityManager,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      searchInput,
+      excludeIds: [...tsvectorRecordIds],
+      limit: limit + 1 - tsvectorResults.length,
+      filter,
+    });
+
+    return [...tsvectorResults, ...fallbackResults];
   }
 
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
@@ -248,6 +314,74 @@ export class SearchService {
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit + 1) // We take one more to check if hasNextPage is true
       .getRawMany();
+  }
+
+  private async buildIlikeFallbackQuery<Entity extends ObjectLiteral>({
+    entityManager,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    searchInput,
+    excludeIds,
+    limit,
+    filter,
+  }: {
+    entityManager: WorkspaceRepository<Entity>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    searchInput: string;
+    excludeIds: string[];
+    limit: number;
+    filter: ObjectRecordFilterInput;
+  }) {
+    const queryBuilder = entityManager.createQueryBuilder();
+
+    const { flatObjectMetadataMaps } = entityManager.internalContext;
+
+    const queryParser = new GraphqlQueryParser(
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    queryParser.applyFilterToBuilder(
+      queryBuilder,
+      flatObjectMetadata.nameSingular,
+      filter,
+    );
+
+    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+
+    const imageIdentifierField = this.getImageIdentifierColumn(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const fieldsToSelect = [
+      'id',
+      ...this.getLabelIdentifierColumns(
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      ),
+      ...(imageIdentifierField ? [imageIdentifierField] : []),
+    ].map((field) => `"${field}"`);
+
+    queryBuilder
+      .select(fieldsToSelect)
+      .addSelect('0', 'tsRankCD')
+      .addSelect('0', 'tsRank');
+
+    const escapedInput = escapeForIlike(searchInput.trim());
+
+    queryBuilder.andWhere(
+      `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:ilikeFallbackPattern)`,
+      { ilikeFallbackPattern: `%${escapedInput}%` },
+    );
+
+    if (excludeIds.length > 0) {
+      queryBuilder.andWhere('id NOT IN (:...excludeIds)', { excludeIds });
+    }
+
+    return await queryBuilder.orderBy('"id"', 'ASC').take(limit).getRawMany();
   }
 
   computeCursorWhereCondition({

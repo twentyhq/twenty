@@ -59,6 +59,7 @@ export {
 export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
+export { defineSkill } from './skills/define-skill';
 export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
 

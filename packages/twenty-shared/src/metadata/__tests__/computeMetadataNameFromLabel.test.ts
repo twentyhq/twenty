@@ -1,4 +1,4 @@
-import { computeMetadataNameFromLabel } from '@/metadata/compute-metadata-name-from-label.util';
+import { computeMetadataNameFromLabel } from '@/metadata/utils/compute-metadata-name-from-label.util';
 
 describe('computeMetadataNameFromLabel', () => {
   it('should convert a label to camelCase', () => {
