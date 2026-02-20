@@ -63,6 +63,7 @@ export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable;
   onChange: (value: RecordId | Variable | null) => void;
+  onClear?: () => void;
   objectNameSingulars: string[];
   disabled?: boolean;
   testId?: string;
@@ -74,6 +75,7 @@ export const FormSingleRecordPicker = ({
   defaultValue,
   objectNameSingulars,
   onChange,
+  onClear,
   disabled,
   testId,
   VariablePicker,
@@ -127,7 +129,7 @@ export const FormSingleRecordPicker = ({
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
     if (!isNonEmptyString(selectedMorphItem?.recordId)) {
-      onChange(null);
+      onClear?.();
 
       return;
     }
@@ -143,7 +145,7 @@ export const FormSingleRecordPicker = ({
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
     // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
-    onChange(null);
+    onClear?.();
   };
 
   const setRecordPickerSelectedId = useSetRecoilComponentState(

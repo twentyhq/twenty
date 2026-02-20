@@ -19,9 +19,9 @@ import {
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -75,6 +75,10 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     } else {
       applyObjectFilterDropdownFilterValue(String(newValue));
     }
+  };
+
+  const handleClear = () => {
+    applyObjectFilterDropdownFilterValue('');
   };
 
   const handleRelativeDateFilterChange = (newValue: RelativeDateFilter) => {
@@ -144,6 +148,7 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
       <AdvancedFilterCommandMenuValueFormCompositeFieldInput
         recordFilter={recordFilter}
         onChange={handleChange}
+        onClear={handleClear}
       />
     );
   }
